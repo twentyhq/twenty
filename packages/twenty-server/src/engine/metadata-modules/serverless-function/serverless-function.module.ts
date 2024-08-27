@@ -15,7 +15,6 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.module';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { ServerlessFunctionInterceptor } from 'src/engine/metadata-modules/serverless-function/serverless-function.interceptor';
 import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverless-function/serverless-function.resolver';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
@@ -45,7 +44,6 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
           update: { disabled: true },
           delete: { disabled: true },
           guards: [JwtAuthGuard],
-          interceptors: [ServerlessFunctionInterceptor],
         },
       ],
     }),

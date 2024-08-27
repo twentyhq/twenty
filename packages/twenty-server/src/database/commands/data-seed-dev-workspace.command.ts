@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, CommandRunner } from 'nest-commander';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
@@ -39,7 +38,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -61,12 +59,9 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly fieldMetadataService: FieldMetadataService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
-    @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
+    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly workspaceSchemaCache: CacheStorageService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super();
   }
@@ -75,7 +70,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     try {
       for (const workspaceId of this.workspaceIds) {
         await this.workspaceSchemaCache.flush();
-        await this.workspaceCacheVersionService.deleteVersion(workspaceId);
 
         await rawDataSource.initialize();
 

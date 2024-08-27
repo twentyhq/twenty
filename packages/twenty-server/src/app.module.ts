@@ -5,27 +5,27 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
 
-import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
+import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
-import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
-import { ModulesModule } from 'src/modules/modules.module';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
-import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
-import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
-import { MessageQueueModule } from 'src/engine/integrations/message-queue/message-queue.module';
+import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
+import { MessageQueueModule } from 'src/engine/integrations/message-queue/message-queue.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
+import { ModulesModule } from 'src/modules/modules.module';
 
-import { IntegrationsModule } from './engine/integrations/integrations.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
+import { IntegrationsModule } from './engine/integrations/integrations.module';
 
 @Module({
   imports: [
@@ -52,7 +52,7 @@ import { CoreEngineModule } from './engine/core-modules/core-engine.module';
     // Modules module, contains all business logic modules
     ModulesModule,
     // Needed for the user workspace middleware
-    WorkspaceCacheVersionModule,
+    WorkspaceMetadataVersionModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,

@@ -1,5 +1,5 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
@@ -21,9 +21,10 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { ServerlessFunctionInterceptor } from 'src/engine/metadata-modules/serverless-function/serverless-function.interceptor';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
+import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -50,6 +51,24 @@ export class ServerlessFunctionResolver {
     }
   }
 
+  @Query(() => String)
+  async getServerlessFunctionSourceCode(
+    @Args('input') input: GetServerlessFunctionSourceCodeInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+
+      return await this.serverlessFunctionService.getServerlessFunctionSourceCode(
+        workspaceId,
+        input.id,
+        input.version,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
   @Mutation(() => ServerlessFunctionDTO)
   async deleteOneServerlessFunction(
     @Args('input') input: DeleteServerlessFunctionInput,
@@ -67,7 +86,6 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @UseInterceptors(ServerlessFunctionInterceptor)
   @Mutation(() => ServerlessFunctionDTO)
   async updateOneServerlessFunction(
     @Args('input')
@@ -86,7 +104,6 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @UseInterceptors(ServerlessFunctionInterceptor)
   @Mutation(() => ServerlessFunctionDTO)
   async createOneServerlessFunction(
     @Args('input')
@@ -109,7 +126,6 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @UseInterceptors(ServerlessFunctionInterceptor)
   @Mutation(() => ServerlessFunctionDTO)
   async createOneServerlessFunctionFromFile(
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -133,17 +149,36 @@ export class ServerlessFunctionResolver {
 
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
   async executeOneServerlessFunction(
-    @Args() executeServerlessFunctionInput: ExecuteServerlessFunctionInput,
+    @Args('input') input: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
       await this.checkFeatureFlag(workspaceId);
-      const { id, payload } = executeServerlessFunctionInput;
+      const { id, payload, version } = input;
 
-      return await this.serverlessFunctionService.executeOne(
+      return await this.serverlessFunctionService.executeOneServerlessFunction(
         id,
         workspaceId,
         payload,
+        version,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => ServerlessFunctionDTO)
+  async publishServerlessFunction(
+    @Args('input') input: PublishServerlessFunctionInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+      const { id } = input;
+
+      return await this.serverlessFunctionService.publishOneServerlessFunction(
+        id,
+        workspaceId,
       );
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);

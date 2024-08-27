@@ -10,6 +10,7 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import {
   WorkflowEventTriggerJob,
@@ -28,25 +29,32 @@ export class DatabaseEventTriggerListener {
   ) {}
 
   @OnEvent('*.created')
-  async handleObjectRecordCreateEvent(payload: ObjectRecordCreateEvent<any>) {
+  async handleObjectRecordCreateEvent(
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+  ) {
     await this.handleEvent(payload);
   }
 
   @OnEvent('*.updated')
-  async handleObjectRecordUpdateEvent(payload: ObjectRecordUpdateEvent<any>) {
+  async handleObjectRecordUpdateEvent(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+  ) {
     await this.handleEvent(payload);
   }
 
   @OnEvent('*.deleted')
-  async handleObjectRecordDeleteEvent(payload: ObjectRecordDeleteEvent<any>) {
+  async handleObjectRecordDeleteEvent(
+    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<any>>,
+  ) {
     await this.handleEvent(payload);
   }
 
   private async handleEvent(
-    payload:
+    payload: WorkspaceEventBatch<
       | ObjectRecordCreateEvent<any>
       | ObjectRecordUpdateEvent<any>
-      | ObjectRecordDeleteEvent<any>,
+      | ObjectRecordDeleteEvent<any>
+    >,
   ) {
     const workspaceId = payload.workspaceId;
     const eventName = payload.name;
@@ -84,15 +92,17 @@ export class DatabaseEventTriggerListener {
     });
 
     for (const eventListener of eventListeners) {
-      this.messageQueueService.add<WorkflowEventTriggerJobData>(
-        WorkflowEventTriggerJob.name,
-        {
-          workspaceId,
-          workflowId: eventListener.workflowId,
-          payload,
-        },
-        { retryLimit: 3 },
-      );
+      for (const eventPayload of payload.events) {
+        this.messageQueueService.add<WorkflowEventTriggerJobData>(
+          WorkflowEventTriggerJob.name,
+          {
+            workspaceId,
+            workflowId: eventListener.workflowId,
+            payload: eventPayload,
+          },
+          { retryLimit: 3 },
+        );
+      }
     }
   }
 }

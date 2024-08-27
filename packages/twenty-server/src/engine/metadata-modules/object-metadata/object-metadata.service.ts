@@ -5,7 +5,7 @@ import console from 'console';
 
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -32,7 +32,7 @@ import {
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -80,7 +80,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(objectMetadataRepository);
   }
@@ -144,7 +144,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
     );
 
-    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
 
     return objectMetadata;
   }
@@ -352,7 +354,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     });
 
-    await this.workspaceCacheVersionService.incrementVersion(
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
       objectMetadataInput.workspaceId,
     );
 
@@ -367,7 +369,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const updatedObject = await super.updateOne(input.id, input.update);
 
-    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+    if (input.update.isActive !== undefined) {
+      await this.updateObjectRelationships(input.id, input.update.isActive);
+    }
+
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
 
     return updatedObject;
   }
@@ -452,7 +460,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
   public async deleteObjectsMetadata(workspaceId: string) {
     await this.objectMetadataRepository.delete({ workspaceId });
-    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
   }
 
   private async createObjectRelationsMetadataAndMigrations(
@@ -1231,5 +1241,33 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       ],
     );
+  }
+
+  private async updateObjectRelationships(
+    objectMetadataId: string,
+    isActive: boolean,
+  ) {
+    const affectedRelations = await this.relationMetadataRepository.find({
+      where: [
+        { fromObjectMetadataId: objectMetadataId },
+        { toObjectMetadataId: objectMetadataId },
+      ],
+    });
+
+    const affectedFieldIds = affectedRelations.reduce(
+      (acc, { fromFieldMetadataId, toFieldMetadataId }) => {
+        acc.push(fromFieldMetadataId, toFieldMetadataId);
+
+        return acc;
+      },
+      [] as string[],
+    );
+
+    if (affectedFieldIds.length > 0) {
+      await this.fieldMetadataRepository.update(
+        { id: In(affectedFieldIds) },
+        { isActive: isActive },
+      );
+    }
   }
 }

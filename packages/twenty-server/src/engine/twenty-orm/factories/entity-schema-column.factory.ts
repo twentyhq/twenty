@@ -109,7 +109,7 @@ export class EntitySchemaColumnFactory {
 
     if (!compositeType) {
       throw new Error(
-        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefintions`,
+        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefinitions`,
       );
     }
 

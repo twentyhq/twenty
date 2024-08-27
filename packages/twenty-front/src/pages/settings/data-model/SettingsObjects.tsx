@@ -128,6 +128,7 @@ export const SettingsObjects = () => {
                 {SETTINGS_OBJECT_TABLE_METADATA.fields.map(
                   (settingsObjectsTableMetadataField) => (
                     <SortableTableHeader
+                      key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
                       label={settingsObjectsTableMetadataField.fieldLabel}
                       tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}

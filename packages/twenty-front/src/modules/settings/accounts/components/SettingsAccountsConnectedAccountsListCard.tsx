@@ -1,21 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
 import { IconGoogle } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Status } from '@/ui/display/status/components/Status';
 
+import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { SettingsListCard } from '../../components/SettingsListCard';
-
-const StyledRowRightContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
 
 export const SettingsAccountsConnectedAccountsListCard = ({
   accounts,
@@ -37,12 +29,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       isLoading={loading}
       RowIcon={IconGoogle}
       RowRightComponent={({ item: account }) => (
-        <StyledRowRightContainer>
-          {account.authFailedAt && (
-            <Status color="red" text="Sync failed" weight="medium" />
-          )}
-          <SettingsAccountsRowDropdownMenu account={account} />
-        </StyledRowRightContainer>
+        <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       )}
       hasFooter
       footerButtonLabel="Add account"
