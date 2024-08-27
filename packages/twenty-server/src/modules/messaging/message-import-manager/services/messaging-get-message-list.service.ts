@@ -36,8 +36,9 @@ export class MessagingGetMessageListService {
           connectedAccount,
         );
       default:
-        throw new Error(
-          `Provider ${connectedAccount.provider} is not supported.`,
+        throw new MessageImportException(
+          `Provider ${connectedAccount.provider} is not supported`,
+          MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }
   }
