@@ -32,6 +32,8 @@ export default defineConfig(({ command, mode }) => {
     overlay: false,
   };
 
+  console.log(VITE_DISABLE_TYPESCRIPT_CHECKER === 'true');
+
   if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
     checkers['typescript'] = {
       tsconfigPath: tsConfigPath,
