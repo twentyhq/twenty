@@ -64,11 +64,6 @@ export class CalendarEventImportErrorHandlerService {
           workspaceId,
         );
         break;
-      case CalendarEventImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED:
-        throw new CalendarEventImportException(
-          exception.message,
-          CalendarEventImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-        );
       default:
         throw exception;
     }
