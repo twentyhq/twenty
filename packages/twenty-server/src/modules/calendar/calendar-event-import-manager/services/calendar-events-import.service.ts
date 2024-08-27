@@ -143,8 +143,6 @@ export class CalendarEventsImportService {
         calendarChannel,
         workspaceId,
       );
-
-      return;
     }
   }
 }

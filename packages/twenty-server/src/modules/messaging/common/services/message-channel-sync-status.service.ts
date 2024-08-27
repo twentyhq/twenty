@@ -12,6 +12,10 @@ import {
   MessageChannelSyncStatus,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageImportException,
+  MessageImportExceptionCode,
+} from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
@@ -189,7 +193,10 @@ export class MessageChannelSyncStatusService {
     });
 
     if (!messageChannel) {
-      return;
+      throw new MessageImportException(
+        `Message channel ${messageChannelId} not found in workspace ${workspaceId}`,
+        MessageImportExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
+      );
     }
 
     const connectedAccountId = messageChannel.connectedAccountId;

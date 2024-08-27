@@ -5,6 +5,10 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
+  CalendarEventImportException,
+  CalendarEventImportExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
+import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
   CalendarChannelWorkspaceEntity,
@@ -172,7 +176,10 @@ export class CalendarChannelSyncStatusService {
     });
 
     if (!calendarChannel) {
-      return;
+      throw new CalendarEventImportException(
+        `Calendar channel ${calendarChannelId} not found in workspace ${workspaceId}`,
+        CalendarEventImportExceptionCode.CALENDAR_CHANNEL_NOT_FOUND,
+      );
     }
 
     const connectedAccountId = calendarChannel.connectedAccountId;
