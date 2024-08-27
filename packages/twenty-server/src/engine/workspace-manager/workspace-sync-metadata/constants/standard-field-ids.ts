@@ -399,7 +399,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   statuses: '20202020-357c-4432-8c50-8c31b4a552d9',
   position: '20202020-39b0-4d8c-8c5f-33c2326deb5f',
   versions: '20202020-9432-416e-8f3c-27ee3153d099',
-  runs: '20202020-4981-ba07-1375592ca3f9',
+  runs: '20202020-759b-4340-b58b-e73595c4df4f',
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
 };
