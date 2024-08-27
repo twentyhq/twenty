@@ -4,22 +4,17 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 @Injectable()
 export class MessagingMessageService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async saveMessagesWithinTransaction(
-    messages: GmailMessage[],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
+    messages: MessageWithParticipants[],
     messageChannelId: string,
     transactionManager: EntityManager,
   ): Promise<Map<string, string>> {
@@ -103,19 +98,13 @@ export class MessagingMessageService {
 
       const newMessageId = v4();
 
-      const messageDirection =
-        connectedAccount.handle === message.fromHandle ||
-        connectedAccount.handleAliases?.includes(message.fromHandle)
-          ? 'outgoing'
-          : 'incoming';
-
       await messageRepository.insert(
         {
           id: newMessageId,
           headerMessageId: message.headerMessageId,
           subject: message.subject,
-          receivedAt: new Date(parseInt(message.internalDate)),
-          direction: messageDirection,
+          receivedAt: message.receivedAt,
+          direction: message.direction,
           text: message.text,
           messageThreadId: newOrExistingMessageThreadId,
         },

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { GaxiosResponse } from 'gaxios';
 import { gmail_v1 } from 'googleapis';
 
 import { MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-history-max-result.constant';
-import { GmailError } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 
 @Injectable()
-export class MessagingGmailHistoryService {
-  constructor() {}
+export class GmailGetHistoryService {
+  constructor(
+    private readonly gmailHandleErrorService: GmailHandleErrorService,
+  ) {}
 
   public async getHistory(
     gmailClient: gmail_v1.Gmail,
@@ -18,34 +19,33 @@ export class MessagingGmailHistoryService {
   ): Promise<{
     history: gmail_v1.Schema$History[];
     historyId?: string | null;
-    error?: GmailError;
   }> {
     const fullHistory: gmail_v1.Schema$History[] = [];
     let pageToken: string | undefined;
     let hasMoreMessages = true;
     let nextHistoryId: string | undefined;
-    let response: GaxiosResponse<gmail_v1.Schema$ListHistoryResponse>;
 
     while (hasMoreMessages) {
-      try {
-        response = await gmailClient.users.history.list({
+      const response = await gmailClient.users.history
+        .list({
           userId: 'me',
           maxResults: MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT,
           pageToken,
           startHistoryId: lastSyncHistoryId,
           historyTypes: historyTypes || ['messageAdded', 'messageDeleted'],
           labelId,
+        })
+        .catch((error) => {
+          this.gmailHandleErrorService.handleError(error);
+
+          return {
+            data: {
+              history: [],
+              historyId: lastSyncHistoryId,
+              nextPageToken: undefined,
+            },
+          };
         });
-      } catch (error) {
-        return {
-          history: [],
-          error: {
-            code: error.response?.status,
-            reason: error.response?.data?.error,
-          },
-          historyId: lastSyncHistoryId,
-        };
-      }
 
       nextHistoryId = response?.data?.historyId ?? undefined;
 

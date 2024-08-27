@@ -5,15 +5,20 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageImportException,
+  MessageImportExceptionCode,
+} from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 
 @Injectable()
-export class MessagingChannelSyncStatusService {
+export class MessageChannelSyncStatusService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
@@ -28,9 +33,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
@@ -44,9 +47,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
       },
@@ -60,9 +61,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
       },
@@ -83,9 +82,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncCursor: '',
         syncStageStartedAt: null,
@@ -103,9 +100,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
         syncStatus: MessageChannelSyncStatus.ONGOING,
@@ -122,9 +117,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStatus: MessageChannelSyncStatus.ACTIVE,
       },
@@ -140,9 +133,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
       },
@@ -163,9 +154,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
@@ -187,12 +176,35 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+      },
+    );
+
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    const messageChannel = await messageChannelRepository.findOne({
+      where: { id: messageChannelId },
+    });
+
+    if (!messageChannel) {
+      throw new MessageImportException(
+        `Message channel ${messageChannelId} not found in workspace ${workspaceId}`,
+        MessageImportExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
+      );
+    }
+
+    const connectedAccountId = messageChannel.connectedAccountId;
+
+    await connectedAccountRepository.update(
+      { id: connectedAccountId },
+      {
+        authFailedAt: new Date(),
       },
     );
 
@@ -209,9 +221,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     const messageChannel = await messageChannelRepository.findOne({
-      where: {
-        id: messageChannelId,
-      },
+      where: { id: messageChannelId },
       relations: {
         connectedAccount: {
           accountOwner: true,

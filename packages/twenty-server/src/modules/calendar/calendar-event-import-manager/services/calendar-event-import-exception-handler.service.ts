@@ -2,8 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
+import {
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import {
+  CalendarEventImportException,
+  CalendarEventImportExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
-import { CalendarEventError } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export enum CalendarEventImportSyncStep {
@@ -19,8 +26,8 @@ export class CalendarEventImportErrorHandlerService {
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
-  public async handleError(
-    error: CalendarEventError,
+  public async handleDriverException(
+    exception: CalendarEventImportDriverException,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<
       CalendarChannelWorkspaceEntity,
@@ -28,26 +35,41 @@ export class CalendarEventImportErrorHandlerService {
     >,
     workspaceId: string,
   ): Promise<void> {
-    switch (error.code) {
-      case 'NOT_FOUND':
-        await this.handleNotFoundError(syncStep, calendarChannel, workspaceId);
-        break;
-      case 'TEMPORARY_ERROR':
-        await this.handleTemporaryError(syncStep, calendarChannel, workspaceId);
-        break;
-      case 'INSUFFICIENT_PERMISSIONS':
-        await this.handleInsufficientPermissionsError(
+    switch (exception.code) {
+      case CalendarEventImportDriverExceptionCode.NOT_FOUND:
+        await this.handleNotFoundException(
+          syncStep,
           calendarChannel,
           workspaceId,
         );
         break;
-      case 'UNKNOWN':
-        await this.handleUnknownError(error, calendarChannel, workspaceId);
+      case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
+        await this.handleTemporaryException(
+          syncStep,
+          calendarChannel,
+          workspaceId,
+        );
         break;
+      case CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+        await this.handleInsufficientPermissionsException(
+          calendarChannel,
+          workspaceId,
+        );
+        break;
+      case CalendarEventImportDriverExceptionCode.UNKNOWN:
+      case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
+        await this.handleUnknownException(
+          exception,
+          calendarChannel,
+          workspaceId,
+        );
+        break;
+      default:
+        throw exception;
     }
   }
 
-  private async handleTemporaryError(
+  private async handleTemporaryException(
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<
       CalendarChannelWorkspaceEntity,
@@ -103,7 +125,7 @@ export class CalendarEventImportErrorHandlerService {
     }
   }
 
-  private async handleInsufficientPermissionsError(
+  private async handleInsufficientPermissionsException(
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
@@ -113,8 +135,8 @@ export class CalendarEventImportErrorHandlerService {
     );
   }
 
-  private async handleUnknownError(
-    error: CalendarEventError,
+  private async handleUnknownException(
+    exception: CalendarEventImportDriverException,
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
@@ -123,12 +145,13 @@ export class CalendarEventImportErrorHandlerService {
       workspaceId,
     );
 
-    throw new Error(
-      `Unknown error occurred while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId}: ${error.message}`,
+    throw new CalendarEventImportException(
+      `Unknown error occurred while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      CalendarEventImportExceptionCode.UNKNOWN,
     );
   }
 
-  private async handleNotFoundError(
+  private async handleNotFoundException(
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
