@@ -5,7 +5,7 @@ import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FeatureFlagFactory } from 'src/engine/core-modules/feature-flag/services/feature-flags.factory';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -27,7 +27,7 @@ export class WorkspaceSyncMetadataService {
   constructor(
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
-    private readonly featureFlagFactory: FeatureFlagFactory,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
@@ -69,9 +69,10 @@ export class WorkspaceSyncMetadataService {
       );
 
       // Retrieve feature flags
-      const workspaceFeatureFlagsMap = await this.featureFlagFactory.create(
-        context.workspaceId,
-      );
+      const workspaceFeatureFlagsMap =
+        await this.featureFlagService.getWorkspaceFeatureFlags(
+          context.workspaceId,
+        );
 
       this.logger.log('Syncing standard objects and fields metadata');
 

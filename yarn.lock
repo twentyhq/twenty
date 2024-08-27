@@ -47108,6 +47108,7 @@ __metadata:
     psl: "npm:^1.9.0"
     rimraf: "npm:^5.0.5"
     tsconfig-paths: "npm:^4.2.0"
+    typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     typescript: "npm:5.3.3"
     zod-to-json-schema: "npm:^3.23.1"
   languageName: unknown
@@ -47214,6 +47215,7 @@ __metadata:
     "@nx/vite": "npm:18.3.3"
     "@nx/web": "npm:18.3.3"
     "@octokit/graphql": "npm:^7.0.2"
+    "@playwright/test": "npm:^1.46.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
     "@react-email/components": "npm:0.0.12"
@@ -47467,7 +47469,6 @@ __metadata:
     tsup: "npm:^8.2.4"
     tsx: "npm:^4.17.0"
     type-fest: "npm:4.10.1"
-    typeorm: "patch:typeorm@0.3.20#./packages/twenty-server/patches/typeorm+0.3.20.patch"
     typescript: "npm:5.3.3"
     use-context-selector: "npm:^2.0.0"
     use-debounce: "npm:^10.0.0"
@@ -47678,9 +47679,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typeorm@patch:typeorm@0.3.20#./packages/twenty-server/patches/typeorm+0.3.20.patch::locator=twenty%40workspace%3A.":
+"typeorm@patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 0.3.20
-  resolution: "typeorm@patch:typeorm@npm%3A0.3.20#./packages/twenty-server/patches/typeorm+0.3.20.patch::version=0.3.20&hash=d5f43a&locator=twenty%40workspace%3A."
+  resolution: "typeorm@patch:typeorm@npm%3A0.3.20#./patches/typeorm+0.3.20.patch::version=0.3.20&hash=d5f43a&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   dependencies:
     "@sqltools/formatter": "npm:^1.2.5"
     app-root-path: "npm:^3.1.0"

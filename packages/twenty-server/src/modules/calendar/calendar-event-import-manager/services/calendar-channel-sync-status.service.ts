@@ -5,11 +5,16 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
+  CalendarEventImportException,
+  CalendarEventImportExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
+import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 @Injectable()
@@ -160,6 +165,31 @@ export class CalendarChannelSyncStatusService {
       syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
       syncStage: CalendarChannelSyncStage.FAILED,
     });
+
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    const calendarChannel = await calendarChannelRepository.findOne({
+      where: { id: calendarChannelId },
+    });
+
+    if (!calendarChannel) {
+      throw new CalendarEventImportException(
+        `Calendar channel ${calendarChannelId} not found in workspace ${workspaceId}`,
+        CalendarEventImportExceptionCode.CALENDAR_CHANNEL_NOT_FOUND,
+      );
+    }
+
+    const connectedAccountId = calendarChannel.connectedAccountId;
+
+    await connectedAccountRepository.update(
+      { id: connectedAccountId },
+      {
+        authFailedAt: new Date(),
+      },
+    );
 
     await this.addToAccountsToReconnect(calendarChannelId, workspaceId);
   }

@@ -6,7 +6,7 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
@@ -25,7 +25,7 @@ export class MessagingOngoingStaleJob {
   private readonly logger = new Logger(MessagingOngoingStaleJob.name);
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   @Process(MessagingOngoingStaleJob.name)
@@ -57,12 +57,12 @@ export class MessagingOngoingStaleJob {
 
         switch (messageChannel.syncStage) {
           case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
-            await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
+            await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
               messageChannel.id,
             );
             break;
           case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
-            await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+            await this.messageChannelSyncStatusService.scheduleMessagesImport(
               messageChannel.id,
             );
             break;

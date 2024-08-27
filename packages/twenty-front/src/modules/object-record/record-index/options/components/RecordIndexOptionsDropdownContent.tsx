@@ -12,6 +12,7 @@ import {
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
+import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import {
   displayedExportProgress,
@@ -38,7 +39,6 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 
 type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
 
@@ -218,6 +218,7 @@ export const RecordIndexOptionsDropdownContent = ({
             to={settingsUrl}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
+              closeDropdown();
             }}
           >
             <DropdownMenuItemsContainer>
