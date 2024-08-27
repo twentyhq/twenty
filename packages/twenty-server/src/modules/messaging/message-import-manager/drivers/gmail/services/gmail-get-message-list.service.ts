@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { gmail_v1 as gmailV1 } from 'googleapis';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
@@ -87,8 +91,9 @@ export class GmailGetMessageListService {
     const nextSyncCursor = firstMessageContent?.data?.historyId;
 
     if (!nextSyncCursor) {
-      throw new Error(
-        `No historyId found for message ${firstMessageExternalId}`,
+      throw new MessageImportDriverException(
+        `No historyId found for message ${firstMessageExternalId} for connected account ${connectedAccount.id}`,
+        MessageImportDriverExceptionCode.NO_NEXT_SYNC_CURSOR,
       );
     }
 
@@ -121,7 +126,10 @@ export class GmailGetMessageListService {
     );
 
     if (!nextSyncCursor) {
-      throw new Error(`No nextSyncCursor found`);
+      throw new MessageImportDriverException(
+        `No nextSyncCursor found for connected account ${connectedAccount.id}`,
+        MessageImportDriverExceptionCode.NO_NEXT_SYNC_CURSOR,
+      );
     }
 
     return {

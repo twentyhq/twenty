@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
+import {
+  MessageImportException,
+  MessageImportExceptionCode,
+} from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 
 export type GetFullMessageListResponse = {
   messageExternalIds: string[];
@@ -56,9 +56,9 @@ export class MessagingGetMessageListService {
           syncCursor,
         );
       default:
-        throw new MessageImportDriverException(
+        throw new MessageImportException(
           `Provider ${connectedAccount.provider} is not supported`,
-          MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
+          MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }
   }
