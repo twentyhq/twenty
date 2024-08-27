@@ -33,6 +33,7 @@ type ViewFieldsVisibilityDropdownSectionProps = {
   ) => void;
   title: string;
   showSubheader: boolean;
+  showDragGrip: boolean;
 };
 
 export const ViewFieldsVisibilityDropdownSection = ({
@@ -42,6 +43,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   onVisibilityChange,
   title,
   showSubheader = true,
+  showDragGrip,
 }: ViewFieldsVisibilityDropdownSectionProps) => {
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
@@ -107,7 +109,8 @@ export const ViewFieldsVisibilityDropdownSection = ({
             isTooltipOpen={openToolTipIndex === fieldIndex}
             text={field.label}
             className={`${title}-fixed-item-tooltip-anchor-${fieldIndex}`}
-            isHoverDisabled={field.isVisible}
+            accent={showDragGrip ? 'placeholder' : 'default'}
+            showGrip={showDragGrip}
             isDragDisabled
           />
         ))}
