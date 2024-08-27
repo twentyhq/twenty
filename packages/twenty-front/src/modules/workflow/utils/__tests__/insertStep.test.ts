@@ -1,7 +1,44 @@
 import { WorkflowStep, WorkflowVersion } from '@/workflow/types/Workflow';
-import { addStepToWorkflowVersion } from '../addStepToWorkflowVersion';
+import { insertStep } from '../insertStep';
 
-describe('addStepToWorkflowVersion', () => {
+describe('insertStep', () => {
+  it('returns a deep copy of the provided steps array instead of mutating it', () => {
+    const workflowVersionInitial: WorkflowVersion = {
+      __typename: 'WorkflowVersion',
+      createdAt: '',
+      id: '1',
+      name: '',
+      steps: [],
+      trigger: {
+        settings: { eventName: 'company.created' },
+        type: 'DATABASE_EVENT',
+      },
+      updatedAt: '',
+      workflowId: '',
+    };
+    const stepToAdd: WorkflowStep = {
+      id: 'step-1',
+      name: '',
+      settings: {
+        errorHandlingOptions: {
+          retryOnFailure: { value: true },
+          continueOnFailure: { value: false },
+        },
+        serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+      },
+      type: 'CODE_ACTION',
+      valid: true,
+    };
+
+    const stepsUpdated = insertStep({
+      steps: workflowVersionInitial.steps,
+      stepToAdd,
+      parentStepId: undefined,
+    });
+
+    expect(workflowVersionInitial.steps).not.toBe(stepsUpdated);
+  });
+
   it('adds the step when the steps array is empty', () => {
     const workflowVersionInitial: WorkflowVersion = {
       __typename: 'WorkflowVersion',
@@ -16,7 +53,7 @@ describe('addStepToWorkflowVersion', () => {
       updatedAt: '',
       workflowId: '',
     };
-    const nodeToAdd: WorkflowStep = {
+    const stepToAdd: WorkflowStep = {
       id: 'step-1',
       name: '',
       settings: {
@@ -30,14 +67,14 @@ describe('addStepToWorkflowVersion', () => {
       valid: true,
     };
 
-    const workflowVersionUpdated = addStepToWorkflowVersion({
-      workflowVersion: workflowVersionInitial,
-      nodeToAdd,
-      parentNodeId: undefined,
+    const stepsUpdated = insertStep({
+      steps: workflowVersionInitial.steps,
+      stepToAdd,
+      parentStepId: undefined,
     });
 
-    const expectedUpdatedSteps: Array<WorkflowStep> = [nodeToAdd];
-    expect(workflowVersionUpdated.steps).toEqual(expectedUpdatedSteps);
+    const expectedUpdatedSteps: Array<WorkflowStep> = [stepToAdd];
+    expect(stepsUpdated).toEqual(expectedUpdatedSteps);
   });
 
   it('adds the step at the end of a non-empty steps array', () => {
@@ -81,7 +118,7 @@ describe('addStepToWorkflowVersion', () => {
       updatedAt: '',
       workflowId: '',
     };
-    const nodeToAdd: WorkflowStep = {
+    const stepToAdd: WorkflowStep = {
       id: 'step-3',
       name: '',
       settings: {
@@ -95,18 +132,18 @@ describe('addStepToWorkflowVersion', () => {
       valid: true,
     };
 
-    const workflowVersionUpdated = addStepToWorkflowVersion({
-      workflowVersion: workflowVersionInitial,
-      nodeToAdd,
-      parentNodeId: workflowVersionInitial.steps[1].id, // Note the selected step.
+    const stepsUpdated = insertStep({
+      steps: workflowVersionInitial.steps,
+      stepToAdd,
+      parentStepId: workflowVersionInitial.steps[1].id, // Note the selected step.
     });
 
     const expectedUpdatedSteps: Array<WorkflowStep> = [
       workflowVersionInitial.steps[0],
       workflowVersionInitial.steps[1],
-      nodeToAdd,
+      stepToAdd,
     ];
-    expect(workflowVersionUpdated.steps).toEqual(expectedUpdatedSteps);
+    expect(stepsUpdated).toEqual(expectedUpdatedSteps);
   });
 
   it('adds the step in the middle of a non-empty steps array', () => {
@@ -150,7 +187,7 @@ describe('addStepToWorkflowVersion', () => {
       updatedAt: '',
       workflowId: '',
     };
-    const nodeToAdd: WorkflowStep = {
+    const stepToAdd: WorkflowStep = {
       id: 'step-3',
       name: '',
       settings: {
@@ -164,17 +201,17 @@ describe('addStepToWorkflowVersion', () => {
       valid: true,
     };
 
-    const workflowVersionUpdated = addStepToWorkflowVersion({
-      workflowVersion: workflowVersionInitial,
-      nodeToAdd,
-      parentNodeId: workflowVersionInitial.steps[0].id, // Note the selected step.
+    const stepsUpdated = insertStep({
+      steps: workflowVersionInitial.steps,
+      stepToAdd,
+      parentStepId: workflowVersionInitial.steps[0].id, // Note the selected step.
     });
 
     const expectedUpdatedSteps: Array<WorkflowStep> = [
       workflowVersionInitial.steps[0],
-      nodeToAdd,
+      stepToAdd,
       workflowVersionInitial.steps[1],
     ];
-    expect(workflowVersionUpdated.steps).toEqual(expectedUpdatedSteps);
+    expect(stepsUpdated).toEqual(expectedUpdatedSteps);
   });
 });

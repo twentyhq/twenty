@@ -1,23 +1,27 @@
-import { WorkflowStep, WorkflowVersion } from '@/workflow/types/Workflow';
+import { WorkflowStep } from '@/workflow/types/Workflow';
 
+/**
+ * This function returns the reference of the array where the step should be positioned
+ * and at which index.
+ */
 const findStepPosition = ({
-  workflowSteps,
+  steps,
   stepId,
 }: {
-  workflowSteps: Array<WorkflowStep>;
+  steps: Array<WorkflowStep>;
   stepId: string | undefined;
-}): { workflowSteps: Array<WorkflowStep>; index: number } => {
+}): { steps: Array<WorkflowStep>; index: number } => {
   if (stepId === undefined) {
     return {
-      workflowSteps,
+      steps,
       index: 0,
     };
   }
 
-  for (const [index, step] of workflowSteps.entries()) {
+  for (const [index, step] of steps.entries()) {
     if (step.id === stepId) {
       return {
-        workflowSteps,
+        steps,
         index,
       };
     }
@@ -35,39 +39,36 @@ const findStepPosition = ({
 };
 
 /**
- * **Returns a shallow copy of the workflow version.**
+ * Insert a step in a steps tree based on the id of the parent step.
+ *
+ * **Note: This function returns a shallow copy of the workflow version.**
  */
-export const addStepToWorkflowVersion = ({
-  workflowVersion,
-  nodeToAdd,
-  parentNodeId,
+export const insertStep = ({
+  steps: stepsInitial,
+  stepToAdd,
+  parentStepId,
 }: {
-  workflowVersion: WorkflowVersion;
-  parentNodeId: string | undefined;
-  nodeToAdd: WorkflowStep;
-}): WorkflowVersion => {
+  steps: Array<WorkflowStep>;
+  parentStepId: string | undefined;
+  stepToAdd: WorkflowStep;
+}): Array<WorkflowStep> => {
   // Make a deep copy of the nested object to prevent unwanted side effects.
-  const versionToUpdate: WorkflowVersion = JSON.parse(
-    JSON.stringify(workflowVersion),
-  );
+  const steps: Array<WorkflowStep> = JSON.parse(JSON.stringify(stepsInitial));
 
   const parentStepPosition = findStepPosition({
-    workflowSteps: versionToUpdate.steps,
-    stepId: parentNodeId,
+    steps: steps,
+    stepId: parentStepId,
   });
 
   /**
    * Add the step at a specific position in the array.
    * This will be useful when we'll want to add a node in the middle of a workflow.
    */
-  parentStepPosition.workflowSteps.splice(
+  parentStepPosition.steps.splice(
     parentStepPosition.index + 1, // The "+ 1" means that we add the step after its parent and not before.
     0,
-    nodeToAdd,
+    stepToAdd,
   );
 
-  return {
-    ...versionToUpdate,
-    steps: versionToUpdate.steps,
-  };
+  return steps;
 };

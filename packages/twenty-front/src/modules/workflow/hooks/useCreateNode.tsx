@@ -5,8 +5,8 @@ import {
   WorkflowStep,
   WorkflowVersion,
 } from '@/workflow/types/Workflow';
-import { addStepToWorkflowVersion } from '@/workflow/utils/addStepToWorkflowVersion';
 import { getWorkflowLastVersion } from '@/workflow/utils/getWorkflowLastVersion';
+import { insertStep } from '@/workflow/utils/insertStep';
 
 export const useCreateNode = ({ workflow }: { workflow: Workflow }) => {
   const { updateOneRecord: updateOneWorkflowVersion } =
@@ -30,11 +30,13 @@ export const useCreateNode = ({ workflow }: { workflow: Workflow }) => {
 
     return updateOneWorkflowVersion({
       idToUpdate: lastVersion.id,
-      updateOneRecordInput: addStepToWorkflowVersion({
-        workflowVersion: lastVersion,
-        parentNodeId,
-        nodeToAdd,
-      }),
+      updateOneRecordInput: {
+        steps: insertStep({
+          steps: lastVersion.steps,
+          parentStepId: parentNodeId,
+          stepToAdd: nodeToAdd,
+        }),
+      },
     });
   };
 
