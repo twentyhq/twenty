@@ -47,6 +47,12 @@ const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
 `;
+const StyledNameLabel = styled.div`
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+`;
 
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
@@ -203,9 +209,15 @@ export const SettingsObjectFieldItemTableRow = ({
     >
       <StyledNameTableCell>
         {!!Icon && (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon
+            style={{ minWidth: theme.icon.size.md }}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         )}
-        {fieldMetadataItem.label}
+        <StyledNameLabel title={fieldMetadataItem.label}>
+          {fieldMetadataItem.label}
+        </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>{typeLabel}</TableCell>
       <TableCell>
