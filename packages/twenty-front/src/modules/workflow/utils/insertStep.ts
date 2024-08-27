@@ -53,7 +53,7 @@ export const insertStep = ({
   stepToAdd: WorkflowStep;
 }): Array<WorkflowStep> => {
   // Make a deep copy of the nested object to prevent unwanted side effects.
-  const steps: Array<WorkflowStep> = JSON.parse(JSON.stringify(stepsInitial));
+  const steps = structuredClone(stepsInitial);
 
   const parentStepPosition = findStepPosition({
     steps: steps,
