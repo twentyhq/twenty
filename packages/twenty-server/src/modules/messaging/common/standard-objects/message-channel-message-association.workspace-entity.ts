@@ -15,6 +15,7 @@ import {
   MESSAGE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
@@ -58,12 +59,22 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     description: 'Message Direction',
     icon: 'IconDirection',
     options: [
-      { value: 'incoming', label: 'Incoming', position: 0, color: 'green' },
-      { value: 'outgoing', label: 'Outgoing', position: 1, color: 'blue' },
+      {
+        value: MessageDirection.INCOMING,
+        label: 'Incoming',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageDirection.OUTGOING,
+        label: 'Outgoing',
+        position: 1,
+        color: 'blue',
+      },
     ],
-    defaultValue: "'incoming'",
+    defaultValue: MessageDirection.INCOMING,
   })
-  direction: string;
+  direction: MessageDirection;
 
   @WorkspaceRelation({
     standardId:

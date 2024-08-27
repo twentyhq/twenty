@@ -1,4 +1,5 @@
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 export const computeMessageDirection = (
   fromHandle: string,
@@ -6,8 +7,8 @@ export const computeMessageDirection = (
     ConnectedAccountWorkspaceEntity,
     'handle' | 'handleAliases'
   >,
-): 'outgoing' | 'incoming' =>
+): MessageDirection =>
   connectedAccount.handle === fromHandle ||
   connectedAccount.handleAliases?.includes(fromHandle)
-    ? 'outgoing'
-    : 'incoming';
+    ? MessageDirection.OUTGOING
+    : MessageDirection.INCOMING;
