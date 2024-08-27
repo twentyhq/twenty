@@ -18,17 +18,13 @@ export class ThrottlerService {
   async throttle(key: string, limit: number, ttl: number): Promise<void> {
     const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
 
-    if (currentCount && currentCount >= limit) {
+    if (currentCount >= limit) {
       throw new ThrottlerException(
         'Too many requests',
         ThrottlerExceptionCode.TOO_MANY_REQUESTS,
       );
     }
 
-    if (currentCount) {
-      await this.cacheStorage.set(key, currentCount + 1, ttl);
-    } else {
-      await this.cacheStorage.set(key, 1, ttl);
-    }
+    await this.cacheStorage.set(key, currentCount + 1, ttl);
   }
 }
