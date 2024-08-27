@@ -32,6 +32,12 @@ export default defineConfig(({ command, mode }) => {
     overlay: false,
   };
 
+  console.log(
+    `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
+  );
+  console.log(`VITE_DISABLE_ESLINT_CHECKER: ${VITE_DISABLE_ESLINT_CHECKER}`);
+  console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
+
   if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
     checkers['typescript'] = {
       tsconfigPath: tsConfigPath,
