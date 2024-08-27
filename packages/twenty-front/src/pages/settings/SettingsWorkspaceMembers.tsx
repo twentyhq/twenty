@@ -20,7 +20,7 @@ import {
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
-import { useDeleteCustomInvitationMutation } from '~/generated/graphql';
+import { useDeleteWorkspaceInvitationMutation } from '~/generated/graphql';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
@@ -46,7 +46,8 @@ export const SettingsWorkspaceMembers = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const [deleteCustomInvitationMutation] = useDeleteCustomInvitationMutation();
+  const [deleteWorkspaceInvitationMutation] =
+    useDeleteWorkspaceInvitationMutation();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -57,7 +58,7 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   const handleRemoveWorkspaceInvitation = async (invitationId: string) => {
-    const deletionInvitationResponse = await deleteCustomInvitationMutation({
+    const deletionInvitationResponse = await deleteWorkspaceInvitationMutation({
       variables: {
         invitationId,
       },
@@ -65,14 +66,14 @@ export const SettingsWorkspaceMembers = () => {
     // TODO: What the best practice to refresh the UI here?
     if (
       isDefined(deletionInvitationResponse.errors) ||
-      deletionInvitationResponse.data?.deleteCustomInvitation === 'error'
+      deletionInvitationResponse.data?.deleteWorkspaceInvitation === 'error'
     ) {
       enqueueSnackBar('Error deleting invitation', {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
     } else if (
-      deletionInvitationResponse.data?.deleteCustomInvitation === 'success'
+      deletionInvitationResponse.data?.deleteWorkspaceInvitation === 'success'
     ) {
       enqueueSnackBar('Invitation successfully deleted', {
         variant: SnackBarVariant.Success,
@@ -111,7 +112,7 @@ export const SettingsWorkspaceMembers = () => {
         <Section>
           <H2Title
             title="Members"
-            description="Manage users who haven't accepted your invite"
+            description="Manage the members of your space here"
           />
           {workspaceMembers?.map((member) => (
             <WorkspaceMemberCard
@@ -139,7 +140,7 @@ export const SettingsWorkspaceMembers = () => {
           <Section>
             <H2Title
               title="Invitations"
-              description="Manage the invitation of your space here"
+              description="Manage the members of your space here"
             />
             {workspaceInvitations.map((workspaceInvitation) => (
               <WorkspaceMemberCard
