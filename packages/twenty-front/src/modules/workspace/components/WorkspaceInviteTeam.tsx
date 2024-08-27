@@ -11,8 +11,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
-import { useSendInviteLinkMutation } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { useInviteUser } from '../../workspace-invitation/hooks/useInviteUser';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -69,7 +68,7 @@ type FormInput = {
 
 export const WorkspaceInviteTeam = () => {
   const { enqueueSnackBar } = useSnackBar();
-  const [sendInviteLink] = useSendInviteLinkMutation();
+  const { sendInvitation } = useInviteUser();
 
   const { reset, handleSubmit, control, formState } = useForm<FormInput>({
     mode: 'onSubmit',
@@ -81,10 +80,8 @@ export const WorkspaceInviteTeam = () => {
 
   const submit = handleSubmit(async (data) => {
     const emailsList = sanitizeEmailList(data.emails.split(','));
-    const result = await sendInviteLink({ variables: { emails: emailsList } });
-    if (isDefined(result.errors)) {
-      throw result.errors;
-    }
+    await sendInvitation({ emails: emailsList });
+
     enqueueSnackBar('Invite link sent to email addresses', {
       variant: SnackBarVariant.Success,
       duration: 2000,
