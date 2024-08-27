@@ -1,40 +1,28 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
-import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
+import { Global, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import {
-  TwentyORMModuleAsyncOptions,
-  TwentyORMOptions,
-} from 'src/engine/twenty-orm/interfaces/twenty-orm-options.interface';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
+import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
-import { TwentyORMCoreModule } from 'src/engine/twenty-orm/twenty-orm-core.module';
-
-// Todo: remove this file
 @Global()
-@Module({})
-export class TwentyORMModule {
-  static register(options: TwentyORMOptions): DynamicModule {
-    return {
-      module: TwentyORMModule,
-      imports: [TwentyORMCoreModule.register(options)],
-    };
-  }
-
-  static forFeature(_objects: EntityClassOrSchema[] = []): DynamicModule {
-    const providers = [];
-
-    return {
-      module: TwentyORMModule,
-      providers: providers,
-      exports: providers,
-    };
-  }
-
-  static registerAsync(
-    asyncOptions: TwentyORMModuleAsyncOptions,
-  ): DynamicModule {
-    return {
-      module: TwentyORMModule,
-      imports: [TwentyORMCoreModule.registerAsync(asyncOptions)],
-    };
-  }
-}
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    DataSourceModule,
+    WorkspaceCacheStorageModule,
+    WorkspaceMetadataVersionModule,
+  ],
+  providers: [
+    ...entitySchemaFactories,
+    TwentyORMManager,
+    TwentyORMGlobalManager,
+  ],
+  exports: [EntitySchemaFactory, TwentyORMManager, TwentyORMGlobalManager],
+})
+export class TwentyORMModule {}

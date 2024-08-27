@@ -8,11 +8,11 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 
 @Module({
   imports: [
-    TwentyORMModule.register({}),
     IntegrationsModule,
     MessageQueueModule.registerExplorer(),
     WorkspaceEventEmitterModule,
     JobsModule,
+    TwentyORMModule,
   ],
 })
 export class QueueWorkerModule {}
