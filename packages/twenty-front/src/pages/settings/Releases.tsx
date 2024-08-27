@@ -111,7 +111,7 @@ export const Releases = () => {
     <SubMenuTopBarContainer Icon={IconRocket} title="Releases">
       <SettingsPageContainer>
         <StyledH1Title title="Releases" />
-        <ScrollWrapper>
+        <ScrollWrapper contextProviderName="releases">
           <StyledReleaseContainer>
             {releases.map((release) => (
               <React.Fragment key={release.slug}>

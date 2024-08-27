@@ -1,14 +1,18 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version-input.dto';
-import { WorkflowTriggerResultDTO } from 'src/engine/core-modules/workflow/dtos/workflow-trigger-result.dto';
-import { workflowTriggerGraphqlApiExceptionHandler } from 'src/engine/core-modules/workflow/utils/workflow-trigger-graphql-api-exception-handler.util';
+import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
+import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workflow-trigger.workspace-service';
 
-@UseGuards(JwtAuthGuard)
 @Resolver()
+@UseGuards(JwtAuthGuard)
+@UseFilters(WorkflowTriggerGraphqlApiExceptionFilter)
 export class WorkflowTriggerResolver {
   constructor(
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
@@ -18,28 +22,22 @@ export class WorkflowTriggerResolver {
   async enableWorkflowTrigger(
     @Args('workflowVersionId') workflowVersionId: string,
   ) {
-    try {
-      return await this.workflowTriggerWorkspaceService.enableWorkflowTrigger(
-        workflowVersionId,
-      );
-    } catch (error) {
-      workflowTriggerGraphqlApiExceptionHandler(error);
-    }
+    return await this.workflowTriggerWorkspaceService.enableWorkflowTrigger(
+      workflowVersionId,
+    );
   }
 
-  @Mutation(() => WorkflowTriggerResultDTO)
+  @Mutation(() => WorkflowRunDTO)
   async runWorkflowVersion(
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUser() user: User,
     @Args('input') { workflowVersionId, payload }: RunWorkflowVersionInput,
   ) {
-    try {
-      return {
-        result: await this.workflowTriggerWorkspaceService.runWorkflowVersion(
-          workflowVersionId,
-          payload ?? {},
-        ),
-      };
-    } catch (error) {
-      workflowTriggerGraphqlApiExceptionHandler(error);
-    }
+    return await this.workflowTriggerWorkspaceService.runWorkflowVersion(
+      workflowVersionId,
+      payload ?? {},
+      workspaceMemberId,
+      user,
+    );
   }
 }

@@ -1,13 +1,13 @@
-import { useState } from 'react';
 import { act, renderHook } from '@testing-library/react';
+import { useState } from 'react';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
-import { StepType } from '@/spreadsheet-import/steps/components/UploadFlow';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 
 describe('useSpreadsheetImportInitialStep', () => {
   it('should return correct number for each step type', async () => {
     const { result } = renderHook(() => {
-      const [step, setStep] = useState<StepType | undefined>();
+      const [step, setStep] = useState<SpreadsheetImportStepType | undefined>();
       const { initialStep } = useSpreadsheetImportInitialStep(step);
       return { initialStep, setStep };
     });
@@ -15,31 +15,31 @@ describe('useSpreadsheetImportInitialStep', () => {
     expect(result.current.initialStep).toBe(-1);
 
     act(() => {
-      result.current.setStep(StepType.upload);
+      result.current.setStep(SpreadsheetImportStepType.upload);
     });
 
     expect(result.current.initialStep).toBe(0);
 
     act(() => {
-      result.current.setStep(StepType.selectSheet);
+      result.current.setStep(SpreadsheetImportStepType.selectSheet);
     });
 
     expect(result.current.initialStep).toBe(0);
 
     act(() => {
-      result.current.setStep(StepType.selectHeader);
+      result.current.setStep(SpreadsheetImportStepType.selectHeader);
     });
 
     expect(result.current.initialStep).toBe(0);
 
     act(() => {
-      result.current.setStep(StepType.matchColumns);
+      result.current.setStep(SpreadsheetImportStepType.matchColumns);
     });
 
     expect(result.current.initialStep).toBe(2);
 
     act(() => {
-      result.current.setStep(StepType.validateData);
+      result.current.setStep(SpreadsheetImportStepType.validateData);
     });
 
     expect(result.current.initialStep).toBe(3);

@@ -8,7 +8,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -28,19 +28,20 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
+import { NameNotAvailableException } from 'src/engine/metadata-modules/utils/exceptions/name-not-available.exception';
+import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import {
-  InvalidStringException,
-  NameTooLongException,
-  validateMetadataNameOrThrow,
-} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { validateMetadataNameValidityOrThrow as validateFieldNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -76,7 +77,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -140,7 +141,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      this.validateFieldMetadataInput<CreateFieldInput>(fieldMetadataInput);
+      this.validateFieldMetadataInput<CreateFieldInput>(
+        fieldMetadataInput,
+        objectMetadata,
+      );
 
       const fieldAlreadyExists = await fieldMetadataRepository.findOne({
         where: {
@@ -274,7 +278,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
-      await this.workspaceCacheVersionService.incrementVersion(
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         fieldMetadataInput.workspaceId,
       );
     }
@@ -355,7 +359,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         }
       }
 
-      this.validateFieldMetadataInput<UpdateFieldInput>(fieldMetadataInput);
+      this.validateFieldMetadataInput<UpdateFieldInput>(
+        fieldMetadataInput,
+        objectMetadata,
+      );
 
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
@@ -426,7 +433,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
-      await this.workspaceCacheVersionService.incrementVersion(
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         fieldMetadataInput.workspaceId,
       );
     }
@@ -485,7 +492,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await fieldMetadataRepository.delete(fieldMetadata.id);
 
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+        const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
         if (!compositeType) {
           throw new Error(
@@ -545,7 +552,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
-      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
     }
   }
 
@@ -586,7 +595,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   public async deleteFieldsMetadata(workspaceId: string) {
     await this.fieldMetadataRepository.delete({ workspaceId });
-    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
   }
 
   private buildUpdatableStandardFieldInput(
@@ -669,10 +680,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   private validateFieldMetadataInput<
     T extends UpdateFieldInput | CreateFieldInput,
-  >(fieldMetadataInput: T): T {
+  >(fieldMetadataInput: T, objectMetadata: ObjectMetadataEntity): T {
     if (fieldMetadataInput.name) {
       try {
-        validateMetadataNameOrThrow(fieldMetadataInput.name);
+        validateFieldNameValidityOrThrow(fieldMetadataInput.name);
+        validateFieldNameAvailabilityOrThrow(
+          fieldMetadataInput.name,
+          objectMetadata,
+        );
       } catch (error) {
         if (error instanceof InvalidStringException) {
           throw new FieldMetadataException(
@@ -682,6 +697,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         } else if (error instanceof NameTooLongException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" exceeds 63 characters`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        } else if (error instanceof NameNotAvailableException) {
+          throw new FieldMetadataException(
+            `Name "${fieldMetadataInput.name}" is not available`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
         } else {

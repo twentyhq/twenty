@@ -23,7 +23,6 @@ export class UpdateServerlessFunctionInput {
   description?: string;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   code: string;
 }

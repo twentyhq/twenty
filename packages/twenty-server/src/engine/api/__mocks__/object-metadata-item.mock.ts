@@ -2,6 +2,12 @@ import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/com
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';
+export const FIELD_CURRENCY_MOCK_NAME = 'fieldCurrency';
+export const FIELD_ADDRESS_MOCK_NAME = 'fieldAddress';
+export const FIELD_ACTOR_MOCK_NAME = 'fieldActor';
+export const FIELD_FULL_NAME_MOCK_NAME = 'fieldFullName';
+
 export const fieldNumberMock = {
   name: 'fieldNumber',
   type: FieldMetadataType.NUMBER,
@@ -16,15 +22,8 @@ export const fieldTextMock = {
   defaultValue: null,
 };
 
-export const fieldLinkMock = {
-  name: 'fieldLink',
-  type: FieldMetadataType.LINK,
-  isNullable: false,
-  defaultValue: { label: '', url: '' },
-};
-
 export const fieldCurrencyMock = {
-  name: 'fieldCurrency',
+  name: FIELD_CURRENCY_MOCK_NAME,
   type: FieldMetadataType.CURRENCY,
   isNullable: true,
   defaultValue: { amountMicros: null, currencyCode: "''" },
@@ -89,7 +88,7 @@ export const fieldRelationMock = {
 };
 
 const fieldLinksMock = {
-  name: 'fieldLinks',
+  name: FIELD_LINKS_MOCK_NAME,
   type: FieldMetadataType.LINKS,
   isNullable: false,
   defaultValue: [
@@ -147,7 +146,7 @@ const fieldNumericMock = {
 };
 
 const fieldFullNameMock = {
-  name: 'fieldFullName',
+  name: FIELD_FULL_NAME_MOCK_NAME,
   type: FieldMetadataType.FULL_NAME,
   isNullable: true,
   defaultValue: { firstName: '', lastName: '' },
@@ -168,7 +167,7 @@ const fieldPositionMock = {
 };
 
 const fieldAddressMock = {
-  name: 'fieldAddress',
+  name: FIELD_ADDRESS_MOCK_NAME,
   type: FieldMetadataType.ADDRESS,
   isNullable: true,
   defaultValue: {
@@ -198,7 +197,7 @@ const fieldRichTextMock = {
 };
 
 const fieldActorMock = {
-  name: 'fieldActor',
+  name: FIELD_ACTOR_MOCK_NAME,
   type: FieldMetadataType.ACTOR,
   isNullable: true,
   defaultValue: {
@@ -217,7 +216,6 @@ export const fields = [
   fieldBooleanMock,
   fieldNumberMock,
   fieldNumericMock,
-  fieldLinkMock,
   fieldLinksMock,
   fieldCurrencyMock,
   fieldFullNameMock,

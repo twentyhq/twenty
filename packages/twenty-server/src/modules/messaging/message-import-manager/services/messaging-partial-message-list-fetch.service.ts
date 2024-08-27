@@ -24,7 +24,7 @@ export class MessagingPartialMessageListFetchService {
 
   constructor(
     private readonly gmailClientProvider: MessagingGmailClientProvider,
-    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
     private readonly gmailGetHistoryService: MessagingGmailHistoryService,

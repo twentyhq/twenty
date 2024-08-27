@@ -2,10 +2,16 @@ import { useContext } from 'react';
 
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { ScrollWrapperContext } from '../components/ScrollWrapper';
+import {
+  ContextProviderName,
+  getContextByProviderName,
+} from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
-export const useScrollWrapperScopedRef = () => {
-  const scrollWrapperRef = useContext(ScrollWrapperContext);
+export const useScrollWrapperScopedRef = (
+  contextProviderName: ContextProviderName,
+) => {
+  const Context = getContextByProviderName(contextProviderName);
+  const scrollWrapperRef = useContext(Context);
 
   if (isUndefinedOrNull(scrollWrapperRef))
     throw new Error(

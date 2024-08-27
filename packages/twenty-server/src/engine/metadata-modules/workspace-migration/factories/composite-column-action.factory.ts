@@ -2,17 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
+import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
+import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   WorkspaceMigrationException,
   WorkspaceMigrationExceptionCode,
@@ -32,7 +32,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
   protected handleCreateAction(
     fieldMetadata: FieldMetadataInterface<CompositeFieldMetadataType>,
   ): WorkspaceMigrationColumnCreate[] {
-    const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
     if (!compositeType) {
       this.logger.error(
@@ -80,10 +80,10 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
     currentFieldMetadata: FieldMetadataInterface<CompositeFieldMetadataType>,
     alteredFieldMetadata: FieldMetadataInterface<CompositeFieldMetadataType>,
   ): WorkspaceMigrationColumnAlter[] {
-    const currentCompositeType = compositeTypeDefintions.get(
+    const currentCompositeType = compositeTypeDefinitions.get(
       currentFieldMetadata.type,
     );
-    const alteredCompositeType = compositeTypeDefintions.get(
+    const alteredCompositeType = compositeTypeDefinitions.get(
       alteredFieldMetadata.type,
     );
 

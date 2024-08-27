@@ -13,7 +13,7 @@ export type CurrentWorkspace = Pick<
   | 'activationStatus'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
-  | 'currentCacheVersion'
+  | 'metadataVersion'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

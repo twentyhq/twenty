@@ -13,10 +13,7 @@ const meta: Meta<typeof Banner> = {
       Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
     </Banner>
   ),
-  argTypes: {
-    as: { control: false },
-    theme: { control: false },
-  },
+  argTypes: {},
 };
 
 export default meta;
