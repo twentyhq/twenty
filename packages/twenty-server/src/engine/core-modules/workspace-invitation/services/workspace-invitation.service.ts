@@ -19,18 +19,34 @@ export class WorkspaceInvitationService {
     private moduleRef: ModuleRef,
   ) {}
 
+  private appTokenToWorkspaceInvitation(appToken: AppToken) {
+    if (appToken.type !== AppTokenType.InvitationToken) {
+      throw new Error(`Token type must be "${AppTokenType.InvitationToken}"`);
+    }
+
+    if (!appToken.context?.email) {
+      throw new Error(`Invitation corrupted: Missing email in context`);
+    }
+
+    return {
+      id: appToken.id,
+      email: appToken.context.email,
+      expiresAt: appToken.expiresAt,
+    };
+  }
+
   onModuleInit() {
-    // not sure about this trick
     this.tokenService = this.moduleRef.get(TokenService, { strict: false });
   }
 
-  // TODO: manage errors
   async createWorkspaceInvitation(email: string, workspace: Workspace) {
-    await this.tokenService.generateInvitationToken(workspace.id, email);
+    return this.appTokenToWorkspaceInvitation(
+      await this.tokenService.generateInvitationToken(workspace.id, email),
+    );
   }
 
   async loadWorkspaceInvitations(workspace: Workspace) {
-    const result = await this.appTokenRepository.find({
+    const appTokens = await this.appTokenRepository.find({
       where: {
         workspaceId: workspace.id,
         type: AppTokenType.InvitationToken,
@@ -41,19 +57,11 @@ export class WorkspaceInvitationService {
       },
     });
 
-    console.log('>>>>>>>>>>>>>>', result);
-
-    if (!result) {
+    if (!appTokens) {
       throw new Error('No invitation found');
     }
 
-    return result.map((result) => {
-      return {
-        id: result.id,
-        email: result.context!.email,
-        expiresAt: result.expiresAt,
-      };
-    });
+    return appTokens.map(this.appTokenToWorkspaceInvitation);
     // return (await this.invitationRepository
     //   .createQueryBuilder('invitation')
     //   .leftJoin(

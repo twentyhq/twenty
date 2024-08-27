@@ -131,42 +131,52 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     sender: User,
   ): Promise<SendInviteLink> {
     if (!workspace?.inviteHash) {
-      return { success: false };
+      return {
+        success: false,
+        errors: ['Workspace invite hash not found'],
+        result: [],
+      };
     }
 
     const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
 
-    for (const email of emails) {
-      await this.workspaceInvitationService.createWorkspaceInvitation(
-        email,
-        workspace,
-      );
+    const workspaceInvitationsPr = await Promise.allSettled(
+      emails.map((email) => {
+        return this.workspaceInvitationService.createWorkspaceInvitation(
+          email,
+          workspace,
+        );
+      }),
+    );
 
-      const emailData = {
-        link: inviteLink,
-        workspace: { name: workspace.displayName, logo: workspace.logo },
-        sender: { email: sender.email, firstName: sender.firstName },
-        serverUrl: this.environmentService.get('SERVER_URL'),
-      };
-      const emailTemplate = SendInviteLinkEmail(emailData);
-      const html = render(emailTemplate, {
-        pretty: true,
-      });
+    for (const workspaceInvitationPr of workspaceInvitationsPr) {
+      if (workspaceInvitationPr.status === 'fulfilled') {
+        const emailData = {
+          link: inviteLink,
+          workspace: { name: workspace.displayName, logo: workspace.logo },
+          sender: { email: sender.email, firstName: sender.firstName },
+          serverUrl: this.environmentService.get('SERVER_URL'),
+        };
+        const emailTemplate = SendInviteLinkEmail(emailData);
+        const html = render(emailTemplate, {
+          pretty: true,
+        });
 
-      const text = render(emailTemplate, {
-        plainText: true,
-      });
+        const text = render(emailTemplate, {
+          plainText: true,
+        });
 
-      await this.emailService.send({
-        from: `${this.environmentService.get(
-          'EMAIL_FROM_NAME',
-        )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-        to: email,
-        subject: 'Join your team on Twenty',
-        text,
-        html,
-      });
+        await this.emailService.send({
+          from: `${this.environmentService.get(
+            'EMAIL_FROM_NAME',
+          )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+          to: workspaceInvitationPr.value.email,
+          subject: 'Join your team on Twenty',
+          text,
+          html,
+        });
+      }
     }
 
     await this.onboardingService.setOnboardingInviteTeamPending({
@@ -174,7 +184,32 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       value: false,
     });
 
-    return { success: true };
+    const result = workspaceInvitationsPr.reduce<{
+      errors: string[];
+      result: ReturnType<
+        typeof this.workspaceInvitationService.createWorkspaceInvitation
+      >['status'] extends 'rejected'
+        ? never
+        : ReturnType<
+            typeof this.workspaceInvitationService.createWorkspaceInvitation
+          >['value'];
+    }>(
+      (acc, workspaceInvitationPr) => {
+        if (workspaceInvitationPr.status === 'rejected') {
+          acc.errors.push(workspaceInvitationPr.reason);
+        } else {
+          acc.result.push(workspaceInvitationPr.value);
+        }
+
+        return acc;
+      },
+      { errors: [], result: [] },
+    );
+
+    return {
+      success: result.errors.length === 0,
+      ...result,
+    };
   }
 
   private async reassignOrRemoveUserDefaultWorkspace(
