@@ -114,7 +114,7 @@ export class MessagingPartialMessageListFetchService {
         messageChannel.id,
       );
     } catch (error) {
-      await this.messageImportErrorHandlerService.handleException(
+      await this.messageImportErrorHandlerService.handleDriverException(
         error,
         MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
         messageChannel,

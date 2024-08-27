@@ -99,7 +99,7 @@ export class MessagingFullMessageListFetchService {
         messageChannel.id,
       );
     } catch (error) {
-      await this.messageImportErrorHandlerService.handleException(
+      await this.messageImportErrorHandlerService.handleDriverException(
         error,
         MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH,
         messageChannel,

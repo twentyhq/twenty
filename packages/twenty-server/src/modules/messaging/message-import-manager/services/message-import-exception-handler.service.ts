@@ -5,6 +5,10 @@ import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-ev
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import {
+  MessageImportException,
+  MessageImportExceptionCode,
+} from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 
 export enum MessageImportSyncStep {
   FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH',
@@ -19,7 +23,7 @@ export class MessageImportExceptionHandlerService {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
-  public async handleException(
+  public async handleDriverException(
     exception: MessageImportDriverException,
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
@@ -56,6 +60,11 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
+      case 'PROVIDER_NOT_SUPPORTED':
+        throw new MessageImportException(
+          exception.message,
+          MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
+        );
       default:
         throw exception;
     }
@@ -135,8 +144,9 @@ export class MessageImportExceptionHandlerService {
       workspaceId,
     );
 
-    throw new Error(
-      `Unknown error occurred while importing calendar events for calendar channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+    throw new MessageImportException(
+      `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      MessageImportExceptionCode.UNKNOWN,
     );
   }
 

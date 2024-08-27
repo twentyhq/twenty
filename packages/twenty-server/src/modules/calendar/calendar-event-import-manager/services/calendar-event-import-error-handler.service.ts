@@ -6,6 +6,10 @@ import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import {
+  CalendarEventImportException,
+  CalendarEventImportExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
@@ -22,7 +26,7 @@ export class CalendarEventImportErrorHandlerService {
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
-  public async handleException(
+  public async handleDriverException(
     exception: CalendarEventImportDriverException,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<
@@ -60,7 +64,10 @@ export class CalendarEventImportErrorHandlerService {
         );
         break;
       case CalendarEventImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED:
-        throw exception;
+        throw new CalendarEventImportException(
+          exception.message,
+          CalendarEventImportExceptionCode.PROVIDER_NOT_SUPPORTED,
+        );
       default:
         throw exception;
     }
@@ -142,8 +149,9 @@ export class CalendarEventImportErrorHandlerService {
       workspaceId,
     );
 
-    throw new Error(
+    throw new CalendarEventImportException(
       `Unknown error occurred while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      CalendarEventImportExceptionCode.UNKNOWN,
     );
   }
 

@@ -11,7 +11,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
-} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handling.service';
+} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handler.service';
 import {
   CalendarGetCalendarEventsService,
   GetCalendarEventsResponse,
@@ -137,7 +137,7 @@ export class CalendarEventsImportService {
         calendarChannel.id,
       );
     } catch (error) {
-      await this.calendarEventImportErrorHandlerService.handleException(
+      await this.calendarEventImportErrorHandlerService.handleDriverException(
         error,
         syncStep,
         calendarChannel,

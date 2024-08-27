@@ -199,7 +199,7 @@ export class MessagingMessagesImportService {
         messageIdsToFetch,
       );
 
-      await this.messageImportErrorHandlerService.handleException(
+      await this.messageImportErrorHandlerService.handleDriverException(
         error,
         MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
         messageChannel,
