@@ -79,7 +79,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
   async executeOneServerlessFunction(
     id: string,
     workspaceId: string,
-    payload: object | undefined = undefined,
+    payload: object,
     version = 'latest',
   ): Promise<ServerlessExecuteResult> {
     const functionToExecute = await this.serverlessFunctionRepository.findOne({

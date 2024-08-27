@@ -69,7 +69,7 @@ export class LocalDriver
 
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
-    payload: object | undefined = undefined,
+    payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
     const startTime = Date.now();

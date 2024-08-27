@@ -8,6 +8,7 @@ import {
   DeleteFunctionCommand,
   GetFunctionCommand,
   InvokeCommand,
+  InvokeCommandInput,
   Lambda,
   LambdaClientConfig,
   PublishLayerVersionCommand,
@@ -255,7 +256,7 @@ export class LambdaDriver
 
   async execute(
     functionToExecute: ServerlessFunctionEntity,
-    payload: object | undefined = undefined,
+    payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
     const computedVersion =
@@ -266,7 +267,7 @@ export class LambdaDriver
         ? functionToExecute.id
         : `${functionToExecute.id}:${computedVersion}`;
     const startTime = Date.now();
-    const params = {
+    const params: InvokeCommandInput = {
       FunctionName: functionName,
       Payload: JSON.stringify(payload),
     };
