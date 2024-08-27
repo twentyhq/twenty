@@ -11,7 +11,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
-} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handler.service';
+} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import {
   CalendarGetCalendarEventsService,
   GetCalendarEventsResponse,

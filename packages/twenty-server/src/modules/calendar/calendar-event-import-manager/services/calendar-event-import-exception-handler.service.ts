@@ -57,6 +57,7 @@ export class CalendarEventImportErrorHandlerService {
         );
         break;
       case CalendarEventImportDriverExceptionCode.UNKNOWN:
+      case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
         await this.handleUnknownException(
           exception,
           calendarChannel,

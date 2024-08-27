@@ -4,7 +4,10 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import {
   MessageImportException,
   MessageImportExceptionCode,
@@ -33,34 +36,35 @@ export class MessageImportExceptionHandlerService {
     workspaceId: string,
   ): Promise<void> {
     switch (exception.code) {
-      case 'NOT_FOUND':
+      case MessageImportDriverExceptionCode.NOT_FOUND:
         await this.handleNotFoundException(
           syncStep,
           messageChannel,
           workspaceId,
         );
         break;
-      case 'TEMPORARY_ERROR':
+      case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         await this.handleTemporaryException(
           syncStep,
           messageChannel,
           workspaceId,
         );
         break;
-      case 'INSUFFICIENT_PERMISSIONS':
+      case MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
         await this.handleInsufficientPermissionsException(
           messageChannel,
           workspaceId,
         );
         break;
-      case 'UNKNOWN':
+      case MessageImportDriverExceptionCode.UNKNOWN:
+      case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
         await this.handleUnknownException(
           exception,
           messageChannel,
           workspaceId,
         );
         break;
-      case 'PROVIDER_NOT_SUPPORTED':
+      case MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED:
         throw new MessageImportException(
           exception.message,
           MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,

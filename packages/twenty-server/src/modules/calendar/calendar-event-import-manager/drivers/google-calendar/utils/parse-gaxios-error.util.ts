@@ -24,7 +24,7 @@ export const parseGaxiosError = (
     default:
       return new CalendarEventImportDriverException(
         error.message,
-        CalendarEventImportDriverExceptionCode.UNKNOWN,
+        CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR,
       );
   }
 };
