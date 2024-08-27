@@ -82,6 +82,17 @@ export class CalendarChannelSyncStatusService {
     await this.scheduleFullCalendarEventListFetch(calendarChannelId);
   }
 
+  public async resetSyncStageStartedAt(calendarChannelId: string) {
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
+    await calendarChannelRepository.update(calendarChannelId, {
+      syncStageStartedAt: null,
+    });
+  }
+
   public async scheduleCalendarEventsImport(calendarChannelId: string) {
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(

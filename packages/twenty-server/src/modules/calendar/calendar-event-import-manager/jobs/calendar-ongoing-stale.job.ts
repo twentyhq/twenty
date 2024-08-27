@@ -54,6 +54,9 @@ export class CalendarOngoingStaleJob {
         this.logger.log(
           `Sync for message channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to pending`,
         );
+        await this.calendarChannelSyncStatusService.resetSyncStageStartedAt(
+          calendarChannel.id,
+        );
 
         switch (calendarChannel.syncStage) {
           case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING:
