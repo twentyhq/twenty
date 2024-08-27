@@ -26,6 +26,7 @@ import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { View } from '@/views/types/View';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { RelationMetadataType } from '~/generated-metadata/graphql';
@@ -109,9 +110,9 @@ export const SettingsObjectFieldItemTableRow = ({
     deleteMetadataField,
   } = useFieldMetadataItem();
 
-  const { records: allViews } = usePrefetchedData(PrefetchKey.AllViews);
+  const { records: allViews } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
-  const deleteRecordFromCache = useDeleteRecordFromCache({
+  const deleteViewFromCache = useDeleteRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.View,
   });
 
@@ -123,7 +124,7 @@ export const SettingsObjectFieldItemTableRow = ({
     const deletedViewIds = allViews
       .map((view) => {
         if (view.kanbanFieldMetadataId === activeFieldMetadatItem.id) {
-          deleteRecordFromCache(view);
+          deleteViewFromCache(view);
           return view.id;
         }
 
@@ -134,6 +135,7 @@ export const SettingsObjectFieldItemTableRow = ({
     const [baseUrl, queryParams] = navigationMemorizedUrl.includes('?')
       ? navigationMemorizedUrl.split('?')
       : [navigationMemorizedUrl, ''];
+
     const params = new URLSearchParams(queryParams);
     const currentViewId = params.get('view');
 
