@@ -222,6 +222,7 @@
     "@nx/storybook": "18.3.3",
     "@nx/vite": "18.3.3",
     "@nx/web": "18.3.3",
+    "@playwright/test": "^1.46.0",
     "@sentry/types": "^7.109.0",
     "@storybook/addon-actions": "^7.6.3",
     "@storybook/addon-coverage": "^1.0.0",

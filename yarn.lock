@@ -47214,6 +47214,7 @@ __metadata:
     "@nx/vite": "npm:18.3.3"
     "@nx/web": "npm:18.3.3"
     "@octokit/graphql": "npm:^7.0.2"
+    "@playwright/test": "npm:^1.46.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
     "@react-email/components": "npm:0.0.12"
