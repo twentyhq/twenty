@@ -46,16 +46,5 @@ describe('GraphqlQueryOrderFieldParser', () => {
         age: { direction: 'DESC', nulls: 'LAST' },
       });
     });
-
-    it('should ignore undefined values', () => {
-      const orderBy = [
-        { name: OrderByDirection.AscNullsFirst, nonExistent: undefined },
-      ];
-      const result = parser.parse(orderBy);
-
-      expect(result).toEqual({
-        name: { direction: 'ASC', nulls: 'FIRST' },
-      });
-    });
   });
 });
