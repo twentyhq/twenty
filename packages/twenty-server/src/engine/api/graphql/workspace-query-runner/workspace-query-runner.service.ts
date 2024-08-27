@@ -1020,9 +1020,9 @@ export class WorkspaceQueryRunnerService {
           operation,
           objectMetadataItem: options.objectMetadataItem,
           creatorDetails: {
-            firstName: options.authContext.user?.firstName as string, 
+            firstName: options.authContext.user?.firstName as string,
             lastName: options.authContext.user?.lastName as string,
-          }
+          },
         },
         { retryLimit: 3 },
       );
