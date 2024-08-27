@@ -86,7 +86,9 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const resetDisabled =
     !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
-  const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
+  // Todo: uncomment when imports are resolved by monaco editor
+  //const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
+  const publishDisabled = latestVersionCode === formValues.code;
 
   const handleReset = async () => {
     try {
