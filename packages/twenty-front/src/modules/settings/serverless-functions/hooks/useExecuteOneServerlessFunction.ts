@@ -2,6 +2,7 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { ApolloClient, useMutation } from '@apollo/client';
 import { EXECUTE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/executeOneServerlessFunction';
 import {
+  ExecuteServerlessFunctionInput,
   ExecuteOneServerlessFunctionMutation,
   ExecuteOneServerlessFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -16,13 +17,11 @@ export const useExecuteOneServerlessFunction = () => {
   });
 
   const executeOneServerlessFunction = async (
-    id: string,
-    payload: object = {},
+    input: ExecuteServerlessFunctionInput,
   ) => {
     return await mutate({
       variables: {
-        id,
-        payload,
+        input,
       },
     });
   };

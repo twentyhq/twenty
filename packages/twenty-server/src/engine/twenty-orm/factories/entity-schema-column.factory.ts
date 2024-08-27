@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -105,11 +105,11 @@ export class EntitySchemaColumnFactory {
     fieldMetadata: FieldMetadataEntity,
   ): EntitySchemaColumnMap {
     const entitySchemaColumnMap: EntitySchemaColumnMap = {};
-    const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
     if (!compositeType) {
       throw new Error(
-        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefintions`,
+        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefinitions`,
       );
     }
 

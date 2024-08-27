@@ -9,6 +9,9 @@ import {
   UpdateFunctionCodeCommand,
   DeleteFunctionCommand,
   ResourceNotFoundException,
+  waitUntilFunctionUpdatedV2,
+  PublishVersionCommandInput,
+  PublishVersionCommand,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
@@ -24,6 +27,10 @@ import { FileStorageService } from 'src/engine/integrations/file-storage/file-st
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import {
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -51,12 +58,10 @@ export class LambdaDriver
     this.buildDirectoryManagerService = options.buildDirectoryManagerService;
   }
 
-  private async checkFunctionExists(
-    serverlessFunctionId: string,
-  ): Promise<boolean> {
+  private async checkFunctionExists(functionName: string): Promise<boolean> {
     try {
       const getFunctionCommand = new GetFunctionCommand({
-        FunctionName: serverlessFunctionId,
+        FunctionName: functionName,
       });
 
       await this.lambdaClient.send(getFunctionCommand);
@@ -132,42 +137,85 @@ export class LambdaDriver
       await this.lambdaClient.send(command);
     }
 
+    const waitParams = { FunctionName: serverlessFunction.id };
+
+    await waitUntilFunctionUpdatedV2(
+      { client: this.lambdaClient, maxWaitTime: 5 },
+      waitParams,
+    );
+
     await this.buildDirectoryManagerService.clean();
+  }
+
+  async publish(serverlessFunction: ServerlessFunctionEntity) {
+    await this.build(serverlessFunction);
+    const params: PublishVersionCommandInput = {
+      FunctionName: serverlessFunction.id,
+    };
+
+    const command = new PublishVersionCommand(params);
+
+    const result = await this.lambdaClient.send(command);
+    const newVersion = result.Version;
+
+    if (!newVersion) {
+      throw new Error('New published version is undefined');
+    }
+
+    return newVersion;
   }
 
   async execute(
     functionToExecute: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
+    version: string,
   ): Promise<ServerlessExecuteResult> {
+    const computedVersion =
+      version === 'latest' ? functionToExecute.latestVersion : version;
+
+    const functionName =
+      computedVersion === 'draft'
+        ? functionToExecute.id
+        : `${functionToExecute.id}:${computedVersion}`;
     const startTime = Date.now();
     const params = {
-      FunctionName: functionToExecute.id,
+      FunctionName: functionName,
       Payload: JSON.stringify(payload),
     };
 
     const command = new InvokeCommand(params);
 
-    const result = await this.lambdaClient.send(command);
+    try {
+      const result = await this.lambdaClient.send(command);
 
-    const parsedResult = result.Payload
-      ? JSON.parse(result.Payload.transformToString())
-      : {};
+      const parsedResult = result.Payload
+        ? JSON.parse(result.Payload.transformToString())
+        : {};
 
-    const duration = Date.now() - startTime;
+      const duration = Date.now() - startTime;
 
-    if (result.FunctionError) {
+      if (result.FunctionError) {
+        return {
+          data: null,
+          duration,
+          status: ServerlessFunctionExecutionStatus.ERROR,
+          error: parsedResult,
+        };
+      }
+
       return {
-        data: null,
+        data: parsedResult,
         duration,
-        status: ServerlessFunctionExecutionStatus.ERROR,
-        error: parsedResult,
+        status: ServerlessFunctionExecutionStatus.SUCCESS,
       };
+    } catch (error) {
+      if (error instanceof ResourceNotFoundException) {
+        throw new ServerlessFunctionException(
+          `Function Version '${version}' does not exist`,
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+      throw error;
     }
-
-    return {
-      data: parsedResult,
-      duration,
-      status: ServerlessFunctionExecutionStatus.SUCCESS,
-    };
   }
 }

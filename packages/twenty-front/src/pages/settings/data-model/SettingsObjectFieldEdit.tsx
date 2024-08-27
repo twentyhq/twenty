@@ -20,7 +20,6 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
@@ -186,18 +185,18 @@ export const SettingsObjectFieldEdit = () => {
               ]}
             />
           }
+          actionButton={
+            shouldDisplaySaveAndCancel && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                isCancelDisabled={isSubmitting}
+                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                onSave={formConfig.handleSubmit(handleSave)}
+              />
+            )
+          }
         >
           <SettingsPageContainer>
-            <SettingsHeaderContainer>
-              {shouldDisplaySaveAndCancel && (
-                <SaveAndCancelButtons
-                  isSaveDisabled={!canSave}
-                  isCancelDisabled={isSubmitting}
-                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                  onSave={formConfig.handleSubmit(handleSave)}
-                />
-              )}
-            </SettingsHeaderContainer>
             <Section>
               <H2Title
                 title="Name and description"

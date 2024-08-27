@@ -4,11 +4,9 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import {
-  validateMetadataNameOrThrow,
-  InvalidStringException,
-} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { camelCase } from 'src/utils/camel-case';
 
 const coreObjectNames = [
@@ -96,7 +94,7 @@ const validateNameIsNotTooLongThrow = (name?: string) => {
 const validateNameCharactersOrThrow = (name?: string) => {
   try {
     if (name) {
-      validateMetadataNameOrThrow(name);
+      validateMetadataNameValidityOrThrow(name);
     }
   } catch (error) {
     if (error instanceof InvalidStringException) {
