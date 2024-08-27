@@ -36,11 +36,6 @@ export const USER_QUERY_FRAGMENT = gql`
         interval
       }
       workspaceMembersCount
-      workspaceInvitations {
-        id
-        email
-        expiresAt
-      }
     }
     workspaces {
       workspace {

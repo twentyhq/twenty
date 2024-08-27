@@ -14,7 +14,6 @@ export type CurrentWorkspace = Pick<
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'metadataVersion'
-  | 'workspaceInvitations'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
