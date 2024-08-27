@@ -28,9 +28,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
@@ -44,9 +42,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
       },
@@ -60,9 +56,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
       },
@@ -83,9 +77,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncCursor: '',
         syncStageStartedAt: null,
@@ -102,9 +94,12 @@ export class MessagingChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(messageChannelId, {
-      syncStageStartedAt: null,
-    });
+    await messageChannelRepository.update(
+      { id: messageChannelId },
+      {
+        syncStageStartedAt: null,
+      },
+    );
   }
 
   public async markAsMessagesListFetchOngoing(messageChannelId: string) {
@@ -114,9 +109,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
         syncStatus: MessageChannelSyncStatus.ONGOING,
@@ -133,9 +126,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStatus: MessageChannelSyncStatus.ACTIVE,
       },
@@ -151,9 +142,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
       },
@@ -174,9 +163,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
@@ -198,9 +185,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
@@ -220,9 +205,7 @@ export class MessagingChannelSyncStatusService {
       );
 
     const messageChannel = await messageChannelRepository.findOne({
-      where: {
-        id: messageChannelId,
-      },
+      where: { id: messageChannelId },
       relations: {
         connectedAccount: {
           accountOwner: true,
