@@ -28,7 +28,7 @@ export type CallWebhookJobsJobData = {
   objectMetadataItem: ObjectMetadataInterface;
   record: any;
   operation: CallWebhookJobsJobOperation;
-  creatorDetails: Pick<User, 'firstName' | 'lastName'>
+  creatorDetails: Pick<User, 'firstName' | 'lastName'>;
 };
 
 @Processor(MessageQueue.webhookQueue)
