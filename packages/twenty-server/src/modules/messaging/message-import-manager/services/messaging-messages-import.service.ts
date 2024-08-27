@@ -20,6 +20,7 @@ import {
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
+import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -102,7 +103,7 @@ export class MessagingMessagesImportService {
             };
           case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
             throw {
-              code: MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
+              code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,
             };
           default:

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  CalendarEventImportDriverException,
-  CalendarEventImportDriverExceptionCode,
-} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { GoogleCalendarGetEventsService as GoogleCalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
+import {
+  CalendarEventImportException,
+  CalendarEventImportExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -33,9 +33,9 @@ export class CalendarGetCalendarEventsService {
           syncCursor,
         );
       default:
-        throw new CalendarEventImportDriverException(
+        throw new CalendarEventImportException(
           `Provider ${connectedAccount.provider} is not supported`,
-          CalendarEventImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
+          CalendarEventImportExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }
   }

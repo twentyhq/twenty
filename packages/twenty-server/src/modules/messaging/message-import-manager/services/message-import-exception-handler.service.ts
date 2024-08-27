@@ -64,11 +64,6 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
-      case MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED:
-        throw new MessageImportException(
-          exception.message,
-          MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-        );
       default:
         throw exception;
     }
