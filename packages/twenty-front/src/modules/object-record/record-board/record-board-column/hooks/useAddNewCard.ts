@@ -2,7 +2,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useContext } from 'react';
 
-export const useAddNewCard = () => {
+export const useAddNewCard = (position: string) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
   const { createOneRecord, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
@@ -10,7 +10,7 @@ export const useAddNewCard = () => {
   const handleAddNewCardClick = () => {
     createOneRecord({
       [selectFieldMetadataItem.name]: columnDefinition.value,
-      position: 'last',
+      position: position,
     });
   };
 

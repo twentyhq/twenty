@@ -30,7 +30,7 @@ export const RecordBoardColumnNewOpportunityButton = () => {
     handleAddNewOpportunityClick,
     handleCancel,
     handleEntitySelect,
-  } = useAddNewOpportunity();
+  } = useAddNewOpportunity('last');
   return (
     <>
       {isCreatingCard ? (

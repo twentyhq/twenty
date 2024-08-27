@@ -6,7 +6,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext, useState } from 'react';
 
-export const useAddNewOpportunity = () => {
+export const useAddNewOpportunity = (position: string) => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
@@ -31,7 +31,7 @@ export const useAddNewOpportunity = () => {
         createOneRecord({
           name: company.name,
           companyId: company.id,
-          position: 'last',
+          position: position,
           [selectFieldMetadataItem.name]: columnDefinition.value,
         });
       }
@@ -42,6 +42,7 @@ export const useAddNewOpportunity = () => {
       goBackToPreviousHotkeyScope,
       resetSearchFilter,
       selectFieldMetadataItem,
+      position,
     ],
   );
 

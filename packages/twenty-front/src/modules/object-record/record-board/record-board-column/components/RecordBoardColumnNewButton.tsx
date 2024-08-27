@@ -23,7 +23,7 @@ const StyledButton = styled.button`
 
 export const RecordBoardColumnNewButton = () => {
   const theme = useTheme();
-  const { handleAddNewCardClick } = useAddNewCard();
+  const { handleAddNewCardClick } = useAddNewCard('last');
   return (
     <StyledButton onClick={handleAddNewCardClick}>
       <IconPlus size={theme.icon.size.md} />
