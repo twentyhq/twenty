@@ -64,7 +64,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
     options: WorkflowVersionStatusOptions,
   })
-  statuses: WorkflowVersionStatus[];
+  @WorkspaceIsNullable()
+  statuses: WorkflowVersionStatus[] | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.position,
