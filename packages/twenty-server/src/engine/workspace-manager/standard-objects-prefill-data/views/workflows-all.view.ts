@@ -27,7 +27,7 @@ export const workflowsAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.workflow].fields[
-            WORKFLOW_STANDARD_FIELD_IDS.publishedVersionId
+            WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId
           ],
         position: 1,
         isVisible: true,

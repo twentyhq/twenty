@@ -18,6 +18,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -121,4 +122,19 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('workflowVersion')
   workflowVersionId: string;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Workflow',
+    description: 'WorkflowRun workflow',
+    icon: 'IconSettingsAutomation',
+    inverseSideTarget: () => WorkflowWorkspaceEntity,
+    inverseSideFieldKey: 'runs',
+  })
+  @WorkspaceIsNullable()
+  workflow: Relation<WorkflowWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('workflow')
+  workflowId: string;
 }

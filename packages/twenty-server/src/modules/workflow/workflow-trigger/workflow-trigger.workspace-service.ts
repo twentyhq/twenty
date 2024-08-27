@@ -127,7 +127,7 @@ export class WorkflowTriggerWorkspaceService {
 
       await workflowRepository.update(
         { id: workflowId },
-        { publishedVersionId: workflowVersionId },
+        { lastPublishedVersionId: workflowVersionId },
         transactionManager,
       );
     });
