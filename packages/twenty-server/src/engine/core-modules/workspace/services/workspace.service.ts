@@ -22,7 +22,7 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { InvitationService } from 'src/engine/core-modules/invitation/services/invitation.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
@@ -39,7 +39,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
-    private readonly invitationService: InvitationService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
   ) {
     super(workspaceRepository);
   }
@@ -138,7 +138,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
 
     for (const email of emails) {
-      await this.invitationService.createInvitation(email, workspace);
+      await this.workspaceInvitationService.createWorkspaceInvitation(
+        email,
+        workspace,
+      );
 
       const emailData = {
         link: inviteLink,

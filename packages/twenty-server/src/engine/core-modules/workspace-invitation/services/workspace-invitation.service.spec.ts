@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { InvitationService } from './invitation.service';
+import { WorkspaceInvitationService } from './workspace-invitation.service';
 
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Invitation } from 'src/engine/core-modules/invitation/invitation.entity';
 
 describe('InvitationService', () => {
-  let service: InvitationService;
+  let service: WorkspaceInvitationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        InvitationService,
+        WorkspaceInvitationService,
         {
           provide: getRepositoryToken(Invitation, 'core'),
           useValue: {},
@@ -20,7 +20,9 @@ describe('InvitationService', () => {
       ],
     }).compile();
 
-    service = module.get<InvitationService>(InvitationService);
+    service = module.get<WorkspaceInvitationService>(
+      WorkspaceInvitationService,
+    );
   });
 
   it('should be defined', () => {

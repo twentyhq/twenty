@@ -1,7 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { ModuleRef } from '@nestjs/core';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository, IsNull } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -12,7 +11,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
-export class InvitationService {
+export class WorkspaceInvitationService {
   private tokenService: TokenService;
   constructor(
     @InjectRepository(AppToken, 'core')
@@ -26,7 +25,7 @@ export class InvitationService {
   }
 
   // TODO: manage errors
-  async createInvitation(email: string, workspace: Workspace) {
+  async createWorkspaceInvitation(email: string, workspace: Workspace) {
     await this.tokenService.generateInvitationToken(workspace.id, email);
   }
 
@@ -76,7 +75,7 @@ export class InvitationService {
     //   .getRawMany()) as unknown as Array<WorkspaceInvitation>;
   }
 
-  async deleteInvitation(appTokenId: string, workspaceId: string) {
+  async deleteWorkspaceInvitation(appTokenId: string, workspaceId: string) {
     // const invitation = await this.invitationRepository
     //   .createQueryBuilder('invitation')
     //   .leftJoinAndSelect(

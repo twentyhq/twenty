@@ -3,13 +3,15 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { InvitationService } from 'src/engine/core-modules/invitation/services/invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
-export class InvitationResolver {
-  constructor(private readonly invitationService: InvitationService) {}
+export class WorkspaceInvitationResolver {
+  constructor(
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
+  ) {}
 
   @Mutation(() => String)
   @UseGuards(JwtAuthGuard)
@@ -17,6 +19,9 @@ export class InvitationResolver {
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.invitationService.deleteInvitation(appTokenId, workspaceId);
+    return this.workspaceInvitationService.deleteWorkspaceInvitation(
+      appTokenId,
+      workspaceId,
+    );
   }
 }
