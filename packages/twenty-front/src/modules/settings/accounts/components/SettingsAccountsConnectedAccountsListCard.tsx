@@ -6,7 +6,7 @@ import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/componen
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountConnectedAccountsRowRightContainer';
+import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { SettingsListCard } from '../../components/SettingsListCard';
 
 export const SettingsAccountsConnectedAccountsListCard = ({
