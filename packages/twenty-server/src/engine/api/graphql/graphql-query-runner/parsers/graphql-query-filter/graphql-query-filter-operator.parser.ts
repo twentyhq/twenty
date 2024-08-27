@@ -36,14 +36,6 @@ export class GraphqlQueryFilterOperatorParser {
     };
   }
 
-  /**
-   * Parses an operator object and returns a TypeORM `FindOperator` based on the operator and value.
-   *
-   * @param operatorObj - An object containing the operator and value to be parsed.
-   * @param isNegated - A boolean indicating whether the operator should be negated.
-   * @returns A TypeORM `FindOperator` that represents the parsed operator and value.
-   * @throws {Error} If the operator is not supported.
-   */
   public parseOperator(
     operatorObj: Record<string, any>,
     isNegated: boolean,
@@ -58,7 +50,7 @@ export class GraphqlQueryFilterOperatorParser {
 
     throw new GraphqlQueryRunnerException(
       `Operator "${operator}" is not supported`,
-      GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_UNSUPPORTED_OPERATOR,
+      GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
     );
   }
 }

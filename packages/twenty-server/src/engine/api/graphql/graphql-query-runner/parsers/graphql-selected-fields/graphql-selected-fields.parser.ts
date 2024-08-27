@@ -1,5 +1,9 @@
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlSelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-selected-fields/graphql-selected-fields-relation.parser';
 import { ObjectMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -7,6 +11,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { capitalize } from 'src/utils/capitalize';
+import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class GraphQLSelectedFieldsParser {
   private graphqlSelectedFieldsRelationParser: GraphqlSelectedFieldsRelationParser;
@@ -16,13 +21,6 @@ export class GraphQLSelectedFieldsParser {
       new GraphqlSelectedFieldsRelationParser(objectMetadataMap);
   }
 
-  /**
-   * Parses the selected GraphQL fields and returns the fields to select and the relations to fetch.
-   *
-   * @param graphqlSelectedFields - The selected GraphQL fields.
-   * @param fieldMetadataMap - A map of field metadata.
-   * @returns An object containing the fields to select and the relations to fetch.
-   */
   parse(
     graphqlSelectedFields: Partial<Record<string, any>>,
     fieldMetadataMap: Record<string, FieldMetadataInterface>,
@@ -38,6 +36,9 @@ export class GraphQLSelectedFieldsParser {
     for (const [fieldKey, fieldValue] of Object.entries(
       graphqlSelectedFields,
     )) {
+      if (this.shouldNotParseField(fieldKey)) {
+        continue;
+      }
       if (this.isConnectionField(fieldKey, fieldValue)) {
         const subResult = this.parse(fieldValue, fieldMetadataMap);
 
@@ -48,17 +49,22 @@ export class GraphQLSelectedFieldsParser {
 
       const fieldMetadata = fieldMetadataMap[fieldKey];
 
-      if (!fieldMetadata) continue;
+      if (!fieldMetadata) {
+        throw new GraphqlQueryRunnerException(
+          `Field "${fieldKey}" does not exist or is not selectable`,
+          GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        );
+      }
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
-        this.graphqlSelectedFieldsRelationParser.handleRelationField(
+        this.graphqlSelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
           fieldKey,
           fieldValue,
           result,
         );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        const compositeResult = this.handleCompositeField(
+        const compositeResult = this.parseCompositeField(
           fieldMetadata,
           fieldValue,
         );
@@ -73,21 +79,16 @@ export class GraphQLSelectedFieldsParser {
   }
 
   private isConnectionField(fieldKey: string, fieldValue: any): boolean {
-    return (
-      ['edges', 'node'].includes(fieldKey) && typeof fieldValue === 'object'
+    return ['edges', 'node'].includes(fieldKey) && isPlainObject(fieldValue);
+  }
+
+  private shouldNotParseField(fieldKey: string): boolean {
+    return ['__typename', 'totalCount', 'pageInfo', 'cursor'].includes(
+      fieldKey,
     );
   }
 
-  /**
-   * Handles the parsing of composite fields in the GraphQL selected fields.
-   * Composite fields are fields that have sub-fields.
-   * This method recursively parses the sub-fields and adds them to the select and relations objects.
-   *
-   * @param fieldMetadata - The metadata for the composite field being parsed.
-   * @param fieldValue - The value of the composite field being parsed.
-   * @returns An object containing the select and relations for the composite field.
-   */
-  private handleCompositeField(
+  private parseCompositeField(
     fieldMetadata: FieldMetadataInterface,
     fieldValue: any,
   ): Record<string, any> {

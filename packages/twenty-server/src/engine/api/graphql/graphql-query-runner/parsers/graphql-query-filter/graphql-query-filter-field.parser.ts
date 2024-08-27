@@ -8,6 +8,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
+import { isPlainObject } from 'src/utils/is-plain-object';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 import { GraphqlQueryFilterOperatorParser } from './graphql-query-filter-operator.parser';
@@ -21,12 +22,6 @@ export class GraphqlQueryFilterFieldParser {
     this.operatorParser = new GraphqlQueryFilterOperatorParser();
   }
 
-  /**   *
-   * @param key - The key of the filter field.
-   * @param value - The value of the filter field.
-   * @param isNegated - Indicates whether the filter should be negated.
-   * @returns The `FindOptionsWhere` object representing the parsed filter field.
-   */
   public parse(
     key: string,
     value: any,
@@ -47,14 +42,10 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      return this.handleCompositeFieldForFilter(
-        fieldMetadata,
-        value,
-        isNegated,
-      );
+      return this.parseCompositeFieldForFilter(fieldMetadata, value, isNegated);
     }
 
-    if (typeof value === 'object' && value !== null) {
+    if (isPlainObject(value)) {
       const parsedValue = this.operatorParser.parseOperator(value, isNegated);
 
       return { [key]: parsedValue };
@@ -63,7 +54,7 @@ export class GraphqlQueryFilterFieldParser {
     return { [key]: isNegated ? Not(value) : value };
   }
 
-  private handleCompositeFieldForFilter(
+  private parseCompositeFieldForFilter(
     fieldMetadata: FieldMetadataInterface,
     fieldValue: any,
     isNegated: boolean,
@@ -92,7 +83,7 @@ export class GraphqlQueryFilterFieldParser {
 
         const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-        if (typeof subFieldValue === 'object' && subFieldValue !== null) {
+        if (isPlainObject(subFieldValue)) {
           result[fullFieldName] = this.operatorParser.parseOperator(
             subFieldValue,
             isNegated,

@@ -17,44 +17,36 @@ export class GraphqlQueryFilterConditionParser {
     );
   }
 
-  /**
-   * Parses the provided record filter conditions and returns the corresponding TypeORM `FindOptionsWhere` object(s).
-   *
-   * @param conditions - The record filter conditions to parse.
-   * @param isNegated - Whether the conditions should be negated (i.e., `not`).
-   * @returns The corresponding TypeORM `FindOptionsWhere` object(s).
-   */
   public parse(
     conditions: RecordFilter,
     isNegated = false,
   ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
     if (Array.isArray(conditions)) {
-      return this.handleAndCondition(conditions, isNegated);
+      return this.parseAndCondition(conditions, isNegated);
     }
 
     const result: FindOptionsWhere<ObjectLiteral> = {};
 
     for (const [key, value] of Object.entries(conditions)) {
-      if (key === 'and') {
-        return this.handleAndCondition(value, isNegated);
+      switch (key) {
+        case 'and':
+          return this.parseAndCondition(value, isNegated);
+        case 'or':
+          return this.parseOrCondition(value, isNegated);
+        case 'not':
+          return this.parse(value, !isNegated);
+        default:
+          Object.assign(
+            result,
+            this.fieldConditionParser.parse(key, value, isNegated),
+          );
       }
-      if (key === 'or') {
-        return this.handleOrCondition(value, isNegated);
-      }
-      if (key === 'not') {
-        return this.parse(value, !isNegated);
-      }
-
-      Object.assign(
-        result,
-        this.fieldConditionParser.parse(key, value, isNegated),
-      );
     }
 
     return result;
   }
 
-  private handleAndCondition(
+  private parseAndCondition(
     conditions: RecordFilter[],
     isNegated: boolean,
   ): FindOptionsWhere<ObjectLiteral>[] {
@@ -65,7 +57,7 @@ export class GraphqlQueryFilterConditionParser {
     return this.combineConditions(parsedConditions, isNegated ? 'or' : 'and');
   }
 
-  private handleOrCondition(
+  private parseOrCondition(
     conditions: RecordFilter[],
     isNegated: boolean,
   ): FindOptionsWhere<ObjectLiteral>[] {

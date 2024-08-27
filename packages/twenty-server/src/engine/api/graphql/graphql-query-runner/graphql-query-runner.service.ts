@@ -24,7 +24,7 @@ import {
   decodeCursor,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/connection.util';
 import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
-import { LogExecutionTime } from 'src/engine/decorators/observability/timed.decorator';
+import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -98,7 +98,7 @@ export class GraphqlQueryRunnerService {
     if (args.first && args.last) {
       throw new GraphqlQueryRunnerException(
         'Cannot provide both first and last',
-        GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_ARGS_CONFLICT,
+        GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
       );
     }
 

@@ -11,6 +11,7 @@ import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.mod
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { DuplicateModule } from 'src/engine/core-modules/duplicate/duplicate.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -32,6 +33,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     DuplicateModule,
     FileModule,
     GraphqlQueryRunnerModule,
+    FeatureFlagModule,
   ],
   providers: [
     WorkspaceQueryRunnerService,

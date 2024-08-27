@@ -23,23 +23,21 @@ export class GraphqlQueryOrderFieldParser {
     this.fieldMetadataMap = fieldMetadataMap;
   }
 
-  /**
-   * Parses the provided `RecordOrderBy` object and converts it to a `Record<string, FindOptionsOrderValue>` format that can be used with TypeORM's `FindOptions`.
-   * Handles both simple and composite field orders, recursively parsing composite fields.
-   *
-   * @param orderBy - The `RecordOrderBy` object to parse.
-   * @returns A `Record<string, FindOptionsOrderValue>` representing the parsed order by information.
-   */
   parse(orderBy: RecordOrderBy): Record<string, FindOptionsOrderValue> {
     return orderBy.reduce(
       (acc, item) => {
         Object.entries(item).forEach(([key, value]) => {
           const fieldMetadata = this.fieldMetadataMap[key];
 
-          if (!fieldMetadata || value === undefined) return;
+          if (!fieldMetadata || value === undefined) {
+            throw new GraphqlQueryRunnerException(
+              `Field "${key}" does not exist or is not sortable`,
+              GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+            );
+          }
 
           if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-            const compositeOrder = this.handleCompositeFieldForOrder(
+            const compositeOrder = this.parseCompositeFieldForOrder(
               fieldMetadata,
               value,
             );
@@ -56,15 +54,7 @@ export class GraphqlQueryOrderFieldParser {
     );
   }
 
-  /**
-   * Handles the order by logic for composite fields in the GraphQL query.
-   * Recursively parses the composite field order by information and converts it to a format that can be used with TypeORM's `FindOptions`.
-   *
-   * @param fieldMetadata - The metadata for the composite field.
-   * @param value - The order by value for the composite field.
-   * @returns A `Record<string, FindOptionsOrderValue>` representing the parsed order by information for the composite field.
-   */
-  private handleCompositeFieldForOrder(
+  private parseCompositeFieldForOrder(
     fieldMetadata: FieldMetadataInterface,
     value: any,
   ): Record<string, FindOptionsOrderValue> {
@@ -92,7 +82,7 @@ export class GraphqlQueryOrderFieldParser {
 
         const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-        if (!isOrderByDirection(subFieldValue)) {
+        if (!this.isOrderByDirection(subFieldValue)) {
           throw new Error(
             `Sub field order by value must be of type OrderByDirection, but got: ${subFieldValue}`,
           );
@@ -106,13 +96,6 @@ export class GraphqlQueryOrderFieldParser {
     );
   }
 
-  /**
-   * Converts an `OrderByDirection` enum value to a `FindOptionsOrderValue` object that can be used with TypeORM's `FindOptions`.
-   *
-   * @param direction - The `OrderByDirection` enum value to convert.
-   * @returns A `FindOptionsOrderValue` object representing the converted order by direction.
-   * @throws Error if the provided `direction` is unknown.
-   */
   private convertOrderByToFindOptionsOrder(
     direction: OrderByDirection,
   ): FindOptionsOrderValue {
@@ -128,11 +111,12 @@ export class GraphqlQueryOrderFieldParser {
       default:
         throw new GraphqlQueryRunnerException(
           `Invalid direction: ${direction}`,
-          GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_INVALID_DIRECTION,
+          GraphqlQueryRunnerExceptionCode.INVALID_DIRECTION,
         );
     }
   }
-}
 
-const isOrderByDirection = (value: unknown): value is OrderByDirection =>
-  Object.values(OrderByDirection).includes(value as OrderByDirection);
+  private isOrderByDirection(value: unknown): value is OrderByDirection {
+    return Object.values(OrderByDirection).includes(value as OrderByDirection);
+  }
+}

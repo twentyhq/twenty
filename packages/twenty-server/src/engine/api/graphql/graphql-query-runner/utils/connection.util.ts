@@ -8,17 +8,8 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { isPlainObject } from 'src/utils/is-plain-object';
 
-/**
- * Creates a connection object from an array of object records, with support for nested connections.
- *
- * @param objectRecords - The array of object records to create the connection from.
- * @param take - The number of records to take from the connection.
- * @param totalCount - The total count of records in the connection.
- * @param order - The order object to use for encoding the cursor.
- * @param depth - The current depth of the nested connections.
- * @returns The created connection object.
- */
 export const createConnection = <ObjectRecord extends IRecord = IRecord>(
   objectRecords: ObjectRecord[],
   take: number,
@@ -49,17 +40,6 @@ export const createConnection = <ObjectRecord extends IRecord = IRecord>(
   };
 };
 
-/**
- * Recursively processes nested connections in an object record, creating a connection object for any nested arrays.
- *
- * @param objectRecord - The object record to process.
- * @param take - The number of records to take from the connection.
- * @param totalCount - The total count of records in the connection.
- * @param order - The order object to use for encoding the cursor.
- * @param depth - The current depth of the nested connections.
- * @returns The processed object record.
- * @throws {GraphqlQueryRunnerException} If the maximum depth of nested connections is reached.
- */
 const processNestedConnections = <T extends Record<string, any>>(
   objectRecord: T,
   take: number,
@@ -70,7 +50,7 @@ const processNestedConnections = <T extends Record<string, any>>(
   if (depth >= CONNECTION_MAX_DEPTH) {
     throw new GraphqlQueryRunnerException(
       `Maximum depth of ${CONNECTION_MAX_DEPTH} reached`,
-      GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_MAX_DEPTH_REACHED,
+      GraphqlQueryRunnerExceptionCode.MAX_DEPTH_REACHED,
     );
   }
 
@@ -91,7 +71,7 @@ const processNestedConnections = <T extends Record<string, any>>(
       }
     } else if (value instanceof Date) {
       processedObjectRecords[key] = value.toISOString();
-    } else if (typeof value === 'object' && value !== null) {
+    } else if (isPlainObject(value)) {
       processedObjectRecords[key] = processNestedConnections(
         value,
         take,
@@ -99,37 +79,25 @@ const processNestedConnections = <T extends Record<string, any>>(
         order,
         depth + 1,
       );
+    } else {
+      processedObjectRecords[key] = value;
     }
   }
 
   return processedObjectRecords as T;
 };
 
-/**
- * Decodes a base64-encoded cursor string into an object record.
- *
- * @param cursor - The base64-encoded cursor string to decode.
- * @returns The object record represented by the cursor.
- * @throws {Error} If the cursor is invalid.
- */
 export const decodeCursor = (cursor: string): Record<string, any> => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
   } catch (err) {
     throw new GraphqlQueryRunnerException(
       `Invalid cursor: ${cursor}`,
-      GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_INVALID_CURSOR,
+      GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
     );
   }
 };
 
-/**
- * Encodes an object record into a base64-encoded cursor string.
- *
- * @param objectRecord - The object record to encode.
- * @param order - The order object to use for encoding the cursor.
- * @returns A base64-encoded cursor string.
- */
 export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
   objectRecord: ObjectRecord,
   order: Record<string, FindOptionsOrderValue> | undefined,

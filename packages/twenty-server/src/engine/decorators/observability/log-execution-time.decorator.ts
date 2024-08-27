@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 /**
  * A decorator function that logs the execution time of the decorated method.
  *
- *
  * @param target The target class of the decorated method.
  * @param propertyKey The name of the decorated method.
  * @param descriptor The property descriptor of the decorated method.

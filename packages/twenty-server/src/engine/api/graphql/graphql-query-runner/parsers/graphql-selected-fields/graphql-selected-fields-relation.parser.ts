@@ -18,15 +18,7 @@ export class GraphqlSelectedFieldsRelationParser {
     this.objectMetadataMap = objectMetadataMap;
   }
 
-  /**
-   * Handles the processing of a relation field in the GraphQL selected fields parser.
-   *
-   * @param fieldMetadata - The metadata for the current field.
-   * @param fieldKey - The key of the current field.
-   * @param fieldValue - The value of the current field.
-   * @param result - The result object to store the selected fields and relations.
-   */
-  handleRelationField(
+  parseRelationField(
     fieldMetadata: FieldMetadataInterface,
     fieldKey: string,
     fieldValue: any,
@@ -67,14 +59,6 @@ export class GraphqlSelectedFieldsRelationParser {
     result.relations[fieldKey] = subResult.relations;
   }
 
-  /**
-   * Retrieves the metadata for the object referenced by the given relation metadata, based on the specified relation direction.
-   *
-   * @param relationMetadata - The relation metadata containing information about the referenced object.
-   * @param relationDirection - The direction of the relation, either 'TO' or 'FROM'.
-   * @returns The metadata for the referenced object.
-   * @throws Error if the referenced object metadata is not found.
-   */
   private getReferencedObjectMetadata(
     relationMetadata: RelationMetadataEntity,
     relationDirection: RelationDirection,

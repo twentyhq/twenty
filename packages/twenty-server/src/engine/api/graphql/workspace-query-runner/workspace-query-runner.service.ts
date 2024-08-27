@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import {
   Record as IRecord,
@@ -46,7 +45,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
@@ -86,8 +85,7 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
     private readonly duplicateService: DuplicateService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
   ) {}
 
@@ -103,13 +101,10 @@ export class WorkspaceQueryRunnerService {
     const start = performance.now();
 
     const isQueryRunnerTwentyORMEnabled =
-      await this.featureFlagRepository.findOne({
-        where: {
-          key: FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
-          workspaceId: authContext.workspace.id,
-          value: true,
-        },
-      });
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        authContext.workspace.id,
+      );
 
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(

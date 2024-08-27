@@ -18,10 +18,6 @@ import {
   ObjectMetadataMap,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 
-/**
- * Provides methods for parsing GraphQL query data, including filters, order, and selected fields.
- * The parser uses metadata about the data model to correctly interpret the GraphQL query.
- */
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
   private objectMetadataMap: ObjectMetadataMap;
