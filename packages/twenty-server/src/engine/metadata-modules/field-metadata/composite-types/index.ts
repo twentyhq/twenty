@@ -9,10 +9,6 @@ import { linkCompositeType } from 'src/engine/metadata-modules/field-metadata/co
 import { linksCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export type CompositeFieldsDefinitionFunction = (
-  fieldMetadata?: FieldMetadataInterface,
-) => FieldMetadataInterface[];
-
 export const compositeTypeDefinitions = new Map<
   FieldMetadataType,
   CompositeType

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   EntityManager,
@@ -27,8 +27,6 @@ import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-syn
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
-  private readonly logger = new Logger(WorkspaceMetadataUpdaterService.name);
-
   async updateObjectMetadata(
     manager: EntityManager,
     storage: WorkspaceSyncStorage,

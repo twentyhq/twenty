@@ -16,10 +16,3 @@ export const {
 })
   .setClassMethodName('forRoot')
   .build();
-
-export type LoggerModuleAsyncOptions = {
-  useFactory: (
-    ...args: any[]
-  ) => LoggerModuleOptions | Promise<LoggerModuleOptions>;
-} & Pick<ModuleMetadata, 'imports'> &
-  Pick<FactoryProvider, 'inject'>;

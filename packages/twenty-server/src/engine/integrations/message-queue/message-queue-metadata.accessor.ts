@@ -45,10 +45,4 @@ export class MessageQueueMetadataAccessor {
 
     return metadata;
   }
-
-  getWorkerOptionsMetadata(
-    target: Type<any> | Function,
-  ): MessageQueueWorkerOptions {
-    return this.reflector.get(WORKER_METADATA, target) ?? {};
-  }
 }

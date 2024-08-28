@@ -607,13 +607,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
   }
 
-  public async deleteFieldsMetadata(workspaceId: string) {
-    await this.fieldMetadataRepository.delete({ workspaceId });
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
-  }
-
   private buildUpdatableStandardFieldInput(
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,

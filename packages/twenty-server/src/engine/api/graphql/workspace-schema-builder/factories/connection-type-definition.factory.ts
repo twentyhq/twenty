@@ -20,8 +20,6 @@ export enum ConnectionTypeDefinitionKind {
 
 @Injectable()
 export class ConnectionTypeDefinitionFactory {
-  private readonly logger = new Logger(ConnectionTypeDefinitionFactory.name);
-
   constructor(private readonly connectionTypeFactory: ConnectionTypeFactory) {}
 
   public create(
