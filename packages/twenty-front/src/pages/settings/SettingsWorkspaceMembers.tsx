@@ -151,7 +151,7 @@ export const SettingsWorkspaceMembers = () => {
           <Section>
             <H2Title
               title="Invitations"
-              description="Manage the members of your space here"
+              description="Manage users who haven't accepted your invite"
             />
             {workspaceInvitations?.map((workspaceInvitation) => (
               <WorkspaceMemberCard
@@ -159,14 +159,14 @@ export const SettingsWorkspaceMembers = () => {
                 workspaceMember={workspaceInvitation as WorkspaceInvitation}
                 accessory={
                   <StyledButtonContainer>
-                    <IconButton
-                      onClick={() => {
-                        handleRemoveWorkspaceInvitation(workspaceInvitation.id);
-                      }}
-                      variant="tertiary"
-                      size="medium"
-                      Icon={IconReload}
-                    />
+                    {/*<IconButton*/}
+                    {/*  onClick={() => {*/}
+                    {/*    handleRemoveWorkspaceInvitation(workspaceInvitation.id);*/}
+                    {/*  }}*/}
+                    {/*  variant="tertiary"*/}
+                    {/*  size="medium"*/}
+                    {/*  Icon={IconReload}*/}
+                    {/*/>*/}
                     <IconButton
                       onClick={() => {
                         handleRemoveWorkspaceInvitation(workspaceInvitation.id);

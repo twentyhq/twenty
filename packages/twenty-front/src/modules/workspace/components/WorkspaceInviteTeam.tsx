@@ -78,15 +78,25 @@ export const WorkspaceInviteTeam = () => {
     },
   });
 
-  const submit = handleSubmit(async (data) => {
-    const emailsList = sanitizeEmailList(data.emails.split(','));
-    await sendInvitation({ emails: emailsList });
+  const submit = handleSubmit(async ({ emails }) => {
+    const emailsList = sanitizeEmailList(emails.split(','));
+    const { data } = await sendInvitation({ emails: emailsList });
 
-    enqueueSnackBar('Invite link sent to email addresses', {
-      variant: SnackBarVariant.Success,
-      duration: 2000,
-    });
-    // TODO: What the best practice to refresh the UI here?
+    if (data && data.sendInviteLink.result.length) {
+      enqueueSnackBar(`${data.sendInviteLink.result.length} invitations sent`, {
+        variant: SnackBarVariant.Success,
+        duration: 2000,
+      });
+    }
+
+    if (data && !data.sendInviteLink.success) {
+      data.sendInviteLink.errors.forEach((error) => {
+        enqueueSnackBar(error, {
+          variant: SnackBarVariant.Error,
+          duration: 5000,
+        });
+      });
+    }
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
