@@ -44,9 +44,10 @@ export const RightDrawerEmailThread = () => {
     thread,
     messages,
     fetchMoreMessages,
-    loading,
+    threadLoading,
     messageThreadExternalId,
     connectedAccountHandle,
+    messageChannelLoading,
   } = useRightDrawerEmailThread();
 
   const visibleMessages = useMemo(() => {
@@ -118,7 +119,7 @@ export const RightDrawerEmailThread = () => {
   }
   return (
     <StyledContainer>
-      {loading ? (
+      {threadLoading ? (
         <EmailLoader loadingText="Loading thread" />
       ) : (
         <>
@@ -143,12 +144,12 @@ export const RightDrawerEmailThread = () => {
             isExpanded
           />
           <CustomResolverFetchMoreLoader
-            loading={loading}
+            loading={threadLoading}
             onLastRowVisible={fetchMoreMessages}
           />
         </>
       )}
-      {canReply && (
+      {canReply && !messageChannelLoading ? (
         <StyledButtonContainer>
           <Button
             onClick={handleReplyClick}
@@ -157,7 +158,7 @@ export const RightDrawerEmailThread = () => {
             disabled={!canReply}
           ></Button>
         </StyledButtonContainer>
-      )}
+      ) : null}
     </StyledContainer>
   );
 };

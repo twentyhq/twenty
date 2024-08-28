@@ -4,7 +4,8 @@ import { useRecoilValue } from 'recoil';
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
 import { EmailThread } from '@/activities/emails/types/EmailThread';
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
-import { MessageChannel } from '@/activities/emails/types/MessageChannel';
+
+import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -73,24 +74,23 @@ export const useRightDrawerEmailThread = () => {
     }
   }, [messages, isMessagesFetchComplete]);
 
-  const {
-    records: messageChannelMessageAssociationData,
-    loading: messageAssociationLoading,
-  } = useFindManyRecords<MessageChannelMessageAssociation>({
-    filter: {
-      messageId: {
-        eq: lastMessageId ?? '',
+  const { records: messageChannelMessageAssociationData } =
+    useFindManyRecords<MessageChannelMessageAssociation>({
+      filter: {
+        messageId: {
+          eq: lastMessageId ?? '',
+        },
       },
-    },
-    objectNameSingular: CoreObjectNameSingular.MessageChannelMessageAssociation,
-    recordGqlFields: {
-      id: true,
-      messageId: true,
-      messageChannelId: true,
-      messageThreadExternalId: true,
-    },
-    skip: !lastMessageId || !isMessagesFetchComplete,
-  });
+      objectNameSingular:
+        CoreObjectNameSingular.MessageChannelMessageAssociation,
+      recordGqlFields: {
+        id: true,
+        messageId: true,
+        messageChannelId: true,
+        messageThreadExternalId: true,
+      },
+      skip: !lastMessageId || !isMessagesFetchComplete,
+    });
 
   useEffect(() => {
     if (messageChannelMessageAssociationData.length > 0) {
@@ -128,8 +128,8 @@ export const useRightDrawerEmailThread = () => {
     messages,
     messageThreadExternalId,
     connectedAccountHandle,
-    loading:
-      messagesLoading || messageAssociationLoading || messageChannelLoading,
+    threadLoading: messagesLoading,
+    messageChannelLoading,
     fetchMoreMessages,
   };
 };
