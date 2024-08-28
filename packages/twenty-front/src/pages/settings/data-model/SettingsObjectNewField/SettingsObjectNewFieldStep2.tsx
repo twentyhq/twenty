@@ -1,13 +1,3 @@
-import { useApolloClient } from '@apollo/client';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
-import pick from 'lodash.pick';
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { H1Title, H2Title, IconHierarchy2 } from 'twenty-ui';
-import { z } from 'zod';
-
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -15,7 +5,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
@@ -31,6 +20,15 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useApolloClient } from '@apollo/client';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import pick from 'lodash.pick';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { H1Title, H1TitleFontColor, H2Title, IconHierarchy2 } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -39,12 +37,9 @@ type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 >;
 
-const StyledSettingsObjectFieldTypeSelect = styled(
-  SettingsDataModelFieldTypeSelect,
-)`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
 `;
-
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
@@ -196,24 +191,30 @@ export const SettingsObjectNewFieldStep2 = () => {
               <SaveAndCancelButtons
                 isSaveDisabled={!canSave}
                 isCancelDisabled={isSubmitting}
-                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                onCancel={() => {
+                  if (!isDefined(selectedFieldType)) {
+                    navigate(`/settings/objects/${objectSlug}`);
+                  } else {
+                    setSelectedFieldType(undefined);
+                  }
+                }}
                 onSave={formConfig.handleSubmit(handleSave)}
               />
             )
           }
         >
           <SettingsPageContainer>
-            <SettingsHeaderContainer>
-              <H1Title
-                title={
-                  !isDefined(selectedFieldType)
-                    ? '1. Select a field type'
-                    : '2. Configure field'
-                }
-              ></H1Title>
-            </SettingsHeaderContainer>
+            <StyledH1Title
+              title={
+                !isDefined(selectedFieldType)
+                  ? '1. Select a field type'
+                  : '2. Configure field'
+              }
+              fontColor={H1TitleFontColor.Primary}
+            />
+
             {!isDefined(selectedFieldType) ? (
-              <StyledSettingsObjectFieldTypeSelect
+              <SettingsDataModelFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
                 fieldMetadataItem={{
                   type: fieldType,
@@ -233,10 +234,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   />
                 </Section>
                 <Section>
-                  <H2Title
-                    title="Type and values"
-                    description="The field's type and values."
-                  />
+                  <H2Title title="Values" description="The field's values" />
 
                   <SettingsDataModelFieldSettingsFormCard
                     fieldMetadataItem={{

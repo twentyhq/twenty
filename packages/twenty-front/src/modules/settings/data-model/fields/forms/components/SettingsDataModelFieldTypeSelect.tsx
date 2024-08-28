@@ -44,28 +44,37 @@ type SettingsDataModelFieldTypeSelectProps = {
   setSelectedFieldType: any;
 };
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  width: 100%;
+`;
+
 const StyledButton = styled(Button)`
-  height: 32px;
-  width: 248px;
+  height: 40px;
+  width: calc(50% - ${({ theme }) => theme.spacing(1)});
 `;
 const StyledButtonContainer = styled.div`
   display: flex;
-  gap: 16px;
+  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: flex-start;
   flex-wrap: wrap;
 `;
 
 const StyledInput = styled.input`
-  border-radius: 0;
-  background-color: transparent;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background: ${({ theme }) => theme.background.transparent.lighter};
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
   margin: 0;
   outline: none;
-  height: 24px;
-  padding: 0;
-  width: ${({ theme }) => `calc(100% - ${theme.spacing(8)})`};
-
+  height: 32px;
+  padding: 0 ${({ theme }) => theme.spacing(1)} 0
+    ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  box-sizing: border-box;
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
     font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -128,7 +137,7 @@ export const SettingsDataModelFieldTypeSelect = ({
           : FieldMetadataType.Text)
       }
       render={({ field: { onChange, value } }) => (
-        <>
+        <StyledContainer className={className}>
           <Section>
             <StyledInput
               type="text"
@@ -168,7 +177,7 @@ export const SettingsDataModelFieldTypeSelect = ({
               </StyledButtonContainer>
             </Section>
           ))}
-        </>
+        </StyledContainer>
       )}
     />
   );
