@@ -12,6 +12,7 @@ import {
   IconSettingsAutomation,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { logError } from '~/utils/logError';
 
 export const useRightDrawerWorkflowSelectAction = ({
   tabListId,
@@ -116,7 +117,7 @@ export const useRightDrawerWorkflowSelectAction = ({
        */
       setShowPageWorkflowDiagramTriggerNodeSelection(newNodeId);
     } catch (err) {
-      console.error('Failed to create a node', err);
+      logError(`Failed to create a node: ${err}`);
     }
   };
 
