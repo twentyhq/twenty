@@ -30,6 +30,15 @@ export const WorkflowShowPageDiagramEffect = () => {
     showPageWorkflowDiagramTriggerNodeSelectionState,
   );
 
+  /**
+   * The callback executed when the selection state of nodes or edges changes.
+   * It's called when a node or an edge is selected or unselected.
+   *
+   * Relying on this callback is safer than listing to click events as nodes and edges
+   * can be selected in many ways, either via mouse click, tab key or even programatically.
+   *
+   * The callback is currently used to open right drawers for step creation or step editing.
+   */
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
       const selectedNode = nodes[0] as WorkflowDiagramNode;
@@ -67,6 +76,10 @@ export const WorkflowShowPageDiagramEffect = () => {
     onChange: handleSelectionChange,
   });
 
+  /**
+   * We can't access the reactflow instance everywhere, only in children components of the <Reactflow /> component,
+   * so we use a useEffect and a Recoil state to trigger actions on the diagram, like programatically selecting a node.
+   */
   useEffect(() => {
     if (isDefined(showPageWorkflowDiagramTriggerNodeSelection) === false) {
       return;

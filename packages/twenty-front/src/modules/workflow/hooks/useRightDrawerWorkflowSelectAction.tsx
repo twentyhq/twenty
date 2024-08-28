@@ -83,6 +83,9 @@ export const useRightDrawerWorkflowSelectAction = ({
 
       const newNodeId = v4();
 
+      /**
+       * FIXME: For now, the data of the node to create are mostly static.
+       */
       await createNode({
         parentNodeId: createStepFromParentStepId,
         nodeToAdd: {
@@ -104,6 +107,13 @@ export const useRightDrawerWorkflowSelectAction = ({
         },
       });
 
+      /**
+       * After the step has been created, select it.
+       * As the `createNode` function mutates the cached workflow before resolving,
+       * we are sure that the new node will have been created at this stage.
+       *
+       * Selecting the node will cause a right drawer to open in order to edit the step.
+       */
       setShowPageWorkflowDiagramTriggerNodeSelection(newNodeId);
     } catch (err) {
       console.error('Failed to create a node', err);
