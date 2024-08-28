@@ -89,6 +89,7 @@ export const SelectFieldInput = ({
             fieldDefinition.metadata.isNullable ? handleClearField : undefined
           }
           clearLabel={fieldDefinition.label}
+          hotkeyScope={hotkeyScope}
         />
       </SelectableList>
     </div>
