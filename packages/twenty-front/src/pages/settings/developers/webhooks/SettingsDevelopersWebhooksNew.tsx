@@ -21,10 +21,26 @@ export const SettingsDevelopersWebhooksNew = () => {
     targetUrl: '',
     operation: '*.*',
   });
+  const [isUrlValid, setIsUrlValid] = useState(true);
+
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
+  const validateUrl = (url: string) => {
+    const urlPattern = new RegExp(
+      '^(https?:\\/\\/)?' +
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+        '(\\?[;&a-z\\d%_.~+=-]*)?' +
+        '(\\#[-a-z\\d_]*)?$',
+      'i',
+    );
+    return !!urlPattern.test(url);
+  };
+
   const handleSave = async () => {
+    setIsUrlValid(true);
     const newWebhook = await createOneWebhook?.(formValues);
 
     if (!newWebhook) {
@@ -32,7 +48,9 @@ export const SettingsDevelopersWebhooksNew = () => {
     }
     navigate(`/settings/developers/webhooks/${newWebhook.id}`);
   };
-  const canSave = !!formValues.targetUrl && createOneWebhook;
+
+  const canSave = !!formValues.targetUrl && isUrlValid && createOneWebhook;
+
   return (
     <SubMenuTopBarContainer
       Icon={IconCode}
@@ -63,6 +81,7 @@ export const SettingsDevelopersWebhooksNew = () => {
           <TextInput
             placeholder="URL"
             value={formValues.targetUrl}
+            error={isUrlValid ? undefined : 'Please enter a valid URL'}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleSave();
@@ -73,6 +92,7 @@ export const SettingsDevelopersWebhooksNew = () => {
                 ...prevState,
                 targetUrl: value,
               }));
+              setIsUrlValid(validateUrl(value));
             }}
             fullWidth
           />

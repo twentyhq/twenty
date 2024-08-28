@@ -136,7 +136,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               {apiKeyToken ? (
                 <>
                   <H2Title
-                    title="Api Key"
+                    title="API Key"
                     description="Copy this key as it will only be visible this one time"
                   />
                   <ApiKeyInput apiKey={apiKeyToken} />
@@ -147,8 +147,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               ) : (
                 <>
                   <H2Title
-                    title="Api Key"
-                    description="Regenerate an Api key"
+                    title="API Key"
+                    description="Regenerate an API key"
                   />
                   <StyledInputContainer>
                     <Button
