@@ -19,6 +19,23 @@ export class WorkspaceInvitationService {
     private moduleRef: ModuleRef,
   ) {}
 
+  onModuleInit() {
+    this.tokenService = this.moduleRef.get(TokenService, { strict: false });
+  }
+
+  private async getOneWorkspaceInvitation(workspaceId: string, email: string) {
+    return await this.appTokenRepository
+      .createQueryBuilder('appToken')
+      .where('"appToken"."workspaceId" = :workspaceId', {
+        workspaceId,
+      })
+      .andWhere('"appToken".type = :type', {
+        type: AppTokenType.InvitationToken,
+      })
+      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .getOne();
+  }
+
   private appTokenToWorkspaceInvitation(appToken: AppToken) {
     if (appToken.type !== AppTokenType.InvitationToken) {
       throw new Error(`Token type must be "${AppTokenType.InvitationToken}"`);
@@ -35,11 +52,16 @@ export class WorkspaceInvitationService {
     };
   }
 
-  onModuleInit() {
-    this.tokenService = this.moduleRef.get(TokenService, { strict: false });
-  }
-
   async createWorkspaceInvitation(email: string, workspace: Workspace) {
+    const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
+      workspace.id,
+      email,
+    );
+
+    if (maybeWorkspaceInvitation) {
+      throw new Error(`${email} already invited`);
+    }
+
     return this.appTokenToWorkspaceInvitation(
       await this.tokenService.generateInvitationToken(workspace.id, email),
     );
@@ -62,45 +84,9 @@ export class WorkspaceInvitationService {
     }
 
     return appTokens.map(this.appTokenToWorkspaceInvitation);
-    // return (await this.invitationRepository
-    //   .createQueryBuilder('invitation')
-    //   .leftJoin(
-    //     AppToken,
-    //     'appToken',
-    //     'invitation.id = "appToken"."invitationId"',
-    //   )
-    //   .where('"appToken"."workspaceId" = :workspaceId', {
-    //     workspaceId: workspace.id,
-    //   })
-    //   .andWhere('"appToken".type = :type', {
-    //     type: AppTokenType.InvitationToken,
-    //   })
-    //   .select([
-    //     'invitation.id as id',
-    //     `"appToken".context->'email' AS email`,
-    //     '"appToken"."expiresAt" AS "expiresAt"',
-    //   ])
-    //   .getRawMany()) as unknown as Array<WorkspaceInvitation>;
   }
 
   async deleteWorkspaceInvitation(appTokenId: string, workspaceId: string) {
-    // const invitation = await this.invitationRepository
-    //   .createQueryBuilder('invitation')
-    //   .leftJoinAndSelect(
-    //     AppToken,
-    //     'appToken',
-    //     'invitation.id = "appToken"."invitationId"',
-    //   )
-    //   .where('invitation.id = :invitationId', { invitationId })
-    //   .andWhere('"appToken"."workspaceId" = :workspaceId', {
-    //     workspaceId,
-    //   })
-    //   .andWhere('"appToken".type = :type', {
-    //     type: AppTokenType.InvitationToken,
-    //   })
-    //   .select(['"appToken".id as "appTokenId"'])
-    //   .getRawOne();
-
     const appToken = await this.appTokenRepository.findOne({
       where: {
         id: appTokenId,
@@ -113,9 +99,16 @@ export class WorkspaceInvitationService {
       return 'error';
     }
 
-    appToken.deletedAt = new Date();
-    await this.appTokenRepository.save(appToken);
+    await this.appTokenRepository.delete(appToken.id);
 
     return 'success';
+  }
+
+  async useWorkspaceInvitation(workspaceId: string, email: string) {
+    const appToken = await this.getOneWorkspaceInvitation(workspaceId, email);
+
+    if (appToken) {
+      await this.appTokenRepository.delete(appToken.id);
+    }
   }
 }
