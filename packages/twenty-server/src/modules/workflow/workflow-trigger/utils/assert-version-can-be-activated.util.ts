@@ -1,4 +1,8 @@
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowTrigger,
   WorkflowTriggerType,
@@ -8,7 +12,32 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
 
-export function assertWorkflowVersionIsValid(
+export function assertVersionCanBeActivated(
+  workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+    trigger: WorkflowTrigger;
+  },
+  workflow: WorkflowWorkspaceEntity,
+) {
+  assertVersionIsValid(workflowVersion);
+
+  const isLastPublishedVersion =
+    workflow.lastPublishedVersionId === workflowVersion.id;
+
+  const isDraft = workflowVersion.status === WorkflowVersionStatus.DRAFT;
+
+  const isLastPublishedVersionDeactivated =
+    workflowVersion.status === WorkflowVersionStatus.DEACTIVATED &&
+    isLastPublishedVersion;
+
+  if (!isDraft && !isLastPublishedVersionDeactivated) {
+    throw new WorkflowTriggerException(
+      'Cannot activate non-draft or non-last-published version',
+      WorkflowTriggerExceptionCode.INVALID_INPUT,
+    );
+  }
+}
+
+function assertVersionIsValid(
   workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
     trigger: WorkflowTrigger;
   },
