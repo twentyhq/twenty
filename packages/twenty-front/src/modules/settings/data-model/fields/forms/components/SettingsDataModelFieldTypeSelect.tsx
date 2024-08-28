@@ -41,7 +41,9 @@ type SettingsDataModelFieldTypeSelectProps = {
     'defaultValue' | 'options' | 'type'
   >;
   selectedFieldType?: SettingsSupportedFieldType;
-  setSelectedFieldType: any;
+  setSelectedFieldType: React.Dispatch<
+    React.SetStateAction<SettingsSupportedFieldType | undefined>
+  >;
 };
 
 const StyledContainer = styled.div`
