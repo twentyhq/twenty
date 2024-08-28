@@ -176,7 +176,6 @@ export class ObjectRecordsToGraphqlConnectionMapper {
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME:
         return value instanceof Date ? value.toISOString() : value;
-      // Add more cases for other field types as needed
       default:
         return value;
     }
