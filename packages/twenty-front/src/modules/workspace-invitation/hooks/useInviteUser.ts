@@ -6,13 +6,13 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { workspaceInvitationsState } from '../states/workspaceInvitationsStates';
 
 export const useInviteUser = () => {
-  const [sendInviteLink] = useSendInviteLinkMutation();
+  const [sendInviteLinkMutation] = useSendInviteLinkMutation();
 
   const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
 
   const sendInvitation = async (emails: SendInviteLinkMutationVariables) => {
-    return await sendInviteLink({
+    return await sendInviteLinkMutation({
       variables: emails,
       onCompleted: (data) => {
         setWorkspaceInvitations([

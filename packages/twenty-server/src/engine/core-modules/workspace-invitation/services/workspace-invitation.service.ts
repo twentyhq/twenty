@@ -9,10 +9,12 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceInvitationService {
   private tokenService: TokenService;
+  private userWorkspaceService: UserWorkspaceService;
   constructor(
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
@@ -21,6 +23,9 @@ export class WorkspaceInvitationService {
 
   onModuleInit() {
     this.tokenService = this.moduleRef.get(TokenService, { strict: false });
+    this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
+      strict: false,
+    });
   }
 
   private async getOneWorkspaceInvitation(workspaceId: string, email: string) {
@@ -60,6 +65,16 @@ export class WorkspaceInvitationService {
 
     if (maybeWorkspaceInvitation) {
       throw new Error(`${email} already invited`);
+    }
+
+    const isUserAlreadyInWorkspace =
+      await this.userWorkspaceService.checkUserWorkspaceExistsByEmail(
+        email,
+        workspace.id,
+      );
+
+    if (isUserAlreadyInWorkspace) {
+      throw new Error(`${email} is already in the workspace`);
     }
 
     return this.appTokenToWorkspaceInvitation(

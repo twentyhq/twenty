@@ -120,4 +120,18 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspaceId,
     });
   }
+
+  async checkUserWorkspaceExistsByEmail(email: string, workspaceId: string) {
+    return this.userWorkspaceRepository.exists({
+      where: {
+        workspaceId,
+        user: {
+          email,
+        },
+      },
+      relations: {
+        user: true,
+      },
+    });
+  }
 }
