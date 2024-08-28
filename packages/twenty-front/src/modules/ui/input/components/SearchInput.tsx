@@ -11,13 +11,14 @@ const StyledSearchInputContainer = styled.div`
 const StyledSearchInput = styled.input`
   width: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   background-color: transparent;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
   outline: none;
   height: 32px;
-  padding: 0 8px 0 32px;
+  padding: 0 ${({ theme }) => theme.spacing(2)} 0
+    ${({ theme }) => theme.spacing(7)};
   box-sizing: border-box;
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
@@ -27,7 +28,7 @@ const StyledSearchInput = styled.input`
 
 const StyledSearchIcon = styled(IconSearch)`
   position: absolute;
-  left: 8px;
+  left: ${({ theme }) => theme.spacing(2)};
   top: 50%;
   transform: translateY(-50%);
   color: ${({ theme }) => theme.font.color.light};
