@@ -57,7 +57,7 @@ export class EntitySchemaRelationFactory {
         target: relationDetails.target,
         inverseSide: relationDetails.inverseSide,
         joinColumn: relationDetails.joinColumn,
-      };
+      } satisfies EntitySchemaRelationOptions;
     }
 
     return entitySchemaRelationMap;

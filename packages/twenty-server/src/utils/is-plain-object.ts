@@ -1,9 +1,5 @@
-export const isPlainObject = <T>(value: T): boolean => {
-  if (Object.prototype.toString.call(value) !== '[object Object]') {
-    return false;
-  }
-
-  const prototype = Object.getPrototypeOf(value);
-
-  return prototype === null || prototype === Object.prototype;
+export const isPlainObject = (
+  input: unknown,
+): input is Record<string, unknown> => {
+  return typeof input === 'object' && input !== null && !Array.isArray(input);
 };

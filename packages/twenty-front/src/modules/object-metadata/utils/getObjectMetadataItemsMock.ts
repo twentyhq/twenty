@@ -1711,20 +1711,20 @@ export const getObjectMetadataItemsMock = () => {
                     "updatedAt": "2024-08-05T16:38:57.285Z",
                     "fromRelationMetadata": null,
                     "toRelationMetadata": null,
-                    "defaultValue": "'incoming'",
+                    "defaultValue": "'INCOMING'",
                     "options": [
                         {
                             "id": "14216544-33d1-47d0-99a9-717763d49c0f",
                             "color": "green",
                             "label": "Incoming",
-                            "value": "incoming",
+                            "value": "INCOMING",
                             "position": 0
                         },
                         {
                             "id": "f1b89e48-1107-45a2-b54a-31a75e76b9b2",
                             "color": "blue",
                             "label": "Outgoing",
-                            "value": "outgoing",
+                            "value": "OUTGOING",
                             "position": 1
                         }
                     ],

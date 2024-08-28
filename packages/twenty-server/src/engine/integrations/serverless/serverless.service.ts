@@ -16,14 +16,22 @@ export class ServerlessService implements ServerlessDriver {
     return this.driver.delete(serverlessFunction);
   }
 
-  async build(serverlessFunction: ServerlessFunctionEntity): Promise<void> {
-    return this.driver.build(serverlessFunction);
+  async build(
+    serverlessFunction: ServerlessFunctionEntity,
+    version: string,
+  ): Promise<void> {
+    return this.driver.build(serverlessFunction, version);
+  }
+
+  async publish(serverlessFunction: ServerlessFunctionEntity): Promise<string> {
+    return this.driver.publish(serverlessFunction);
   }
 
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
+    version: string,
   ): Promise<ServerlessExecuteResult> {
-    return this.driver.execute(serverlessFunction, payload);
+    return this.driver.execute(serverlessFunction, payload, version);
   }
 }

@@ -1,16 +1,23 @@
-import { H2Title, IconPlayerPlay } from 'twenty-ui';
 import { Section } from '@/ui/layout/section/components/Section';
+import { H2Title, IconPlayerPlay } from 'twenty-ui';
 
-import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
-import styled from '@emotion/styled';
-import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
-import { Button } from '@/ui/input/button/components/Button';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
-import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
-import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
 import { SettingsServerlessFunctionsOutputMetadataInfo } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsOutputMetadataInfo';
+import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
+import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
+import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
+import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { Button } from '@/ui/input/button/components/Button';
+import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
+import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -58,6 +65,18 @@ export const SettingsServerlessFunctionTestTab = ({
       leftNodes={[<SettingsServerlessFunctionsOutputMetadataInfo />]}
       rightNodes={[<LightCopyIconButton copyText={result} />]}
     />
+  );
+  const navigate = useNavigate();
+  useHotkeyScopeOnMount(
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
+  );
+
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+    },
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
   );
 
   return (
