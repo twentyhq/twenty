@@ -34,7 +34,6 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 
 type SettingsDataModelFieldTypeSelectProps = {
   className?: string;
-  disabled?: boolean;
   excludedFieldTypes?: SettingsSupportedFieldType[];
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
@@ -85,7 +84,6 @@ const StyledInput = styled.input`
 
 export const SettingsDataModelFieldTypeSelect = ({
   className,
-  disabled,
   excludedFieldTypes = [],
   fieldMetadataItem,
   selectedFieldType,
@@ -169,7 +167,6 @@ export const SettingsDataModelFieldTypeSelect = ({
                         );
                         setSelectedFieldType(key as SettingsSupportedFieldType);
                       }}
-                      disabled={disabled}
                       variant={value === key ? 'primary' : 'secondary'}
                       title={config.label}
                       Icon={config.Icon}
