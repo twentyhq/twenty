@@ -5,11 +5,11 @@ import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { pascalCase } from 'src/utils/pascal-case';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { pascalCase } from 'src/utils/pascal-case';
 
 import { InputTypeFactory } from './input-type.factory';
 
@@ -56,6 +56,11 @@ export class InputTypeDefinitionFactory {
 
             return {
               ...this.generateFields(objectMetadata, kind, options),
+              // Incrémenter version metadata !!
+              // pas besoin de codegen
+              // regarder PR de felix qui a modifié ce meme genre de truc pour rajouter l'argument Upsert
+              // ne doit etre ajouté que pour le findMany, peut etre déjà géré vu que filter que pour findMany
+              // search: String, // à creuser ?
               and: {
                 type: andOrType,
               },
