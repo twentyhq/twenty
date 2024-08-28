@@ -6,7 +6,7 @@ export type NavigationDrawerItemBreadcrumbProps = {
 };
 
 const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
-  margin-left: 7px;
+  margin-left: 7.5px;
 
   height: 28px;
   width: 9px;
