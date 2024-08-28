@@ -9,7 +9,7 @@ import {
 
 type SettingsNavigationDrawerItemProps = Pick<
   NavigationDrawerItemProps,
-  'Icon' | 'label' | 'level' | 'soon'
+  'Icon' | 'label' | 'indentationLevel' | 'soon'
 > & {
   matchSubPages?: boolean;
   path: SettingsPath;
@@ -18,7 +18,7 @@ type SettingsNavigationDrawerItemProps = Pick<
 export const SettingsNavigationDrawerItem = ({
   Icon,
   label,
-  level,
+  indentationLevel,
   matchSubPages = false,
   path,
   soon,
@@ -31,7 +31,7 @@ export const SettingsNavigationDrawerItem = ({
 
   return (
     <NavigationDrawerItem
-      level={level}
+      indentationLevel={indentationLevel}
       label={label}
       to={href}
       Icon={Icon}

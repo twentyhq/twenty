@@ -9,12 +9,12 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
-import { ObjectMetadataNavItems } from '../ObjectMetadataNavItems';
 
-const meta: Meta<typeof ObjectMetadataNavItems> = {
-  title: 'Modules/ObjectMetadata/ObjectMetadataNavItems',
-  component: ObjectMetadataNavItems,
+const meta: Meta<typeof NavigationDrawerSectionForObjectMetadataItems> = {
+  title: 'Modules/ObjectMetadata/NavigationDrawerSectionForObjectMetadataItems',
+  component: NavigationDrawerSectionForObjectMetadataItems,
   decorators: [
     IconsProviderDecorator,
     ObjectMetadataItemsDecorator,
@@ -29,7 +29,7 @@ const meta: Meta<typeof ObjectMetadataNavItems> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ObjectMetadataNavItems>;
+type Story = StoryObj<typeof NavigationDrawerSectionForObjectMetadataItems>;
 
 export const Default: Story = {
   play: async () => {

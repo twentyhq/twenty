@@ -59,14 +59,14 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconAt}
           />
           <SettingsNavigationDrawerItem
-            level={2}
+            indentationLevel={2}
             label="Emails"
             path={SettingsPath.AccountsEmails}
             Icon={IconMail}
             matchSubPages
           />
           <SettingsNavigationDrawerItem
-            level={2}
+            indentationLevel={2}
             label="Calendars"
             path={SettingsPath.AccountsCalendars}
             Icon={IconCalendarEvent}
