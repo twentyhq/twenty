@@ -56,7 +56,7 @@ const StyledTitleContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  max-width: 50%;
+  width: 100%;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
@@ -65,6 +65,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
   flex: 1 0 auto;
   gap: ${({ theme }) => theme.spacing(1)};
   flex-direction: row;
+  width: 100%;
 `;
 
 const StyledPageActionContainer = styled.div`

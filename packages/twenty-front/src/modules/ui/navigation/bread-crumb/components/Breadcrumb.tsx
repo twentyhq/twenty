@@ -15,6 +15,7 @@ const StyledWrapper = styled.nav`
   // font-weight: ${({ theme }) => theme.font.weight.semiBold};
   gap: ${({ theme }) => theme.spacing(2)};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  max-width: 100%;
 `;
 
 const StyledLink = styled(Link)`
@@ -24,6 +25,9 @@ const StyledLink = styled(Link)`
 
 const StyledText = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => (
@@ -33,7 +37,7 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => (
         {link.href ? (
           <StyledLink to={link.href}>{link.children}</StyledLink>
         ) : (
-          <StyledText>{link.children}</StyledText>
+          <StyledText title={link.children}>{link.children}</StyledText>
         )}
         {index < links.length - 1 && '/'}
       </Fragment>
