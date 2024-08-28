@@ -4,12 +4,13 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import {
+  COMPANY_OBJECT_METADATA_ID,
+  getObjectMetadataItemsMock,
+} from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { AppPath } from '@/types/AppPath';
 import { mockedUserData } from '~/testing/mock-data/users';
-
-const objectMetadataItem = getObjectMetadataItemsMock()[2].id;
 
 jest.mock('@/prefetch/hooks/usePrefetchedData');
 const setupMockPrefetchedData = (viewId?: string) => {
@@ -20,7 +21,7 @@ const setupMockPrefetchedData = (viewId?: string) => {
           {
             id: viewId,
             __typename: 'object',
-            objectMetadataId: objectMetadataItem.id,
+            objectMetadataId: COMPANY_OBJECT_METADATA_ID,
           },
         ]
       : [],
