@@ -28,7 +28,6 @@ export const ViewPickerListContent = () => {
 
   const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
     useGetCurrentView();
-
   const { viewPickerReferenceViewIdState } = useViewPickerStates();
   const setViewPickerReferenceViewId = useSetRecoilState(
     viewPickerReferenceViewIdState,
@@ -37,7 +36,6 @@ export const ViewPickerListContent = () => {
   const { setViewPickerMode } = useViewPickerMode();
 
   const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
-
   const { updateView } = useHandleViews();
 
   const handleViewSelect = (viewId: string) => {

@@ -38,7 +38,6 @@ const meta: Meta<PageDecoratorArgs> = {
                 description: '',
                 syncStatus: 'READY',
                 runtime: 'nodejs18.x',
-                sourceCodeFullPath: SOURCE_CODE_FULL_PATH,
                 sourceCodeHash: '42d2734b3dc8a7b45a16803ed7f417bc',
                 updatedAt: '2024-02-24T10:23:10.673Z',
                 createdAt: '2024-02-24T10:23:10.673Z',

@@ -33,11 +33,12 @@ export class CodeActionExecutor implements WorkflowStepExecutor {
       );
     }
 
-    const result = await this.serverlessFunctionService.executeOne(
-      step.settings.serverlessFunctionId,
-      workspaceId,
-      payload,
-    );
+    const result =
+      await this.serverlessFunctionService.executeOneServerlessFunction(
+        step.settings.serverlessFunctionId,
+        workspaceId,
+        payload,
+      );
 
     return { data: result.data, ...(result.error && { error: result.error }) };
   }

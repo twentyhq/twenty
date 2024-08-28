@@ -25,6 +25,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
 import { WorkspaceQueryBuilderFactory } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
@@ -42,6 +43,8 @@ import {
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
@@ -63,8 +66,8 @@ import {
 } from './interfaces/pg-graphql.interface';
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
-  PgGraphQLConfig,
   computePgGraphQLError,
+  PgGraphQLConfig,
 } from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
@@ -83,6 +86,8 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
     private readonly duplicateService: DuplicateService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
   ) {}
 
   async findMany<
@@ -95,6 +100,12 @@ export class WorkspaceQueryRunnerService {
   ): Promise<IConnection<Record> | undefined> {
     const { authContext, objectMetadataItem } = options;
     const start = performance.now();
+
+    const isQueryRunnerTwentyORMEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        authContext.workspace.id,
+      );
 
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
@@ -110,6 +121,13 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
+    if (isQueryRunnerTwentyORMEnabled) {
+      return this.graphqlQueryRunnerService.findManyWithTwentyOrm(
+        computedArgs,
+        options,
+      );
+    }
+
     const query = await this.workspaceQueryBuilderFactory.findMany(
       computedArgs,
       {
@@ -119,6 +137,7 @@ export class WorkspaceQueryRunnerService {
     );
 
     const result = await this.execute(query, authContext.workspace.id);
+
     const end = performance.now();
 
     this.logger.log(

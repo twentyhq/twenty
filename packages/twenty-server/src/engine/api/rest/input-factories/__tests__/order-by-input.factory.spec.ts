@@ -54,7 +54,7 @@ describe('OrderByInputFactory', () => {
       ]);
     });
 
-    it('should handler complex fields', () => {
+    it('should handle complex fields', () => {
       const request: any = {
         query: {
           order_by: 'fieldCurrency.amountMicros',
@@ -66,7 +66,7 @@ describe('OrderByInputFactory', () => {
       ]);
     });
 
-    it('should handler complex fields with direction', () => {
+    it('should handle complex fields with direction', () => {
       const request: any = {
         query: {
           order_by: 'fieldCurrency.amountMicros[DescNullsLast]',
@@ -78,17 +78,17 @@ describe('OrderByInputFactory', () => {
       ]);
     });
 
-    it('should handler multiple complex fields with direction', () => {
+    it('should handle multiple complex fields with direction', () => {
       const request: any = {
         query: {
           order_by:
-            'fieldCurrency.amountMicros[DescNullsLast],fieldLink.label[AscNullsLast]',
+            'fieldCurrency.amountMicros[DescNullsLast],fieldText.label[AscNullsLast]',
         },
       };
 
       expect(service.create(request, objectMetadata)).toEqual([
         { fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast } },
-        { fieldLink: { label: OrderByDirection.AscNullsLast } },
+        { fieldText: { label: OrderByDirection.AscNullsLast } },
       ]);
     });
 

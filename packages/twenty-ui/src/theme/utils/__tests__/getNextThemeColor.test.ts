@@ -20,4 +20,9 @@ describe('getNextThemeColor', () => {
 
     expect(getNextThemeColor(currentColor)).toBe(nextColor);
   });
+  it('returns the first color when currentColorIsUndefined', () => {
+    const firstColor: ThemeColor = MAIN_COLOR_NAMES[0];
+
+    expect(getNextThemeColor(undefined)).toBe(firstColor);
+  });
 });

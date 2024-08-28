@@ -35,7 +35,7 @@ type SelectSheetStepProps = {
   sheetNames: string[];
   onBack: () => void;
   setCurrentStepState: (data: SpreadsheetImportStep) => void;
-  errorToast: (message: string) => void;
+  onError: (message: string) => void;
   setPreviousStepState: (data: SpreadsheetImportStep) => void;
   currentStepState: {
     type: SpreadsheetImportStepType.selectSheet;
@@ -46,7 +46,7 @@ type SelectSheetStepProps = {
 export const SelectSheetStep = ({
   sheetNames,
   setCurrentStepState,
-  errorToast,
+  onError,
   setPreviousStepState,
   onBack,
   currentStepState,
@@ -57,7 +57,7 @@ export const SelectSheetStep = ({
 
   const { maxRecords, uploadStepHook } = useSpreadsheetImportInternal();
 
-  const onContinue = useCallback(
+  const handleContinue = useCallback(
     async (sheetName: string) => {
       if (
         maxRecords > 0 &&
@@ -66,7 +66,7 @@ export const SelectSheetStep = ({
           maxRecords,
         )
       ) {
-        errorToast(`Too many records. Up to ${maxRecords.toString()} allowed`);
+        onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
         return;
       }
       try {
@@ -79,11 +79,11 @@ export const SelectSheetStep = ({
         });
         setPreviousStepState(currentStepState);
       } catch (e) {
-        errorToast((e as Error).message);
+        onError((e as Error).message);
       }
     },
     [
-      errorToast,
+      onError,
       maxRecords,
       currentStepState,
       setPreviousStepState,
@@ -95,10 +95,10 @@ export const SelectSheetStep = ({
   const handleOnContinue = useCallback(
     async (data: typeof value) => {
       setIsLoading(true);
-      await onContinue(data);
+      await handleContinue(data);
       setIsLoading(false);
     },
-    [onContinue],
+    [handleContinue],
   );
 
   return (
