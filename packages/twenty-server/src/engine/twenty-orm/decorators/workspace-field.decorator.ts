@@ -19,6 +19,7 @@ export interface WorkspaceFieldOptions<
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
   settings?: FieldMetadataSettings<T>;
+  isActive?: boolean;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(
@@ -75,6 +76,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isSystem,
       gate,
       isDeprecated,
+      isActive: options.isActive,
     });
   };
 }

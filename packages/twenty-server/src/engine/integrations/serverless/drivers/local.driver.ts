@@ -1,10 +1,11 @@
-import { join } from 'path';
-import { tmpdir } from 'os';
-import { promises as fs } from 'fs';
 import { fork } from 'child_process';
+import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
 import { v4 } from 'uuid';
 
+import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 import {
   ServerlessDriver,
   ServerlessExecuteError,
@@ -13,10 +14,15 @@ import {
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
+import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
+import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import {
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -33,11 +39,7 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
-  async delete(serverlessFunction: ServerlessFunctionEntity) {
-    await this.fileStorageService.delete({
-      folderPath: this.getFolderPath(serverlessFunction),
-    });
-  }
+  async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
@@ -49,20 +51,48 @@ export class LocalDriver
       file: javascriptCode,
       name: BUILD_FILE_NAME,
       mimeType: undefined,
-      folder: this.getFolderPath(serverlessFunction),
+      folder: getServerlessFolder({
+        serverlessFunction,
+        version: 'draft',
+      }),
     });
+  }
+
+  async publish(serverlessFunction: ServerlessFunctionEntity) {
+    await this.build(serverlessFunction);
+
+    return serverlessFunction.latestVersion
+      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
+      : '1';
   }
 
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
+    version: string,
   ): Promise<ServerlessExecuteResult> {
     const startTime = Date.now();
-    const fileStream = await this.fileStorageService.read({
-      folderPath: this.getFolderPath(serverlessFunction),
-      filename: BUILD_FILE_NAME,
-    });
-    const fileContent = await readFileContent(fileStream);
+    let fileContent = '';
+
+    try {
+      const fileStream = await this.fileStorageService.read({
+        folderPath: getServerlessFolder({
+          serverlessFunction,
+          version,
+        }),
+        filename: BUILD_FILE_NAME,
+      });
+
+      fileContent = await readFileContent(fileStream);
+    } catch (error) {
+      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+        throw new ServerlessFunctionException(
+          `Function Version '${version}' does not exist`,
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+      throw error;
+    }
 
     const tmpFilePath = join(tmpdir(), `${v4()}.js`);
 
@@ -107,7 +137,7 @@ export class LocalDriver
           });
         }
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.stderr?.on('data', (data) => {
@@ -139,19 +169,19 @@ export class LocalDriver
           },
         });
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.on('error', (error) => {
         reject(error);
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.on('exit', (code) => {
         if (code && code !== 0) {
           reject(new Error(`Child process exited with code ${code}`));
-          fs.unlink(tmpFilePath);
+          fs.unlink(tmpFilePath).catch(console.error);
         }
       });
 

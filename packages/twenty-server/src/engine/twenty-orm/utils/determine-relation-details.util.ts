@@ -4,7 +4,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 interface RelationDetails {
   relationType: RelationType;
@@ -14,22 +13,24 @@ interface RelationDetails {
 }
 
 export async function determineRelationDetails(
-  workspaceId: string,
   fieldMetadata: FieldMetadataEntity,
   relationMetadata: RelationMetadataEntity,
-  workspaceCacheStorageService: WorkspaceCacheStorageService,
+  objectMetadataCollection: ObjectMetadataEntity[],
 ): Promise<RelationDetails> {
   const relationType = computeRelationType(fieldMetadata, relationMetadata);
   let fromObjectMetadata: ObjectMetadataEntity | undefined =
     fieldMetadata.object;
   let toObjectMetadata: ObjectMetadataEntity | undefined =
-    relationMetadata.toObjectMetadata;
+    objectMetadataCollection.find(
+      (objectMetadata) =>
+        objectMetadata.id === relationMetadata.toObjectMetadataId,
+    );
 
   // RelationMetadata always store the relation from the perspective of the `from` object, MANY_TO_ONE relations are not stored yet
   if (relationType === 'many-to-one') {
     fromObjectMetadata = fieldMetadata.object;
-    toObjectMetadata = await workspaceCacheStorageService.getObjectMetadata(
-      workspaceId,
+
+    toObjectMetadata = objectMetadataCollection.find(
       (objectMetadata) =>
         objectMetadata.id === relationMetadata.fromObjectMetadataId,
     );
@@ -37,6 +38,16 @@ export async function determineRelationDetails(
 
   if (!fromObjectMetadata || !toObjectMetadata) {
     throw new Error('Object metadata not found');
+  }
+
+  const toFieldMetadata = toObjectMetadata.fields.find((field) =>
+    relationType === 'many-to-one'
+      ? field.id === relationMetadata.fromFieldMetadataId
+      : field.id === relationMetadata.toFieldMetadataId,
+  );
+
+  if (!toFieldMetadata) {
+    throw new Error('To field metadata not found');
   }
 
   // TODO: Support many to many relations
@@ -47,7 +58,7 @@ export async function determineRelationDetails(
   return {
     relationType,
     target: toObjectMetadata.nameSingular,
-    inverseSide: fromObjectMetadata.nameSingular,
+    inverseSide: toFieldMetadata.name,
     joinColumn:
       // TODO: This will work for now but we need to handle this better in the future for custom names on the join column
       relationType === 'many-to-one' ||

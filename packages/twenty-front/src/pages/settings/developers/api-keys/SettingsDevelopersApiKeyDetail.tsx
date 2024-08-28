@@ -4,16 +4,16 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { H2Title, IconRepeat, IconSettings, IconTrash } from 'twenty-ui';
+import { H2Title, IconCode, IconRepeat, IconTrash } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
+import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
@@ -24,7 +24,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
-import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -121,16 +120,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
   return (
     <>
       {apiKeyData?.name && (
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SubMenuTopBarContainer
+          Icon={IconCode}
+          title={
+            <Breadcrumb
+              links={[
+                { children: 'Developers', href: '/settings/developers' },
+                { children: `${apiKeyName} API Key` },
+              ]}
+            />
+          }
+        >
           <SettingsPageContainer>
-            <SettingsHeaderContainer>
-              <Breadcrumb
-                links={[
-                  { children: 'Developers', href: '/settings/developers' },
-                  { children: `${apiKeyName} API Key` },
-                ]}
-              />
-            </SettingsHeaderContainer>
             <Section>
               {apiKeyToken ? (
                 <>

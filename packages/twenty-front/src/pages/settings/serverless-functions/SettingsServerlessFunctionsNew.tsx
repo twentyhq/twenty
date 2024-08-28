@@ -1,19 +1,22 @@
-import { IconSettings } from 'twenty-ui';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useNavigate } from 'react-router-dom';
 
-import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
-import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
-import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
-import { isDefined } from '~/utils/isDefined';
-import { useState } from 'react';
+import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
+import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useState } from 'react';
+import { Key } from 'ts-key-enum';
+import { IconFunction } from 'twenty-ui';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { isDefined } from '~/utils/isDefined';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
@@ -53,24 +56,50 @@ export const SettingsServerlessFunctionsNew = () => {
 
   const canSave = !!formValues.name && createOneServerlessFunction;
 
+  useHotkeyScopeOnMount(
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
+  );
+
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      if (canSave !== false) {
+        handleSave();
+      }
+    },
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
+    [canSave],
+  );
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+    },
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
+  );
+
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconFunction}
+      title={
+        <Breadcrumb
+          links={[
+            { children: 'Functions', href: '/settings/functions' },
+            { children: 'New' },
+          ]}
+        />
+      }
+      actionButton={
+        <SaveAndCancelButtons
+          isSaveDisabled={!canSave}
+          onCancel={() => {
+            navigate('/settings/functions');
+          }}
+          onSave={handleSave}
+        />
+      }
+    >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Functions', href: '/settings/functions' },
-              { children: 'New' },
-            ]}
-          />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => {
-              navigate('/settings/functions');
-            }}
-            onSave={handleSave}
-          />
-        </SettingsHeaderContainer>
         <SettingsServerlessFunctionNewForm
           formValues={formValues}
           onChange={onChange}

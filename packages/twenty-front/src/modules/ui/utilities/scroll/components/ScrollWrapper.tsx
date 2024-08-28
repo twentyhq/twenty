@@ -1,18 +1,17 @@
-import { createContext, RefObject, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { OverlayScrollbars } from 'overlayscrollbars';
 import { useOverlayScrollbars } from 'overlayscrollbars-react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useEffect, useRef } from 'react';
+import { useSetRecoilState } from 'recoil';
 
+import {
+  ContextProviderName,
+  getContextByProviderName,
+} from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useScrollStates } from '@/ui/utilities/scroll/hooks/internal/useScrollStates';
 import { overlayScrollbarsState } from '@/ui/utilities/scroll/states/overlayScrollbarsState';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 
 import 'overlayscrollbars/overlayscrollbars.css';
-
-export const ScrollWrapperContext = createContext<RefObject<HTMLDivElement>>({
-  current: null,
-});
 
 const StyledScrollWrapper = styled.div`
   display: flex;
@@ -29,6 +28,7 @@ export type ScrollWrapperProps = {
   className?: string;
   hideY?: boolean;
   hideX?: boolean;
+  contextProviderName: ContextProviderName;
 };
 
 export const ScrollWrapper = ({
@@ -36,18 +36,21 @@ export const ScrollWrapper = ({
   className,
   hideX,
   hideY,
+  contextProviderName,
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
+  const Context = getContextByProviderName(contextProviderName);
 
-  const handleScroll = useRecoilCallback(
-    ({ set }) =>
-      (overlayScroll: OverlayScrollbars) => {
-        const target = overlayScroll.elements().scrollOffsetElement;
-        set(scrollTopState, target.scrollTop);
-        set(scrollLeftState, target.scrollLeft);
-      },
-    [],
-  );
+  const { scrollTopComponentState, scrollLeftComponentState } =
+    useScrollStates(contextProviderName);
+  const setScrollTop = useSetRecoilState(scrollTopComponentState);
+  const setScrollLeft = useSetRecoilState(scrollLeftComponentState);
+
+  const handleScroll = (overlayScroll: OverlayScrollbars) => {
+    const target = overlayScroll.elements().scrollOffsetElement;
+    setScrollTop(target.scrollTop);
+    setScrollLeft(target.scrollLeft);
+  };
 
   const setOverlayScrollbars = useSetRecoilState(overlayScrollbarsState);
 
@@ -75,10 +78,10 @@ export const ScrollWrapper = ({
   }, [instance, setOverlayScrollbars]);
 
   return (
-    <ScrollWrapperContext.Provider value={scrollableRef}>
+    <Context.Provider value={{ ref: scrollableRef, id: contextProviderName }}>
       <StyledScrollWrapper ref={scrollableRef} className={className}>
         {children}
       </StyledScrollWrapper>
-    </ScrollWrapperContext.Provider>
+    </Context.Provider>
   );
 };

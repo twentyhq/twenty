@@ -349,7 +349,7 @@ export const CommandMenu = () => {
             )}
           </StyledInputContainer>
           <StyledList>
-            <ScrollWrapper>
+            <ScrollWrapper contextProviderName="commandMenu">
               <StyledInnerList isMobile={isMobile}>
                 <SelectableList
                   selectableListId="command-menu-list"

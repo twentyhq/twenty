@@ -12,13 +12,12 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
-import { MessagingGmailFetchByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-by-batch.service';
-import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
-import { MessagingGmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-ids-to-exclude.service';
-import { MessagingGmailHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-history.service';
+import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
+import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
+import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
+import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
+import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
+import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 
 @Module({
@@ -29,8 +28,6 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     EnvironmentModule,
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
-      MessageChannelWorkspaceEntity,
-      MessageChannelMessageAssociationWorkspaceEntity,
       BlocklistWorkspaceEntity,
     ]),
     MessagingCommonModule,
@@ -42,18 +39,13 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     MessageParticipantManagerModule,
   ],
   providers: [
-    MessagingGmailClientProvider,
-    MessagingGmailHistoryService,
-    MessagingGmailFetchByBatchesService,
-    MessagingGmailFetchMessagesByBatchesService,
-    MessagingGmailFetchMessageIdsToExcludeService,
+    GmailClientProvider,
+    GmailGetHistoryService,
+    GmailFetchByBatchService,
+    GmailGetMessagesService,
+    GmailGetMessageListService,
+    GmailHandleErrorService,
   ],
-  exports: [
-    MessagingGmailClientProvider,
-    MessagingGmailHistoryService,
-    MessagingGmailFetchByBatchesService,
-    MessagingGmailFetchMessagesByBatchesService,
-    MessagingGmailFetchMessageIdsToExcludeService,
-  ],
+  exports: [GmailGetMessagesService, GmailGetMessageListService],
 })
 export class MessagingGmailDriverModule {}

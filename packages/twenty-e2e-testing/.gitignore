@@ -1,0 +1,10 @@
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+run_results/
+playwright-report/.last-run.json
+results/
+run_results/.playwright-artifacts-0/
+run_results/.playwright-artifacts-1/
+.auth/

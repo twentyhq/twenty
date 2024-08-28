@@ -40,6 +40,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   icon: 'IconUser',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
+  softDelete: true,
 })
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -127,7 +128,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.createdBy,

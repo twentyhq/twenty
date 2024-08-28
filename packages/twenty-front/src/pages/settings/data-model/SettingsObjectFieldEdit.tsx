@@ -6,7 +6,7 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
+import { H2Title, IconArchive, IconHierarchy2 } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -20,7 +20,6 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
@@ -172,28 +171,32 @@ export const SettingsObjectFieldEdit = () => {
     <RecordFieldValueSelectorContextProvider>
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-          <SettingsPageContainer>
-            <SettingsHeaderContainer>
-              <Breadcrumb
-                links={[
-                  { children: 'Objects', href: '/settings/objects' },
-                  {
-                    children: activeObjectMetadataItem.labelPlural,
-                    href: `/settings/objects/${objectSlug}`,
-                  },
-                  { children: activeMetadataField.label },
-                ]}
+        <SubMenuTopBarContainer
+          Icon={IconHierarchy2}
+          title={
+            <Breadcrumb
+              links={[
+                { children: 'Objects', href: '/settings/objects' },
+                {
+                  children: activeObjectMetadataItem.labelPlural,
+                  href: `/settings/objects/${objectSlug}`,
+                },
+                { children: activeMetadataField.label },
+              ]}
+            />
+          }
+          actionButton={
+            shouldDisplaySaveAndCancel && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                isCancelDisabled={isSubmitting}
+                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
-              {shouldDisplaySaveAndCancel && (
-                <SaveAndCancelButtons
-                  isSaveDisabled={!canSave}
-                  isCancelDisabled={isSubmitting}
-                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                  onSave={formConfig.handleSubmit(handleSave)}
-                />
-              )}
-            </SettingsHeaderContainer>
+            )
+          }
+        >
+          <SettingsPageContainer>
             <Section>
               <H2Title
                 title="Name and description"

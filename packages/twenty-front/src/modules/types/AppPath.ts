@@ -15,7 +15,7 @@ export enum AppPath {
 
   // Onboarded
   Index = '/',
-  TasksPage = '/tasks',
+  TasksPage = '/objects/tasks',
   OpportunitiesPage = '/objects/opportunities',
 
   RecordIndexPage = '/objects/:objectNamePlural',
@@ -25,6 +25,8 @@ export enum AppPath {
   SettingsCatchAll = `/${Settings}/*`,
   Developers = `developers`,
   DevelopersCatchAll = `/${Developers}/*`,
+
+  WorkflowShowPage = `/workflow/:workflowId`,
 
   // Impersonate
   Impersonate = '/impersonate/:userId',

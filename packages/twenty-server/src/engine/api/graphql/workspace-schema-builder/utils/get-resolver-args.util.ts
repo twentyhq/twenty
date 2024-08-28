@@ -116,6 +116,20 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
+    case 'restoreMany':
+      return {
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: false,
+        },
+      };
+    case 'destroyMany':
+      return {
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: false,
+        },
+      };
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }

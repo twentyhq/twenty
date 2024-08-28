@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID = '39403bee-314b-4f14-bc91-70d500397517';
+export const COMPANY_OBJECT_METADATA_ID = 'f1231579-8e7d-4b84-9a60-41844902f2c4';
 
 export const getObjectMetadataItemsMock = () => {
     const mockArray = [
@@ -1711,20 +1712,20 @@ export const getObjectMetadataItemsMock = () => {
                     "updatedAt": "2024-08-05T16:38:57.285Z",
                     "fromRelationMetadata": null,
                     "toRelationMetadata": null,
-                    "defaultValue": "'incoming'",
+                    "defaultValue": "'INCOMING'",
                     "options": [
                         {
                             "id": "14216544-33d1-47d0-99a9-717763d49c0f",
                             "color": "green",
                             "label": "Incoming",
-                            "value": "incoming",
+                            "value": "INCOMING",
                             "position": 0
                         },
                         {
                             "id": "f1b89e48-1107-45a2-b54a-31a75e76b9b2",
                             "color": "blue",
                             "label": "Outgoing",
-                            "value": "outgoing",
+                            "value": "OUTGOING",
                             "position": 1
                         }
                     ],

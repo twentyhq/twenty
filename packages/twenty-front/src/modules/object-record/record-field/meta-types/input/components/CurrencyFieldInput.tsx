@@ -9,7 +9,7 @@ import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 import { FieldInputEvent } from './DateTimeFieldInput';
 
-export type CurrencyFieldInputProps = {
+type CurrencyFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

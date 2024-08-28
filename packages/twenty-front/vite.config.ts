@@ -15,18 +15,47 @@ export default defineConfig(({ command, mode }) => {
   /*
     Using explicit env variables, there is no need to expose all of them (security).
   */
-  const { REACT_APP_SERVER_BASE_URL, VITE_BUILD_SOURCEMAP } = env;
+  const {
+    REACT_APP_SERVER_BASE_URL,
+    VITE_BUILD_SOURCEMAP,
+    VITE_DISABLE_TYPESCRIPT_CHECKER,
+    VITE_DISABLE_ESLINT_CHECKER,
+  } = env;
 
   const isBuildCommand = command === 'build';
 
+  const tsConfigPath = isBuildCommand
+    ? path.resolve(__dirname, './tsconfig.build.json')
+    : path.resolve(__dirname, './tsconfig.dev.json');
+
   const checkers: Checkers = {
-    typescript: {
-      tsconfigPath: path.resolve(__dirname, './tsconfig.app.json'),
-    },
     overlay: false,
   };
 
-  if (!isBuildCommand) {
+  if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
+    // eslint-disable-next-line no-console
+    console.log(
+      `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
+    );
+  }
+
+  if (VITE_DISABLE_ESLINT_CHECKER === 'true') {
+    // eslint-disable-next-line no-console
+    console.log(`VITE_DISABLE_ESLINT_CHECKER: ${VITE_DISABLE_ESLINT_CHECKER}`);
+  }
+
+  if (VITE_BUILD_SOURCEMAP === 'true') {
+    // eslint-disable-next-line no-console
+    console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
+  }
+
+  if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
+    checkers['typescript'] = {
+      tsconfigPath: tsConfigPath,
+    };
+  }
+
+  if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand:
         'eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',

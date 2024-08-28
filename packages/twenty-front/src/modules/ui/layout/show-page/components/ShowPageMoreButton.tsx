@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { IconDotsVertical, IconTrash } from 'twenty-ui';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { IconDotsVertical, IconRestore, IconTrash } from 'twenty-ui';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -11,6 +11,9 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
+import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
+import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 
@@ -32,12 +35,33 @@ export const ShowPageMoreButton = ({
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular,
   });
+  const { destroyManyRecords } = useDestroyManyRecords({
+    objectNameSingular,
+  });
+  const { restoreManyRecords } = useRestoreManyRecords({
+    objectNameSingular,
+  });
 
   const handleDelete = () => {
     deleteOneRecord(recordId);
     closeDropdown();
     navigate(navigationMemorizedUrl, { replace: true });
   };
+
+  const handleDestroy = () => {
+    destroyManyRecords([recordId]);
+    closeDropdown();
+    navigate(navigationMemorizedUrl, { replace: true });
+  };
+
+  const handleRestore = () => {
+    restoreManyRecords([recordId]);
+    closeDropdown();
+  };
+
+  const [recordFromStore] = useRecoilState<any>(
+    recordStoreFamilyState(recordId),
+  );
 
   return (
     <StyledContainer>
@@ -56,12 +80,29 @@ export const ShowPageMoreButton = ({
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>
-              <MenuItem
-                onClick={handleDelete}
-                accent="danger"
-                LeftIcon={IconTrash}
-                text="Delete"
-              />
+              {recordFromStore && !recordFromStore.deletedAt && (
+                <MenuItem
+                  onClick={handleDelete}
+                  accent="danger"
+                  LeftIcon={IconTrash}
+                  text="Delete"
+                />
+              )}
+              {recordFromStore && recordFromStore.deletedAt && (
+                <>
+                  <MenuItem
+                    onClick={handleDestroy}
+                    accent="danger"
+                    LeftIcon={IconTrash}
+                    text="Destroy"
+                  />
+                  <MenuItem
+                    onClick={handleRestore}
+                    LeftIcon={IconRestore}
+                    text="Restore"
+                  />
+                </>
+              )}
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }

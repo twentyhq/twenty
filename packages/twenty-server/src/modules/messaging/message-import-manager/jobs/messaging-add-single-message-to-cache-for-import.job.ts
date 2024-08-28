@@ -14,7 +14,7 @@ export type MessagingAddSingleMessageToCacheForImportJobData = {
 @Processor(MessageQueue.messagingQueue)
 export class MessagingAddSingleMessageToCacheForImportJob {
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
   ) {}
 
