@@ -1,6 +1,6 @@
 export const PACKAGE_JSON = `{
   "dependencies": {
-    "@types/addressparser": "^1.0.3",
+    "@aws-sdk/types": "^3.609.0",
     "@types/bcrypt": "^5.0.2",
     "@types/deep-equal": "^1.0.4",
     "@types/lodash.camelcase": "^4.3.9",
@@ -18,15 +18,13 @@ export const PACKAGE_JSON = `{
     "@types/lodash.snakecase": "^4.1.9",
     "@types/lodash.upperfirst": "^4.3.9",
     "@types/uuid": "^10.0.0",
-    "addressparser": "^1.0.1",
     "archiver": "^7.0.1",
+    "aws-sdk": "^2.1684.0",
     "axios": "^1.7.5",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "deep-equal": "^2.2.3",
-    "googleapis": "^142.0.0",
     "jsonwebtoken": "^9.0.2",
-    "libphonenumber-js": "^1.11.7",
     "lodash.camelcase": "^4.3.0",
     "lodash.chunk": "^4.2.0",
     "lodash.compact": "^3.0.1",
@@ -45,11 +43,8 @@ export const PACKAGE_JSON = `{
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
     "nodemailer": "^6.9.14",
-    "pg": "^8.12.0",
     "sharp": "^0.33.5",
-    "stripe": "^16.8.0",
     "uuid": "^10.0.0",
-    "winston": "^3.14.2",
-    "zod": "^3.23.8"
+    "winston": "^3.14.2"
   }
 }`;
