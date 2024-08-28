@@ -26,21 +26,35 @@ export const SettingsDevelopersWebhooksNew = () => {
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
+
   const validateUrl = (url: string) => {
     const urlPattern = new RegExp(
-      '^(https?:\\/\\/)?' +
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-        '((\\d{1,3}\\.){3}\\d{1,3}))' +
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-        '(\\?[;&a-z\\d%_.~+=-]*)?' +
+      '^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
         '(\\#[-a-z\\d_]*)?$',
-      'i',
+      'i', // fragment locator
     );
     return !!urlPattern.test(url);
   };
 
   const handleSave = async () => {
+    const trimmedUrl = formValues.targetUrl.trim();
+
+    if (!trimmedUrl) {
+      setIsUrlValid(false);
+      throw new Error('Endpoint URL cannot be empty');
+    }
+
+    if (!validateUrl(trimmedUrl)) {
+      setIsUrlValid(false);
+      return;
+    }
+
     setIsUrlValid(true);
+
     const newWebhook = await createOneWebhook?.(formValues);
 
     if (!newWebhook) {
@@ -84,7 +98,8 @@ export const SettingsDevelopersWebhooksNew = () => {
             error={isUrlValid ? undefined : 'Please enter a valid URL'}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleSave();
+                e.preventDefault(); // Prevent form submission or other default behaviors
+                handleSave(); // Manually trigger the save process, which includes validation
               }
             }}
             onChange={(value) => {
