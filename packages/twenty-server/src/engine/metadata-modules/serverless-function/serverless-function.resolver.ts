@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
+import graphqlTypeJson from 'graphql-type-json';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -48,6 +49,17 @@ export class ServerlessFunctionResolver {
         `IS_FUNCTION_SETTINGS_ENABLED feature flag is not set to true for this workspace`,
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
       );
+    }
+  }
+
+  @Query(() => graphqlTypeJson)
+  async getAvailablePackages(@AuthWorkspace() { id: workspaceId }: Workspace) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+
+      return await this.serverlessFunctionService.getAvailablePackages();
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 

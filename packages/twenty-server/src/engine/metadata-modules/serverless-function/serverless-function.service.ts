@@ -25,6 +25,8 @@ import {
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
+import { YARN_LOCK } from 'src/engine/integrations/serverless/drivers/constants/dependencies/yarn_lock';
+import { PACKAGE_JSON } from 'src/engine/integrations/serverless/drivers/constants/dependencies/package_json';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -229,6 +231,25 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     });
 
     return await this.findById(existingServerlessFunction.id);
+  }
+
+  async getAvailablePackages() {
+    const packageJsonDependencies = JSON.parse(PACKAGE_JSON).dependencies;
+    const packageVersionRegex = /^(.*)@.*:\n\s+version "(.*)"/gm;
+    const versions: Record<string, string> = {};
+
+    let match: RegExpExecArray | null;
+
+    while ((match = packageVersionRegex.exec(YARN_LOCK)) !== null) {
+      const packageName = match[1].split('@', 1)[0];
+      const version = match[2];
+
+      if (packageJsonDependencies[packageName]) {
+        versions[packageName] = version;
+      }
+    }
+
+    return versions;
   }
 
   async createOneServerlessFunction(
