@@ -21,6 +21,7 @@ export type MenuItemDraggableProps = {
   isDragDisabled?: boolean;
   isHoverDisabled?: boolean;
 };
+
 export const MenuItemDraggable = ({
   LeftIcon,
   accent = 'default',

@@ -106,6 +106,9 @@ export const StyledMenuItemRightContent = styled.div`
 
 export const StyledDraggableItem = styled.div`
   cursor: grab;
+
+  align-items: center;
+  display: flex;
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
