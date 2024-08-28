@@ -30,6 +30,8 @@ export type WorkflowAction = WorkflowCodeAction;
 
 export type WorkflowStep = WorkflowAction;
 
+export type WorkflowStepType = WorkflowStep['type'];
+
 export type WorkflowTriggerType = 'DATABASE_EVENT';
 
 type BaseTrigger = {

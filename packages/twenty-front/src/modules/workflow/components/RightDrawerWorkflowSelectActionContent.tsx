@@ -1,8 +1,8 @@
-import { TabList } from '@/ui/layout/tab/components/TabList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRightDrawerWorkflowSelectAction } from '@/workflow/hooks/useRightDrawerWorkflowSelectAction';
 import { Workflow } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
+import { IconSettingsAutomation } from 'twenty-ui';
 
 // FIXME: copy-pasted
 const StyledTabListContainer = styled.div`
@@ -24,18 +24,14 @@ const StyledActionListContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const TAB_LIST_COMPONENT_ID =
-  'workflow-select-action-page-right-tab-list';
-
 export const RightDrawerWorkflowSelectActionContent = ({
   workflow,
 }: {
   workflow: Workflow;
 }) => {
-  const tabListId = `${TAB_LIST_COMPONENT_ID}`;
-
-  const { tabs, options, handleActionClick } =
-    useRightDrawerWorkflowSelectAction({ tabListId, workflow });
+  const { handleActionClick } = useRightDrawerWorkflowSelectAction({
+    workflow,
+  });
 
   return (
     <>
@@ -44,16 +40,13 @@ export const RightDrawerWorkflowSelectActionContent = ({
       </StyledTabListContainer>
 
       <StyledActionListContainer>
-        {options.map((option) => (
-          <MenuItem
-            key={option.id}
-            LeftIcon={option.icon}
-            text={option.name}
-            onClick={() => {
-              handleActionClick(option.id);
-            }}
-          />
-        ))}
+        <MenuItem
+          LeftIcon={IconSettingsAutomation}
+          text="Serverless Function"
+          onClick={() => {
+            handleActionClick('CODE_ACTION');
+          }}
+        />
       </StyledActionListContainer>
     </>
   );
