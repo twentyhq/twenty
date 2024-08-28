@@ -5,6 +5,9 @@ import {
 import styled from '@emotion/styled';
 
 const StyledItem = styled.div`
+  &:not(:last-child) {
+    margin-bottom: ${({ theme }) => theme.spacing(0.5)};
+  }
   margin-left: ${({ theme }) => theme.spacing(4)};
 `;
 

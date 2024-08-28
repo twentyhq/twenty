@@ -1,11 +1,11 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-import {
-  ServerlessModuleOptions,
-  ServerlessDriverType,
-} from 'src/engine/integrations/serverless/serverless.interface';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import {
+  ServerlessDriverType,
+  ServerlessModuleOptions,
+} from 'src/engine/integrations/serverless/serverless.interface';
 
 export const serverlessModuleFactory = async (
   environmentService: EnvironmentService,

@@ -50,7 +50,7 @@ describe('useRightDrawerEmailThread', () => {
 
     expect(result.current.thread).toBeDefined();
     expect(result.current.messages).toEqual(mockMessages);
-    expect(result.current.loading).toBeFalsy();
+    expect(result.current.threadLoading).toBeFalsy();
     expect(result.current.fetchMoreMessages).toBeInstanceOf(Function);
   });
 });

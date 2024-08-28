@@ -153,6 +153,7 @@ export {
   IconSearch,
   IconSend,
   IconSettings,
+  IconSettingsAutomation,
   IconSortDescending,
   IconSparkles,
   IconSql,
