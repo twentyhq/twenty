@@ -81,16 +81,23 @@ export class BlocklistItemDeleteCalendarEventsJob {
         'calendarChannelEventAssociation',
       );
 
-    await calendarChannelEventAssociationRepository.delete({
-      calendarEvent: {
-        calendarEventParticipants: {
-          handle: isHandleDomain ? ILike(`%${handle}`) : handle,
+    const calendarEventsAssociationsToDelete =
+      await calendarChannelEventAssociationRepository.find({
+        where: {
+          calendarEvent: {
+            calendarEventParticipants: {
+              handle: isHandleDomain ? ILike(`%${handle}`) : handle,
+            },
+            calendarChannelEventAssociations: {
+              calendarChannelId: Any(calendarChannelIds),
+            },
+          },
         },
-        calendarChannelEventAssociations: {
-          calendarChannelId: Any(calendarChannelIds),
-        },
-      },
-    });
+      });
+
+    await calendarChannelEventAssociationRepository.delete(
+      calendarEventsAssociationsToDelete.map(({ id }) => id),
+    );
 
     await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
       workspaceId,
