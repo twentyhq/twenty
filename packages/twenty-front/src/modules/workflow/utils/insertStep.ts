@@ -41,7 +41,7 @@ const findStepPosition = ({
 /**
  * Insert a step in a steps tree based on the id of the parent step.
  *
- * **Note: This function returns a shallow copy of the workflow version.**
+ * **Note: This function returns a deep copy of the workflow version.**
  */
 export const insertStep = ({
   steps: stepsInitial,
