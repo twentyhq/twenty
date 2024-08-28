@@ -67,19 +67,30 @@ export class BlocklistItemDeleteMessagesJob {
 
     const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
 
-    await messageChannelMessageAssociationRepository.delete({
-      messageChannel: {
-        connectedAccount: {
-          accountOwnerId: workspaceMemberId,
+    const messageChannelMessageAssociationsToDelete =
+      await messageChannelMessageAssociationRepository.find({
+        where: {
+          messageChannel: {
+            connectedAccount: {
+              accountOwnerId: workspaceMemberId,
+            },
+          },
+          message: {
+            messageParticipants: {
+              handle,
+              role: Any(rolesToDelete),
+            },
+          },
         },
-      },
-      message: {
-        messageParticipants: {
-          handle,
-          role: Any(rolesToDelete),
-        },
-      },
-    });
+      });
+
+    if (messageChannelMessageAssociationsToDelete.length === 0) {
+      return;
+    }
+
+    await messageChannelMessageAssociationRepository.delete(
+      messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+    );
 
     await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);
 

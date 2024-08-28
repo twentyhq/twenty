@@ -95,6 +95,10 @@ export class BlocklistItemDeleteCalendarEventsJob {
         },
       });
 
+    if (calendarEventsAssociationsToDelete.length === 0) {
+      return;
+    }
+
     await calendarChannelEventAssociationRepository.delete(
       calendarEventsAssociationsToDelete.map(({ id }) => id),
     );

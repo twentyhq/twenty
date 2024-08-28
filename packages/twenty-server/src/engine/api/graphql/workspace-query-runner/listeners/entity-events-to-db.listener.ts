@@ -50,16 +50,18 @@ export class EntityEventsToDbListener {
   }
 
   private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
-    payload.events = payload.events.filter(
+    const newPayload = { ...payload };
+
+    newPayload.events = payload.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
     await this.messageQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(CreateAuditLogFromInternalEvent.name, payload);
+    >(CreateAuditLogFromInternalEvent.name, newPayload);
 
     await this.messageQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(UpsertTimelineActivityFromInternalEvent.name, payload);
+    >(UpsertTimelineActivityFromInternalEvent.name, newPayload);
   }
 }

@@ -7,13 +7,7 @@ import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cle
 
 @Module({
   imports: [MessagingCommonModule, MessagingMessageCleanerModule],
-  providers: [
-    MessagingBlocklistListener,
-    {
-      provide: BlocklistItemDeleteMessagesJob.name,
-      useClass: BlocklistItemDeleteMessagesJob,
-    },
-  ],
+  providers: [MessagingBlocklistListener, BlocklistItemDeleteMessagesJob],
   exports: [],
 })
 export class MessagingBlocklistManagerModule {}

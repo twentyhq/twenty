@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
@@ -20,7 +20,7 @@ import {
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class MessagingBlocklistListener {
   constructor(
     @InjectMessageQueue(MessageQueue.messagingQueue)
@@ -37,6 +37,7 @@ export class MessagingBlocklistListener {
       ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
     >,
   ) {
+    console.log('messaging blocklist created event', payload);
     await Promise.all(
       payload.events.map((eventPayload) =>
         // TODO: modify to pass an array of blocklist items
