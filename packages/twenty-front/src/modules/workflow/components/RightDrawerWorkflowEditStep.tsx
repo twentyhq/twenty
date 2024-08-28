@@ -12,8 +12,6 @@ const StyledShowPageRightContainer = styled.div`
   height: 100%;
 `;
 
-export const TAB_LIST_COMPONENT_ID = 'workflow-page-right-tab-list';
-
 export const RightDrawerWorkflowEditStep = () => {
   const showPageWorkflowSelectedNode = useRecoilValue(
     showPageWorkflowSelectedNodeState,
