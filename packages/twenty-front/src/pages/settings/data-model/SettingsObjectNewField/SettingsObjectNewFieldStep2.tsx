@@ -7,7 +7,8 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
-import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
+import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
+import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -183,6 +184,11 @@ export const SettingsObjectNewFieldStep2 = () => {
                   href: `/settings/objects/${objectSlug}`,
                 },
                 { children: 'New Field' },
+                {
+                  children: !isDefined(selectedFieldType)
+                    ? '1. Type'
+                    : '2. Configure',
+                },
               ]}
             />
           }
@@ -226,15 +232,18 @@ export const SettingsObjectNewFieldStep2 = () => {
               <>
                 <Section>
                   <H2Title
-                    title="Name and description"
-                    description="The name and description of this field"
+                    title="Icon and Name"
+                    description="The name and icon of this field"
                   />
-                  <SettingsDataModelFieldAboutForm
+                  <SettingsDataModelFieldIconLabelForm
                     maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                   />
                 </Section>
                 <Section>
-                  <H2Title title="Values" description="The field's values" />
+                  <H2Title
+                    title="Values"
+                    description="The values of this field"
+                  />
 
                   <SettingsDataModelFieldSettingsFormCard
                     fieldMetadataItem={{
@@ -244,6 +253,13 @@ export const SettingsObjectNewFieldStep2 = () => {
                     }}
                     objectMetadataItem={activeObjectMetadataItem}
                   />
+                </Section>
+                <Section>
+                  <H2Title
+                    title="Description"
+                    description="The description of this field"
+                  />
+                  <SettingsDataModelFieldDescriptionForm />
                 </Section>
               </>
             )}

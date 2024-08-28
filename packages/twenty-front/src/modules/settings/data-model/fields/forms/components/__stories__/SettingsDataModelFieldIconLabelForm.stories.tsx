@@ -4,17 +4,17 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
 
-import { SettingsDataModelFieldAboutForm } from '../SettingsDataModelFieldAboutForm';
+import { mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
+import { SettingsDataModelFieldIconLabelForm } from '../SettingsDataModelFieldIconLabelForm';
 
 const StyledContainer = styled.div`
   flex: 1;
 `;
 
-const meta: Meta<typeof SettingsDataModelFieldAboutForm> = {
-  title: 'Modules/Settings/DataModel/SettingsDataModelFieldAboutForm',
-  component: SettingsDataModelFieldAboutForm,
+const meta: Meta<typeof SettingsDataModelFieldIconLabelForm> = {
+  title: 'Modules/Settings/DataModel/SettingsDataModelFieldIconLabelForm',
+  component: SettingsDataModelFieldIconLabelForm,
   decorators: [
     (Story) => (
       <StyledContainer>
@@ -28,11 +28,11 @@ const meta: Meta<typeof SettingsDataModelFieldAboutForm> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsDataModelFieldAboutForm>;
+type Story = StoryObj<typeof SettingsDataModelFieldIconLabelForm>;
 
 export const Default: Story = {};
 
-export const WithDefaultValues: Story = {
+export const WithFieldMetadataItem: Story = {
   args: {
     fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
       ({ name }) => name === 'name',
@@ -43,5 +43,11 @@ export const WithDefaultValues: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
+  },
+};
+
+export const WithMaxLength: Story = {
+  args: {
+    maxLength: 50,
   },
 };
