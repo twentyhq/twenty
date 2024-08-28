@@ -26,7 +26,7 @@ export class WorkflowRunWorkspaceService {
       );
 
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
         workflowVersionId,
       );
 

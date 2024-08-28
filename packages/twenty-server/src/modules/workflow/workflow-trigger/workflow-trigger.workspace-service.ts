@@ -46,7 +46,7 @@ export class WorkflowTriggerWorkspaceService {
       );
     }
 
-    await this.workflowCommonWorkspaceService.getWorkflowVersion(
+    await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
       workflowVersionId,
     );
 
@@ -60,7 +60,7 @@ export class WorkflowTriggerWorkspaceService {
 
   async enableWorkflowTrigger(workflowVersionId: string) {
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
         workflowVersionId,
       );
 
@@ -101,7 +101,11 @@ export class WorkflowTriggerWorkspaceService {
         );
       }
 
-      await this.activateWorkflowVersion(workflowVersionId, manager);
+      await this.activateWorkflowVersion(
+        workflowVersion.workflowId,
+        workflowVersionId,
+        manager,
+      );
       await workflowRepository.update(
         { id: workflow.id },
         { lastPublishedVersionId: workflowVersionId },
@@ -201,6 +205,7 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   private async activateWorkflowVersion(
+    workflowId: string,
     workflowVersionId: string,
     manager: EntityManager,
   ) {
@@ -211,7 +216,7 @@ export class WorkflowTriggerWorkspaceService {
 
     const activeWorkflowVersions = await workflowVersionRepository.find(
       {
-        where: { status: WorkflowVersionStatus.ACTIVE },
+        where: { workflowId, status: WorkflowVersionStatus.ACTIVE },
       },
       manager,
     );
