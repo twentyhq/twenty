@@ -106,10 +106,14 @@ export const StyledMenuItemRightContent = styled.div`
 
 export const StyledDraggableItem = styled.div`
   cursor: grab;
+
+  align-items: center;
+  display: flex;
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isIconDisplayedOnHoverOnly?: boolean;
+  cursor?: 'drag' | 'default' | 'not-allowed';
 }>`
   ${({ isIconDisplayedOnHoverOnly, theme }) =>
     isIconDisplayedOnHoverOnly &&
@@ -131,4 +135,15 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   & .hoverable-buttons {
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
+
+  cursor: ${({ cursor }) => {
+    switch (cursor) {
+      case 'drag':
+        return 'grab';
+      case 'not-allowed':
+        return 'not-allowed';
+      default:
+        return 'default';
+    }
+  }};
 `;

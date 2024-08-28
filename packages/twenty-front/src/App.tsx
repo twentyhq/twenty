@@ -84,6 +84,7 @@ import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
+import { WorkflowShowPage } from '~/pages/workflows/WorkflowShowPage';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 const ProvidersThatNeedRouterContext = () => {
@@ -135,6 +136,7 @@ const createRouter = (
   isBillingEnabled?: boolean,
   isCRMMigrationEnabled?: boolean,
   isServerlessFunctionSettingsEnabled?: boolean,
+  isWorkflowEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
@@ -162,6 +164,13 @@ const createRouter = (
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
+
+          {isWorkflowEnabled === true ? (
+            <Route
+              path={AppPath.WorkflowShowPage}
+              element={<WorkflowShowPage />}
+            />
+          ) : null}
 
           <Route
             path={AppPath.SettingsCatchAll}
@@ -326,6 +335,7 @@ export const App = () => {
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
@@ -336,6 +346,7 @@ export const App = () => {
         isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
+        isWorkflowEnabled,
       )}
     />
   );

@@ -48,7 +48,7 @@ export const SpreadsheetImportStepper = ({
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const errorToast = useCallback(
+  const handleError = useCallback(
     (description: string) => {
       enqueueSnackBar(description, {
         title: 'Error',
@@ -58,7 +58,7 @@ export const SpreadsheetImportStepper = ({
     [enqueueSnackBar],
   );
 
-  const onBack = useCallback(() => {
+  const handleBack = useCallback(() => {
     setCurrentStepState(previousStepState);
     prevStep();
   }, [prevStep, previousStepState]);
@@ -71,7 +71,7 @@ export const SpreadsheetImportStepper = ({
           currentStepState={currentStepState}
           setPreviousStepState={setPreviousStepState}
           setCurrentStepState={setCurrentStepState}
-          errorToast={errorToast}
+          onError={handleError}
           nextStep={nextStep}
         />
       );
@@ -81,9 +81,9 @@ export const SpreadsheetImportStepper = ({
           sheetNames={currentStepState.workbook.SheetNames}
           setCurrentStepState={setCurrentStepState}
           currentStepState={currentStepState}
-          errorToast={errorToast}
+          onError={handleError}
           setPreviousStepState={setPreviousStepState}
-          onBack={onBack}
+          onBack={handleBack}
         />
       );
     case SpreadsheetImportStepType.selectHeader:
@@ -93,8 +93,8 @@ export const SpreadsheetImportStepper = ({
           setCurrentStepState={setCurrentStepState}
           nextStep={nextStep}
           setPreviousStepState={setPreviousStepState}
-          errorToast={errorToast}
-          onBack={onBack}
+          onError={handleError}
+          onBack={handleBack}
           currentStepState={currentStepState}
         />
       );
@@ -107,10 +107,8 @@ export const SpreadsheetImportStepper = ({
           setPreviousStepState={setPreviousStepState}
           currentStepState={currentStepState}
           nextStep={nextStep}
-          onBack={() => {
-            onBack();
-          }}
-          errorToast={errorToast}
+          onBack={handleBack}
+          onError={handleError}
         />
       );
     case SpreadsheetImportStepType.validateData:
@@ -124,7 +122,7 @@ export const SpreadsheetImportStepper = ({
           file={uploadedFile}
           setCurrentStepState={setCurrentStepState}
           onBack={() => {
-            onBack();
+            handleBack();
             setPreviousStepState(
               initialStepState || { type: SpreadsheetImportStepType.upload },
             );

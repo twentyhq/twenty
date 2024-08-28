@@ -12,7 +12,7 @@ import {
 export class WorkflowCommonWorkspaceService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
-  async getWorkflowVersion(workflowVersionId: string): Promise<
+  async getWorkflowVersionOrFail(workflowVersionId: string): Promise<
     Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
       trigger: WorkflowTrigger;
     }

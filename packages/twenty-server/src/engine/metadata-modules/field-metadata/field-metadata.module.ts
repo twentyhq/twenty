@@ -19,7 +19,6 @@ import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metada
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
 
@@ -36,7 +35,6 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         NestjsQueryTypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
         WorkspaceMigrationModule,
         WorkspaceStatusModule,
-        TwentyORMModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
         ObjectMetadataModule,

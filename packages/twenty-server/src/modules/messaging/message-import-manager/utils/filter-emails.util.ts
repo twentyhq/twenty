@@ -1,10 +1,10 @@
 import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blocklisted.util';
-import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 // Todo: refactor this into several utils
 export const filterEmails = (
   messageChannelHandle: string,
-  messages: GmailMessage[],
+  messages: MessageWithParticipants[],
   blocklist: string[],
 ) => {
   return filterOutBlocklistedMessages(
@@ -16,7 +16,7 @@ export const filterEmails = (
 
 const filterOutBlocklistedMessages = (
   messageChannelHandle: string,
-  messages: GmailMessage[],
+  messages: MessageWithParticipants[],
   blocklist: string[],
 ) => {
   return messages.filter((message) => {
@@ -35,7 +35,7 @@ const filterOutBlocklistedMessages = (
   });
 };
 
-const filterOutIcsAttachments = (messages: GmailMessage[]) => {
+const filterOutIcsAttachments = (messages: MessageWithParticipants[]) => {
   return messages.filter((message) => {
     if (!message.attachments) {
       return true;

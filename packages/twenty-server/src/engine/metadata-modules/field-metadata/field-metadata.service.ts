@@ -51,6 +51,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
@@ -78,6 +79,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(fieldMetadataRepository);
   }
@@ -346,6 +348,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'Cannot deactivate label identifier field',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         );
+      }
+
+      if (fieldMetadataInput.isActive === false) {
+        const viewsRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+            fieldMetadataInput.workspaceId,
+            'view',
+          );
+
+        await viewsRepository.delete({
+          kanbanFieldMetadataId: id,
+        });
       }
 
       if (fieldMetadataInput.options) {
