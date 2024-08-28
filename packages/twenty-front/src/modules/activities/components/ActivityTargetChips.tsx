@@ -31,7 +31,6 @@ export const ActivityTargetChips = ({
               objectNameSingular={
                 activityTargetObjectRecord.targetObjectMetadataItem.nameSingular
               }
-              className="relation-chip"
             />
           ),
         )}

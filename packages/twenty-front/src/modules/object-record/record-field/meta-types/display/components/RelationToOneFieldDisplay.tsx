@@ -19,7 +19,6 @@ export const RelationToOneFieldDisplay = () => {
       key={recordChipData.recordId}
       objectNameSingular={recordChipData.objectNameSingular}
       record={fieldValue}
-      className="relation-chip"
     />
   );
 };

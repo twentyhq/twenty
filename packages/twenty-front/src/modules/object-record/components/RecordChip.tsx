@@ -30,7 +30,7 @@ export const RecordChip = ({
         name={recordChipData.name}
         avatarType={recordChipData.avatarType}
         avatarUrl={recordChipData.avatarUrl ?? ''}
-        className={className}
+        className={`relation-chip ${className}`}
         variant={variant}
         onClick={() => {}}
       />

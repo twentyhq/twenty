@@ -183,7 +183,6 @@ export const RecordDetailRelationRecordsListItem = ({
         <RecordChip
           record={relationRecord}
           objectNameSingular={relationObjectMetadataItem.nameSingular}
-          className="relation-chip"
         />
         <StyledClickableZone onClick={handleClick}>
           <LightIconButton
