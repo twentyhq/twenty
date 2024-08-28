@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryFilterOperatorParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-filter/graphql-query-filter-operator.parser';
+import { GraphqlQueryFilterOperatorParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-operator.parser';
 
 describe('GraphqlQueryFilterOperatorParser', () => {
   let parser: GraphqlQueryFilterOperatorParser;

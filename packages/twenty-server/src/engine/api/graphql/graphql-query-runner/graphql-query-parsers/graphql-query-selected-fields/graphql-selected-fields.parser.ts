@@ -4,7 +4,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlSelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-selected-fields/graphql-selected-fields-relation.parser';
+import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { ObjectMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -13,12 +13,12 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 import { capitalize } from 'src/utils/capitalize';
 import { isPlainObject } from 'src/utils/is-plain-object';
 
-export class GraphQLSelectedFieldsParser {
-  private graphqlSelectedFieldsRelationParser: GraphqlSelectedFieldsRelationParser;
+export class GraphqlQuerySelectedFieldsParser {
+  private graphqlQuerySelectedFieldsRelationParser: GraphqlQuerySelectedFieldsRelationParser;
 
   constructor(objectMetadataMap: ObjectMetadataMap) {
-    this.graphqlSelectedFieldsRelationParser =
-      new GraphqlSelectedFieldsRelationParser(objectMetadataMap);
+    this.graphqlQuerySelectedFieldsRelationParser =
+      new GraphqlQuerySelectedFieldsRelationParser(objectMetadataMap);
   }
 
   parse(
@@ -57,7 +57,7 @@ export class GraphQLSelectedFieldsParser {
       }
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
-        this.graphqlSelectedFieldsRelationParser.parseRelationField(
+        this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
           fieldKey,
           fieldValue,
