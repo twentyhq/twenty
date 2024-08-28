@@ -6,8 +6,10 @@ import { SelectOption } from '@/spreadsheet-import/types';
 
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 
+import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { SelectInput } from '@/ui/input/components/SelectInput';
-import { useState } from 'react';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useEffect, useState } from 'react';
 import { IconChevronDown, Tag, TagColor } from 'twenty-ui';
 import {
   MatchedOptions,
@@ -83,6 +85,12 @@ export const SubMatchingSelect = <T extends string>({
     setIsOpen(false);
   };
 
+  const setHotkeyScope = useSetHotkeyScope();
+
+  useEffect(() => {
+    setHotkeyScope(SelectFieldHotkeyScope.SelectField);
+  }, [setHotkeyScope]);
+
   return (
     <StyledContainer>
       <StyledControlContainer cursor="default">
@@ -113,6 +121,7 @@ export const SubMatchingSelect = <T extends string>({
             options={options}
             onOptionSelected={handleSelect}
             onCancel={() => setIsOpen(false)}
+            hotkeyScope={SelectFieldHotkeyScope.SelectField}
           />
         )}
       </StyledControlContainer>

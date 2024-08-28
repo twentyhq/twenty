@@ -26,7 +26,7 @@ export const Default = () => (
         <UploadStep
           setUploadedFile={() => null}
           setCurrentStepState={() => null}
-          errorToast={() => null}
+          onError={() => null}
           nextStep={() => null}
           setPreviousStepState={() => null}
           currentStepState={{
