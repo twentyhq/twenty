@@ -94,10 +94,6 @@ export class WorkspaceInvitationService {
       },
     });
 
-    if (!appTokens) {
-      throw new Error('No invitation found');
-    }
-
     return appTokens.map(this.appTokenToWorkspaceInvitation);
   }
 
