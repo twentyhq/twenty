@@ -37,7 +37,7 @@ export const SelectableList = ({
   }, [onEnter, setSelectableListOnEnter]);
   useEffect(() => {
     handleResetSelectedPosition();
-  }, [handleResetSelectedPosition]);
+  }, []);
   useEffect(() => {
     if (!selectableItemIdArray && !selectableItemIdMatrix) {
       throw new Error(
