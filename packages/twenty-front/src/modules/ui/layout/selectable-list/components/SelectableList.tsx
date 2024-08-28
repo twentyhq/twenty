@@ -26,13 +26,18 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListId, hotkeyScope);
 
-  const { setSelectableItemIds, setSelectableListOnEnter } =
-    useSelectableList(selectableListId);
+  const {
+    setSelectableItemIds,
+    setSelectableListOnEnter,
+    handleResetSelectedPosition,
+  } = useSelectableList(selectableListId);
 
   useEffect(() => {
     setSelectableListOnEnter(() => onEnter);
   }, [onEnter, setSelectableListOnEnter]);
-
+  useEffect(() => {
+    handleResetSelectedPosition();
+  }, [handleResetSelectedPosition]);
   useEffect(() => {
     if (!selectableItemIdArray && !selectableItemIdMatrix) {
       throw new Error(
