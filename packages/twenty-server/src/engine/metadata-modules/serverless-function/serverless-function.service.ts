@@ -213,6 +213,9 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       name: serverlessFunctionInput.name,
       description: serverlessFunctionInput.description,
       syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
+      sourceCodeHash: serverlessFunctionCreateHash(
+        serverlessFunctionInput.code,
+      ),
     });
 
     const fileFolder = getServerlessFolder({

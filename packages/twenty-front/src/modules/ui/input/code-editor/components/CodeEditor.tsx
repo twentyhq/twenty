@@ -56,7 +56,7 @@ export const CodeEditor = ({
         preloadPackages: true,
         onlySpecifiedPackages: true,
         versions: availablePackages,
-        debounceDuration: 0
+        debounceDuration: 0,
       });
     }
   };
@@ -86,7 +86,7 @@ export const CodeEditor = ({
 
   return (
     isDefined(availablePackages) && (
-      <div>
+      <>
         {header}
         <StyledEditor
           height={height}
@@ -107,7 +107,7 @@ export const CodeEditor = ({
             },
           }}
         />
-      </div>
+      </>
     )
   );
 };
