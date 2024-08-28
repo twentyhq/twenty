@@ -50,12 +50,14 @@ export const CodeEditor = ({
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
 
-    await AutoTypings.create(editor, {
-      monaco,
-      preloadPackages: true,
-      onlySpecifiedPackages: true,
-      versions: availablePackages,
-    });
+    if(language === 'typescript') {
+      await AutoTypings.create(editor, {
+        monaco,
+        preloadPackages: true,
+        onlySpecifiedPackages: true,
+        versions: availablePackages,
+      });
+    }
   };
 
   const handleEditorValidation = (markers: editor.IMarker[]) => {
