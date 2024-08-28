@@ -18,6 +18,7 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
+import { SearchInput } from '@/ui/input/components/SearchInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -27,7 +28,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 
@@ -37,7 +38,7 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 export const SettingsObjects = () => {
   const theme = useTheme();
-
+  const [searchTerm, setSearchTerm] = useState('');
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
@@ -102,7 +103,25 @@ export const SettingsObjects = () => {
     inactiveObjectSettingsArray,
     SETTINGS_OBJECT_TABLE_METADATA,
   );
+  const filteredActiveObjectSettingsItems = useMemo(
+    () =>
+      sortedActiveObjectSettingsItems.filter(
+        (item) =>
+          item.labelPlural.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.objectTypeLabel.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [sortedActiveObjectSettingsItems, searchTerm],
+  );
 
+  const filteredInactiveObjectSettingsItems = useMemo(
+    () =>
+      sortedInactiveObjectSettingsItems.filter(
+        (item) =>
+          item.labelPlural.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.objectTypeLabel.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [sortedInactiveObjectSettingsItems, searchTerm],
+  );
   return (
     <SubMenuTopBarContainer
       Icon={IconHierarchy2}
@@ -123,6 +142,13 @@ export const SettingsObjects = () => {
           <SettingsObjectCoverImage />
           <Section>
             <H2Title title="Existing objects" />
+
+            <SearchInput
+              placeholder="Search an object..."
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+
             <Table>
               <StyledObjectTableRow>
                 {SETTINGS_OBJECT_TABLE_METADATA.fields.map(
@@ -141,27 +167,31 @@ export const SettingsObjects = () => {
               </StyledObjectTableRow>
               {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
                 <TableSection title="Active">
-                  {sortedActiveObjectSettingsItems.map((objectSettingsItem) => (
-                    <SettingsObjectMetadataItemTableRow
-                      key={objectSettingsItem.objectMetadataItem.namePlural}
-                      objectMetadataItem={objectSettingsItem.objectMetadataItem}
-                      totalObjectCount={objectSettingsItem.totalObjectCount}
-                      action={
-                        <StyledIconChevronRight
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                        />
-                      }
-                      link={`/settings/objects/${getObjectSlug(
-                        objectSettingsItem.objectMetadataItem,
-                      )}`}
-                    />
-                  ))}
+                  {filteredActiveObjectSettingsItems.map(
+                    (objectSettingsItem) => (
+                      <SettingsObjectMetadataItemTableRow
+                        key={objectSettingsItem.objectMetadataItem.namePlural}
+                        objectMetadataItem={
+                          objectSettingsItem.objectMetadataItem
+                        }
+                        totalObjectCount={objectSettingsItem.totalObjectCount}
+                        action={
+                          <StyledIconChevronRight
+                            size={theme.icon.size.md}
+                            stroke={theme.icon.stroke.sm}
+                          />
+                        }
+                        link={`/settings/objects/${getObjectSlug(
+                          objectSettingsItem.objectMetadataItem,
+                        )}`}
+                      />
+                    ),
+                  )}
                 </TableSection>
               )}
               {isNonEmptyArray(inactiveObjectMetadataItems) && (
                 <TableSection title="Inactive">
-                  {sortedInactiveObjectSettingsItems.map(
+                  {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
                         key={objectSettingsItem.objectMetadataItem.namePlural}
