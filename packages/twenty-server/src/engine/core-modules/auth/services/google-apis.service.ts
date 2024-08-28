@@ -67,10 +67,6 @@ export class GoogleAPIsService {
       messageVisibility,
     } = input;
 
-    const isCalendarEnabled = this.environmentService.get(
-      'CALENDAR_PROVIDER_GOOGLE_ENABLED',
-    );
-
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByHandleAndWorkspaceMemberId(
         handle,
@@ -125,20 +121,17 @@ export class GoogleAPIsService {
           manager,
         );
 
-        if (isCalendarEnabled) {
-          await calendarChannelRepository.save(
-            {
-              id: v4(),
-              connectedAccountId: newOrExistingConnectedAccountId,
-              handle,
-              visibility:
-                calendarVisibility ||
-                CalendarChannelVisibility.SHARE_EVERYTHING,
-            },
-            {},
-            manager,
-          );
-        }
+        await calendarChannelRepository.save(
+          {
+            id: v4(),
+            connectedAccountId: newOrExistingConnectedAccountId,
+            handle,
+            visibility:
+              calendarVisibility || CalendarChannelVisibility.SHARE_EVERYTHING,
+          },
+          {},
+          manager,
+        );
       } else {
         await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
           input.accessToken,
@@ -181,40 +174,36 @@ export class GoogleAPIsService {
       }
     });
 
-    if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      const messageChannels = await messageChannelRepository.find({
-        where: {
-          connectedAccountId: newOrExistingConnectedAccountId,
-        },
-      });
+    const messageChannels = await messageChannelRepository.find({
+      where: {
+        connectedAccountId: newOrExistingConnectedAccountId,
+      },
+    });
 
-      for (const messageChannel of messageChannels) {
-        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-          MessagingMessageListFetchJob.name,
-          {
-            workspaceId,
-            messageChannelId: messageChannel.id,
-          },
-        );
-      }
+    for (const messageChannel of messageChannels) {
+      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
+        {
+          workspaceId,
+          messageChannelId: messageChannel.id,
+        },
+      );
     }
 
-    if (isCalendarEnabled) {
-      const calendarChannels = await calendarChannelRepository.find({
-        where: {
-          connectedAccountId: newOrExistingConnectedAccountId,
-        },
-      });
+    const calendarChannels = await calendarChannelRepository.find({
+      where: {
+        connectedAccountId: newOrExistingConnectedAccountId,
+      },
+    });
 
-      for (const calendarChannel of calendarChannels) {
-        await this.calendarQueueService.add<CalendarEventsImportJobData>(
-          CalendarEventListFetchJob.name,
-          {
-            calendarChannelId: calendarChannel.id,
-            workspaceId,
-          },
-        );
-      }
+    for (const calendarChannel of calendarChannels) {
+      await this.calendarQueueService.add<CalendarEventsImportJobData>(
+        CalendarEventListFetchJob.name,
+        {
+          calendarChannelId: calendarChannel.id,
+          workspaceId,
+        },
+      );
     }
   }
 }

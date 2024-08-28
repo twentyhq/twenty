@@ -151,11 +151,11 @@ export class EnvironmentVariables {
   @IsOptional()
   FILE_TOKEN_EXPIRES_IN = '1d';
 
-  // Auth
-  @IsUrl({ require_tld: false })
+  @IsDuration()
   @IsOptional()
-  FRONT_AUTH_CALLBACK_URL: string;
+  PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
+  // Auth
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
@@ -322,10 +322,6 @@ export class EnvironmentVariables {
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
 
-  @IsDuration()
-  @IsOptional()
-  PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
-
   @CastToPositiveNumber()
   @IsNumber()
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
@@ -372,10 +368,7 @@ export class EnvironmentVariables {
 
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
 
-  @CastToBoolean()
-  MESSAGING_PROVIDER_GMAIL_ENABLED = false;
-
-  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
+  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
@@ -410,13 +403,10 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
 
-  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Memory;
+  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Redis;
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
-
-  @CastToBoolean()
-  CALENDAR_PROVIDER_GOOGLE_ENABLED = false;
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 

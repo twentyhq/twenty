@@ -4,10 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import {
   GoogleAPIScopeConfig,
@@ -34,16 +30,6 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const state = JSON.parse(request.query.state);
-
-    if (
-      !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
-      !this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
-    ) {
-      throw new AuthException(
-        'Google apis auth is not enabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
 
     const { workspaceId } = await this.tokenService.verifyTransientToken(
       state.transientToken,

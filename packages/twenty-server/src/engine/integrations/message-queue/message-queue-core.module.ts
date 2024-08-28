@@ -8,21 +8,20 @@ import {
 
 import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 
+import { BullMQDriver } from 'src/engine/integrations/message-queue/drivers/bullmq.driver';
+import { PgBossDriver } from 'src/engine/integrations/message-queue/drivers/pg-boss.driver';
 import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
 import {
   MessageQueue,
   QUEUE_DRIVER,
 } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { PgBossDriver } from 'src/engine/integrations/message-queue/drivers/pg-boss.driver';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { BullMQDriver } from 'src/engine/integrations/message-queue/drivers/bullmq.driver';
-import { SyncDriver } from 'src/engine/integrations/message-queue/drivers/sync.driver';
-import { getQueueToken } from 'src/engine/integrations/message-queue/utils/get-queue-token.util';
 import {
   ASYNC_OPTIONS_TYPE,
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from 'src/engine/integrations/message-queue/message-queue.module-definition';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/integrations/message-queue/utils/get-queue-token.util';
 
 @Global()
 @Module({})
@@ -99,15 +98,10 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
       case MessageQueueDriverType.BullMQ: {
         return new BullMQDriver(options);
       }
-      case MessageQueueDriverType.Sync: {
-        return new SyncDriver();
-      }
       default: {
         this.logger.warn(
           `Unsupported message queue driver type: ${type}. Using SyncDriver by default.`,
         );
-
-        return new SyncDriver();
       }
     }
   }
