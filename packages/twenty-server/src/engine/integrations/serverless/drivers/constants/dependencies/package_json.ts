@@ -1,6 +1,5 @@
 export const PACKAGE_JSON = `{
   "dependencies": {
-    "@aws-sdk/types": "^3.609.0",
     "@types/bcrypt": "^5.0.2",
     "@types/deep-equal": "^1.0.4",
     "@types/lodash.camelcase": "^4.3.9",
@@ -19,7 +18,6 @@ export const PACKAGE_JSON = `{
     "@types/lodash.upperfirst": "^4.3.9",
     "@types/uuid": "^10.0.0",
     "archiver": "^7.0.1",
-    "aws-sdk": "^2.1684.0",
     "axios": "^1.7.5",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
