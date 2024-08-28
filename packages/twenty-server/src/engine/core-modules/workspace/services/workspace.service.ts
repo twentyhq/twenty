@@ -142,12 +142,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
 
     const workspaceInvitationsPr = await Promise.allSettled(
-      emails.map((email) => {
-        return this.workspaceInvitationService.createWorkspaceInvitation(
+      emails.map((email) =>
+        this.workspaceInvitationService.createWorkspaceInvitation(
           email,
           workspace,
-        );
-      }),
+        ),
+      ),
     );
 
     for (const workspaceInvitationPr of workspaceInvitationsPr) {
@@ -196,7 +196,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }>(
       (acc, workspaceInvitationPr) => {
         if (workspaceInvitationPr.status === 'rejected') {
-          acc.errors.push(workspaceInvitationPr.reason);
+          acc.errors.push(
+            workspaceInvitationPr.reason?.message ?? 'Unknown error',
+          );
         } else {
           acc.result.push(workspaceInvitationPr.value);
         }

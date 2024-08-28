@@ -11,6 +11,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInviteHashValidInput } from 'src/engine/core-modules/auth/dto/workspace-invite-hash.input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => UserWorkspace)
@@ -21,6 +22,7 @@ export class UserWorkspaceResolver {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
   ) {}
 
   @Mutation(() => User)
@@ -35,6 +37,11 @@ export class UserWorkspaceResolver {
     if (!workspace) {
       return;
     }
+
+    await this.workspaceInvitationService.useWorkspaceInvitation(
+      workspace.id,
+      user.email,
+    );
 
     return await this.userWorkspaceService.addUserToWorkspace(user, workspace);
   }
