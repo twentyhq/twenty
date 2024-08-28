@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import { isString } from '@sniptt/guards';
+import { ReactNode } from 'react';
 import {
   IconComponent,
   IconGripVertical,
@@ -34,13 +34,17 @@ export const MenuItemLeftContent = ({
     <StyledMenuItemLeftContent className={className}>
       {showGrip &&
         (isDisabled ? (
-          <IconGripVertical
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={
-              isDisabled ? theme.font.color.extraLight : theme.font.color.light
-            }
-          />
+          <StyledDraggableItem>
+            <IconGripVertical
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={
+                isDisabled
+                  ? theme.font.color.extraLight
+                  : theme.font.color.light
+              }
+            />
+          </StyledDraggableItem>
         ) : (
           <StyledDraggableItem>
             <IconGripVertical
