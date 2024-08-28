@@ -1,6 +1,6 @@
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useCreateNode } from '@/workflow/hooks/useCreateNode';
-import { createStepFromStepState } from '@/workflow/states/createStepFromStepState';
+import { createStepFromParentStepIdState } from '@/workflow/states/createStepFromParentStepIdState';
 import { showPageWorkflowDiagramTriggerNodeSelectionState } from '@/workflow/states/showPageWorkflowDiagramTriggerNodeSelectionState';
 import { Workflow } from '@/workflow/types/Workflow';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -20,7 +20,9 @@ export const useRightDrawerWorkflowSelectAction = ({
   tabListId: string;
   workflow: Workflow;
 }) => {
-  const createStepFromStep = useRecoilValue(createStepFromStepState);
+  const createStepFromParentStepId = useRecoilValue(
+    createStepFromParentStepIdState,
+  );
 
   const setShowPageWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
     showPageWorkflowDiagramTriggerNodeSelectionState,
@@ -75,14 +77,14 @@ export const useRightDrawerWorkflowSelectAction = ({
 
   const handleActionClick = async (actionId: string) => {
     try {
-      if (createStepFromStep === undefined) {
+      if (createStepFromParentStepId === undefined) {
         throw new Error('Select a step to create a new step from first.');
       }
 
       const newNodeId = v4();
 
       await createNode({
-        parentNodeId: createStepFromStep,
+        parentNodeId: createStepFromParentStepId,
         nodeToAdd: {
           id: newNodeId,
           name: actionId,
