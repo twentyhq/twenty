@@ -5,7 +5,7 @@ import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H1Title, H2Title, IconHierarchy2 } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
@@ -51,7 +51,9 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [searchParams] = useSearchParams();
   const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
-
+  const [selectedFieldType, setSelectedFieldType] = useState<
+    SettingsSupportedFieldType | undefined
+  >(undefined);
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
 
@@ -175,57 +177,78 @@ export const SettingsObjectNewFieldStep2 = () => {
       <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
         {...formConfig}
       >
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SubMenuTopBarContainer
+          Icon={IconHierarchy2}
+          title={
+            <Breadcrumb
+              links={[
+                { children: 'Objects', href: '/settings/objects' },
+                {
+                  children: activeObjectMetadataItem.labelPlural,
+                  href: `/settings/objects/${objectSlug}`,
+                },
+                { children: 'New Field' },
+              ]}
+            />
+          }
+          actionButton={
+            !activeObjectMetadataItem.isRemote && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                isCancelDisabled={isSubmitting}
+                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                onSave={formConfig.handleSubmit(handleSave)}
+              />
+            )
+          }
+        >
           <SettingsPageContainer>
             <SettingsHeaderContainer>
-              <Breadcrumb
-                links={[
-                  { children: 'Objects', href: '/settings/objects' },
-                  {
-                    children: activeObjectMetadataItem.labelPlural,
-                    href: `/settings/objects/${objectSlug}`,
-                  },
-                  { children: 'New Field' },
-                ]}
-              />
-              {!activeObjectMetadataItem.isRemote && (
-                <SaveAndCancelButtons
-                  isSaveDisabled={!canSave}
-                  isCancelDisabled={isSubmitting}
-                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                  onSave={formConfig.handleSubmit(handleSave)}
-                />
-              )}
+              <H1Title
+                title={
+                  !isDefined(selectedFieldType)
+                    ? '1. Select a field type'
+                    : '2. Configure field'
+                }
+              ></H1Title>
             </SettingsHeaderContainer>
-            <Section>
-              <H2Title
-                title="Name and description"
-                description="The name and description of this field"
-              />
-              <SettingsDataModelFieldAboutForm
-                maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title="Type and values"
-                description="The field's type and values."
-              />
+            {!isDefined(selectedFieldType) ? (
               <StyledSettingsObjectFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
                 fieldMetadataItem={{
                   type: fieldType,
                 }}
+                setSelectedFieldType={setSelectedFieldType}
+                selectedFieldType={selectedFieldType}
               />
-              <SettingsDataModelFieldSettingsFormCard
-                fieldMetadataItem={{
-                  icon: formConfig.watch('icon'),
-                  label: formConfig.watch('label') || 'Employees',
-                  type: formConfig.watch('type'),
-                }}
-                objectMetadataItem={activeObjectMetadataItem}
-              />
-            </Section>
+            ) : (
+              <>
+                <Section>
+                  <H2Title
+                    title="Name and description"
+                    description="The name and description of this field"
+                  />
+                  <SettingsDataModelFieldAboutForm
+                    maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+                  />
+                </Section>
+                <Section>
+                  <H2Title
+                    title="Type and values"
+                    description="The field's type and values."
+                  />
+
+                  <SettingsDataModelFieldSettingsFormCard
+                    fieldMetadataItem={{
+                      icon: formConfig.watch('icon'),
+                      label: formConfig.watch('label') || 'Employees',
+                      type: formConfig.watch('type'),
+                    }}
+                    objectMetadataItem={activeObjectMetadataItem}
+                  />
+                </Section>
+              </>
+            )}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>

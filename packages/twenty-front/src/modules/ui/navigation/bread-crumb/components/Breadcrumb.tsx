@@ -15,6 +15,7 @@ const StyledWrapper = styled.nav`
   // font-weight: ${({ theme }) => theme.font.weight.semiBold};
   gap: ${({ theme }) => theme.spacing(2)};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  white-space: nowrap;
 `;
 
 const StyledLink = styled(Link)`
