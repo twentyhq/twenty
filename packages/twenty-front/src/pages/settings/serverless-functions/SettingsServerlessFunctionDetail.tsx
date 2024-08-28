@@ -20,10 +20,10 @@ import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { useDebouncedCallback } from 'use-debounce';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { useState } from 'react';
 import isEmpty from 'lodash.isempty';
+import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -52,10 +52,10 @@ export const SettingsServerlessFunctionDetail = () => {
   );
 
   const save = async () => {
+    if (isEmpty(formValues.name)) {
+      return;
+    }
     try {
-      if (isEmpty(formValues.name)) {
-        return;
-      }
       await updateOneServerlessFunction({
         id: serverlessFunctionId,
         name: formValues.name,
@@ -72,7 +72,7 @@ export const SettingsServerlessFunctionDetail = () => {
     }
   };
 
-  const handleSave = useDebouncedCallback(save, 500);
+  const handleSave = usePreventOverlapCallback(save, 1000);
 
   const onChange = (key: string) => {
     return async (value: string | undefined) => {
@@ -86,9 +86,7 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const resetDisabled =
     !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
-  // Todo: uncomment when imports are resolved by monaco editor
-  //const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
-  const publishDisabled = latestVersionCode === formValues.code;
+  const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
 
   const handleReset = async () => {
     try {

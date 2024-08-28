@@ -50,12 +50,13 @@ export const CodeEditor = ({
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
 
-    if(language === 'typescript') {
+    if (language === 'typescript') {
       await AutoTypings.create(editor, {
         monaco,
         preloadPackages: true,
         onlySpecifiedPackages: true,
         versions: availablePackages,
+        debounceDuration: 0
       });
     }
   };

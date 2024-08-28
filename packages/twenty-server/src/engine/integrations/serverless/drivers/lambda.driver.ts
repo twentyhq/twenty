@@ -72,6 +72,18 @@ export class LambdaDriver
     this.fileStorageService = options.fileStorageService;
   }
 
+  private async waitFunctionUpdates(
+    serverlessFunctionId: string,
+    maxWaitTime: number,
+  ) {
+    const waitParams = { FunctionName: serverlessFunctionId };
+
+    await waitUntilFunctionUpdatedV2(
+      { client: this.lambdaClient, maxWaitTime },
+      waitParams,
+    );
+  }
+
   private async getLastCommonLayer() {
     const params: ListLayerVersionsCommandInput = {
       LayerName: 'common-layer',
@@ -226,12 +238,7 @@ export class LambdaDriver
       await this.lambdaClient.send(command);
     }
 
-    const waitParams = { FunctionName: serverlessFunction.id };
-
-    await waitUntilFunctionUpdatedV2(
-      { client: this.lambdaClient, maxWaitTime: 30 },
-      waitParams,
-    );
+    await this.waitFunctionUpdates(serverlessFunction.id, 10);
 
     await buildDirectoryManager.clean();
   }
@@ -266,6 +273,9 @@ export class LambdaDriver
       computedVersion === 'draft'
         ? functionToExecute.id
         : `${functionToExecute.id}:${computedVersion}`;
+
+    await this.waitFunctionUpdates(functionToExecute.id, 10);
+
     const startTime = Date.now();
     const params: InvokeCommandInput = {
       FunctionName: functionName,

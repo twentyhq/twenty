@@ -98,15 +98,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
     }
 
-    if (
-      functionToExecute.syncStatus === ServerlessFunctionSyncStatus.NOT_READY
-    ) {
-      await this.serverlessService.build(functionToExecute, version);
-      await super.updateOne(functionToExecute.id, {
-        syncStatus: ServerlessFunctionSyncStatus.READY,
-      });
-    }
-
     return this.serverlessService.execute(functionToExecute, payload, version);
   }
 
@@ -228,6 +219,11 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       name: SOURCE_FILE_NAME,
       mimeType: undefined,
       folder: fileFolder,
+    });
+
+    await this.serverlessService.build(existingServerlessFunction, 'draft');
+    await super.updateOne(existingServerlessFunction.id, {
+      syncStatus: ServerlessFunctionSyncStatus.READY,
     });
 
     return await this.findById(existingServerlessFunction.id);
