@@ -1,6 +1,6 @@
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
-import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-order/graphql-query-order.parser';
+import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { FieldMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 

@@ -2,7 +2,7 @@ import { FindOperator, Not } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { GraphqlQueryFilterFieldParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-filter/graphql-query-filter-field.parser';
+import { GraphqlQueryFilterFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 describe('GraphqlQueryFilterFieldParser', () => {
