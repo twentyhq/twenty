@@ -1,10 +1,13 @@
-import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
-import { useRecoilValue } from 'recoil';
+import { RightDrawerWorkflowEditStepContent } from '@/workflow/components/RightDrawerWorkflowEditStepContent';
+import { useFindShowPageWorkflow } from '@/workflow/hooks/useFindShowPageWorkflow';
+import { isDefined } from 'twenty-ui';
 
 export const RightDrawerWorkflowEditStep = () => {
-  const showPageWorkflowSelectedNode = useRecoilValue(
-    showPageWorkflowSelectedNodeState,
-  );
+  const workflow = useFindShowPageWorkflow();
 
-  return <p>{showPageWorkflowSelectedNode}</p>;
+  if (!isDefined(workflow)) {
+    return null;
+  }
+
+  return <RightDrawerWorkflowEditStepContent workflow={workflow} />;
 };
