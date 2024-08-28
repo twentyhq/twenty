@@ -14,6 +14,7 @@ export const ChipFieldDisplay = () => {
     <RecordIdentifierChip
       objectNameSingular={objectNameSingular}
       record={recordValue}
+      className="relation-chip"
     />
   ) : (
     <RecordChip objectNameSingular={objectNameSingular} record={recordValue} />

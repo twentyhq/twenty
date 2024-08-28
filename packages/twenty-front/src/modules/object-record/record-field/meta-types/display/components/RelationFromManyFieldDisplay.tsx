@@ -22,6 +22,7 @@ export const RelationFromManyFieldDisplay = () => {
             key={record.id}
             objectNameSingular={relationObjectNameSingular}
             record={record}
+            className="relation-chip"
           />
         );
       })}

@@ -1,7 +1,7 @@
-import { useCallback, useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useCallback, useContext } from 'react';
 import {
   IconChevronDown,
   IconComponent,
@@ -183,6 +183,7 @@ export const RecordDetailRelationRecordsListItem = ({
         <RecordChip
           record={relationRecord}
           objectNameSingular={relationObjectMetadataItem.nameSingular}
+          className="relation-chip"
         />
         <StyledClickableZone onClick={handleClick}>
           <LightIconButton

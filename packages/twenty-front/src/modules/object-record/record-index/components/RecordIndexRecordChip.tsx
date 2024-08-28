@@ -9,12 +9,14 @@ export type RecordIdentifierChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   variant?: AvatarChipVariant;
+  className?: string;
 };
 
 export const RecordIdentifierChip = ({
   objectNameSingular,
   record,
   variant,
+  className,
 }: RecordIdentifierChipProps) => {
   const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
 
@@ -35,6 +37,7 @@ export const RecordIdentifierChip = ({
       avatarUrl={recordChipData.avatarUrl ?? ''}
       onClick={handleAvatarChipClick}
       variant={variant}
+      className={className}
     />
   );
 };
