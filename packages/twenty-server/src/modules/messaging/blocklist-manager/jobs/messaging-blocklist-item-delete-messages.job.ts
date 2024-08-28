@@ -5,9 +5,7 @@ import { Any } from 'typeorm';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
@@ -25,8 +23,6 @@ export class BlocklistItemDeleteMessagesJob {
   private readonly logger = new Logger(BlocklistItemDeleteMessagesJob.name);
 
   constructor(
-    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
-    private readonly blocklistRepository: BlocklistRepository,
     private readonly threadCleanerService: MessagingMessageCleanerService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
@@ -35,10 +31,16 @@ export class BlocklistItemDeleteMessagesJob {
   async handle(data: BlocklistItemDeleteMessagesJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 
-    const blocklistItem = await this.blocklistRepository.getById(
-      blocklistItemId,
-      workspaceId,
-    );
+    const blocklistRepository =
+      await this.twentyORMManager.getRepository<BlocklistWorkspaceEntity>(
+        'blocklist',
+      );
+
+    const blocklistItem = await blocklistRepository.findOne({
+      where: {
+        id: blocklistItemId,
+      },
+    });
 
     if (!blocklistItem) {
       this.logger.log(

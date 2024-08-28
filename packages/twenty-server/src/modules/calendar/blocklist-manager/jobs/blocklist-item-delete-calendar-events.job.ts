@@ -5,9 +5,7 @@ import { Any, ILike } from 'typeorm';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 
@@ -27,8 +25,6 @@ export class BlocklistItemDeleteCalendarEventsJob {
 
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
-    private readonly blocklistRepository: BlocklistRepository,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
@@ -36,10 +32,16 @@ export class BlocklistItemDeleteCalendarEventsJob {
   async handle(data: BlocklistItemDeleteCalendarEventsJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 
-    const blocklistItem = await this.blocklistRepository.getById(
-      blocklistItemId,
-      workspaceId,
-    );
+    const blocklistRepository =
+      await this.twentyORMManager.getRepository<BlocklistWorkspaceEntity>(
+        'blocklist',
+      );
+
+    const blocklistItem = await blocklistRepository.findOne({
+      where: {
+        id: blocklistItemId,
+      },
+    });
 
     if (!blocklistItem) {
       this.logger.log(
