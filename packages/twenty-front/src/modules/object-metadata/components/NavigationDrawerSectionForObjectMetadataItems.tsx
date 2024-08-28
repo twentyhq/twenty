@@ -13,7 +13,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { getSubItemState } from '@/ui/navigation/navigation-drawer/utils/getSubItemState';
+import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 
@@ -138,7 +138,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
                         currentPathWithSearch ===
                         `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
                       }
-                      subItemState={getSubItemState({
+                      subItemState={getNavigationSubItemState({
                         index,
                         arrayLength: subItemArrayLength,
                         selectedIndex: selectedSubItemIndex,

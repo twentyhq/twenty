@@ -1,6 +1,6 @@
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 
-export const getSubItemState = ({
+export const getNavigationSubItemState = ({
   index,
   arrayLength,
   selectedIndex,
@@ -17,13 +17,7 @@ export const getSubItemState = ({
 
   const itsBeforeTheSelectedItem = index < selectedIndex;
 
-  if (thereIsOnlyOneItem) {
-    if (itsTheSelectedItem) {
-      return 'last-selected';
-    } else {
-      return 'last-not-selected';
-    }
-  } else if (itsTheLastItem) {
+  if (thereIsOnlyOneItem || itsTheLastItem) {
     if (itsTheSelectedItem) {
       return 'last-selected';
     } else {
