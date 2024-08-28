@@ -5,6 +5,10 @@ import { Processor } from 'src/engine/integrations/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import {
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
 import {
@@ -36,16 +40,32 @@ export class WorkflowEventTriggerJob {
       id: data.workflowId,
     });
 
-    if (!workflow.publishedVersionId) {
+    if (!workflow.lastPublishedVersionId) {
       throw new WorkflowTriggerException(
         'Workflow has no published version',
         WorkflowTriggerExceptionCode.INTERNAL_ERROR,
       );
     }
 
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const workflowVersion = await workflowVersionRepository.findOneByOrFail({
+      id: workflow.lastPublishedVersionId,
+    });
+
+    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+      throw new WorkflowTriggerException(
+        'Workflow version is not active',
+        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      );
+    }
+
     await this.workflowRunnerWorkspaceService.run(
       data.workspaceId,
-      workflow.publishedVersionId,
+      workflow.lastPublishedVersionId,
       data.payload,
       {
         source: FieldActorSource.WORKFLOW,

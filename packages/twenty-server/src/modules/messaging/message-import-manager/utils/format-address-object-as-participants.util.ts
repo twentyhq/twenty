@@ -1,6 +1,6 @@
 import addressparser from 'addressparser';
 
-import { Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 
 const formatAddressObjectAsArray = (
   addressObject: addressparser.EmailAddress | addressparser.EmailAddress[],
