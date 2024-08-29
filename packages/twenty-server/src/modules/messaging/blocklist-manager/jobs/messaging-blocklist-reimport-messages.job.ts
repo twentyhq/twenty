@@ -43,6 +43,7 @@ export class BlocklistReimportMessagesJob {
         eventPayload.properties.before.workspaceMemberId;
 
       const messageChannels = await messageChannelRepository.find({
+        select: ['id'],
         where: {
           connectedAccount: {
             accountOwnerId: workspaceMemberId,
