@@ -20,7 +20,7 @@ export const RightDrawerWorkflowSelectAction = () => {
     },
   });
 
-  if (isDefined(workflow) === false) {
+  if (!isDefined(workflow)) {
     return null;
   }
 
