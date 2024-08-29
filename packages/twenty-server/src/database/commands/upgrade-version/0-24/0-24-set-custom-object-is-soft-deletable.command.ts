@@ -6,7 +6,7 @@ import { In, Repository } from 'typeorm';
 import {
   ActiveWorkspacesCommandOptions,
   ActiveWorkspacesCommandRunner,
-} from 'src/database/commands/upgrade-version/active-workspaces.command';
+} from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 

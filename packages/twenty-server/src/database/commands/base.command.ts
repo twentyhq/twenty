@@ -32,7 +32,7 @@ export abstract class BaseCommandRunner extends CommandRunner {
     try {
       await this.executeBaseCommand(passedParams, options);
     } catch (error) {
-      this.logger.log(chalk.red(`Command failed`));
+      this.logger.error(chalk.red(`Command failed`));
       throw error;
     } finally {
       this.logger.log(chalk.blue('Command completed!'));

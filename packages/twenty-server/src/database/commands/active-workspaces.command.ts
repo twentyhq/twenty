@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
@@ -8,7 +7,7 @@ import { Repository } from 'typeorm';
 import {
   BaseCommandOptions,
   BaseCommandRunner,
-} from 'src/database/commands/upgrade-version/base.command';
+} from 'src/database/commands/base.command';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -23,10 +22,7 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
 
   protected readonly logger: Logger;
 
-  constructor(
-    @InjectRepository(Workspace, 'core')
-    protected readonly workspaceRepository: Repository<Workspace>,
-  ) {
+  constructor(protected readonly workspaceRepository: Repository<Workspace>) {
     super();
     this.logger = new Logger(this.constructor.name);
   }
