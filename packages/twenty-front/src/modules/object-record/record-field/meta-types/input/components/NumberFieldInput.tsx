@@ -60,7 +60,7 @@ export const NumberFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={draftValue ?? ''}
+        value={draftValue?.toString() ?? ''}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
