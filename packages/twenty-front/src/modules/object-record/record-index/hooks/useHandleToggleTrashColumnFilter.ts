@@ -52,7 +52,7 @@ export const useHandleToggleTrashColumnFilter = ({
       operand: ViewFilterOperand.IsNotEmpty,
       displayValue: '',
       definition: {
-        label: `Deleted ${objectNameSingular}`,
+        label: `Deleted ${objectMetadataItem.namePlural}`,
         iconName: 'IconTrash',
         fieldMetadataId: trashFieldMetadata.id,
         type: filterType,
