@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 
@@ -20,8 +20,6 @@ export enum EdgeTypeDefinitionKind {
 
 @Injectable()
 export class EdgeTypeDefinitionFactory {
-  private readonly logger = new Logger(EdgeTypeDefinitionFactory.name);
-
   constructor(private readonly edgeTypeFactory: EdgeTypeFactory) {}
 
   public create(

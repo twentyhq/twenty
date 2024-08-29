@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
@@ -21,10 +21,6 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 
 @Injectable()
 export class WorkspaceSyncRelationMetadataService {
-  private readonly logger = new Logger(
-    WorkspaceSyncRelationMetadataService.name,
-  );
-
   constructor(
     private readonly standardRelationFactory: StandardRelationFactory,
     private readonly workspaceRelationComparator: WorkspaceRelationComparator,

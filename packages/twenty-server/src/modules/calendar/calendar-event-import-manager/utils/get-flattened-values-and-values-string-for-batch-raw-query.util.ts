@@ -26,31 +26,3 @@ export const valuesStringForBatchRawQuery = (
 
   return castedValues.join(', ');
 };
-
-export const getFlattenedValuesAndValuesStringForBatchRawQuery = (
-  values: {
-    [key: string]: any;
-  }[],
-  keyTypeMap: {
-    [key: string]: string;
-  },
-): {
-  flattenedValues: any[];
-  valuesString: string;
-} => {
-  const keysToInsert = Object.keys(keyTypeMap);
-
-  const flattenedValues = values.flatMap((value) =>
-    keysToInsert.map((key) => value[key]),
-  );
-
-  const valuesString = valuesStringForBatchRawQuery(
-    values,
-    Object.values(keyTypeMap),
-  );
-
-  return {
-    flattenedValues,
-    valuesString,
-  };
-};

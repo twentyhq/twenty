@@ -66,10 +66,4 @@ export class WorkspaceQueryHookStorage {
 
     this.postHookInstances.get(key)?.push(data);
   }
-
-  getWorkspaceQueryPostHookInstances(
-    key: WorkspaceQueryHookKey,
-  ): WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] | undefined {
-    return this.postHookInstances.get(key);
-  }
 }
