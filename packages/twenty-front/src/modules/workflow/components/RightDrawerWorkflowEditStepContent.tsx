@@ -5,7 +5,7 @@ import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { getWorkflowLastVersion } from '@/workflow/utils/getWorkflowLastVersion';
-import { replaceStep } from '@/workflow/utils/insertStep';
+import { replaceStep } from '@/workflow/utils/replaceStep';
 import { useRecoilValue } from 'recoil';
 
 const getStepDefinition = ({

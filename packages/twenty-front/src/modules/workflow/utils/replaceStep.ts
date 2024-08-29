@@ -1,28 +1,27 @@
 import { WorkflowStep } from '@/workflow/types/Workflow';
 import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
 
-export const insertStep = ({
+export const replaceStep = ({
   steps: stepsInitial,
-  stepToAdd,
-  parentStepId,
+  stepId,
+  stepToReplace,
 }: {
   steps: Array<WorkflowStep>;
-  parentStepId: string | undefined;
-  stepToAdd: WorkflowStep;
-}): Array<WorkflowStep> => {
+  stepId: string;
+  stepToReplace: Partial<Omit<WorkflowStep, 'id'>>;
+}) => {
   // Make a deep copy of the nested object to prevent unwanted side effects.
   const steps = structuredClone(stepsInitial);
 
   const parentStepPosition = findStepPositionOrThrow({
     steps,
-    stepId: parentStepId,
+    stepId,
   });
 
-  parentStepPosition.steps.splice(
-    parentStepPosition.index + 1, // The "+ 1" means that we add the step after its parent and not before.
-    0,
-    stepToAdd,
-  );
+  parentStepPosition.steps[parentStepPosition.index] = {
+    ...parentStepPosition.steps[parentStepPosition.index],
+    ...stepToReplace,
+  };
 
   return steps;
 };
