@@ -13,7 +13,7 @@ import {
 export class MessageQueueMetadataAccessor {
   constructor(private readonly reflector: Reflector) {}
 
-  isProcessor(target: Type<any> | Function): boolean {
+  isProcessor(target: Type | Function): boolean {
     if (!target) {
       return false;
     }
@@ -21,7 +21,7 @@ export class MessageQueueMetadataAccessor {
     return !!this.reflector.get(PROCESSOR_METADATA, target);
   }
 
-  isProcess(target: Type<any> | Function): boolean {
+  isProcess(target: Type | Function): boolean {
     if (!target) {
       return false;
     }
@@ -30,13 +30,13 @@ export class MessageQueueMetadataAccessor {
   }
 
   getProcessorMetadata(
-    target: Type<any> | Function,
+    target: Type | Function,
   ): MessageQueueProcessorOptions | undefined {
     return this.reflector.get(PROCESSOR_METADATA, target);
   }
 
   getProcessMetadata(
-    target: Type<any> | Function,
+    target: Type | Function,
   ): MessageQueueProcessOptions | undefined {
     const metadata = this.reflector.get(PROCESS_METADATA, target);
 

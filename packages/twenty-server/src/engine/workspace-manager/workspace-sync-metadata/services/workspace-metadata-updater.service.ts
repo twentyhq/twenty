@@ -125,12 +125,13 @@ export class WorkspaceMetadataUpdaterService {
     /**
      * Update field metadata
      */
-    const updatedFieldMetadataCollection = await this.updateEntities<
-      FieldMetadataEntity<'default'>
-    >(manager, FieldMetadataEntity, storage.fieldMetadataUpdateCollection, [
-      'objectMetadataId',
-      'workspaceId',
-    ]);
+    const updatedFieldMetadataCollection =
+      await this.updateEntities<FieldMetadataEntity>(
+        manager,
+        FieldMetadataEntity,
+        storage.fieldMetadataUpdateCollection,
+        ['objectMetadataId', 'workspaceId'],
+      );
 
     /**
      * Create field metadata
