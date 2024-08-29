@@ -85,6 +85,7 @@ const previewableTypes = [
   FieldMetadataType.Currency,
   FieldMetadataType.Date,
   FieldMetadataType.DateTime,
+  FieldMetadataType.Emails,
   FieldMetadataType.FullName,
   FieldMetadataType.Link,
   FieldMetadataType.Links,

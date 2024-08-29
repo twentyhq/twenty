@@ -265,6 +265,7 @@ export enum FieldMetadataType {
   Date = 'DATE',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
+  Emails = 'EMAILS',
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Links = 'LINKS',

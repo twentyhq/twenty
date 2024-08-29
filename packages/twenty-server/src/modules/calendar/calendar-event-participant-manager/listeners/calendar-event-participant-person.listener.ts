@@ -32,7 +32,7 @@ export class CalendarEventParticipantPersonListener {
     >,
   ) {
     for (const eventPayload of payload.events) {
-      if (eventPayload.properties.after.email === null) {
+      if (!eventPayload.properties.after.email) {
         continue;
       }
 

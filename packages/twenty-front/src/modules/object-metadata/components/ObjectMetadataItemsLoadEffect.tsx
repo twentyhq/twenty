@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
@@ -13,10 +14,11 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const ObjectMetadataItemsLoadEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const isLoggedIn = useIsLogged();
 
   const { objectMetadataItems: newObjectMetadataItems, loading } =
     useFindManyObjectMetadataItems({
-      skip: isUndefinedOrNull(currentUser),
+      skip: !isLoggedIn,
     });
 
   const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(

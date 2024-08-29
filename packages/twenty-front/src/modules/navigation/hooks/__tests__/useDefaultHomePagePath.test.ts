@@ -2,18 +2,15 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import {
+  COMPANY_OBJECT_METADATA_ID,
+  getObjectMetadataItemsMock,
+} from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { AppPath } from '@/types/AppPath';
-import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { mockedUserData } from '~/testing/mock-data/users';
-
-const objectMetadataItem = getObjectMetadataItemsMock()[0];
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
-jest.mocked(useObjectMetadataItem).mockReturnValue({
-  objectMetadataItem,
-});
 
 jest.mock('@/prefetch/hooks/usePrefetchedData');
 const setupMockPrefetchedData = (viewId?: string) => {
@@ -24,7 +21,7 @@ const setupMockPrefetchedData = (viewId?: string) => {
           {
             id: viewId,
             __typename: 'object',
-            objectMetadataId: objectMetadataItem.id,
+            objectMetadataId: COMPANY_OBJECT_METADATA_ID,
           },
         ]
       : [],
@@ -35,6 +32,12 @@ const renderHooks = (withCurrentUser: boolean) => {
   const { result } = renderHook(
     () => {
       const setCurrentUser = useSetRecoilState(currentUserState);
+      const setObjectMetadataItems = useSetRecoilState(
+        objectMetadataItemsState,
+      );
+
+      setObjectMetadataItems(getObjectMetadataItemsMock());
+
       if (withCurrentUser) {
         setCurrentUser(mockedUserData);
       }
