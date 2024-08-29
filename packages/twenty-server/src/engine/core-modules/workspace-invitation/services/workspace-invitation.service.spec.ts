@@ -1,12 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
-import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { Invitation } from 'src/engine/core-modules/invitation/invitation.entity';
-
-describe('InvitationService', () => {
+describe('WorkspaceInvitationService', () => {
   let service: WorkspaceInvitationService;
 
   beforeEach(async () => {
@@ -14,7 +13,7 @@ describe('InvitationService', () => {
       providers: [
         WorkspaceInvitationService,
         {
-          provide: getRepositoryToken(Invitation, 'core'),
+          provide: getRepositoryToken(AppToken, 'core'),
           useValue: {},
         },
       ],
