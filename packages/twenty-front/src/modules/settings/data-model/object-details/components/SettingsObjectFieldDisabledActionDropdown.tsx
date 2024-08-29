@@ -1,4 +1,4 @@
-import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui';
+import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui';
 
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -49,7 +49,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
           <DropdownMenuItemsContainer>
             <MenuItem
               text="Activate"
-              LeftIcon={IconArchiveOff}
+              LeftIcon={IconArchive}
               onClick={handleActivate}
             />
             {isDeletable && (
