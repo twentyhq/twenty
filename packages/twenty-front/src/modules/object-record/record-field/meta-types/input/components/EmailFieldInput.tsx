@@ -27,30 +27,30 @@ export const EmailFieldInput = ({
   const persistField = usePersistField();
 
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistField(newText.trim()));
+    onEnter?.(() => persistField(newText));
   };
 
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistField(newText.trim()));
+    onEscape?.(() => persistField(newText));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistField(newText.trim()));
+    onClickOutside?.(() => persistField(newText));
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistField(newText.trim()));
+    onTab?.(() => persistField(newText));
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() => persistField(newText.trim()));
+    onShiftTab?.(() => persistField(newText));
   };
 
   const handleChange = (newText: string) => {
-    setDraftValue(newText.trim());
+    setDraftValue(newText);
   };
 
   return (
