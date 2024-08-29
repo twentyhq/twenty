@@ -47,7 +47,7 @@ export const insertStep = ({
   const steps = structuredClone(stepsInitial);
 
   const parentStepPosition = findStepPositionOrThrow({
-    steps: steps,
+    steps,
     stepId: parentStepId,
   });
 
@@ -56,6 +56,31 @@ export const insertStep = ({
     0,
     stepToAdd,
   );
+
+  return steps;
+};
+
+export const replaceStep = ({
+  steps: stepsInitial,
+  stepId,
+  stepToReplace,
+}: {
+  steps: Array<WorkflowStep>;
+  stepId: string;
+  stepToReplace: Partial<Omit<WorkflowStep, 'id'>>;
+}) => {
+  // Make a deep copy of the nested object to prevent unwanted side effects.
+  const steps = structuredClone(stepsInitial);
+
+  const parentStepPosition = findStepPositionOrThrow({
+    steps,
+    stepId,
+  });
+
+  parentStepPosition.steps[parentStepPosition.index] = {
+    ...parentStepPosition.steps[parentStepPosition.index],
+    ...stepToReplace,
+  };
 
   return steps;
 };

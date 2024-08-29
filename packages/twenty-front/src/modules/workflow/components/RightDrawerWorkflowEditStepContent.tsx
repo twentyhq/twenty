@@ -5,18 +5,8 @@ import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { getWorkflowLastVersion } from '@/workflow/utils/getWorkflowLastVersion';
-import styled from '@emotion/styled';
+import { replaceStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue } from 'recoil';
-
-// FIXME: copy-pasted
-const StyledShowPageRightContainer = styled.div`
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  justify-content: start;
-  width: 100%;
-  height: 100%;
-`;
 
 const getStepDefinition = ({
   stepId,
@@ -89,8 +79,6 @@ export const RightDrawerWorkflowEditStepContent = ({
             );
           }
 
-          console.log({ updatedTrigger });
-
           updateOneWorkflowVersion({
             idToUpdate: lastVersion.id,
             updateOneRecordInput: {
@@ -105,6 +93,25 @@ export const RightDrawerWorkflowEditStepContent = ({
   return (
     <RightDrawerWorkflowEditStepContentAction
       action={stepConfiguration.definition}
+      onUpdateAction={(updatedAction) => {
+        const lastVersion = getWorkflowLastVersion(workflow);
+        if (lastVersion === undefined) {
+          throw new Error(
+            "Can't add a node when no version exists yet. Create a first workflow version before trying to add a node.",
+          );
+        }
+
+        updateOneWorkflowVersion({
+          idToUpdate: lastVersion.id,
+          updateOneRecordInput: {
+            steps: replaceStep({
+              steps: lastVersion.steps,
+              stepId: showPageWorkflowSelectedNode,
+              stepToReplace: updatedAction,
+            }),
+          },
+        });
+      }}
     />
   );
 };
