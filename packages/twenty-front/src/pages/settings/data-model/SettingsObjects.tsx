@@ -1,6 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { H2Title, IconChevronRight, IconHierarchy2, IconPlus } from 'twenty-ui';
+import {
+  H2Title,
+  IconChevronRight,
+  IconHierarchy2,
+  IconPlus,
+  IconSearch,
+} from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -18,7 +24,7 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
-import { SearchInput } from '@/ui/input/components/SearchInput';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -35,7 +41,9 @@ import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/Setti
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
-
+const StyledSearchInput = styled(TextInput)`
+  width: 100%;
+`;
 export const SettingsObjects = () => {
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
@@ -143,7 +151,8 @@ export const SettingsObjects = () => {
           <Section>
             <H2Title title="Existing objects" />
 
-            <SearchInput
+            <StyledSearchInput
+              LeftIcon={IconSearch}
               placeholder="Search an object..."
               value={searchTerm}
               onChange={setSearchTerm}

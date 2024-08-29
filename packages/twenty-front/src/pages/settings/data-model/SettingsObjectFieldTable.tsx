@@ -4,17 +4,18 @@ import {
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
-import { SearchInput } from '@/ui/input/components/SearchInput';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
-
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { IconSearch } from 'twenty-ui';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
@@ -76,6 +77,9 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObject
     },
   };
 
+const StyledSearchInput = styled(TextInput)`
+  width: 100%;
+`;
 export type SettingsObjectFieldTableProps = {
   objectMetadataItem: ObjectMetadataItem;
   mode: 'view' | 'new-field';
@@ -169,7 +173,8 @@ export const SettingsObjectFieldTable = ({
 
   return (
     <>
-      <SearchInput
+      <StyledSearchInput
+        LeftIcon={IconSearch}
         placeholder="Search a field..."
         value={searchTerm}
         onChange={setSearchTerm}
