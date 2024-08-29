@@ -1,5 +1,9 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RightDrawerWorkflowEditStepContentAction } from '@/workflow/components/RightDrawerWorkflowEditStepContentAction';
+import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components/RightDrawerWorkflowEditStepContentTrigger';
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
-import { Workflow } from '@/workflow/types/Workflow';
+import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { getWorkflowLastVersion } from '@/workflow/utils/getWorkflowLastVersion';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -51,6 +55,11 @@ export const RightDrawerWorkflowEditStepContent = ({
 }: {
   workflow: Workflow;
 }) => {
+  const { updateOneRecord: updateOneWorkflowVersion } =
+    useUpdateOneRecord<WorkflowVersion>({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    });
+
   const showPageWorkflowSelectedNode = useRecoilValue(
     showPageWorkflowSelectedNodeState,
   );
@@ -68,9 +77,34 @@ export const RightDrawerWorkflowEditStepContent = ({
     throw new Error('Expected to resolve the definition of the step.');
   }
 
+  if (stepConfiguration.type === 'trigger') {
+    return (
+      <RightDrawerWorkflowEditStepContentTrigger
+        trigger={stepConfiguration.definition}
+        onUpdateTrigger={(updatedTrigger) => {
+          const lastVersion = getWorkflowLastVersion(workflow);
+          if (lastVersion === undefined) {
+            throw new Error(
+              "Can't add a node when no version exists yet. Create a first workflow version before trying to add a node.",
+            );
+          }
+
+          console.log({ updatedTrigger });
+
+          updateOneWorkflowVersion({
+            idToUpdate: lastVersion.id,
+            updateOneRecordInput: {
+              trigger: updatedTrigger,
+            },
+          });
+        }}
+      />
+    );
+  }
+
   return (
-    <StyledShowPageRightContainer>
-      <p>{JSON.stringify(stepConfiguration)}</p>
-    </StyledShowPageRightContainer>
+    <RightDrawerWorkflowEditStepContentAction
+      action={stepConfiguration.definition}
+    />
   );
 };
