@@ -44,14 +44,14 @@ export const WorkflowShowPageDiagramEffect = () => {
       const selectedNode = nodes[0] as WorkflowDiagramNode;
       const isClosingStep = isDefined(selectedNode) === false;
 
-      if (isClosingStep === true) {
+      if (isClosingStep) {
         closeRightDrawer();
 
         return;
       }
 
       const isCreateStepNode = selectedNode.type === 'create-step';
-      if (isCreateStepNode === true) {
+      if (isCreateStepNode) {
         if (selectedNode.data.nodeType !== 'create-step') {
           throw new Error('Expected selected node to be a create step node.');
         }
@@ -81,7 +81,7 @@ export const WorkflowShowPageDiagramEffect = () => {
    * so we use a useEffect and a Recoil state to trigger actions on the diagram, like programatically selecting a node.
    */
   useEffect(() => {
-    if (isDefined(showPageWorkflowDiagramTriggerNodeSelection) === false) {
+    if (!isDefined(showPageWorkflowDiagramTriggerNodeSelection)) {
       return;
     }
 
