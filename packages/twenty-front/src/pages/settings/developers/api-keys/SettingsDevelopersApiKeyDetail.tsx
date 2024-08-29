@@ -213,7 +213,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         confirmationValue="yes"
         isOpen={isDeleteApiKeyModalOpen}
         setIsOpen={setIsDeleteApiKeyModalOpen}
-        title="Delete Api key"
+        title="Delete API key"
         subtitle={
           <>
             Please type "yes" to confirm you want to delete this API Key. Be
@@ -228,7 +228,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         confirmationValue="yes"
         isOpen={isRegenerateKeyModalOpen}
         setIsOpen={setIsRegenerateKeyModalOpen}
-        title="Regenerate an Api key"
+        title="Regenerate an API key"
         subtitle={
           <>
             If you’ve lost this key, you can regenerate it, but be aware that
