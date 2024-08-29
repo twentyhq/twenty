@@ -195,7 +195,7 @@ export class CalendarChannelSyncStatusService {
     });
 
     const connectedAccountIds = calendarChannels.map(
-      (calendarChannel) => calendarChannel.connectedAccount.id,
+      (calendarChannel) => calendarChannel.connectedAccountId,
     );
 
     await connectedAccountRepository.update(

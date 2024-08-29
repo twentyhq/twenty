@@ -182,7 +182,7 @@ export class MessageChannelSyncStatusService {
     });
 
     const connectedAccountIds = messageChannels.map(
-      (messageChannel) => messageChannel.connectedAccount.id,
+      (messageChannel) => messageChannel.connectedAccountId,
     );
 
     await connectedAccountRepository.update(
