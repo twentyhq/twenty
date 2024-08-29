@@ -1,4 +1,4 @@
-import { WorkflowShowPageDiagramCreateStepNode } from '@/workflow/components/WorkflowShowPageDiagramCreateStepNode.tsx';
+import { WorkflowShowPageDiagramCreateStepNode } from '@/workflow/components/WorkflowShowPageDiagramCreateStepNode';
 import { WorkflowShowPageDiagramEffect } from '@/workflow/components/WorkflowShowPageDiagramEffect';
 import { WorkflowShowPageDiagramStepNode } from '@/workflow/components/WorkflowShowPageDiagramStepNode';
 import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
