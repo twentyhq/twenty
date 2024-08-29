@@ -24,7 +24,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -175,7 +174,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 apiKeyId={apiKeyData?.id}
                 disabled={loading}
                 onNameUpdate={(value: string) => {
-                  setApiKeyName(convertToEmptyStringForWhitespaces(value));
+                  setApiKeyName(value);
                 }}
               />
             </Section>

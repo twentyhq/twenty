@@ -19,7 +19,6 @@ import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -98,7 +97,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             onChange={(value) => {
               setFormValues((prevState) => ({
                 ...prevState,
-                name: convertToEmptyStringForWhitespaces(value),
+                name: value,
               }));
             }}
             fullWidth
