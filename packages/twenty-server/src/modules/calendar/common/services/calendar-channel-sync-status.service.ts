@@ -27,6 +27,10 @@ export class CalendarChannelSyncStatusService {
   public async scheduleFullCalendarEventListFetch(
     calendarChannelIds: string[],
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -41,6 +45,10 @@ export class CalendarChannelSyncStatusService {
   public async schedulePartialCalendarEventListFetch(
     calendarChannelIds: string[],
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -55,6 +63,10 @@ export class CalendarChannelSyncStatusService {
   public async markAsCalendarEventListFetchOngoing(
     calendarChannelIds: string[],
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -71,6 +83,10 @@ export class CalendarChannelSyncStatusService {
     calendarChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
         `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
@@ -92,6 +108,10 @@ export class CalendarChannelSyncStatusService {
   }
 
   public async resetSyncStageStartedAt(calendarChannelIds: string[]) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -103,6 +123,10 @@ export class CalendarChannelSyncStatusService {
   }
 
   public async scheduleCalendarEventsImport(calendarChannelIds: string[]) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -114,6 +138,10 @@ export class CalendarChannelSyncStatusService {
   }
 
   public async markAsCalendarEventsImportOngoing(calendarChannelIds: string[]) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -128,6 +156,10 @@ export class CalendarChannelSyncStatusService {
   public async markAsCompletedAndSchedulePartialMessageListFetch(
     calendarChannelIds: string[],
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -148,6 +180,10 @@ export class CalendarChannelSyncStatusService {
     calendarChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -169,6 +205,10 @@ export class CalendarChannelSyncStatusService {
     calendarChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -215,6 +255,10 @@ export class CalendarChannelSyncStatusService {
     calendarChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',

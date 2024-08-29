@@ -25,6 +25,10 @@ export class MessageChannelSyncStatusService {
   ) {}
 
   public async scheduleFullMessageListFetch(messageChannelIds: string[]) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -36,6 +40,10 @@ export class MessageChannelSyncStatusService {
   }
 
   public async schedulePartialMessageListFetch(messageChannelIds: string[]) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -47,6 +55,10 @@ export class MessageChannelSyncStatusService {
   }
 
   public async scheduleMessagesImport(messageChannelIds: string[]) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -61,6 +73,10 @@ export class MessageChannelSyncStatusService {
     messageChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
         `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
@@ -82,6 +98,10 @@ export class MessageChannelSyncStatusService {
   }
 
   public async resetSyncStageStartedAt(messageChannelIds: string[]) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -93,6 +113,10 @@ export class MessageChannelSyncStatusService {
   }
 
   public async markAsMessagesListFetchOngoing(messageChannelIds: string[]) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -107,6 +131,10 @@ export class MessageChannelSyncStatusService {
   public async markAsCompletedAndSchedulePartialMessageListFetch(
     messageChannelIds: string[],
   ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -120,6 +148,10 @@ export class MessageChannelSyncStatusService {
   }
 
   public async markAsMessagesImportOngoing(messageChannelIds: string[]) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -134,6 +166,10 @@ export class MessageChannelSyncStatusService {
     messageChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
         `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
@@ -155,6 +191,10 @@ export class MessageChannelSyncStatusService {
     messageChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
         `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
@@ -202,6 +242,10 @@ export class MessageChannelSyncStatusService {
     messageChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
