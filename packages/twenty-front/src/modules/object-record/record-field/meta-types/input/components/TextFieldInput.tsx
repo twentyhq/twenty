@@ -4,7 +4,6 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 import { convertToUndefinedForWhitespaces } from '~/utils/string/convertToUndefinedForWhitespaces';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
@@ -27,36 +26,31 @@ export const TextFieldInput = ({
     useTextField();
 
   const persistField = usePersistField();
-
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistField(convertToEmptyStringForWhitespaces(newText)));
+    onEnter?.(() => persistField(newText.trim()));
   };
 
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistField(convertToEmptyStringForWhitespaces(newText)));
+    onEscape?.(() => persistField(newText.trim()));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() =>
-      persistField(convertToEmptyStringForWhitespaces(newText)),
-    );
+    onClickOutside?.(() => persistField(newText.trim()));
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistField(convertToEmptyStringForWhitespaces(newText)));
+    onTab?.(() => persistField(newText.trim()));
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() =>
-      persistField(convertToEmptyStringForWhitespaces(newText)),
-    );
+    onShiftTab?.(() => persistField(newText.trim()));
   };
 
   const handleChange = (newText: string) => {
-    setDraftValue(convertToUndefinedForWhitespaces(newText));
+    setDraftValue(convertToUndefinedForWhitespaces(newText.trim()));
   };
 
   return (
