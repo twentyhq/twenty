@@ -1,6 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { Any, ILike } from 'typeorm';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
@@ -83,6 +83,22 @@ export class BlocklistItemDeleteMessagesJob {
 
       const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
 
+      const handleConditions = handles
+        .map((handle) => {
+          const isHandleDomain = handle.startsWith('@');
+
+          return isHandleDomain
+            ? [
+                { handle: ILike(`%${handle}`), role: Any(rolesToDelete) },
+                {
+                  handle: ILike(`%.${handle.slice(1)}`),
+                  role: Any(rolesToDelete),
+                },
+              ]
+            : { handle, role: Any(rolesToDelete) };
+        })
+        .flat();
+
       const messageChannelMessageAssociationsToDelete =
         await messageChannelMessageAssociationRepository.find({
           where: {
@@ -92,10 +108,7 @@ export class BlocklistItemDeleteMessagesJob {
               },
             },
             message: {
-              messageParticipants: {
-                handle: Any(handles),
-                role: Any(rolesToDelete),
-              },
+              messageParticipants: handleConditions,
             },
           },
         });
