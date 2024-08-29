@@ -4,7 +4,7 @@ import { WorkflowStep } from '@/workflow/types/Workflow';
  * This function returns the reference of the array where the step should be positioned
  * and at which index.
  */
-const findStepPosition = ({
+const findStepPositionOrThrow = ({
   steps,
   stepId,
 }: {
@@ -55,7 +55,7 @@ export const insertStep = ({
   // Make a deep copy of the nested object to prevent unwanted side effects.
   const steps = structuredClone(stepsInitial);
 
-  const parentStepPosition = findStepPosition({
+  const parentStepPosition = findStepPositionOrThrow({
     steps: steps,
     stepId: parentStepId,
   });
