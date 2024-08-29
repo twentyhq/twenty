@@ -3,16 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { In, Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandRunner } from 'src/database/commands/upgrade-version/active-workspaces.command';
-import { BaseCommandOptions } from 'src/database/commands/upgrade-version/base.command';
+import {
+  ActiveWorkspacesCommandOptions,
+  ActiveWorkspacesCommandRunner,
+} from 'src/database/commands/upgrade-version/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-interface SetCustomObjectIsSoftDeletableCommandOptions
-  extends BaseCommandOptions {}
+type SetCustomObjectIsSoftDeletableCommandOptions =
+  ActiveWorkspacesCommandOptions;
 
 @Command({
-  name: 'upgrade-0-24:set-custom-object-is-soft-deletable',
+  name: 'upgrade-0.24:set-custom-object-is-soft-deletable',
   description: 'Set custom object is soft deletable',
 })
 export class SetCustomObjectIsSoftDeletableCommand extends ActiveWorkspacesCommandRunner {
