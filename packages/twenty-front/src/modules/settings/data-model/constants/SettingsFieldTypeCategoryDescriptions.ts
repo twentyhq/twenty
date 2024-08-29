@@ -1,4 +1,5 @@
-import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
+import { SettingsFieldTypeCategoryType } from "@/settings/data-model/types/SettingsFieldTypeCategoryType";
+
 
 export const SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS: Record<
   SettingsFieldTypeCategoryType,
@@ -6,5 +7,5 @@ export const SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS: Record<
 > = {
   Basic: 'All the basic field types you need to start',
   Advanced: 'More advanced fields for advanced projects',
-  Relation: 'Custom relationships and predefined relationships',
+  Relation: 'Create a relation with another object',
 };

@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 type BreadcrumbProps = {
   className?: string;
-  links: { children: string; href?: string }[];
+  links: { children: ReactNode; href?: string }[];
 };
 
 const StyledWrapper = styled.nav`

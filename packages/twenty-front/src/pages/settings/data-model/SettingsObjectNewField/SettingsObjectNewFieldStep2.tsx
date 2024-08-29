@@ -6,6 +6,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
@@ -182,9 +183,13 @@ export const SettingsObjectNewFieldStep2 = () => {
                   children: activeObjectMetadataItem.labelPlural,
                   href: `/settings/objects/${objectSlug}`,
                 },
-                { children: 'New Field' },
                 {
-                  children: !isConfigureStep ? '1. Type' : '2. Configure',
+                  children: (
+                    <SettingsDataModelNewFieldBreadcrumbDropDown
+                      isConfigureStep={isConfigureStep}
+                      onBreadcrumbClick={setIsConfigureStep}
+                    />
+                  ),
                 },
               ]}
             />
