@@ -4,16 +4,6 @@ import { Workflow } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
 import { IconSettingsAutomation } from 'twenty-ui';
 
-// FIXME: copy-pasted
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-`;
-
 const StyledActionListContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -35,10 +25,6 @@ export const RightDrawerWorkflowSelectActionContent = ({
 
   return (
     <>
-      <StyledTabListContainer>
-        <TabList loading={false} tabListId={tabListId} tabs={tabs} />
-      </StyledTabListContainer>
-
       <StyledActionListContainer>
         <MenuItem
           LeftIcon={IconSettingsAutomation}
