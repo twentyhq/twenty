@@ -1,9 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -16,12 +15,11 @@ import {
   WorkflowStatusesUpdateJob,
   WorkflowVersionBatchEvent,
   WorkflowVersionEventType,
+  WorkflowVersionStatusUpdate,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 
 @Injectable()
 export class WorkflowVersionStatusListener {
-  private readonly logger = new Logger(WorkflowVersionStatusListener.name);
-
   constructor(
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -36,6 +34,7 @@ export class WorkflowVersionStatusListener {
     const workflowIds = payload.events
       .filter(
         (event) =>
+          !event.properties.after.status ||
           event.properties.after.status === WorkflowVersionStatus.DRAFT,
       )
       .map((event) => event.properties.after.workflowId);
@@ -54,25 +53,14 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnEvent('workflowVersion.updated')
+  @OnEvent('workflowVersion.statusUpdated')
   async handleWorkflowVersionUpdated(
-    payload: WorkspaceEventBatch<
-      ObjectRecordUpdateEvent<WorkflowVersionWorkspaceEntity>
-    >,
+    payload: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
-    const statusUpdates = payload.events
-      .map((event) => {
-        return {
-          workflowId: event.properties.after.workflowId,
-          previousStatus: event.properties.before.status,
-          newStatus: event.properties.after.status,
-        };
-      })
-      .filter(
-        (workflowVersionEvent) =>
-          workflowVersionEvent.previousStatus !==
-          workflowVersionEvent.newStatus,
-      );
+    const statusUpdates = payload.events.filter(
+      (workflowVersionEvent) =>
+        workflowVersionEvent.previousStatus !== workflowVersionEvent.newStatus,
+    );
 
     if (statusUpdates.length === 0) {
       return;

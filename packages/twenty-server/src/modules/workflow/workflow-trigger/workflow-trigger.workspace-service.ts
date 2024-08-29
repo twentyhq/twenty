@@ -7,6 +7,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -18,6 +19,7 @@ import {
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
+import { WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { DatabaseEventTriggerService } from 'src/modules/workflow/workflow-trigger/database-event-trigger/database-event-trigger.service';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import {
@@ -33,6 +35,7 @@ export class WorkflowTriggerWorkspaceService {
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly databaseEventTriggerService: DatabaseEventTriggerService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async runWorkflowVersion(
@@ -171,19 +174,18 @@ export class WorkflowTriggerWorkspaceService {
         workflowVersionRepository,
         manager,
       );
-
-      await this.upgradeWorflowVersion(
-        workflow,
-        workflowVersion.id,
-        workflowRepository,
-        workflowVersionRepository,
-        manager,
-      );
     }
 
-    await this.setActiveVersionStatus(
-      workflowVersion.workflowId,
+    await this.upgradeWorflowVersion(
+      workflow,
       workflowVersion.id,
+      workflowRepository,
+      workflowVersionRepository,
+      manager,
+    );
+
+    await this.setActiveVersionStatus(
+      workflowVersion,
       workflowVersionRepository,
       manager,
     );
@@ -215,14 +217,18 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   private async setActiveVersionStatus(
-    workflowId: string,
-    workflowVersionId: string,
+    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    },
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     manager: EntityManager,
   ) {
     const activeWorkflowVersions = await workflowVersionRepository.find(
       {
-        where: { workflowId, status: WorkflowVersionStatus.ACTIVE },
+        where: {
+          workflowId: workflowVersion.workflowId,
+          status: WorkflowVersionStatus.ACTIVE,
+        },
       },
       manager,
     );
@@ -235,9 +241,15 @@ export class WorkflowTriggerWorkspaceService {
     }
 
     await workflowVersionRepository.update(
-      { id: workflowVersionId },
+      { id: workflowVersion.id },
       { status: WorkflowVersionStatus.ACTIVE },
       manager,
+    );
+
+    this.emitStatusUpdateEventOrThrow(
+      workflowVersion.workflowId,
+      workflowVersion.status,
+      WorkflowVersionStatus.ACTIVE,
     );
   }
 
@@ -259,6 +271,12 @@ export class WorkflowTriggerWorkspaceService {
       { id: workflowVersion.id },
       { status: WorkflowVersionStatus.DEACTIVATED },
       manager,
+    );
+
+    this.emitStatusUpdateEventOrThrow(
+      workflowVersion.workflowId,
+      workflowVersion.status,
+      WorkflowVersionStatus.DEACTIVATED,
     );
   }
 
@@ -323,5 +341,32 @@ export class WorkflowTriggerWorkspaceService {
       default:
         break;
     }
+  }
+
+  private emitStatusUpdateEventOrThrow(
+    workflowId: string,
+    previousStatus: WorkflowVersionStatus,
+    newStatus: WorkflowVersionStatus,
+  ) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new WorkflowTriggerException(
+        'No workspace id found',
+        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      );
+    }
+
+    this.workspaceEventEmitter.emit(
+      'workflowVersion.statusUpdated',
+      [
+        {
+          workflowId,
+          previousStatus,
+          newStatus,
+        } satisfies WorkflowVersionStatusUpdate,
+      ],
+      workspaceId,
+    );
   }
 }

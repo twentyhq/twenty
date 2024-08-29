@@ -2,6 +2,7 @@ import { Scope } from '@nestjs/common';
 
 import isEqual from 'lodash.isequal';
 
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -34,7 +35,7 @@ export type WorkflowVersionBatchCreateEvent = {
   workflowIds: string[];
 };
 
-type WorkflowVersionStatusUpdate = {
+export type WorkflowVersionStatusUpdate = {
   workflowId: string;
   previousStatus: WorkflowVersionStatus;
   newStatus: WorkflowVersionStatus;
@@ -54,6 +55,7 @@ export type WorkflowVersionBatchDelete = {
 export class WorkflowStatusesUpdateJob {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
+  @Process(WorkflowStatusesUpdateJob.name)
   async handle(event: WorkflowVersionBatchEvent): Promise<void> {
     switch (event.type) {
       case WorkflowVersionEventType.CREATE:

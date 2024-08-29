@@ -4,9 +4,9 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
-    WorkflowStatusesUpdateJob,
-    WorkflowVersionEvent,
-    WorkflowVersionEventType,
+  WorkflowStatusesUpdateJob,
+  WorkflowVersionBatchEvent,
+  WorkflowVersionEventType,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 
 describe('WorkflowStatusesUpdate', () => {
@@ -60,10 +60,10 @@ describe('WorkflowStatusesUpdate', () => {
     describe('when event type is CREATE', () => {
       it('when already a draft, do not change anything', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.CREATE,
-          workflowId: '1',
+          workflowIds: ['1'],
         };
 
         const mockWorkflow = {
@@ -82,10 +82,10 @@ describe('WorkflowStatusesUpdate', () => {
 
       it('when no draft yet, update statuses', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.CREATE,
-          workflowId: '1',
+          workflowIds: ['1'],
         };
 
         const mockWorkflow = {
@@ -106,12 +106,16 @@ describe('WorkflowStatusesUpdate', () => {
     describe('when event type is STATUS_UPDATE', () => {
       test('when status is the same, should not do anything', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
-          workflowId: '1',
-          previousStatus: WorkflowVersionStatus.ACTIVE,
-          newStatus: WorkflowVersionStatus.ACTIVE,
+          statusUpdates: [
+            {
+              workflowId: '1',
+              previousStatus: WorkflowVersionStatus.ACTIVE,
+              newStatus: WorkflowVersionStatus.ACTIVE,
+            },
+          ],
         };
 
         const mockWorkflow = {
@@ -130,12 +134,16 @@ describe('WorkflowStatusesUpdate', () => {
 
       test('when update that should be impossible, do not do anything', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
-          workflowId: '1',
-          previousStatus: WorkflowVersionStatus.ACTIVE,
-          newStatus: WorkflowVersionStatus.DRAFT,
+          statusUpdates: [
+            {
+              workflowId: '1',
+              previousStatus: WorkflowVersionStatus.ACTIVE,
+              newStatus: WorkflowVersionStatus.DRAFT,
+            },
+          ],
         };
 
         const mockWorkflow = {
@@ -154,12 +162,16 @@ describe('WorkflowStatusesUpdate', () => {
 
       test('when WorkflowVersionStatus.DEACTIVATED to WorkflowVersionStatus.ACTIVE, should activate', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
-          workflowId: '1',
-          previousStatus: WorkflowVersionStatus.DEACTIVATED,
-          newStatus: WorkflowVersionStatus.ACTIVE,
+          statusUpdates: [
+            {
+              workflowId: '1',
+              previousStatus: WorkflowVersionStatus.DEACTIVATED,
+              newStatus: WorkflowVersionStatus.ACTIVE,
+            },
+          ],
         };
 
         const mockWorkflow = {
@@ -181,12 +193,16 @@ describe('WorkflowStatusesUpdate', () => {
 
       test('when WorkflowVersionStatus.ACTIVE to WorkflowVersionStatus.DEACTIVATED, should deactivate', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
-          workflowId: '1',
-          previousStatus: WorkflowVersionStatus.ACTIVE,
-          newStatus: WorkflowVersionStatus.DEACTIVATED,
+          statusUpdates: [
+            {
+              workflowId: '1',
+              previousStatus: WorkflowVersionStatus.ACTIVE,
+              newStatus: WorkflowVersionStatus.DEACTIVATED,
+            },
+          ],
         };
 
         const mockWorkflow = {
@@ -215,12 +231,16 @@ describe('WorkflowStatusesUpdate', () => {
 
       test('when WorkflowVersionStatus.DRAFT to WorkflowVersionStatus.ACTIVE, should activate', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
-          workflowId: '1',
-          previousStatus: WorkflowVersionStatus.DRAFT,
-          newStatus: WorkflowVersionStatus.ACTIVE,
+          statusUpdates: [
+            {
+              workflowId: '1',
+              previousStatus: WorkflowVersionStatus.DRAFT,
+              newStatus: WorkflowVersionStatus.ACTIVE,
+            },
+          ],
         };
 
         const mockWorkflow = {
@@ -251,10 +271,10 @@ describe('WorkflowStatusesUpdate', () => {
     describe('when event type is DELETE', () => {
       test('when status is not draft, should not do anything', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.DELETE,
-          workflowId: '1',
+          workflowIds: ['1'],
         };
 
         const mockWorkflow = {
@@ -273,10 +293,10 @@ describe('WorkflowStatusesUpdate', () => {
 
       test('when status is draft, should delete', async () => {
         // Arrange
-        const event: WorkflowVersionEvent = {
+        const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.DELETE,
-          workflowId: '1',
+          workflowIds: ['1'],
         };
 
         const mockWorkflow = {
