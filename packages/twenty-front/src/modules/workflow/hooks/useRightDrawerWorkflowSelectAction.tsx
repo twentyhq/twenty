@@ -12,7 +12,6 @@ import {
   IconSettingsAutomation,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
-import { logError } from '~/utils/logError';
 
 export const useRightDrawerWorkflowSelectAction = ({
   tabListId,
@@ -77,48 +76,44 @@ export const useRightDrawerWorkflowSelectAction = ({
   );
 
   const handleActionClick = async (actionId: string) => {
-    try {
-      if (createStepFromParentStepId === undefined) {
-        throw new Error('Select a step to create a new step from first.');
-      }
+    if (createStepFromParentStepId === undefined) {
+      throw new Error('Select a step to create a new step from first.');
+    }
 
-      const newNodeId = v4();
+    const newNodeId = v4();
 
-      /**
-       * FIXME: For now, the data of the node to create are mostly static.
-       */
-      await createNode({
-        parentNodeId: createStepFromParentStepId,
-        nodeToAdd: {
-          id: newNodeId,
-          name: actionId,
-          type: 'CODE_ACTION',
-          valid: true,
-          settings: {
-            serverlessFunctionId: '111',
-            errorHandlingOptions: {
-              continueOnFailure: {
-                value: true,
-              },
-              retryOnFailure: {
-                value: true,
-              },
+    /**
+     * FIXME: For now, the data of the node to create are mostly static.
+     */
+    await createNode({
+      parentNodeId: createStepFromParentStepId,
+      nodeToAdd: {
+        id: newNodeId,
+        name: actionId,
+        type: 'CODE_ACTION',
+        valid: true,
+        settings: {
+          serverlessFunctionId: '111',
+          errorHandlingOptions: {
+            continueOnFailure: {
+              value: true,
+            },
+            retryOnFailure: {
+              value: true,
             },
           },
         },
-      });
+      },
+    });
 
-      /**
-       * After the step has been created, select it.
-       * As the `createNode` function mutates the cached workflow before resolving,
-       * we are sure that the new node will have been created at this stage.
-       *
-       * Selecting the node will cause a right drawer to open in order to edit the step.
-       */
-      setShowPageWorkflowDiagramTriggerNodeSelection(newNodeId);
-    } catch (err) {
-      logError(`Failed to create a node: ${err}`);
-    }
+    /**
+     * After the step has been created, select it.
+     * As the `createNode` function mutates the cached workflow before resolving,
+     * we are sure that the new node will have been created at this stage.
+     *
+     * Selecting the node will cause a right drawer to open in order to edit the step.
+     */
+    setShowPageWorkflowDiagramTriggerNodeSelection(newNodeId);
   };
 
   return {
