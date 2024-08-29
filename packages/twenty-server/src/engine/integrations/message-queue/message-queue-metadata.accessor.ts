@@ -2,14 +2,11 @@
 import { Injectable, Type } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
-
 import { MessageQueueProcessOptions } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { MessageQueueProcessorOptions } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import {
   PROCESSOR_METADATA,
   PROCESS_METADATA,
-  WORKER_METADATA,
 } from 'src/engine/integrations/message-queue/message-queue.constants';
 
 @Injectable()

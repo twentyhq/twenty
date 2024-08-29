@@ -1,8 +1,4 @@
-import {
-  ConfigurableModuleBuilder,
-  FactoryProvider,
-  ModuleMetadata,
-} from '@nestjs/common';
+import { ConfigurableModuleBuilder } from '@nestjs/common';
 
 import { ExceptionHandlerModuleOptions } from './interfaces';
 
