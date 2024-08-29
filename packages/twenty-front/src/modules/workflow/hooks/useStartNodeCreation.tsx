@@ -1,13 +1,13 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { createStepFromParentStepIdState } from '@/workflow/states/createStepFromParentStepIdState';
+import { workflowCreateStepFropParentStepId } from '@/workflow/states/workflowCreateStepFropParentStepId';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 export const useStartNodeCreation = () => {
   const { openRightDrawer } = useRightDrawer();
   const setCreateStepFromStepState = useSetRecoilState(
-    createStepFromParentStepIdState,
+    workflowCreateStepFropParentStepId,
   );
 
   /**

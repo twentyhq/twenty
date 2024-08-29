@@ -1,7 +1,7 @@
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useCreateNode } from '@/workflow/hooks/useCreateNode';
-import { createStepFromParentStepIdState } from '@/workflow/states/createStepFromParentStepIdState';
 import { showPageWorkflowDiagramTriggerNodeSelectionState } from '@/workflow/states/showPageWorkflowDiagramTriggerNodeSelectionState';
+import { workflowCreateStepFropParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
 import { Workflow } from '@/workflow/types/Workflow';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -20,8 +20,8 @@ export const useRightDrawerWorkflowSelectAction = ({
   tabListId: string;
   workflow: Workflow;
 }) => {
-  const createStepFromParentStepId = useRecoilValue(
-    createStepFromParentStepIdState,
+  const workflowCreateStepFropParentStepId = useRecoilValue(
+    workflowCreateStepFropParentStepIdState,
   );
 
   const setShowPageWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
@@ -76,7 +76,7 @@ export const useRightDrawerWorkflowSelectAction = ({
   );
 
   const handleActionClick = async (actionId: string) => {
-    if (createStepFromParentStepId === undefined) {
+    if (workflowCreateStepFropParentStepId === undefined) {
       throw new Error('Select a step to create a new step from first.');
     }
 
@@ -86,7 +86,7 @@ export const useRightDrawerWorkflowSelectAction = ({
      * FIXME: For now, the data of the node to create are mostly static.
      */
     await createNode({
-      parentNodeId: createStepFromParentStepId,
+      parentNodeId: workflowCreateStepFropParentStepId,
       nodeToAdd: {
         id: newNodeId,
         name: actionId,
