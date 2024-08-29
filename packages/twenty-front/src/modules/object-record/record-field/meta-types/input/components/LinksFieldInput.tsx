@@ -1,28 +1,9 @@
-import styled from '@emotion/styled';
-import { useMemo, useRef, useState } from 'react';
-import { Key } from 'ts-key-enum';
-import { IconCheck, IconPlus } from 'twenty-ui';
-
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { toSpliced } from '~/utils/array/toSpliced';
-import { isDefined } from '~/utils/isDefined';
+import { useMemo } from 'react';
+import { isDefined } from 'twenty-ui';
 import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
-
-const StyledDropdownMenu = styled(DropdownMenu)`
-  left: -1px;
-  position: absolute;
-  top: -1px;
-`;
+import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type LinksFieldInputProps = {
   onCancel?: () => void;
@@ -30,8 +11,6 @@ type LinksFieldInputProps = {
 
 export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
   const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const links = useMemo<{ url: string; label: string }[]>(
     () =>
@@ -51,158 +30,44 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
     ],
   );
 
-  const handleDropdownClose = () => {
-    onCancel?.();
-  };
-
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: handleDropdownClose,
-  });
-
-  useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
-
-  const [isInputDisplayed, setIsInputDisplayed] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [linkToEditIndex, setLinkToEditIndex] = useState(-1);
-  const isAddingNewLink = linkToEditIndex === -1;
-
-  const handleAddButtonClick = () => {
-    setLinkToEditIndex(-1);
-    setIsInputDisplayed(true);
-  };
-
-  const handleEditButtonClick = (index: number) => {
-    setLinkToEditIndex(index);
-    setInputValue(links[index].url);
-    setIsInputDisplayed(true);
-  };
-
-  const urlInputValidation = inputValue
-    ? absoluteUrlSchema.safeParse(inputValue)
-    : null;
-
-  const handleSubmitInput = () => {
-    if (!urlInputValidation?.success) return;
-
-    const validatedInputValue = urlInputValidation.data;
-
-    // Don't persist if value hasn't changed.
-    if (
-      !isAddingNewLink &&
-      validatedInputValue === links[linkToEditIndex].url
-    ) {
-      setIsInputDisplayed(false);
-      setInputValue('');
-      return;
-    }
-
-    const linkValue = { label: '', url: validatedInputValue };
-    const nextLinks = isAddingNewLink
-      ? [...links, linkValue]
-      : toSpliced(links, linkToEditIndex, 1, linkValue);
-    const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
-
+  const handlePersistLinks = (
+    updatedLinks: { url: string; label: string }[],
+  ) => {
+    const [nextPrimaryLink, ...nextSecondaryLinks] = updatedLinks;
     persistLinksField({
-      primaryLinkUrl: nextPrimaryLink.url ?? '',
-      primaryLinkLabel: nextPrimaryLink.label ?? '',
+      primaryLinkUrl: nextPrimaryLink?.url ?? '',
+      primaryLinkLabel: nextPrimaryLink?.label ?? '',
       secondaryLinks: nextSecondaryLinks,
-    });
-    setIsInputDisplayed(false);
-    setInputValue('');
-  };
-
-  const handleSetPrimaryLink = (index: number) => {
-    const nextLinks = moveArrayItem(links, { fromIndex: index, toIndex: 0 });
-    const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
-
-    persistLinksField({
-      primaryLinkUrl: nextPrimaryLink.url ?? '',
-      primaryLinkLabel: nextPrimaryLink.label ?? '',
-      secondaryLinks: nextSecondaryLinks,
-    });
-  };
-
-  const handleDeleteLink = (index: number) => {
-    const hasOnlyOneLastLink = links.length === 1;
-
-    if (hasOnlyOneLastLink) {
-      persistLinksField({
-        primaryLinkUrl: '',
-        primaryLinkLabel: '',
-        secondaryLinks: null,
-      });
-
-      handleDropdownClose();
-
-      return;
-    }
-
-    const isRemovingPrimary = index === 0;
-    if (isRemovingPrimary) {
-      const [, nextPrimaryLink, ...nextSecondaryLinks] = links;
-
-      persistLinksField({
-        primaryLinkUrl: nextPrimaryLink.url ?? '',
-        primaryLinkLabel: nextPrimaryLink.label ?? '',
-        secondaryLinks: nextSecondaryLinks,
-      });
-
-      return;
-    }
-
-    persistLinksField({
-      ...fieldValue,
-      secondaryLinks: toSpliced(fieldValue.secondaryLinks ?? [], index - 1, 1),
     });
   };
 
   return (
-    <StyledDropdownMenu ref={containerRef} width={200}>
-      {!!links.length && (
-        <>
-          <DropdownMenuItemsContainer>
-            {links.map(({ label, url }, index) => (
-              <LinksFieldMenuItem
-                key={index}
-                dropdownId={`${hotkeyScope}-links-${index}`}
-                isPrimary={index === 0}
-                label={label}
-                onEdit={() => handleEditButtonClick(index)}
-                onSetAsPrimary={() => handleSetPrimaryLink(index)}
-                onDelete={() => handleDeleteLink(index)}
-                url={url}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
-      )}
-      {isInputDisplayed || !links.length ? (
-        <DropdownMenuInput
-          autoFocus
-          placeholder="URL"
-          value={inputValue}
-          hotkeyScope={hotkeyScope}
-          onChange={(event) => setInputValue(event.target.value)}
-          onEnter={handleSubmitInput}
-          rightComponent={
-            <LightIconButton
-              Icon={isAddingNewLink ? IconPlus : IconCheck}
-              disabled={!urlInputValidation?.success}
-              onClick={handleSubmitInput}
-            />
-          }
+    <MultiItemFieldInput
+      items={links}
+      onPersist={handlePersistLinks}
+      onCancel={onCancel}
+      placeholder="URL"
+      validateInput={(input) => absoluteUrlSchema.safeParse(input).success}
+      formatInput={(input) => ({ url: input, label: '' })}
+      renderItem={({
+        value: link,
+        index,
+        handleEdit,
+        handleSetPrimary,
+        handleDelete,
+      }) => (
+        <LinksFieldMenuItem
+          key={index}
+          dropdownId={`${hotkeyScope}-links-${index}`}
+          isPrimary={index === 0}
+          label={link.label}
+          onEdit={handleEdit}
+          onSetAsPrimary={handleSetPrimary}
+          onDelete={handleDelete}
+          url={link.url}
         />
-      ) : (
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            onClick={handleAddButtonClick}
-            LeftIcon={IconPlus}
-            text="Add link"
-          />
-        </DropdownMenuItemsContainer>
       )}
-    </StyledDropdownMenu>
+      hotkeyScope={hotkeyScope}
+    />
   );
 };

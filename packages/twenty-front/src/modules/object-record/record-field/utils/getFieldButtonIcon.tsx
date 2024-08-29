@@ -3,6 +3,7 @@ import { IconComponent, IconPencil } from 'twenty-ui';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
+import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -29,7 +30,8 @@ export const getFieldButtonIcon = (
     (isFieldRelation(fieldDefinition) &&
       fieldDefinition.metadata.relationObjectMetadataNameSingular !==
         'workspaceMember') ||
-    isFieldLinks(fieldDefinition)
+    isFieldLinks(fieldDefinition) ||
+    isFieldEmails(fieldDefinition)
   ) {
     return IconPencil;
   }

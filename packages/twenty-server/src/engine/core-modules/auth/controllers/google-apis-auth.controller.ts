@@ -72,7 +72,7 @@ export class GoogleAPIsAuthController {
     if (!workspaceId) {
       throw new AuthException(
         'Workspace not found',
-        AuthExceptionCode.INVALID_INPUT,
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
 

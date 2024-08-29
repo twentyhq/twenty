@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 
@@ -20,8 +20,6 @@ import { ArgsStringFactory } from './args-string.factory';
 
 @Injectable()
 export class RelationFieldAliasFactory {
-  private logger = new Logger(RelationFieldAliasFactory.name);
-
   constructor(
     @Inject(forwardRef(() => FieldsStringFactory))
     private readonly fieldsStringFactory: CircularDep<FieldsStringFactory>,

@@ -10,11 +10,11 @@ export const matchColumnsState = atom({
   default: [] as Columns<string>,
 });
 
-export const initialComputedColumnsState = selectorFamily<
+export const initialComputedColumnsSelector = selectorFamily<
   Columns<string>,
   ImportedRow
 >({
-  key: 'InitialComputedColumnsState',
+  key: 'initialComputedColumnsSelector',
   get:
     (headerValues: ImportedRow) =>
     ({ get }) => {

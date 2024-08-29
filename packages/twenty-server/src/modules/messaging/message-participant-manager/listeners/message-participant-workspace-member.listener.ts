@@ -52,7 +52,7 @@ export class MessageParticipantWorkspaceMemberListener {
     }
 
     for (const eventPayload of payload.events) {
-      if (eventPayload.properties.after.userEmail === null) {
+      if (!eventPayload.properties.after.userEmail) {
         continue;
       }
 

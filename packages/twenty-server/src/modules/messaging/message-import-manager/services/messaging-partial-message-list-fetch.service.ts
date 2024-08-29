@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { gmail_v1 } from 'googleapis';
 import { Any } from 'typeorm';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
@@ -8,13 +7,14 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
-import { MessagingGmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-ids-to-exclude.service';
-import { MessagingGmailHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-history.service';
-import { MessagingErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+import {
+  MessageImportExceptionHandlerService,
+  MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
+import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 @Injectable()
 export class MessagingPartialMessageListFetchService {
@@ -23,14 +23,12 @@ export class MessagingPartialMessageListFetchService {
   );
 
   constructor(
-    private readonly gmailClientProvider: MessagingGmailClientProvider,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
-    private readonly gmailGetHistoryService: MessagingGmailHistoryService,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
-    private readonly gmailFetchMessageIdsToExcludeService: MessagingGmailFetchMessageIdsToExcludeService,
+    private readonly messagingGetMessageListService: MessagingGetMessageListService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
   public async processMessageListFetch(
@@ -38,129 +36,90 @@ export class MessagingPartialMessageListFetchService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
-      messageChannel.id,
-    );
-
-    const lastSyncHistoryId = messageChannel.syncCursor;
-
-    const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(connectedAccount);
-
-    const { history, historyId, error } =
-      await this.gmailGetHistoryService.getHistory(
-        gmailClient,
-        lastSyncHistoryId,
-      );
-
-    if (error) {
-      await this.gmailErrorHandlingService.handleGmailError(
-        error,
-        'partial-message-list-fetch',
-        messageChannel,
-        workspaceId,
-      );
-
-      return;
-    }
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    await messageChannelRepository.update(
-      {
-        id: messageChannel.id,
-      },
-      {
-        throttleFailureCount: 0,
-        syncStageStartedAt: null,
-      },
-    );
-
-    if (!historyId) {
-      throw new Error(
-        `No historyId found for ${connectedAccount.id} in workspace ${workspaceId} in gmail history response.`,
-      );
-    }
-
-    if (historyId === lastSyncHistoryId || !history?.length) {
-      this.logger.log(
-        `Partial message list import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
-      );
-
-      await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+    try {
+      await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
         messageChannel.id,
       );
 
-      return;
-    }
-
-    const { messagesAdded, messagesDeleted } =
-      await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
-
-    let messageIdsToFilter: string[] = [];
-
-    try {
-      messageIdsToFilter =
-        await this.gmailFetchMessageIdsToExcludeService.fetchEmailIdsToExcludeOrThrow(
-          gmailClient,
-          lastSyncHistoryId,
+      const messageChannelRepository =
+        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+          'messageChannel',
         );
-    } catch (error) {
-      await this.gmailErrorHandlingService.handleGmailError(
-        error,
-        'partial-message-list-fetch',
-        messageChannel,
-        workspaceId,
-      );
 
-      return;
-    }
-
-    const messagesAddedFiltered = messagesAdded.filter(
-      (messageId) => !messageIdsToFilter.includes(messageId),
-    );
-
-    await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-      messagesAddedFiltered,
-    );
-
-    this.logger.log(
-      `Added ${messagesAddedFiltered.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
-    );
-
-    const messageChannelMessageAssociationRepository =
-      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        'messageChannelMessageAssociation',
-      );
-
-    await messageChannelMessageAssociationRepository.delete({
-      messageChannelId: messageChannel.id,
-      messageExternalId: Any(messagesDeleted),
-    });
-
-    this.logger.log(
-      `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
-    );
-
-    const currentSyncCursor = messageChannel.syncCursor;
-
-    if (!currentSyncCursor || historyId > currentSyncCursor) {
       await messageChannelRepository.update(
         {
           id: messageChannel.id,
         },
         {
-          syncCursor: historyId,
+          throttleFailureCount: 0,
+          syncStageStartedAt: null,
         },
       );
-    }
 
-    await this.messagingChannelSyncStatusService.scheduleMessagesImport(
-      messageChannel.id,
-    );
+      const syncCursor = messageChannel.syncCursor;
+
+      const { messageExternalIds, messageExternalIdsToDelete, nextSyncCursor } =
+        await this.messagingGetMessageListService.getPartialMessageList(
+          connectedAccount,
+          syncCursor,
+        );
+
+      if (syncCursor === nextSyncCursor) {
+        this.logger.log(
+          `Partial message list import done with history ${syncCursor} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        );
+
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+          messageChannel.id,
+        );
+
+        return;
+      }
+
+      await this.cacheStorage.setAdd(
+        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        messageExternalIds,
+      );
+
+      this.logger.log(
+        `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      );
+
+      const messageChannelMessageAssociationRepository =
+        await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          'messageChannelMessageAssociation',
+        );
+
+      await messageChannelMessageAssociationRepository.delete({
+        messageChannelId: messageChannel.id,
+        messageExternalId: Any(messageExternalIdsToDelete),
+      });
+
+      this.logger.log(
+        `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      );
+
+      if (!syncCursor || nextSyncCursor > syncCursor) {
+        await messageChannelRepository.update(
+          {
+            id: messageChannel.id,
+          },
+          {
+            syncCursor: nextSyncCursor,
+          },
+        );
+      }
+
+      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        messageChannel.id,
+      );
+    } catch (error) {
+      await this.messageImportErrorHandlerService.handleDriverException(
+        error,
+        MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
+        messageChannel,
+        workspaceId,
+      );
+    }
   }
 }

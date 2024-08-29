@@ -52,7 +52,7 @@ export const useHandleToggleTrashColumnFilter = ({
       operand: ViewFilterOperand.IsNotEmpty,
       displayValue: '',
       definition: {
-        label: 'Trash',
+        label: `Deleted ${objectNameSingular}`,
         iconName: 'IconTrash',
         fieldMetadataId: trashFieldMetadata.id,
         type: filterType,
@@ -61,7 +61,12 @@ export const useHandleToggleTrashColumnFilter = ({
     };
 
     upsertCombinedViewFilter(newFilter);
-  }, [columnDefinitions, objectMetadataItem.fields, upsertCombinedViewFilter]);
+  }, [
+    columnDefinitions,
+    objectMetadataItem.fields,
+    objectNameSingular,
+    upsertCombinedViewFilter,
+  ]);
 
   return handleToggleTrashColumnFilter;
 };
