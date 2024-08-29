@@ -26,10 +26,9 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
-import { PACKAGE_JSON } from 'src/engine/integrations/serverless/drivers/constants/dependencies/package_json';
-import { YARN_LOCK } from 'src/engine/integrations/serverless/drivers/constants/dependencies/yarn_lock';
 import { BuildDirectoryManager } from 'src/engine/integrations/serverless/drivers/utils/build-directory-manager';
 import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
+import { get_last_layer_dependencies } from 'src/engine/integrations/serverless/drivers/utils/get_last_layer_dependencies';
 
 import { unzipFile } from './utils/unzip-file';
 
@@ -92,8 +91,9 @@ export class LocalDriver
   }
 
   private async buildCommonNodeModules(): Promise<number> {
+    const { packageJson, yarnLock } = await get_last_layer_dependencies();
     const dependencyHash = serverlessFunctionCreateHash(
-      PACKAGE_JSON + YARN_LOCK,
+      JSON.stringify(packageJson) + yarnLock,
     );
     const { lastCommonNodeModulesHash, lastVersion } =
       await this.getLastCommonNodeModulesInfo();
@@ -108,8 +108,11 @@ export class LocalDriver
 
     const newCommonModulesVersion = lastVersion + 1;
 
-    await fs.writeFile(join(sourceTemporaryDir, 'package.json'), PACKAGE_JSON);
-    await fs.writeFile(join(sourceTemporaryDir, 'yarn.lock'), YARN_LOCK);
+    await fs.writeFile(
+      join(sourceTemporaryDir, 'package.json'),
+      JSON.stringify(packageJson),
+    );
+    await fs.writeFile(join(sourceTemporaryDir, 'yarn.lock'), yarnLock);
 
     await execPromise('yarn', {
       cwd: sourceTemporaryDir,

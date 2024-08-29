@@ -43,9 +43,8 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { isDefined } from 'src/utils/is-defined';
-import { PACKAGE_JSON } from 'src/engine/integrations/serverless/drivers/constants/dependencies/package_json';
-import { YARN_LOCK } from 'src/engine/integrations/serverless/drivers/constants/dependencies/yarn_lock';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
+import { get_last_layer_dependencies } from 'src/engine/integrations/serverless/drivers/utils/get_last_layer_dependencies';
 
 const execPromise = promisify(exec);
 
@@ -101,8 +100,9 @@ export class LambdaDriver
   }
 
   private async upsertCommonLayer(): Promise<string> {
+    const { packageJson, yarnLock } = await get_last_layer_dependencies();
     const dependencyHash = serverlessFunctionCreateHash(
-      PACKAGE_JSON + YARN_LOCK,
+      JSON.stringify(packageJson) + yarnLock,
     );
     const lastCommonLayer = await this.getLastCommonLayer();
 
@@ -122,9 +122,9 @@ export class LambdaDriver
 
     await fs.writeFile(
       join(nodeDependenciesFolder, 'package.json'),
-      PACKAGE_JSON,
+      JSON.stringify(packageJson),
     );
-    await fs.writeFile(join(nodeDependenciesFolder, 'yarn.lock'), YARN_LOCK);
+    await fs.writeFile(join(nodeDependenciesFolder, 'yarn.lock'), yarnLock);
 
     await execPromise('yarn', {
       cwd: nodeDependenciesFolder,
