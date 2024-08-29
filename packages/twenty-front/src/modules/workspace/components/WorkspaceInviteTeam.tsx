@@ -12,6 +12,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useInviteUser } from '../../workspace-invitation/hooks/useInviteUser';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -81,21 +82,26 @@ export const WorkspaceInviteTeam = () => {
   const submit = handleSubmit(async ({ emails }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
     const { data } = await sendInvitation({ emails: emailsList });
-
-    if (data && data.sendInviteLink.result.length) {
-      enqueueSnackBar(`${data.sendInviteLink.result.length} invitations sent`, {
-        variant: SnackBarVariant.Success,
-        duration: 2000,
-      });
-    }
-
-    if (data && !data.sendInviteLink.success) {
-      data.sendInviteLink.errors.forEach((error) => {
-        enqueueSnackBar(error, {
-          variant: SnackBarVariant.Error,
-          duration: 5000,
+    if (isDefined(data)) {
+      if (data.sendInviteLink.result.length > 0) {
+        enqueueSnackBar(
+          `${data.sendInviteLink.result.length} invitations sent`,
+          {
+            variant: SnackBarVariant.Success,
+            duration: 2000,
+          },
+        );
+      }
+      if (!data.sendInviteLink.success) {
+        data.sendInviteLink.errors.forEach((error) => {
+          enqueueSnackBar(error, {
+            variant: SnackBarVariant.Error,
+            duration: 5000,
+          });
         });
-      });
+      }
+    } else {
+      return;
     }
   });
 

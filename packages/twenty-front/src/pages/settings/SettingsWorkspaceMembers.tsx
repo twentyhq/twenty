@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { H2Title, IconTrash, IconUsers, IconReload } from 'twenty-ui';
+import { H2Title, IconTrash, IconUsers } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
