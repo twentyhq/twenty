@@ -109,18 +109,6 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async markAsCalendarEventsImportOngoing(calendarChannelId: string) {
-    const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
-        'calendarChannel',
-      );
-
-    await calendarChannelRepository.update(calendarChannelId, {
-      syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
-      syncStatus: CalendarChannelSyncStatus.ONGOING,
-    });
-  }
-
   public async markAsCompletedAndSchedulePartialMessageListFetch(
     calendarChannelId: string,
   ) {

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { GraphQLSchema } from 'graphql';
 
@@ -14,8 +14,6 @@ import { OrphanedTypesFactory } from './factories/orphaned-types.factory';
 
 @Injectable()
 export class WorkspaceGraphQLSchemaFactory {
-  private readonly logger = new Logger(WorkspaceGraphQLSchemaFactory.name);
-
   constructor(
     private readonly typeDefinitionsGenerator: TypeDefinitionsGenerator,
     private readonly queryTypeFactory: QueryTypeFactory,

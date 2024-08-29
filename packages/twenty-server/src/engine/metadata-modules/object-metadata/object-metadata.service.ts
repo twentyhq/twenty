@@ -399,31 +399,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
-  public async findOneOrFailWithinWorkspace(
-    workspaceId: string,
-    options: FindOneOptions<ObjectMetadataEntity>,
-  ): Promise<ObjectMetadataEntity> {
-    try {
-      return this.objectMetadataRepository.findOneOrFail({
-        relations: [
-          'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
-        ],
-        ...options,
-        where: {
-          ...options.where,
-          workspaceId,
-        },
-      });
-    } catch (error) {
-      throw new ObjectMetadataException(
-        'Object does not exist',
-        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-  }
-
   public async findManyWithinWorkspace(
     workspaceId: string,
     options?: FindManyOptions<ObjectMetadataEntity>,

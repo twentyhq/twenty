@@ -12,7 +12,7 @@ import { MessageQueueDriver } from './interfaces/message-queue-driver.interface'
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);
   private workersMap: {
-    [queueName: string]: (job: MessageQueueJob<any>) => Promise<void> | void;
+    [queueName: string]: (job: MessageQueueJob) => Promise<void> | void;
   } = {};
 
   constructor() {}
