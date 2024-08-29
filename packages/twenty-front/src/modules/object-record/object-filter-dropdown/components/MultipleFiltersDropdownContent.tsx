@@ -60,6 +60,7 @@ export const MultipleFiltersDropdownContent = ({
             {[
               'TEXT',
               'EMAIL',
+              'EMAILS',
               'PHONE',
               'FULL_NAME',
               'LINK',

@@ -143,6 +143,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
+      if (fieldMetadataInput.type === FieldMetadataType.EMAIL) {
+        throw new FieldMetadataException(
+          '"Email" field types are being deprecated, please use Emails type instead',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
       this.validateFieldMetadataInput<CreateFieldInput>(
         fieldMetadataInput,
         objectMetadata,

@@ -167,6 +167,7 @@ export const SettingsObjectNewFieldStep2 = () => {
       FieldMetadataType.Numeric,
       FieldMetadataType.RichText,
       FieldMetadataType.Actor,
+      FieldMetadataType.Email,
     ] as const
   ).filter(isDefined);
 

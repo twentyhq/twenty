@@ -1,34 +1,32 @@
-import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
+import { EmailDisplay } from '@/ui/field/display/components/EmailDisplay';
 import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 
-type LinksFieldMenuItemProps = {
+type EmailsFieldMenuItemProps = {
   dropdownId: string;
   isPrimary?: boolean;
-  label: string;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
-  url: string;
+  email: string;
 };
 
-export const LinksFieldMenuItem = ({
+export const EmailsFieldMenuItem = ({
   dropdownId,
   isPrimary,
-  label,
   onEdit,
   onSetAsPrimary,
   onDelete,
-  url,
-}: LinksFieldMenuItemProps) => {
+  email,
+}: EmailsFieldMenuItemProps) => {
   return (
     <MultiItemFieldMenuItem
       dropdownId={dropdownId}
       isPrimary={isPrimary}
-      value={{ label, url }}
+      value={email}
       onEdit={onEdit}
       onSetAsPrimary={onSetAsPrimary}
       onDelete={onDelete}
-      DisplayComponent={LinkDisplay}
+      DisplayComponent={EmailDisplay}
     />
   );
 };

@@ -26,6 +26,7 @@ export enum FieldMetadataType {
   TEXT = 'TEXT',
   PHONE = 'PHONE',
   EMAIL = 'EMAIL',
+  EMAILS = 'EMAILS',
   DATE_TIME = 'DATE_TIME',
   DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
