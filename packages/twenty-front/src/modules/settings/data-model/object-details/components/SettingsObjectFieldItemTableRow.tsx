@@ -47,11 +47,11 @@ const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
 `;
+
 const StyledNameLabel = styled.div`
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const StyledIconTableCell = styled(TableCell)`

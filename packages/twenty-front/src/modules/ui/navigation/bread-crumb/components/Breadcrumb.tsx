@@ -16,11 +16,15 @@ const StyledWrapper = styled.nav`
   gap: ${({ theme }) => theme.spacing(2)};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
   max-width: 100%;
+  min-width: 0;
 `;
 
 const StyledLink = styled(Link)`
   color: inherit;
   text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledText = styled.span`
@@ -35,7 +39,9 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => (
     {links.map((link, index) => (
       <Fragment key={index}>
         {link.href ? (
-          <StyledLink to={link.href}>{link.children}</StyledLink>
+          <StyledLink title={link.children} to={link.href}>
+            {link.children}
+          </StyledLink>
         ) : (
           <StyledText title={link.children}>{link.children}</StyledText>
         )}
