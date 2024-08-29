@@ -1,6 +1,6 @@
 import { Scope } from '@nestjs/common';
 
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -136,7 +136,7 @@ export class WorkflowStatusesUpdateJob {
     const newWorkflowStatusesArray = Array.from(newWorkflowStatuses);
 
     if (
-      _.isEqual(newWorkflowStatusesArray.sort(), currentWorkflowStatuses.sort())
+      isEqual(newWorkflowStatusesArray.sort(), currentWorkflowStatuses.sort())
     ) {
       return;
     }

@@ -5,13 +5,17 @@ import { EntityManager } from 'typeorm';
 import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowTriggerType } from 'src/modules/workflow/common/types/workflow-trigger.type';
+import {
+  WorkflowTrigger,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/common/types/workflow-trigger.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
 import { DatabaseEventTriggerService } from 'src/modules/workflow/workflow-trigger/database-event-trigger/database-event-trigger.service';
@@ -58,10 +62,19 @@ export class WorkflowTriggerWorkspaceService {
     );
   }
 
-  async enableWorkflowTrigger(workflowVersionId: string) {
+  async activateWorkflowVersion(workflowVersionId: string) {
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const workflowVersionNullable = await workflowVersionRepository.findOne({
+      where: { id: workflowVersionId },
+    });
+
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
-        workflowVersionId,
+      await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
+        workflowVersionNullable,
       );
 
     const workflowRepository =
@@ -91,38 +104,13 @@ export class WorkflowTriggerWorkspaceService {
     const manager = queryRunner.manager;
 
     try {
-      if (
-        workflow.lastPublishedVersionId &&
-        workflowVersionId !== workflow.lastPublishedVersionId
-      ) {
-        await this.disableWorkflowTriggerWithManager(
-          workflow.lastPublishedVersionId,
-          manager,
-        );
-      }
-
-      await this.activateWorkflowVersion(
-        workflowVersion.workflowId,
-        workflowVersionId,
+      await this.performActivationSteps(
+        workflow,
+        workflowVersion,
+        workflowRepository,
+        workflowVersionRepository,
         manager,
       );
-      await workflowRepository.update(
-        { id: workflow.id },
-        { lastPublishedVersionId: workflowVersionId },
-        manager,
-      );
-
-      switch (workflowVersion.trigger.type) {
-        case WorkflowTriggerType.DATABASE_EVENT:
-          await this.databaseEventTriggerService.createEventListener(
-            workflowVersion.workflowId,
-            workflowVersion.trigger,
-            manager,
-          );
-          break;
-        default:
-          break;
-      }
 
       await queryRunner.commitTransaction();
 
@@ -135,7 +123,7 @@ export class WorkflowTriggerWorkspaceService {
     }
   }
 
-  async disableWorkflowTrigger(workflowVersionId: string) {
+  async deactivateWorkflowVersion(workflowVersionId: string) {
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
     const queryRunner = workspaceDataSource.createQueryRunner();
 
@@ -143,8 +131,14 @@ export class WorkflowTriggerWorkspaceService {
     await queryRunner.startTransaction();
 
     try {
-      await this.disableWorkflowTriggerWithManager(
+      const workflowVersionRepository =
+        await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+        );
+
+      await this.performDeactivationSteps(
         workflowVersionId,
+        workflowVersionRepository,
         queryRunner.manager,
       );
 
@@ -159,61 +153,73 @@ export class WorkflowTriggerWorkspaceService {
     }
   }
 
-  private async disableWorkflowTriggerWithManager(
-    workflowVersionId: string,
+  private async performActivationSteps(
+    workflow: WorkflowWorkspaceEntity,
+    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    },
+    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>,
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     manager: EntityManager,
   ) {
-    const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
+    if (
+      workflow.lastPublishedVersionId &&
+      workflowVersion.id !== workflow.lastPublishedVersionId
+    ) {
+      await this.performDeactivationSteps(
+        workflow.lastPublishedVersionId,
+        workflowVersionRepository,
+        manager,
       );
 
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: { id: workflowVersionId },
-    });
-
-    if (!workflowVersion) {
-      throw new WorkflowTriggerException(
-        'No workflow version found',
-        WorkflowTriggerExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
-      throw new WorkflowTriggerException(
-        'Cannot disable non-active workflow version',
-        WorkflowTriggerExceptionCode.INVALID_INPUT,
+      await this.upgradeWorflowVersion(
+        workflow,
+        workflowVersion.id,
+        workflowRepository,
+        workflowVersionRepository,
+        manager,
       );
     }
 
-    await workflowVersionRepository.update(
-      { id: workflowVersionId },
-      { status: WorkflowVersionStatus.DEACTIVATED },
+    await this.setActiveVersionStatus(
+      workflowVersion.workflowId,
+      workflowVersion.id,
+      workflowVersionRepository,
       manager,
     );
 
-    switch (workflowVersion?.trigger?.type) {
-      case WorkflowTriggerType.DATABASE_EVENT:
-        await this.databaseEventTriggerService.deleteEventListener(
-          workflowVersion.workflowId,
-          manager,
-        );
-        break;
-      default:
-        break;
-    }
+    await this.enableTrigger(workflowVersion, manager);
   }
 
-  private async activateWorkflowVersion(
-    workflowId: string,
+  private async performDeactivationSteps(
     workflowVersionId: string,
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     manager: EntityManager,
   ) {
-    const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
+    const workflowVersionNullable = await workflowVersionRepository.findOne({
+      where: { id: workflowVersionId },
+    });
+
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
+        workflowVersionNullable,
       );
 
+    await this.setDeactivatedVersionStatus(
+      workflowVersion,
+      workflowVersionRepository,
+      manager,
+    );
+
+    await this.disableTrigger(workflowVersion, manager);
+  }
+
+  private async setActiveVersionStatus(
+    workflowId: string,
+    workflowVersionId: string,
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    manager: EntityManager,
+  ) {
     const activeWorkflowVersions = await workflowVersionRepository.find(
       {
         where: { workflowId, status: WorkflowVersionStatus.ACTIVE },
@@ -233,5 +239,89 @@ export class WorkflowTriggerWorkspaceService {
       { status: WorkflowVersionStatus.ACTIVE },
       manager,
     );
+  }
+
+  private async setDeactivatedVersionStatus(
+    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    },
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    manager: EntityManager,
+  ) {
+    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+      throw new WorkflowTriggerException(
+        'Cannot disable non-active workflow version',
+        WorkflowTriggerExceptionCode.FORBIDDEN,
+      );
+    }
+
+    await workflowVersionRepository.update(
+      { id: workflowVersion.id },
+      { status: WorkflowVersionStatus.DEACTIVATED },
+      manager,
+    );
+  }
+
+  private async upgradeWorflowVersion(
+    workflow: WorkflowWorkspaceEntity,
+    newPublishedVersionId: string,
+    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>,
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    manager: EntityManager,
+  ) {
+    if (workflow.lastPublishedVersionId === newPublishedVersionId) {
+      return;
+    }
+
+    if (workflow.lastPublishedVersionId) {
+      await workflowVersionRepository.update(
+        { id: workflow.lastPublishedVersionId },
+        { status: WorkflowVersionStatus.ARCHIVED },
+        manager,
+      );
+    }
+
+    await workflowRepository.update(
+      { id: workflow.id },
+      { lastPublishedVersionId: newPublishedVersionId },
+      manager,
+    );
+  }
+
+  private async enableTrigger(
+    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    },
+    manager: EntityManager,
+  ) {
+    switch (workflowVersion.trigger.type) {
+      case WorkflowTriggerType.DATABASE_EVENT:
+        await this.databaseEventTriggerService.createEventListener(
+          workflowVersion.workflowId,
+          workflowVersion.trigger,
+          manager,
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
+  private async disableTrigger(
+    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    },
+    manager: EntityManager,
+  ) {
+    switch (workflowVersion.trigger.type) {
+      case WorkflowTriggerType.DATABASE_EVENT:
+        await this.databaseEventTriggerService.deleteEventListener(
+          workflowVersion.workflowId,
+          manager,
+        );
+        break;
+      default:
+        break;
+    }
   }
 }
