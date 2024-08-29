@@ -1,7 +1,8 @@
-import { fork } from 'child_process';
+import { exec, fork } from 'child_process';
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
+import { promisify } from 'util';
 
 import { v4 } from 'uuid';
 
@@ -11,6 +12,7 @@ import {
   ServerlessExecuteError,
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
@@ -23,10 +25,19 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
+import { PACKAGE_JSON } from 'src/engine/integrations/serverless/drivers/constants/dependencies/package_json';
+import { YARN_LOCK } from 'src/engine/integrations/serverless/drivers/constants/dependencies/yarn_lock';
+import { BuildDirectoryManager } from 'src/engine/integrations/serverless/drivers/utils/build-directory-manager';
+import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
+
+import { unzipFile } from './utils/unzip-file';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
 }
+
+const execPromise = promisify(exec);
 
 export class LocalDriver
   extends BaseServerlessDriver
@@ -39,6 +50,97 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
+  private async getLastCommonNodeModulesInfo() {
+    const lastVersion = 1;
+
+    try {
+      const packageJsonStream = await this.fileStorageService.read({
+        folderPath: join(
+          FileFolder.Shared,
+          FileFolder.ServerlessFunctionLayers,
+          `${lastVersion}`,
+        ),
+        filename: 'package.json',
+      });
+      const packageJson = await readFileContent(packageJsonStream);
+      const yarnLockStream = await this.fileStorageService.read({
+        folderPath: join(
+          FileFolder.Shared,
+          FileFolder.ServerlessFunctionLayers,
+          `${lastVersion}`,
+        ),
+        filename: 'yarn.lock',
+      });
+      const yarnLock = await readFileContent(yarnLockStream);
+
+      return {
+        lastCommonNodeModulesHash: serverlessFunctionCreateHash(
+          packageJson + yarnLock,
+        ),
+        lastVersion,
+      };
+    } catch (error) {
+      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+        return {
+          lastCommonNodeModulesHash: undefined,
+          lastVersion: 0,
+        };
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  private async buildCommonNodeModules(): Promise<number> {
+    const dependencyHash = serverlessFunctionCreateHash(
+      PACKAGE_JSON + YARN_LOCK,
+    );
+    const { lastCommonNodeModulesHash, lastVersion } =
+      await this.getLastCommonNodeModulesInfo();
+
+    if (dependencyHash === lastCommonNodeModulesHash) {
+      return lastVersion;
+    }
+
+    const buildDirectoryManager = new BuildDirectoryManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await buildDirectoryManager.init();
+
+    const newCommonModulesVersion = lastVersion + 1;
+
+    await fs.writeFile(join(sourceTemporaryDir, 'package.json'), PACKAGE_JSON);
+    await fs.writeFile(join(sourceTemporaryDir, 'yarn.lock'), YARN_LOCK);
+
+    await execPromise('yarn', {
+      cwd: sourceTemporaryDir,
+    });
+
+    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+    const zipFile = await fs.readFile(lambdaZipPath);
+
+    const newNodeModulesVersionFolderPath = join(
+      tmpdir(),
+      'nodeModulesVersions',
+      `${newCommonModulesVersion}`,
+    );
+
+    await unzipFile(lambdaZipPath, newNodeModulesVersionFolderPath);
+
+    await this.fileStorageService.write({
+      file: zipFile,
+      name: 'node_modules.zip',
+      folder: join(
+        FileFolder.Shared,
+        FileFolder.ServerlessFunctionLayers,
+        `${newCommonModulesVersion}`,
+      ),
+      mimeType: undefined,
+    });
+
+    return newCommonModulesVersion;
+  }
+
   async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
@@ -47,15 +149,36 @@ export class LocalDriver
       this.fileStorageService,
     );
 
+    const draftFolderPath = getServerlessFolder({
+      serverlessFunction,
+      version: 'draft',
+    });
+
+    let functionExists = true;
+
+    try {
+      await this.fileStorageService.read({
+        folderPath: draftFolderPath,
+        filename: BUILD_FILE_NAME,
+      });
+    } catch (error) {
+      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+        functionExists = false;
+      } else {
+        throw error;
+      }
+    }
+
     await this.fileStorageService.write({
       file: javascriptCode,
       name: BUILD_FILE_NAME,
       mimeType: undefined,
-      folder: getServerlessFolder({
-        serverlessFunction,
-        version: 'draft',
-      }),
+      folder: draftFolderPath,
     });
+
+    if (1 + 1 === 2 || !functionExists) {
+      await this.buildCommonNodeModules();
+    }
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
@@ -94,7 +217,16 @@ export class LocalDriver
       throw error;
     }
 
-    const tmpFilePath = join(tmpdir(), `${v4()}.js`);
+    const tmpFolderPath = join(tmpdir(), v4());
+
+    const tmpFilePath = join(tmpFolderPath, 'index.js');
+    const nodeModulesVersionFolderPath = join(
+      tmpdir(),
+      'nodeModulesVersions',
+      `1`,
+    );
+
+    await fs.symlink(nodeModulesVersionFolderPath, tmpFolderPath, 'dir');
 
     const modifiedContent = `
     process.on('message', async (message) => {

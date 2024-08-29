@@ -44,6 +44,7 @@
     "psl": "^1.9.0",
     "tsconfig-paths": "^4.2.0",
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
+    "unzipper": "^0.12.3",
     "zod-to-json-schema": "^3.23.1"
   },
   "devDependencies": {
@@ -61,6 +62,7 @@
     "@types/lodash.uniqby": "^4.7.9",
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/react": "^18.2.39",
+    "@types/unzipper": "^0",
     "rimraf": "^5.0.5",
     "typescript": "5.3.3"
   },

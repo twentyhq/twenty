@@ -139,6 +139,8 @@ export class LocalDriver implements StorageDriver {
       params.to.filename || '',
     );
 
+    await this.createFolder(dirname(toPath));
+
     try {
       await fs.cp(fromPath, toPath, { recursive: true });
     } catch (error) {
