@@ -1,8 +1,8 @@
 import { createState } from 'twenty-ui';
 
-export const workflowCreateStepFropParentStepIdState = createState<
+export const workflowCreateStepFromParentStepIdState = createState<
   string | undefined
 >({
-  key: 'workflowCreateStepFropParentStepId',
+  key: 'workflowCreateStepFromParentStepId',
   defaultValue: undefined,
 });
