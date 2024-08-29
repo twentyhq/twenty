@@ -15,7 +15,7 @@ export type ServerlessExecuteResult = {
 };
 
 export interface ServerlessDriver {
-  findOrCreateLastVersionLayer(): Promise<void>;
+  createLastVersionLayerIfNotExists(): Promise<void>;
   delete(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
   build(
     serverlessFunction: ServerlessFunctionEntity,

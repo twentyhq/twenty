@@ -43,18 +43,15 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { isDefined } from 'src/utils/is-defined';
-import { get_last_layer_dependencies } from 'src/engine/integrations/serverless/drivers/utils/get_last_layer_dependencies';
-import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/constants/last_layer_version';
-
-const execPromise = promisify(exec);
+import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
+import { COMMON_LAYER_NAME } from 'src/engine/integrations/serverless/drivers/constants/common-layer-name';
+import { copyAndBuildDependencies } from 'src/engine/integrations/serverless/drivers/utils/copy-and-build-dependencies';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
   region: string;
   role: string;
 }
-
-const COMMON_LAYER_NAME = 'common-layer';
 
 export class LambdaDriver
   extends BaseServerlessDriver
@@ -85,7 +82,7 @@ export class LambdaDriver
     );
   }
 
-  async findOrCreateLastVersionLayer(): Promise<void> {
+  async createLastVersionLayerIfNotExists(): Promise<void> {
     const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: COMMON_LAYER_NAME,
       MaxItems: 1,
@@ -101,30 +98,18 @@ export class LambdaDriver
       return;
     }
 
-    const { packageJson, yarnLock } = await get_last_layer_dependencies();
-
     const buildDirectoryManager = new BuildDirectoryManager();
     const { sourceTemporaryDir, lambdaZipPath } =
       await buildDirectoryManager.init();
 
     const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
 
-    await fs.mkdir(nodeDependenciesFolder);
-
-    await fs.writeFile(
-      join(nodeDependenciesFolder, 'package.json'),
-      JSON.stringify(packageJson),
-    );
-    await fs.writeFile(join(nodeDependenciesFolder, 'yarn.lock'), yarnLock);
-
-    await execPromise('yarn', {
-      cwd: nodeDependenciesFolder,
-    });
+    await copyAndBuildDependencies(nodeDependenciesFolder);
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
     const params: PublishLayerVersionCommandInput = {
-      LayerName: 'common-layer',
+      LayerName: COMMON_LAYER_NAME,
       Content: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },

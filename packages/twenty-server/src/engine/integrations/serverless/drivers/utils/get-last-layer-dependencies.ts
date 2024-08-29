@@ -1,19 +1,16 @@
 import fs from 'fs/promises';
-import path, { join } from 'path';
+import { join } from 'path';
 
-import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/constants/last_layer_version';
+import { getLayerDependenciesDirName } from 'src/engine/integrations/serverless/drivers/utils/get-layer-dependencies-dir-name';
 
 export type LayerDependencies = {
   packageJson: { dependencies: object };
   yarnLock: string;
 };
 
-export const get_last_layer_dependencies =
+export const getLastLayerDependencies =
   async (): Promise<LayerDependencies> => {
-    const lastVersionLayerDirName = path.resolve(
-      __dirname,
-      `../constants/layers/${LAST_LAYER_VERSION}`,
-    );
+    const lastVersionLayerDirName = getLayerDependenciesDirName('latest');
     const packageJson = await fs.readFile(
       join(lastVersionLayerDirName, 'package.json'),
       'utf8',

@@ -6,8 +6,11 @@
     "builder": "swc",
     "typeCheck": true,
     "assets": [
-      {"include": "**/yarn.lock", "outDir": "dist/src"},
-      {"include": "**/package.json", "outDir": "dist/src"}
+      {
+        "include": "**/serverless/drivers/layers/**",
+        "exclude": "**/serverless/drivers/layers/**/node_modules",
+        "outDir": "dist/src"
+      }
     ],
     "watchAssets": true
   }

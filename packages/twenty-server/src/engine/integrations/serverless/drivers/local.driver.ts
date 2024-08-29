@@ -1,5 +1,5 @@
 import { exec, fork } from 'child_process';
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { promisify } from 'util';
@@ -12,7 +12,6 @@ import {
   ServerlessExecuteError,
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
@@ -25,18 +24,19 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
-import { BuildDirectoryManager } from 'src/engine/integrations/serverless/drivers/utils/build-directory-manager';
-import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
-import { get_last_layer_dependencies } from 'src/engine/integrations/serverless/drivers/utils/get_last_layer_dependencies';
-
-import { unzipFile } from './utils/unzip-file';
+import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
+import { COMMON_LAYER_NAME } from 'src/engine/integrations/serverless/drivers/constants/common-layer-name';
+import { copyAndBuildDependencies } from 'src/engine/integrations/serverless/drivers/utils/copy-and-build-dependencies';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
 }
 
-const execPromise = promisify(exec);
+const IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH = join(
+  tmpdir(),
+  COMMON_LAYER_NAME,
+  `${LAST_LAYER_VERSION}`,
+);
 
 export class LocalDriver
   extends BaseServerlessDriver
@@ -49,99 +49,15 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
-  private async getLastCommonNodeModulesInfo() {
-    const lastVersion = 1;
-
-    try {
-      const packageJsonStream = await this.fileStorageService.read({
-        folderPath: join(
-          FileFolder.Shared,
-          FileFolder.ServerlessFunctionLayers,
-          `${lastVersion}`,
-        ),
-        filename: 'package.json',
-      });
-      const packageJson = await readFileContent(packageJsonStream);
-      const yarnLockStream = await this.fileStorageService.read({
-        folderPath: join(
-          FileFolder.Shared,
-          FileFolder.ServerlessFunctionLayers,
-          `${lastVersion}`,
-        ),
-        filename: 'yarn.lock',
-      });
-      const yarnLock = await readFileContent(yarnLockStream);
-
-      return {
-        lastCommonNodeModulesHash: serverlessFunctionCreateHash(
-          packageJson + yarnLock,
-        ),
-        lastVersion,
-      };
-    } catch (error) {
-      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-        return {
-          lastCommonNodeModulesHash: undefined,
-          lastVersion: 0,
-        };
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  private async buildCommonNodeModules(): Promise<number> {
-    const { packageJson, yarnLock } = await get_last_layer_dependencies();
-    const dependencyHash = serverlessFunctionCreateHash(
-      JSON.stringify(packageJson) + yarnLock,
-    );
-    const { lastCommonNodeModulesHash, lastVersion } =
-      await this.getLastCommonNodeModulesInfo();
-
-    if (dependencyHash === lastCommonNodeModulesHash) {
-      return lastVersion;
+  async createLastVersionLayerIfNotExists(): Promise<void> {
+    if (
+      existsSync(IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH) &&
+      existsSync(join(IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH, 'node_modules'))
+    ) {
+      return;
     }
 
-    const buildDirectoryManager = new BuildDirectoryManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await buildDirectoryManager.init();
-
-    const newCommonModulesVersion = lastVersion + 1;
-
-    await fs.writeFile(
-      join(sourceTemporaryDir, 'package.json'),
-      JSON.stringify(packageJson),
-    );
-    await fs.writeFile(join(sourceTemporaryDir, 'yarn.lock'), yarnLock);
-
-    await execPromise('yarn', {
-      cwd: sourceTemporaryDir,
-    });
-
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
-
-    const zipFile = await fs.readFile(lambdaZipPath);
-
-    const newNodeModulesVersionFolderPath = join(
-      tmpdir(),
-      'nodeModulesVersions',
-      `${newCommonModulesVersion}`,
-    );
-
-    await unzipFile(lambdaZipPath, newNodeModulesVersionFolderPath);
-
-    await this.fileStorageService.write({
-      file: zipFile,
-      name: 'node_modules.zip',
-      folder: join(
-        FileFolder.Shared,
-        FileFolder.ServerlessFunctionLayers,
-        `${newCommonModulesVersion}`,
-      ),
-      mimeType: undefined,
-    });
-
-    return newCommonModulesVersion;
+    await copyAndBuildDependencies(IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH);
   }
 
   async delete() {}
@@ -157,31 +73,12 @@ export class LocalDriver
       version: 'draft',
     });
 
-    let functionExists = true;
-
-    try {
-      await this.fileStorageService.read({
-        folderPath: draftFolderPath,
-        filename: BUILD_FILE_NAME,
-      });
-    } catch (error) {
-      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-        functionExists = false;
-      } else {
-        throw error;
-      }
-    }
-
     await this.fileStorageService.write({
       file: javascriptCode,
       name: BUILD_FILE_NAME,
       mimeType: undefined,
       folder: draftFolderPath,
     });
-
-    if (1 + 1 === 2 || !functionExists) {
-      await this.buildCommonNodeModules();
-    }
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
@@ -223,13 +120,12 @@ export class LocalDriver
     const tmpFolderPath = join(tmpdir(), v4());
 
     const tmpFilePath = join(tmpFolderPath, 'index.js');
-    const nodeModulesVersionFolderPath = join(
-      tmpdir(),
-      'nodeModulesVersions',
-      `1`,
-    );
 
-    await fs.symlink(nodeModulesVersionFolderPath, tmpFolderPath, 'dir');
+    await fs.symlink(
+      IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH,
+      tmpFolderPath,
+      'dir',
+    );
 
     const modifiedContent = `
     process.on('message', async (message) => {

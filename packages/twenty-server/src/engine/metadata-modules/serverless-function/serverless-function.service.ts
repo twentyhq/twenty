@@ -27,8 +27,8 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { get_last_layer_dependencies } from 'src/engine/integrations/serverless/drivers/utils/get_last_layer_dependencies';
-import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/constants/last_layer_version';
+import { getLastLayerDependencies } from 'src/engine/integrations/serverless/drivers/utils/get-last-layer-dependencies';
+import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -239,9 +239,9 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
   }
 
   async getAvailablePackages() {
-    const { packageJson, yarnLock } = await get_last_layer_dependencies();
+    const { packageJson, yarnLock } = await getLastLayerDependencies();
 
-    const packageVersionRegex = /^(.*)@.*:\n\s+version "(.*)"/gm;
+    const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
     const versions: Record<string, string> = {};
 
     let match: RegExpExecArray | null;
@@ -271,7 +271,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       typescriptCode = await readFileContent(code.createReadStream());
     }
 
-    await this.serverlessService.findOrCreateLastVersionLayer();
+    await this.serverlessService.createLastVersionLayerIfNotExists();
 
     const createdServerlessFunction = await super.createOne({
       ...serverlessFunctionInput,
