@@ -43,8 +43,8 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { isDefined } from 'src/utils/is-defined';
-import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { get_last_layer_dependencies } from 'src/engine/integrations/serverless/drivers/utils/get_last_layer_dependencies';
+import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/constants/last_layer_version';
 
 const execPromise = promisify(exec);
 
@@ -53,6 +53,8 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   region: string;
   role: string;
 }
+
+const COMMON_LAYER_NAME = 'common-layer';
 
 export class LambdaDriver
   extends BaseServerlessDriver
@@ -83,35 +85,24 @@ export class LambdaDriver
     );
   }
 
-  private async getLastCommonLayer() {
-    const params: ListLayerVersionsCommandInput = {
-      LayerName: 'common-layer',
+  async findOrCreateLastVersionLayer(): Promise<void> {
+    const listLayerParams: ListLayerVersionsCommandInput = {
+      LayerName: COMMON_LAYER_NAME,
       MaxItems: 1,
     };
-    const command = new ListLayerVersionsCommand(params);
+    const listLayerCommand = new ListLayerVersionsCommand(listLayerParams);
+    const listLayerResult = await this.lambdaClient.send(listLayerCommand);
 
-    const result = await this.lambdaClient.send(command);
-
-    if (!isDefined(result.LayerVersions) || result.LayerVersions.length === 0) {
+    if (
+      isDefined(listLayerResult.LayerVersions) &&
+      listLayerResult.LayerVersions.length > 0 &&
+      listLayerResult.LayerVersions[0].Description === `${LAST_LAYER_VERSION}`
+    ) {
       return;
     }
 
-    return result.LayerVersions[0];
-  }
-
-  private async upsertCommonLayer(): Promise<string> {
     const { packageJson, yarnLock } = await get_last_layer_dependencies();
-    const dependencyHash = serverlessFunctionCreateHash(
-      JSON.stringify(packageJson) + yarnLock,
-    );
-    const lastCommonLayer = await this.getLastCommonLayer();
 
-    if (
-      dependencyHash === lastCommonLayer?.Description &&
-      lastCommonLayer.LayerVersionArn
-    ) {
-      return lastCommonLayer.LayerVersionArn;
-    }
     const buildDirectoryManager = new BuildDirectoryManager();
     const { sourceTemporaryDir, lambdaZipPath } =
       await buildDirectoryManager.init();
@@ -138,7 +129,7 @@ export class LambdaDriver
         ZipFile: await fs.readFile(lambdaZipPath),
       },
       CompatibleRuntimes: [ServerlessFunctionRuntime.NODE18],
-      Description: dependencyHash,
+      Description: `${LAST_LAYER_VERSION}`,
     };
 
     const command = new PublishLayerVersionCommand(params);
@@ -150,8 +141,27 @@ export class LambdaDriver
     if (!isDefined(result.LayerVersionArn)) {
       throw new Error('new layer version arn undefined');
     }
+  }
 
-    return result.LayerVersionArn;
+  private async getCommonLayerArnOrFail(version: number): Promise<string> {
+    const params: ListLayerVersionsCommandInput = {
+      LayerName: COMMON_LAYER_NAME,
+      MaxItems: 50,
+    };
+    const command = new ListLayerVersionsCommand(params);
+    const result = await this.lambdaClient.send(command);
+
+    if (isDefined(result.LayerVersions) && result.LayerVersions.length > 0) {
+      for (const layerVersion of result.LayerVersions) {
+        if (
+          layerVersion.Description === `${version}` &&
+          isDefined(layerVersion.LayerVersionArn)
+        ) {
+          return layerVersion.LayerVersionArn;
+        }
+      }
+    }
+    throw Error(`${COMMON_LAYER_NAME} version "${version}" not found`);
   }
 
   private async checkFunctionExists(functionName: string): Promise<boolean> {
@@ -209,7 +219,9 @@ export class LambdaDriver
     );
 
     if (!functionExists) {
-      const layerArn = await this.upsertCommonLayer();
+      const layerArn = await this.getCommonLayerArnOrFail(
+        serverlessFunction.layerVersion,
+      );
 
       const params: CreateFunctionCommandInput = {
         Code: {

@@ -12,6 +12,10 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 export class ServerlessService implements ServerlessDriver {
   constructor(@Inject(SERVERLESS_DRIVER) private driver: ServerlessDriver) {}
 
+  async findOrCreateLastVersionLayer(): Promise<void> {
+    return this.driver.findOrCreateLastVersionLayer();
+  }
+
   async delete(serverlessFunction: ServerlessFunctionEntity): Promise<void> {
     return this.driver.delete(serverlessFunction);
   }

@@ -28,6 +28,7 @@ import {
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { get_last_layer_dependencies } from 'src/engine/integrations/serverless/drivers/utils/get_last_layer_dependencies';
+import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/constants/last_layer_version';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -270,10 +271,13 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       typescriptCode = await readFileContent(code.createReadStream());
     }
 
+    await this.serverlessService.findOrCreateLastVersionLayer();
+
     const createdServerlessFunction = await super.createOne({
       ...serverlessFunctionInput,
       workspaceId,
       sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
+      layerVersion: LAST_LAYER_VERSION,
     });
 
     const draftFileFolder = getServerlessFolder({
