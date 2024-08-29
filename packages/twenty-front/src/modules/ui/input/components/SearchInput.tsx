@@ -12,7 +12,7 @@ const StyledSearchInput = styled.input`
   width: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  background-color: transparent;
+  background: ${({ theme }) => theme.background.transparent.lighter};
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
   outline: none;
