@@ -4,6 +4,11 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "builder": "swc",
-    "typeCheck": true
+    "typeCheck": true,
+    "assets": [
+      {"include": "**/yarn.lock", "outDir": "dist/src"},
+      {"include": "**/package.json", "outDir": "dist/src"}
+    ],
+    "watchAssets": true
   }
 }
