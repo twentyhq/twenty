@@ -39,10 +39,7 @@ type SettingsDataModelFieldTypeSelectProps = {
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
   >;
-  selectedFieldType?: SettingsSupportedFieldType;
-  setSelectedFieldType: React.Dispatch<
-    React.SetStateAction<SettingsSupportedFieldType | undefined>
-  >;
+  onFieldTypeSelect: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -86,8 +83,7 @@ export const SettingsDataModelFieldTypeSelect = ({
   className,
   excludedFieldTypes = [],
   fieldMetadataItem,
-  selectedFieldType,
-  setSelectedFieldType,
+  onFieldTypeSelect,
 }: SettingsDataModelFieldTypeSelectProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,19 +119,13 @@ export const SettingsDataModelFieldTypeSelect = ({
       default:
         break;
     }
-  };
+  }; 
 
   return (
     <Controller
       name="type"
-      control={control}
-      defaultValue={
-        selectedFieldType ||
-        (fieldMetadataItem &&
-        fieldMetadataItem.type in SETTINGS_FIELD_TYPE_CONFIGS
-          ? (fieldMetadataItem.type as SettingsSupportedFieldType)
-          : FieldMetadataType.Text)
-      }
+      control={control} 
+    
       render={({ field: { onChange, value } }) => (
         <StyledContainer className={className}>
           <Section>
@@ -165,7 +155,7 @@ export const SettingsDataModelFieldTypeSelect = ({
                         resetDefaultValueField(
                           key as SettingsSupportedFieldType,
                         );
-                        setSelectedFieldType(key as SettingsSupportedFieldType);
+                        onFieldTypeSelect();
                       }}
                       variant={value === key ? 'primary' : 'secondary'}
                       title={config.label}

@@ -47,9 +47,8 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [searchParams] = useSearchParams();
   const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
-  const [selectedFieldType, setSelectedFieldType] = useState<
-    SettingsSupportedFieldType | undefined
-  >(undefined);
+  
+  const [isConfigureStep, setIsConfigureStep] = useState(false);
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
 
@@ -185,7 +184,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                 },
                 { children: 'New Field' },
                 {
-                  children: !isDefined(selectedFieldType)
+                  children: !isConfigureStep
                     ? '1. Type'
                     : '2. Configure',
                 },
@@ -198,10 +197,10 @@ export const SettingsObjectNewFieldStep2 = () => {
                 isSaveDisabled={!canSave}
                 isCancelDisabled={isSubmitting}
                 onCancel={() => {
-                  if (!isDefined(selectedFieldType)) {
+                  if (!isConfigureStep) {
                     navigate(`/settings/objects/${objectSlug}`);
                   } else {
-                    setSelectedFieldType(undefined);
+                    setIsConfigureStep(false);
                   }
                 }}
                 onSave={formConfig.handleSubmit(handleSave)}
@@ -212,23 +211,23 @@ export const SettingsObjectNewFieldStep2 = () => {
           <SettingsPageContainer>
             <StyledH1Title
               title={
-                !isDefined(selectedFieldType)
+                !isConfigureStep
                   ? '1. Select a field type'
                   : '2. Configure field'
               }
-              fontColor={H1TitleFontColor.Primary}
+              fontColor={H1TitleFontColor.Primary} 
             />
 
-            {!isDefined(selectedFieldType) ? (
+            {!isConfigureStep ? (
               <SettingsDataModelFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
                 fieldMetadataItem={{
                   type: fieldType,
                 }}
-                setSelectedFieldType={setSelectedFieldType}
-                selectedFieldType={selectedFieldType}
+                
+                onFieldTypeSelect={() => setIsConfigureStep(true)}
               />
-            ) : (
+            ) : ( 
               <>
                 <Section>
                   <H2Title
