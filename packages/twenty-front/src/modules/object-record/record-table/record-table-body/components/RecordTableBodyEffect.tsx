@@ -129,7 +129,7 @@ export const RecordTableBodyEffect = () => {
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window
     await fetchMoreRecords();
-  }, 2000);
+  }, 100);
 
   useEffect(() => {
     const allRecordsHaveBeenFetched = !hasNextPage;
