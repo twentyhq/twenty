@@ -56,8 +56,7 @@ export class CalendarBlocklistListener {
           BlocklistReimportCalendarEventsJob.name,
           {
             workspaceId: payload.workspaceId,
-            workspaceMemberId:
-              eventPayload.properties.before.workspaceMember.id,
+            workspaceMemberId: eventPayload.properties.before.workspaceMemberId,
           },
         ),
       ),
