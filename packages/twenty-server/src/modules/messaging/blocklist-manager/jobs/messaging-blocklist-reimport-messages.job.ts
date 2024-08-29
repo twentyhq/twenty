@@ -53,12 +53,10 @@ export class BlocklistReimportMessagesJob {
         },
       });
 
-      for (const messageChannel of messageChannels) {
-        await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-          messageChannel.id,
-          workspaceId,
-        );
-      }
+      await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+        messageChannels.map((messageChannel) => messageChannel.id),
+        workspaceId,
+      );
     }
   }
 }

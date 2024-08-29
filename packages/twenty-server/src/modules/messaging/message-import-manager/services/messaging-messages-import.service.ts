@@ -76,9 +76,9 @@ export class MessagingMessagesImportService {
         `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
       );
 
-      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
+      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing([
         messageChannel.id,
-      );
+      ]);
 
       try {
         connectedAccount.accessToken =
@@ -130,7 +130,7 @@ export class MessagingMessagesImportService {
 
       if (!messageIdsToFetch?.length) {
         await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-          messageChannel.id,
+          [messageChannel.id],
         );
 
         return await this.trackMessageImportCompleted(
@@ -167,12 +167,12 @@ export class MessagingMessagesImportService {
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
       ) {
         await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-          messageChannel.id,
+          [messageChannel.id],
         );
       } else {
-        await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        await this.messageChannelSyncStatusService.scheduleMessagesImport([
           messageChannel.id,
-        );
+        ]);
       }
 
       const messageChannelRepository =

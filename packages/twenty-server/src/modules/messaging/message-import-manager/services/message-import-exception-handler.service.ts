@@ -79,7 +79,7 @@ export class MessageImportExceptionHandlerService {
   ): Promise<void> {
     if (messageChannel.throttleFailureCount >= CALENDAR_THROTTLE_MAX_ATTEMPTS) {
       await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
-        messageChannel.id,
+        [messageChannel.id],
         workspaceId,
       );
 
@@ -102,20 +102,20 @@ export class MessageImportExceptionHandlerService {
     switch (syncStep) {
       case MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH:
         await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
-          messageChannel.id,
+          [messageChannel.id],
         );
         break;
 
       case MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH:
         await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
-          messageChannel.id,
+          [messageChannel.id],
         );
         break;
 
       case MessageImportSyncStep.MESSAGES_IMPORT:
-        await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        await this.messageChannelSyncStatusService.scheduleMessagesImport([
           messageChannel.id,
-        );
+        ]);
         break;
 
       default:
@@ -128,7 +128,7 @@ export class MessageImportExceptionHandlerService {
     workspaceId: string,
   ): Promise<void> {
     await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
-      messageChannel.id,
+      [messageChannel.id],
       workspaceId,
     );
   }
@@ -139,7 +139,7 @@ export class MessageImportExceptionHandlerService {
     workspaceId: string,
   ): Promise<void> {
     await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
-      messageChannel.id,
+      [messageChannel.id],
       workspaceId,
     );
 
@@ -159,7 +159,7 @@ export class MessageImportExceptionHandlerService {
     }
 
     await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-      messageChannel.id,
+      [messageChannel.id],
       workspaceId,
     );
   }
