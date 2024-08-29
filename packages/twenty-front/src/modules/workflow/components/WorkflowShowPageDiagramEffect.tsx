@@ -62,7 +62,7 @@ export const WorkflowShowPageDiagramEffect = () => {
       }
 
       setShowPageWorkflowSelectedNode(selectedNode.id);
-      openRightDrawer(RightDrawerPages.WorkflowEditStep);
+      openRightDrawer(RightDrawerPages.WorkflowStepEdit);
     },
     [
       closeRightDrawer,

@@ -37,8 +37,10 @@ const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
   [RightDrawerPages.ViewCalendarEvent]: <RightDrawerCalendarEvent />,
   [RightDrawerPages.ViewRecord]: <RightDrawerRecord />,
   [RightDrawerPages.Copilot]: <RightDrawerAIChat />,
-  [RightDrawerPages.WorkflowSelectAction]: <RightDrawerWorkflowSelectAction />,
-  [RightDrawerPages.WorkflowEditStep]: <RightDrawerWorkflowEditStep />,
+  [RightDrawerPages.WorkflowStepSelectAction]: (
+    <RightDrawerWorkflowSelectAction />
+  ),
+  [RightDrawerPages.WorkflowStepEdit]: <RightDrawerWorkflowEditStep />,
 };
 
 export const RightDrawerRouter = () => {

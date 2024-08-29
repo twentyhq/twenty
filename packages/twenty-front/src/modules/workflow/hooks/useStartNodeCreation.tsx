@@ -18,7 +18,7 @@ export const useStartNodeCreation = () => {
     (parentNodeId: string) => {
       setCreateStepFromStepState(parentNodeId);
 
-      openRightDrawer(RightDrawerPages.WorkflowSelectAction);
+      openRightDrawer(RightDrawerPages.WorkflowStepSelectAction);
     },
     [openRightDrawer, setCreateStepFromStepState],
   );
