@@ -14,9 +14,11 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { Button } from '@/ui/input/button/components/Button';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useTheme } from '@emotion/react';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
-import { H2Title } from 'twenty-ui';
+import { H2Title, IconChevronRight, IconSearch } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
@@ -42,41 +44,44 @@ type SettingsDataModelFieldTypeSelectProps = {
   onFieldTypeSelect: () => void;
 };
 
-const StyledContainer = styled.div`
+const StyledTypeSelectContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: inherit;
   width: 100%;
 `;
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ isActive: boolean }>`
+  background: ${({ theme, isActive }) =>
+    isActive ? theme.background.quaternary : theme.background.secondary};
   height: 40px;
-  width: calc(50% - ${({ theme }) => theme.spacing(1)});
+  width: 100%;
+  border-radius: ${({ theme }) => theme.border.radius.md};
 `;
-const StyledButtonContainer = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: flex-start;
   flex-wrap: wrap;
+  width: 100%;
 `;
 
-const StyledInput = styled.input`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  margin: 0;
-  outline: none;
-  height: 32px;
-  padding: 0 ${({ theme }) => theme.spacing(1)} 0
-    ${({ theme }) => theme.spacing(2)};
+const StyledButtonContainer = styled.div`
+  display: flex;
+
+  position: relative;
+  width: calc(50% - ${({ theme }) => theme.spacing(1)});
+`;
+
+const StyledRightChevron = styled(IconChevronRight)`
+  color: ${({ theme }) => theme.font.color.secondary};
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(2)};
+  top: 50%;
+  transform: translateY(-50%);
+`;
+const StyledSearchInput = styled(TextInput)`
   width: 100%;
-  box-sizing: border-box;
-  &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
-  }
 `;
 
 export const SettingsDataModelFieldTypeSelect = ({
@@ -87,6 +92,7 @@ export const SettingsDataModelFieldTypeSelect = ({
 }: SettingsDataModelFieldTypeSelectProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
+  const theme = useTheme();
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig>(
     SETTINGS_FIELD_TYPE_CONFIGS,
   ).filter(
@@ -125,14 +131,19 @@ export const SettingsDataModelFieldTypeSelect = ({
     <Controller
       name="type"
       control={control}
+      defaultValue={
+        fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
+          ? (fieldMetadataItem.type as SettingsSupportedFieldType)
+          : FieldMetadataType.Text
+      }
       render={({ field: { onChange, value } }) => (
-        <StyledContainer className={className}>
+        <StyledTypeSelectContainer className={className}>
           <Section>
-            <StyledInput
-              type="text"
-              placeholder="Search a field"
+            <StyledSearchInput
+              LeftIcon={IconSearch}
+              placeholder="Search a type"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={setSearchQuery}
             />
           </Section>
           {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
@@ -143,29 +154,32 @@ export const SettingsDataModelFieldTypeSelect = ({
                   SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
                 }
               />
-              <StyledButtonContainer>
+              <StyledContainer>
                 {fieldTypeConfigs
                   .filter(([, config]) => config.category === category)
                   .map(([key, config]) => (
-                    <StyledButton
-                      key={key}
-                      onClick={() => {
-                        onChange(key as SettingsSupportedFieldType);
-                        resetDefaultValueField(
-                          key as SettingsSupportedFieldType,
-                        );
-                        onFieldTypeSelect();
-                      }}
-                      variant={value === key ? 'primary' : 'secondary'}
-                      title={config.label}
-                      Icon={config.Icon}
-                      size="small"
-                    />
+                    <StyledButtonContainer>
+                      <StyledButton
+                        key={key}
+                        onClick={() => {
+                          onChange(key as SettingsSupportedFieldType);
+                          resetDefaultValueField(
+                            key as SettingsSupportedFieldType,
+                          );
+                          onFieldTypeSelect();
+                        }}
+                        title={config.label}
+                        Icon={config.Icon}
+                        size="small"
+                        isActive={value === key}
+                      />
+                      <StyledRightChevron size={theme.icon.size.md} />
+                    </StyledButtonContainer>
                   ))}
-              </StyledButtonContainer>
+              </StyledContainer>
             </Section>
           ))}
-        </StyledContainer>
+        </StyledTypeSelectContainer>
       )}
     />
   );
