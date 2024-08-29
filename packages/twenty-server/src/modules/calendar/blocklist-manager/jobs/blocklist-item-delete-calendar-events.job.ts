@@ -1,6 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { Any, ILike, In } from 'typeorm';
+import { Any, ILike } from 'typeorm';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
@@ -95,19 +95,26 @@ export class BlocklistItemDeleteCalendarEventsJob {
 
       const calendarChannelIds = calendarChannels.map(({ id }) => id);
 
-      const handleConditions = handles.map((handle) => {
-        const isHandleDomain = handle.startsWith('@');
+      const handleConditions = handles
+        .map((handle) => {
+          const isHandleDomain = handle.startsWith('@');
 
-        return isHandleDomain ? ILike(`%${handle}`) : handle;
-      });
+          return isHandleDomain
+            ? [
+                { handle: ILike(`%${handle}`) },
+                {
+                  handle: ILike(`%.${handle.slice(1)}`),
+                },
+              ]
+            : { handle };
+        })
+        .flat();
 
       const calendarEventsAssociationsToDelete =
         await calendarChannelEventAssociationRepository.find({
           where: {
             calendarEvent: {
-              calendarEventParticipants: {
-                handle: In(handleConditions),
-              },
+              calendarEventParticipants: handleConditions,
               calendarChannelEventAssociations: {
                 calendarChannelId: Any(calendarChannelIds),
               },
