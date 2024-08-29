@@ -5,16 +5,6 @@ import { Workflow } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
 
 // FIXME: copy-pasted
-const StyledShowPageRightContainer = styled.div`
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  justify-content: start;
-  width: 100%;
-  height: 100%;
-`;
-
-// FIXME: copy-pasted
 const StyledTabListContainer = styled.div`
   align-items: center;
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
@@ -48,7 +38,7 @@ export const RightDrawerWorkflowSelectActionContent = ({
     useRightDrawerWorkflowSelectAction({ tabListId, workflow });
 
   return (
-    <StyledShowPageRightContainer>
+    <>
       <StyledTabListContainer>
         <TabList loading={false} tabListId={tabListId} tabs={tabs} />
       </StyledTabListContainer>
@@ -65,6 +55,6 @@ export const RightDrawerWorkflowSelectActionContent = ({
           />
         ))}
       </StyledActionListContainer>
-    </StyledShowPageRightContainer>
+    </>
   );
 };
