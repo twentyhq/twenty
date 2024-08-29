@@ -50,7 +50,7 @@ export class CalendarEventsImportService {
         : CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH;
 
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
-      calendarChannel.id,
+      [calendarChannel.id],
     );
     let calendarEvents: GetCalendarEventsResponse['calendarEvents'] = [];
     let nextSyncCursor: GetCalendarEventsResponse['nextSyncCursor'] = '';
@@ -81,7 +81,7 @@ export class CalendarEventsImportService {
         );
 
         await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
-          calendarChannel.id,
+          [calendarChannel.id],
         );
       }
 
@@ -134,7 +134,7 @@ export class CalendarEventsImportService {
       );
 
       await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-        calendarChannel.id,
+        [calendarChannel.id],
       );
     } catch (error) {
       await this.calendarEventImportErrorHandlerService.handleDriverException(

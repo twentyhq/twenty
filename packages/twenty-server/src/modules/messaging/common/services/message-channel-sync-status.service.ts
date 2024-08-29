@@ -30,12 +30,9 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+    });
   }
 
   public async schedulePartialMessageListFetch(messageChannelIds: string[]) {
@@ -44,12 +41,9 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+    });
   }
 
   public async scheduleMessagesImport(messageChannelIds: string[]) {
@@ -58,12 +52,9 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+    });
   }
 
   public async resetAndScheduleFullMessageListFetch(
@@ -81,14 +72,11 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncCursor: '',
-        syncStageStartedAt: null,
-        throttleFailureCount: 0,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncCursor: '',
+      syncStageStartedAt: null,
+      throttleFailureCount: 0,
+    });
 
     await this.scheduleFullMessageListFetch(messageChannelIds);
   }
@@ -99,12 +87,9 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStageStartedAt: null,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStageStartedAt: null,
+    });
   }
 
   public async markAsMessagesListFetchOngoing(messageChannelIds: string[]) {
@@ -113,13 +98,10 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-        syncStatus: MessageChannelSyncStatus.ONGOING,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+      syncStatus: MessageChannelSyncStatus.ONGOING,
+    });
   }
 
   public async markAsCompletedAndSchedulePartialMessageListFetch(
@@ -130,12 +112,9 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStatus: MessageChannelSyncStatus.ACTIVE,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStatus: MessageChannelSyncStatus.ACTIVE,
+    });
 
     await this.schedulePartialMessageListFetch(messageChannelIds);
   }
@@ -146,12 +125,9 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+    });
   }
 
   public async markAsFailedUnknownAndFlushMessagesToImport(
@@ -169,13 +145,10 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStage: MessageChannelSyncStage.FAILED,
-        syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.FAILED,
+      syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
+    });
   }
 
   public async markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
@@ -193,13 +166,10 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
-    await messageChannelRepository.update(
-      { id: Any(messageChannelIds) },
-      {
-        syncStage: MessageChannelSyncStage.FAILED,
-        syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-      },
-    );
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.FAILED,
+      syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+    });
 
     const connectedAccountRepository =
       await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
