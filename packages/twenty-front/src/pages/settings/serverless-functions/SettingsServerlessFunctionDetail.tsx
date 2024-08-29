@@ -79,7 +79,7 @@ export const SettingsServerlessFunctionDetail = () => {
     return async (value: string) => {
       setFormValues((prevState) => ({
         ...prevState,
-        [key]: convertToEmptyStringForWhitespaces(value),
+        [key]: value,
       }));
       await handleSave();
     };

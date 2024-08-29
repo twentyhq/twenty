@@ -1,9 +1,10 @@
+import styled from '@emotion/styled';
 import { FocusEventHandler } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import styled from '@emotion/styled';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
+import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
@@ -75,7 +76,9 @@ export const TextArea = ({
       maxRows={MAX_ROWS}
       minRows={computedMinRows}
       value={value}
-      onChange={(event) => onChange?.(event.target.value)}
+      onChange={(event) =>
+        onChange?.(convertToEmptyStringForWhitespaces(event.target.value))
+      }
       onFocus={handleFocus}
       onBlur={handleBlur}
       disabled={disabled}
