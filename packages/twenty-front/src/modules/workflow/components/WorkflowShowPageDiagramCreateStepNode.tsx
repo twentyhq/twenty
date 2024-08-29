@@ -9,10 +9,10 @@ export const StyledTargetHandle = styled(Handle)`
 
 export const WorkflowShowPageDiagramCreateStepNode = () => {
   return (
-    <div>
+    <>
       <StyledTargetHandle type="target" position={Position.Top} />
 
       <IconButton Icon={IconPlus} />
-    </div>
+    </>
   );
 };
