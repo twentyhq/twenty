@@ -14,7 +14,7 @@ interface SettingsIntegrationComponentProps {
 
 const StyledContainer = styled.div<{ to?: string }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   font-size: ${({ theme }) => theme.font.size.md};
