@@ -76,7 +76,7 @@ export class BlocklistItemDeleteMessagesJob {
       }
 
       this.logger.log(
-        `Deleting messages from ${handles.concat(
+        `Deleting messages from ${handles.join(
           ', ',
         )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
       );
@@ -109,7 +109,7 @@ export class BlocklistItemDeleteMessagesJob {
       );
 
       this.logger.log(
-        `Deleted messages from handle ${handles.concat(
+        `Deleted messages from handle ${handles.join(
           ', ',
         )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
       );

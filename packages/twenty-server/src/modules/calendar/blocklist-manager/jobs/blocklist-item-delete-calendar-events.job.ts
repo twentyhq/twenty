@@ -80,7 +80,7 @@ export class BlocklistItemDeleteCalendarEventsJob {
       }
 
       this.logger.log(
-        `Deleting calendar events from ${handles.concat(
+        `Deleting calendar events from ${handles.join(
           ', ',
         )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
       );
@@ -124,7 +124,7 @@ export class BlocklistItemDeleteCalendarEventsJob {
       );
 
       this.logger.log(
-        `Deleted calendar events from handle ${handles.concat(
+        `Deleted calendar events from handle ${handles.join(
           ', ',
         )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
       );
