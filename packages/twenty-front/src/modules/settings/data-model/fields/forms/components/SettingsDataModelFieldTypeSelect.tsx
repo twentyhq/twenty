@@ -119,13 +119,12 @@ export const SettingsDataModelFieldTypeSelect = ({
       default:
         break;
     }
-  }; 
+  };
 
   return (
     <Controller
       name="type"
-      control={control} 
-    
+      control={control}
       render={({ field: { onChange, value } }) => (
         <StyledContainer className={className}>
           <Section>

@@ -47,7 +47,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [searchParams] = useSearchParams();
   const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
-  
+
   const [isConfigureStep, setIsConfigureStep] = useState(false);
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
@@ -184,9 +184,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                 },
                 { children: 'New Field' },
                 {
-                  children: !isConfigureStep
-                    ? '1. Type'
-                    : '2. Configure',
+                  children: !isConfigureStep ? '1. Type' : '2. Configure',
                 },
               ]}
             />
@@ -215,7 +213,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   ? '1. Select a field type'
                   : '2. Configure field'
               }
-              fontColor={H1TitleFontColor.Primary} 
+              fontColor={H1TitleFontColor.Primary}
             />
 
             {!isConfigureStep ? (
@@ -224,10 +222,9 @@ export const SettingsObjectNewFieldStep2 = () => {
                 fieldMetadataItem={{
                   type: fieldType,
                 }}
-                
                 onFieldTypeSelect={() => setIsConfigureStep(true)}
               />
-            ) : ( 
+            ) : (
               <>
                 <Section>
                   <H2Title
