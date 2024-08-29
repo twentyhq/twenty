@@ -27,7 +27,7 @@ type SelectHeaderStepProps = {
   setCurrentStepState: (currentStepState: SpreadsheetImportStep) => void;
   nextStep: () => void;
   setPreviousStepState: (currentStepState: SpreadsheetImportStep) => void;
-  errorToast: (message: string) => void;
+  onError: (message: string) => void;
   onBack: () => void;
   currentStepState: SpreadsheetImportStep;
 };
@@ -37,7 +37,7 @@ export const SelectHeaderStep = ({
   setCurrentStepState,
   nextStep,
   setPreviousStepState,
-  errorToast,
+  onError,
   onBack,
   currentStepState,
 }: SelectHeaderStepProps) => {
@@ -49,7 +49,7 @@ export const SelectHeaderStep = ({
 
   const { selectHeaderStepHook } = useSpreadsheetImportInternal();
 
-  const onContinue = useCallback(
+  const handleContinue = useCallback(
     async (...args: Parameters<typeof selectHeaderStepHook>) => {
       try {
         const { importedRows: data, headerRow: headerValues } =
@@ -62,11 +62,11 @@ export const SelectHeaderStep = ({
         setPreviousStepState(currentStepState);
         nextStep();
       } catch (e) {
-        errorToast((e as Error).message);
+        onError((e as Error).message);
       }
     },
     [
-      errorToast,
+      onError,
       nextStep,
       selectHeaderStepHook,
       setPreviousStepState,
@@ -75,17 +75,17 @@ export const SelectHeaderStep = ({
     ],
   );
 
-  const handleContinue = useCallback(async () => {
+  const handleOnContinue = useCallback(async () => {
     const [selectedRowIndex] = Array.from(new Set(selectedRowIndexes));
     // We consider data above header to be redundant
     const trimmedData = importedRows.slice(selectedRowIndex + 1);
 
     setIsLoading(true);
 
-    await onContinue(importedRows[selectedRowIndex], trimmedData);
+    await handleContinue(importedRows[selectedRowIndex], trimmedData);
 
     setIsLoading(false);
-  }, [onContinue, importedRows, selectedRowIndexes]);
+  }, [handleContinue, importedRows, selectedRowIndexes]);
 
   return (
     <>
@@ -100,7 +100,7 @@ export const SelectHeaderStep = ({
         </StyledTableContainer>
       </Modal.Content>
       <StepNavigationButton
-        onClick={handleContinue}
+        onClick={handleOnContinue}
         onBack={onBack}
         title="Continue"
         isLoading={isLoading}

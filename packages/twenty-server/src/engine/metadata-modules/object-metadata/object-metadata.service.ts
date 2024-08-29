@@ -209,6 +209,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: isCustom,
       isSystem: false,
       isRemote: objectMetadataInput.isRemote,
+      isSoftDeletable: true,
       fields: isCustom
         ? // Creating default fields.
           // No need to create a custom migration for this though as the default columns are already

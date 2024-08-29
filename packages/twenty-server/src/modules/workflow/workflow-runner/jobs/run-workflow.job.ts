@@ -32,7 +32,7 @@ export class RunWorkflowJob {
     await this.workflowRunWorkspaceService.startWorkflowRun(workflowRunId);
 
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
         workflowVersionId,
       );
 

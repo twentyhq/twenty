@@ -182,6 +182,7 @@ export const RecordIndexOptionsDropdownContent = ({
             onDragEnd={handleReorderFields}
             onVisibilityChange={handleChangeFieldVisibility}
             showSubheader={false}
+            showDragGrip={true}
           />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
@@ -209,6 +210,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 isDraggable={false}
                 onVisibilityChange={handleChangeFieldVisibility}
                 showSubheader={false}
+                showDragGrip={false}
               />
             </>
           )}
