@@ -12,23 +12,13 @@ import {
 describe('WorkflowStatusesUpdate', () => {
   let job: WorkflowStatusesUpdateJob;
 
-  const mockWorkflowVersionRepository = {
-    exists: jest.fn(),
-  };
-
   const mockWorkflowRepository = {
     findOneOrFail: jest.fn(),
     update: jest.fn(),
   };
 
   const mockTwentyORMManager = {
-    getRepository: jest
-      .fn()
-      .mockImplementation((name) =>
-        name === 'workflow'
-          ? mockWorkflowRepository
-          : mockWorkflowVersionRepository,
-      ),
+    getRepository: jest.fn().mockResolvedValue(mockWorkflowRepository),
   };
 
   beforeEach(async () => {
@@ -54,7 +44,6 @@ describe('WorkflowStatusesUpdate', () => {
   describe('handle', () => {
     describe('when event type is CREATE', () => {
       it('when already a draft, do not change anything', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.CREATE,
@@ -67,16 +56,13 @@ describe('WorkflowStatusesUpdate', () => {
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
       });
 
       it('when no draft yet, update statuses', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.CREATE,
@@ -90,10 +76,8 @@ describe('WorkflowStatusesUpdate', () => {
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
@@ -104,7 +88,6 @@ describe('WorkflowStatusesUpdate', () => {
 
     describe('when event type is STATUS_UPDATE', () => {
       test('when status is the same, should not do anything', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
@@ -123,16 +106,13 @@ describe('WorkflowStatusesUpdate', () => {
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
       });
 
       test('when update that should be impossible, do not do anything', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
@@ -151,16 +131,13 @@ describe('WorkflowStatusesUpdate', () => {
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
       });
 
       test('when WorkflowVersionStatus.DEACTIVATED to WorkflowVersionStatus.ACTIVE, should activate', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
@@ -179,10 +156,8 @@ describe('WorkflowStatusesUpdate', () => {
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
@@ -191,7 +166,6 @@ describe('WorkflowStatusesUpdate', () => {
       });
 
       test('when WorkflowVersionStatus.ACTIVE to WorkflowVersionStatus.DEACTIVATED, should deactivate', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
@@ -205,31 +179,21 @@ describe('WorkflowStatusesUpdate', () => {
         };
 
         const mockWorkflow = {
-          statuses: [WorkflowStatus.ACTIVE, WorkflowStatus.DRAFT],
+          statuses: [WorkflowStatus.ACTIVE],
         };
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
-        mockWorkflowVersionRepository.exists.mockResolvedValue(false);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
-        expect(mockWorkflowVersionRepository.exists).toHaveBeenCalledWith({
-          where: {
-            workflowId: '1',
-            status: WorkflowVersionStatus.ACTIVE,
-          },
-        });
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
-          { statuses: [WorkflowStatus.DEACTIVATED, WorkflowStatus.DRAFT] },
+          { statuses: [WorkflowStatus.DEACTIVATED] },
         );
       });
 
       test('when WorkflowVersionStatus.DRAFT to WorkflowVersionStatus.ACTIVE, should activate', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.STATUS_UPDATE,
@@ -247,19 +211,10 @@ describe('WorkflowStatusesUpdate', () => {
         };
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
-        mockWorkflowVersionRepository.exists.mockResolvedValue(false);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
-        expect(mockWorkflowVersionRepository.exists).toHaveBeenCalledWith({
-          where: {
-            workflowId: '1',
-            status: WorkflowVersionStatus.DRAFT,
-          },
-        });
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
           { statuses: [WorkflowStatus.ACTIVE] },
@@ -269,7 +224,6 @@ describe('WorkflowStatusesUpdate', () => {
 
     describe('when event type is DELETE', () => {
       test('when status is not draft, should not do anything', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.DELETE,
@@ -282,16 +236,13 @@ describe('WorkflowStatusesUpdate', () => {
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
         expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(0);
       });
 
       test('when status is draft, should delete', async () => {
-        // Arrange
         const event: WorkflowVersionBatchEvent = {
           workspaceId: '1',
           type: WorkflowVersionEventType.DELETE,
@@ -303,19 +254,10 @@ describe('WorkflowStatusesUpdate', () => {
         };
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
-        mockWorkflowVersionRepository.exists.mockResolvedValue(false);
 
-        // Act
         await job.handle(event);
 
-        // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
-        expect(mockWorkflowVersionRepository.exists).toHaveBeenCalledWith({
-          where: {
-            workflowId: '1',
-            status: WorkflowVersionStatus.DRAFT,
-          },
-        });
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
           { statuses: [] },

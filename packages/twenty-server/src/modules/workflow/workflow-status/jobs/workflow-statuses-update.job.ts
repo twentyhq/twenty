@@ -1,19 +1,16 @@
 import { Scope } from '@nestjs/common';
 
-import isEqual from 'lodash.isequal';
-
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
-  WorkflowVersionStatus,
-  WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  WorkflowStatus,
-  WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+  getNewCombinationFromUpdate,
+  getWorkflowStatusCombinationFromArray,
+  getWorkflowStatusesFromCombination,
+} from 'src/modules/workflow/workflow-status/utils/workflow-status-combination.util';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -98,9 +95,16 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const currentWorkflowStatuses = workflow.statuses || [];
+    const currentWorkflowStatusCombination =
+      getWorkflowStatusCombinationFromArray(workflow.statuses || []);
 
-    if (currentWorkflowStatuses.includes(WorkflowStatus.DRAFT)) {
+    const newWorkflowStatusCombination = getNewCombinationFromUpdate(
+      currentWorkflowStatusCombination,
+      undefined,
+      WorkflowVersionStatus.DRAFT,
+    );
+
+    if (newWorkflowStatusCombination === currentWorkflowStatusCombination) {
       return;
     }
 
@@ -109,7 +113,9 @@ export class WorkflowStatusesUpdateJob {
         id: workflow.id,
       },
       {
-        statuses: [...currentWorkflowStatuses, WorkflowStatus.DRAFT],
+        statuses: getWorkflowStatusesFromCombination(
+          newWorkflowStatusCombination,
+        ),
       },
     );
   }
@@ -128,42 +134,16 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const currentWorkflowStatuses = workflow.statuses || [];
-    let newWorkflowStatuses = new Set<WorkflowStatus>(currentWorkflowStatuses);
+    const currentWorkflowStatusCombination =
+      getWorkflowStatusCombinationFromArray(workflow.statuses || []);
 
-    if (
-      statusUpdate.previousStatus === WorkflowVersionStatus.DEACTIVATED &&
-      statusUpdate.newStatus === WorkflowVersionStatus.ACTIVE
-    ) {
-      newWorkflowStatuses = await this.buildStatusesFromNewActivation(
-        currentWorkflowStatuses,
-      );
-    }
+    const newWorkflowStatusCombination = getNewCombinationFromUpdate(
+      currentWorkflowStatusCombination,
+      statusUpdate.previousStatus,
+      statusUpdate.newStatus,
+    );
 
-    if (
-      statusUpdate.previousStatus === WorkflowVersionStatus.ACTIVE &&
-      statusUpdate.newStatus === WorkflowVersionStatus.DEACTIVATED
-    ) {
-      newWorkflowStatuses = await this.buildStatusesFromDeactivation(
-        statusUpdate.workflowId,
-        currentWorkflowStatuses,
-      );
-    }
-
-    if (
-      statusUpdate.previousStatus === WorkflowVersionStatus.DRAFT &&
-      statusUpdate.newStatus === WorkflowVersionStatus.ACTIVE
-    ) {
-      newWorkflowStatuses = await this.buildStatusesFromFirstActivation(
-        statusUpdate.workflowId,
-      );
-    }
-
-    const newWorkflowStatusesArray = Array.from(newWorkflowStatuses);
-
-    if (
-      isEqual(newWorkflowStatusesArray.sort(), currentWorkflowStatuses.sort())
-    ) {
+    if (newWorkflowStatusCombination === currentWorkflowStatusCombination) {
       return;
     }
 
@@ -172,7 +152,9 @@ export class WorkflowStatusesUpdateJob {
         id: statusUpdate.workflowId,
       },
       {
-        statuses: newWorkflowStatusesArray,
+        statuses: getWorkflowStatusesFromCombination(
+          newWorkflowStatusCombination,
+        ),
       },
     );
   }
@@ -191,18 +173,16 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const currentWorkflowStatuses = workflow.statuses || [];
+    const currentWorkflowStatusCombination =
+      getWorkflowStatusCombinationFromArray(workflow.statuses || []);
 
-    if (!currentWorkflowStatuses.includes(WorkflowStatus.DRAFT)) {
-      return;
-    }
-
-    const hasWorkflowVersionByStatus = await this.hasWorkflowVersionByStatus(
-      workflowId,
+    const newWorkflowStatusCombination = getNewCombinationFromUpdate(
+      currentWorkflowStatusCombination,
       WorkflowVersionStatus.DRAFT,
+      undefined,
     );
 
-    if (hasWorkflowVersionByStatus) {
+    if (newWorkflowStatusCombination === currentWorkflowStatusCombination) {
       return;
     }
 
@@ -211,70 +191,10 @@ export class WorkflowStatusesUpdateJob {
         id: workflowId,
       },
       {
-        statuses: currentWorkflowStatuses.filter(
-          (status) => status !== WorkflowStatus.DRAFT,
+        statuses: getWorkflowStatusesFromCombination(
+          newWorkflowStatusCombination,
         ),
       },
     );
-  }
-
-  private async buildStatusesFromFirstActivation(workflowId: string) {
-    const hasWorkflowVersionDraft = await this.hasWorkflowVersionByStatus(
-      workflowId,
-      WorkflowVersionStatus.DRAFT,
-    );
-
-    if (hasWorkflowVersionDraft) {
-      return new Set([WorkflowStatus.ACTIVE, WorkflowStatus.DRAFT]);
-    }
-
-    return new Set([WorkflowStatus.ACTIVE]);
-  }
-
-  private async buildStatusesFromDeactivation(
-    workflowId: string,
-    currentWorkflowStatuses: WorkflowStatus[],
-  ) {
-    const hasWorkflowVersionActive = await this.hasWorkflowVersionByStatus(
-      workflowId,
-      WorkflowVersionStatus.ACTIVE,
-    );
-
-    if (hasWorkflowVersionActive) {
-      return new Set(currentWorkflowStatuses);
-    }
-
-    return new Set(
-      currentWorkflowStatuses
-        .filter((status) => status !== WorkflowStatus.ACTIVE)
-        .concat(WorkflowStatus.DEACTIVATED),
-    );
-  }
-
-  private async buildStatusesFromNewActivation(
-    currentWorkflowStatuses: WorkflowStatus[],
-  ) {
-    return new Set(
-      currentWorkflowStatuses
-        .filter((status) => status !== WorkflowStatus.DEACTIVATED)
-        .concat(WorkflowStatus.ACTIVE),
-    );
-  }
-
-  private async hasWorkflowVersionByStatus(
-    workflowId: string,
-    status: WorkflowVersionStatus,
-  ): Promise<boolean> {
-    const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
-      );
-
-    return workflowVersionRepository.exists({
-      where: {
-        workflowId,
-        status,
-      },
-    });
   }
 }
