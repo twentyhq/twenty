@@ -29,10 +29,6 @@ export const useCreateNode = ({ workflow }: { workflow: Workflow }) => {
       );
     }
 
-    /**
-     * A node id is equal to its related step id.
-     * That's handy when you need to update the steps based on a change on nodes.
-     */
     return updateOneWorkflowVersion({
       idToUpdate: lastVersion.id,
       updateOneRecordInput: {
