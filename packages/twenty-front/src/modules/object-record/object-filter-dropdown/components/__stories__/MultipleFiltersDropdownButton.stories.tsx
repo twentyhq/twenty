@@ -5,7 +5,6 @@ import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dro
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { within } from '@storybook/test';
-import { act } from 'react';
 import { ComponentDecorator } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -74,27 +73,19 @@ export const Default: Story = {
 
     const filterButton = await canvas.findByText('Filter');
 
-    act(() => {
-      filterButton.click();
-    });
+    filterButton.click();
 
     const textFilter = await canvas.findByText('Text');
 
-    act(() => {
-      textFilter.click();
-    });
+    textFilter.click();
 
     const operatorDropdown = await canvas.findByText('Contains');
 
-    act(() => {
-      operatorDropdown.click();
-    });
+    operatorDropdown.click();
 
     const containsOption = await canvas.findByText("Doesn't contain");
 
-    act(() => {
-      containsOption.click();
-    });
+    containsOption.click();
   },
 };
 
@@ -104,15 +95,11 @@ export const Date: Story = {
 
     const filterButton = await canvas.findByText('Filter');
 
-    act(() => {
-      filterButton.click();
-    });
+    filterButton.click();
 
     const dateFilter = await canvas.findByText('Date');
 
-    act(() => {
-      dateFilter.click();
-    });
+    dateFilter.click();
   },
 };
 
@@ -122,14 +109,10 @@ export const Number: Story = {
 
     const filterButton = await canvas.findByText('Filter');
 
-    act(() => {
-      filterButton.click();
-    });
+    filterButton.click();
 
     const dateFilter = await canvas.findByText('Number');
 
-    act(() => {
-      dateFilter.click();
-    });
+    dateFilter.click();
   },
 };
