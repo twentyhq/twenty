@@ -17,6 +17,7 @@ import { isDefined } from '~/utils/isDefined';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
+  padding-bottom: 12px;
 `;
 
 const StyledLinkContainer = styled.div`
