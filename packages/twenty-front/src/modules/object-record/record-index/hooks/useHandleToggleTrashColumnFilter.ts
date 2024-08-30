@@ -63,7 +63,7 @@ export const useHandleToggleTrashColumnFilter = ({
     upsertCombinedViewFilter(newFilter);
   }, [
     columnDefinitions,
-    objectMetadataItem.fields,
+    objectMetadataItem,
     objectNameSingular,
     upsertCombinedViewFilter,
   ]);

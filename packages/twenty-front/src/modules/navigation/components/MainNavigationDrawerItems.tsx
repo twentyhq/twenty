@@ -4,7 +4,7 @@ import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
-import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
+import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
@@ -41,8 +41,8 @@ export const MainNavigationDrawerItems = () => {
 
       <Favorites />
 
-      <ObjectMetadataNavItems isRemote={false} />
-      <ObjectMetadataNavItems isRemote={true} />
+      <NavigationDrawerSectionForObjectMetadataItems isRemote={false} />
+      <NavigationDrawerSectionForObjectMetadataItems isRemote={true} />
     </>
   );
 };
