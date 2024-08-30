@@ -53,6 +53,8 @@ export const SettingsObjectEdit = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
+  console.log('activeObjectMetadataItem', activeObjectMetadataItem, objectSlug);
+
   const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
   const formConfig = useForm<SettingsDataModelObjectEditFormValues>({

@@ -148,7 +148,7 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir}",
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=1 --coverage --coverageDirectory={args.coverageDir}",
           "nx storybook:coverage {projectName} --coverageDir={args.coverageDir}"
         ],
         "parallel": false,
