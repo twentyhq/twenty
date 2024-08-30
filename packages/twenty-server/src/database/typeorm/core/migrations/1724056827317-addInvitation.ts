@@ -19,13 +19,13 @@ export class AddInvitation1724056827317 implements MigrationInterface {
     await queryRunner.query('ALTER TABLE core."appToken" ADD "context" jsonb');
 
     await queryRunner.query(
-      `CREATE UNIQUE INDEX 'appToken_unique_invitation_by_user_workspace' ON core."appToken" ("workspaceId", (context ->> 'email')) WHERE type = 'INVITATION_TOKEN';`,
+      'CREATE UNIQUE INDEX apptoken_unique_invitation_by_user_workspace ON core."appToken" ("workspaceId", ("context" ->> \'email\')) WHERE type = \'INVITATION_TOKEN\';',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DROP INDEX core.'appToken_unique_invitation_by_user_workspace';`,
+      `DROP INDEX core.apptoken_unique_invitation_by_user_workspace;`,
     );
 
     await queryRunner.query(
