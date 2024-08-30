@@ -13,6 +13,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
+import { splitFullName } from '~/utils/format/spiltFullName';
 import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 import { StyledTextInput } from './TextInput';
 
@@ -168,11 +169,11 @@ export const DoubleTextInput = ({
 
     const name = event.clipboardData.getData('Text');
 
-    const splittedName = name.split(' ');
+    const splittedName = splitFullName(name);
 
     onPaste?.({
-      firstValue: splittedName[0].trim(),
-      secondValue: splittedName[1].trim(),
+      firstValue: splittedName[0],
+      secondValue: splittedName[1],
     });
   };
 
