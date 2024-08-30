@@ -292,6 +292,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       folder: draftFileFolder,
     });
 
+    await this.serverlessService.build(createdServerlessFunction, 'draft');
+
     return await this.findById(createdServerlessFunction.id);
   }
 
