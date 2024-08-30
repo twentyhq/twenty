@@ -10,11 +10,14 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceInvitationService {
   private tokenService: TokenService;
   private userWorkspaceService: UserWorkspaceService;
+  private workspaceService: WorkspaceService;
   constructor(
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
@@ -24,6 +27,9 @@ export class WorkspaceInvitationService {
   onModuleInit() {
     this.tokenService = this.moduleRef.get(TokenService, { strict: false });
     this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
+      strict: false,
+    });
+    this.workspaceService = this.moduleRef.get(WorkspaceService, {
       strict: false,
     });
   }
@@ -121,5 +127,31 @@ export class WorkspaceInvitationService {
     if (appToken) {
       await this.appTokenRepository.delete(appToken.id);
     }
+  }
+
+  async resendWorkspaceInvitation(
+    appTokenId: string,
+    workspace: Workspace,
+    sender: User,
+  ) {
+    const appToken = await this.appTokenRepository.findOne({
+      where: {
+        id: appTokenId,
+        workspaceId: workspace.id,
+        type: AppTokenType.InvitationToken,
+      },
+    });
+
+    if (!appToken || !appToken.context || !('email' in appToken.context)) {
+      throw new Error('Invalid appToken');
+    }
+
+    await this.appTokenRepository.delete(appToken.id);
+
+    return this.workspaceService.sendInviteLink(
+      [appToken.context.email],
+      workspace,
+      sender,
+    );
   }
 }

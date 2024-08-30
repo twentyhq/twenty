@@ -26,10 +26,10 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {
   useDeleteWorkspaceInvitationMutation,
   useGetWorkspaceInvitationsQuery,
+  useResendWorkspaceInvitationMutation,
 } from '~/generated/graphql';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -65,6 +65,8 @@ export const SettingsWorkspaceMembers = () => {
 
   const [deleteWorkspaceInvitationMutation] =
     useDeleteWorkspaceInvitationMutation();
+  const [resendWorkspaceInvitationMutation] =
+    useResendWorkspaceInvitationMutation();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -109,8 +111,26 @@ export const SettingsWorkspaceMembers = () => {
     });
   };
 
-  const handleResendWorkspaceInvitation = async (invitationId: string) => {
-    console.log('>>>>>>>>>>>>>>', 'Resend invitation ', invitationId);
+  const handleResendWorkspaceInvitation = (appTokenId: string) => {
+    resendWorkspaceInvitationMutation({
+      variables: {
+        appTokenId,
+      },
+      onError: (error) => {
+        enqueueSnackBar('Error resending invitation', {
+          variant: SnackBarVariant.Error,
+          duration: 2000,
+        });
+      },
+      onCompleted: (data) => {
+        setWorkspaceInvitations([
+          ...data.resendWorkspaceInvitation.result,
+          ...workspaceInvitations.filter(
+            (workspaceInvitation) => workspaceInvitation.id !== appTokenId,
+          ),
+        ]);
+      },
+    });
   };
 
   const getExpiresAtText = (expiresAt: string) => {
@@ -172,42 +192,23 @@ export const SettingsWorkspaceMembers = () => {
                   />
                 </TableCell>
                 <TableCell align={'right'}>
-                  <StyledButtonContainer>
-                    <IconButton
-                      onClick={() => {
-                        setIsConfirmationModalOpen(true);
-                        setWorkspaceMemberToDelete(workspaceMember.id);
-                      }}
-                      variant="tertiary"
-                      size="medium"
-                      Icon={IconTrash}
-                    />
-                  </StyledButtonContainer>
+                  {currentWorkspaceMember?.id !== workspaceMember.id && (
+                    <StyledButtonContainer>
+                      <IconButton
+                        onClick={() => {
+                          setIsConfirmationModalOpen(true);
+                          setWorkspaceMemberToDelete(workspaceMember.id);
+                        }}
+                        variant="tertiary"
+                        size="medium"
+                        Icon={IconTrash}
+                      />
+                    </StyledButtonContainer>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
           </Table>
-          {/*{workspaceMembers?.map((member) => (*/}
-          {/*  <WorkspaceMemberCard*/}
-          {/*    key={member.id}*/}
-          {/*    workspaceMember={member as WorkspaceMember}*/}
-          {/*    accessory={*/}
-          {/*      currentWorkspaceMember?.id !== member.id && (*/}
-          {/*        <StyledButtonContainer>*/}
-          {/*          <IconButton*/}
-          {/*            onClick={() => {*/}
-          {/*              setIsConfirmationModalOpen(true);*/}
-          {/*              setWorkspaceMemberToDelete(member.id);*/}
-          {/*            }}*/}
-          {/*            variant="tertiary"*/}
-          {/*            size="medium"*/}
-          {/*            Icon={IconTrash}*/}
-          {/*          />*/}
-          {/*        </StyledButtonContainer>*/}
-          {/*      )*/}
-          {/*    }*/}
-          {/*  />*/}
-          {/*))}*/}
         </Section>
         <Section>
           <H2Title
