@@ -3,8 +3,6 @@ import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleT
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
-import { usePersistField } from '../../../hooks/usePersistField';
-
 import { FieldInputEvent } from './DateTimeFieldInput';
 
 const FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS =
@@ -28,9 +26,8 @@ export const FullNameFieldInput = ({
   onTab,
   onShiftTab,
 }: FullNameFieldInputProps) => {
-  const { hotkeyScope, draftValue, setDraftValue } = useFullNameField();
-
-  const persistField = usePersistField();
+  const { hotkeyScope, draftValue, setDraftValue, persistFullNameField } =
+    useFullNameField();
 
   const isTrimmedFieldDoubleTextEmpty = (newDoubleText: FieldDoubleText) => {
     const { firstValue, secondValue } = newDoubleText;
@@ -54,15 +51,11 @@ export const FullNameFieldInput = ({
   };
 
   const handleEnter = (newDoubleText: FieldDoubleText) => {
-    onEnter?.(() =>
-      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
-    );
+    onEnter?.(() => persistFullNameField(convertToFullName(newDoubleText)));
   };
 
   const handleEscape = (newDoubleText: FieldDoubleText) => {
-    onEscape?.(() =>
-      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
-    );
+    onEscape?.(() => persistFullNameField(convertToFullName(newDoubleText)));
   };
 
   const handleClickOutside = (
@@ -70,20 +63,16 @@ export const FullNameFieldInput = ({
     newDoubleText: FieldDoubleText,
   ) => {
     onClickOutside?.(() =>
-      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+      persistFullNameField(convertToFullName(newDoubleText)),
     );
   };
 
   const handleTab = (newDoubleText: FieldDoubleText) => {
-    onTab?.(() =>
-      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
-    );
+    onTab?.(() => persistFullNameField(convertToFullName(newDoubleText)));
   };
 
   const handleShiftTab = (newDoubleText: FieldDoubleText) => {
-    onShiftTab?.(() =>
-      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
-    );
+    onShiftTab?.(() => persistFullNameField(convertToFullName(newDoubleText)));
   };
 
   const handleChange = (newDoubleText: FieldDoubleText) => {

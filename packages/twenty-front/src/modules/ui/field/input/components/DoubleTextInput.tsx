@@ -169,7 +169,10 @@ export const DoubleTextInput = ({
 
     const splittedName = name.split(' ');
 
-    onPaste?.({ firstValue: splittedName[0], secondValue: splittedName[1] });
+    onPaste?.({
+      firstValue: splittedName[0].trim(),
+      secondValue: splittedName[1].trim(),
+    });
   };
 
   return (
