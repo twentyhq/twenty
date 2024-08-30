@@ -269,7 +269,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               defaultValue: 'now',
             },
             {
-              standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+              standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
               type: FieldMetadataType.DATE_TIME,
               name: 'deletedAt',
               label: 'Deleted at',
