@@ -90,17 +90,17 @@ export const DeleteApiKey: Story = {
     await canvas.findByText('Cancel');
     const confirmationInput = await canvas.findByPlaceholderText('yes');
     await userEvent.click(confirmationInput);
-    // await userEvent.keyboard('y');
-    // await userEvent.keyboard('e');
-    // await userEvent.keyboard('s');
+    await userEvent.keyboard('y');
+    await userEvent.keyboard('e');
+    await userEvent.keyboard('s');
 
-    // const confirmButton = await canvas.findByTestId(
-    //   'confirmation-modal-confirm-button',
-    // );
+    const confirmButton = await canvas.findByTestId(
+      'confirmation-modal-confirm-button',
+    );
 
-    // await step('Click on confirm button', async () => {
-    //   await sleep(1000);
-    //   await userEvent.click(confirmButton);
-    // });
+    await step('Click on confirm button', async () => {
+      await sleep(1000);
+      await userEvent.click(confirmButton);
+    });
   },
 };
