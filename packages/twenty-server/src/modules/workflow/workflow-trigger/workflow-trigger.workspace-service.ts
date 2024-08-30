@@ -176,7 +176,7 @@ export class WorkflowTriggerWorkspaceService {
       );
     }
 
-    await this.upgradeWorflowVersion(
+    await this.upgradeWorkflowVersion(
       workflow,
       workflowVersion.id,
       workflowRepository,
@@ -280,7 +280,7 @@ export class WorkflowTriggerWorkspaceService {
     );
   }
 
-  private async upgradeWorflowVersion(
+  private async upgradeWorkflowVersion(
     workflow: WorkflowWorkspaceEntity,
     newPublishedVersionId: string,
     workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>,

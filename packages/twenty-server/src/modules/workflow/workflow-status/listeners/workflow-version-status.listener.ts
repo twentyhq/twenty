@@ -57,21 +57,12 @@ export class WorkflowVersionStatusListener {
   async handleWorkflowVersionUpdated(
     payload: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
-    const statusUpdates = payload.events.filter(
-      (workflowVersionEvent) =>
-        workflowVersionEvent.previousStatus !== workflowVersionEvent.newStatus,
-    );
-
-    if (statusUpdates.length === 0) {
-      return;
-    }
-
     await this.messageQueueService.add<WorkflowVersionBatchEvent>(
       WorkflowStatusesUpdateJob.name,
       {
         type: WorkflowVersionEventType.STATUS_UPDATE,
         workspaceId: payload.workspaceId,
-        statusUpdates,
+        statusUpdates: payload.events,
       },
     );
   }

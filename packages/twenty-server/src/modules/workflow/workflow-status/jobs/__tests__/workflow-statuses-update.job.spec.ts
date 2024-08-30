@@ -13,7 +13,7 @@ describe('WorkflowStatusesUpdate', () => {
   let job: WorkflowStatusesUpdateJob;
 
   const mockWorkflowVersionRepository = {
-    find: jest.fn(),
+    exists: jest.fn(),
   };
 
   const mockWorkflowRepository = {
@@ -52,11 +52,6 @@ describe('WorkflowStatusesUpdate', () => {
   });
 
   describe('handle', () => {
-    beforeEach(() => {
-      // make twentyORMManager.getRepository return a mock object
-      TwentyORMManager.prototype.getRepository = jest.fn();
-    });
-
     describe('when event type is CREATE', () => {
       it('when already a draft, do not change anything', async () => {
         // Arrange
@@ -89,6 +84,7 @@ describe('WorkflowStatusesUpdate', () => {
         };
 
         const mockWorkflow = {
+          id: '1',
           statuses: [WorkflowStatus.ACTIVE],
         };
 
@@ -99,7 +95,10 @@ describe('WorkflowStatusesUpdate', () => {
 
         // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
-        expect(mockWorkflowRepository.update).toHaveBeenCalledTimes(1);
+        expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
+          { id: '1' },
+          { statuses: [WorkflowStatus.ACTIVE, WorkflowStatus.DRAFT] },
+        );
       });
     });
 
@@ -210,14 +209,14 @@ describe('WorkflowStatusesUpdate', () => {
         };
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
-        mockWorkflowVersionRepository.find.mockResolvedValue([]);
+        mockWorkflowVersionRepository.exists.mockResolvedValue(false);
 
         // Act
         await job.handle(event);
 
         // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
-        expect(mockWorkflowVersionRepository.find).toHaveBeenCalledWith({
+        expect(mockWorkflowVersionRepository.exists).toHaveBeenCalledWith({
           where: {
             workflowId: '1',
             status: WorkflowVersionStatus.ACTIVE,
@@ -248,14 +247,14 @@ describe('WorkflowStatusesUpdate', () => {
         };
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
-        mockWorkflowVersionRepository.find.mockResolvedValue([]);
+        mockWorkflowVersionRepository.exists.mockResolvedValue(false);
 
         // Act
         await job.handle(event);
 
         // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
-        expect(mockWorkflowVersionRepository.find).toHaveBeenCalledWith({
+        expect(mockWorkflowVersionRepository.exists).toHaveBeenCalledWith({
           where: {
             workflowId: '1',
             status: WorkflowVersionStatus.DRAFT,
@@ -304,14 +303,14 @@ describe('WorkflowStatusesUpdate', () => {
         };
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
-        mockWorkflowVersionRepository.find.mockResolvedValue([]);
+        mockWorkflowVersionRepository.exists.mockResolvedValue(false);
 
         // Act
         await job.handle(event);
 
         // Assert
         expect(mockWorkflowRepository.findOneOrFail).toHaveBeenCalledTimes(1);
-        expect(mockWorkflowVersionRepository.find).toHaveBeenCalledWith({
+        expect(mockWorkflowVersionRepository.exists).toHaveBeenCalledWith({
           where: {
             workflowId: '1',
             status: WorkflowVersionStatus.DRAFT,

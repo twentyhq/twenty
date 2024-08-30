@@ -270,13 +270,11 @@ export class WorkflowStatusesUpdateJob {
         'workflowVersion',
       );
 
-    const workflowVersions = await workflowVersionRepository.find({
+    return workflowVersionRepository.exists({
       where: {
         workflowId,
         status,
       },
     });
-
-    return workflowVersions.length > 0;
   }
 }

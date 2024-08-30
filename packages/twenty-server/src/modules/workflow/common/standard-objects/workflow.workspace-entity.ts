@@ -18,10 +18,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  WorkflowVersionStatus,
-  WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
@@ -31,19 +28,19 @@ export enum WorkflowStatus {
 
 const WorkflowStatusOptions = [
   {
-    value: WorkflowVersionStatus.DRAFT,
+    value: WorkflowStatus.DRAFT,
     label: 'Draft',
     position: 0,
     color: 'yellow',
   },
   {
-    value: WorkflowVersionStatus.ACTIVE,
+    value: WorkflowStatus.ACTIVE,
     label: 'Active',
     position: 1,
     color: 'green',
   },
   {
-    value: WorkflowVersionStatus.DEACTIVATED,
+    value: WorkflowStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
     color: 'grey',
