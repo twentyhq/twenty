@@ -2,20 +2,20 @@ import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const usePreventOverlapCallback = (
-  func: () => Promise<void>,
+  callback: () => Promise<void>,
   wait?: number,
 ) => {
   const [isRunning, setIsRunning] = useState(false);
   const [pendingRun, setPendingRun] = useState(false);
 
-  const handleFunc = async () => {
+  const handleCallback = async () => {
     if (isRunning) {
       setPendingRun(true);
       return;
     }
     setIsRunning(true);
     try {
-      await func();
+      await callback();
     } finally {
       setIsRunning(false);
     }
@@ -24,9 +24,9 @@ export const usePreventOverlapCallback = (
   useEffect(() => {
     if (!isRunning && pendingRun) {
       setPendingRun(false);
-      func();
+      callback();
     }
-  }, [func, isRunning, pendingRun, setPendingRun]);
+  }, [callback, isRunning, pendingRun, setPendingRun]);
 
-  return useDebouncedCallback(handleFunc, wait);
+  return useDebouncedCallback(handleCallback, wait);
 };

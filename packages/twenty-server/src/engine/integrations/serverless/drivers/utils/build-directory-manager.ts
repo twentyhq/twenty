@@ -22,13 +22,8 @@ export class BuildDirectoryManager {
     const lambdaZipPath = join(this.temporaryDir, LAMBDA_ZIP_FILE_NAME);
     const javascriptFilePath = join(sourceTemporaryDir, LAMBDA_ENTRY_FILE_NAME);
 
-    if (!fs.existsSync(this.temporaryDir)) {
-      await fs.promises.mkdir(this.temporaryDir);
-      await fs.promises.mkdir(sourceTemporaryDir);
-    } else {
-      await fsExtra.emptyDir(this.temporaryDir);
-      await fs.promises.mkdir(sourceTemporaryDir);
-    }
+    await fs.promises.mkdir(this.temporaryDir);
+    await fs.promises.mkdir(sourceTemporaryDir);
 
     return {
       sourceTemporaryDir,
