@@ -12,7 +12,7 @@ import {
 import { RelationMetadataService } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.service';
 
 @Injectable()
-export class BeforeDeleteOneRelation implements BeforeDeleteOneHook<any> {
+export class BeforeDeleteOneRelation implements BeforeDeleteOneHook {
   constructor(readonly relationMetadataService: RelationMetadataService) {}
 
   async run(

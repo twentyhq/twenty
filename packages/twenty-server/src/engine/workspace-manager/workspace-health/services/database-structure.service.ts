@@ -151,24 +151,6 @@ export class DatabaseStructureService {
     }));
   }
 
-  async workspaceColumnExist(
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-  ): Promise<boolean> {
-    const mainDataSource = this.typeORMService.getMainDataSource();
-    const results = await mainDataSource.query(
-      `SELECT column_name
-        FROM information_schema.columns
-        WHERE table_schema = $1
-        AND table_name = $2
-        AND column_name = $3`,
-      [schemaName, tableName, columnName],
-    );
-
-    return results.length >= 1;
-  }
-
   getPostgresDataTypes(fieldMetadata: FieldMetadataEntity): string[] {
     const mainDataSource = this.typeORMService.getMainDataSource();
 

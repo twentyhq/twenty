@@ -61,41 +61,6 @@ export class ConnectedAccountRepository {
     return connectedAccounts;
   }
 
-  public async getAllByUserId(
-    userId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
-    const schemaExists =
-      await this.workspaceDataSourceService.checkSchemaExists(workspaceId);
-
-    if (!schemaExists) {
-      return;
-    }
-
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const workspaceMember = (
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = $1`,
-        [userId],
-        workspaceId,
-        transactionManager,
-      )
-    )?.[0];
-
-    if (!workspaceMember) {
-      return;
-    }
-
-    return await this.getAllByWorkspaceMemberId(
-      workspaceMember.id,
-      workspaceId,
-      transactionManager,
-    );
-  }
-
   public async getAllByHandleAndWorkspaceMemberId(
     handle: string,
     workspaceMemberId: string,
@@ -202,58 +167,6 @@ export class ConnectedAccountRepository {
     }
 
     return connectedAccount;
-  }
-
-  public async updateLastSyncHistoryId(
-    historyId: string,
-    connectedAccountId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ) {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = $1 WHERE "id" = $2`,
-      [historyId, connectedAccountId],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
-  public async updateLastSyncHistoryIdIfHigher(
-    historyId: string,
-    connectedAccountId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ) {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = $1
-      WHERE "id" = $2
-      AND ("lastSyncHistoryId" < $1 OR "lastSyncHistoryId" = '')`,
-      [historyId, connectedAccountId],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
-  public async deleteHistoryId(
-    connectedAccountId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ) {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = '' WHERE "id" = $1`,
-      [connectedAccountId],
-      workspaceId,
-      transactionManager,
-    );
   }
 
   public async updateAccessToken(

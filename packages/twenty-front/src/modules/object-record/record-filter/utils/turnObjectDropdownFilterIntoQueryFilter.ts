@@ -5,6 +5,7 @@ import {
   AddressFilter,
   CurrencyFilter,
   DateFilter,
+  EmailsFilter,
   FloatFilter,
   RecordGqlOperationFilter,
   RelationFilter,
@@ -225,6 +226,22 @@ const applyEmptyFilters = (
             [correspondingField.name]: {
               name: { is: 'NULL' },
             } as ActorFilter,
+          },
+        ],
+      };
+      break;
+    case 'EMAILS':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: {
+              primaryEmail: { ilike: '' },
+            } as EmailsFilter,
+          },
+          {
+            [correspondingField.name]: {
+              primaryEmail: { is: 'NULL' },
+            } as EmailsFilter,
           },
         ],
       };
@@ -786,6 +803,51 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as ActorFilter,
+                  },
+                },
+              ],
+            });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition.type,
+            );
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      case 'EMAILS':
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: [
+                {
+                  [correspondingField.name]: {
+                    primaryEmail: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as EmailsFilter,
+                },
+              ],
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      primaryEmail: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as EmailsFilter,
                   },
                 },
               ],

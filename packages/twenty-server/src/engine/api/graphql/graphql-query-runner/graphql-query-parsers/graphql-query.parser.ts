@@ -10,9 +10,9 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { GraphqlQueryFilterConditionParser as GraphqlQueryFilterParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-filter/graphql-query-filter-condition.parser';
-import { GraphqlQueryOrderFieldParser as GraphqlQueryOrderParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-order/graphql-query-order.parser';
-import { GraphQLSelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-selected-fields/graphql-selected-fields.parser';
+import { GraphqlQueryFilterConditionParser as GraphqlQueryFilterParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { GraphqlQueryOrderFieldParser as GraphqlQueryOrderParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
@@ -61,7 +61,7 @@ export class GraphqlQueryParser {
       );
     }
 
-    const selectedFieldsParser = new GraphQLSelectedFieldsParser(
+    const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMap,
     );
 

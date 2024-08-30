@@ -57,9 +57,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       ) ?? false;
 
     const defaultValue = (options.defaultValue ??
-      generateDefaultValue(
-        options.type,
-      )) as FieldMetadataDefaultValue<'default'> | null;
+      generateDefaultValue(options.type)) as FieldMetadataDefaultValue | null;
 
     metadataArgsStorage.addFields({
       target: object.constructor,

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
@@ -15,8 +15,6 @@ import { RelationFieldAliasFactory } from './relation-field-alias.factory';
 
 @Injectable()
 export class FieldsStringFactory {
-  private readonly logger = new Logger(FieldsStringFactory.name);
-
   constructor(
     private readonly fieldAliasFactory: FieldAliasFactory,
     private readonly relationFieldAliasFactory: RelationFieldAliasFactory,
