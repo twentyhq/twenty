@@ -17,13 +17,11 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query.parser';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
-import {
-  createConnection,
-  decodeCursor,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/connection.util';
 import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -120,11 +118,15 @@ export class GraphqlQueryRunnerService {
 
     const objectRecords = await repository.find(findOptions);
 
-    return createConnection(
+    const typeORMObjectRecordsParser =
+      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+
+    return typeORMObjectRecordsParser.createConnection(
       (objectRecords as ObjectRecord[]) ?? [],
       take,
       totalCount,
       order,
+      objectMetadataItem.nameSingular,
     );
   }
 }

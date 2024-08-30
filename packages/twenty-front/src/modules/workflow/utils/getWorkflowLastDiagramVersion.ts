@@ -1,6 +1,7 @@
 import { Workflow } from '@/workflow/types/Workflow';
 import { WorkflowDiagram } from '@/workflow/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/utils/generateWorkflowDiagram';
+import { getWorkflowLastVersion } from '@/workflow/utils/getWorkflowLastVersion';
 import { isDefined } from 'twenty-ui';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
@@ -15,7 +16,7 @@ export const getWorkflowLastDiagramVersion = (
     return EMPTY_DIAGRAM;
   }
 
-  const lastVersion = workflow.versions.at(-1);
+  const lastVersion = getWorkflowLastVersion(workflow);
   if (!isDefined(lastVersion) || !isDefined(lastVersion.trigger)) {
     return EMPTY_DIAGRAM;
   }

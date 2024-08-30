@@ -134,7 +134,7 @@ export class QueryRunnerArgsFactory {
               ),
             ];
           case FieldMetadataType.NUMBER:
-            return [key, await Promise.resolve(Number(value))];
+            return [key, Number(value)];
           default:
             return [key, await Promise.resolve(value)];
         }

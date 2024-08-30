@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import { AddressFieldInput } from '@/object-record/record-field/meta-types/input/components/AddressFieldInput';
 import { DateFieldInput } from '@/object-record/record-field/meta-types/input/components/DateFieldInput';
+import { EmailsFieldInput } from '@/object-record/record-field/meta-types/input/components/EmailsFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { LinksFieldInput } from '@/object-record/record-field/meta-types/input/components/LinksFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput';
@@ -11,6 +12,7 @@ import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
+import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
@@ -103,6 +105,8 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
+      ) : isFieldEmails(fieldDefinition) ? (
+        <EmailsFieldInput onCancel={onCancel} />
       ) : isFieldFullName(fieldDefinition) ? (
         <FullNameFieldInput
           onEnter={onEnter}

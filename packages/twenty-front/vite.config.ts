@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import path from 'path';
@@ -8,13 +9,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 type Checkers = Parameters<typeof checker>[0];
 
-// https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
-  /*
-    Using explicit env variables, there is no need to expose all of them (security).
-  */
   const {
     REACT_APP_SERVER_BASE_URL,
     VITE_BUILD_SOURCEMAP,

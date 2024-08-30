@@ -6,8 +6,9 @@ import { ExceptionHandlerDriver } from 'src/engine/integrations/exception-handle
 
 /**
  * ExceptionHandler Module factory
- * @param environment
  * @returns ExceptionHandlerModuleOptions
+ * @param environmentService
+ * @param adapterHost
  */
 export const exceptionHandlerModuleFactory = async (
   environmentService: EnvironmentService,
