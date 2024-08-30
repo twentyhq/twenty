@@ -1,5 +1,3 @@
-// TODO: Move inside blocklist module
-
 export const isEmailBlocklisted = (
   channelHandle: string,
   email: string | null | undefined,
