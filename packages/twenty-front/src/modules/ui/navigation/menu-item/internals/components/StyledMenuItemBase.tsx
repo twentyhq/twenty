@@ -25,7 +25,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 
   font-size: ${({ theme }) => theme.font.size.sm};
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(6.4)};
 
   height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
