@@ -61,12 +61,7 @@ export const useHandleToggleTrashColumnFilter = ({
     };
 
     upsertCombinedViewFilter(newFilter);
-  }, [
-    columnDefinitions,
-    objectMetadataItem,
-    objectNameSingular,
-    upsertCombinedViewFilter,
-  ]);
+  }, [columnDefinitions, objectMetadataItem, upsertCombinedViewFilter]);
 
   return handleToggleTrashColumnFilter;
 };

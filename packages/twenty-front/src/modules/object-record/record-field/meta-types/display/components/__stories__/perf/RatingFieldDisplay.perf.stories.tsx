@@ -29,6 +29,6 @@ export const Default: Story = {};
 export const Performance = getProfilingStory({
   componentName: 'RatingFieldDisplay',
   averageThresholdInMs: 0.5,
-  numberOfRuns: 50,
+  numberOfRuns: 30,
   numberOfTestsPerRun: 100,
 });

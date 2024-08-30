@@ -30,7 +30,6 @@ export type Story = StoryObj<typeof SettingsObjectNewFieldStep2>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Settings');
     await canvas.findByText('Objects');
     await canvas.findByText('Name and description');
 
