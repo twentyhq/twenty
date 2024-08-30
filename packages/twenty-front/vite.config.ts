@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import path from 'path';
@@ -8,14 +9,15 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 type Checkers = Parameters<typeof checker>[0];
 
-// https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
-  /*
-    Using explicit env variables, there is no need to expose all of them (security).
-  */
-  const { REACT_APP_SERVER_BASE_URL, VITE_BUILD_SOURCEMAP } = env;
+  const {
+    REACT_APP_SERVER_BASE_URL,
+    VITE_BUILD_SOURCEMAP,
+    VITE_DISABLE_TYPESCRIPT_CHECKER,
+    VITE_DISABLE_ESLINT_CHECKER,
+  } = env;
 
   const isBuildCommand = command === 'build';
 
@@ -24,13 +26,33 @@ export default defineConfig(({ command, mode }) => {
     : path.resolve(__dirname, './tsconfig.dev.json');
 
   const checkers: Checkers = {
-    typescript: {
-      tsconfigPath: tsConfigPath,
-    },
     overlay: false,
   };
 
-  if (!isBuildCommand) {
+  if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
+    // eslint-disable-next-line no-console
+    console.log(
+      `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
+    );
+  }
+
+  if (VITE_DISABLE_ESLINT_CHECKER === 'true') {
+    // eslint-disable-next-line no-console
+    console.log(`VITE_DISABLE_ESLINT_CHECKER: ${VITE_DISABLE_ESLINT_CHECKER}`);
+  }
+
+  if (VITE_BUILD_SOURCEMAP === 'true') {
+    // eslint-disable-next-line no-console
+    console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
+  }
+
+  if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
+    checkers['typescript'] = {
+      tsconfigPath: tsConfigPath,
+    };
+  }
+
+  if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand:
         'eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',

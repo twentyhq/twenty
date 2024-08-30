@@ -11,7 +11,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
-} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handling.service';
+} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import {
   CalendarGetCalendarEventsService,
   GetCalendarEventsResponse,
@@ -64,23 +64,66 @@ export class CalendarEventsImportService {
 
       calendarEvents = getCalendarEventsResponse.calendarEvents;
       nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
-    } catch (error) {
-      await this.calendarEventImportErrorHandlerService.handleError(
-        error,
-        syncStep,
-        calendarChannel,
+
+      const calendarChannelRepository =
+        await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+          'calendarChannel',
+        );
+
+      if (!calendarEvents || calendarEvents?.length === 0) {
+        await calendarChannelRepository.update(
+          {
+            id: calendarChannel.id,
+          },
+          {
+            syncCursor: nextSyncCursor,
+          },
+        );
+
+        await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+          calendarChannel.id,
+        );
+      }
+
+      const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
+        connectedAccount.accountOwnerId,
         workspaceId,
       );
 
-      return;
-    }
+      const { filteredEvents, cancelledEvents } =
+        filterEventsAndReturnCancelledEvents(
+          calendarChannel,
+          calendarEvents,
+          blocklist.map((blocklist) => blocklist.handle),
+        );
 
-    const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
-        'calendarChannel',
+      const cancelledEventExternalIds = cancelledEvents.map(
+        (event) => event.externalId,
       );
 
-    if (!calendarEvents || calendarEvents?.length === 0) {
+      await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
+        filteredEvents,
+        calendarChannel,
+        connectedAccount,
+        workspaceId,
+      );
+
+      const calendarChannelEventAssociationRepository =
+        await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+          'calendarChannelEventAssociation',
+        );
+
+      await calendarChannelEventAssociationRepository.delete({
+        eventExternalId: Any(cancelledEventExternalIds),
+        calendarChannel: {
+          id: calendarChannel.id,
+        },
+      });
+
+      await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
+        workspaceId,
+      );
+
       await calendarChannelRepository.update(
         {
           id: calendarChannel.id,
@@ -90,61 +133,16 @@ export class CalendarEventsImportService {
         },
       );
 
-      await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+      await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         calendarChannel.id,
       );
-    }
-
-    const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
-      connectedAccount.accountOwnerId,
-      workspaceId,
-    );
-
-    const { filteredEvents, cancelledEvents } =
-      filterEventsAndReturnCancelledEvents(
+    } catch (error) {
+      await this.calendarEventImportErrorHandlerService.handleDriverException(
+        error,
+        syncStep,
         calendarChannel,
-        calendarEvents,
-        blocklist.map((blocklist) => blocklist.handle),
+        workspaceId,
       );
-
-    const cancelledEventExternalIds = cancelledEvents.map(
-      (event) => event.externalId,
-    );
-
-    await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
-      filteredEvents,
-      calendarChannel,
-      connectedAccount,
-      workspaceId,
-    );
-
-    const calendarChannelEventAssociationRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-        'calendarChannelEventAssociation',
-      );
-
-    await calendarChannelEventAssociationRepository.delete({
-      eventExternalId: Any(cancelledEventExternalIds),
-      calendarChannel: {
-        id: calendarChannel.id,
-      },
-    });
-
-    await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
-      workspaceId,
-    );
-
-    await calendarChannelRepository.update(
-      {
-        id: calendarChannel.id,
-      },
-      {
-        syncCursor: nextSyncCursor,
-      },
-    );
-
-    await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-      calendarChannel.id,
-    );
+    }
   }
 }

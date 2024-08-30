@@ -1,11 +1,11 @@
 {
   "name": "twenty-front",
-  "version": "0.23.2",
+  "version": "0.24.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=4096 npx nx build",
+    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=3000 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=6000 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx vite --host",
     "tsup": "npx tsup"
   },

@@ -84,10 +84,6 @@ export class WorkspaceSyncStorage {
     return this._indexMetadataCreateCollection;
   }
 
-  get indexMetadataUpdateCollection() {
-    return this._indexMetadataUpdateCollection;
-  }
-
   get indexMetadataDeleteCollection() {
     return this._indexMetadataDeleteCollection;
   }
@@ -136,10 +132,6 @@ export class WorkspaceSyncStorage {
 
   addCreateIndexMetadata(index: Partial<IndexMetadataEntity>) {
     this._indexMetadataCreateCollection.push(index);
-  }
-
-  addUpdateIndexMetadata(index: Partial<IndexMetadataEntity>) {
-    this._indexMetadataUpdateCollection.push(index);
   }
 
   addDeleteIndexMetadata(index: IndexMetadataEntity) {

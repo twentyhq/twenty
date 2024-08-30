@@ -72,6 +72,11 @@ export type FieldEmailMetadata = {
   fieldName: string;
 };
 
+export type FieldEmailsMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldPhoneMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
@@ -180,6 +185,10 @@ export type FieldBooleanValue = boolean;
 
 export type FieldPhoneValue = string;
 export type FieldEmailValue = string;
+export type FieldEmailsValue = {
+  primaryEmail: string;
+  additionalEmails: string[] | null;
+};
 export type FieldLinkValue = { url: string; label: string };
 export type FieldLinksValue = {
   primaryLinkLabel: string;

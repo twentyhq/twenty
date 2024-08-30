@@ -9,7 +9,7 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 
 @Injectable()
 export class BeforeCreateOneObject<T extends CreateObjectInput>
-  implements BeforeCreateOneHook<T, any>
+  implements BeforeCreateOneHook<T>
 {
   async run(
     instance: CreateOneInputType<T>,

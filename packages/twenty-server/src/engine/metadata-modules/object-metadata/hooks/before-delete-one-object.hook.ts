@@ -12,7 +12,7 @@ import {
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 @Injectable()
-export class BeforeDeleteOneObject implements BeforeDeleteOneHook<any> {
+export class BeforeDeleteOneObject implements BeforeDeleteOneHook {
   constructor(readonly objectMetadataService: ObjectMetadataService) {}
 
   async run(

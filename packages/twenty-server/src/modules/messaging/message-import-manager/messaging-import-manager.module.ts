@@ -5,12 +5,10 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshAccessTokenManagerModule } from 'src/modules/connected-account/refresh-access-token-manager/refresh-access-token-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
@@ -25,8 +23,10 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
-import { MessagingErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
 import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
+import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-partial-message-list-fetch.service';
@@ -42,7 +42,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingCommonModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
-    TwentyORMModule.forFeature([MessageChannelWorkspaceEntity]),
     BillingModule,
     EmailAliasManagerModule,
     FeatureFlagModule,
@@ -64,11 +63,13 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageImportManagerMessageChannelListener,
     MessagingCleanCacheJob,
     MessagingMessageService,
-    MessagingErrorHandlingService,
     MessagingPartialMessageListFetchService,
     MessagingFullMessageListFetchService,
     MessagingMessagesImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
+    MessagingGetMessageListService,
+    MessagingGetMessagesService,
+    MessageImportExceptionHandlerService,
   ],
   exports: [],
 })

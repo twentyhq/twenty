@@ -51,6 +51,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
@@ -78,6 +79,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(fieldMetadataRepository);
   }
@@ -92,7 +94,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     try {
       const fieldMetadataRepository =
-        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
           FieldMetadataEntity,
         );
       const objectMetadata =
@@ -137,6 +139,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (fieldMetadataInput.type === FieldMetadataType.LINK) {
         throw new FieldMetadataException(
           '"Link" field types are being deprecated, please use Links type instead',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      if (fieldMetadataInput.type === FieldMetadataType.EMAIL) {
+        throw new FieldMetadataException(
+          '"Email" field types are being deprecated, please use Emails type instead',
           FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         );
       }
@@ -295,7 +304,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     try {
       const fieldMetadataRepository =
-        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
           FieldMetadataEntity,
         );
 
@@ -346,6 +355,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'Cannot deactivate label identifier field',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         );
+      }
+
+      if (fieldMetadataInput.isActive === false) {
+        const viewsRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+            fieldMetadataInput.workspaceId,
+            'view',
+          );
+
+        await viewsRepository.delete({
+          kanbanFieldMetadataId: id,
+        });
       }
 
       if (fieldMetadataInput.options) {
@@ -450,7 +471,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     try {
       const fieldMetadataRepository =
-        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
           FieldMetadataEntity,
         );
 
@@ -591,13 +612,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         workspaceId,
       },
     });
-  }
-
-  public async deleteFieldsMetadata(workspaceId: string) {
-    await this.fieldMetadataRepository.delete({ workspaceId });
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
   }
 
   private buildUpdatableStandardFieldInput(
