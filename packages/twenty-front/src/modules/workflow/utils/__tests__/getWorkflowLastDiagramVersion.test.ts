@@ -1,5 +1,5 @@
 import { Workflow } from '@/workflow/types/Workflow';
-import { getWorkflowLastDiagramVersion } from '../getWorkflowLastDiagramVersion';
+import { getWorkflowLastDiagramVersion } from '../getWorkflowVersionDiagram';
 
 describe('getWorkflowLastDiagramVersion', () => {
   it('returns an empty diagram if the provided workflow is undefined', () => {

@@ -64,5 +64,5 @@ export type Workflow = {
   id: string;
   name: string;
   versions: Array<WorkflowVersion>;
-  publishedVersionId: string;
+  lastPublishedVersionId: string;
 };
