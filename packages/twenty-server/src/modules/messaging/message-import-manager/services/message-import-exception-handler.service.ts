@@ -92,9 +92,7 @@ export class MessageImportExceptionHandlerService {
       );
 
     await messageChannelRepository.increment(
-      {
-        id: messageChannel.id,
-      },
+      { id: messageChannel.id },
       'throttleFailureCount',
       1,
     );
