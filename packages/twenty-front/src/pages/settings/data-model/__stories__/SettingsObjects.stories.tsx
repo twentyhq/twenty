@@ -30,9 +30,6 @@ export const Default: Story = {
 
     await sleep(1000);
 
-    await canvas.getByRole('heading', {
-      level: 2,
-      name: 'Objects',
-    });
+    await canvas.findByText('Data model');
   },
 };
