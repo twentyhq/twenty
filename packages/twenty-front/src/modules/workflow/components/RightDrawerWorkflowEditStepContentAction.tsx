@@ -78,7 +78,7 @@ export const RightDrawerWorkflowEditStepContentAction = ({
         </StyledTriggerHeaderIconContainer>
 
         <StyledTriggerHeaderTitle>
-          Get First and Last names
+          Code - Serverless Function
         </StyledTriggerHeaderTitle>
 
         <StyledTriggerHeaderType>Code</StyledTriggerHeaderType>

@@ -1,3 +1,4 @@
+import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { WorkflowStep } from '@/workflow/types/Workflow';
 
 /**
@@ -11,7 +12,7 @@ export const findStepPositionOrThrow = ({
   steps: Array<WorkflowStep>;
   stepId: string | undefined;
 }): { steps: Array<WorkflowStep>; index: number } => {
-  if (stepId === undefined) {
+  if (stepId === undefined || stepId === TRIGGER_STEP_ID) {
     return {
       steps,
       index: 0,
