@@ -26,6 +26,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.DateTime,
         FieldMetadataType.Text,
         FieldMetadataType.Email,
+        FieldMetadataType.Emails,
         FieldMetadataType.Number,
         FieldMetadataType.Link,
         FieldMetadataType.Links,
@@ -77,6 +78,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'CURRENCY';
     case FieldMetadataType.Email:
       return 'EMAIL';
+    case FieldMetadataType.Emails:
+      return 'EMAILS';
     case FieldMetadataType.Phone:
       return 'PHONE';
     case FieldMetadataType.Relation:

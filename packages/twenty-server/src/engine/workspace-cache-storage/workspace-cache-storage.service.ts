@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EntitySchemaOptions } from 'typeorm';
 
@@ -18,8 +18,6 @@ enum WorkspaceCacheKeys {
 
 @Injectable()
 export class WorkspaceCacheStorageService {
-  private readonly logger = new Logger(WorkspaceCacheStorageService.name);
-
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly cacheStorageService: CacheStorageService,

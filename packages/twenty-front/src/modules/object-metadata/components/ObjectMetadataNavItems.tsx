@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
@@ -52,12 +53,12 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   );
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
-  const currentPathWithSearch = currentPath + useLocation().search;
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
   const theme = useTheme();
+  const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
   if (loading && isDefined(currentUser)) {
     return <ObjectMetadataNavItemsSkeletonLoader />;
@@ -106,7 +107,11 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               objectMetadataItem.id,
               views,
             );
-            const viewId = objectMetadataViews[0]?.id;
+            const lastVisitedViewId =
+              getLastVisitedViewIdFromObjectMetadataItemId(
+                objectMetadataItem.id,
+              );
+            const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
 
             const navigationPath = `/objects/${objectMetadataItem.namePlural}${
               viewId ? `?view=${viewId}` : ''
@@ -146,10 +151,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                           <NavigationDrawerSubItem
                             label={view.name}
                             to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-                            active={
-                              currentPathWithSearch ===
-                              `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
-                            }
+                            active={viewId === view.id}
                             Icon={getIcon(view.icon)}
                             key={view.id}
                           />

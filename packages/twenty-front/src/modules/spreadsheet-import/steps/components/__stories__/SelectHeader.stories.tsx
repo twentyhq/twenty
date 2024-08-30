@@ -29,7 +29,7 @@ export const Default = () => (
           setCurrentStepState={() => null}
           nextStep={() => Promise.resolve()}
           setPreviousStepState={() => null}
-          errorToast={() => null}
+          onError={() => null}
           onBack={() => Promise.resolve()}
           currentStepState={{
             type: SpreadsheetImportStepType.selectHeader,

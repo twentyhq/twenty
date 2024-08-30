@@ -209,6 +209,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: isCustom,
       isSystem: false,
       isRemote: objectMetadataInput.isRemote,
+      isSoftDeletable: true,
       fields: isCustom
         ? // Creating default fields.
           // No need to create a custom migration for this though as the default columns are already
@@ -396,31 +397,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
       },
     });
-  }
-
-  public async findOneOrFailWithinWorkspace(
-    workspaceId: string,
-    options: FindOneOptions<ObjectMetadataEntity>,
-  ): Promise<ObjectMetadataEntity> {
-    try {
-      return this.objectMetadataRepository.findOneOrFail({
-        relations: [
-          'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
-        ],
-        ...options,
-        where: {
-          ...options.where,
-          workspaceId,
-        },
-      });
-    } catch (error) {
-      throw new ObjectMetadataException(
-        'Object does not exist',
-        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
   }
 
   public async findManyWithinWorkspace(

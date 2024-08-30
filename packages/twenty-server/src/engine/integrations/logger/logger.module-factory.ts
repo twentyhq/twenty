@@ -6,8 +6,8 @@ import {
 
 /**
  * Logger Module factory
- * @param environment
  * @returns LoggerModuleOptions
+ * @param environmentService
  */
 export const loggerModuleFactory = async (
   environmentService: EnvironmentService,

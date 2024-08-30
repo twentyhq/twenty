@@ -3,10 +3,6 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export interface WorkspaceIndexOptions {
-  columns?: string[];
-}
-
 export function WorkspaceIndex(): PropertyDecorator;
 export function WorkspaceIndex(columns: string[]): ClassDecorator;
 export function WorkspaceIndex(
