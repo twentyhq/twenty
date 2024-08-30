@@ -1,9 +1,9 @@
 export const isEmailBlocklisted = (
-  channelHandle: string,
+  channelHandle: string[],
   email: string | null | undefined,
   blocklist: string[],
 ): boolean => {
-  if (!email || email === channelHandle) {
+  if (!email || channelHandle.includes(email)) {
     return false;
   }
 

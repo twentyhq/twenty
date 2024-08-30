@@ -151,7 +151,7 @@ export class MessagingMessagesImportService {
       );
 
       const messagesToSave = filterEmails(
-        messageChannel.handle,
+        [messageChannel.handle, ...connectedAccount.handleAliases],
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
