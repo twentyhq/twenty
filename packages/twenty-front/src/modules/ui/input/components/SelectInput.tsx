@@ -23,7 +23,6 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { TagColor, isDefined } from 'twenty-ui';
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;
@@ -145,9 +144,7 @@ export const SelectInput = ({
       <DropdownMenu ref={containerRef} data-select-disable>
         <DropdownMenuSearchInput
           value={searchFilter}
-          onChange={(e) =>
-            setSearchFilter(convertToEmptyStringForWhitespaces(e.target.value))
-          }
+          onChange={(e) => setSearchFilter(e.target.value)}
           autoFocus
         />
         <DropdownMenuSeparator />

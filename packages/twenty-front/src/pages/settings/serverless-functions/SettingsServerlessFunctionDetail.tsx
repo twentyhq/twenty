@@ -24,7 +24,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { isDefined } from '~/utils/isDefined';
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
