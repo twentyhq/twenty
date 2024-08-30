@@ -31,12 +31,6 @@ export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
 }
 
-const IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH = join(
-  tmpdir(),
-  COMMON_LAYER_NAME,
-  `${LAST_LAYER_VERSION}`,
-);
-
 export class LocalDriver
   extends BaseServerlessDriver
   implements ServerlessDriver
@@ -48,15 +42,24 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
+  private getInMemoryLayerFolderPath = (version: 'latest' | number) => {
+    const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
+
+    return join(tmpdir(), COMMON_LAYER_NAME, `${computedVersion}`);
+  };
+
   async createLastVersionLayerIfNotExists(): Promise<void> {
+    const inMemoryLastVersionLayerFolderPath =
+      this.getInMemoryLayerFolderPath('latest');
+
     if (
-      existsSync(IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH) &&
-      existsSync(join(IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH, 'node_modules'))
+      existsSync(inMemoryLastVersionLayerFolderPath) &&
+      existsSync(join(inMemoryLastVersionLayerFolderPath, 'node_modules'))
     ) {
       return;
     }
 
-    await copyAndBuildDependencies(IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH);
+    await copyAndBuildDependencies(inMemoryLastVersionLayerFolderPath);
   }
 
   async delete() {}
@@ -121,7 +124,7 @@ export class LocalDriver
     const tmpFilePath = join(tmpFolderPath, 'index.js');
 
     await fs.symlink(
-      IN_MEMORY_LAST_VERSION_LAYER_FOLDER_PATH,
+      this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
       tmpFolderPath,
       'dir',
     );
