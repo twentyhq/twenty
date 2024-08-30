@@ -53,6 +53,7 @@ export const SettingsNavigationDrawerItems = () => {
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
+  // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
   const accountSubSettings: SettingsNavigationItem[] = [
