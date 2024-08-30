@@ -8,11 +8,13 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { isDefined } from '~/utils/isDefined';
@@ -21,8 +23,12 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const useHandleViews = (viewBarComponentId?: string) => {
   const { resetCurrentView } = useResetCurrentView(viewBarComponentId);
 
-  const { currentViewIdState, isPersistingViewFieldsState } =
-    useViewStates(viewBarComponentId);
+  const { isPersistingViewFieldsState } = useViewStates(viewBarComponentId);
+
+  const currentViewIdState = useExtractedComponentState(
+    currentViewIdComponentState,
+    viewBarComponentId,
+  );
 
   const { getViewFromCache } = useGetViewFromCache();
 

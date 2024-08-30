@@ -4,8 +4,10 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/ViewScopeInternalContext';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { View } from '@/views/types/View';
 import { combinedViewFilters } from '@/views/utils/combinedViewFilters';
 import { combinedViewSorts } from '@/views/utils/combinedViewSorts';
@@ -21,7 +23,6 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const {
-    currentViewIdState,
     viewObjectMetadataIdState,
     unsavedToUpsertViewFiltersState,
     unsavedToDeleteViewFilterIdsState,
@@ -29,6 +30,11 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
     unsavedToUpsertViewSortsState,
     isCurrentViewKeyIndexState,
   } = useViewStates(componentId);
+
+  const currentViewIdState = useExtractedComponentState(
+    currentViewIdComponentState,
+    viewBarComponentId,
+  );
 
   const currentViewId = useRecoilValue(currentViewIdState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);

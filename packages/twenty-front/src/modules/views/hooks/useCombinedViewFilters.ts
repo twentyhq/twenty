@@ -2,17 +2,21 @@ import { useRecoilCallback } from 'recoil';
 
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { isDefined } from '~/utils/isDefined';
 
 export const useCombinedViewFilters = (viewBarComponentId?: string) => {
-  const {
-    unsavedToUpsertViewFiltersState,
-    unsavedToDeleteViewFilterIdsState,
-    currentViewIdState,
-  } = useViewStates(viewBarComponentId);
+  const { unsavedToUpsertViewFiltersState, unsavedToDeleteViewFilterIdsState } =
+    useViewStates(viewBarComponentId);
+
+  const currentViewIdState = useExtractedComponentState(
+    currentViewIdComponentState,
+    viewBarComponentId,
+  );
 
   const { getViewFromCache } = useGetViewFromCache();
 

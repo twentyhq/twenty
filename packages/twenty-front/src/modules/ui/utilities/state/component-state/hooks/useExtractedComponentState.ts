@@ -1,11 +1,9 @@
-import { useSetRecoilState } from 'recoil';
-
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
 
-export const useSetRecoilComponentState = <StateType>(
-  componentState: RecoilComponentState<StateType>,
+export const useExtractedComponentState = <Value>(
+  componentState: RecoilComponentState<Value>,
   componentId?: string,
 ) => {
   const componentContext = (window as any).componentContextStateMap?.get(
@@ -18,12 +16,12 @@ export const useSetRecoilComponentState = <StateType>(
     );
   }
 
-  const internalComponentId = useAvailableScopeIdOrThrow(
+  const internalScopeId = useAvailableScopeIdOrThrow(
     componentContext,
     getScopeIdOrUndefinedFromComponentId(componentId),
   );
 
-  return useSetRecoilState(
-    componentState.atomFamily({ scopeId: internalComponentId }),
-  );
+  return componentState.atomFamily({
+    scopeId: internalScopeId,
+  });
 };

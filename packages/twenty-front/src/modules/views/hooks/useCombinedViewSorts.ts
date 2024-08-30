@@ -3,17 +3,21 @@ import { v4 } from 'uuid';
 
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { ViewSort } from '@/views/types/ViewSort';
 import { isDefined } from '~/utils/isDefined';
 
 export const useCombinedViewSorts = (viewBarComponentId?: string) => {
-  const {
-    unsavedToUpsertViewSortsState,
-    unsavedToDeleteViewSortIdsState,
-    currentViewIdState,
-  } = useViewStates(viewBarComponentId);
+  const { unsavedToUpsertViewSortsState, unsavedToDeleteViewSortIdsState } =
+    useViewStates(viewBarComponentId);
+
+  const currentViewIdState = useExtractedComponentState(
+    currentViewIdComponentState,
+    viewBarComponentId,
+  );
 
   const { getViewFromCache } = useGetViewFromCache();
 

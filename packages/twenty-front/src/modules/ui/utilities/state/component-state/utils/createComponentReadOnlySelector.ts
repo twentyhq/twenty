@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 
 export const createComponentReadOnlySelector = <ValueType>({
@@ -8,9 +8,9 @@ export const createComponentReadOnlySelector = <ValueType>({
   get,
 }: {
   key: string;
-  get: SelectorGetter<ValueType, ComponentStateKey>;
+  get: SelectorGetter<ValueType, RecoilComponentStateKey>;
 }) => {
-  return selectorFamily<ValueType, ComponentStateKey>({
+  return selectorFamily<ValueType, RecoilComponentStateKey>({
     key,
     get,
   });

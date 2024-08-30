@@ -4,7 +4,6 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import { availableFieldDefinitionsComponentState } from '@/views/states/availableFieldDefinitionsComponentState';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 import { isCurrentViewKeyIndexComponentState } from '@/views/states/isCurrentViewIndexComponentState';
 import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
@@ -27,10 +26,7 @@ export const useViewStates = (viewComponentId?: string) => {
 
   return {
     componentId,
-    currentViewIdState: extractComponentState(
-      currentViewIdComponentState,
-      componentId,
-    ),
+
     availableFieldDefinitionsState: extractComponentState(
       availableFieldDefinitionsComponentState,
       componentId,

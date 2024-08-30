@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import styled from '@emotion/styled';
+import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconChevronDown, IconPlus } from 'twenty-ui';
 
@@ -10,11 +10,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
@@ -33,8 +35,12 @@ export type UpdateViewButtonGroupProps = {
 export const UpdateViewButtonGroup = ({
   hotkeyScope,
 }: UpdateViewButtonGroupProps) => {
-  const { canPersistViewSelector, currentViewIdState } = useViewStates();
+  const { canPersistViewSelector } = useViewStates();
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
+
+  const currentViewIdState = useExtractedComponentState(
+    currentViewIdComponentState,
+  );
 
   const { setViewPickerMode } = useViewPickerMode();
   const { viewPickerReferenceViewIdState } = useViewPickerStates();

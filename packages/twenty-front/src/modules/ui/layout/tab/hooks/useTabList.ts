@@ -4,7 +4,7 @@ import { useTabListStates } from '@/ui/layout/tab/hooks/internal/useTabListState
 
 export const useTabList = (tabListId?: string) => {
   const { activeTabIdState } = useTabListStates({
-    tabListScopeId: `${tabListId}-scope`,
+    tabListScopeId: tabListId,
   });
 
   const setActiveTabId = useSetRecoilState(activeTabIdState);

@@ -1,11 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -19,8 +21,12 @@ export const useSaveCurrentViewFiltersAndSorts = (
     unsavedToUpsertViewSortsState,
     unsavedToDeleteViewFilterIdsState,
     unsavedToUpsertViewFiltersState,
-    currentViewIdState,
   } = useViewStates(viewBarComponentId);
+
+  const currentViewIdState = useExtractedComponentState(
+    currentViewIdComponentState,
+    viewBarComponentId,
+  );
 
   const {
     createViewSortRecords,
