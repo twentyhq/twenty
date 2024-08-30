@@ -12,7 +12,7 @@ export const useStartNodeCreation = () => {
 
   /**
    * This function is used in a context where dependencies shouldn't change much.
-   * That's why its wrapped in a `useCallback` hook.
+   * That's why its wrapped in a `useCallback` hook. Removing memoization might break the app unexpectedly.
    */
   const startNodeCreation = useCallback(
     (parentNodeId: string) => {
