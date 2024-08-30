@@ -1,5 +1,5 @@
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useRightDrawerWorkflowSelectAction } from '@/workflow/hooks/useRightDrawerWorkflowSelectAction';
+import { useRightDrawerWorkflowSelectActionCreateStep } from '@/workflow/hooks/useRightDrawerWorkflowSelectActionCreateStep';
 import { Workflow } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
 import { IconSettingsAutomation } from 'twenty-ui';
@@ -19,7 +19,7 @@ export const RightDrawerWorkflowSelectActionContent = ({
 }: {
   workflow: Workflow;
 }) => {
-  const { handleActionClick } = useRightDrawerWorkflowSelectAction({
+  const { createStep } = useRightDrawerWorkflowSelectActionCreateStep({
     workflow,
   });
 
@@ -30,7 +30,7 @@ export const RightDrawerWorkflowSelectActionContent = ({
           LeftIcon={IconSettingsAutomation}
           text="Serverless Function"
           onClick={() => {
-            handleActionClick('CODE_ACTION');
+            return createStep('CODE_ACTION');
           }}
         />
       </StyledActionListContainer>
