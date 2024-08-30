@@ -50,7 +50,7 @@ export const TextFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    setDraftValue(convertToUndefinedForWhitespaces(newText.trim()));
+    setDraftValue(convertToUndefinedForWhitespaces(newText));
   };
 
   return (
