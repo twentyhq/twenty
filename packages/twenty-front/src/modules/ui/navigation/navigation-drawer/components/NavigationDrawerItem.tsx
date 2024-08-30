@@ -13,7 +13,7 @@ import { isDefined } from '~/utils/isDefined';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
-type NavigationDrawerItemIndentationLevel = 1 | 2;
+export type NavigationDrawerItemIndentationLevel = 1 | 2;
 
 export type NavigationDrawerItemProps = {
   className?: string;
