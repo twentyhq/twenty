@@ -9,7 +9,7 @@ import { WorkspaceQueryHookOptions } from 'src/engine/api/graphql/workspace-quer
 export class WorkspaceQueryHookMetadataAccessor {
   constructor(private readonly reflector: Reflector) {}
 
-  isWorkspaceQueryHook(target: Type<any> | Function): boolean {
+  isWorkspaceQueryHook(target: Type | Function): boolean {
     if (!target) {
       return false;
     }
@@ -18,7 +18,7 @@ export class WorkspaceQueryHookMetadataAccessor {
   }
 
   getWorkspaceQueryHookMetadata(
-    target: Type<any> | Function,
+    target: Type | Function,
   ): WorkspaceQueryHookOptions | undefined {
     return this.reflector.get(WORKSPACE_QUERY_HOOK_METADATA, target);
   }

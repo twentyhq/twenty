@@ -83,8 +83,8 @@ const StyledEditor = styled.div`
     border: 1px solid ${({ theme }) => theme.border.color.light};
   }
   & .bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item) svg {
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
   }
 
   & .bn-mantine .bn-side-menu > [draggable='true'] {

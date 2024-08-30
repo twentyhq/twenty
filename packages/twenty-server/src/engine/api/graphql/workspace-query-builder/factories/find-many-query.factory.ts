@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   RecordFilter,
@@ -14,8 +14,6 @@ import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
 export class FindManyQueryFactory {
-  private readonly logger = new Logger(FindManyQueryFactory.name);
-
   constructor(
     private readonly fieldsStringFactory: FieldsStringFactory,
     private readonly argsStringFactory: ArgsStringFactory,

@@ -118,6 +118,12 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     Icon: IconMail,
     category: 'Basic',
   },
+  [FieldMetadataType.Emails]: {
+    label: 'Emails',
+    Icon: IconMail,
+    exampleValue: { primaryEmail: 'john@twenty.com' },
+    category: 'Basic',
+  },
   [FieldMetadataType.Phone]: {
     label: 'Phone',
     Icon: IconPhone,

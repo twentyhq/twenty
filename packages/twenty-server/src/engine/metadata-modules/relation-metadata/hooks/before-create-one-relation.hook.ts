@@ -9,7 +9,7 @@ import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metada
 
 @Injectable()
 export class BeforeCreateOneRelation<T extends CreateRelationInput>
-  implements BeforeCreateOneHook<T, any>
+  implements BeforeCreateOneHook<T>
 {
   async run(
     instance: CreateOneInputType<T>,

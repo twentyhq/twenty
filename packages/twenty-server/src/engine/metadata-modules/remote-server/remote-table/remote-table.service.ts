@@ -601,7 +601,7 @@ export class RemoteTableService {
     columnName: string,
     columnType: string,
     objectMetadataId: string,
-  ): Promise<FieldMetadataEntity<'default'>> {
+  ): Promise<FieldMetadataEntity> {
     return this.fieldMetadataService.createOne({
       name: columnName,
       label: camelToTitleCase(columnName),

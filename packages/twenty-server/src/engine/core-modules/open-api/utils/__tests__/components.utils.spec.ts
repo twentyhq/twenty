@@ -147,6 +147,17 @@ describe('computeSchemaComponents', () => {
             },
             type: 'object',
           },
+          fieldEmails: {
+            properties: {
+              primaryEmail: {
+                type: 'string',
+              },
+              additionalEmails: {
+                type: 'object',
+              },
+            },
+            type: 'object',
+          },
         },
       },
       'ObjectName with Relations': {
