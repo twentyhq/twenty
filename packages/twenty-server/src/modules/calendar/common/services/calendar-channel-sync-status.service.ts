@@ -153,7 +153,7 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async markAsCompletedAndSchedulePartialMessageListFetch(
+  public async markAsCompletedAndSchedulePartialCalendarEventListFetch(
     calendarChannelIds: string[],
   ) {
     if (!calendarChannelIds.length) {
