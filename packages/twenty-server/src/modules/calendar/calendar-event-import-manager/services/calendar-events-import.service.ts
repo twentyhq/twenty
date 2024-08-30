@@ -92,7 +92,10 @@ export class CalendarEventsImportService {
 
       const { filteredEvents, cancelledEvents } =
         filterEventsAndReturnCancelledEvents(
-          [calendarChannel.handle, ...connectedAccount.handleAliases],
+          [
+            calendarChannel.handle,
+            ...connectedAccount.handleAliases.split(','),
+          ],
           calendarEvents,
           blocklist.map((blocklist) => blocklist.handle),
         );
