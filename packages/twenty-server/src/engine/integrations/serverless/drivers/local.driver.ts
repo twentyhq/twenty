@@ -1,8 +1,7 @@
-import { exec, fork } from 'child_process';
+import { fork } from 'child_process';
 import { promises as fs, existsSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { promisify } from 'util';
 
 import { v4 } from 'uuid';
 
