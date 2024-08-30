@@ -24,7 +24,7 @@ export const generateWorkflowDiagram = ({
     xPos: number,
     yPos: number,
   ) => {
-    const nodeId = v4();
+    const nodeId = step.id;
     nodes.push({
       id: nodeId,
       data: {
@@ -58,7 +58,7 @@ export const generateWorkflowDiagram = ({
   };
 
   // Start with the trigger node
-  const triggerNodeId = v4();
+  const triggerNodeId = 'trigger';
   nodes.push({
     id: triggerNodeId,
     data: {
