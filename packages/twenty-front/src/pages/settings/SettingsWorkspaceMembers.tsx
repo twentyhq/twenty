@@ -48,6 +48,14 @@ const StyledButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
+const StyledTable = styled(Table)`
+  margin-top: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledTableHeaderRow = styled(Table)`
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+`;
+
 export const SettingsWorkspaceMembers = () => {
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
@@ -160,53 +168,57 @@ export const SettingsWorkspaceMembers = () => {
             description="Manage the members of your space here"
           />
           <Table>
-            <TableRow>
-              <TableHeader>Name</TableHeader>
-              <TableHeader>Email</TableHeader>
-              <TableHeader align={'right'}></TableHeader>
-            </TableRow>
-            {workspaceMembers?.map((workspaceMember) => (
-              <TableRow key={workspaceMember.id}>
-                <TableCell>
-                  <StyledText
-                    PrefixComponent={
-                      <Avatar
-                        avatarUrl={workspaceMember.avatarUrl}
-                        placeholderColorSeed={workspaceMember.id}
-                        placeholder={workspaceMember.name.firstName ?? ''}
-                        type="rounded"
-                        size="sm"
-                      />
-                    }
-                    text={
-                      workspaceMember.name.firstName +
-                      ' ' +
-                      workspaceMember.name.lastName
-                    }
-                  />
-                </TableCell>
-                <TableCell>
-                  <StyledText
-                    text={workspaceMember.userEmail}
-                    color={theme.font.color.secondary}
-                  />
-                </TableCell>
-                <TableCell align={'right'}>
-                  {currentWorkspaceMember?.id !== workspaceMember.id && (
-                    <StyledButtonContainer>
-                      <IconButton
-                        onClick={() => {
-                          setIsConfirmationModalOpen(true);
-                          setWorkspaceMemberToDelete(workspaceMember.id);
-                        }}
-                        variant="tertiary"
-                        size="medium"
-                        Icon={IconTrash}
-                      />
-                    </StyledButtonContainer>
-                  )}
-                </TableCell>
+            <StyledTableHeaderRow>
+              <TableRow>
+                <TableHeader>Name</TableHeader>
+                <TableHeader>Email</TableHeader>
+                <TableHeader align={'right'}></TableHeader>
               </TableRow>
+            </StyledTableHeaderRow>
+            {workspaceMembers?.map((workspaceMember) => (
+              <StyledTable>
+                <TableRow key={workspaceMember.id}>
+                  <TableCell>
+                    <StyledText
+                      PrefixComponent={
+                        <Avatar
+                          avatarUrl={workspaceMember.avatarUrl}
+                          placeholderColorSeed={workspaceMember.id}
+                          placeholder={workspaceMember.name.firstName ?? ''}
+                          type="rounded"
+                          size="sm"
+                        />
+                      }
+                      text={
+                        workspaceMember.name.firstName +
+                        ' ' +
+                        workspaceMember.name.lastName
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <StyledText
+                      text={workspaceMember.userEmail}
+                      color={theme.font.color.secondary}
+                    />
+                  </TableCell>
+                  <TableCell align={'right'}>
+                    {currentWorkspaceMember?.id !== workspaceMember.id && (
+                      <StyledButtonContainer>
+                        <IconButton
+                          onClick={() => {
+                            setIsConfirmationModalOpen(true);
+                            setWorkspaceMemberToDelete(workspaceMember.id);
+                          }}
+                          variant="tertiary"
+                          size="medium"
+                          Icon={IconTrash}
+                        />
+                      </StyledButtonContainer>
+                    )}
+                  </TableCell>
+                </TableRow>
+              </StyledTable>
             ))}
           </Table>
         </Section>
@@ -217,54 +229,63 @@ export const SettingsWorkspaceMembers = () => {
           />
           <WorkspaceInviteTeam />
           <Table>
-            <TableRow>
-              <TableHeader>Email</TableHeader>
-              <TableHeader align={'right'}>Expires in</TableHeader>
-            </TableRow>
+            <StyledTableHeaderRow>
+              <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
+                <TableHeader>Email</TableHeader>
+                <TableHeader align={'right'}>Expires in</TableHeader>
+                <TableHeader></TableHeader>
+              </TableRow>
+            </StyledTableHeaderRow>
             {isNonEmptyArray(workspaceInvitations) &&
               workspaceInvitations?.map((workspaceInvitation) => (
-                <TableRow key={workspaceInvitation.id}>
-                  <TableCell>
-                    <StyledText
-                      PrefixComponent={
-                        <IconMail
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
+                <StyledTable>
+                  <TableRow
+                    key={workspaceInvitation.id}
+                    gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}
+                  >
+                    <TableCell>
+                      <StyledText
+                        PrefixComponent={
+                          <IconMail
+                            size={theme.icon.size.md}
+                            stroke={theme.icon.stroke.sm}
+                          />
+                        }
+                        text={workspaceInvitation.email}
+                      />
+                    </TableCell>
+                    <TableCell align={'right'}>
+                      <Status
+                        color={'gray'}
+                        text={getExpiresAtText(workspaceInvitation.expiresAt)}
+                      />
+                    </TableCell>
+                    <TableCell align={'right'}>
+                      <StyledButtonContainer>
+                        <IconButton
+                          onClick={() => {
+                            handleResendWorkspaceInvitation(
+                              workspaceInvitation.id,
+                            );
+                          }}
+                          variant="tertiary"
+                          size="medium"
+                          Icon={IconReload}
                         />
-                      }
-                      text={workspaceInvitation.email}
-                    />
-                  </TableCell>
-                  <TableCell align={'right'}>
-                    <Status
-                      color={'gray'}
-                      text={getExpiresAtText(workspaceInvitation.expiresAt)}
-                    />
-
-                    <StyledButtonContainer>
-                      <IconButton
-                        onClick={() => {
-                          handleResendWorkspaceInvitation(
-                            workspaceInvitation.id,
-                          );
-                        }}
-                        variant="tertiary"
-                        size="medium"
-                        Icon={IconReload}
-                      />
-                      <IconButton
-                        onClick={() => {
-                          handleRemoveWorkspaceInvitation(
-                            workspaceInvitation.id,
-                          );
-                        }}
-                        variant="tertiary"
-                        size="medium"
-                        Icon={IconTrash}
-                      />
-                    </StyledButtonContainer>
-                  </TableCell>
-                </TableRow>
+                        <IconButton
+                          onClick={() => {
+                            handleRemoveWorkspaceInvitation(
+                              workspaceInvitation.id,
+                            );
+                          }}
+                          variant="tertiary"
+                          size="medium"
+                          Icon={IconTrash}
+                        />
+                      </StyledButtonContainer>
+                    </TableCell>
+                  </TableRow>
+                </StyledTable>
               ))}
           </Table>
         </Section>
