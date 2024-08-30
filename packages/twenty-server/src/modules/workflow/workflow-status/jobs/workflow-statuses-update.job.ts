@@ -6,11 +6,9 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import {
-  getNewCombinationFromUpdate,
-  getWorkflowStatusCombinationFromArray,
-  getWorkflowStatusesFromCombination,
-} from 'src/modules/workflow/workflow-status/utils/workflow-status-combination.util';
+import { getStatusCombinationFromArray } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-array.util';
+import { getStatusCombinationFromUpdate } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-update.util';
+import { getWorkflowStatusesFromCombination } from 'src/modules/workflow/workflow-status/utils/get-statuses-from-combination.util';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -95,10 +93,11 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const currentWorkflowStatusCombination =
-      getWorkflowStatusCombinationFromArray(workflow.statuses || []);
+    const currentWorkflowStatusCombination = getStatusCombinationFromArray(
+      workflow.statuses || [],
+    );
 
-    const newWorkflowStatusCombination = getNewCombinationFromUpdate(
+    const newWorkflowStatusCombination = getStatusCombinationFromUpdate(
       currentWorkflowStatusCombination,
       undefined,
       WorkflowVersionStatus.DRAFT,
@@ -134,10 +133,11 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const currentWorkflowStatusCombination =
-      getWorkflowStatusCombinationFromArray(workflow.statuses || []);
+    const currentWorkflowStatusCombination = getStatusCombinationFromArray(
+      workflow.statuses || [],
+    );
 
-    const newWorkflowStatusCombination = getNewCombinationFromUpdate(
+    const newWorkflowStatusCombination = getStatusCombinationFromUpdate(
       currentWorkflowStatusCombination,
       statusUpdate.previousStatus,
       statusUpdate.newStatus,
@@ -173,10 +173,11 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const currentWorkflowStatusCombination =
-      getWorkflowStatusCombinationFromArray(workflow.statuses || []);
+    const currentWorkflowStatusCombination = getStatusCombinationFromArray(
+      workflow.statuses || [],
+    );
 
-    const newWorkflowStatusCombination = getNewCombinationFromUpdate(
+    const newWorkflowStatusCombination = getStatusCombinationFromUpdate(
       currentWorkflowStatusCombination,
       WorkflowVersionStatus.DRAFT,
       undefined,
