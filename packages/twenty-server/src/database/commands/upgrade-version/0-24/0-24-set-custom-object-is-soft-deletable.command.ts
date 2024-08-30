@@ -150,17 +150,19 @@ export class SetCustomObjectIsSoftDeletableCommand extends ActiveWorkspacesComma
         }) satisfies Partial<FieldMetadataEntity>,
     );
 
-    if (newDeletedAtFields.length > 0) {
-      const createdDeletedAtFields =
-        await this.fieldMetadataRepository.insert(newDeletedAtFields);
-
-      this.logger.log(
-        `Created ${createdDeletedAtFields.identifiers.length} deletedAt fields for workspace ${workspaceId}`,
-      );
-    } else {
+    if (newDeletedAtFields.length === 0) {
       this.logger.log(
         `No new deletedAt fields needed for workspace ${workspaceId}`,
       );
+
+      return;
     }
+
+    const createdDeletedAtFields =
+      await this.fieldMetadataRepository.insert(newDeletedAtFields);
+
+    this.logger.log(
+      `Created ${createdDeletedAtFields.identifiers.length} deletedAt fields for workspace ${workspaceId}`,
+    );
   }
 }
