@@ -116,7 +116,7 @@ export const SettingsWorkspaceMembers = () => {
       variables: {
         appTokenId,
       },
-      onError: (error) => {
+      onError: () => {
         enqueueSnackBar('Error resending invitation', {
           variant: SnackBarVariant.Error,
           duration: 2000,
