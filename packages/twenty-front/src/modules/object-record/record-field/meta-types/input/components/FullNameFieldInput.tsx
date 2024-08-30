@@ -42,7 +42,7 @@ export const FullNameFieldInput = ({
     };
   };
 
-  const getRequiredValuetoPersistFromDoubleText = (
+  const getRequiredDraftValueFromDoubleText = (
     newDoubleText: FieldDoubleText,
   ) => {
     return isTrimmedFieldDoubleTextEmpty(newDoubleText)
@@ -76,11 +76,11 @@ export const FullNameFieldInput = ({
   };
 
   const handleChange = (newDoubleText: FieldDoubleText) => {
-    setDraftValue(getRequiredValuetoPersistFromDoubleText(newDoubleText));
+    setDraftValue(getRequiredDraftValueFromDoubleText(newDoubleText));
   };
 
   const handlePaste = (newDoubleText: FieldDoubleText) => {
-    setDraftValue(getRequiredValuetoPersistFromDoubleText(newDoubleText));
+    setDraftValue(getRequiredDraftValueFromDoubleText(newDoubleText));
   };
 
   return (
