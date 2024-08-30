@@ -1,5 +1,5 @@
 import {
-  IconArchiveOff,
+  IconArchive,
   IconDotsVertical,
   IconEye,
   IconPencil,
@@ -75,7 +75,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
             {!!onDeactivate && (
               <MenuItem
                 text="Deactivate"
-                LeftIcon={IconArchiveOff}
+                LeftIcon={IconArchive}
                 onClick={handleDeactivate}
               />
             )}
