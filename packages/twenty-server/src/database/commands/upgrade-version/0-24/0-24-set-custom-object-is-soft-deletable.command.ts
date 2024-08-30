@@ -39,13 +39,13 @@ export class SetCustomObjectIsSoftDeletableCommand extends ActiveWorkspacesComma
     };
 
     if (options.dryRun) {
-      const entitiesToUpdate = await this.objectMetadataRepository.find({
+      const objectsToUpdate = await this.objectMetadataRepository.find({
         select: ['id'],
         where: updateCriteria,
       });
 
       this.logger.log(
-        `Dry run: ${entitiesToUpdate.length} entities would be updated`,
+        `Dry run: ${objectsToUpdate.length} objects would be updated`,
       );
 
       return;
@@ -55,6 +55,6 @@ export class SetCustomObjectIsSoftDeletableCommand extends ActiveWorkspacesComma
       isSoftDeletable: true,
     });
 
-    this.logger.log(`Updated ${result.affected} entities`);
+    this.logger.log(`Updated ${result.affected} objects`);
   }
 }
