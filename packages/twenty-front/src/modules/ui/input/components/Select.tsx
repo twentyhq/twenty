@@ -10,6 +10,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
+import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectOption<Value extends string | number | null> = {
@@ -155,7 +156,11 @@ export const Select = <Value extends string | number | null>({
                 <DropdownMenuSearchInput
                   autoFocus
                   value={searchInputValue}
-                  onChange={(event) => setSearchInputValue(event.target.value)}
+                  onChange={(event) =>
+                    setSearchInputValue(
+                      convertToEmptyStringForWhitespaces(event.target.value),
+                    )
+                  }
                 />
               )}
               {!!withSearchInput && !!filteredOptions.length && (

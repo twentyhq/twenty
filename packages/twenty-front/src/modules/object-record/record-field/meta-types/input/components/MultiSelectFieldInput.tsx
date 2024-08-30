@@ -16,6 +16,7 @@ import { MenuItemMultiSelectTag } from '@/ui/navigation/menu-item/components/Men
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
+import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;
@@ -107,7 +108,11 @@ export const MultiSelectFieldInput = ({
         <DropdownMenu data-select-disable>
           <DropdownMenuSearchInput
             value={searchFilter}
-            onChange={(event) => setSearchFilter(event.currentTarget.value)}
+            onChange={(event) =>
+              setSearchFilter(
+                convertToEmptyStringForWhitespaces(event.currentTarget.value),
+              )
+            }
             autoFocus
           />
           <DropdownMenuSeparator />
