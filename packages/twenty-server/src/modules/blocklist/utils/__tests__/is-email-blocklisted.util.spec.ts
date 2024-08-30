@@ -2,7 +2,7 @@ import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blockli
 
 describe('isEmailBlocklisted', () => {
   it('should return true if email is blocklisted', () => {
-    const channelHandles = [['abc@example.com']];
+    const channelHandles = ['abc@example.com'];
     const email = 'hello@twenty.com';
     const blocklist = ['hello@twenty.com', 'hey@twenty.com'];
     const result = isEmailBlocklisted(channelHandles, email, blocklist);
@@ -10,7 +10,7 @@ describe('isEmailBlocklisted', () => {
     expect(result).toBe(true);
   });
   it('should return false if email is not blocklisted', () => {
-    const channelHandles = [['abc@example.com']];
+    const channelHandles = ['abc@example.com'];
     const email = 'hello@twenty.com';
     const blocklist = ['hey@example.com'];
     const result = isEmailBlocklisted(channelHandles, email, blocklist);
