@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { Fragment, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconComponent, IconPlus } from 'twenty-ui';
@@ -157,16 +157,15 @@ export const SingleEntitySelectMenuItems = ({
               switch (entity.id) {
                 case 'add-new': {
                   return (
-                    <>
+                    <Fragment key={entity.id}>
                       {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
                       <CreateNewButton
-                        key={entity.id}
                         onClick={onCreate}
                         LeftIcon={IconPlus}
                         text="Add New"
                         hovered={isSelectedAddNewButton}
                       />
-                    </>
+                    </Fragment>
                   );
                 }
                 case 'select-none': {

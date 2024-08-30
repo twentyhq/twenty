@@ -13,6 +13,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
+import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 import { StyledTextInput } from './TextInput';
 
 const StyledContainer = styled.div`
@@ -185,7 +186,10 @@ export const DoubleTextInput = ({
         placeholder={firstValuePlaceholder}
         value={firstInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleChange(event.target.value, secondInternalValue);
+          handleChange(
+            convertToEmptyStringForWhitespaces(event.target.value),
+            secondInternalValue,
+          );
         }}
         onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
           handleOnPaste(event)
@@ -198,7 +202,10 @@ export const DoubleTextInput = ({
         placeholder={secondValuePlaceholder}
         value={secondInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleChange(firstInternalValue, event.target.value);
+          handleChange(
+            firstInternalValue,
+            convertToEmptyStringForWhitespaces(event.target.value),
+          );
         }}
       />
     </StyledContainer>
