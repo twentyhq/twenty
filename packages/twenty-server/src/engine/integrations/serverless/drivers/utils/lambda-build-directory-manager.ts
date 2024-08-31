@@ -1,17 +1,22 @@
 import { join } from 'path';
-import { tmpdir } from 'os';
-import fs from 'fs';
+import * as fs from 'fs/promises';
 
-import fsExtra from 'fs-extra';
 import { v4 } from 'uuid';
 
-const TEMPORARY_LAMBDA_FOLDER = 'twenty-build-lambda-temp-folder';
+import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/integrations/serverless/drivers/constants/serverless-tmpdir-folder';
+
+export const NODE_LAYER_SUBFOLDER = 'nodejs';
+
+const TEMPORARY_LAMBDA_FOLDER = 'lambda-build';
 const TEMPORARY_LAMBDA_SOURCE_FOLDER = 'src';
 const LAMBDA_ZIP_FILE_NAME = 'lambda.zip';
 const LAMBDA_ENTRY_FILE_NAME = 'index.js';
 
-export class BuildDirectoryManager {
-  private temporaryDir = join(tmpdir(), `${TEMPORARY_LAMBDA_FOLDER}_${v4()}`);
+export class LambdaBuildDirectoryManager {
+  private temporaryDir = join(
+    SERVERLESS_TMPDIR_FOLDER,
+    `${TEMPORARY_LAMBDA_FOLDER}-${v4()}`,
+  );
   private lambdaHandler = `${LAMBDA_ENTRY_FILE_NAME.split('.')[0]}.handler`;
 
   async init() {
@@ -22,8 +27,7 @@ export class BuildDirectoryManager {
     const lambdaZipPath = join(this.temporaryDir, LAMBDA_ZIP_FILE_NAME);
     const javascriptFilePath = join(sourceTemporaryDir, LAMBDA_ENTRY_FILE_NAME);
 
-    await fs.promises.mkdir(this.temporaryDir);
-    await fs.promises.mkdir(sourceTemporaryDir);
+    await fs.mkdir(sourceTemporaryDir, { recursive: true });
 
     return {
       sourceTemporaryDir,
@@ -34,7 +38,6 @@ export class BuildDirectoryManager {
   }
 
   async clean() {
-    await fsExtra.emptyDir(this.temporaryDir);
-    await fs.promises.rmdir(this.temporaryDir);
+    await fs.rm(this.temporaryDir, { recursive: true, force: true });
   }
 }

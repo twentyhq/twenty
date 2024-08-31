@@ -31,7 +31,10 @@ import {
   ServerlessFunctionEntity,
   ServerlessFunctionRuntime,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { BuildDirectoryManager } from 'src/engine/integrations/serverless/drivers/utils/build-directory-manager';
+import {
+  LambdaBuildDirectoryManager,
+  NODE_LAYER_SUBFOLDER,
+} from 'src/engine/integrations/serverless/drivers/utils/lambda-build-directory-manager';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
@@ -96,11 +99,14 @@ export class LambdaDriver
       return;
     }
 
-    const buildDirectoryManager = new BuildDirectoryManager();
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
     const { sourceTemporaryDir, lambdaZipPath } =
-      await buildDirectoryManager.init();
+      await lambdaBuildDirectoryManager.init();
 
-    const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
+    const nodeDependenciesFolder = join(
+      sourceTemporaryDir,
+      NODE_LAYER_SUBFOLDER,
+    );
 
     await copyAndBuildDependencies(nodeDependenciesFolder);
 
@@ -119,7 +125,7 @@ export class LambdaDriver
 
     const result = await this.lambdaClient.send(command);
 
-    await buildDirectoryManager.clean();
+    await lambdaBuildDirectoryManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
       throw new Error('new layer version arn undefined');
@@ -184,14 +190,14 @@ export class LambdaDriver
       this.fileStorageService,
     );
 
-    const buildDirectoryManager = new BuildDirectoryManager();
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     const {
       sourceTemporaryDir,
       lambdaZipPath,
       javascriptFilePath,
       lambdaHandler,
-    } = await buildDirectoryManager.init();
+    } = await lambdaBuildDirectoryManager.init();
 
     await fs.writeFile(javascriptFilePath, javascriptCode);
 
@@ -235,7 +241,7 @@ export class LambdaDriver
 
     await this.waitFunctionUpdates(serverlessFunction.id, 10);
 
-    await buildDirectoryManager.clean();
+    await lambdaBuildDirectoryManager.clean();
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {

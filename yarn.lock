@@ -47431,7 +47431,6 @@ __metadata:
     facepaint: "npm:^1.2.1"
     file-type: "npm:16.5.4"
     framer-motion: "npm:^10.12.17"
-    fs-extra: "npm:^11.2.0"
     googleapis: "npm:105"
     graphiql: "npm:^3.1.1"
     graphql: "npm:16.8.0"

@@ -1,6 +1,5 @@
 import { fork } from 'child_process';
 import { promises as fs, existsSync } from 'fs';
-import { tmpdir } from 'os';
 import { join } from 'path';
 
 import { v4 } from 'uuid';
@@ -26,6 +25,7 @@ import {
 import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
 import { COMMON_LAYER_NAME } from 'src/engine/integrations/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/integrations/serverless/drivers/utils/copy-and-build-dependencies';
+import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/integrations/serverless/drivers/constants/serverless-tmpdir-folder';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -45,7 +45,11 @@ export class LocalDriver
   private getInMemoryLayerFolderPath = (version: 'latest' | number) => {
     const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
 
-    return join(tmpdir(), COMMON_LAYER_NAME, `${computedVersion}`);
+    return join(
+      SERVERLESS_TMPDIR_FOLDER,
+      COMMON_LAYER_NAME,
+      `${computedVersion}`,
+    );
   };
 
   async createLastVersionLayerIfNotExists(): Promise<void> {
@@ -119,7 +123,7 @@ export class LocalDriver
       throw error;
     }
 
-    const tmpFolderPath = join(tmpdir(), v4());
+    const tmpFolderPath = join(SERVERLESS_TMPDIR_FOLDER, v4());
 
     const tmpFilePath = join(tmpFolderPath, 'index.js');
 
