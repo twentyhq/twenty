@@ -11,6 +11,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
   const navigate = useNavigate();
@@ -21,9 +22,18 @@ export const SettingsDevelopersWebhooksNew = () => {
     targetUrl: '',
     operation: '*.*',
   });
+  const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
+
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
+
+  const handleValidate = async (value: string) => {
+    const trimmedUrl = value.trim();
+
+    setIsTargetUrlValid(isValidUrl(trimmedUrl));
+  };
+
   const handleSave = async () => {
     const newWebhook = await createOneWebhook?.(formValues);
 
@@ -32,7 +42,10 @@ export const SettingsDevelopersWebhooksNew = () => {
     }
     navigate(`/settings/developers/webhooks/${newWebhook.id}`);
   };
-  const canSave = !!formValues.targetUrl && createOneWebhook;
+
+  const canSave =
+    !!formValues.targetUrl && isTargetUrlValid && createOneWebhook;
+
   return (
     <SubMenuTopBarContainer
       Icon={IconCode}
@@ -63,6 +76,7 @@ export const SettingsDevelopersWebhooksNew = () => {
           <TextInput
             placeholder="URL"
             value={formValues.targetUrl}
+            error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleSave();
@@ -73,6 +87,7 @@ export const SettingsDevelopersWebhooksNew = () => {
                 ...prevState,
                 targetUrl: value,
               }));
+              handleValidate(value);
             }}
             fullWidth
           />
