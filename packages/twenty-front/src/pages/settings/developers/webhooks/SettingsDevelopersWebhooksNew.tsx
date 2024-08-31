@@ -76,7 +76,7 @@ export const SettingsDevelopersWebhooksNew = () => {
           <TextInput
             placeholder="URL"
             value={formValues.targetUrl}
-            error={isTargetUrlValid ? undefined : 'Please enter a valid URL'}
+            error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleSave();
