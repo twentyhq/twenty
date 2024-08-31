@@ -60,6 +60,16 @@ export const EmailThreads = ({
     );
 
   const { totalNumberOfThreads, timelineThreads } = data?.[queryName] ?? {};
+  const hasMoreTimelineThreads =
+    timelineThreads && totalNumberOfThreads
+      ? timelineThreads?.length < totalNumberOfThreads
+      : false;
+
+  const handleLastRowVisible = async () => {
+    if (hasMoreTimelineThreads) {
+      await fetchMoreRecords();
+    }
+  };
 
   if (firstQueryLoading) {
     return <SkeletonLoader />;
@@ -108,7 +118,7 @@ export const EmailThreads = ({
         )}
         <CustomResolverFetchMoreLoader
           loading={isFetchingMore || firstQueryLoading}
-          onLastRowVisible={fetchMoreRecords}
+          onLastRowVisible={handleLastRowVisible}
         />
       </Section>
     </StyledContainer>
