@@ -59,6 +59,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
       )}
       <DropdownMenuItemsContainer>
         <UndecoratedLink
+          fullWidth
           to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}
           onClick={() => {
             setNavigationMemorizedUrl(location.pathname + location.search);

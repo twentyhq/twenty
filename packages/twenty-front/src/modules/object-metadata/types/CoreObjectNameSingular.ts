@@ -29,4 +29,6 @@ export enum CoreObjectNameSingular {
   WorkspaceMember = 'workspaceMember',
   MessageThreadSubscriber = 'messageThreadSubscriber',
   Workflow = 'workflow',
+  MessageChannelMessageAssociation = 'messageChannelMessageAssociation',
+  WorkflowVersion = 'workflowVersion',
 }

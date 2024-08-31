@@ -24,6 +24,40 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import { WorkflowStep } from 'src/modules/workflow/common/types/workflow-step.type';
 import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
+export enum WorkflowVersionStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+  ARCHIVED = 'ARCHIVED',
+}
+
+const WorkflowVersionStatusOptions = [
+  {
+    value: WorkflowVersionStatus.DRAFT,
+    label: 'Draft',
+    position: 0,
+    color: 'yellow',
+  },
+  {
+    value: WorkflowVersionStatus.ACTIVE,
+    label: 'Active',
+    position: 1,
+    color: 'green',
+  },
+  {
+    value: WorkflowVersionStatus.DEACTIVATED,
+    label: 'Deactivated',
+    position: 2,
+    color: 'red',
+  },
+  {
+    value: WorkflowVersionStatus.ARCHIVED,
+    label: 'Archived',
+    position: 3,
+    color: 'grey',
+  },
+];
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,
   namePlural: 'workflowVersions',
@@ -64,6 +98,16 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   steps: WorkflowStep[] | null;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,
+    type: FieldMetadataType.SELECT,
+    label: 'Version status',
+    description: 'The workflow version status',
+    options: WorkflowVersionStatusOptions,
+    defaultValue: "'DRAFT'",
+  })
+  status: WorkflowVersionStatus;
 
   // Relations
   @WorkspaceRelation({

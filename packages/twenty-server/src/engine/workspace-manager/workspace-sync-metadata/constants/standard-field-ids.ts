@@ -10,7 +10,6 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
   company: '20202020-7cc0-44a1-8068-f11171fdd02e',
   opportunity: '20202020-1fc2-4af1-8c91-7901ee0fd38b',
-  workflow: '20202020-a63d-40d0-b24d-ddcc1347d583',
   custom: '20202020-7f21-442f-94be-32462281b1ca',
 };
 
@@ -45,7 +44,6 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
-  workflow: '20202020-0906-4dc3-b26f-edc951c7ab82',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 };
 
@@ -190,7 +188,6 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
   task: '20202020-b2f5-415c-9135-a31dfe49501b',
   note: '20202020-ec55-4135-8da5-3a20badc0156',
-  workflow: '20202020-9e59-4030-aa27-55abd676c3c8',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
@@ -284,7 +281,6 @@ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   company: 'c500fbc0-d6f2-4982-a959-5a755431696c',
   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
   custom: '20202020-3d12-4579-94ee-7117c1bad492',
-  workflow: '20202020-eb46-47c5-8f3f-f3f93e7aec20',
 };
 
 export const OPPORTUNITY_STANDARD_FIELD_IDS = {
@@ -348,7 +344,6 @@ export const TASK_TARGET_STANDARD_FIELD_IDS = {
   company: '20202020-4703-4a4e-948c-487b0c60a92c',
   opportunity: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
   custom: '20202020-41c1-4c9a-8c75-be0971ef89af',
-  workflow: '20202020-a16c-47a3-b21c-c41c9bcac659',
 };
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {
@@ -400,20 +395,18 @@ export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
 
 export const WORKFLOW_STANDARD_FIELD_IDS = {
   name: '20202020-b3d3-478f-acc0-5d901e725b20',
-  publishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
-  versions: '20202020-9432-416e-8f3c-27ee3153d099',
-  eventListeners: '20202020-0229-4c66-832e-035c67579a38',
+  lastPublishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
+  statuses: '20202020-357c-4432-8c50-8c31b4a552d9',
   position: '20202020-39b0-4d8c-8c5f-33c2326deb5f',
+  versions: '20202020-9432-416e-8f3c-27ee3153d099',
+  runs: '20202020-759b-4340-b58b-e73595c4df4f',
+  eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
-  activityTargets: '20202020-9d65-445a-899d-1c6f1cf3a9ab',
-  attachments: '20202020-ea95-4d4d-81cd-9921740316b8',
-  timelineActivities: '20202020-dd79-492a-9d11-58333ed0f71a',
-  taskTargets: '20202020-0094-4e79-b934-03eaa8ab949c',
-  noteTargets: '20202020-40aa-4839-965e-972a2f72e08d',
 };
 
 export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   workflowVersion: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
+  workflow: '20202020-8c57-4e7f-84f5-f373f68e1b82',
   startedAt: '20202020-a234-4e2d-bd15-85bcea6bb183',
   endedAt: '20202020-e1c1-4b6b-bbbd-b2beaf2e159e',
   status: '20202020-6b3e-4f9c-8c2b-2e5b8e6d6f3b',
@@ -424,6 +417,7 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   name: '20202020-a12f-4cca-9937-a2e40cc65509',
   workflow: '20202020-afa3-46c3-91b0-0631ca6aa1c8',
   trigger: '20202020-4eae-43e7-86e0-212b41a30b48',
+  status: '20202020-5a34-440e-8a25-39d8c3d1d4cf',
   runs: '20202020-1d08-46df-901a-85045f18099a',
   steps: '20202020-5988-4a64-b94a-1f9b7b989039',
 };

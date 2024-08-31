@@ -2,7 +2,7 @@ import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blockli
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 
 export const filterOutBlocklistedEvents = (
-  calendarChannelHandle: string,
+  calendarChannelHandles: string[],
   events: CalendarEventWithParticipants[],
   blocklist: string[],
 ) => {
@@ -13,7 +13,7 @@ export const filterOutBlocklistedEvents = (
 
     return event.participants.every(
       (attendee) =>
-        !isEmailBlocklisted(calendarChannelHandle, attendee.handle, blocklist),
+        !isEmailBlocklisted(calendarChannelHandles, attendee.handle, blocklist),
     );
   });
 };

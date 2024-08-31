@@ -807,7 +807,7 @@ export const mockedViewsData = [
   {
     id: '37a8a866-eb17-4e76-9382-03143a2f6a80',
     name: 'All companies',
-    objectMetadataId: 'f9fd99a8-108f-4066-9675-cde753cf5de9',
+    objectMetadataId: '701aecf9-eb1c-4d84-9d94-b954b231b64b',
     type: 'table',
     icon: 'IconSkyline',
     key: 'INDEX',
@@ -850,7 +850,7 @@ export const mockedViewsData = [
   {
     id: '5c307222-1dd5-4ff3-ab06-8d990e9b3c74',
     name: 'All companies (v2)',
-    objectMetadataId: 'f9fd99a8-108f-4066-9675-cde753cf5de9',
+    objectMetadataId: '701aecf9-eb1c-4d84-9d94-b954b231b64b',
     type: 'table',
     icon: 'IconSkyline',
     key: 'INDEX',

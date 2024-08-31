@@ -58,7 +58,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     linkedObjectMetadataId: '1ad72a42-6ab4-4474-a62a-a57cae3c0298',
     linkedRecordCachedName: 'New Task',
     linkedRecordId: 'ce40eca0-8f4b-4bba-ba91-5cbd870c64d2',
-    name: 'task.created',
+    name: 'linked-task.created',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     workspaceMember: {
       __typename: 'WorkspaceMember',

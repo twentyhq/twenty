@@ -12,7 +12,7 @@ import {
 export class WorkflowCommonWorkspaceService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
-  async getWorkflowVersion(workflowVersionId: string): Promise<
+  async getWorkflowVersionOrFail(workflowVersionId: string): Promise<
     Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
       trigger: WorkflowTrigger;
     }
@@ -28,6 +28,16 @@ export class WorkflowCommonWorkspaceService {
       },
     });
 
+    return this.getValidWorkflowVersionOrFail(workflowVersion);
+  }
+
+  async getValidWorkflowVersionOrFail(
+    workflowVersion: WorkflowVersionWorkspaceEntity | null,
+  ): Promise<
+    Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    }
+  > {
     if (!workflowVersion) {
       throw new WorkflowTriggerException(
         'Workflow version not found',

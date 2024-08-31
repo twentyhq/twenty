@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -11,6 +11,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -60,9 +61,21 @@ export const RecordIndexBoardDataLoaderEffect = ({
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
+
   const navigateToSelectSettings = useCallback(() => {
+    setNavigationMemorizedUrl(location.pathname + location.search);
     navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
-  }, [navigate, objectMetadataItem]);
+  }, [
+    navigate,
+    objectMetadataItem,
+    location.pathname,
+    location.search,
+    setNavigationMemorizedUrl,
+  ]);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 

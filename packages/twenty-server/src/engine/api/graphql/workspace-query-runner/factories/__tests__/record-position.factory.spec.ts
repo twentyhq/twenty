@@ -1,12 +1,12 @@
-import { TestingModule, Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { RecordPositionQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 describe('RecordPositionFactory', () => {
   const recordPositionQueryFactory = {
-    create: jest.fn().mockResolvedValue('query'),
+    create: jest.fn().mockReturnValue(['query', []]),
   };
 
   let workspaceDataSourceService;
