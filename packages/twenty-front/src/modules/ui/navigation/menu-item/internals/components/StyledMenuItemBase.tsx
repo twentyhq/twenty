@@ -25,7 +25,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 
   font-size: ${({ theme }) => theme.font.size.sm};
 
-  gap: ${({ theme }) => theme.spacing(6.4)};
+  gap: ${({ theme }) => theme.spacing(2)};
 
   height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
@@ -143,7 +143,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
       case 'not-allowed':
         return 'not-allowed';
       default:
-        return 'default';
+        return 'pointer';
     }
   }};
 `;
