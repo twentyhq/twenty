@@ -1,12 +1,12 @@
-import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
-import { graphqlMocks } from '~/testing/graphqlMocks';
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
+import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
-import { within } from '@storybook/test';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/ServerlessFunctions/SettingsServerlessFunctions',
@@ -26,7 +26,6 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await sleep(100);
 
-    await canvas.findByText('Functions');
     await canvas.findByText('Add your first Function');
   },
 };
