@@ -2,6 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
 import { showPageWorkflowErrorState } from '@/workflow/states/showPageWorkflowErrorState';
+import { showPageWorkflowIdState } from '@/workflow/states/showPageWorkflowIdState';
 import { showPageWorkflowLoadingState } from '@/workflow/states/showPageWorkflowLoadingState';
 import { Workflow } from '@/workflow/types/Workflow';
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
@@ -32,6 +33,7 @@ export const WorkflowShowPageEffect = ({
     },
   });
 
+  const setShowPageWorkflowId = useSetRecoilState(showPageWorkflowIdState);
   const setCurrentWorkflowData = useSetRecoilState(
     showPageWorkflowDiagramState,
   );
@@ -39,6 +41,10 @@ export const WorkflowShowPageEffect = ({
     showPageWorkflowLoadingState,
   );
   const setCurrentWorkflowError = useSetRecoilState(showPageWorkflowErrorState);
+
+  useEffect(() => {
+    setShowPageWorkflowId(workflowId);
+  }, [setShowPageWorkflowId, workflowId]);
 
   useEffect(() => {
     const flowLastVersion = getWorkflowLastDiagramVersion(workflow);

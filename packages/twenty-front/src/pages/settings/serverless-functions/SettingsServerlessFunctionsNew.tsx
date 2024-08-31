@@ -108,3 +108,5 @@ export const SettingsServerlessFunctionsNew = () => {
     </SubMenuTopBarContainer>
   );
 };
+
+export default SettingsServerlessFunctionsNew;
