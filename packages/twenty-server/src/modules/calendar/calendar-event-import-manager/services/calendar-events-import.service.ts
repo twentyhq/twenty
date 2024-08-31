@@ -7,7 +7,6 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
-import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
@@ -18,6 +17,7 @@ import {
 } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import {
   CalendarChannelSyncStage,
@@ -50,7 +50,7 @@ export class CalendarEventsImportService {
         : CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH;
 
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
-      calendarChannel.id,
+      [calendarChannel.id],
     );
     let calendarEvents: GetCalendarEventsResponse['calendarEvents'] = [];
     let nextSyncCursor: GetCalendarEventsResponse['nextSyncCursor'] = '';
@@ -81,7 +81,7 @@ export class CalendarEventsImportService {
         );
 
         await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
-          calendarChannel.id,
+          [calendarChannel.id],
         );
       }
 
@@ -92,7 +92,10 @@ export class CalendarEventsImportService {
 
       const { filteredEvents, cancelledEvents } =
         filterEventsAndReturnCancelledEvents(
-          calendarChannel,
+          [
+            calendarChannel.handle,
+            ...connectedAccount.handleAliases.split(','),
+          ],
           calendarEvents,
           blocklist.map((blocklist) => blocklist.handle),
         );
@@ -133,8 +136,8 @@ export class CalendarEventsImportService {
         },
       );
 
-      await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-        calendarChannel.id,
+      await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialCalendarEventListFetch(
+        [calendarChannel.id],
       );
     } catch (error) {
       await this.calendarEventImportErrorHandlerService.handleDriverException(

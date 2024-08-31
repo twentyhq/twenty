@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export class BeforeCreateOneAppToken<T extends AppToken>
-  implements BeforeCreateOneHook<T, any>
+  implements BeforeCreateOneHook<T>
 {
   async run(
     instance: CreateOneInputType<T>,

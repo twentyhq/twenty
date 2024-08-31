@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,8 +14,6 @@ import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
 export class CreateManyQueryFactory {
-  private readonly logger = new Logger(CreateManyQueryFactory.name);
-
   constructor(
     private readonly fieldsStringFactory: FieldsStringFactory,
     private readonly argsAliasFactory: ArgsAliasFactory,

@@ -166,7 +166,8 @@ export const RecordIndexOptionsDropdownContent = ({
               closeDropdown();
             }}
             LeftIcon={IconTrash}
-            text="Trash"
+            accent="danger"
+            text={`Deleted ${objectNamePlural}`}
           />
         </DropdownMenuItemsContainer>
       )}

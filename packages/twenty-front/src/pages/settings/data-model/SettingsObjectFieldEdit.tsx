@@ -235,6 +235,7 @@ export const SettingsObjectFieldEdit = () => {
                 />
                 <Button
                   Icon={IconArchive}
+                  variant="secondary"
                   title="Deactivate"
                   size="small"
                   onClick={handleDeactivate}

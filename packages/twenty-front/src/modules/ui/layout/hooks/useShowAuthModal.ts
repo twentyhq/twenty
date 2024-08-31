@@ -15,19 +15,23 @@ export const useShowAuthModal = () => {
   const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
+
   const isDefaultLayoutAuthModalVisible = useRecoilValue(
     isDefaultLayoutAuthModalVisibleState,
   );
+
   return useMemo(() => {
     if (isMatchingLocation(AppPath.Verify)) {
       return false;
     }
+
     if (
       isMatchingLocation(AppPath.Invite) ||
       isMatchingLocation(AppPath.ResetPassword)
     ) {
       return isDefaultLayoutAuthModalVisible;
     }
+
     if (
       !isLoggedIn ||
       onboardingStatus === OnboardingStatus.PlanRequired ||
@@ -38,6 +42,7 @@ export const useShowAuthModal = () => {
     ) {
       return true;
     }
+
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
         (onboardingStatus === OnboardingStatus.Completed &&
@@ -45,6 +50,7 @@ export const useShowAuthModal = () => {
         subscriptionStatus === SubscriptionStatus.Canceled
       );
     }
+
     return false;
   }, [
     isLoggedIn,

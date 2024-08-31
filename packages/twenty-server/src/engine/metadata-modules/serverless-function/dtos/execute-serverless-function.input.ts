@@ -1,4 +1,4 @@
-import { ArgsType, Field, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsObject, IsOptional, IsUUID } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';

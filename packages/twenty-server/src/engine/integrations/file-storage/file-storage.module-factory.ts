@@ -9,8 +9,8 @@ import { resolveAbsolutePath } from 'src/utils/resolve-absolute-path';
 
 /**
  * FileStorage Module factory
- * @param environment
  * @returns FileStorageModuleOptions
+ * @param environmentService
  */
 export const fileStorageModuleFactory = async (
   environmentService: EnvironmentService,

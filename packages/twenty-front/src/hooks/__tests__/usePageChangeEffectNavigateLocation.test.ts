@@ -244,6 +244,17 @@ const testCases = [
   { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: undefined },
 
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: AppPath.PlanRequired },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: undefined },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WorkspaceActivation, res: AppPath.CreateWorkspace },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.ProfileCreation, res: AppPath.CreateProfile },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
+  { loc: AppPath.WorkflowShowPage, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: undefined },
+
   { loc: AppPath.Authorize, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: AppPath.PlanRequired },
   { loc: AppPath.Authorize, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
   { loc: AppPath.Authorize, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },

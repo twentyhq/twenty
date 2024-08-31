@@ -52,12 +52,4 @@ export class IsFieldMetadataOptions {
       return false;
     }
   }
-
-  defaultMessage(): string {
-    if (this.validationErrors.length > 0) {
-      return this.validationErrors.join(', ');
-    }
-
-    return 'FieldMetadataOptions is not valid';
-  }
 }
