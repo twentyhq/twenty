@@ -181,7 +181,7 @@ const TextInputV2Component = (
           </StyledLeftIconContainer>
         )}
         <StyledInput
-          data-testId={dataTestId}
+          data-testid={dataTestId}
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
