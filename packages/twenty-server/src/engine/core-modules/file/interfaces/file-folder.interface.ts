@@ -6,8 +6,6 @@ export enum FileFolder {
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
   ServerlessFunction = 'serverless-function',
-  ServerlessFunctionLayers = 'serverless-function-layers',
-  Shared = 'shared',
 }
 
 registerEnumType(FileFolder, {
