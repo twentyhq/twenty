@@ -20,9 +20,9 @@ handle_error () {
     exit 1
 }
 
-read -r "This script uses sudo to install postgresql, curl and change different settings, do you want to run this script? [y/N]" AGREEMENT
+read -p "This script uses sudo to install postgresql, curl and change different settings, do you want to run this script? [y/N]" AGREEMENT
 
-if [ "$AGREEMENT" != "y" ] || [ "$AGREEMENT" != "Y" ] ; then
+if ! echo "$AGREEMENT" | grep -iq "^y"; then
   exit 1
 fi
 
