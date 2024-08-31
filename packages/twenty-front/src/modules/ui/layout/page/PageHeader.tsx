@@ -15,6 +15,7 @@ import { IconButton } from '@/ui/input/button/components/IconButton';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsRoute } from '~/utils/currentPage';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -107,11 +108,11 @@ export const PageHeader = ({
   const isMobile = useIsMobile();
   const theme = useTheme();
   const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
-
+  const isSettingsPage = useIsRoute('/settings/profile');
   return (
     <StyledTopBarContainer width={width}>
       <StyledLeftContainer>
-        {!isMobile && !isNavigationDrawerOpen && (
+        {!isMobile && !isNavigationDrawerOpen && !isSettingsPage && (
           <StyledTopBarButtonContainer>
             <NavigationDrawerCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
