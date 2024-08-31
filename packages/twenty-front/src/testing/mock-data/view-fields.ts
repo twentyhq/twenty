@@ -4,7 +4,7 @@ export const mockedViewFieldsData = [
   // Companies
   {
     id: '79035310-e955-4986-a4a4-73f9d9949c6a',
-    fieldMetadataId: 'name',
+    fieldMetadataId: '9e123592-cd2b-471c-8143-3cc0b46089ef',
     viewId: mockedViewsData[0].id,
     position: 0,
     isVisible: true,

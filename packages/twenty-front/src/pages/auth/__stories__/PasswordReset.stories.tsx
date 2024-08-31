@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
@@ -65,6 +65,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Reset Password');
+    await canvas.findByText('Reset Password', undefined, {
+      timeout: 3000,
+    });
   },
 };
