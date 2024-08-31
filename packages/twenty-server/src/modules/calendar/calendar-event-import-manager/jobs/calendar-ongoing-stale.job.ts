@@ -6,8 +6,8 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
 import { isSyncStale } from 'src/modules/calendar/calendar-event-import-manager/utils/is-sync-stale.util';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
   CalendarChannelSyncStage,
   CalendarChannelWorkspaceEntity,
@@ -54,19 +54,19 @@ export class CalendarOngoingStaleJob {
         this.logger.log(
           `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to pending`,
         );
-        await this.calendarChannelSyncStatusService.resetSyncStageStartedAt(
+        await this.calendarChannelSyncStatusService.resetSyncStageStartedAt([
           calendarChannel.id,
-        );
+        ]);
 
         switch (calendarChannel.syncStage) {
           case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING:
             await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
-              calendarChannel.id,
+              [calendarChannel.id],
             );
             break;
           case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING:
             await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
-              calendarChannel.id,
+              [calendarChannel.id],
             );
             break;
           default:

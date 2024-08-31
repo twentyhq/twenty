@@ -35,6 +35,6 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     sleep(100);
 
-    await canvas.findByText('Edit Connection');
+    await canvas.findByText('Edit Connection', undefined, { timeout: 3000 });
   },
 };

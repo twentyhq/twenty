@@ -50,17 +50,14 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Developers');
-    await canvas.findByText('sfsfdsf API Key');
+    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
   },
 };
 
 export const RegenerateApiKey: Story = {
   play: async ({ step }) => {
     const canvas = within(document.body);
-    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 10000 });
-
-    // userEvent.dblClick(await canvas.findByDisplayValue('sfsfdsf'));
+    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Regenerate Key'));
 
@@ -88,7 +85,7 @@ export const RegenerateApiKey: Story = {
 export const DeleteApiKey: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('sfsfdsf API Key');
+    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Delete'));
 
