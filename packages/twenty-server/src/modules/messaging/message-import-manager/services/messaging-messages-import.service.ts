@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -44,7 +42,6 @@ export class MessagingMessagesImportService {
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
-    private readonly isFeatureEnabledService: FeatureFlagService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
@@ -111,17 +108,10 @@ export class MessagingMessagesImportService {
         }
       }
 
-      if (
-        await this.isFeatureEnabledService.isFeatureEnabled(
-          FeatureFlagKey.IsMessagingAliasFetchingEnabled,
-          workspaceId,
-        )
-      ) {
-        await this.emailAliasManagerService.refreshHandleAliases(
-          connectedAccount,
-          workspaceId,
-        );
-      }
+      await this.emailAliasManagerService.refreshHandleAliases(
+        connectedAccount,
+        workspaceId,
+      );
 
       messageIdsToFetch = await this.cacheStorage.setPop(
         `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
