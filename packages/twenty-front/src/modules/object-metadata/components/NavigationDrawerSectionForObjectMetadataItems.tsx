@@ -1,11 +1,10 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
-import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
+import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -15,9 +14,9 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
-import { Theme, useTheme } from '@emotion/react';
 
 const ORDERED_STANDARD_OBJECTS = [
   'person',
@@ -27,20 +26,11 @@ const ORDERED_STANDARD_OBJECTS = [
   'note',
 ];
 
-const navItemsAnimationVariants = (theme: Theme) => ({
-  hidden: {
-    height: 0,
-    opacity: 0,
-    marginTop: 0,
-  },
-  visible: {
-    height: 'auto',
-    opacity: 1,
-    marginTop: theme.spacing(1),
-  },
-});
-
-export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
+export const NavigationDrawerSectionForObjectMetadataItems = ({
+  isRemote,
+}: {
+  isRemote: boolean;
+}) => {
   const currentUser = useRecoilValue(currentUserState);
 
   const { toggleNavigationSection, isNavigationSectionOpenState } =
@@ -57,13 +47,13 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
-  const theme = useTheme();
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
   if (loading && isDefined(currentUser)) {
-    return <ObjectMetadataNavItemsSkeletonLoader />;
+    return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
   }
 
+  // TODO: refactor this by splitting into separate components
   return (
     filteredActiveObjectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
@@ -121,6 +111,17 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               currentPath === `/objects/${objectMetadataItem.namePlural}` &&
               objectMetadataViews.length > 1;
 
+            const sortedObjectMetadataViews = [...objectMetadataViews].sort(
+              (viewA, viewB) =>
+                viewA.key === 'INDEX' ? -1 : viewA.position - viewB.position,
+            );
+
+            const selectedSubItemIndex = sortedObjectMetadataViews.findIndex(
+              (view) => viewId === view.id,
+            );
+
+            const subItemArrayLength = sortedObjectMetadataViews.length;
+
             return (
               <div key={objectMetadataItem.id}>
                 <NavigationDrawerItem
@@ -132,33 +133,21 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                     currentPath === `/objects/${objectMetadataItem.namePlural}`
                   }
                 />
-                <AnimatePresence>
-                  {shouldSubItemsBeDisplayed && (
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      variants={navItemsAnimationVariants(theme)}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    >
-                      {objectMetadataViews
-                        .sort((viewA, viewB) =>
-                          viewA.key === 'INDEX'
-                            ? -1
-                            : viewA.position - viewB.position,
-                        )
-                        .map((view) => (
-                          <NavigationDrawerSubItem
-                            label={view.name}
-                            to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-                            active={viewId === view.id}
-                            Icon={getIcon(view.icon)}
-                            key={view.id}
-                          />
-                        ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {shouldSubItemsBeDisplayed &&
+                  sortedObjectMetadataViews.map((view, index) => (
+                    <NavigationDrawerSubItem
+                      label={view.name}
+                      to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+                      active={viewId === view.id}
+                      subItemState={getNavigationSubItemState({
+                        index,
+                        arrayLength: subItemArrayLength,
+                        selectedIndex: selectedSubItemIndex,
+                      })}
+                      Icon={getIcon(view.icon)}
+                      key={view.id}
+                    />
+                  ))}
               </div>
             );
           })}

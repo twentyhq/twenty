@@ -1,4 +1,5 @@
-import { WorkflowShowPageDiagramCreateStepNode } from '@/workflow/components/WorkflowShowPageDiagramCreateStepNode.tsx';
+import { WorkflowShowPageDiagramCreateStepNode } from '@/workflow/components/WorkflowShowPageDiagramCreateStepNode';
+import { WorkflowShowPageDiagramEffect } from '@/workflow/components/WorkflowShowPageDiagramEffect';
 import { WorkflowShowPageDiagramStepNode } from '@/workflow/components/WorkflowShowPageDiagramStepNode';
 import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
 import {
@@ -80,6 +81,8 @@ export const WorkflowShowPageDiagram = ({
       onNodesChange={handleNodesChange}
       onEdgesChange={handleEdgesChange}
     >
+      <WorkflowShowPageDiagramEffect />
+
       <Background color={GRAY_SCALE.gray25} size={2} />
     </ReactFlow>
   );
