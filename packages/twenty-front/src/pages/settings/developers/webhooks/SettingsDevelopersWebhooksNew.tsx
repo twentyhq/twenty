@@ -11,6 +11,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
   const navigate = useNavigate();
@@ -21,35 +22,19 @@ export const SettingsDevelopersWebhooksNew = () => {
     targetUrl: '',
     operation: '*.*',
   });
-  const [isUrlValid, setIsUrlValid] = useState(true);
+  const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
 
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
-  const validateUrl = (url: string) => {
-    const urlPattern = new RegExp(
-      '^(https?:\\/\\/)?' +
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-        '((\\d{1,3}\\.){3}\\d{1,3}))' +
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-        '(\\?[;&a-z\\d%_.~+=-]*)?' +
-        '(\\#[-a-z\\d_]*)?$',
-      'i',
-    );
-    return !!urlPattern.test(url);
+  const handleValidate = async (value: string) => {
+    const trimmedUrl = value.trim();
+
+    setIsTargetUrlValid(isValidUrl(trimmedUrl));
   };
 
   const handleSave = async () => {
-    const trimmedUrl = formValues.targetUrl.trim();
-
-    if (!validateUrl(trimmedUrl)) {
-      setIsUrlValid(false);
-      return;
-    }
-
-    setIsUrlValid(true);
-
     const newWebhook = await createOneWebhook?.(formValues);
 
     if (!newWebhook) {
@@ -58,7 +43,8 @@ export const SettingsDevelopersWebhooksNew = () => {
     navigate(`/settings/developers/webhooks/${newWebhook.id}`);
   };
 
-  const canSave = !!formValues.targetUrl && isUrlValid && createOneWebhook;
+  const canSave =
+    !!formValues.targetUrl && isTargetUrlValid && createOneWebhook;
 
   return (
     <SubMenuTopBarContainer
@@ -90,10 +76,9 @@ export const SettingsDevelopersWebhooksNew = () => {
           <TextInput
             placeholder="URL"
             value={formValues.targetUrl}
-            error={isUrlValid ? undefined : 'Please enter a valid URL'}
+            error={isTargetUrlValid ? undefined : 'Please enter a valid URL'}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                e.preventDefault();
                 handleSave();
               }
             }}
@@ -102,6 +87,7 @@ export const SettingsDevelopersWebhooksNew = () => {
                 ...prevState,
                 targetUrl: value,
               }));
+              handleValidate(value);
             }}
             fullWidth
           />
