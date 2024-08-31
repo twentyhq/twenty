@@ -63,7 +63,18 @@ export const Calendar = ({
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
 
-  const { timelineCalendarEvents } = data?.[queryName] ?? {};
+  const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
+    data?.[queryName] ?? {};
+  const hasMoreCalendarEvents =
+    timelineCalendarEvents && totalNumberOfCalendarEvents
+      ? timelineCalendarEvents?.length < totalNumberOfCalendarEvents
+      : false;
+
+  const handleLastRowVisible = async () => {
+    if (hasMoreCalendarEvents) {
+      await fetchMoreRecords();
+    }
+  };
 
   const {
     calendarEventsByDayTime,
@@ -134,7 +145,7 @@ export const Calendar = ({
         })}
         <CustomResolverFetchMoreLoader
           loading={isFetchingMore || firstQueryLoading}
-          onLastRowVisible={fetchMoreRecords}
+          onLastRowVisible={handleLastRowVisible}
         />
       </StyledContainer>
     </CalendarContext.Provider>

@@ -121,11 +121,13 @@ export const useRecordActionBar = ({
                   title={`Delete ${numberOfSelectedRecords} ${
                     numberOfSelectedRecords === 1 ? `record` : 'records'
                   }`}
-                  subtitle={`This action cannot be undone. This will permanently delete ${
+                  subtitle={`Are you sure you want to delete ${
                     numberOfSelectedRecords === 1
                       ? 'this record'
                       : 'these records'
-                  }`}
+                  }? ${
+                    numberOfSelectedRecords === 1 ? 'It' : 'They'
+                  } can be recovered from the Options menu.`}
                   onConfirmClick={() => handleDeleteClick()}
                   deleteButtonText={`Delete ${
                     numberOfSelectedRecords > 1 ? 'Records' : 'Record'

@@ -18,7 +18,10 @@ export const addCreateStepNodes = ({ nodes, edges }: WorkflowDiagram) => {
     const newCreateStepNode: WorkflowDiagramNode = {
       id: v4(),
       type: 'create-step',
-      data: {},
+      data: {
+        nodeType: 'create-step',
+        parentNodeId: node.id,
+      },
       position: { x: 0, y: 0 },
     };
 

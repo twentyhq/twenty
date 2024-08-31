@@ -127,6 +127,7 @@ export type TextInputV2ComponentProps = Omit<
   LeftIcon?: IconComponent;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
+  dataTestId?: string;
 };
 
 const TextInputV2Component = (
@@ -151,6 +152,7 @@ const TextInputV2Component = (
     LeftIcon,
     autoComplete,
     maxLength,
+    dataTestId,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -178,6 +180,7 @@ const TextInputV2Component = (
           </StyledLeftIconContainer>
         )}
         <StyledInput
+          data-testId={dataTestId}
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}

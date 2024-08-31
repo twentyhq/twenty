@@ -4,16 +4,18 @@ import {
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
-
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { IconSearch } from 'twenty-ui';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
@@ -75,6 +77,9 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObject
     },
   };
 
+const StyledSearchInput = styled(TextInput)`
+  width: 100%;
+`;
 export type SettingsObjectFieldTableProps = {
   objectMetadataItem: ObjectMetadataItem;
   mode: 'view' | 'new-field';
@@ -85,6 +90,8 @@ export const SettingsObjectFieldTable = ({
   objectMetadataItem,
   mode,
 }: SettingsObjectFieldTableProps) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
   const tableMetadata = objectMetadataItem.isCustom
     ? SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM
     : SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD;
@@ -144,51 +151,75 @@ export const SettingsObjectFieldTable = ({
     tableMetadata,
   );
 
+  const filteredActiveItems = useMemo(
+    () =>
+      sortedActiveObjectSettingsDetailItems.filter(
+        (item) =>
+          item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.dataType.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [sortedActiveObjectSettingsDetailItems, searchTerm],
+  );
+
+  const filteredDisabledItems = useMemo(
+    () =>
+      sortedDisabledObjectSettingsDetailItems.filter(
+        (item) =>
+          item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.dataType.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [sortedDisabledObjectSettingsDetailItems, searchTerm],
+  );
+
   return (
-    <Table>
-      <StyledObjectFieldTableRow>
-        {tableMetadata.fields.map((item) => (
-          <SortableTableHeader
-            key={item.fieldName}
-            fieldName={item.fieldName}
-            label={item.fieldLabel}
-            tableId={tableMetadata.tableId}
-            initialSort={tableMetadata.initialSort}
-          />
-        ))}
-        <TableHeader></TableHeader>
-      </StyledObjectFieldTableRow>
-      {isNonEmptyArray(sortedActiveObjectSettingsDetailItems) && (
-        <TableSection title="Active">
-          {sortedActiveObjectSettingsDetailItems.map(
-            (objectSettingsDetailItem) => (
+    <>
+      <StyledSearchInput
+        LeftIcon={IconSearch}
+        placeholder="Search a field..."
+        value={searchTerm}
+        onChange={setSearchTerm}
+      />
+      <Table>
+        <StyledObjectFieldTableRow>
+          {tableMetadata.fields.map((item) => (
+            <SortableTableHeader
+              key={item.fieldName}
+              fieldName={item.fieldName}
+              label={item.fieldLabel}
+              tableId={tableMetadata.tableId}
+              initialSort={tableMetadata.initialSort}
+            />
+          ))}
+          <TableHeader></TableHeader>
+        </StyledObjectFieldTableRow>
+        {isNonEmptyArray(filteredActiveItems) && (
+          <TableSection title="Active">
+            {filteredActiveItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
                 settingsObjectDetailTableItem={objectSettingsDetailItem}
                 status="active"
                 mode={mode}
               />
-            ),
-          )}
-        </TableSection>
-      )}
-      {isNonEmptyArray(sortedDisabledObjectSettingsDetailItems) && (
-        <TableSection
-          isInitiallyExpanded={mode === 'new-field' ? true : false}
-          title="Inactive"
-        >
-          {sortedDisabledObjectSettingsDetailItems.map(
-            (objectSettingsDetailItem) => (
+            ))}
+          </TableSection>
+        )}
+        {isNonEmptyArray(filteredDisabledItems) && (
+          <TableSection
+            isInitiallyExpanded={mode === 'new-field' ? true : false}
+            title="Inactive"
+          >
+            {filteredDisabledItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
                 settingsObjectDetailTableItem={objectSettingsDetailItem}
                 status="disabled"
                 mode={mode}
               />
-            ),
-          )}
-        </TableSection>
-      )}
-    </Table>
+            ))}
+          </TableSection>
+        )}
+      </Table>
+    </>
   );
 };

@@ -58,8 +58,9 @@ export class GraphqlQueryRunnerService {
     const objectMetadata = objectMetadataMap[objectMetadataItem.nameSingular];
 
     if (!objectMetadata) {
-      throw new Error(
-        `Object metadata for ${objectMetadataItem.nameSingular} not found`,
+      throw new GraphqlQueryRunnerException(
+        `Object metadata not found for ${objectMetadataItem.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 

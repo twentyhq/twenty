@@ -6,8 +6,8 @@ import {
 
 /**
  * MessageQueue Module factory
- * @param environment
  * @returns MessageQueueModuleOptions
+ * @param environmentService
  */
 export const messageQueueModuleFactory = async (
   environmentService: EnvironmentService,

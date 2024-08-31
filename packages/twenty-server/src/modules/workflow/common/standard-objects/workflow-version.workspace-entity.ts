@@ -28,9 +28,10 @@ export enum WorkflowVersionStatus {
   DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
   DEACTIVATED = 'DEACTIVATED',
+  ARCHIVED = 'ARCHIVED',
 }
 
-export const WorkflowVersionStatusOptions = [
+const WorkflowVersionStatusOptions = [
   {
     value: WorkflowVersionStatus.DRAFT,
     label: 'Draft',
@@ -47,7 +48,13 @@ export const WorkflowVersionStatusOptions = [
     value: WorkflowVersionStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
-    color: 'gray',
+    color: 'red',
+  },
+  {
+    value: WorkflowVersionStatus.ARCHIVED,
+    label: 'Archived',
+    position: 3,
+    color: 'grey',
   },
 ];
 

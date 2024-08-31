@@ -216,7 +216,10 @@ export const SettingsObjectFieldEdit = () => {
               <StyledSettingsObjectFieldTypeSelect
                 disabled
                 fieldMetadataItem={activeMetadataField}
-                excludedFieldTypes={[FieldMetadataType.Link]}
+                excludedFieldTypes={[
+                  FieldMetadataType.Link,
+                  FieldMetadataType.Email,
+                ]}
               />
               <SettingsDataModelFieldSettingsFormCard
                 disableCurrencyForm
@@ -232,6 +235,7 @@ export const SettingsObjectFieldEdit = () => {
                 />
                 <Button
                   Icon={IconArchive}
+                  variant="secondary"
                   title="Deactivate"
                   size="small"
                   onClick={handleDeactivate}
