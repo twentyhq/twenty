@@ -16,11 +16,6 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKey.IsBlocklistEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsAirtableIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -37,16 +32,6 @@ export const seedFeatureFlags = async (
       },
       {
         key: FeatureFlagKey.IsStripeIntegrationEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsMessagingAliasFetchingEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsGoogleCalendarSyncV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },

@@ -9,53 +9,53 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
-  CalendarChannelSyncStage,
-  CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
+export type BlocklistReimportMessagesJobData = WorkspaceEventBatch<
   ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
 >;
 
 @Processor({
-  queueName: MessageQueue.calendarQueue,
+  queueName: MessageQueue.messagingQueue,
   scope: Scope.REQUEST,
 })
-export class BlocklistReimportCalendarEventsJob {
+export class BlocklistReimportMessagesJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
+    private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
-  @Process(BlocklistReimportCalendarEventsJob.name)
-  async handle(data: BlocklistReimportCalendarEventsJobData): Promise<void> {
+  @Process(BlocklistReimportMessagesJob.name)
+  async handle(data: BlocklistReimportMessagesJobData): Promise<void> {
     const workspaceId = data.workspaceId;
 
-    const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
-        'calendarChannel',
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
       );
 
     for (const eventPayload of data.events) {
       const workspaceMemberId =
         eventPayload.properties.before.workspaceMemberId;
 
-      const calendarChannels = await calendarChannelRepository.find({
+      const messageChannels = await messageChannelRepository.find({
         select: ['id'],
         where: {
           connectedAccount: {
             accountOwnerId: workspaceMemberId,
           },
           syncStage: Not(
-            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+            MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
           ),
         },
       });
 
-      await this.calendarChannelSyncStatusService.resetAndScheduleFullCalendarEventListFetch(
-        calendarChannels.map((calendarChannel) => calendarChannel.id),
+      await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+        messageChannels.map((messageChannel) => messageChannel.id),
         workspaceId,
       );
     }
