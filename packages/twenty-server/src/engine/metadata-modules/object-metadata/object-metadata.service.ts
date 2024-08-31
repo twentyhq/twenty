@@ -270,6 +270,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               defaultValue: 'now',
             },
             {
+              standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+              type: FieldMetadataType.DATE_TIME,
+              name: 'deletedAt',
+              label: 'Deleted at',
+              icon: 'IconCalendarClock',
+              description: 'Deletion date',
+              isNullable: true,
+              isActive: true,
+              isCustom: false,
+              isSystem: false,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: null,
+            },
+            {
               standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
               type: FieldMetadataType.ACTOR,
               name: 'createdBy',
@@ -342,7 +356,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     createdObjectMetadata.fields.map(async (field, index) => {
-      if (field.name === 'id') {
+      if (field.name === 'id' || field.name === 'deletedAt') {
         return;
       }
 

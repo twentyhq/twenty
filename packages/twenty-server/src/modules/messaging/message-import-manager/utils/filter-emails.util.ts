@@ -3,19 +3,19 @@ import { MessageWithParticipants } from 'src/modules/messaging/message-import-ma
 
 // Todo: refactor this into several utils
 export const filterEmails = (
-  messageChannelHandle: string,
+  messageChannelHandles: string[],
   messages: MessageWithParticipants[],
   blocklist: string[],
 ) => {
   return filterOutBlocklistedMessages(
-    messageChannelHandle,
+    messageChannelHandles,
     filterOutIcsAttachments(messages),
     blocklist,
   );
 };
 
 const filterOutBlocklistedMessages = (
-  messageChannelHandle: string,
+  messageChannelHandles: string[],
   messages: MessageWithParticipants[],
   blocklist: string[],
 ) => {
@@ -27,7 +27,7 @@ const filterOutBlocklistedMessages = (
     return message.participants.every(
       (participant) =>
         !isEmailBlocklisted(
-          messageChannelHandle,
+          messageChannelHandles,
           participant.handle,
           blocklist,
         ),
