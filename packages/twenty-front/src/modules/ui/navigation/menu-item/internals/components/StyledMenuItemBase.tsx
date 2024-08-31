@@ -143,7 +143,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
       case 'not-allowed':
         return 'not-allowed';
       default:
-        return 'default';
+        return 'pointer';
     }
   }};
 `;

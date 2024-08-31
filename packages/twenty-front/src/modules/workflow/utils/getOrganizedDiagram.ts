@@ -1,9 +1,6 @@
 import { WorkflowDiagram } from '@/workflow/types/WorkflowDiagram';
 import Dagre from '@dagrejs/dagre';
 
-/**
- * Set the position of the nodes in the diagram. The positions are computed with a layouting algorithm.
- */
 export const getOrganizedDiagram = (
   diagram: WorkflowDiagram,
 ): WorkflowDiagram => {

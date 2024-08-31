@@ -7,7 +7,6 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Developers/SettingsDevelopers',
@@ -26,8 +25,9 @@ export type Story = StoryObj<typeof SettingsDevelopers>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await sleep(100);
 
-    await canvas.findByText('API keys');
+    await canvas.findByText('API keys', undefined, {
+      timeout: 3000,
+    });
   },
 };

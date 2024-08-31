@@ -28,6 +28,16 @@ export class WorkflowCommonWorkspaceService {
       },
     });
 
+    return this.getValidWorkflowVersionOrFail(workflowVersion);
+  }
+
+  async getValidWorkflowVersionOrFail(
+    workflowVersion: WorkflowVersionWorkspaceEntity | null,
+  ): Promise<
+    Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    }
+  > {
     if (!workflowVersion) {
       throw new WorkflowTriggerException(
         'Workflow version not found',
