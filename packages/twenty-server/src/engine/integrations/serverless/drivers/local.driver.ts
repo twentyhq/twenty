@@ -9,6 +9,7 @@ import {
   ServerlessDriver,
   ServerlessExecuteError,
   ServerlessExecuteResult,
+  LayerVersion,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
@@ -42,7 +43,7 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
-  private getInMemoryLayerFolderPath = (version: 'latest' | number) => {
+  private getInMemoryLayerFolderPath = (version: LayerVersion) => {
     const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
 
     return join(
@@ -52,9 +53,10 @@ export class LocalDriver
     );
   };
 
-  async createLastVersionLayerIfNotExists(): Promise<void> {
+  async createLayerIfNotExists(version: LayerVersion): Promise<void> {
+    const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
     const inMemoryLastVersionLayerFolderPath =
-      this.getInMemoryLayerFolderPath('latest');
+      this.getInMemoryLayerFolderPath(computedVersion);
 
     if (
       existsSync(inMemoryLastVersionLayerFolderPath) &&

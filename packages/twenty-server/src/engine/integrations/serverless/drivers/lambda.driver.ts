@@ -24,6 +24,7 @@ import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-type
 
 import {
   ServerlessDriver,
+  LayerVersion,
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
@@ -83,7 +84,8 @@ export class LambdaDriver
     );
   }
 
-  async createLastVersionLayerIfNotExists(): Promise<void> {
+  async createLayerIfNotExists(version: LayerVersion): Promise<void> {
+    const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
     const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: COMMON_LAYER_NAME,
       MaxItems: 1,
@@ -94,7 +96,7 @@ export class LambdaDriver
     if (
       isDefined(listLayerResult.LayerVersions) &&
       listLayerResult.LayerVersions.length > 0 &&
-      listLayerResult.LayerVersions[0].Description === `${LAST_LAYER_VERSION}`
+      listLayerResult.LayerVersions[0].Description === `${computedVersion}`
     ) {
       return;
     }
@@ -118,7 +120,7 @@ export class LambdaDriver
         ZipFile: await fs.readFile(lambdaZipPath),
       },
       CompatibleRuntimes: [ServerlessFunctionRuntime.NODE18],
-      Description: `${LAST_LAYER_VERSION}`,
+      Description: `${computedVersion}`,
     };
 
     const command = new PublishLayerVersionCommand(params);
