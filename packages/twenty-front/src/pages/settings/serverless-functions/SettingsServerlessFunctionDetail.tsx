@@ -22,7 +22,6 @@ import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { useState } from 'react';
-import isEmpty from 'lodash.isempty';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
@@ -52,9 +51,6 @@ export const SettingsServerlessFunctionDetail = () => {
   );
 
   const save = async () => {
-    if (isEmpty(formValues.name)) {
-      return;
-    }
     try {
       await updateOneServerlessFunction({
         id: serverlessFunctionId,
