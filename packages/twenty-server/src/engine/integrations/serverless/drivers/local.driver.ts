@@ -49,10 +49,7 @@ export class LocalDriver
     const inMemoryLastVersionLayerFolderPath =
       this.getInMemoryLayerFolderPath(version);
 
-    if (
-      existsSync(inMemoryLastVersionLayerFolderPath) &&
-      existsSync(join(inMemoryLastVersionLayerFolderPath, 'node_modules'))
-    ) {
+    if (existsSync(inMemoryLastVersionLayerFolderPath)) {
       return;
     }
 
