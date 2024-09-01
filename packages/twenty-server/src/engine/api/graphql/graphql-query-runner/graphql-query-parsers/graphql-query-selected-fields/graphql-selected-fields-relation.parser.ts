@@ -17,11 +17,11 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     fieldValue: any,
     result: { select: Record<string, any>; relations: Record<string, any> },
   ): void {
-    result.relations[fieldKey] = true;
-
     if (!fieldValue || typeof fieldValue !== 'object') {
       return;
     }
+
+    result.relations[fieldKey] = true;
 
     const referencedObjectMetadata = getRelationObjectMetadata(
       fieldMetadata,
