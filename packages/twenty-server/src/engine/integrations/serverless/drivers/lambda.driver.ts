@@ -24,7 +24,6 @@ import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-type
 
 import {
   ServerlessDriver,
-  LayerVersion,
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
@@ -45,7 +44,6 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { isDefined } from 'src/utils/is-defined';
-import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
 import { COMMON_LAYER_NAME } from 'src/engine/integrations/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/integrations/serverless/drivers/utils/copy-and-build-dependencies';
 
@@ -84,8 +82,7 @@ export class LambdaDriver
     );
   }
 
-  async createLayerIfNotExists(version: LayerVersion): Promise<void> {
-    const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
+  private async createLayerIfNotExists(version: number): Promise<string> {
     const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: COMMON_LAYER_NAME,
       MaxItems: 1,
@@ -95,10 +92,10 @@ export class LambdaDriver
 
     if (
       isDefined(listLayerResult.LayerVersions) &&
-      listLayerResult.LayerVersions.length > 0 &&
-      listLayerResult.LayerVersions[0].Description === `${computedVersion}`
+      listLayerResult.LayerVersions?.[0].Description === `${version}` &&
+      isDefined(listLayerResult.LayerVersions[0].LayerVersionArn)
     ) {
-      return;
+      return listLayerResult.LayerVersions[0].LayerVersionArn;
     }
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
@@ -120,7 +117,7 @@ export class LambdaDriver
         ZipFile: await fs.readFile(lambdaZipPath),
       },
       CompatibleRuntimes: [ServerlessFunctionRuntime.NODE18],
-      Description: `${computedVersion}`,
+      Description: `${version}`,
     };
 
     const command = new PublishLayerVersionCommand(params);
@@ -130,29 +127,10 @@ export class LambdaDriver
     await lambdaBuildDirectoryManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
-      throw new Error('new layer version arn undefined');
+      throw new Error('new layer version arn si undefined');
     }
-  }
 
-  private async getCommonLayerArnOrFail(version: number): Promise<string> {
-    const params: ListLayerVersionsCommandInput = {
-      LayerName: COMMON_LAYER_NAME,
-      MaxItems: 50,
-    };
-    const command = new ListLayerVersionsCommand(params);
-    const result = await this.lambdaClient.send(command);
-
-    if (isDefined(result.LayerVersions) && result.LayerVersions.length > 0) {
-      for (const layerVersion of result.LayerVersions) {
-        if (
-          layerVersion.Description === `${version}` &&
-          isDefined(layerVersion.LayerVersionArn)
-        ) {
-          return layerVersion.LayerVersionArn;
-        }
-      }
-    }
-    throw Error(`${COMMON_LAYER_NAME} version "${version}" not found`);
+    return result.LayerVersionArn;
   }
 
   private async checkFunctionExists(functionName: string): Promise<boolean> {
@@ -210,7 +188,7 @@ export class LambdaDriver
     );
 
     if (!functionExists) {
-      const layerArn = await this.getCommonLayerArnOrFail(
+      const layerArn = await this.createLayerIfNotExists(
         serverlessFunction.layerVersion,
       );
 

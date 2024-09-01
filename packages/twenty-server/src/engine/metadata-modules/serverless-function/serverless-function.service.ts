@@ -104,10 +104,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
     }
 
-    await this.serverlessService.createLayerIfNotExists(
-      functionToExecute.layerVersion,
-    );
-
     return this.serverlessService.execute(functionToExecute, payload, version);
   }
 
@@ -274,8 +270,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     } else {
       typescriptCode = await readFileContent(code.createReadStream());
     }
-
-    await this.serverlessService.createLayerIfNotExists('latest');
 
     const createdServerlessFunction = await super.createOne({
       ...serverlessFunctionInput,

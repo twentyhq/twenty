@@ -9,7 +9,6 @@ import {
   ServerlessDriver,
   ServerlessExecuteError,
   ServerlessExecuteResult,
-  LayerVersion,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
@@ -23,7 +22,6 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
 import { COMMON_LAYER_NAME } from 'src/engine/integrations/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/integrations/serverless/drivers/utils/copy-and-build-dependencies';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/integrations/serverless/drivers/constants/serverless-tmpdir-folder';
@@ -43,20 +41,13 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
-  private getInMemoryLayerFolderPath = (version: LayerVersion) => {
-    const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
-
-    return join(
-      SERVERLESS_TMPDIR_FOLDER,
-      COMMON_LAYER_NAME,
-      `${computedVersion}`,
-    );
+  private getInMemoryLayerFolderPath = (version: number) => {
+    return join(SERVERLESS_TMPDIR_FOLDER, COMMON_LAYER_NAME, `${version}`);
   };
 
-  async createLayerIfNotExists(version: LayerVersion): Promise<void> {
-    const computedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
+  private async createLayerIfNotExists(version: number) {
     const inMemoryLastVersionLayerFolderPath =
-      this.getInMemoryLayerFolderPath(computedVersion);
+      this.getInMemoryLayerFolderPath(version);
 
     if (
       existsSync(inMemoryLastVersionLayerFolderPath) &&
@@ -71,6 +62,7 @@ export class LocalDriver
   async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
+    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
     const javascriptCode = await this.getCompiledCode(
       serverlessFunction,
       this.fileStorageService,
@@ -102,6 +94,8 @@ export class LocalDriver
     payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
+    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
+
     const startTime = Date.now();
     let fileContent = '';
 

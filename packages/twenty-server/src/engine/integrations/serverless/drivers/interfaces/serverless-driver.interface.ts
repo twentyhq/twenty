@@ -14,10 +14,7 @@ export type ServerlessExecuteResult = {
   error?: ServerlessExecuteError;
 };
 
-export type LayerVersion = 'latest' | number;
-
 export interface ServerlessDriver {
-  createLayerIfNotExists(version: LayerVersion): Promise<void>;
   delete(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
   build(
     serverlessFunction: ServerlessFunctionEntity,

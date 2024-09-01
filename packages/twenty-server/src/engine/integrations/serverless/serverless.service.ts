@@ -3,7 +3,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   ServerlessDriver,
   ServerlessExecuteResult,
-  LayerVersion,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { SERVERLESS_DRIVER } from 'src/engine/integrations/serverless/serverless.constants';
@@ -12,10 +11,6 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 @Injectable()
 export class ServerlessService implements ServerlessDriver {
   constructor(@Inject(SERVERLESS_DRIVER) private driver: ServerlessDriver) {}
-
-  async createLayerIfNotExists(version: LayerVersion): Promise<void> {
-    return this.driver.createLayerIfNotExists(version);
-  }
 
   async delete(serverlessFunction: ServerlessFunctionEntity): Promise<void> {
     return this.driver.delete(serverlessFunction);
