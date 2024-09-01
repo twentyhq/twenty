@@ -24,6 +24,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
     if (
       ![
         FieldMetadataType.DateTime,
+        FieldMetadataType.Date,
         FieldMetadataType.Text,
         FieldMetadataType.Email,
         FieldMetadataType.Emails,
