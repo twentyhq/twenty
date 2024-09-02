@@ -1,14 +1,10 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RightDrawerWorkflowEditStepContentAction } from '@/workflow/components/RightDrawerWorkflowEditStepContentAction';
 import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components/RightDrawerWorkflowEditStepContentTrigger';
+import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflowVersionStep';
+import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
-import {
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
-import { replaceStep } from '@/workflow/utils/replaceStep';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -55,11 +51,6 @@ export const RightDrawerWorkflowEditStepContent = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const { updateOneRecord: updateOneWorkflowVersion } =
-    useUpdateOneRecord<WorkflowVersion>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
-
   const showPageWorkflowSelectedNode = useRecoilValue(
     showPageWorkflowSelectedNodeState,
   );
@@ -68,6 +59,12 @@ export const RightDrawerWorkflowEditStepContent = ({
       'Expected a node to be selected. Selecting a node is mandatory to edit it.',
     );
   }
+
+  const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
+  const { updateStep } = useUpdateWorkflowVersionStep({
+    workflow,
+    stepId: showPageWorkflowSelectedNode,
+  });
 
   const stepConfiguration = getStepDefinition({
     stepId: showPageWorkflowSelectedNode,
@@ -81,18 +78,7 @@ export const RightDrawerWorkflowEditStepContent = ({
     return (
       <RightDrawerWorkflowEditStepContentTrigger
         trigger={stepConfiguration.definition}
-        onUpdateTrigger={(updatedTrigger) => {
-          if (!isDefined(workflow.currentVersion)) {
-            throw new Error('Can not update an undefined workflow version.');
-          }
-
-          updateOneWorkflowVersion({
-            idToUpdate: workflow.currentVersion.id,
-            updateOneRecordInput: {
-              trigger: updatedTrigger,
-            },
-          });
-        }}
+        onUpdateTrigger={updateTrigger}
       />
     );
   }
@@ -100,22 +86,7 @@ export const RightDrawerWorkflowEditStepContent = ({
   return (
     <RightDrawerWorkflowEditStepContentAction
       action={stepConfiguration.definition}
-      onUpdateAction={(updatedAction) => {
-        if (!isDefined(workflow.currentVersion)) {
-          throw new Error('Can not update an undefined workflow version.');
-        }
-
-        updateOneWorkflowVersion({
-          idToUpdate: workflow.currentVersion.id,
-          updateOneRecordInput: {
-            steps: replaceStep({
-              steps: workflow.currentVersion.steps ?? [],
-              stepId: showPageWorkflowSelectedNode,
-              stepToReplace: updatedAction,
-            }),
-          },
-        });
-      }}
+      onUpdateAction={updateStep}
     />
   );
 };
