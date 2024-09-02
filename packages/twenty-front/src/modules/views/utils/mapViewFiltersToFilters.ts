@@ -2,10 +2,8 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { isDefined } from '~/utils/isDefined';
 
-import {
-  getSubMenuOptions,
-  isCompositeField,
-} from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
+import { getSubMenuOptions } from '@/object-record/object-filter-dropdown/utils/getSubMenuOptions';
+import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { ViewFilter } from '../types/ViewFilter';
 
 const getDefinitionForFilter = (

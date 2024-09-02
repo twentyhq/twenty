@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconApps, IconChevronLeft, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -9,9 +9,10 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
+import { SubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectSubMenu';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 export const StyledInput = styled.input`
@@ -39,128 +40,6 @@ export const StyledInput = styled.input`
     color: ${({ theme }) => theme.font.color.light};
   }
 `;
-
-type SubMenuProps = {
-  currentSubMenu: FilterType;
-  setCurrentSubMenu: (currentSubMenu: FilterType | null) => void;
-  parent: FilterDefinition | null;
-};
-
-export const getSubMenuOptions = (subMenu: FilterType | null) => {
-  switch (subMenu) {
-    case 'ADDRESS':
-      return [
-        'Address 1',
-        'Address 2',
-        'City',
-        'Post Code',
-        'State',
-        'Country',
-      ];
-    case 'FULL_NAME':
-      return ['First Name', 'Last Name'];
-    case 'LINKS':
-      return ['Link URL', 'Link Label'];
-    default:
-      return [];
-  }
-};
-
-const SubMenu = ({
-  currentSubMenu,
-  setCurrentSubMenu,
-  parent,
-}: SubMenuProps) => {
-  const [searchText, setSearchText] = useState('');
-
-  const getHeaderTitle = (subMenu: FilterType | null) => {
-    switch (subMenu) {
-      case 'ADDRESS':
-        return 'Address';
-      case 'FULL_NAME':
-        return 'Full Name';
-      case 'LINKS':
-        return 'Links';
-      default:
-        return;
-    }
-  };
-
-  const { getIcon } = useIcons();
-
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setSelectedOperandInDropdown,
-    setObjectFilterDropdownSearchInput,
-  } = useFilterDropdown();
-
-  const handleSelectFilter = (definition: FilterDefinition | null) => {
-    if (definition !== null) {
-      setFilterDefinitionUsedInDropdown(definition);
-
-      setSelectedOperandInDropdown(
-        getOperandsForFilterType(definition.type)?.[0],
-      );
-
-      setObjectFilterDropdownSearchInput('');
-    }
-  };
-
-  return (
-    <>
-      <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onClick={() => {
-          setCurrentSubMenu(null);
-        }}
-      >
-        {getHeaderTitle(currentSubMenu)}
-      </DropdownMenuHeader>
-      <StyledInput
-        value={searchText}
-        autoFocus
-        placeholder="Search fields"
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setSearchText(event.target.value)
-        }
-      />
-      <DropdownMenuItemsContainer>
-        <MenuItem
-          key={`select-filter-${-1}`}
-          testId={`select-filter-${-1}`}
-          onClick={() => {
-            handleSelectFilter(parent);
-          }}
-          LeftIcon={IconApps}
-          text={`Any ${getHeaderTitle(currentSubMenu)} field`}
-        />
-        {getSubMenuOptions(currentSubMenu)
-          .sort((a, b) => a.localeCompare(b))
-          .filter((item) =>
-            item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
-          )
-          .map((menuOption, index) => (
-            <MenuItem
-              key={`select-filter-${index}`}
-              testId={`select-filter-${index}`}
-              onClick={() =>
-                parent &&
-                handleSelectFilter({
-                  ...parent,
-                  label: menuOption,
-                })
-              }
-              text={menuOption}
-              LeftIcon={getIcon(parent?.iconName)}
-            />
-          ))}
-      </DropdownMenuItemsContainer>
-    </>
-  );
-};
-
-export const isCompositeField = (type: FilterType) =>
-  ['ADDRESS', 'FULL_NAME', 'LINKS'].includes(type);
 
 export const ObjectFilterDropdownFilterSelect = () => {
   const [searchText, setSearchText] = useState('');
