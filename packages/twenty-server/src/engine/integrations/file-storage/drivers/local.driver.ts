@@ -127,6 +127,9 @@ export class LocalDriver implements StorageDriver {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
+    if (!params.from.filename && params.to.filename) {
+      throw new Error('Cannot copy folder to file');
+    }
     const fromPath = join(
       `${this.options.storagePath}/`,
       params.from.folderPath,
@@ -138,6 +141,8 @@ export class LocalDriver implements StorageDriver {
       params.to.folderPath,
       params.to.filename || '',
     );
+
+    await this.createFolder(dirname(toPath));
 
     try {
       await fs.cp(fromPath, toPath, { recursive: true });
