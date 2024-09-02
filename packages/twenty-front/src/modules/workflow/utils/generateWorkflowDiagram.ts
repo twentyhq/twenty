@@ -1,3 +1,4 @@
+import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
@@ -60,7 +61,7 @@ export const generateWorkflowDiagram = ({
   };
 
   // Start with the trigger node
-  const triggerNodeId = 'trigger';
+  const triggerNodeId = TRIGGER_STEP_ID;
   const triggerEvent = splitWorkflowTriggerEventName(
     trigger.settings.eventName,
   );

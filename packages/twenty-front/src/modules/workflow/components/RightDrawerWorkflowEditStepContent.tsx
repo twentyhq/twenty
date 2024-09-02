@@ -1,5 +1,6 @@
 import { RightDrawerWorkflowEditStepContentAction } from '@/workflow/components/RightDrawerWorkflowEditStepContentAction';
 import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components/RightDrawerWorkflowEditStepContentTrigger';
+import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
@@ -20,7 +21,7 @@ const getStepDefinition = ({
     return undefined;
   }
 
-  if (stepId === 'trigger') {
+  if (stepId === TRIGGER_STEP_ID) {
     if (!isDefined(currentVersion.trigger)) {
       return undefined;
     }
