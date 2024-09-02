@@ -43,7 +43,6 @@ import {
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
@@ -66,8 +65,8 @@ import {
 } from './interfaces/pg-graphql.interface';
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
-  computePgGraphQLError,
   PgGraphQLConfig,
+  computePgGraphQLError,
 } from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
@@ -101,12 +100,7 @@ export class WorkspaceQueryRunnerService {
     const { authContext, objectMetadataItem } = options;
     const start = performance.now();
 
-    const isQueryRunnerTwentyORMEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
-        authContext.workspace.id,
-      );
-
+    const isQueryRunnerTwentyORMEnabled = true;
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,

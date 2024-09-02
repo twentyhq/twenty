@@ -23,7 +23,9 @@ import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/ut
 import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 @Injectable()
 export class GraphqlQueryRunnerService {
@@ -116,17 +118,76 @@ export class GraphqlQueryRunnerService {
       applyRangeFilter(where, order, cursor);
     }
 
-    const objectRecords = await repository.find(findOptions);
+    let objectRecords: ObjectLiteral[] = [];
+
+    if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.person) {
+      // if (args.filter?.search) {
+      if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.person) {
+        throw new GraphqlQueryRunnerException(
+          'Search is only supported for Person object',
+          GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+        );
+      }
+      const rawObjectRecords = await this.searchPerson(
+        repository,
+        select,
+        'com',
+      );
+
+      objectRecords = await repository.formatResult(rawObjectRecords);
+    } else {
+      if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.person) {
+        console.log('stop');
+      }
+      objectRecords = await repository.find(findOptions);
+    }
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
-    return typeORMObjectRecordsParser.createConnection(
+    const a = typeORMObjectRecordsParser.createConnection(
       (objectRecords as ObjectRecord[]) ?? [],
       take,
       totalCount,
       order,
       objectMetadataItem.nameSingular,
     );
+
+    return a;
+  }
+
+  async searchPerson(
+    repository: WorkspaceRepository<ObjectLiteral>,
+    select: Record<string, any>,
+    searchTerm: string,
+  ) {
+    const selectedFieldsWithoutRelations =
+      this.getSelectedFieldsWithoutRelations(select);
+
+    const results = await repository
+      .createQueryBuilder()
+      .select(selectedFieldsWithoutRelations)
+      .where('"nameFirstName" % :searchTerm', { searchTerm })
+      .orWhere('"nameLastName" % :searchTerm', { searchTerm })
+      .orWhere('email % :searchTerm', { searchTerm })
+      .orderBy('similarity("nameFirstName", :searchTerm)', 'DESC')
+      .addOrderBy('similarity("nameLastName", :searchTerm)', 'DESC')
+      .addOrderBy('similarity(email, :searchTerm)', 'DESC')
+      .setParameter('searchTerm', searchTerm)
+      .execute();
+
+    return results;
+  }
+
+  private getSelectedFieldsWithoutRelations(select: Record<string, any>) {
+    const selectForQueryBuilder: string[] = [];
+
+    Object.keys(select).forEach((key) => {
+      if (select[key] === true) {
+        selectForQueryBuilder.push(`"${key}"`);
+      }
+    });
+
+    return selectForQueryBuilder;
   }
 }

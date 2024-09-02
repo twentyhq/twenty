@@ -721,7 +721,7 @@ export class WorkspaceRepository<
     return newData as T;
   }
 
-  private async formatResult<T>(
+  async formatResult<T>(
     data: T,
     objectMetadata?: ObjectMetadataEntity,
   ): Promise<T> {
@@ -790,6 +790,10 @@ export class WorkspaceRepository<
       const { relationMetadata, relationType } =
         relationMetadataMap.get(key) ?? {};
 
+      if (objectMetadata.nameSingular === 'person' && key == 'name') {
+        console.log('stop');
+      }
+
       if (!compositePropertyArgs && !relationMetadata) {
         if (isPlainObject(value)) {
           newData[key] = await this.formatResult(value);
@@ -842,6 +846,10 @@ export class WorkspaceRepository<
 
       if (!newData[parentField]) {
         newData[parentField] = {};
+      }
+
+      if (compositeProperty.name === 'firstName') {
+        console.log('stop');
       }
 
       newData[parentField][compositeProperty.name] = value;

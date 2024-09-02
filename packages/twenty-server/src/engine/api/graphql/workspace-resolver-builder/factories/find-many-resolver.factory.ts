@@ -25,7 +25,7 @@ export class FindManyResolverFactory
   ): Resolver<FindManyResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, context, info) => {
+    return async (_source, args, _context, info) => {
       try {
         return await this.workspaceQueryRunnerService.findMany(args, {
           authContext: internalContext.authContext,
