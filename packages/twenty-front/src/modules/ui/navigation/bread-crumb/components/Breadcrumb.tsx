@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { Fragment } from 'react';
+import { CSSProperties, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 type BreadcrumbProps = {
   className?: string;
-  links: { children: string; href?: string }[];
+  links: { children: string; href?: string; styles?: CSSProperties }[];
 };
 
 const StyledWrapper = styled.nav`
@@ -39,11 +39,13 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => (
     {links.map((link, index) => (
       <Fragment key={index}>
         {link.href ? (
-          <StyledLink title={link.children} to={link.href}>
+          <StyledLink style={link.styles} title={link.children} to={link.href}>
             {link.children}
           </StyledLink>
         ) : (
-          <StyledText title={link.children}>{link.children}</StyledText>
+          <StyledText style={link.styles} title={link.children}>
+            {link.children}
+          </StyledText>
         )}
         {index < links.length - 1 && '/'}
       </Fragment>

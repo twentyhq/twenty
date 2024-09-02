@@ -8,7 +8,12 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
+import {
+  IconComponent,
+  MOBILE_VIEWPORT,
+  Pill,
+  TablerIconsProps,
+} from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
@@ -22,7 +27,7 @@ export type NavigationDrawerItemProps = {
   subItemState?: NavigationDrawerSubItemState;
   to?: string;
   onClick?: () => void;
-  Icon: IconComponent;
+  Icon: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
@@ -185,7 +190,11 @@ export const NavigationDrawerItem = ({
           <NavigationDrawerItemBreadcrumb state={subItemState} />
         )}
         {Icon && (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
+          <Icon
+            style={{ minWidth: theme.icon.size.md }}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.md}
+          />
         )}
         <StyledItemLabel>{label}</StyledItemLabel>
         {soon && <Pill label="Soon" />}
