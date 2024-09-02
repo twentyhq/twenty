@@ -151,6 +151,7 @@ export {
   IconRestore,
   IconRocket,
   IconRotate,
+  IconRotate2,
   IconSearch,
   IconSend,
   IconSettings,
