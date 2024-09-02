@@ -1,6 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowTrigger } from '@/workflow/types/Workflow';
+import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconPlaylistAdd } from 'twenty-ui';
@@ -54,7 +55,9 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const [recordType, event] = trigger.settings.eventName.split('.');
+  const triggerEvent = splitWorkflowTriggerEventName(
+    trigger.settings.eventName,
+  );
 
   const availableMetadata: Array<SelectOption<string>> =
     activeObjectMetadataItems.map((item) => ({
@@ -62,7 +65,7 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
       value: item.nameSingular,
     }));
   const recordTypeMetadata = activeObjectMetadataItems.find(
-    (item) => item.nameSingular === recordType,
+    (item) => item.nameSingular === triggerEvent.objectType,
   );
   if (recordTypeMetadata === undefined) {
     throw new Error(
@@ -85,7 +88,7 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
     },
   ];
   const eventLabel = availableEvents.find(
-    (availableEvent) => availableEvent.value === event,
+    (availableEvent) => availableEvent.value === triggerEvent.event,
   );
   if (eventLabel === undefined) {
     throw new Error('Expected to find the currently selected event type.');
@@ -112,14 +115,14 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
           dropdownId="right-drawer-workflow-edit-step-trigger-record-type"
           label="Record Type"
           fullWidth
-          value={recordType}
+          value={triggerEvent.objectType}
           options={availableMetadata}
           onChange={(updatedRecordType) => {
             onUpdateTrigger({
               ...trigger,
               settings: {
                 ...trigger.settings,
-                eventName: `${updatedRecordType}.${event}`,
+                eventName: `${updatedRecordType}.${triggerEvent.event}`,
               },
             });
           }}
@@ -128,14 +131,14 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
           dropdownId="right-drawer-workflow-edit-step-trigger-event-type"
           label="Event type"
           fullWidth
-          value={event}
+          value={triggerEvent.event}
           options={availableEvents}
           onChange={(updatedEvent) => {
             onUpdateTrigger({
               ...trigger,
               settings: {
                 ...trigger.settings,
-                eventName: `${recordType}.${updatedEvent}`,
+                eventName: `${triggerEvent.objectType}.${updatedEvent}`,
               },
             });
           }}
