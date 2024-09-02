@@ -45,10 +45,6 @@ export const getFindDuplicatesRequestBody = (name: string) => {
             },
             ids: {
               type: 'array',
-              items: {
-                type: 'string',
-                format: 'uuid',
-              },
             },
           },
         },
