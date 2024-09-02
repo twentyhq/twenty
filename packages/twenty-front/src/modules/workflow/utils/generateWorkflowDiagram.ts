@@ -6,6 +6,7 @@ import {
 } from '@/workflow/types/WorkflowDiagram';
 import { MarkerType } from '@xyflow/react';
 import { v4 } from 'uuid';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const generateWorkflowDiagram = ({
   trigger,
@@ -59,11 +60,12 @@ export const generateWorkflowDiagram = ({
 
   // Start with the trigger node
   const triggerNodeId = 'trigger';
+  const [triggerObject, triggerEvent] = trigger.settings.eventName.split('.');
   nodes.push({
     id: triggerNodeId,
     data: {
       nodeType: 'trigger',
-      label: trigger.settings.eventName,
+      label: `${capitalize(triggerObject)} is ${capitalize(triggerEvent)}`,
     },
     position: {
       x: 0,
