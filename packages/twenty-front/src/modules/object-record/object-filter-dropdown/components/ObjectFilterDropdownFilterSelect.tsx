@@ -9,6 +9,7 @@ import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useHandleClick } from '@/object-record/object-filter-dropdown/hooks/useHandleClick';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -50,7 +51,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
     .filter((item) =>
       item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
     );
-
+  const { handleClick } = useHandleClick();
   return (
     <>
       <StyledInput
@@ -67,6 +68,14 @@ export const ObjectFilterDropdownFilterSelect = () => {
           (item) => item.fieldMetadataId,
         )}
         selectableListId={OBJECT_FILTER_DROPDOWN_ID}
+        onEnter={(itemId) => {
+          const selectedFilterDefinition =
+            sortedAvailableFilterDefinitions.find(
+              (item) => item.fieldMetadataId === itemId,
+            );
+          if (!selectedFilterDefinition) return;
+          handleClick({ filterDefinition: selectedFilterDefinition });
+        }}
       >
         <DropdownMenuItemsContainer>
           {sortedAvailableFilterDefinitions.map(
