@@ -5,16 +5,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCode } from 'twenty-ui';
 
-// FIXME: copy-pasted
-const StyledShowPageRightContainer = styled.div`
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  justify-content: start;
-  width: 100%;
-  height: 100%;
-`;
-
 const StyledTriggerHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -73,7 +63,7 @@ export const RightDrawerWorkflowEditStepContentAction = ({
   ];
 
   return (
-    <StyledShowPageRightContainer>
+    <>
       <StyledTriggerHeader>
         <StyledTriggerHeaderIconContainer>
           <IconCode color={theme.color.orange} />
@@ -104,6 +94,6 @@ export const RightDrawerWorkflowEditStepContentAction = ({
           }}
         />
       </StyledTriggerSettings>
-    </StyledShowPageRightContainer>
+    </>
   );
 };
