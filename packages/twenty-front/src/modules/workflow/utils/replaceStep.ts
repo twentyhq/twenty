@@ -10,7 +10,6 @@ export const replaceStep = ({
   stepId: string;
   stepToReplace: Partial<Omit<WorkflowStep, 'id'>>;
 }) => {
-  // Make a deep copy of the nested object to prevent unwanted side effects.
   const steps = structuredClone(stepsInitial);
 
   const parentStepPosition = findStepPositionOrThrow({

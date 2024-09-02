@@ -93,9 +93,6 @@ export const useRightDrawerWorkflowSelectActionCreateStep = ({
 
     const newStep = getStepDefaultConfiguration(newStepType);
 
-    /**
-     * FIXME: For now, the data of the node to create are mostly static.
-     */
     await insertNodeAndSave({
       parentNodeId: workflowCreateStepFromParentStepId,
       nodeToAdd: newStep,
