@@ -64,11 +64,13 @@ export const RightDrawerWorkflowEditStepContentAction = ({
 
   const { serverlessFunctions } = useGetManyServerlessFunctions();
 
-  const availableFunctions: Array<SelectOption<string>> =
-    serverlessFunctions.map((serverlessFunction) => ({
+  const availableFunctions: Array<SelectOption<string>> = [
+    { label: 'None', value: '' },
+    ...serverlessFunctions.map((serverlessFunction) => ({
       label: serverlessFunction.name,
       value: serverlessFunction.id,
-    }));
+    })),
+  ];
 
   return (
     <StyledShowPageRightContainer>
