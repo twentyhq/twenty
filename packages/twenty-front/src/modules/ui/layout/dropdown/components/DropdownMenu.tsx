@@ -22,7 +22,8 @@ const StyledDropdownMenu = styled.div<{
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   display: flex;
-
+  position: absolute;
+  overflow: visible;
   flex-direction: column;
   z-index: 30;
   width: ${({ width = 160 }) =>
