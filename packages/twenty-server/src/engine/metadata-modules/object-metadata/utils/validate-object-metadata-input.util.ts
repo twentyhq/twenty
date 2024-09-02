@@ -84,7 +84,7 @@ const validateNameIsNotTooLongThrow = (name?: string) => {
   if (name) {
     if (exceedsDatabaseIdentifierMaximumLength(name)) {
       throw new ObjectMetadataException(
-        `Name exceeds 63 characters: ${name}`,
+        `Name exceeds 62 characters: ${name}`,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       );
     }

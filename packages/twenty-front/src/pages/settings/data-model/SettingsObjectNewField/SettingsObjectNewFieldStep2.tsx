@@ -173,7 +173,8 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   return (
     <RecordFieldValueSelectorContextProvider>
-      <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
+      <FormProvider
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...formConfig}
       >
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

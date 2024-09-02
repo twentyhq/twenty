@@ -728,7 +728,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       for (const option of fieldMetadataInput.options) {
         if (exceedsDatabaseIdentifierMaximumLength(option.value)) {
           throw new FieldMetadataException(
-            `Option value "${option.value}" exceeds 63 characters`,
+            `Option value "${option.value}" exceeds 62 characters`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
         }

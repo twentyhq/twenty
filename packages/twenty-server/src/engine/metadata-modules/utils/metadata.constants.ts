@@ -1,1 +1,1 @@
-export const IDENTIFIER_MAX_CHAR_LENGTH = 63;
+export const IDENTIFIER_MAX_CHAR_LENGTH = 62;
