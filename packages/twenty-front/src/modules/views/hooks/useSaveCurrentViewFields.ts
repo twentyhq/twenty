@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
+import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
@@ -18,7 +18,7 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
 
   const { isPersistingViewFieldsState } = useViewStates(viewBarComponentId);
 
-  const currentViewIdState = useExtractedComponentState(
+  const currentViewIdState = useRecoilCallbackState(
     currentViewIdComponentState,
     viewBarComponentId,
   );

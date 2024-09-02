@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
+import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
@@ -14,7 +14,7 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
   const { unsavedToUpsertViewSortsState, unsavedToDeleteViewSortIdsState } =
     useViewStates(viewBarComponentId);
 
-  const currentViewIdState = useExtractedComponentState(
+  const currentViewIdState = useRecoilCallbackState(
     currentViewIdComponentState,
     viewBarComponentId,
   );

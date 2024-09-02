@@ -4,7 +4,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
+import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
@@ -31,7 +31,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
     isCurrentViewKeyIndexState,
   } = useViewStates(componentId);
 
-  const currentViewIdState = useExtractedComponentState(
+  const currentViewIdState = useRecoilCallbackState(
     currentViewIdComponentState,
     viewBarComponentId,
   );

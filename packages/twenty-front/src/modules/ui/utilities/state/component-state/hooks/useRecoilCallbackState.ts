@@ -2,7 +2,7 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
 
-export const useExtractedComponentState = <Value>(
+export const useRecoilCallbackState = <Value>(
   componentState: RecoilComponentState<Value>,
   componentId?: string,
 ) => {

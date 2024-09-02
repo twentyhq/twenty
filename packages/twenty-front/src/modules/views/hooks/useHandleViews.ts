@@ -8,7 +8,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useExtractedComponentState } from '@/ui/utilities/state/component-state/hooks/useExtractedComponentState';
+import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
@@ -25,7 +25,7 @@ export const useHandleViews = (viewBarComponentId?: string) => {
 
   const { isPersistingViewFieldsState } = useViewStates(viewBarComponentId);
 
-  const currentViewIdState = useExtractedComponentState(
+  const currentViewIdState = useRecoilCallbackState(
     currentViewIdComponentState,
     viewBarComponentId,
   );
