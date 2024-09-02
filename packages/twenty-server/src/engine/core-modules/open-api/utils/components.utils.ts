@@ -20,7 +20,10 @@ type Properties = {
   [name: string]: Property;
 };
 
-const getFieldProperties = (type: FieldMetadataType): Property => {
+const getFieldProperties = (
+  type: FieldMetadataType,
+  propertyName?: string,
+): Property => {
   switch (type) {
     case FieldMetadataType.UUID:
       return { type: 'string', format: 'uuid' };
@@ -42,10 +45,28 @@ const getFieldProperties = (type: FieldMetadataType): Property => {
     case FieldMetadataType.BOOLEAN:
       return { type: 'boolean' };
     case FieldMetadataType.RAW_JSON:
+      if (propertyName === 'secondaryLinks') {
+        return {
+          type: 'array',
+          items: {
+            type: 'object',
+            description: `A secondary link`,
+            properties: {
+              url: { type: 'string' },
+              label: { type: 'string' },
+            },
+          },
+        };
+      }
+
       return { type: 'object' };
     default:
       return { type: 'string' };
   }
+};
+
+const getSecondaryLinksFieldProperties = () => {
+  return { type: 'array', properties: {} };
 };
 
 const getSchemaComponentsProperties = (
@@ -78,7 +99,10 @@ const getSchemaComponentsProperties = (
           properties: compositeTypeDefinitions
             .get(field.type)
             ?.properties?.reduce((properties, property) => {
-              properties[property.name] = getFieldProperties(property.type);
+              properties[property.name] = getFieldProperties(
+                property.type,
+                property.name,
+              );
 
               return properties;
             }, {} as Properties),

@@ -61,7 +61,21 @@ describe('computeSchemaComponents', () => {
             properties: {
               primaryLinkLabel: { type: 'string' },
               primaryLinkUrl: { type: 'string' },
-              secondaryLinks: { type: 'object' },
+              secondaryLinks: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  description: 'A secondary link',
+                  properties: {
+                    label: {
+                      type: 'string',
+                    },
+                    url: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
             },
             type: 'object',
           },
