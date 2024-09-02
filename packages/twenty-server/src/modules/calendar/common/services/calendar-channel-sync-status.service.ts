@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { Any } from 'typeorm';
+
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import {
-  CalendarEventImportException,
-  CalendarEventImportExceptionCode,
-} from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
@@ -26,39 +24,55 @@ export class CalendarChannelSyncStatusService {
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
-  public async scheduleFullCalendarEventListFetch(calendarChannelId: string) {
+  public async scheduleFullCalendarEventListFetch(
+    calendarChannelIds: string[],
+  ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStage:
         CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
     });
   }
 
   public async schedulePartialCalendarEventListFetch(
-    calendarChannelId: string,
+    calendarChannelIds: string[],
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStage:
         CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
     });
   }
 
-  public async markAsCalendarEventListFetchOngoing(calendarChannelId: string) {
+  public async markAsCalendarEventListFetchOngoing(
+    calendarChannelIds: string[],
+  ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
       syncStatus: CalendarChannelSyncStatus.ONGOING,
       syncStageStartedAt: new Date().toISOString(),
@@ -66,58 +80,92 @@ export class CalendarChannelSyncStatusService {
   }
 
   public async resetAndScheduleFullCalendarEventListFetch(
-    calendarChannelId: string,
+    calendarChannelIds: string[],
     workspaceId: string,
   ) {
-    await this.cacheStorage.del(
-      `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
-    );
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
+    for (const calendarChannelId of calendarChannelIds) {
+      await this.cacheStorage.del(
+        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+      );
+    }
 
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncCursor: '',
       syncStageStartedAt: null,
       throttleFailureCount: 0,
     });
 
-    await this.scheduleFullCalendarEventListFetch(calendarChannelId);
+    await this.scheduleFullCalendarEventListFetch(calendarChannelIds);
   }
 
-  public async resetSyncStageStartedAt(calendarChannelId: string) {
+  public async resetSyncStageStartedAt(calendarChannelIds: string[]) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStageStartedAt: null,
     });
   }
 
-  public async scheduleCalendarEventsImport(calendarChannelId: string) {
+  public async scheduleCalendarEventsImport(calendarChannelIds: string[]) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
     });
   }
 
-  public async markAsCompletedAndSchedulePartialMessageListFetch(
-    calendarChannelId: string,
-  ) {
+  public async markAsCalendarEventsImportOngoing(calendarChannelIds: string[]) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
+      syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
+      syncStatus: CalendarChannelSyncStatus.ONGOING,
+    });
+  }
+
+  public async markAsCompletedAndSchedulePartialCalendarEventListFetch(
+    calendarChannelIds: string[],
+  ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStage:
         CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
       syncStatus: CalendarChannelSyncStatus.ACTIVE,
@@ -125,42 +173,53 @@ export class CalendarChannelSyncStatusService {
       syncStageStartedAt: null,
     });
 
-    await this.schedulePartialCalendarEventListFetch(calendarChannelId);
+    await this.schedulePartialCalendarEventListFetch(calendarChannelIds);
   }
 
   public async markAsFailedUnknownAndFlushCalendarEventsToImport(
-    calendarChannelId: string,
+    calendarChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await this.cacheStorage.del(
-      `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
-    );
+    for (const calendarChannelId of calendarChannelIds) {
+      await this.cacheStorage.del(
+        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+      );
+    }
 
-    await calendarChannelRepository.update(calendarChannelId, {
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
       syncStage: CalendarChannelSyncStage.FAILED,
     });
   }
 
   public async markAsFailedInsufficientPermissionsAndFlushCalendarEventsToImport(
-    calendarChannelId: string,
+    calendarChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await this.cacheStorage.del(
-      `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
-    );
-
-    await calendarChannelRepository.update(calendarChannelId, {
+    for (const calendarChannelId of calendarChannelIds) {
+      await this.cacheStorage.del(
+        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+      );
+    }
+    await calendarChannelRepository.update(calendarChannelIds, {
       syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
       syncStage: CalendarChannelSyncStage.FAILED,
     });
@@ -170,41 +229,44 @@ export class CalendarChannelSyncStatusService {
         'connectedAccount',
       );
 
-    const calendarChannel = await calendarChannelRepository.findOne({
-      where: { id: calendarChannelId },
+    const calendarChannels = await calendarChannelRepository.find({
+      select: ['id', 'connectedAccountId'],
+      where: { id: Any(calendarChannelIds) },
     });
 
-    if (!calendarChannel) {
-      throw new CalendarEventImportException(
-        `Calendar channel ${calendarChannelId} not found in workspace ${workspaceId}`,
-        CalendarEventImportExceptionCode.CALENDAR_CHANNEL_NOT_FOUND,
-      );
-    }
-
-    const connectedAccountId = calendarChannel.connectedAccountId;
+    const connectedAccountIds = calendarChannels.map(
+      (calendarChannel) => calendarChannel.connectedAccountId,
+    );
 
     await connectedAccountRepository.update(
-      { id: connectedAccountId },
+      { id: Any(connectedAccountIds) },
       {
         authFailedAt: new Date(),
       },
     );
 
-    await this.addToAccountsToReconnect(calendarChannelId, workspaceId);
+    await this.addToAccountsToReconnect(
+      calendarChannels.map((calendarChannel) => calendarChannel.id),
+      workspaceId,
+    );
   }
 
   private async addToAccountsToReconnect(
-    calendarChannelId: string,
+    calendarChannelIds: string[],
     workspaceId: string,
   ) {
+    if (!calendarChannelIds.length) {
+      return;
+    }
+
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    const calendarChannel = await calendarChannelRepository.findOne({
+    const calendarChannels = await calendarChannelRepository.find({
       where: {
-        id: calendarChannelId,
+        id: Any(calendarChannelIds),
       },
       relations: {
         connectedAccount: {
@@ -213,18 +275,16 @@ export class CalendarChannelSyncStatusService {
       },
     });
 
-    if (!calendarChannel) {
-      return;
+    for (const calendarChannel of calendarChannels) {
+      const userId = calendarChannel.connectedAccount.accountOwner.userId;
+      const connectedAccountId = calendarChannel.connectedAccount.id;
+
+      await this.accountsToReconnectService.addAccountToReconnectByKey(
+        AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+        userId,
+        workspaceId,
+        connectedAccountId,
+      );
     }
-
-    const userId = calendarChannel.connectedAccount.accountOwner.userId;
-    const connectedAccountId = calendarChannel.connectedAccount.id;
-
-    await this.accountsToReconnectService.addAccountToReconnectByKey(
-      AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
-      userId,
-      workspaceId,
-      connectedAccountId,
-    );
   }
 }

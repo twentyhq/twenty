@@ -29,7 +29,7 @@ export const useHandleToggleTrashColumnFilter = ({
 
   const handleToggleTrashColumnFilter = useCallback(() => {
     const trashFieldMetadata = objectMetadataItem.fields.find(
-      (field) => field.name === 'deletedAt',
+      (field: { name: string }) => field.name === 'deletedAt',
     );
 
     if (!isDefined(trashFieldMetadata)) return;
@@ -52,7 +52,7 @@ export const useHandleToggleTrashColumnFilter = ({
       operand: ViewFilterOperand.IsNotEmpty,
       displayValue: '',
       definition: {
-        label: `Deleted ${objectMetadataItem.namePlural}`,
+        label: `Deleted`,
         iconName: 'IconTrash',
         fieldMetadataId: trashFieldMetadata.id,
         type: filterType,
@@ -61,12 +61,7 @@ export const useHandleToggleTrashColumnFilter = ({
     };
 
     upsertCombinedViewFilter(newFilter);
-  }, [
-    columnDefinitions,
-    objectMetadataItem.fields,
-    objectNameSingular,
-    upsertCombinedViewFilter,
-  ]);
+  }, [columnDefinitions, objectMetadataItem, upsertCombinedViewFilter]);
 
   return handleToggleTrashColumnFilter;
 };

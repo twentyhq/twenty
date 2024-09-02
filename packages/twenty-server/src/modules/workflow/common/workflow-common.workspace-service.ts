@@ -17,6 +17,13 @@ export class WorkflowCommonWorkspaceService {
       trigger: WorkflowTrigger;
     }
   > {
+    if (!workflowVersionId) {
+      throw new WorkflowTriggerException(
+        'Workflow version ID is required',
+        WorkflowTriggerExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
@@ -28,6 +35,16 @@ export class WorkflowCommonWorkspaceService {
       },
     });
 
+    return this.getValidWorkflowVersionOrFail(workflowVersion);
+  }
+
+  async getValidWorkflowVersionOrFail(
+    workflowVersion: WorkflowVersionWorkspaceEntity | null,
+  ): Promise<
+    Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
+      trigger: WorkflowTrigger;
+    }
+  > {
     if (!workflowVersion) {
       throw new WorkflowTriggerException(
         'Workflow version not found',

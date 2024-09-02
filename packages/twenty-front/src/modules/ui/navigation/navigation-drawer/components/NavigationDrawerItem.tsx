@@ -1,3 +1,5 @@
+import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
+import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
@@ -9,10 +11,15 @@ import { useSetRecoilState } from 'recoil';
 import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
+const DEFAULT_INDENTATION_LEVEL = 1;
+
+export type NavigationDrawerItemIndentationLevel = 1 | 2;
+
 export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
-  level?: 1 | 2;
+  indentationLevel?: NavigationDrawerItemIndentationLevel;
+  subItemState?: NavigationDrawerSubItemState;
   to?: string;
   onClick?: () => void;
   Icon: IconComponent;
@@ -23,13 +30,10 @@ export type NavigationDrawerItemProps = {
   keyboard?: string[];
 };
 
-type StyledItemProps = {
-  active?: boolean;
-  danger?: boolean;
-  level: 1 | 2;
-  soon?: boolean;
-  to?: string;
-};
+type StyledItemProps = Pick<
+  NavigationDrawerItemProps,
+  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to'
+>;
 
 const StyledItem = styled('div', {
   shouldForwardProp: (prop) =>
@@ -59,13 +63,17 @@ const StyledItem = styled('div', {
   font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-left: ${({ level, theme }) => theme.spacing((level - 1) * 4)};
+
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
-  pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
 
+  margin-top: ${({ indentationLevel }) =>
+    indentationLevel === 2 ? '2px' : '0'};
+
+  pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
+  width: 100%;
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
@@ -116,10 +124,16 @@ const StyledKeyBoardShortcut = styled.div`
   visibility: hidden;
 `;
 
+const StyledNavigationDrawerItemContainer = styled.div`
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+`;
+
 export const NavigationDrawerItem = ({
   className,
   label,
-  level = 1,
+  indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   to,
   onClick,
@@ -128,6 +142,7 @@ export const NavigationDrawerItem = ({
   soon,
   count,
   keyboard,
+  subItemState,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -135,6 +150,8 @@ export const NavigationDrawerItem = ({
   const setIsNavigationDrawerOpen = useSetRecoilState(
     isNavigationDrawerOpenState,
   );
+
+  const showBreadcrumb = indentationLevel === 2;
 
   const handleItemClick = () => {
     if (isMobile) {
@@ -152,26 +169,33 @@ export const NavigationDrawerItem = ({
   };
 
   return (
-    <StyledItem
-      className={className}
-      level={level}
-      onClick={handleItemClick}
-      active={active}
-      aria-selected={active}
-      danger={danger}
-      soon={soon}
-      as={to ? Link : 'div'}
-      to={to ? to : undefined}
-    >
-      {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />}
-      <StyledItemLabel>{label}</StyledItemLabel>
-      {soon && <Pill label="Soon" />}
-      {!!count && <StyledItemCount>{count}</StyledItemCount>}
-      {keyboard && (
-        <StyledKeyBoardShortcut className="keyboard-shortcuts">
-          {keyboard}
-        </StyledKeyBoardShortcut>
-      )}
-    </StyledItem>
+    <StyledNavigationDrawerItemContainer>
+      <StyledItem
+        className={className}
+        onClick={handleItemClick}
+        active={active}
+        aria-selected={active}
+        danger={danger}
+        soon={soon}
+        as={to ? Link : 'div'}
+        to={to ? to : undefined}
+        indentationLevel={indentationLevel}
+      >
+        {showBreadcrumb && (
+          <NavigationDrawerItemBreadcrumb state={subItemState} />
+        )}
+        {Icon && (
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
+        )}
+        <StyledItemLabel>{label}</StyledItemLabel>
+        {soon && <Pill label="Soon" />}
+        {!!count && <StyledItemCount>{count}</StyledItemCount>}
+        {keyboard && (
+          <StyledKeyBoardShortcut className="keyboard-shortcuts">
+            {keyboard}
+          </StyledKeyBoardShortcut>
+        )}
+      </StyledItem>
+    </StyledNavigationDrawerItemContainer>
   );
 };

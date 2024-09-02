@@ -38,7 +38,7 @@ export class MessagingPartialMessageListFetchService {
   ): Promise<void> {
     try {
       await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
-        messageChannel.id,
+        [messageChannel.id],
       );
 
       const messageChannelRepository =
@@ -70,7 +70,7 @@ export class MessagingPartialMessageListFetchService {
         );
 
         await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-          messageChannel.id,
+          [messageChannel.id],
         );
 
         return;
@@ -110,9 +110,9 @@ export class MessagingPartialMessageListFetchService {
         );
       }
 
-      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+      await this.messageChannelSyncStatusService.scheduleMessagesImport([
         messageChannel.id,
-      );
+      ]);
     } catch (error) {
       await this.messageImportErrorHandlerService.handleDriverException(
         error,

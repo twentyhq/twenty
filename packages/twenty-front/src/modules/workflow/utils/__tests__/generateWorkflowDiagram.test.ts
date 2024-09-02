@@ -70,8 +70,10 @@ describe('generateWorkflowDiagram', () => {
     const stepNodes = result.nodes.slice(1);
 
     for (const [index, step] of steps.entries()) {
-      expect(stepNodes[index].data.nodeType).toBe('action');
-      expect(stepNodes[index].data.label).toBe(step.name);
+      expect(stepNodes[index].data).toEqual({
+        nodeType: 'action',
+        label: step.name,
+      });
     }
   });
 
