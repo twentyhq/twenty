@@ -2,7 +2,31 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { isDefined } from '~/utils/isDefined';
 
+import {
+  getSubMenuOptions,
+  isCompositeField,
+} from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { ViewFilter } from '../types/ViewFilter';
+
+const getDefinitionForFilter = (
+  viewFilter: ViewFilter,
+  filterDefinition: FilterDefinition,
+) => {
+  if (
+    viewFilter.definition !== undefined &&
+    isCompositeField(viewFilter.definition.type) === true
+  ) {
+    return {
+      ...filterDefinition,
+      label: viewFilter.definition.label,
+      isSubField: getSubMenuOptions(viewFilter.definition.type).includes(
+        viewFilter.definition.label,
+      ),
+    };
+  } else {
+    return filterDefinition;
+  }
+};
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[],
@@ -23,7 +47,10 @@ export const mapViewFiltersToFilters = (
         value: viewFilter.value,
         displayValue: viewFilter.displayValue,
         operand: viewFilter.operand,
-        definition: availableFilterDefinition,
+        definition: getDefinitionForFilter(
+          viewFilter,
+          availableFilterDefinition,
+        ),
       };
     })
     .filter(isDefined);

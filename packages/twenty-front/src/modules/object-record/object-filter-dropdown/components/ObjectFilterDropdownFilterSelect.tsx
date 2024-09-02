@@ -46,6 +46,26 @@ type SubMenuProps = {
   parent: FilterDefinition | null;
 };
 
+export const getSubMenuOptions = (subMenu: FilterType | null) => {
+  switch (subMenu) {
+    case 'ADDRESS':
+      return [
+        'Address 1',
+        'Address 2',
+        'City',
+        'Post Code',
+        'State',
+        'Country',
+      ];
+    case 'FULL_NAME':
+      return ['First Name', 'Last Name'];
+    case 'LINKS':
+      return ['Link URL', 'Link Label'];
+    default:
+      return [];
+  }
+};
+
 const SubMenu = ({
   currentSubMenu,
   setCurrentSubMenu,
@@ -68,33 +88,13 @@ const SubMenu = ({
 
   const { getIcon } = useIcons();
 
-  const getMenuOptions = (subMenu: FilterType | null) => {
-    switch (subMenu) {
-      case 'ADDRESS':
-        return [
-          'Address 1',
-          'Address 2',
-          'City',
-          'Post Code',
-          'State',
-          'Country',
-        ];
-      case 'FULL_NAME':
-        return ['First Name', 'Last Name'];
-      case 'LINKS':
-        return ['Link URL', 'Link Label'];
-      default:
-        return [];
-    }
-  };
-
   const {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
   } = useFilterDropdown();
 
-  const handleFilterSelect = (definition: FilterDefinition | null) => {
+  const handleSelectFilter = (definition: FilterDefinition | null) => {
     if (definition !== null) {
       setFilterDefinitionUsedInDropdown(definition);
 
@@ -129,12 +129,12 @@ const SubMenu = ({
           key={`select-filter-${-1}`}
           testId={`select-filter-${-1}`}
           onClick={() => {
-            handleFilterSelect(parent);
+            handleSelectFilter(parent);
           }}
           LeftIcon={IconApps}
           text={`Any ${getHeaderTitle(currentSubMenu)} field`}
         />
-        {getMenuOptions(currentSubMenu)
+        {getSubMenuOptions(currentSubMenu)
           .sort((a, b) => a.localeCompare(b))
           .filter((item) =>
             item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
@@ -145,9 +145,8 @@ const SubMenu = ({
               testId={`select-filter-${index}`}
               onClick={() =>
                 parent &&
-                handleFilterSelect({
+                handleSelectFilter({
                   ...parent,
-                  type: 'TEXT',
                   label: menuOption,
                 })
               }
@@ -159,6 +158,9 @@ const SubMenu = ({
     </>
   );
 };
+
+export const isCompositeField = (type: FilterType) =>
+  ['ADDRESS', 'FULL_NAME', 'LINKS'].includes(type);
 
 export const ObjectFilterDropdownFilterSelect = () => {
   const [searchText, setSearchText] = useState('');
@@ -196,9 +198,6 @@ export const ObjectFilterDropdownFilterSelect = () => {
 
     setObjectFilterDropdownSearchInput('');
   };
-
-  const isCompositeField = (type: FilterType) =>
-    ['ADDRESS', 'FULL_NAME', 'LINKS'].includes(type);
 
   return (
     <>
