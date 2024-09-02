@@ -17,6 +17,13 @@ export class WorkflowCommonWorkspaceService {
       trigger: WorkflowTrigger;
     }
   > {
+    if (!workflowVersionId) {
+      throw new WorkflowTriggerException(
+        'Workflow version ID is required',
+        WorkflowTriggerExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
