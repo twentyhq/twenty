@@ -3,12 +3,11 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { showPageWorkflowDiagramTriggerNodeSelectionState } from '@/workflow/states/showPageWorkflowDiagramTriggerNodeSelectionState';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
 import {
-  Workflow,
   WorkflowStep,
   WorkflowStepType,
   WorkflowVersion,
+  WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { getWorkflowLastVersion } from '@/workflow/utils/getWorkflowLastVersion';
 import { insertStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -17,7 +16,7 @@ import { v4 } from 'uuid';
 export const useRightDrawerWorkflowSelectActionCreateStep = ({
   workflow,
 }: {
-  workflow: Workflow;
+  workflow: WorkflowWithCurrentVersion;
 }) => {
   const workflowCreateStepFromParentStepId = useRecoilValue(
     workflowCreateStepFromParentStepIdState,
@@ -39,18 +38,16 @@ export const useRightDrawerWorkflowSelectActionCreateStep = ({
     parentNodeId: string;
     nodeToAdd: WorkflowStep;
   }) => {
-    const lastVersion = getWorkflowLastVersion(workflow);
-    if (!isDefined(lastVersion)) {
-      throw new Error(
-        "Can't add a node when no version exists yet. Create a first workflow version before trying to add a node.",
-      );
+    const currentVersion = workflow.currentVersion;
+    if (!isDefined(currentVersion)) {
+      throw new Error("Can't add a node when there is no current version.");
     }
 
     return updateOneWorkflowVersion({
-      idToUpdate: lastVersion.id,
+      idToUpdate: currentVersion.id,
       updateOneRecordInput: {
         steps: insertStep({
-          steps: lastVersion.steps,
+          steps: currentVersion.steps ?? [],
           parentStepId: parentNodeId,
           stepToAdd: nodeToAdd,
         }),

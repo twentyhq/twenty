@@ -3,31 +3,38 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RightDrawerWorkflowEditStepContentAction } from '@/workflow/components/RightDrawerWorkflowEditStepContentAction';
 import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components/RightDrawerWorkflowEditStepContentTrigger';
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
-import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
-import { getWorkflowLastVersion } from '@/workflow/utils/getWorkflowLastVersion';
+import {
+  WorkflowVersion,
+  WorkflowWithCurrentVersion,
+} from '@/workflow/types/Workflow';
 import { replaceStep } from '@/workflow/utils/replaceStep';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
 const getStepDefinition = ({
   stepId,
   workflow,
 }: {
   stepId: string;
-  workflow: Workflow;
+  workflow: WorkflowWithCurrentVersion;
 }) => {
-  const workflowLastVersion = getWorkflowLastVersion(workflow);
-  if (workflowLastVersion === undefined) {
+  const currentVersion = workflow.currentVersion;
+  if (currentVersion === undefined) {
     return undefined;
   }
 
   if (stepId === 'trigger') {
+    if (!isDefined(currentVersion.trigger)) {
+      return undefined;
+    }
+
     return {
       type: 'trigger',
-      definition: workflowLastVersion.trigger,
+      definition: currentVersion.trigger,
     } as const;
   }
 
-  const selectedNodeDefinition = workflowLastVersion.steps.find(
+  const selectedNodeDefinition = currentVersion.steps?.find(
     (step) => step.id === stepId,
   );
   if (selectedNodeDefinition === undefined) {
@@ -43,7 +50,7 @@ const getStepDefinition = ({
 export const RightDrawerWorkflowEditStepContent = ({
   workflow,
 }: {
-  workflow: Workflow;
+  workflow: WorkflowWithCurrentVersion;
 }) => {
   const { updateOneRecord: updateOneWorkflowVersion } =
     useUpdateOneRecord<WorkflowVersion>({
@@ -72,15 +79,12 @@ export const RightDrawerWorkflowEditStepContent = ({
       <RightDrawerWorkflowEditStepContentTrigger
         trigger={stepConfiguration.definition}
         onUpdateTrigger={(updatedTrigger) => {
-          const lastVersion = getWorkflowLastVersion(workflow);
-          if (lastVersion === undefined) {
-            throw new Error(
-              "Can't add a node when no version exists yet. Create a first workflow version before trying to add a node.",
-            );
+          if (!isDefined(workflow.currentVersion)) {
+            throw new Error('Can not update an undefined workflow version.');
           }
 
           updateOneWorkflowVersion({
-            idToUpdate: lastVersion.id,
+            idToUpdate: workflow.currentVersion.id,
             updateOneRecordInput: {
               trigger: updatedTrigger,
             },
@@ -94,18 +98,15 @@ export const RightDrawerWorkflowEditStepContent = ({
     <RightDrawerWorkflowEditStepContentAction
       action={stepConfiguration.definition}
       onUpdateAction={(updatedAction) => {
-        const lastVersion = getWorkflowLastVersion(workflow);
-        if (lastVersion === undefined) {
-          throw new Error(
-            "Can't add a node when no version exists yet. Create a first workflow version before trying to add a node.",
-          );
+        if (!isDefined(workflow.currentVersion)) {
+          throw new Error('Can not update an undefined workflow version.');
         }
 
         updateOneWorkflowVersion({
-          idToUpdate: lastVersion.id,
+          idToUpdate: workflow.currentVersion.id,
           updateOneRecordInput: {
             steps: replaceStep({
-              steps: lastVersion.steps,
+              steps: workflow.currentVersion.steps ?? [],
               stepId: showPageWorkflowSelectedNode,
               stepToReplace: updatedAction,
             }),

@@ -48,14 +48,23 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
 
 export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
 
+export type WorkflowStatus = 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
+
+export type WorkflowVersionStatus =
+  | 'DRAFT'
+  | 'ACTIVE'
+  | 'DEACTIVATED'
+  | 'ARCHIVED';
+
 export type WorkflowVersion = {
   id: string;
   name: string;
   createdAt: string;
   updatedAt: string;
   workflowId: string;
-  trigger: WorkflowTrigger;
-  steps: Array<WorkflowStep>;
+  trigger: WorkflowTrigger | null;
+  steps: Array<WorkflowStep> | null;
+  status: WorkflowVersionStatus;
   __typename: 'WorkflowVersion';
 };
 
@@ -65,4 +74,9 @@ export type Workflow = {
   name: string;
   versions: Array<WorkflowVersion>;
   lastPublishedVersionId: string;
+  statuses: Array<WorkflowStatus> | null;
+};
+
+export type WorkflowWithCurrentVersion = Workflow & {
+  currentVersion: WorkflowVersion | undefined;
 };

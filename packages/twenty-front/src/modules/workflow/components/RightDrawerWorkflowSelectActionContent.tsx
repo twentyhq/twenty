@@ -1,6 +1,6 @@
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRightDrawerWorkflowSelectActionCreateStep } from '@/workflow/hooks/useRightDrawerWorkflowSelectActionCreateStep';
-import { Workflow } from '@/workflow/types/Workflow';
+import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
 import { IconSettingsAutomation } from 'twenty-ui';
 
@@ -17,7 +17,7 @@ const StyledActionListContainer = styled.div`
 export const RightDrawerWorkflowSelectActionContent = ({
   workflow,
 }: {
-  workflow: Workflow;
+  workflow: WorkflowWithCurrentVersion;
 }) => {
   const { createStep } = useRightDrawerWorkflowSelectActionCreateStep({
     workflow,
