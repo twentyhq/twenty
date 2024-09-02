@@ -19,6 +19,7 @@ import {
   RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
+import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
@@ -62,10 +63,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     try {
-      validateMetadataNameValidityOrThrow(relationMetadataInput.fromName);
-      validateMetadataNameValidityOrThrow(relationMetadataInput.toName);
+      validateMetadataNameValidityOrThrow(relationMetadataInput.fromName, 2);
+      validateMetadataNameValidityOrThrow(relationMetadataInput.toName, 2);
     } catch (error) {
-      if (error instanceof InvalidStringException) {
+      if (error instanceof NameTooLongException) {
+        throw new RelationMetadataException(
+          `Name "${relationMetadataInput.fromName}" or "${relationMetadataInput.toName}" is too long`,
+          RelationMetadataExceptionCode.INVALID_RELATION_INPUT,
+        );
+      } else if (error instanceof InvalidStringException) {
         throw new RelationMetadataException(
           `Characters used in name "${relationMetadataInput.fromName}" or "${relationMetadataInput.toName}" are not supported`,
           RelationMetadataExceptionCode.INVALID_RELATION_INPUT,

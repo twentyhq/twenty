@@ -38,19 +38,34 @@ describe('validateMetadataNameValidityOrThrow', () => {
       InvalidStringException,
     );
   });
-  it('does not throw if string is less than 63 characters', () => {
-    const inputWith63Characters =
-      'thisIsAstringWithSixtyThreeCharacters11111111111111111111111111';
+  it('does not throw if string is less than 62 characters', () => {
+    const inputWith62Characters =
+      'thisIsAstringWithSixtyTwoCharactersiiiiiiiiiiiiiiiiiiiiiiiiiii';
 
-    expect(validateMetadataNameValidityOrThrow(inputWith63Characters)).not
+    expect(validateMetadataNameValidityOrThrow(inputWith62Characters)).not
       .toThrow;
   });
-  it('throws error if string is above 63 characters', () => {
-    const inputWith64Characters =
-      'thisIsAstringWithSixtyFourCharacters1111111111111111111111111111';
+  it('throws error if string is 62 characters long with a prefix of length 1', () => {
+    const inputWith62Characters =
+      'thisIsAstringWithSixtyTwoCharactersiiiiiiiiiiiiiiiiiiiiiiiiiii';
 
     expect(() =>
-      validateMetadataNameValidityOrThrow(inputWith64Characters),
+      validateMetadataNameValidityOrThrow(inputWith62Characters, 1),
+    ).toThrow(NameTooLongException);
+  });
+  it('does not throw error if string is 61 characters long with a prefix of length 1', () => {
+    const inputWith61Characters =
+      'thisIsAstringWithSixtyOneCharactersiiiiiiiiiiiiiiiiiiiiiiiiii';
+
+    expect(validateMetadataNameValidityOrThrow(inputWith61Characters, 1)).not
+      .toThrow;
+  });
+  it('throws error if string is above 62 characters', () => {
+    const inputWith63Characters =
+      'thisIsAstringWithSixtyThreeCharactersiiiiiiiiiiiiiiiiiiiiiiiiii';
+
+    expect(() =>
+      validateMetadataNameValidityOrThrow(inputWith63Characters),
     ).toThrow(NameTooLongException);
   });
 });

@@ -4,11 +4,14 @@ import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modu
 
 const VALID_STRING_PATTERN = /^[a-z][a-zA-Z0-9]*$/;
 
-export const validateMetadataNameValidityOrThrow = (name: string) => {
+export const validateMetadataNameValidityOrThrow = (
+  name: string,
+  prefixLength = 0,
+) => {
   if (!name.match(VALID_STRING_PATTERN)) {
     throw new InvalidStringException(name);
   }
-  if (exceedsDatabaseIdentifierMaximumLength(name)) {
+  if (exceedsDatabaseIdentifierMaximumLength(name, prefixLength)) {
     throw new NameTooLongException(name);
   }
 };

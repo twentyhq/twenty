@@ -1,5 +1,5 @@
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { Controller, useFormContext } from 'react-hook-form';
 import { useIcons } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -164,7 +164,7 @@ export const SettingsDataModelFieldRelationForm = ({
               value={value}
               onChange={onChange}
               fullWidth
-              maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+              maxLength={FIELD_NAME_MAXIMUM_LENGTH - 2} // Id suffix
             />
           )}
         />

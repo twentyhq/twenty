@@ -5,7 +5,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
-import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
+import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
 import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { camelCase } from 'src/utils/camel-case';
 
@@ -48,14 +48,11 @@ export const validateObjectMetadataInputOrThrow = <
   validateNameCamelCasedOrThrow(objectMetadataInput.nameSingular);
   validateNameCamelCasedOrThrow(objectMetadataInput.namePlural);
 
-  validateNameCharactersOrThrow(objectMetadataInput.nameSingular);
-  validateNameCharactersOrThrow(objectMetadataInput.namePlural);
+  validateNameCharactersAndLengthOrThrow(objectMetadataInput.nameSingular);
+  validateNameCharactersAndLengthOrThrow(objectMetadataInput.namePlural);
 
   validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.nameSingular);
   validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.namePlural);
-
-  validateNameIsNotTooLongThrow(objectMetadataInput.nameSingular);
-  validateNameIsNotTooLongThrow(objectMetadataInput.namePlural);
 };
 
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
@@ -80,24 +77,18 @@ const validateNameCamelCasedOrThrow = (name?: string) => {
   }
 };
 
-const validateNameIsNotTooLongThrow = (name?: string) => {
-  if (name) {
-    if (exceedsDatabaseIdentifierMaximumLength(name)) {
-      throw new ObjectMetadataException(
-        `Name exceeds 62 characters: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
-  }
-};
-
-const validateNameCharactersOrThrow = (name?: string) => {
+const validateNameCharactersAndLengthOrThrow = (name?: string) => {
   try {
     if (name) {
-      validateMetadataNameValidityOrThrow(name);
+      validateMetadataNameValidityOrThrow(name, 1);
     }
   } catch (error) {
-    if (error instanceof InvalidStringException) {
+    if (error instanceof NameTooLongException) {
+      throw new ObjectMetadataException(
+        `Name "${name}" is too long`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    } else if (error instanceof InvalidStringException) {
       throw new ObjectMetadataException(
         `Characters used in name "${name}" are not supported`,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
