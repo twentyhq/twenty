@@ -7,6 +7,7 @@ import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
 import { replaceStep } from '@/workflow/utils/replaceStep';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -34,16 +35,18 @@ const getStepDefinition = ({
     } as const;
   }
 
-  const selectedNodeDefinition = currentVersion.steps?.find(
-    (step) => step.id === stepId,
-  );
-  if (selectedNodeDefinition === undefined) {
+  if (!isDefined(currentVersion.steps)) {
     return undefined;
   }
 
+  const selectedNodePosition = findStepPositionOrThrow({
+    steps: currentVersion.steps,
+    stepId: stepId,
+  });
+
   return {
     type: 'action',
-    definition: selectedNodeDefinition,
+    definition: selectedNodePosition.steps[selectedNodePosition.index],
   } as const;
 };
 
