@@ -35,7 +35,8 @@ export const RecordTable = ({
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const { scopeId } = useRecordTableStates(recordTableId);
+  const { scopeId, isSoftDeleteActiveState } =
+    useRecordTableStates(recordTableId);
 
   const {
     isRecordTableInitialLoadingState,
@@ -48,6 +49,8 @@ export const RecordTable = ({
   );
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
+
+  const isSoftDeleteActive = useRecoilValue(isSoftDeleteActiveState);
 
   const pendingRecordId = useRecoilValue(pendingRecordIdState);
 
