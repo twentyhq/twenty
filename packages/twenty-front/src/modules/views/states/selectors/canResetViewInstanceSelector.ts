@@ -1,4 +1,5 @@
 import { createInstanceSelector } from '@/ui/utilities/state/instance/utils/createInstanceSelector';
+import { ViewInstanceContext } from '@/views/states/contexts/ViewInstanceContext';
 import { unsavedToDeleteViewFilterIdsInstanceState } from '@/views/states/unsavedToDeleteViewFilterIdsInstanceState';
 import { unsavedToDeleteViewSortIdsInstanceState } from '@/views/states/unsavedToDeleteViewSortIdsInstanceState';
 import { unsavedToUpsertViewFiltersInstanceState } from '@/views/states/unsavedToUpsertViewFiltersInstanceState';
@@ -21,4 +22,5 @@ export const canResetViewInstanceSelector = createInstanceSelector({
           .length === 0
       );
     },
+  instanceContext: ViewInstanceContext,
 });

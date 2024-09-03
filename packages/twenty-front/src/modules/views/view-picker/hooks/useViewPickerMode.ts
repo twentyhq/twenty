@@ -1,12 +1,11 @@
-import { useRecoilState } from 'recoil';
-
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
+import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
+import { viewPickerModeInstanceState } from '@/views/view-picker/states/viewPickerModeInstanceState';
 
 export const useViewPickerMode = (viewBarComponentId?: string) => {
-  const { viewPickerModeState } = useViewPickerStates(viewBarComponentId);
-
-  const [viewPickerMode, setViewPickerMode] =
-    useRecoilState(viewPickerModeState);
+  const [viewPickerMode, setViewPickerMode] = useRecoilInstanceState(
+    viewPickerModeInstanceState,
+    viewBarComponentId,
+  );
 
   return {
     viewPickerMode,

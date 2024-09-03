@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconChevronLeft, IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
@@ -11,6 +10,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewType } from '@/views/types/ViewType';
 import { ViewPickerCreateOrEditButton } from '@/views/view-picker/components/ViewPickerCreateOrEditButton';
@@ -19,7 +21,12 @@ import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
+import { viewPickerInputNameInstanceState } from '@/views/view-picker/states/viewPickerInputNameInstanceState';
+import { viewPickerIsDirtyInstanceState } from '@/views/view-picker/states/viewPickerIsDirtyInstanceState';
+import { viewPickerIsPersistingInstanceState } from '@/views/view-picker/states/viewPickerIsPersistingInstanceState';
+import { viewPickerKanbanFieldMetadataIdInstanceState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdInstanceState';
+import { viewPickerSelectedIconInstanceState } from '@/views/view-picker/states/viewPickerSelectedIconInstanceState';
+import { viewPickerTypeInstanceState } from '@/views/view-picker/states/viewPickerTypeInstanceState';
 
 const StyledIconAndNameContainer = styled.div`
   align-items: center;
@@ -51,29 +58,25 @@ const StyledSaveButtonContainer = styled.div`
 `;
 export const ViewPickerCreateOrEditContent = () => {
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
-  const {
-    viewPickerInputNameState,
-    viewPickerSelectedIconState,
-    viewPickerIsPersistingState,
-    viewPickerKanbanFieldMetadataIdState,
-    viewPickerTypeState,
-    viewPickerIsDirtyState,
-  } = useViewPickerStates();
 
-  const [viewPickerInputName, setViewPickerInputName] = useRecoilState(
-    viewPickerInputNameState,
+  const [viewPickerInputName, setViewPickerInputName] = useRecoilInstanceState(
+    viewPickerInputNameInstanceState,
   );
-  const [viewPickerSelectedIcon, setViewPickerSelectedIcon] = useRecoilState(
-    viewPickerSelectedIconState,
+  const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
+    useRecoilInstanceState(viewPickerSelectedIconInstanceState);
+  const viewPickerIsPersisting = useRecoilInstanceValue(
+    viewPickerIsPersistingInstanceState,
   );
-  const viewPickerIsPersisting = useRecoilValue(viewPickerIsPersistingState);
-  const setViewPickerIsDirty = useSetRecoilState(viewPickerIsDirtyState);
+  const setViewPickerIsDirty = useSetRecoilInstanceState(
+    viewPickerIsDirtyInstanceState,
+  );
 
   const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
-    useRecoilState(viewPickerKanbanFieldMetadataIdState);
+    useRecoilInstanceState(viewPickerKanbanFieldMetadataIdInstanceState);
 
-  const [viewPickerType, setViewPickerType] =
-    useRecoilState(viewPickerTypeState);
+  const [viewPickerType, setViewPickerType] = useRecoilInstanceState(
+    viewPickerTypeInstanceState,
+  );
 
   const setHotkeyScope = useSetHotkeyScope();
 

@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { IconChevronDown, IconPlus } from 'twenty-ui';
 
 import { Button } from '@/ui/input/button/components/Button';
@@ -12,6 +11,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilInstanceSelectorValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceSelectorValue';
 import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -20,7 +20,7 @@ import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstance
 import { canPersistViewInstanceSelector } from '@/views/states/selectors/canPersistViewInstanceSelector';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
+import { viewPickerReferenceViewIdInstanceState } from '@/views/view-picker/states/viewPickerReferenceViewIdInstanceState';
 
 const StyledContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -39,7 +39,6 @@ export const UpdateViewButtonGroup = ({
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
 
   const { setViewPickerMode } = useViewPickerMode();
-  const { viewPickerReferenceViewIdState } = useViewPickerStates();
 
   const canPersistView = useRecoilInstanceSelectorValue(
     canPersistViewInstanceSelector,
@@ -54,8 +53,8 @@ export const UpdateViewButtonGroup = ({
   );
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const setViewPickerReferenceViewId = useSetRecoilState(
-    viewPickerReferenceViewIdState,
+  const setViewPickerReferenceViewId = useSetRecoilInstanceState(
+    viewPickerReferenceViewIdInstanceState,
   );
 
   const handleViewCreate = useCallback(() => {

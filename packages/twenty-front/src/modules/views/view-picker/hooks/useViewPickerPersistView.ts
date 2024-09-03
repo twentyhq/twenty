@@ -2,41 +2,73 @@ import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useHandleViews } from '@/views/hooks/useHandleViews';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
+import { viewPickerInputNameInstanceState } from '@/views/view-picker/states/viewPickerInputNameInstanceState';
+import { viewPickerIsDirtyInstanceState } from '@/views/view-picker/states/viewPickerIsDirtyInstanceState';
+import { viewPickerIsPersistingInstanceState } from '@/views/view-picker/states/viewPickerIsPersistingInstanceState';
+import { viewPickerKanbanFieldMetadataIdInstanceState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdInstanceState';
+import { viewPickerReferenceViewIdInstanceState } from '@/views/view-picker/states/viewPickerReferenceViewIdInstanceState';
+import { viewPickerSelectedIconInstanceState } from '@/views/view-picker/states/viewPickerSelectedIconInstanceState';
+import { viewPickerTypeInstanceState } from '@/views/view-picker/states/viewPickerTypeInstanceState';
 
 export const useViewPickerPersistView = () => {
-  const {
-    viewPickerInputNameState,
-    viewPickerSelectedIconState,
-    viewPickerIsPersistingState,
-    viewPickerReferenceViewIdState,
-    viewPickerKanbanFieldMetadataIdState,
-    viewPickerTypeState,
-    viewPickerIsDirtyState,
-  } = useViewPickerStates();
-
   const { createView, selectView, removeView, updateView } = useHandleViews();
 
   const { viewsOnCurrentObject } = useGetCurrentView();
 
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
+  const viewPickerInputNameCallbackState = useRecoilInstanceCallbackState(
+    viewPickerInputNameInstanceState,
+  );
+
+  const viewPickerSelectedIconCallbackState = useRecoilInstanceCallbackState(
+    viewPickerSelectedIconInstanceState,
+  );
+
+  const viewPickerTypeCallbackState = useRecoilInstanceCallbackState(
+    viewPickerTypeInstanceState,
+  );
+
+  const viewPickerKanbanFieldMetadataIdCallbackState =
+    useRecoilInstanceCallbackState(
+      viewPickerKanbanFieldMetadataIdInstanceState,
+    );
+
+  const viewPickerIsPersistingCallbackState = useRecoilInstanceCallbackState(
+    viewPickerIsPersistingInstanceState,
+  );
+
+  const viewPickerIsDirtyCallbackState = useRecoilInstanceCallbackState(
+    viewPickerIsDirtyInstanceState,
+  );
+
+  const viewPickerReferenceViewIdCallbackState = useRecoilInstanceCallbackState(
+    viewPickerReferenceViewIdInstanceState,
+  );
+
   const handleCreate = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
-        const name = getSnapshotValue(snapshot, viewPickerInputNameState);
-        const iconKey = getSnapshotValue(snapshot, viewPickerSelectedIconState);
-        const type = getSnapshotValue(snapshot, viewPickerTypeState);
+        const name = getSnapshotValue(
+          snapshot,
+          viewPickerInputNameCallbackState,
+        );
+        const iconKey = getSnapshotValue(
+          snapshot,
+          viewPickerSelectedIconCallbackState,
+        );
+        const type = getSnapshotValue(snapshot, viewPickerTypeCallbackState);
         const kanbanFieldMetadataId = getSnapshotValue(
           snapshot,
-          viewPickerKanbanFieldMetadataIdState,
+          viewPickerKanbanFieldMetadataIdCallbackState,
         );
         const id = v4();
-        set(viewPickerIsPersistingState, true);
-        set(viewPickerIsDirtyState, false);
+        set(viewPickerIsPersistingCallbackState, true);
+        set(viewPickerIsDirtyCallbackState, false);
         await createView({
           id,
           name,
@@ -51,24 +83,24 @@ export const useViewPickerPersistView = () => {
       closeAndResetViewPicker,
       createView,
       selectView,
-      viewPickerInputNameState,
-      viewPickerIsDirtyState,
-      viewPickerIsPersistingState,
-      viewPickerKanbanFieldMetadataIdState,
-      viewPickerSelectedIconState,
-      viewPickerTypeState,
+      viewPickerInputNameCallbackState,
+      viewPickerIsDirtyCallbackState,
+      viewPickerIsPersistingCallbackState,
+      viewPickerKanbanFieldMetadataIdCallbackState,
+      viewPickerSelectedIconCallbackState,
+      viewPickerTypeCallbackState,
     ],
   );
 
   const handleDelete = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
-        set(viewPickerIsPersistingState, true);
+        set(viewPickerIsPersistingCallbackState, true);
         closeAndResetViewPicker();
-        set(viewPickerIsDirtyState, false);
+        set(viewPickerIsDirtyCallbackState, false);
         const viewPickerReferenceViewId = getSnapshotValue(
           snapshot,
-          viewPickerReferenceViewIdState,
+          viewPickerReferenceViewIdCallbackState,
         );
 
         selectView(
@@ -82,9 +114,9 @@ export const useViewPickerPersistView = () => {
       closeAndResetViewPicker,
       removeView,
       selectView,
-      viewPickerIsDirtyState,
-      viewPickerIsPersistingState,
-      viewPickerReferenceViewIdState,
+      viewPickerIsDirtyCallbackState,
+      viewPickerIsPersistingCallbackState,
+      viewPickerReferenceViewIdCallbackState,
       viewsOnCurrentObject,
     ],
   );
@@ -92,21 +124,21 @@ export const useViewPickerPersistView = () => {
   const handleUpdate = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
-        set(viewPickerIsPersistingState, true);
-        set(viewPickerIsDirtyState, false);
+        set(viewPickerIsPersistingCallbackState, true);
+        set(viewPickerIsDirtyCallbackState, false);
         closeAndResetViewPicker();
 
         const viewPickerReferenceViewId = getSnapshotValue(
           snapshot,
-          viewPickerReferenceViewIdState,
+          viewPickerReferenceViewIdCallbackState,
         );
         const viewPickerInputName = getSnapshotValue(
           snapshot,
-          viewPickerInputNameState,
+          viewPickerInputNameCallbackState,
         );
         const viewPickerSelectedIcon = getSnapshotValue(
           snapshot,
-          viewPickerSelectedIconState,
+          viewPickerSelectedIconCallbackState,
         );
 
         await updateView({
@@ -117,12 +149,12 @@ export const useViewPickerPersistView = () => {
         selectView(viewPickerReferenceViewId);
       },
     [
-      viewPickerIsPersistingState,
-      viewPickerIsDirtyState,
+      viewPickerIsPersistingCallbackState,
+      viewPickerIsDirtyCallbackState,
       closeAndResetViewPicker,
-      viewPickerReferenceViewIdState,
-      viewPickerInputNameState,
-      viewPickerSelectedIconState,
+      viewPickerReferenceViewIdCallbackState,
+      viewPickerInputNameCallbackState,
+      viewPickerSelectedIconCallbackState,
       updateView,
       selectView,
     ],

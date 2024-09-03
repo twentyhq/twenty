@@ -1,27 +1,24 @@
-import { useRecoilValue } from 'recoil';
-
 import { Button } from '@/ui/input/button/components/Button';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
+import { viewPickerIsPersistingInstanceState } from '@/views/view-picker/states/viewPickerIsPersistingInstanceState';
+import { viewPickerKanbanFieldMetadataIdInstanceState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdInstanceState';
+import { viewPickerTypeInstanceState } from '@/views/view-picker/states/viewPickerTypeInstanceState';
 
 export const ViewPickerCreateOrEditButton = () => {
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
 
-  const {
-    viewPickerIsPersistingState,
-    viewPickerKanbanFieldMetadataIdState,
-    viewPickerTypeState,
-  } = useViewPickerStates();
-
   const { viewPickerMode } = useViewPickerMode();
-  const viewPickerType = useRecoilValue(viewPickerTypeState);
-  const viewPickerIsPersisting = useRecoilValue(viewPickerIsPersistingState);
-  const viewPickerKanbanFieldMetadataId = useRecoilValue(
-    viewPickerKanbanFieldMetadataIdState,
+  const viewPickerType = useRecoilInstanceValue(viewPickerTypeInstanceState);
+  const viewPickerIsPersisting = useRecoilInstanceValue(
+    viewPickerIsPersistingInstanceState,
+  );
+  const viewPickerKanbanFieldMetadataId = useRecoilInstanceValue(
+    viewPickerKanbanFieldMetadataIdInstanceState,
   );
 
   const { handleCreate, handleDelete } = useViewPickerPersistView();

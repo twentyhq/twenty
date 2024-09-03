@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { MouseEvent, useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -11,11 +10,12 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useHandleViews } from '@/views/hooks/useHandleViews';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
+import { viewPickerReferenceViewIdInstanceState } from '@/views/view-picker/states/viewPickerReferenceViewIdInstanceState';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDefined } from '~/utils/isDefined';
 
@@ -28,9 +28,8 @@ export const ViewPickerListContent = () => {
 
   const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
     useGetCurrentView();
-  const { viewPickerReferenceViewIdState } = useViewPickerStates();
-  const setViewPickerReferenceViewId = useSetRecoilState(
-    viewPickerReferenceViewIdState,
+  const setViewPickerReferenceViewId = useSetRecoilInstanceState(
+    viewPickerReferenceViewIdInstanceState,
   );
 
   const { setViewPickerMode } = useViewPickerMode();

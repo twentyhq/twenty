@@ -9,7 +9,7 @@ import { isDefined } from '~/utils/isDefined';
 type CreateInstaceStateArgs<ValueType> = {
   key: string;
   defaultValue: ValueType;
-  instanceContext?: InstanceStateContext<any> | null;
+  instanceContext: InstanceStateContext<any> | null;
   effects?: AtomEffect<ValueType>[];
 };
 
