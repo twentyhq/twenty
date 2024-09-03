@@ -59,7 +59,7 @@ export const SettingsObjectMetadataItemTableRow = ({
           />
         )}
         <StyledNameLabel title={objectMetadataItem.labelPlural}>
-          {objectMetadataItem.labelPlural}{' '}
+          {objectMetadataItem.labelPlural}
         </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
