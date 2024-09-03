@@ -1,11 +1,10 @@
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -14,11 +13,14 @@ import { isDefined } from '~/utils/isDefined';
 export const QueryParamsViewIdEffect = () => {
   const { getFiltersFromQueryParams, viewIdQueryParam } =
     useViewFromQueryParams();
-  const { componentId: objectNamePlural } = useViewStates();
 
-  const [currentViewId, setCurrentViewId] = useRecoilComponentState(
-    currentViewIdComponentState,
+  // TODO: fix this implicit hack
+  const { instanceId: objectNamePlural } = useGetCurrentView();
+
+  const [currentViewId, setCurrentViewId] = useRecoilInstanceState(
+    currentViewIdInstanceState,
   );
+
   const { viewsOnCurrentObject } = useGetCurrentView();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();

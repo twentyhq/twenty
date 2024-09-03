@@ -1,30 +1,36 @@
-import { useRecoilCallback } from 'recoil';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
+import { unsavedToDeleteViewFilterIdsInstanceState } from '@/views/states/unsavedToDeleteViewFilterIdsInstanceState';
+import { unsavedToDeleteViewSortIdsInstanceState } from '@/views/states/unsavedToDeleteViewSortIdsInstanceState';
+import { unsavedToUpsertViewFiltersInstanceState } from '@/views/states/unsavedToUpsertViewFiltersInstanceState';
+import { unsavedToUpsertViewSortsInstanceState } from '@/views/states/unsavedToUpsertViewSortsInstanceState';
 
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
-
-export const useResetCurrentView = (viewBarComponentId?: string) => {
-  const {
-    unsavedToDeleteViewSortIdsState,
-    unsavedToUpsertViewSortsState,
-    unsavedToDeleteViewFilterIdsState,
-    unsavedToUpsertViewFiltersState,
-  } = useViewStates(viewBarComponentId);
-
-  const resetCurrentView = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        set(unsavedToDeleteViewFilterIdsState, []);
-        set(unsavedToDeleteViewSortIdsState, []);
-        set(unsavedToUpsertViewFiltersState, []);
-        set(unsavedToUpsertViewSortsState, []);
-      },
-    [
-      unsavedToDeleteViewFilterIdsState,
-      unsavedToDeleteViewSortIdsState,
-      unsavedToUpsertViewFiltersState,
-      unsavedToUpsertViewSortsState,
-    ],
+export const useResetCurrentView = (viewBarInstanceId?: string) => {
+  const setUnsavedToDeleteViewFilterIds = useSetRecoilInstanceState(
+    unsavedToDeleteViewFilterIdsInstanceState,
+    viewBarInstanceId,
   );
+
+  const setUnsavedToDeleteViewSortIds = useSetRecoilInstanceState(
+    unsavedToDeleteViewSortIdsInstanceState,
+    viewBarInstanceId,
+  );
+
+  const setUnsavedToUpsertViewFilters = useSetRecoilInstanceState(
+    unsavedToUpsertViewFiltersInstanceState,
+    viewBarInstanceId,
+  );
+
+  const setUnsavedToUpsertViewSortsState = useSetRecoilInstanceState(
+    unsavedToUpsertViewSortsInstanceState,
+    viewBarInstanceId,
+  );
+
+  const resetCurrentView = () => {
+    setUnsavedToDeleteViewFilterIds([]);
+    setUnsavedToDeleteViewSortIds([]);
+    setUnsavedToUpsertViewFilters([]);
+    setUnsavedToUpsertViewSortsState([]);
+  };
 
   return {
     resetCurrentView,

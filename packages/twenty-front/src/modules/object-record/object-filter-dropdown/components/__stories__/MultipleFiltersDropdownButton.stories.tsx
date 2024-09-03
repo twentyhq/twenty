@@ -2,8 +2,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
+import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
 import { within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -17,9 +18,12 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
   component: MultipleFiltersDropdownButton,
   decorators: [
     (Story) => {
-      const { setAvailableFilterDefinitions } = useFilterDropdown({
-        filterDropdownId: 'entity-tasks-filter-scope',
-      });
+      const instanceId = 'entity-tasks-filter-scope';
+      const setAvailableFilterDefinitions = useSetRecoilInstanceState(
+        availableFilterDefinitionsInstanceState,
+        instanceId,
+      );
+
       setAvailableFilterDefinitions([
         {
           fieldMetadataId: '1',
@@ -47,7 +51,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
         },
       ]);
       return (
-        <ObjectFilterDropdownScope filterScopeId="entity-tasks-filter-scope">
+        <ObjectFilterDropdownScope filterScopeId={instanceId}>
           <Story />
         </ObjectFilterDropdownScope>
       );

@@ -1,5 +1,5 @@
-import React from 'react';
 import { useTheme } from '@emotion/react';
+import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconChevronDown } from 'twenty-ui';
 
@@ -13,6 +13,8 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from './ObjectFilterDropdownSearchInput';
@@ -25,14 +27,13 @@ export const SingleEntityObjectFilterDropdownButton = ({
   hotkeyScope: HotkeyScope;
 }) => {
   const {
-    availableFilterDefinitionsState,
     selectedFilterState,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
   } = useFilterDropdown();
 
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  const availableFilterDefinitions = useRecoilInstanceValue(
+    availableFilterDefinitionsInstanceState,
   );
   const selectedFilter = useRecoilValue(selectedFilterState);
 

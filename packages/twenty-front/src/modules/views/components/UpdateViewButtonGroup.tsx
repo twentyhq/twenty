@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { IconChevronDown, IconPlus } from 'twenty-ui';
 
 import { Button } from '@/ui/input/button/components/Button';
@@ -10,13 +10,14 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
+import { useRecoilInstanceSelectorValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceSelectorValue';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
+import { canPersistViewInstanceSelector } from '@/views/states/selectors/canPersistViewInstanceSelector';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
@@ -35,16 +36,15 @@ export type UpdateViewButtonGroupProps = {
 export const UpdateViewButtonGroup = ({
   hotkeyScope,
 }: UpdateViewButtonGroupProps) => {
-  const { canPersistViewSelector } = useViewStates();
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
-
-  const currentViewIdState = useRecoilCallbackState(
-    currentViewIdComponentState,
-  );
 
   const { setViewPickerMode } = useViewPickerMode();
   const { viewPickerReferenceViewIdState } = useViewPickerStates();
-  const canPersistView = useRecoilValue(canPersistViewSelector());
+
+  const canPersistView = useRecoilInstanceSelectorValue(
+    canPersistViewInstanceSelector,
+  );
+  const currentViewId = useRecoilInstanceValue(currentViewIdInstanceState);
 
   const { closeDropdown: closeUpdateViewButtonDropdown } = useDropdown(
     UPDATE_VIEW_BUTTON_DROPDOWN_ID,
@@ -53,8 +53,6 @@ export const UpdateViewButtonGroup = ({
     VIEW_PICKER_DROPDOWN_ID,
   );
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
-
-  const currentViewId = useRecoilValue(currentViewIdState);
 
   const setViewPickerReferenceViewId = useSetRecoilState(
     viewPickerReferenceViewIdState,

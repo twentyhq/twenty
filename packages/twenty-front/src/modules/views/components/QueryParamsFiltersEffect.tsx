@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { unsavedToUpsertViewFiltersInstanceState } from '@/views/states/unsavedToUpsertViewFiltersInstanceState';
 
 export const QueryParamsFiltersEffect = () => {
   const { hasFiltersQueryParams, getFiltersFromQueryParams } =
     useViewFromQueryParams();
-  const { unsavedToUpsertViewFiltersState } = useViewStates();
-  const setUnsavedViewFilter = useSetRecoilState(
-    unsavedToUpsertViewFiltersState,
+
+  const setUnsavedViewFilter = useSetRecoilInstanceState(
+    unsavedToUpsertViewFiltersInstanceState,
   );
+
   const { resetCurrentView } = useResetCurrentView();
 
   useEffect(() => {

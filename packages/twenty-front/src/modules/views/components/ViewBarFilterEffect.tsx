@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarFilterEffectProps = {
@@ -16,17 +18,15 @@ type ViewBarFilterEffectProps = {
 export const ViewBarFilterEffect = ({
   filterDropdownId,
 }: ViewBarFilterEffectProps) => {
-  const { availableFilterDefinitionsState } = useViewStates();
-
   const { upsertCombinedViewFilter } = useCombinedViewFilters();
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  const availableFilterDefinitions = useRecoilInstanceValue(
+    availableFilterDefinitionsInstanceState,
   );
+
   const {
-    setAvailableFilterDefinitions,
     setOnFilterSelect,
     filterDefinitionUsedInDropdownState,
     setObjectFilterDropdownSelectedRecordIds,
@@ -35,6 +35,12 @@ export const ViewBarFilterEffect = ({
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
+  );
+
+  // TODO: verify this instance id works
+  const setAvailableFilterDefinitions = useSetRecoilInstanceState(
+    availableFilterDefinitionsInstanceState,
+    filterDropdownId,
   );
 
   useEffect(() => {

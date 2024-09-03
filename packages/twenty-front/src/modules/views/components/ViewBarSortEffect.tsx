@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
+import { availableSortDefinitionsInstanceState } from '@/views/states/availableSortDefinitionsInstanceState';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarSortEffectProps = {
@@ -14,22 +16,21 @@ type ViewBarSortEffectProps = {
 export const ViewBarSortEffect = ({
   sortDropdownId,
 }: ViewBarSortEffectProps) => {
-  const { availableSortDefinitionsState } = useViewStates();
   const { upsertCombinedViewSort } = useCombinedViewSorts();
 
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
+  // TDOO: verify this instance id works
+  const availableSortDefinitions = useRecoilInstanceValue(
+    availableSortDefinitionsInstanceState,
   );
 
-  const {
-    availableSortDefinitionsState: availableSortDefinitionsInSortDropdownState,
-    onSortSelectState,
-  } = useSortDropdown({
+  const { onSortSelectState } = useSortDropdown({
     sortDropdownId,
   });
 
-  const setAvailableSortDefinitionsInSortDropdown = useSetRecoilState(
-    availableSortDefinitionsInSortDropdownState,
+  // TDOO: verify this instance id works
+  const setAvailableSortDefinitionsInSortDropdown = useSetRecoilInstanceState(
+    availableSortDefinitionsInstanceState,
+    sortDropdownId,
   );
   const setOnSortSelect = useSetRecoilState(onSortSelectState);
 

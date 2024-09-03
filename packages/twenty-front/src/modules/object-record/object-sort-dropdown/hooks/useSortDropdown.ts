@@ -14,8 +14,8 @@ export const useSortDropdown = (props?: UseSortProps) => {
     ObjectSortDropdownScopeInternalContext,
     props?.sortDropdownId,
   );
+
   const {
-    availableSortDefinitionsState,
     isSortSelectedState,
     onSortSelectState,
     objectSortDropdownSearchInputState,
@@ -35,7 +35,6 @@ export const useSortDropdown = (props?: UseSortProps) => {
 
   return {
     scopeId,
-    availableSortDefinitionsState,
     isSortSelectedState,
     onSortSelectState,
     objectSortDropdownSearchInputState,

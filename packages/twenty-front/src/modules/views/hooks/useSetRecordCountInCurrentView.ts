@@ -1,12 +1,10 @@
-import { useSetRecoilState } from 'recoil';
-
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
+import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
 
 export const useSetRecordCountInCurrentView = (viewBarComponentId?: string) => {
-  const { entityCountInCurrentViewState } = useViewStates(viewBarComponentId);
-
-  const setEntityCountInCurrentView = useSetRecoilState(
-    entityCountInCurrentViewState,
+  const setEntityCountInCurrentView = useSetRecoilInstanceState(
+    entityCountInCurrentViewInstanceState,
+    viewBarComponentId,
   );
 
   return {

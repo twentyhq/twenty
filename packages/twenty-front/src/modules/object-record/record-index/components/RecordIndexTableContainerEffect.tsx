@@ -8,8 +8,9 @@ import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
+import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
 
 type RecordIndexTableContainerEffectProps = {
   objectNameSingular: string;
@@ -50,9 +51,10 @@ export const RecordIndexTableContainerEffect = ({
   const { tableRowIdsState, hasUserSelectedAllRowsState } =
     useRecordTableStates(recordTableId);
 
-  const { entityCountInCurrentViewState } = useViewStates(recordTableId);
-  const entityCountInCurrentView = useRecoilValue(
-    entityCountInCurrentViewState,
+  // TODO: verify this instance id works
+  const entityCountInCurrentView = useRecoilInstanceValue(
+    entityCountInCurrentViewInstanceState,
+    recordTableId,
   );
   const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
   const tableRowIds = useRecoilValue(tableRowIdsState);

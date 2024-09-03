@@ -3,21 +3,30 @@ import { v4 } from 'uuid';
 
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
+import { unsavedToDeleteViewSortIdsInstanceState } from '@/views/states/unsavedToDeleteViewSortIdsInstanceState';
+import { unsavedToUpsertViewSortsInstanceState } from '@/views/states/unsavedToUpsertViewSortsInstanceState';
 import { ViewSort } from '@/views/types/ViewSort';
 import { isDefined } from '~/utils/isDefined';
 
 export const useCombinedViewSorts = (viewBarComponentId?: string) => {
-  const { unsavedToUpsertViewSortsState, unsavedToDeleteViewSortIdsState } =
-    useViewStates(viewBarComponentId);
-
-  const currentViewIdState = useRecoilCallbackState(
-    currentViewIdComponentState,
+  const currentViewIdCallbackState = useRecoilInstanceCallbackState(
+    currentViewIdInstanceState,
     viewBarComponentId,
   );
+
+  const unsavedToUpsertViewSortsCallbackState = useRecoilInstanceCallbackState(
+    unsavedToUpsertViewSortsInstanceState,
+    viewBarComponentId,
+  );
+
+  const unsavedToDeleteViewSortIdsCallbackState =
+    useRecoilInstanceCallbackState(
+      unsavedToDeleteViewSortIdsInstanceState,
+      viewBarComponentId,
+    );
 
   const { getViewFromCache } = useGetViewFromCache();
 
@@ -26,15 +35,18 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
       async (upsertedSort: Sort) => {
         const unsavedToUpsertViewSorts = getSnapshotValue(
           snapshot,
-          unsavedToUpsertViewSortsState,
+          unsavedToUpsertViewSortsCallbackState,
         );
 
         const unsavedToDeleteViewSortIds = getSnapshotValue(
           snapshot,
-          unsavedToDeleteViewSortIdsState,
+          unsavedToDeleteViewSortIdsCallbackState,
         );
 
-        const currentViewId = getSnapshotValue(snapshot, currentViewIdState);
+        const currentViewId = getSnapshotValue(
+          snapshot,
+          currentViewIdCallbackState,
+        );
 
         if (!currentViewId) {
           return;
@@ -63,17 +75,17 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
               : viewSort,
           );
 
-          set(unsavedToUpsertViewSortsState, updatedSorts);
+          set(unsavedToUpsertViewSortsCallbackState, updatedSorts);
           return;
         }
 
         if (isDefined(matchingSortInCurrentView)) {
-          set(unsavedToUpsertViewSortsState, [
+          set(unsavedToUpsertViewSortsCallbackState, [
             ...unsavedToUpsertViewSorts,
             { ...matchingSortInCurrentView, ...upsertedSort },
           ]);
           set(
-            unsavedToDeleteViewSortIdsState,
+            unsavedToDeleteViewSortIdsCallbackState,
             unsavedToDeleteViewSortIds.filter(
               (id) => id !== matchingSortInCurrentView.id,
             ),
@@ -81,7 +93,7 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
           return;
         }
 
-        set(unsavedToUpsertViewSortsState, [
+        set(unsavedToUpsertViewSortsCallbackState, [
           ...unsavedToUpsertViewSorts,
           {
             ...upsertedSort,
@@ -91,10 +103,10 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
         ]);
       },
     [
-      currentViewIdState,
+      currentViewIdCallbackState,
       getViewFromCache,
-      unsavedToDeleteViewSortIdsState,
-      unsavedToUpsertViewSortsState,
+      unsavedToDeleteViewSortIdsCallbackState,
+      unsavedToUpsertViewSortsCallbackState,
     ],
   );
   const removeCombinedViewSort = useRecoilCallback(
@@ -102,15 +114,18 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
       async (fieldMetadataId: string) => {
         const unsavedToUpsertViewSorts = getSnapshotValue(
           snapshot,
-          unsavedToUpsertViewSortsState,
+          unsavedToUpsertViewSortsCallbackState,
         );
 
         const unsavedToDeleteViewSortIds = getSnapshotValue(
           snapshot,
-          unsavedToDeleteViewSortIdsState,
+          unsavedToDeleteViewSortIdsCallbackState,
         );
 
-        const currentViewId = getSnapshotValue(snapshot, currentViewIdState);
+        const currentViewId = getSnapshotValue(
+          snapshot,
+          currentViewIdCallbackState,
+        );
 
         if (!currentViewId) {
           return;
@@ -132,7 +147,7 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
 
         if (isDefined(matchingSortInUnsavedSorts)) {
           set(
-            unsavedToUpsertViewSortsState,
+            unsavedToUpsertViewSortsCallbackState,
             unsavedToUpsertViewSorts.filter(
               (viewSort) => viewSort.fieldMetadataId !== fieldMetadataId,
             ),
@@ -141,7 +156,7 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
         }
 
         if (isDefined(matchingSortInCurrentView)) {
-          set(unsavedToDeleteViewSortIdsState, [
+          set(unsavedToDeleteViewSortIdsCallbackState, [
             ...new Set([
               ...unsavedToDeleteViewSortIds,
               matchingSortInCurrentView.id,
@@ -150,10 +165,10 @@ export const useCombinedViewSorts = (viewBarComponentId?: string) => {
         }
       },
     [
-      currentViewIdState,
+      currentViewIdCallbackState,
       getViewFromCache,
-      unsavedToDeleteViewSortIdsState,
-      unsavedToUpsertViewSortsState,
+      unsavedToDeleteViewSortIdsCallbackState,
+      unsavedToUpsertViewSortsCallbackState,
     ],
   );
   return {

@@ -2,19 +2,29 @@ import { useRecoilCallback } from 'recoil';
 
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
+import { unsavedToDeleteViewFilterIdsInstanceState } from '@/views/states/unsavedToDeleteViewFilterIdsInstanceState';
+import { unsavedToUpsertViewFiltersInstanceState } from '@/views/states/unsavedToUpsertViewFiltersInstanceState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { isDefined } from '~/utils/isDefined';
 
 export const useCombinedViewFilters = (viewBarComponentId?: string) => {
-  const { unsavedToUpsertViewFiltersState, unsavedToDeleteViewFilterIdsState } =
-    useViewStates(viewBarComponentId);
+  const unsavedToUpsertViewFiltersCallbackState =
+    useRecoilInstanceCallbackState(
+      unsavedToUpsertViewFiltersInstanceState,
+      viewBarComponentId,
+    );
 
-  const currentViewIdState = useRecoilCallbackState(
-    currentViewIdComponentState,
+  const unsavedToDeleteViewFilterIdsCallbackState =
+    useRecoilInstanceCallbackState(
+      unsavedToDeleteViewFilterIdsInstanceState,
+      viewBarComponentId,
+    );
+
+  const currentViewIdCallbackState = useRecoilInstanceCallbackState(
+    currentViewIdInstanceState,
     viewBarComponentId,
   );
 
@@ -25,15 +35,18 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
       async (upsertedFilter: Filter) => {
         const unsavedToUpsertViewFilters = getSnapshotValue(
           snapshot,
-          unsavedToUpsertViewFiltersState,
+          unsavedToUpsertViewFiltersCallbackState,
         );
 
         const unsavedToDeleteViewFilterIds = getSnapshotValue(
           snapshot,
-          unsavedToDeleteViewFilterIdsState,
+          unsavedToDeleteViewFilterIdsCallbackState,
         );
 
-        const currentViewId = getSnapshotValue(snapshot, currentViewIdState);
+        const currentViewId = getSnapshotValue(
+          snapshot,
+          currentViewIdCallbackState,
+        );
 
         if (!currentViewId) {
           return;
@@ -63,12 +76,12 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
               : viewFilter,
           );
 
-          set(unsavedToUpsertViewFiltersState, updatedFilters);
+          set(unsavedToUpsertViewFiltersCallbackState, updatedFilters);
           return;
         }
 
         if (isDefined(matchingFilterInCurrentView)) {
-          set(unsavedToUpsertViewFiltersState, [
+          set(unsavedToUpsertViewFiltersCallbackState, [
             ...unsavedToUpsertViewFilters,
             {
               ...matchingFilterInCurrentView,
@@ -77,7 +90,7 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
             },
           ]);
           set(
-            unsavedToDeleteViewFilterIdsState,
+            unsavedToDeleteViewFilterIdsCallbackState,
             unsavedToDeleteViewFilterIds.filter(
               (id) => id !== matchingFilterInCurrentView.id,
             ),
@@ -85,7 +98,7 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
           return;
         }
 
-        set(unsavedToUpsertViewFiltersState, [
+        set(unsavedToUpsertViewFiltersCallbackState, [
           ...unsavedToUpsertViewFilters,
           {
             ...upsertedFilter,
@@ -94,10 +107,10 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
         ]);
       },
     [
-      currentViewIdState,
+      currentViewIdCallbackState,
       getViewFromCache,
-      unsavedToDeleteViewFilterIdsState,
-      unsavedToUpsertViewFiltersState,
+      unsavedToDeleteViewFilterIdsCallbackState,
+      unsavedToUpsertViewFiltersCallbackState,
     ],
   );
   const removeCombinedViewFilter = useRecoilCallback(
@@ -105,15 +118,18 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
       async (fieldId: string) => {
         const unsavedToUpsertViewFilters = getSnapshotValue(
           snapshot,
-          unsavedToUpsertViewFiltersState,
+          unsavedToUpsertViewFiltersCallbackState,
         );
 
         const unsavedToDeleteViewFilterIds = getSnapshotValue(
           snapshot,
-          unsavedToDeleteViewFilterIdsState,
+          unsavedToDeleteViewFilterIdsCallbackState,
         );
 
-        const currentViewId = getSnapshotValue(snapshot, currentViewIdState);
+        const currentViewId = getSnapshotValue(
+          snapshot,
+          currentViewIdCallbackState,
+        );
 
         if (!currentViewId) {
           return;
@@ -135,7 +151,7 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
 
         if (isDefined(matchingFilterInUnsavedFilters)) {
           set(
-            unsavedToUpsertViewFiltersState,
+            unsavedToUpsertViewFiltersCallbackState,
             unsavedToUpsertViewFilters.filter(
               (viewFilter) => viewFilter.id !== fieldId,
             ),
@@ -143,7 +159,7 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
         }
 
         if (isDefined(matchingFilterInCurrentView)) {
-          set(unsavedToDeleteViewFilterIdsState, [
+          set(unsavedToDeleteViewFilterIdsCallbackState, [
             ...new Set([
               ...unsavedToDeleteViewFilterIds,
               matchingFilterInCurrentView.id,
@@ -152,10 +168,10 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
         }
       },
     [
-      currentViewIdState,
+      currentViewIdCallbackState,
       getViewFromCache,
-      unsavedToDeleteViewFilterIdsState,
-      unsavedToUpsertViewFiltersState,
+      unsavedToDeleteViewFilterIdsCallbackState,
+      unsavedToUpsertViewFiltersCallbackState,
     ],
   );
   return {

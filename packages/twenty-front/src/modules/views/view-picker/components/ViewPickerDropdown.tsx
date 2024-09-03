@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import {
   IconChevronDown,
   IconList,
@@ -11,7 +10,9 @@ import {
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerCreateOrEditContent } from '@/views/view-picker/components/ViewPickerCreateOrEditContent';
 import { ViewPickerCreateOrEditContentEffect } from '@/views/view-picker/components/ViewPickerCreateOrEditContentEffect';
@@ -20,8 +21,6 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
 import { isDefined } from '~/utils/isDefined';
-
-import { useViewStates } from '../../hooks/internal/useViewStates';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
@@ -50,14 +49,12 @@ const StyledViewName = styled.span`
 export const ViewPickerDropdown = () => {
   const theme = useTheme();
 
-  const { entityCountInCurrentViewState } = useViewStates();
-
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const { handleUpdate } = useViewPickerPersistView();
 
-  const entityCountInCurrentView = useRecoilValue(
-    entityCountInCurrentViewState,
+  const entityCountInCurrentView = useRecoilInstanceValue(
+    entityCountInCurrentViewInstanceState,
   );
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(

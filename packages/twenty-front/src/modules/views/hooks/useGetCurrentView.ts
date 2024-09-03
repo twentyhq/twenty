@@ -1,13 +1,18 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useAvailableInstanceIdOrThrow } from '@/ui/utilities/state/instance/hooks/useAvailableInstanceIdOrThrow';
 import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { ViewInstanceContext } from '@/views/states/contexts/ViewInstanceContext';
 import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
+import { isCurrentViewKeyIndexInstanceState } from '@/views/states/isCurrentViewIndexInstanceState';
+import { unsavedToDeleteViewFilterIdsInstanceState } from '@/views/states/unsavedToDeleteViewFilterIdsInstanceState';
+import { unsavedToDeleteViewSortIdsInstanceState } from '@/views/states/unsavedToDeleteViewSortIdsInstanceState';
+import { unsavedToUpsertViewFiltersInstanceState } from '@/views/states/unsavedToUpsertViewFiltersInstanceState';
+import { unsavedToUpsertViewSortsInstanceState } from '@/views/states/unsavedToUpsertViewSortsInstanceState';
+import { viewObjectMetadataIdInstanceState } from '@/views/states/viewObjectMetadataIdInstanceState';
 import { View } from '@/views/types/View';
 import { combinedViewFilters } from '@/views/utils/combinedViewFilters';
 import { combinedViewSorts } from '@/views/utils/combinedViewSorts';
@@ -22,23 +27,19 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
-  const {
-    viewObjectMetadataIdState,
-    unsavedToUpsertViewFiltersState,
-    unsavedToDeleteViewFilterIdsState,
-    unsavedToDeleteViewSortIdsState,
-    unsavedToUpsertViewSortsState,
-    isCurrentViewKeyIndexState,
-  } = useViewStates(instanceId);
-
   const currentViewId = useRecoilInstanceValue(
     currentViewIdInstanceState,
-    viewBarInstanceId,
+    instanceId,
   );
 
-  const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
-  const setIsCurrentViewKeyIndex = useSetRecoilState(
-    isCurrentViewKeyIndexState,
+  const viewObjectMetadataId = useRecoilInstanceValue(
+    viewObjectMetadataIdInstanceState,
+    instanceId,
+  );
+
+  const setIsCurrentViewKeyIndex = useSetRecoilInstanceState(
+    isCurrentViewKeyIndexInstanceState,
+    instanceId,
   );
 
   const currentViewFromCurrentViewId = views.find(
@@ -60,22 +61,29 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
     views,
   );
 
-  const unsavedToUpsertViewFilters = useRecoilValue(
-    unsavedToUpsertViewFiltersState,
+  const unsavedToUpsertViewFilters = useRecoilInstanceValue(
+    unsavedToUpsertViewFiltersInstanceState,
+    instanceId,
   );
-  const unsavedToUpsertViewSorts = useRecoilValue(
-    unsavedToUpsertViewSortsState,
+
+  const unsavedToUpsertViewSorts = useRecoilInstanceValue(
+    unsavedToUpsertViewSortsInstanceState,
+    instanceId,
   );
-  const unsavedToDeleteViewFilterIds = useRecoilValue(
-    unsavedToDeleteViewFilterIdsState,
+
+  const unsavedToDeleteViewFilterIds = useRecoilInstanceValue(
+    unsavedToDeleteViewFilterIdsInstanceState,
+    instanceId,
   );
-  const unsavedToDeleteViewSortIds = useRecoilValue(
-    unsavedToDeleteViewSortIdsState,
+
+  const unsavedToDeleteViewSortIds = useRecoilInstanceValue(
+    unsavedToDeleteViewSortIdsInstanceState,
+    instanceId,
   );
 
   if (!isDefined(currentView)) {
     return {
-      componentId: instanceId,
+      instanceId,
       currentViewWithSavedFiltersAndSorts: undefined,
       currentViewWithCombinedFiltersAndSorts: undefined,
       viewsOnCurrentObject: viewsOnCurrentObject ?? [],
@@ -97,7 +105,7 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
   };
 
   return {
-    componentId: instanceId,
+    instanceId,
     currentViewWithSavedFiltersAndSorts: currentView,
     currentViewWithCombinedFiltersAndSorts,
     viewsOnCurrentObject: viewsOnCurrentObject ?? [],
