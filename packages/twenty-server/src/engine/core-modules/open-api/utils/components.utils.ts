@@ -168,15 +168,23 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
   }, [] as string[]);
 };
 
-const computeSchemaComponent = (
-  item: ObjectMetadataEntity,
-): OpenAPIV3_1.SchemaObject => {
+const computeSchemaComponent = ({
+  item,
+  withRequired,
+}: {
+  item: ObjectMetadataEntity;
+  withRequired: boolean;
+}): OpenAPIV3_1.SchemaObject => {
   const result = {
     type: 'object',
     description: item.description,
     properties: getSchemaComponentsProperties(item),
     example: {},
   } as OpenAPIV3_1.SchemaObject;
+
+  if (!withRequired) {
+    return result;
+  }
 
   const requiredFields = getRequiredFields(item);
 
@@ -195,14 +203,18 @@ const computeSchemaComponent = (
   return result;
 };
 
-const computeRelationSchemaComponent = (
-  item: ObjectMetadataEntity,
-): OpenAPIV3_1.SchemaObject => {
+const computeRelationSchemaComponent = ({
+  item,
+  withRequired,
+}: {
+  item: ObjectMetadataEntity;
+  withRequired: boolean;
+}): OpenAPIV3_1.SchemaObject => {
   const result = {
     description: item.description,
     allOf: [
       {
-        $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+        $ref: `#/components/schemas/${capitalize(item.nameSingular)}${!withRequired ? ' for Responses' : ''}`,
       },
       {
         type: 'object',
@@ -211,6 +223,10 @@ const computeRelationSchemaComponent = (
     ],
     example: {},
   } as OpenAPIV3_1.SchemaObject;
+
+  if (!withRequired) {
+    return result;
+  }
 
   const requiredFields = getRequiredFields(item);
 
@@ -234,9 +250,14 @@ export const computeSchemaComponents = (
 ): Record<string, OpenAPIV3_1.SchemaObject> => {
   return objectMetadataItems.reduce(
     (schemas, item) => {
-      schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
-      schemas[capitalize(item.nameSingular) + ' with Relations'] =
-        computeRelationSchemaComponent(item);
+      schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
+        item,
+        withRequired: true,
+      });
+      schemas[capitalize(item.nameSingular) + ' for Responses'] =
+        computeSchemaComponent({ item, withRequired: false });
+      schemas[capitalize(item.nameSingular) + ' with Relations for Responses'] =
+        computeRelationSchemaComponent({ item, withRequired: false });
 
       return schemas;
     },

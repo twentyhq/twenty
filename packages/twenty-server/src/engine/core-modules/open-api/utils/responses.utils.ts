@@ -20,7 +20,7 @@ export const getFindManyResponse200 = (
                   items: {
                     $ref: `#/components/schemas/${capitalize(
                       item.nameSingular,
-                    )}${!fromMetadata ? ' with Relations' : ''}`,
+                    )}${!fromMetadata ? ' with Relations for Responses' : ' for Responses'}`,
                   },
                 },
               },
@@ -76,7 +76,9 @@ export const getFindOneResponse200 = (
               properties: {
                 [item.nameSingular]: {
                   $ref: `#/components/schemas/${capitalize(item.nameSingular)}${
-                    !fromMetadata ? ' with Relations' : ''
+                    !fromMetadata
+                      ? ' with Relations for Responses'
+                      : ' for Responses'
                   }`,
                 },
               },
@@ -110,7 +112,7 @@ export const getCreateOneResponse201 = (
               type: 'object',
               properties: {
                 [`create${one}${capitalize(item.nameSingular)}`]: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Responses`,
                 },
               },
             },
@@ -146,7 +148,7 @@ export const getCreateManyResponse201 = (
                   items: {
                     $ref: `#/components/schemas/${capitalize(
                       item.nameSingular,
-                    )}`,
+                    )} for Responses`,
                   },
                 },
               },
@@ -184,7 +186,7 @@ export const getUpdateOneResponse200 = (
               type: 'object',
               properties: {
                 [`update${one}${capitalize(item.nameSingular)}`]: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Responses`,
                 },
               },
             },
@@ -328,7 +330,7 @@ export const getFindDuplicatesResponse200 = (
                     items: {
                       $ref: `#/components/schemas/${capitalize(
                         item.nameSingular,
-                      )}`,
+                      )} for Responses`,
                     },
                   },
                 },
