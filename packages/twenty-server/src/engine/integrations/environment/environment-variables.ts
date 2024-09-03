@@ -130,7 +130,7 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_EXPIRES_IN = '30m';
+  REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @IsDuration()
   @IsOptional()
