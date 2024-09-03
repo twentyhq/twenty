@@ -1,6 +1,10 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
-import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
+import {
+  GraphQLInputFieldConfigMap,
+  GraphQLInputObjectType,
+  GraphQLString,
+} from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -71,6 +75,9 @@ export class InputTypeDefinitionFactory {
                 type: this.typeMapperService.mapToGqlType(inputType, {
                   nullable: true,
                 }),
+              },
+              search: {
+                type: GraphQLString,
               },
             };
           }
