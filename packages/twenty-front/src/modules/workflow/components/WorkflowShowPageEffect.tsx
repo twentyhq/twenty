@@ -1,4 +1,4 @@
-import { useFindWorkflowWithCurrentVersion } from '@/workflow/hooks/useFindWorkflowWithCurrentVersion';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
 import { showPageWorkflowIdState } from '@/workflow/states/showPageWorkflowIdState';
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
@@ -14,8 +14,7 @@ type WorkflowShowPageEffectProps = {
 export const WorkflowShowPageEffect = ({
   workflowId,
 }: WorkflowShowPageEffectProps) => {
-  const workflowWithCurrentVersion =
-    useFindWorkflowWithCurrentVersion(workflowId);
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const setShowPageWorkflowId = useSetRecoilState(showPageWorkflowIdState);
   const setCurrentWorkflowData = useSetRecoilState(

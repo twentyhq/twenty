@@ -1,9 +1,12 @@
 import { RightDrawerWorkflowEditStepContent } from '@/workflow/components/RightDrawerWorkflowEditStepContent';
-import { useFindShowPageWorkflow } from '@/workflow/hooks/useFindShowPageWorkflow';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { showPageWorkflowIdState } from '@/workflow/states/showPageWorkflowIdState';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const RightDrawerWorkflowEditStep = () => {
-  const workflow = useFindShowPageWorkflow();
+  const showPageWorkflowId = useRecoilValue(showPageWorkflowIdState);
+  const workflow = useWorkflowWithCurrentVersion(showPageWorkflowId);
 
   if (!isDefined(workflow)) {
     return null;
