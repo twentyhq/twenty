@@ -49,8 +49,12 @@ export const useFindWorkflowWithCurrentVersion = (
         status: {
           eq: 'DRAFT',
         },
+        workflowId: {
+          eq: workflowId,
+        },
       },
       limit: 1,
+      skip: !isDefined(workflowId),
     });
 
   if (!isDefined(workflow)) {
