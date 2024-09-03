@@ -8,10 +8,10 @@ import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { getStepDefaultDefinition } from '@/workflow/utils/getStepDefaultDefinition';
 import { insertStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
-import { v4 } from 'uuid';
 
 export const useRightDrawerWorkflowSelectActionCreateStep = ({
   workflow,
@@ -55,43 +55,12 @@ export const useRightDrawerWorkflowSelectActionCreateStep = ({
     });
   };
 
-  const getStepDefaultConfiguration = (
-    type: WorkflowStepType,
-  ): WorkflowStep => {
-    const newStepId = v4();
-
-    switch (type) {
-      case 'CODE_ACTION': {
-        return {
-          id: newStepId,
-          name: 'Code',
-          type: 'CODE_ACTION',
-          valid: false,
-          settings: {
-            serverlessFunctionId: '',
-            errorHandlingOptions: {
-              continueOnFailure: {
-                value: false,
-              },
-              retryOnFailure: {
-                value: false,
-              },
-            },
-          },
-        };
-      }
-      default: {
-        throw new Error(`Unknown type: ${type}`);
-      }
-    }
-  };
-
   const createStep = async (newStepType: WorkflowStepType) => {
     if (!isDefined(workflowCreateStepFromParentStepId)) {
       throw new Error('Select a step to create a new step from first.');
     }
 
-    const newStep = getStepDefaultConfiguration(newStepType);
+    const newStep = getStepDefaultDefinition(newStepType);
 
     await insertNodeAndSave({
       parentNodeId: workflowCreateStepFromParentStepId,
