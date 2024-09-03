@@ -11,17 +11,12 @@ const formatMessage = (message: BaseGraphQLError) => {
     .replace(/"/g, "'")
     .replace("Variable '$data' got i", 'I');
 
-  const regex =
-    /Field '(.*?)' is not defined by type '(.*?)'\. Did you mean '(.*?)'\?/;
+  const regex = /Field '[^']+' is not defined by type .*/;
 
   const match = formattedMessage.match(regex);
 
   if (match) {
-    const field = match[1];
-    const type = match[2];
-    const suggestion = match[3];
-
-    formattedMessage = `Field '${field}' is not defined by type '${type}'. Did you mean '${suggestion}'?`;
+    formattedMessage = match[0];
   }
 
   return formattedMessage;
