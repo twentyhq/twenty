@@ -3,7 +3,7 @@ import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCode } from 'twenty-ui';
+import { IconCode, isDefined } from 'twenty-ui';
 
 const StyledTriggerHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -56,10 +56,14 @@ export const RightDrawerWorkflowEditStepContentAction = ({
 
   const availableFunctions: Array<SelectOption<string>> = [
     { label: 'None', value: '' },
-    ...serverlessFunctions.map((serverlessFunction) => ({
-      label: serverlessFunction.name,
-      value: serverlessFunction.id,
-    })),
+    ...serverlessFunctions
+      .filter((serverlessFunction) =>
+        isDefined(serverlessFunction.latestVersion),
+      )
+      .map((serverlessFunction) => ({
+        label: serverlessFunction.name,
+        value: serverlessFunction.id,
+      })),
   ];
 
   return (
