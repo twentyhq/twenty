@@ -42,7 +42,7 @@ describe('computeSchemaComponents', () => {
           },
           fieldDateTime: {
             type: 'string',
-            format: 'date',
+            format: 'date-time',
           },
           fieldDate: {
             type: 'string',

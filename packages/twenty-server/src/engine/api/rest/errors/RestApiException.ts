@@ -2,14 +2,17 @@ import { BadRequestException } from '@nestjs/common';
 
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-const formatMessage = (message: BaseGraphQLError) => {
-  let formattedMessage = message.extensions
-    ? message.extensions.response.message || message.extensions.response
-    : message.message;
+const formatMessage = (error: BaseGraphQLError) => {
+  let formattedMessage = error.extensions
+    ? error.extensions.response?.error ||
+      error.extensions.response ||
+      error.message
+    : error.error;
 
   formattedMessage = formattedMessage
     .replace(/"/g, "'")
-    .replace("Variable '$data' got i", 'I');
+    .replace("Variable '$data' got i", 'I')
+    .replace("Variable '$input' got i", 'I');
 
   const regex = /Field '[^']+' is not defined by type .*/;
 
