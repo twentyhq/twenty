@@ -9,7 +9,7 @@ import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThro
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-const getStepDefinition = ({
+const getStepDefinitionOrThrow = ({
   stepId,
   workflow,
 }: {
@@ -18,12 +18,12 @@ const getStepDefinition = ({
 }) => {
   const currentVersion = workflow.currentVersion;
   if (!isDefined(currentVersion)) {
-    return undefined;
+    throw new Error('Expected to find a current version');
   }
 
   if (stepId === TRIGGER_STEP_ID) {
     if (!isDefined(currentVersion.trigger)) {
-      return undefined;
+      throw new Error('Expected to find the definition of the trigger');
     }
 
     return {
@@ -33,7 +33,7 @@ const getStepDefinition = ({
   }
 
   if (!isDefined(currentVersion.steps)) {
-    return undefined;
+    throw new Error('Expected to find an array of steps');
   }
 
   const selectedNodePosition = findStepPositionOrThrow({
@@ -67,18 +67,15 @@ export const RightDrawerWorkflowEditStepContent = ({
     stepId: showPageWorkflowSelectedNode,
   });
 
-  const stepConfiguration = getStepDefinition({
+  const stepDefinition = getStepDefinitionOrThrow({
     stepId: showPageWorkflowSelectedNode,
     workflow,
   });
-  if (!isDefined(stepConfiguration)) {
-    throw new Error('Expected to resolve the definition of the step.');
-  }
 
-  if (stepConfiguration.type === 'trigger') {
+  if (stepDefinition.type === 'trigger') {
     return (
       <RightDrawerWorkflowEditStepContentTrigger
-        trigger={stepConfiguration.definition}
+        trigger={stepDefinition.definition}
         onUpdateTrigger={updateTrigger}
       />
     );
@@ -86,7 +83,7 @@ export const RightDrawerWorkflowEditStepContent = ({
 
   return (
     <RightDrawerWorkflowEditStepContentAction
-      action={stepConfiguration.definition}
+      action={stepDefinition.definition}
       onUpdateAction={updateStep}
     />
   );
