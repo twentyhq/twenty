@@ -155,25 +155,8 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
     ],
   );
 
-  // const getCurrentViewFilters = useRecoilCallback(
-  //   ({ snapshot }) =>
-  //     async () => {
-  //       const currentViewId = getSnapshotValue(snapshot, currentViewIdState);
-
-  //       if (!currentViewId) {
-  //         return [];
-  //       }
-
-  //       const currentView = await getViewFromCache(currentViewId);
-
-  //       return currentView?.viewFilters ?? [];
-  //     },
-  //   [currentViewIdState, getViewFromCache],
-  // );
-
   return {
     upsertCombinedViewFilter,
     removeCombinedViewFilter,
-    // getCurrentViewFilters,
   };
 };
