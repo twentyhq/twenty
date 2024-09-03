@@ -48,7 +48,7 @@ export const PhoneCountryPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownMenu width="200px" disableBlur>
+    <DropdownMenu width="auto" disableBlur>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.currentTarget.value)}
