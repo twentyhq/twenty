@@ -84,7 +84,9 @@ export class MatchParticipantService<
     );
 
     for (const handle of uniqueParticipantsHandles) {
-      const person = people.find((person) => person.email === handle);
+      const person = people.find(
+        (person) => person.email?.primaryEmail === handle,
+      );
 
       const workspaceMember = workspaceMembers.find(
         (workspaceMember) => workspaceMember.userEmail === handle,

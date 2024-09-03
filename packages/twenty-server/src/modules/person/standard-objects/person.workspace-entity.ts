@@ -4,6 +4,7 @@ import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -55,12 +56,12 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.email,
-    type: FieldMetadataType.EMAIL,
+    type: FieldMetadataType.EMAILS,
     label: 'Email',
     description: 'Contact’s Email',
     icon: 'IconMail',
   })
-  email: string;
+  email: EmailsMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,

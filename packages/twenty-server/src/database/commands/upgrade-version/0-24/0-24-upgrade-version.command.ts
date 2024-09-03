@@ -1,5 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
+import { MigrateEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-24/0-24-migrate-email-fields-to-emails.command';
 import { SetCustomObjectIsSoftDeletableCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-custom-object-is-soft-deletable.command';
 import { SetMessageDirectionCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-message-direction.command';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
@@ -17,6 +18,7 @@ export class UpgradeTo0_24Command extends CommandRunner {
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly setMessagesDirectionCommand: SetMessageDirectionCommand,
     private readonly setCustomObjectIsSoftDeletableCommand: SetCustomObjectIsSoftDeletableCommand,
+    private readonly migrateEmailFieldsToEmails: MigrateEmailFieldsToEmailsCommand,
   ) {
     super();
   }
@@ -41,5 +43,6 @@ export class UpgradeTo0_24Command extends CommandRunner {
     });
     await this.setMessagesDirectionCommand.run(passedParam, options);
     await this.setCustomObjectIsSoftDeletableCommand.run(passedParam, options);
+    await this.migrateEmailFieldsToEmails.run(passedParam, options);
   }
 }

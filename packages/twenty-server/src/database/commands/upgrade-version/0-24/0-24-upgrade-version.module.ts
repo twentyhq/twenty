@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MigrateEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-24/0-24-migrate-email-fields-to-emails.command';
 import { SetCustomObjectIsSoftDeletableCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-custom-object-is-soft-deletable.command';
 import { SetMessageDirectionCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-message-direction.command';
 import { UpgradeTo0_24Command } from 'src/database/commands/upgrade-version/0-24/0-24-upgrade-version.command';
@@ -16,6 +17,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+import { ViewModule } from 'src/modules/view/view.module';
 
 @Module({
   imports: [
@@ -33,11 +35,13 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
       'metadata',
     ),
     TypeORMModule,
+    ViewModule,
   ],
   providers: [
     UpgradeTo0_24Command,
     SetMessageDirectionCommand,
     SetCustomObjectIsSoftDeletableCommand,
+    MigrateEmailFieldsToEmailsCommand,
   ],
 })
 export class UpgradeTo0_24CommandModule {}

@@ -40,7 +40,7 @@ export class MessageParticipantPersonListener {
         MessageParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: eventPayload.properties.after.email,
+          email: eventPayload.properties.after.email.primaryEmail,
           personId: eventPayload.recordId,
         },
       );
@@ -64,7 +64,7 @@ export class MessageParticipantPersonListener {
           MessageParticipantUnmatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.before.email,
+            email: eventPayload.properties.before.email.primaryEmail,
             personId: eventPayload.recordId,
           },
         );
@@ -73,7 +73,7 @@ export class MessageParticipantPersonListener {
           MessageParticipantMatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.email,
+            email: eventPayload.properties.after.email.primaryEmail,
             personId: eventPayload.recordId,
           },
         );

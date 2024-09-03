@@ -186,6 +186,10 @@ id
 createdAt
 city
 email
+{
+  primaryEmail
+  additionalEmails
+}
 jobTitle
 name
 {
