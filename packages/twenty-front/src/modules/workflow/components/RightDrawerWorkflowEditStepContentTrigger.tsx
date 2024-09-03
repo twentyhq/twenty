@@ -87,10 +87,10 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
       value: 'deleted',
     },
   ];
-  const eventLabel = availableEvents.find(
+  const selectedEvent = availableEvents.find(
     (availableEvent) => availableEvent.value === triggerEvent.event,
   );
-  if (!isDefined(eventLabel)) {
+  if (!isDefined(selectedEvent)) {
     throw new Error('Expected to find the currently selected event type.');
   }
 
@@ -102,11 +102,11 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
         </StyledTriggerHeaderIconContainer>
 
         <StyledTriggerHeaderTitle>
-          When a {recordTypeMetadata.labelSingular} is {eventLabel.label}
+          When a {recordTypeMetadata.labelSingular} is {selectedEvent.label}
         </StyledTriggerHeaderTitle>
 
         <StyledTriggerHeaderType>
-          Trigger . Record is {eventLabel.label}
+          Trigger . Record is {selectedEvent.label}
         </StyledTriggerHeaderType>
       </StyledTriggerHeader>
 
