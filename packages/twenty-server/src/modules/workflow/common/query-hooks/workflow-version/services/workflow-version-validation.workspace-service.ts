@@ -6,6 +6,7 @@ import {
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   WorkflowQueryHookException,
   WorkflowQueryHookExceptionCode,
@@ -21,6 +22,7 @@ import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trig
 export class WorkflowVersionValidationWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   async validateWorkflowVersionForCreateOne(
@@ -32,6 +34,26 @@ export class WorkflowVersionValidationWorkspaceService {
     ) {
       throw new WorkflowQueryHookException(
         'Cannot create workflow version with status other than draft',
+        WorkflowQueryHookExceptionCode.FORBIDDEN,
+      );
+    }
+
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const workflowAlreadyHasDraftVersion =
+      await workflowVersionRepository.exists({
+        where: {
+          workflowId: payload.data.workflowId,
+          status: WorkflowVersionStatus.DRAFT,
+        },
+      });
+
+    if (workflowAlreadyHasDraftVersion) {
+      throw new WorkflowQueryHookException(
+        'Cannot create multiple draft versions for the same workflow',
         WorkflowQueryHookExceptionCode.FORBIDDEN,
       );
     }
@@ -56,12 +78,12 @@ export class WorkflowVersionValidationWorkspaceService {
   }
 
   async validateWorkflowVersionForDeleteOne(payload: DeleteOneResolverArgs) {
-    const workflow =
+    const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
         payload.id,
       );
 
-    this.validateWorkflowVersionIsDraft(workflow);
+    this.validateWorkflowVersionIsDraft(workflowVersion);
   }
 
   private validateWorkflowVersionIsDraft(

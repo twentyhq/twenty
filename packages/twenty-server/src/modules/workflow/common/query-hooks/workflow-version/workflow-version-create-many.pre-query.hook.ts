@@ -1,5 +1,8 @@
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import {
+  CreateManyResolverArgs,
+  CreateOneResolverArgs,
+} from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -22,7 +25,9 @@ export class WorkflowVersionCreateManyPreQueryHook
     await Promise.all(
       payload.data.map(async (workflowVersion) => {
         await this.workflowVersionValidationWorkspaceService.validateWorkflowVersionForCreateOne(
-          { data: workflowVersion },
+          {
+            data: workflowVersion,
+          } satisfies CreateOneResolverArgs<WorkflowVersionWorkspaceEntity>,
         );
       }),
     );
