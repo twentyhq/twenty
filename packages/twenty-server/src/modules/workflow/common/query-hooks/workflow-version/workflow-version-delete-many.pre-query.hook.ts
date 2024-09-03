@@ -12,8 +12,6 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/stan
 export class WorkflowVersionDeleteManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
-  constructor() {}
-
   async execute(): Promise<
     DeleteManyResolverArgs<WorkflowVersionWorkspaceEntity>
   > {

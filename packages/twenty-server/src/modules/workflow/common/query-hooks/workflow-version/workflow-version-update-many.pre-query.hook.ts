@@ -12,8 +12,6 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/stan
 export class WorkflowVersionUpdateManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
-  constructor() {}
-
   async execute(): Promise<
     UpdateManyResolverArgs<WorkflowVersionWorkspaceEntity>
   > {

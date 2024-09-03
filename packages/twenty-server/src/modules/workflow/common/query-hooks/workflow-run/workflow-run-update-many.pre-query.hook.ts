@@ -6,13 +6,13 @@ import {
   WorkflowQueryHookException,
   WorkflowQueryHookExceptionCode,
 } from 'src/modules/workflow/common/query-hooks/workflow-query-hook.exception';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
-@WorkspaceQueryHook(`workflow.updateMany`)
-export class WorkflowUpdateManyPreQueryHook
+@WorkspaceQueryHook(`workflowRun.updateMany`)
+export class WorkflowRunUpdateManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
-  async execute(): Promise<UpdateManyResolverArgs<WorkflowWorkspaceEntity>> {
+  async execute(): Promise<UpdateManyResolverArgs<WorkflowRunWorkspaceEntity>> {
     throw new WorkflowQueryHookException(
       'Method not allowed.',
       WorkflowQueryHookExceptionCode.FORBIDDEN,
