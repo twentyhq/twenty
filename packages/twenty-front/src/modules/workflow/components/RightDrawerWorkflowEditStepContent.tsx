@@ -17,7 +17,7 @@ const getStepDefinition = ({
   workflow: WorkflowWithCurrentVersion;
 }) => {
   const currentVersion = workflow.currentVersion;
-  if (currentVersion === undefined) {
+  if (!isDefined(currentVersion)) {
     return undefined;
   }
 
@@ -55,7 +55,7 @@ export const RightDrawerWorkflowEditStepContent = ({
   const showPageWorkflowSelectedNode = useRecoilValue(
     showPageWorkflowSelectedNodeState,
   );
-  if (showPageWorkflowSelectedNode === undefined) {
+  if (!isDefined(showPageWorkflowSelectedNode)) {
     throw new Error(
       'Expected a node to be selected. Selecting a node is mandatory to edit it.',
     );
@@ -71,7 +71,7 @@ export const RightDrawerWorkflowEditStepContent = ({
     stepId: showPageWorkflowSelectedNode,
     workflow,
   });
-  if (stepConfiguration === undefined) {
+  if (!isDefined(stepConfiguration)) {
     throw new Error('Expected to resolve the definition of the step.');
   }
 

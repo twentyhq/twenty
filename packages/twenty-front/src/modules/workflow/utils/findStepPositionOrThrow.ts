@@ -1,5 +1,6 @@
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { WorkflowStep } from '@/workflow/types/Workflow';
+import { isDefined } from 'twenty-ui';
 
 /**
  * This function returns the reference of the array where the step should be positioned
@@ -12,7 +13,7 @@ export const findStepPositionOrThrow = ({
   steps: Array<WorkflowStep>;
   stepId: string | undefined;
 }): { steps: Array<WorkflowStep>; index: number } => {
-  if (stepId === undefined || stepId === TRIGGER_STEP_ID) {
+  if (!isDefined(stepId) || stepId === TRIGGER_STEP_ID) {
     return {
       steps,
       index: 0,

@@ -4,7 +4,7 @@ import { WorkflowTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconPlaylistAdd } from 'twenty-ui';
+import { IconPlaylistAdd, isDefined } from 'twenty-ui';
 
 const StyledTriggerHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -67,7 +67,7 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
   const recordTypeMetadata = activeObjectMetadataItems.find(
     (item) => item.nameSingular === triggerEvent.objectType,
   );
-  if (recordTypeMetadata === undefined) {
+  if (!isDefined(recordTypeMetadata)) {
     throw new Error(
       'Expected to find the metadata configuration for the currently selected record type of the trigger.',
     );
@@ -90,7 +90,7 @@ export const RightDrawerWorkflowEditStepContentTrigger = ({
   const eventLabel = availableEvents.find(
     (availableEvent) => availableEvent.value === triggerEvent.event,
   );
-  if (eventLabel === undefined) {
+  if (!isDefined(eventLabel)) {
     throw new Error('Expected to find the currently selected event type.');
   }
 

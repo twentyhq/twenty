@@ -87,7 +87,7 @@ export const useRightDrawerWorkflowSelectActionCreateStep = ({
   };
 
   const createStep = async (newStepType: WorkflowStepType) => {
-    if (workflowCreateStepFromParentStepId === undefined) {
+    if (!isDefined(workflowCreateStepFromParentStepId)) {
       throw new Error('Select a step to create a new step from first.');
     }
 
