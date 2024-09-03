@@ -3,21 +3,21 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { useRecoilCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilCallbackState';
+import { useAvailableInstanceIdOrThrow } from '@/ui/utilities/state/instance/hooks/useAvailableInstanceIdOrThrow';
+import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
-import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/ViewScopeInternalContext';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { ViewInstanceContext } from '@/views/states/contexts/ViewInstanceContext';
+import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
 import { View } from '@/views/types/View';
 import { combinedViewFilters } from '@/views/utils/combinedViewFilters';
 import { combinedViewSorts } from '@/views/utils/combinedViewSorts';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { isDefined } from '~/utils/isDefined';
 
-export const useGetCurrentView = (viewBarComponentId?: string) => {
-  const componentId = useAvailableScopeIdOrThrow(
-    ViewScopeInternalContext,
-    viewBarComponentId,
+export const useGetCurrentView = (viewBarInstanceId?: string) => {
+  const instanceId = useAvailableInstanceIdOrThrow(
+    ViewInstanceContext,
+    viewBarInstanceId,
   );
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
@@ -29,14 +29,13 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
     unsavedToDeleteViewSortIdsState,
     unsavedToUpsertViewSortsState,
     isCurrentViewKeyIndexState,
-  } = useViewStates(componentId);
+  } = useViewStates(instanceId);
 
-  const currentViewIdState = useRecoilCallbackState(
-    currentViewIdComponentState,
-    viewBarComponentId,
+  const currentViewId = useRecoilInstanceValue(
+    currentViewIdInstanceState,
+    viewBarInstanceId,
   );
 
-  const currentViewId = useRecoilValue(currentViewIdState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const setIsCurrentViewKeyIndex = useSetRecoilState(
     isCurrentViewKeyIndexState,
@@ -76,7 +75,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
 
   if (!isDefined(currentView)) {
     return {
-      componentId,
+      componentId: instanceId,
       currentViewWithSavedFiltersAndSorts: undefined,
       currentViewWithCombinedFiltersAndSorts: undefined,
       viewsOnCurrentObject: viewsOnCurrentObject ?? [],
@@ -98,7 +97,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
   };
 
   return {
-    componentId,
+    componentId: instanceId,
     currentViewWithSavedFiltersAndSorts: currentView,
     currentViewWithCombinedFiltersAndSorts,
     viewsOnCurrentObject: viewsOnCurrentObject ?? [],
