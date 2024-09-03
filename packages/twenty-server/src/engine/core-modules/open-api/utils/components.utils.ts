@@ -65,10 +65,6 @@ const getFieldProperties = (
   }
 };
 
-const getSecondaryLinksFieldProperties = () => {
-  return { type: 'array', properties: {} };
-};
-
 const getSchemaComponentsProperties = (
   item: ObjectMetadataEntity,
 ): Properties => {
