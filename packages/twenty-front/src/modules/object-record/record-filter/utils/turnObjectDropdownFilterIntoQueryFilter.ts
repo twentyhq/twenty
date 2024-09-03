@@ -199,6 +199,7 @@ const applyEmptyFilters = (
         [correspondingField.name]: { is: 'NULL' } as StringFilter,
       };
       break;
+    case 'DATE':
     case 'DATE_TIME':
       emptyRecordFilter = {
         [correspondingField.name]: { is: 'NULL' } as DateFilter,
@@ -326,6 +327,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      case 'DATE':
       case 'DATE_TIME':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan:
