@@ -81,8 +81,14 @@ export class GraphqlQueryRunnerService {
       ? graphqlQueryParser.parseOrder(args.orderBy)
       : undefined;
 
+    const argsFilterWithoutSearch = { ...args.filter };
+
+    if (argsFilterWithoutSearch?.search) {
+      delete argsFilterWithoutSearch.search;
+    }
+
     const where = args.filter
-      ? graphqlQueryParser.parseFilter(args.filter)
+      ? graphqlQueryParser.parseFilter(argsFilterWithoutSearch as RecordFilter)
       : {};
 
     let cursor: Record<string, any> | undefined;
@@ -120,7 +126,6 @@ export class GraphqlQueryRunnerService {
 
     let objectRecords: ObjectLiteral[] = [];
 
-    // if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.person) {
     if (args.filter?.search) {
       if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.person) {
         throw new GraphqlQueryRunnerException(
@@ -131,14 +136,11 @@ export class GraphqlQueryRunnerService {
       const rawObjectRecords = await this.searchPerson(
         repository,
         select,
-        'design',
+        args.filter.search,
       );
 
       objectRecords = await repository.formatResult(rawObjectRecords);
     } else {
-      if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.person) {
-        console.log('stop');
-      }
       objectRecords = await repository.find(findOptions);
     }
 
@@ -164,33 +166,21 @@ export class GraphqlQueryRunnerService {
     const selectedFieldsWithoutRelations =
       this.getSelectedFieldsWithoutRelations(select);
 
-    const results = await repository
+    const resultsWithTrigram = await repository
       .createQueryBuilder()
       .select(selectedFieldsWithoutRelations)
       .where('"nameLastName" % :searchTerm', { searchTerm })
       .orWhere('"nameFirstName" % :searchTerm', { searchTerm })
       .orWhere('email % :searchTerm', { searchTerm })
       .orWhere('phone % :searchTerm', { searchTerm })
-      .orWhere('"searchVector" @@ to_tsquery(:searchTermWithSuffix)')
-      .orderBy('similarity("nameFirstName", :searchTerm)', 'DESC')
-      .addOrderBy('similarity("nameLastName", :searchTerm)', 'DESC')
-      .addOrderBy('similarity(email, :searchTerm)', 'DESC')
-      .addOrderBy('similarity(phone, :searchTerm)', 'DESC')
-      .addOrderBy(
-        `ts_rank("searchVector", to_tsquery('simple', :searchTermWithSuffix))`,
+      .orderBy(
+        '(similarity("nameFirstName", :searchTerm) + similarity("nameLastName", :searchTerm))',
         'DESC',
       )
       .setParameter('searchTerm', searchTerm)
-      .setParameter('searchTermWithSuffix', `${searchTerm}:*`)
       .execute();
 
-    //       SELECT *,
-    //       ts_rank("searchVector", to_tsquery('simple', 'Eléonor:* | H:*')) AS rank
-    // FROM person
-    // WHERE "searchVector" @@ to_tsquery('simple', 'Eléonor:* | H:*')
-    // ORDER BY rank DESC;
-
-    return results;
+    return resultsWithTrigram;
   }
 
   private getSelectedFieldsWithoutRelations(select: Record<string, any>) {

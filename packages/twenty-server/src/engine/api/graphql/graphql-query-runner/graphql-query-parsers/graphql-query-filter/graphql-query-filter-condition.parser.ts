@@ -29,8 +29,6 @@ export class GraphqlQueryFilterConditionParser {
 
     for (const [key, value] of Object.entries(conditions)) {
       switch (key) {
-        // case 'search':
-        //   return Raw({}); // prend du sql Raw - '% value'
         case 'and':
           return this.parseAndCondition(value, isNegated);
         case 'or':

@@ -33,7 +33,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
 import { getLogoUrlFromDomainName } from '~/utils';
-import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 const SEARCH_BAR_HEIGHT = 56;
 const SEARCH_BAR_PADDING = 3;
@@ -168,16 +167,7 @@ export const CommandMenu = () => {
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Person,
-    filter: commandMenuSearch
-      ? makeOrFilterVariables([
-          ...generateILikeFiltersForCompositeFields(commandMenuSearch, 'name', [
-            'firstName',
-            'lastName',
-          ]),
-          { email: { ilike: `%${commandMenuSearch}%` } },
-          { phone: { ilike: `%${commandMenuSearch}%` } },
-        ])
-      : undefined,
+    filter: commandMenuSearch ? { search: commandMenuSearch } : undefined,
     limit: 3,
   });
 

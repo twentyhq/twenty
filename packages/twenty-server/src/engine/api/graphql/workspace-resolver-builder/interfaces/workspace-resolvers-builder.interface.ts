@@ -33,7 +33,6 @@ export interface FindManyResolverArgs<
   before?: string;
   after?: string;
   filter?: Filter;
-  search?: string;
   orderBy?: OrderBy;
 }
 

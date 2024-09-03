@@ -128,8 +128,13 @@ export type LeafObjectRecordFilter = {
   [fieldName: string]: LeafFilter;
 };
 
+export type SearchObjectRecordFilter = {
+  search?: string;
+};
+
 export type RecordGqlOperationFilter =
   | LeafObjectRecordFilter
   | AndObjectRecordFilter
   | OrObjectRecordFilter
-  | NotObjectRecordFilter;
+  | NotObjectRecordFilter
+  | SearchObjectRecordFilter;
