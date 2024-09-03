@@ -3,7 +3,7 @@ import { replaceStep } from '../replaceStep';
 
 describe('replaceStep', () => {
   it('returns a deep copy of the provided steps array instead of mutating it', () => {
-    const stepToBeReplaced: WorkflowStep = {
+    const stepToBeReplaced = {
       id: 'step-1',
       name: '',
       settings: {
@@ -15,9 +15,10 @@ describe('replaceStep', () => {
       },
       type: 'CODE_ACTION',
       valid: true,
-    };
-    const workflowVersionInitial: WorkflowVersion = {
+    } satisfies WorkflowStep;
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -28,7 +29,7 @@ describe('replaceStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
 
     const stepsUpdated = replaceStep({
       steps: workflowVersionInitial.steps,
@@ -61,8 +62,9 @@ describe('replaceStep', () => {
       type: 'CODE_ACTION',
       valid: true,
     };
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -101,7 +103,7 @@ describe('replaceStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
 
     const updatedStepName = "that's another name";
     const stepsUpdated = replaceStep({
