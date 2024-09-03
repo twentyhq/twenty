@@ -3,9 +3,9 @@ import { DeleteManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
-  WorkflowQueryHookException,
-  WorkflowQueryHookExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-hook.exception';
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 @WorkspaceQueryHook(`workflowRun.deleteMany`)
@@ -13,9 +13,9 @@ export class WorkflowRunDeleteManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
   async execute(): Promise<DeleteManyResolverArgs<WorkflowRunWorkspaceEntity>> {
-    throw new WorkflowQueryHookException(
+    throw new WorkflowQueryValidationException(
       'Method not allowed.',
-      WorkflowQueryHookExceptionCode.FORBIDDEN,
+      WorkflowQueryValidationExceptionCode.FORBIDDEN,
     );
   }
 }

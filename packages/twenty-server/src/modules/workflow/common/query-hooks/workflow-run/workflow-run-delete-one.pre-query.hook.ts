@@ -3,18 +3,18 @@ import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
-  WorkflowQueryHookException,
-  WorkflowQueryHookExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-hook.exception';
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
 
 @WorkspaceQueryHook(`workflowRun.deleteOne`)
 export class WorkflowRunDeleteOnePreQueryHook
   implements WorkspaceQueryHookInstance
 {
   async execute(): Promise<DeleteOneResolverArgs> {
-    throw new WorkflowQueryHookException(
+    throw new WorkflowQueryValidationException(
       'Method not allowed.',
-      WorkflowQueryHookExceptionCode.FORBIDDEN,
+      WorkflowQueryValidationExceptionCode.FORBIDDEN,
     );
   }
 }

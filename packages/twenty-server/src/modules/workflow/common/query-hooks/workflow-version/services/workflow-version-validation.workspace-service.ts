@@ -8,15 +8,15 @@ import {
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
-  WorkflowQueryHookException,
-  WorkflowQueryHookExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-hook.exception';
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
+import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/query-hooks/workflow-version/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/services/workflow-common.workspace-service';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
 @Injectable()
 export class WorkflowVersionValidationWorkspaceService {
@@ -32,9 +32,9 @@ export class WorkflowVersionValidationWorkspaceService {
       payload.data.status &&
       payload.data.status !== WorkflowVersionStatus.DRAFT
     ) {
-      throw new WorkflowQueryHookException(
+      throw new WorkflowQueryValidationException(
         'Cannot create workflow version with status other than draft',
-        WorkflowQueryHookExceptionCode.FORBIDDEN,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
       );
     }
 
@@ -52,9 +52,9 @@ export class WorkflowVersionValidationWorkspaceService {
       });
 
     if (workflowAlreadyHasDraftVersion) {
-      throw new WorkflowQueryHookException(
+      throw new WorkflowQueryValidationException(
         'Cannot create multiple draft versions for the same workflow',
-        WorkflowQueryHookExceptionCode.FORBIDDEN,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
       );
     }
   }
@@ -67,12 +67,12 @@ export class WorkflowVersionValidationWorkspaceService {
         payload.id,
       );
 
-    this.validateWorkflowVersionIsDraft(workflowVersion);
+    assertWorkflowVersionIsDraft(workflowVersion);
 
     if (payload.data.status !== workflowVersion.status) {
-      throw new WorkflowQueryHookException(
+      throw new WorkflowQueryValidationException(
         'Cannot update workflow version status manually',
-        WorkflowQueryHookExceptionCode.FORBIDDEN,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
       );
     }
   }
@@ -83,19 +83,6 @@ export class WorkflowVersionValidationWorkspaceService {
         payload.id,
       );
 
-    this.validateWorkflowVersionIsDraft(workflowVersion);
-  }
-
-  private validateWorkflowVersionIsDraft(
-    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
-      trigger: WorkflowTrigger;
-    },
-  ) {
-    if (workflowVersion.status !== WorkflowVersionStatus.DRAFT) {
-      throw new WorkflowQueryHookException(
-        'Workflow version is not in draft status',
-        WorkflowQueryHookExceptionCode.FORBIDDEN,
-      );
-    }
+    assertWorkflowVersionIsDraft(workflowVersion);
   }
 }

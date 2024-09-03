@@ -3,9 +3,9 @@ import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
-  WorkflowQueryHookException,
-  WorkflowQueryHookExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-hook.exception';
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @WorkspaceQueryHook(`workflow.updateMany`)
@@ -13,9 +13,9 @@ export class WorkflowUpdateManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
   async execute(): Promise<UpdateManyResolverArgs<WorkflowWorkspaceEntity>> {
-    throw new WorkflowQueryHookException(
+    throw new WorkflowQueryValidationException(
       'Method not allowed.',
-      WorkflowQueryHookExceptionCode.FORBIDDEN,
+      WorkflowQueryValidationExceptionCode.FORBIDDEN,
     );
   }
 }
