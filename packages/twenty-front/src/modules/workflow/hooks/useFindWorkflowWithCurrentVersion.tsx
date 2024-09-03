@@ -8,7 +8,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-ui';
 
-export const useFindWorkflowWithCurrentVersion = (
+export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,
 ): WorkflowWithCurrentVersion | undefined => {
   const { record: workflow } = useFindOneRecord<Workflow>({
