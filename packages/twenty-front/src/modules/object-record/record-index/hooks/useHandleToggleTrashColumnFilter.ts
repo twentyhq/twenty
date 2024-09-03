@@ -69,7 +69,6 @@ export const useHandleToggleTrashColumnFilter = ({
   const toggleSoftDeleteFilterState = useRecoilCallback(
     ({ set }) =>
       (currentState?: boolean) => {
-        console.log('currentState changing', currentState);
         set(isSoftDeleteActiveState, Boolean(currentState));
       },
     [isSoftDeleteActiveState],

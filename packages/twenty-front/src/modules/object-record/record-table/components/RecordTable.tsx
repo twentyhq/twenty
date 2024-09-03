@@ -84,6 +84,8 @@ export const RecordTable = ({
             objectLabel={objectLabel}
             createRecord={createRecord}
             isRemote={isRemote}
+            isSoftDeleteActive={isSoftDeleteActive}
+            recordTableId={recordTableId}
           />
         ) : (
           <StyledTable className="entity-table-cell">
