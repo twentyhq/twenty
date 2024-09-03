@@ -18,6 +18,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -312,19 +313,12 @@ export const computeMetadataSchemaComponents = (
             type: 'object',
             description: `An object`,
             properties: {
-              dataSourceId: { type: 'string', format: 'uuid' },
               nameSingular: { type: 'string' },
               namePlural: { type: 'string' },
               labelSingular: { type: 'string' },
               labelPlural: { type: 'string' },
               description: { type: 'string' },
               icon: { type: 'string' },
-              isCustom: { type: 'boolean' },
-              isRemote: { type: 'boolean' },
-              isActive: { type: 'boolean' },
-              isSystem: { type: 'boolean' },
-              createdAt: { type: 'string', format: 'date-time' },
-              updatedAt: { type: 'string', format: 'date-time' },
               labelIdentifierFieldMetadataId: {
                 type: 'string',
                 format: 'uuid',
@@ -333,6 +327,33 @@ export const computeMetadataSchemaComponents = (
                 type: 'string',
                 format: 'uuid',
               },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)} for Update`] = {
+            type: 'object',
+            description: `An object`,
+            properties: {
+              isActive: { type: 'boolean' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)} for Response`] = {
+            ...schemas[`${capitalize(item.nameSingular)}`],
+            properties: {
+              ...schemas[`${capitalize(item.nameSingular)}`].properties,
+              id: { type: 'string', format: 'uuid' },
+              dataSourceId: { type: 'string', format: 'uuid' },
+              isCustom: { type: 'boolean' },
+              isActive: { type: 'boolean' },
+              isSystem: { type: 'boolean' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
               fields: {
                 type: 'object',
                 properties: {
@@ -342,7 +363,7 @@ export const computeMetadataSchemaComponents = (
                       node: {
                         type: 'array',
                         items: {
-                          $ref: '#/components/schemas/Field',
+                          $ref: '#/components/schemas/Field for Response',
                         },
                       },
                     },
@@ -351,11 +372,11 @@ export const computeMetadataSchemaComponents = (
               },
             },
           };
-          schemas[`${capitalize(item.namePlural)}`] = {
+          schemas[`${capitalize(item.namePlural)} for Response`] = {
             type: 'array',
             description: `A list of ${item.namePlural}`,
             items: {
-              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
             },
           };
 
@@ -366,22 +387,67 @@ export const computeMetadataSchemaComponents = (
             type: 'object',
             description: `A field`,
             properties: {
-              type: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: Object.keys(FieldMetadataType),
+              },
               name: { type: 'string' },
               label: { type: 'string' },
               description: { type: 'string' },
               icon: { type: 'string' },
+              isNullable: { type: 'boolean' },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)} for Update`] = {
+            type: 'object',
+            description: `An object`,
+            properties: {
+              description: { type: 'string' },
+              icon: { type: 'string' },
+              isActive: { type: 'boolean' },
+              isCustom: { type: 'boolean' },
+              isNullable: { type: 'boolean' },
+              isSystem: { type: 'boolean' },
+              label: { type: 'string' },
+              name: { type: 'string' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)} for Response`] = {
+            ...schemas[`${capitalize(item.nameSingular)}`],
+            properties: {
+              type: {
+                type: 'string',
+                enum: Object.keys(FieldMetadataType),
+              },
+              name: { type: 'string' },
+              label: { type: 'string' },
+              description: { type: 'string' },
+              icon: { type: 'string' },
+              isNullable: { type: 'boolean' },
+              id: { type: 'string', format: 'uuid' },
               isCustom: { type: 'boolean' },
               isActive: { type: 'boolean' },
               isSystem: { type: 'boolean' },
-              isNullable: { type: 'boolean' },
+              defaultValue: { type: 'object' },
+              options: { type: 'object' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
               fromRelationMetadata: {
                 type: 'object',
                 properties: {
                   id: { type: 'string', format: 'uuid' },
-                  relationType: { type: 'string' },
+                  relationType: {
+                    type: 'string',
+                    enum: Object.keys(RelationMetadataType),
+                  },
                   toObjectMetadata: {
                     type: 'object',
                     properties: {
@@ -390,6 +456,7 @@ export const computeMetadataSchemaComponents = (
                       nameSingular: { type: 'string' },
                       namePlural: { type: 'string' },
                       isSystem: { type: 'boolean' },
+                      isRemote: { type: 'boolean' },
                     },
                   },
                   toFieldMetadataId: { type: 'string', format: 'uuid' },
@@ -399,7 +466,10 @@ export const computeMetadataSchemaComponents = (
                 type: 'object',
                 properties: {
                   id: { type: 'string', format: 'uuid' },
-                  relationType: { type: 'string' },
+                  relationType: {
+                    type: 'string',
+                    enum: Object.keys(RelationMetadataType),
+                  },
                   fromObjectMetadata: {
                     type: 'object',
                     properties: {
@@ -408,20 +478,19 @@ export const computeMetadataSchemaComponents = (
                       nameSingular: { type: 'string' },
                       namePlural: { type: 'string' },
                       isSystem: { type: 'boolean' },
+                      isRemote: { type: 'boolean' },
                     },
                   },
                   fromFieldMetadataId: { type: 'string', format: 'uuid' },
                 },
               },
-              defaultValue: { type: 'object' },
-              options: { type: 'object' },
             },
           };
-          schemas[`${capitalize(item.namePlural)}`] = {
+          schemas[`${capitalize(item.namePlural)} for Response`] = {
             type: 'array',
             description: `A list of ${item.namePlural}`,
             items: {
-              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
             },
           };
 
@@ -432,7 +501,35 @@ export const computeMetadataSchemaComponents = (
             type: 'object',
             description: 'A relation',
             properties: {
-              relationType: { type: 'string' },
+              relationType: {
+                type: 'string',
+                enum: Object.keys(RelationMetadataType),
+              },
+              fromObjectMetadataId: { type: 'string', format: 'uuid' },
+              toObjectMetadataId: { type: 'string', format: 'uuid' },
+              fromName: { type: 'string' },
+              fromLabel: { type: 'string' },
+              toName: { type: 'string' },
+              toLabel: { type: 'string' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)} for Response`] = {
+            ...schemas[`${capitalize(item.nameSingular)}`],
+            properties: {
+              relationType: {
+                type: 'string',
+                enum: Object.keys(RelationMetadataType),
+              },
+              id: { type: 'string', format: 'uuid' },
+              fromFieldMetadataId: { type: 'string', format: 'uuid' },
+              toFieldMetadataId: { type: 'string', format: 'uuid' },
               fromObjectMetadata: {
                 type: 'object',
                 properties: {
@@ -441,9 +538,9 @@ export const computeMetadataSchemaComponents = (
                   nameSingular: { type: 'string' },
                   namePlural: { type: 'string' },
                   isSystem: { type: 'boolean' },
+                  isRemote: { type: 'boolean' },
                 },
               },
-              fromObjectMetadataId: { type: 'string' },
               toObjectMetadata: {
                 type: 'object',
                 properties: {
@@ -452,18 +549,16 @@ export const computeMetadataSchemaComponents = (
                   nameSingular: { type: 'string' },
                   namePlural: { type: 'string' },
                   isSystem: { type: 'boolean' },
+                  isRemote: { type: 'boolean' },
                 },
               },
-              toObjectMetadataId: { type: 'string', format: 'uuid' },
-              fromFieldMetadataId: { type: 'string', format: 'uuid' },
-              toFieldMetadataId: { type: 'string', format: 'uuid' },
             },
           };
-          schemas[`${capitalize(item.namePlural)}`] = {
+          schemas[`${capitalize(item.namePlural)} for Response`] = {
             type: 'array',
             description: `A list of ${item.namePlural}`,
             items: {
-              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
             },
           };
         }

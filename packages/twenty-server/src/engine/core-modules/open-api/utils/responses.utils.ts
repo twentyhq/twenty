@@ -7,7 +7,7 @@ export const getFindManyResponse200 = (
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
-  )}${!fromMetadata ? ' with Relations for Response' : ''}`;
+  )}${!fromMetadata ? ' with Relations' : ''} for Response`;
 
   return {
     description: 'Successful operation',
@@ -59,7 +59,7 @@ export const getFindOneResponse200 = (
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}${
     !fromMetadata ? ' with Relations for Response' : ''
-  }`;
+  } for Response`;
 
   return {
     description: 'Successful operation',
@@ -88,7 +88,7 @@ export const getCreateOneResponse201 = (
   fromMetadata = false,
 ) => {
   const one = fromMetadata ? 'One' : '';
-  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}${!fromMetadata ? ' for Response' : ''}`;
+  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}${!fromMetadata ? ' with Relations' : ''} for Response`;
 
   return {
     description: 'Successful operation',
@@ -149,7 +149,7 @@ export const getUpdateOneResponse200 = (
   fromMetadata = false,
 ) => {
   const one = fromMetadata ? 'One' : '';
-  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}${!fromMetadata ? ' for Response' : ''}`;
+  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}${!fromMetadata ? ' with Relations' : ''} for Response`;
 
   return {
     description: 'Successful operation',

@@ -22,7 +22,10 @@ import {
   computeManyResultPath,
   computeSingleResultPath,
 } from 'src/engine/core-modules/open-api/utils/path.utils';
-import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
+import {
+  getRequestBody,
+  getUpdateRequestBody,
+} from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import {
   getCreateOneResponse201,
   getDeleteResponse200,
@@ -187,7 +190,7 @@ export class OpenApiService {
             summary: `Update One ${item.nameSingular}`,
             operationId: `updateOne${capitalize(item.nameSingular)}`,
             parameters: [{ $ref: '#/components/parameters/idPath' }],
-            requestBody: getRequestBody(capitalize(item.nameSingular)),
+            requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
             responses: {
               '200': getUpdateOneResponse200(item, true),
               '400': { $ref: '#/components/responses/400' },
