@@ -17,42 +17,24 @@ export const useFindWorkflowWithCurrentVersion = (
     recordGqlFields: {
       id: true,
       name: true,
-      lastPublishedVersionId: true,
       statuses: true,
-      versions: true,
     },
     skip: !isDefined(workflowId),
   });
 
-  const { record: lastPublishedVersion } = useFindOneRecord<WorkflowVersion>({
-    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    objectRecordId: workflow?.lastPublishedVersionId,
-    skip: !(
-      typeof workflow?.lastPublishedVersionId === 'string' &&
-      workflow.lastPublishedVersionId !== ''
-    ),
-    recordGqlFields: {
-      id: true,
-      name: true,
-      createdAt: true,
-      updatedAt: true,
-      workflowId: true,
-      trigger: true,
-      steps: true,
-    },
-  });
-
-  const { records: workflowDraftVersions } =
+  const { records: mostRecentWorkflowVersions } =
     useFindManyRecords<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
       filter: {
-        status: {
-          eq: 'DRAFT',
-        },
         workflowId: {
           eq: workflowId,
         },
       },
+      orderBy: [
+        {
+          createdAt: 'DescNullsLast',
+        },
+      ],
       limit: 1,
       skip: !isDefined(workflowId),
     });
@@ -61,8 +43,10 @@ export const useFindWorkflowWithCurrentVersion = (
     return undefined;
   }
 
-  const draftVersion = workflowDraftVersions?.[0];
-  const currentVersion = draftVersion || lastPublishedVersion;
+  const currentVersion = mostRecentWorkflowVersions?.[0];
+  if (!isDefined(currentVersion)) {
+    return undefined;
+  }
 
   return {
     ...workflow,
