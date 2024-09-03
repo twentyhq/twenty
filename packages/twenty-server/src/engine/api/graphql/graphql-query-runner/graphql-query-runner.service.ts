@@ -120,8 +120,8 @@ export class GraphqlQueryRunnerService {
 
     let objectRecords: ObjectLiteral[] = [];
 
-    if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.person) {
-      // if (args.filter?.search) {
+    // if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.person) {
+    if (args.filter?.search) {
       if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.person) {
         throw new GraphqlQueryRunnerException(
           'Search is only supported for Person object',
@@ -131,7 +131,7 @@ export class GraphqlQueryRunnerService {
       const rawObjectRecords = await this.searchPerson(
         repository,
         select,
-        'com',
+        'design',
       );
 
       objectRecords = await repository.formatResult(rawObjectRecords);
@@ -167,14 +167,28 @@ export class GraphqlQueryRunnerService {
     const results = await repository
       .createQueryBuilder()
       .select(selectedFieldsWithoutRelations)
-      .where('"nameFirstName" % :searchTerm', { searchTerm })
-      .orWhere('"nameLastName" % :searchTerm', { searchTerm })
+      .where('"nameLastName" % :searchTerm', { searchTerm })
+      .orWhere('"nameFirstName" % :searchTerm', { searchTerm })
       .orWhere('email % :searchTerm', { searchTerm })
+      .orWhere('phone % :searchTerm', { searchTerm })
+      .orWhere('"searchVector" @@ to_tsquery(:searchTermWithSuffix)')
       .orderBy('similarity("nameFirstName", :searchTerm)', 'DESC')
       .addOrderBy('similarity("nameLastName", :searchTerm)', 'DESC')
       .addOrderBy('similarity(email, :searchTerm)', 'DESC')
+      .addOrderBy('similarity(phone, :searchTerm)', 'DESC')
+      .addOrderBy(
+        `ts_rank("searchVector", to_tsquery('simple', :searchTermWithSuffix))`,
+        'DESC',
+      )
       .setParameter('searchTerm', searchTerm)
+      .setParameter('searchTermWithSuffix', `${searchTerm}:*`)
       .execute();
+
+    //       SELECT *,
+    //       ts_rank("searchVector", to_tsquery('simple', 'Eléonor:* | H:*')) AS rank
+    // FROM person
+    // WHERE "searchVector" @@ to_tsquery('simple', 'Eléonor:* | H:*')
+    // ORDER BY rank DESC;
 
     return results;
   }
