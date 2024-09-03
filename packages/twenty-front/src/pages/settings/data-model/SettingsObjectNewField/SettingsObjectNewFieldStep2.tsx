@@ -181,10 +181,15 @@ export const SettingsObjectNewFieldStep2 = () => {
             <SettingsHeaderContainer>
               <Breadcrumb
                 links={[
-                  { children: 'Objects', href: '/settings/objects' },
+                  {
+                    children: 'Objects',
+                    href: '/settings/objects',
+                    styles: { minWidth: 'max-content' },
+                  },
                   {
                     children: activeObjectMetadataItem.labelPlural,
                     href: `/settings/objects/${objectSlug}`,
+                    styles: { maxWidth: '50%' },
                   },
                   { children: 'New Field' },
                 ]}
