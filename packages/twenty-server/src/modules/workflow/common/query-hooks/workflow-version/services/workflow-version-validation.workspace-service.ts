@@ -69,7 +69,7 @@ export class WorkflowVersionValidationWorkspaceService {
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
-    if (payload.data.status !== workflowVersion.status) {
+    if (payload.data.status && payload.data.status !== workflowVersion.status) {
       throw new WorkflowQueryValidationException(
         'Cannot update workflow version status manually',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
