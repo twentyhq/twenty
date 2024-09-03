@@ -166,21 +166,48 @@ export class GraphqlQueryRunnerService {
     const selectedFieldsWithoutRelations =
       this.getSelectedFieldsWithoutRelations(select);
 
-    const resultsWithTrigram = await repository
-      .createQueryBuilder()
-      .select(selectedFieldsWithoutRelations)
-      .where('"nameLastName" % :searchTerm', { searchTerm })
-      .orWhere('"nameFirstName" % :searchTerm', { searchTerm })
-      .orWhere('email % :searchTerm', { searchTerm })
-      .orWhere('phone % :searchTerm', { searchTerm })
-      .orderBy(
-        '(similarity("nameFirstName", :searchTerm) + similarity("nameLastName", :searchTerm))',
-        'DESC',
-      )
-      .setParameter('searchTerm', searchTerm)
-      .execute();
+    const getResultsWithTrigram = false;
 
-    return resultsWithTrigram;
+    if (getResultsWithTrigram) {
+      const similarityThreshold = 0.2;
+      const resultsWithTrigram = await repository
+        .createQueryBuilder()
+        .select(selectedFieldsWithoutRelations)
+        .where('similarity("nameLastName", :searchTerm) > :threshold', {
+          searchTerm,
+          threshold: similarityThreshold,
+        })
+        .orWhere('similarity("nameFirstName", :searchTerm) > :threshold', {
+          searchTerm,
+          threshold: similarityThreshold,
+        })
+
+        .orWhere('email % :searchTerm', { searchTerm })
+        .orWhere('phone % :searchTerm', { searchTerm })
+        .orWhere('"jobTitle" % :searchTerm', { searchTerm })
+        .orderBy(
+          '(similarity("nameFirstName", :searchTerm) + similarity("nameLastName", :searchTerm))',
+          'DESC',
+        )
+        .setParameter('searchTerm', searchTerm)
+        .execute();
+
+      return resultsWithTrigram;
+    } else {
+      const searchTerms = this.formatSearchTerms(searchTerm);
+
+      const resultsWithTsVector = await repository
+        .createQueryBuilder()
+        .select(selectedFieldsWithoutRelations)
+        .where('search_vector @@ to_tsquery(:searchTerms)', {
+          searchTerms,
+        })
+        .orderBy('ts_rank(search_vector, to_tsquery(:searchTerms))', 'DESC')
+        .setParameter('searchTerms', searchTerms)
+        .execute();
+
+      return resultsWithTsVector;
+    }
   }
 
   private getSelectedFieldsWithoutRelations(select: Record<string, any>) {
@@ -193,5 +220,18 @@ export class GraphqlQueryRunnerService {
     });
 
     return selectForQueryBuilder;
+  }
+
+  private formatSearchTerms(searchTerm: string) {
+    // Diviser la chaîne d'entrée en mots en utilisant les espaces comme séparateurs
+    const words = searchTerm.trim().split(/\s+/);
+
+    // Transformer chaque mot pour le mettre au format souhaité
+    const formattedWords = words.map((word) => `${word}:*`);
+
+    // Joindre les mots formatés avec " | "
+    const result = formattedWords.join(' | ');
+
+    return result;
   }
 }

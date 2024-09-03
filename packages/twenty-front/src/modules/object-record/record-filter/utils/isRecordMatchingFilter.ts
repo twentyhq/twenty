@@ -41,6 +41,10 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
+const isSearchFilter = (
+  filter: RecordGqlOperationFilter,
+): filter is NotObjectRecordFilter => 'search' in filter && !!filter.search;
+
 export const isRecordMatchingFilter = ({
   record,
   filter,
@@ -118,6 +122,10 @@ export const isRecordMatchingFilter = ({
         objectMetadataItem,
       })
     );
+  }
+
+  if (isSearchFilter(filter)) {
+    return false; //TODO
   }
 
   return Object.entries(filter).every(([filterKey, filterValue]) => {
