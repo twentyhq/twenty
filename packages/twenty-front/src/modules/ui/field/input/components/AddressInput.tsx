@@ -9,6 +9,7 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { isDefined } from '~/utils/isDefined';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledAddressContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -23,11 +24,27 @@ const StyledAddressContainer = styled.div`
   > div {
     margin-bottom: 6px;
   }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    min-width: 100px;
+    max-width: 240px;
+    overflow: hidden;
+    > div {
+      margin-bottom: 8px;
+    }
+  }
 `;
 
 const StyledHalfRowContainer = styled.div`
   display: flex;
   gap: 8px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: block;
+    > div {
+      margin-bottom: 7px;
+    }
+  }
 `;
 
 export type AddressInputProps = {

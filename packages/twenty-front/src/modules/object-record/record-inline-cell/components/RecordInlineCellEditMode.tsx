@@ -19,7 +19,7 @@ const StyledInlineCellInput = styled.div`
   display: flex;
 
   min-height: 32px;
-  min-width: 320px;
+  min-width: 240px;
 
   width: inherit;
 
