@@ -16,7 +16,7 @@ import { useCallback, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const WorkflowShowPageDiagramEffect = () => {
+export const WorkflowDiagramCanvasEffect = () => {
   const reactflow = useReactFlow<WorkflowDiagramNode, WorkflowDiagramEdge>();
 
   const { startNodeCreation } = useStartNodeCreation();

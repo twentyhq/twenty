@@ -1,6 +1,6 @@
+import { WorkflowDiagramCanvasEffect } from '@/workflow/components/WorkflowDiagramCanvasEffect';
 import { WorkflowDiagramCreateStepNode } from '@/workflow/components/WorkflowDiagramCreateStepNode';
 import { WorkflowDiagramStepNode } from '@/workflow/components/WorkflowDiagramStepNode';
-import { WorkflowShowPageDiagramEffect } from '@/workflow/components/WorkflowShowPageDiagramEffect';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import {
   WorkflowDiagram,
@@ -79,7 +79,7 @@ export const WorkflowDiagramCanvas = ({
       onNodesChange={handleNodesChange}
       onEdgesChange={handleEdgesChange}
     >
-      <WorkflowShowPageDiagramEffect />
+      <WorkflowDiagramCanvasEffect />
 
       <Background color={GRAY_SCALE.gray25} size={2} />
     </ReactFlow>
