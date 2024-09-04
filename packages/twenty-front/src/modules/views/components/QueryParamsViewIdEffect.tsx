@@ -53,9 +53,7 @@ export const QueryParamsViewIdEffect = () => {
           viewId: lastVisitedViewId,
         });
       }
-
       setCurrentViewId(lastVisitedViewId);
-
       return;
     }
 
