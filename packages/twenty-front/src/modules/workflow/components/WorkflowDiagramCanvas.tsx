@@ -1,6 +1,6 @@
-import { WorkflowShowPageDiagramCreateStepNode } from '@/workflow/components/WorkflowShowPageDiagramCreateStepNode';
+import { WorkflowDiagramCreateStepNode } from '@/workflow/components/WorkflowDiagramCreateStepNode';
+import { WorkflowDiagramStepNode } from '@/workflow/components/WorkflowDiagramStepNode';
 import { WorkflowShowPageDiagramEffect } from '@/workflow/components/WorkflowShowPageDiagramEffect';
-import { WorkflowShowPageDiagramStepNode } from '@/workflow/components/WorkflowShowPageDiagramStepNode';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import {
   WorkflowDiagram,
@@ -70,8 +70,8 @@ export const WorkflowDiagramCanvas = ({
   return (
     <ReactFlow
       nodeTypes={{
-        default: WorkflowShowPageDiagramStepNode,
-        'create-step': WorkflowShowPageDiagramCreateStepNode,
+        default: WorkflowDiagramStepNode,
+        'create-step': WorkflowDiagramCreateStepNode,
       }}
       fitView
       nodes={nodes.map((node) => ({ ...node, draggable: false }))}
