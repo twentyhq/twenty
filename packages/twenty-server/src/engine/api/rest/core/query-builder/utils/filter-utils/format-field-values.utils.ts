@@ -24,9 +24,9 @@ export const formatFieldValue = (
     return value;
   }
   switch (fieldType) {
-    case FieldMetadataType.NUMBER:
     case FieldMetadataType.NUMERIC:
       return parseInt(value);
+    case FieldMetadataType.NUMBER:
     case FieldMetadataType.POSITION:
       return parseFloat(value);
     case FieldMetadataType.BOOLEAN:
