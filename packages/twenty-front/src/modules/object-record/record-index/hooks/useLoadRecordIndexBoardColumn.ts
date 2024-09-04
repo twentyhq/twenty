@@ -50,14 +50,15 @@ export const useLoadRecordIndexBoardColumn = ({
     (field) => field.id === boardFieldMetadataId,
   );
 
-  const filter = {
-    ...requestFilters,
-    [recordIndexKanbanFieldMetadataItem?.name ?? '']: isDefined(
-      columnFieldSelectValue,
-    )
-      ? { in: [columnFieldSelectValue] }
-      : { is: 'NULL' },
-  };
+  const filter = requestFilters
+    ? requestFilters
+    : {
+        [recordIndexKanbanFieldMetadataItem?.name ?? '']: isDefined(
+          columnFieldSelectValue,
+        )
+          ? { in: [columnFieldSelectValue] }
+          : { is: 'NULL' },
+      };
 
   const {
     records,
