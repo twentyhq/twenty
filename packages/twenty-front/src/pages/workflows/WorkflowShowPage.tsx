@@ -4,7 +4,7 @@ import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { WorkflowShowPageDiagram } from '@/workflow/components/WorkflowShowPageDiagram';
 import { WorkflowShowPageEffect } from '@/workflow/components/WorkflowShowPageEffect';
 import { WorkflowShowPageHeader } from '@/workflow/components/WorkflowShowPageHeader';
-import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
+import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import styled from '@emotion/styled';
 import '@xyflow/react/dist/style.css';
 import { useParams } from 'react-router-dom';
@@ -37,7 +37,7 @@ export const WorkflowShowPage = () => {
 
   const workflowName = 'Test Workflow';
 
-  const showPageWorkflowDiagram = useRecoilValue(showPageWorkflowDiagramState);
+  const workflowDiagram = useRecoilValue(workflowDiagramState);
 
   if (parameters.workflowId === undefined) {
     return null;
@@ -54,8 +54,8 @@ export const WorkflowShowPage = () => {
       />
       <PageBody>
         <StyledFlowContainer>
-          {showPageWorkflowDiagram === undefined ? null : (
-            <WorkflowShowPageDiagram diagram={showPageWorkflowDiagram} />
+          {workflowDiagram === undefined ? null : (
+            <WorkflowShowPageDiagram diagram={workflowDiagram} />
           )}
         </StyledFlowContainer>
       </PageBody>

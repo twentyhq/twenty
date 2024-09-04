@@ -1,7 +1,7 @@
 import { WorkflowShowPageDiagramCreateStepNode } from '@/workflow/components/WorkflowShowPageDiagramCreateStepNode';
 import { WorkflowShowPageDiagramEffect } from '@/workflow/components/WorkflowShowPageDiagramEffect';
 import { WorkflowShowPageDiagramStepNode } from '@/workflow/components/WorkflowShowPageDiagramStepNode';
-import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
+import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
@@ -31,14 +31,12 @@ export const WorkflowShowPageDiagram = ({
     [diagram],
   );
 
-  const setShowPageWorkflowDiagram = useSetRecoilState(
-    showPageWorkflowDiagramState,
-  );
+  const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
   const handleNodesChange = (
     nodeChanges: Array<NodeChange<WorkflowDiagramNode>>,
   ) => {
-    setShowPageWorkflowDiagram((diagram) => {
+    setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
           'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
@@ -55,7 +53,7 @@ export const WorkflowShowPageDiagram = ({
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
   ) => {
-    setShowPageWorkflowDiagram((diagram) => {
+    setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
           'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',

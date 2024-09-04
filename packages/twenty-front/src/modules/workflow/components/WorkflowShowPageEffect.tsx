@@ -1,6 +1,6 @@
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
 import { showPageWorkflowIdState } from '@/workflow/states/showPageWorkflowIdState';
+import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
@@ -17,9 +17,7 @@ export const WorkflowShowPageEffect = ({
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const setShowPageWorkflowId = useSetRecoilState(showPageWorkflowIdState);
-  const setCurrentWorkflowData = useSetRecoilState(
-    showPageWorkflowDiagramState,
-  );
+  const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
   useEffect(() => {
     setShowPageWorkflowId(workflowId);
@@ -28,7 +26,7 @@ export const WorkflowShowPageEffect = ({
   useEffect(() => {
     const currentVersion = workflowWithCurrentVersion?.currentVersion;
     if (!isDefined(currentVersion)) {
-      setCurrentWorkflowData(undefined);
+      setWorkflowDiagram(undefined);
 
       return;
     }
@@ -36,8 +34,8 @@ export const WorkflowShowPageEffect = ({
     const flowLastVersion = getWorkflowVersionDiagram(currentVersion);
     const flowWithCreateStepNodes = addCreateStepNodes(flowLastVersion);
 
-    setCurrentWorkflowData(flowWithCreateStepNodes);
-  }, [setCurrentWorkflowData, workflowWithCurrentVersion?.currentVersion]);
+    setWorkflowDiagram(flowWithCreateStepNodes);
+  }, [setWorkflowDiagram, workflowWithCurrentVersion?.currentVersion]);
 
   return null;
 };
