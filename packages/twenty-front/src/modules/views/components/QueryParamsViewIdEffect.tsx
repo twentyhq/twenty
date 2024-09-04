@@ -1,13 +1,10 @@
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
-import { View } from '@/views/types/View';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
@@ -36,8 +33,6 @@ export const QueryParamsViewIdEffect = () => {
     objectMetadataItemId?.id,
     lastVisitedObjectMetadataItemId,
   );
-
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const { resetCurrentView } = useResetCurrentView();
 
@@ -74,9 +69,7 @@ export const QueryParamsViewIdEffect = () => {
           viewId: viewIdQueryParam,
         });
       }
-
       setCurrentViewId(viewIdQueryParam);
-
       return;
     }
 
@@ -90,13 +83,10 @@ export const QueryParamsViewIdEffect = () => {
           viewId: indexView.id,
         });
       }
-
       setCurrentViewId(indexView.id);
-
       return;
     }
   }, [
-    views,
     currentViewId,
     getFiltersFromQueryParams,
     isLastVisitedObjectMetadataItemDifferent,
@@ -108,7 +98,6 @@ export const QueryParamsViewIdEffect = () => {
     setLastVisitedView,
     viewIdQueryParam,
     viewsOnCurrentObject,
-    resetCurrentView,
   ]);
 
   return <></>;
