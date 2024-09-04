@@ -58,6 +58,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
   const unsavedToUpsertViewFilters = useRecoilValue(
     unsavedToUpsertViewFiltersState,
   );
+
   const unsavedToUpsertViewSorts = useRecoilValue(
     unsavedToUpsertViewSortsState,
   );
