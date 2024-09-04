@@ -45,7 +45,6 @@ export const ViewBar = ({
     return;
   }
 
-  // TODO: effects have dangerous cyclical dependencies that rapidly cause infinite loop
   return (
     <ViewScope
       viewScopeId={viewBarId}
