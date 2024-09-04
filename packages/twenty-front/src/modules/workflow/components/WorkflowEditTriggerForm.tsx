@@ -1,5 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { OBJECT_EVENT_TRIGGERS } from '@/workflow/constants/ObjectEventTriggers';
 import { WorkflowTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { useTheme } from '@emotion/react';
@@ -73,21 +74,7 @@ export const WorkflowEditTriggerForm = ({
     );
   }
 
-  const availableEvents: Array<SelectOption<string>> = [
-    {
-      label: 'Created',
-      value: 'created',
-    },
-    {
-      label: 'Updated',
-      value: 'updated',
-    },
-    {
-      label: 'Deleted',
-      value: 'deleted',
-    },
-  ];
-  const selectedEvent = availableEvents.find(
+  const selectedEvent = OBJECT_EVENT_TRIGGERS.find(
     (availableEvent) => availableEvent.value === triggerEvent.event,
   );
   if (!isDefined(selectedEvent)) {
@@ -132,7 +119,7 @@ export const WorkflowEditTriggerForm = ({
           label="Event type"
           fullWidth
           value={triggerEvent.event}
-          options={availableEvents}
+          options={OBJECT_EVENT_TRIGGERS}
           onChange={(updatedEvent) => {
             onUpdateTrigger({
               ...trigger,
