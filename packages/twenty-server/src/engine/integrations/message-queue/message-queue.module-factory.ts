@@ -34,6 +34,8 @@ export const messageQueueModuleFactory = async (
     case MessageQueueDriverType.BullMQ: {
       const host = environmentService.get('REDIS_HOST');
       const port = environmentService.get('REDIS_PORT');
+      const username = environmentService.get('REDIS_USERNAME');
+      const password = environmentService.get('REDIS_PASSWORD');
 
       return {
         type: MessageQueueDriverType.BullMQ,
@@ -41,6 +43,8 @@ export const messageQueueModuleFactory = async (
           connection: {
             host,
             port,
+            username,
+            password,
           },
         },
       };
