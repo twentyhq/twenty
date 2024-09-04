@@ -31,10 +31,11 @@ export const WorkflowShowPageEffect = ({
       return;
     }
 
-    const flowLastVersion = getWorkflowVersionDiagram(currentVersion);
-    const flowWithCreateStepNodes = addCreateStepNodes(flowLastVersion);
+    const lastWorkflowDiagram = getWorkflowVersionDiagram(currentVersion);
+    const workflowDiagramWithCreateStepNodes =
+      addCreateStepNodes(lastWorkflowDiagram);
 
-    setWorkflowDiagram(flowWithCreateStepNodes);
+    setWorkflowDiagram(workflowDiagramWithCreateStepNodes);
   }, [setWorkflowDiagram, workflowWithCurrentVersion?.currentVersion]);
 
   return null;
