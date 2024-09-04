@@ -1,5 +1,5 @@
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { ACTIONS } from '@/workflow/constants/actions';
+import { ACTIONS } from '@/workflow/constants/Actions';
 import { useCreateStep } from '@/workflow/hooks/useCreateStep';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
