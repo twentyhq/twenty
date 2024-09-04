@@ -10,7 +10,7 @@ import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { View } from '@/views/types/View';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
@@ -41,25 +41,11 @@ export const QueryParamsViewIdEffect = () => {
 
   const { resetCurrentView } = useResetCurrentView();
 
-  const { unsavedToUpsertViewFiltersState, unsavedToUpsertViewSortsState } =
-    useViewStates();
-
-  const setUnsavedViewFilters = useSetRecoilState(
-    unsavedToUpsertViewFiltersState,
-  );
-
-  const setUnsavedViewSorts = useSetRecoilState(unsavedToUpsertViewSortsState);
-
   useEffect(() => {
     if (isDefined(currentViewId)) {
-      const view = views.find((view) => view.id === currentViewId);
-
-      if (isDefined(view)) {
-        setUnsavedViewFilters(view.viewFilters ?? []);
-        setUnsavedViewSorts(view.viewSorts ?? []);
-      }
+      resetCurrentView();
     }
-  }, [currentViewId, views, setUnsavedViewFilters, setUnsavedViewSorts]);
+  }, [resetCurrentView, currentViewId]);
 
   useEffect(() => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
@@ -111,8 +97,6 @@ export const QueryParamsViewIdEffect = () => {
     }
   }, [
     views,
-    setUnsavedViewFilters,
-    setUnsavedViewSorts,
     currentViewId,
     getFiltersFromQueryParams,
     isLastVisitedObjectMetadataItemDifferent,
