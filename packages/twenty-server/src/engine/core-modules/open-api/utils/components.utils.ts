@@ -105,7 +105,7 @@ const getSchemaComponentsProperties = ({
   return item.fields.reduce((node, field) => {
     if (
       !isFieldAvailable(field, forResponse) ||
-      field.type == FieldMetadataType.RELATION
+      field.type === FieldMetadataType.RELATION
     ) {
       return node;
     }
@@ -170,19 +170,21 @@ const getSchemaComponentsRelationProperties = (
   item: ObjectMetadataEntity,
 ): Properties => {
   return item.fields.reduce((node, field) => {
+    if (field.type !== FieldMetadataType.RELATION) {
+      return node;
+    }
+
     let itemProperty = {} as Property;
 
-    if (field.type == FieldMetadataType.RELATION) {
-      if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
-        itemProperty = {
-          type: 'array',
-          items: {
-            $ref: `#/components/schemas/${capitalize(
-              field.fromRelationMetadata?.toObjectMetadata.nameSingular || '',
-            )}`,
-          },
-        };
-      }
+    if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
+      itemProperty = {
+        type: 'array',
+        items: {
+          $ref: `#/components/schemas/${capitalize(
+            field.fromRelationMetadata?.toObjectMetadata.nameSingular,
+          )} for Response`,
+        },
+      };
     }
 
     if (field.description) {
@@ -211,10 +213,14 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
 
 const computeSchemaComponent = ({
   item,
+  withRequiredFields,
   forResponse,
+  withRelations,
 }: {
   item: ObjectMetadataEntity;
+  withRequiredFields: boolean;
   forResponse: boolean;
+  withRelations: boolean;
 }): OpenAPIV3_1.SchemaObject => {
   const result = {
     type: 'object',
@@ -222,40 +228,14 @@ const computeSchemaComponent = ({
     properties: getSchemaComponentsProperties({ item, forResponse }),
   } as OpenAPIV3_1.SchemaObject;
 
-  if (forResponse) {
-    return result;
+  if (withRelations) {
+    result.properties = {
+      ...result.properties,
+      ...getSchemaComponentsRelationProperties(item),
+    };
   }
 
-  const requiredFields = getRequiredFields(item);
-
-  if (requiredFields?.length) {
-    result.required = requiredFields;
-  }
-
-  return result;
-};
-
-const computeRelationSchemaComponent = ({
-  item,
-  forResponse,
-}: {
-  item: ObjectMetadataEntity;
-  forResponse: boolean;
-}): OpenAPIV3_1.SchemaObject => {
-  const result = {
-    description: item.description,
-    allOf: [
-      {
-        $ref: `#/components/schemas/${capitalize(item.nameSingular)}${forResponse ? ' for Response' : ''}`,
-      },
-      {
-        type: 'object',
-        properties: getSchemaComponentsRelationProperties(item),
-      },
-    ],
-  } as OpenAPIV3_1.SchemaObject;
-
-  if (forResponse) {
+  if (!withRequiredFields) {
     return result;
   }
 
@@ -275,12 +255,24 @@ export const computeSchemaComponents = (
     (schemas, item) => {
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,
+        withRequiredFields: true,
         forResponse: false,
+        withRelations: false,
       });
+      schemas[capitalize(item.nameSingular) + ' for Update'] =
+        computeSchemaComponent({
+          item,
+          withRequiredFields: false,
+          forResponse: false,
+          withRelations: false,
+        });
       schemas[capitalize(item.nameSingular) + ' for Response'] =
-        computeSchemaComponent({ item, forResponse: true });
-      schemas[capitalize(item.nameSingular) + ' with Relations for Response'] =
-        computeRelationSchemaComponent({ item, forResponse: true });
+        computeSchemaComponent({
+          item,
+          withRequiredFields: false,
+          forResponse: true,
+          withRelations: true,
+        });
 
       return schemas;
     },
