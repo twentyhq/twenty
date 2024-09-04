@@ -112,7 +112,7 @@ export const WorkflowEditTriggerForm = ({
 
       <StyledTriggerSettings>
         <Select
-          dropdownId="right-drawer-workflow-edit-step-trigger-record-type"
+          dropdownId="workflow-edit-trigger-record-type"
           label="Record Type"
           fullWidth
           value={triggerEvent.objectType}
@@ -128,7 +128,7 @@ export const WorkflowEditTriggerForm = ({
           }}
         />
         <Select
-          dropdownId="right-drawer-workflow-edit-step-trigger-event-type"
+          dropdownId="workflow-edit-trigger-event-type"
           label="Event type"
           fullWidth
           value={triggerEvent.event}

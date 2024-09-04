@@ -82,7 +82,7 @@ export const WorkflowEditActionForm = ({
 
       <StyledTriggerSettings>
         <Select
-          dropdownId="right-drawer-workflow-edit-step-action-function"
+          dropdownId="workflow-edit-action-function"
           label="Function"
           fullWidth
           value={action.settings.serverlessFunctionId}
