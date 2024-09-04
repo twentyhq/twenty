@@ -3,7 +3,7 @@ import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
-import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
+import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
 import { useRecoilValue } from 'recoil';
@@ -52,10 +52,8 @@ export const RightDrawerWorkflowEditStepContent = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const showPageWorkflowSelectedNode = useRecoilValue(
-    showPageWorkflowSelectedNodeState,
-  );
-  if (!isDefined(showPageWorkflowSelectedNode)) {
+  const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
+  if (!isDefined(workflowSelectedNode)) {
     throw new Error(
       'Expected a node to be selected. Selecting a node is mandatory to edit it.',
     );
@@ -64,11 +62,11 @@ export const RightDrawerWorkflowEditStepContent = ({
   const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
   const { updateStep } = useUpdateWorkflowVersionStep({
     workflow,
-    stepId: showPageWorkflowSelectedNode,
+    stepId: workflowSelectedNode,
   });
 
   const stepDefinition = getStepDefinitionOrThrow({
-    stepId: showPageWorkflowSelectedNode,
+    stepId: workflowSelectedNode,
     workflow,
   });
 
