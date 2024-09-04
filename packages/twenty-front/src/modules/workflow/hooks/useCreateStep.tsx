@@ -13,7 +13,7 @@ import { insertStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useRightDrawerWorkflowSelectActionCreateStep = ({
+export const useCreateStep = ({
   workflow,
 }: {
   workflow: WorkflowWithCurrentVersion;
