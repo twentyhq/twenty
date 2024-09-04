@@ -1,12 +1,8 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
-import { showPageWorkflowErrorState } from '@/workflow/states/showPageWorkflowErrorState';
-import { showPageWorkflowIdState } from '@/workflow/states/showPageWorkflowIdState';
-import { showPageWorkflowLoadingState } from '@/workflow/states/showPageWorkflowLoadingState';
-import { Workflow } from '@/workflow/types/Workflow';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
-import { getWorkflowLastDiagramVersion } from '@/workflow/utils/getWorkflowLastDiagramVersion';
+import { getWorkflowVersionDiagram } from '@/workflow/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -18,50 +14,29 @@ type WorkflowShowPageEffectProps = {
 export const WorkflowShowPageEffect = ({
   workflowId,
 }: WorkflowShowPageEffectProps) => {
-  const {
-    record: workflow,
-    loading,
-    error,
-  } = useFindOneRecord<Workflow>({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-    objectRecordId: workflowId,
-    recordGqlFields: {
-      id: true,
-      name: true,
-      versions: true,
-      publishedVersionId: true,
-    },
-  });
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
-  const setShowPageWorkflowId = useSetRecoilState(showPageWorkflowIdState);
-  const setCurrentWorkflowData = useSetRecoilState(
-    showPageWorkflowDiagramState,
-  );
-  const setCurrentWorkflowLoading = useSetRecoilState(
-    showPageWorkflowLoadingState,
-  );
-  const setCurrentWorkflowError = useSetRecoilState(showPageWorkflowErrorState);
+  const setWorkflowId = useSetRecoilState(workflowIdState);
+  const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
   useEffect(() => {
-    setShowPageWorkflowId(workflowId);
-  }, [setShowPageWorkflowId, workflowId]);
+    setWorkflowId(workflowId);
+  }, [setWorkflowId, workflowId]);
 
   useEffect(() => {
-    const flowLastVersion = getWorkflowLastDiagramVersion(workflow);
-    const flowWithCreateStepNodes = addCreateStepNodes(flowLastVersion);
+    const currentVersion = workflowWithCurrentVersion?.currentVersion;
+    if (!isDefined(currentVersion)) {
+      setWorkflowDiagram(undefined);
 
-    setCurrentWorkflowData(
-      isDefined(workflow) ? flowWithCreateStepNodes : undefined,
-    );
-  }, [setCurrentWorkflowData, workflow]);
+      return;
+    }
 
-  useEffect(() => {
-    setCurrentWorkflowLoading(loading);
-  }, [loading, setCurrentWorkflowLoading]);
+    const lastWorkflowDiagram = getWorkflowVersionDiagram(currentVersion);
+    const workflowDiagramWithCreateStepNodes =
+      addCreateStepNodes(lastWorkflowDiagram);
 
-  useEffect(() => {
-    setCurrentWorkflowError(error);
-  }, [error, setCurrentWorkflowError]);
+    setWorkflowDiagram(workflowDiagramWithCreateStepNodes);
+  }, [setWorkflowDiagram, workflowWithCurrentVersion?.currentVersion]);
 
   return null;
 };

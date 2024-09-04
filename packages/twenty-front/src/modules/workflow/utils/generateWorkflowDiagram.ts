@@ -1,11 +1,14 @@
+import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
 } from '@/workflow/types/WorkflowDiagram';
+import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { MarkerType } from '@xyflow/react';
 import { v4 } from 'uuid';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const generateWorkflowDiagram = ({
   trigger,
@@ -58,12 +61,15 @@ export const generateWorkflowDiagram = ({
   };
 
   // Start with the trigger node
-  const triggerNodeId = 'trigger';
+  const triggerNodeId = TRIGGER_STEP_ID;
+  const triggerEvent = splitWorkflowTriggerEventName(
+    trigger.settings.eventName,
+  );
   nodes.push({
     id: triggerNodeId,
     data: {
       nodeType: 'trigger',
-      label: trigger.settings.eventName,
+      label: `${capitalize(triggerEvent.objectType)} is ${capitalize(triggerEvent.event)}`,
     },
     position: {
       x: 0,
