@@ -44,7 +44,7 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const RightDrawerWorkflowEditStepContentTrigger = ({
+export const WorkflowEditTriggerForm = ({
   trigger,
   onUpdateTrigger,
 }: {

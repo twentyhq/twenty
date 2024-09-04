@@ -1,5 +1,5 @@
-import { RightDrawerWorkflowEditStepContentAction } from '@/workflow/components/RightDrawerWorkflowEditStepContentAction';
-import { RightDrawerWorkflowEditStepContentTrigger } from '@/workflow/components/RightDrawerWorkflowEditStepContentTrigger';
+import { WorkflowEditActionForm } from '@/workflow/components/WorkflowEditActionForm';
+import { WorkflowEditTriggerForm } from '@/workflow/components/WorkflowEditTriggerForm';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
@@ -72,7 +72,7 @@ export const RightDrawerWorkflowEditStepContent = ({
 
   if (stepDefinition.type === 'trigger') {
     return (
-      <RightDrawerWorkflowEditStepContentTrigger
+      <WorkflowEditTriggerForm
         trigger={stepDefinition.definition}
         onUpdateTrigger={updateTrigger}
       />
@@ -80,7 +80,7 @@ export const RightDrawerWorkflowEditStepContent = ({
   }
 
   return (
-    <RightDrawerWorkflowEditStepContentAction
+    <WorkflowEditActionForm
       action={stepDefinition.definition}
       onUpdateAction={updateStep}
     />
