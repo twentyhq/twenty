@@ -52,7 +52,7 @@ export const useRecordShowPagePagination = (
       objectNameSingular,
       recordGqlFields: { id: true },
     });
-
+  console.log(currentRecordsPageInfo)
   const cursorFromRequest = currentRecordsPageInfo?.endCursor;
 
   const [totalCountBefore, setTotalCountBefore] = useState<number>(0);

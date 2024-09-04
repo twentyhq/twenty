@@ -58,7 +58,6 @@ export const useLoadRecordIndexBoardColumn = ({
       ? { in: [columnFieldSelectValue] }
       : { is: 'NULL' },
   };
-
   const {
     records,
     loading,
@@ -72,9 +71,10 @@ export const useLoadRecordIndexBoardColumn = ({
     recordGqlFields,
     limit: 10,
   });
-
+  console.log(records)
   useEffect(() => {
     setRecordIdsForColumn(columnId, records);
+    console.log(columnId)
   }, [records, setRecordIdsForColumn, columnId]);
 
   useEffect(() => {

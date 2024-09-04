@@ -123,7 +123,6 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
           recordBefore?.position,
           recordAfter?.position,
         );
-
         updateOneRecord({
           idToUpdate: draggedRecordId,
           updateOneRecordInput: {

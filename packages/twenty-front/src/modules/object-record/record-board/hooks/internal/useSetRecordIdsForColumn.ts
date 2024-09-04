@@ -19,7 +19,6 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
         const column = snapshot
           .getLoadable(columnsFamilySelector(columnId))
           .getValue();
-
         const existingColumnRecordIds = snapshot
           .getLoadable(recordIdsByColumnIdFamilyState(columnId))
           .getValue();
