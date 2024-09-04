@@ -1,8 +1,8 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useStartNodeCreation } from '@/workflow/hooks/useStartNodeCreation';
-import { showPageWorkflowDiagramTriggerNodeSelectionState } from '@/workflow/states/showPageWorkflowDiagramTriggerNodeSelectionState';
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
+import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
@@ -26,8 +26,8 @@ export const WorkflowShowPageDiagramEffect = () => {
     showPageWorkflowSelectedNodeState,
   );
 
-  const showPageWorkflowDiagramTriggerNodeSelection = useRecoilValue(
-    showPageWorkflowDiagramTriggerNodeSelectionState,
+  const workflowDiagramTriggerNodeSelection = useRecoilValue(
+    workflowDiagramTriggerNodeSelectionState,
   );
 
   const handleSelectionChange = useCallback(
@@ -68,14 +68,14 @@ export const WorkflowShowPageDiagramEffect = () => {
   });
 
   useEffect(() => {
-    if (!isDefined(showPageWorkflowDiagramTriggerNodeSelection)) {
+    if (!isDefined(workflowDiagramTriggerNodeSelection)) {
       return;
     }
 
-    reactflow.updateNode(showPageWorkflowDiagramTriggerNodeSelection, {
+    reactflow.updateNode(workflowDiagramTriggerNodeSelection, {
       selected: true,
     });
-  }, [reactflow, showPageWorkflowDiagramTriggerNodeSelection]);
+  }, [reactflow, workflowDiagramTriggerNodeSelection]);
 
   return null;
 };

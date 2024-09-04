@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { showPageWorkflowDiagramTriggerNodeSelectionState } from '@/workflow/states/showPageWorkflowDiagramTriggerNodeSelectionState';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
+import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
 import {
   WorkflowStep,
   WorkflowStepType,
@@ -22,8 +22,8 @@ export const useRightDrawerWorkflowSelectActionCreateStep = ({
     workflowCreateStepFromParentStepIdState,
   );
 
-  const setShowPageWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
-    showPageWorkflowDiagramTriggerNodeSelectionState,
+  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
+    workflowDiagramTriggerNodeSelectionState,
   );
 
   const { updateOneRecord: updateOneWorkflowVersion } =
@@ -74,7 +74,7 @@ export const useRightDrawerWorkflowSelectActionCreateStep = ({
      *
      * Selecting the node will cause a right drawer to open in order to edit the step.
      */
-    setShowPageWorkflowDiagramTriggerNodeSelection(newStep.id);
+    setWorkflowDiagramTriggerNodeSelection(newStep.id);
   };
 
   return {
