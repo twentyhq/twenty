@@ -21,7 +21,7 @@ import { useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined } from 'twenty-ui';
 
-export const WorkflowShowPageDiagram = ({
+export const WorkflowDiagramCanvas = ({
   diagram,
 }: {
   diagram: WorkflowDiagram;

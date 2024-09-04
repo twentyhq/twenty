@@ -1,7 +1,7 @@
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
-import { WorkflowShowPageDiagram } from '@/workflow/components/WorkflowShowPageDiagram';
+import { WorkflowDiagramCanvas } from '@/workflow/components/WorkflowDiagramCanvas';
 import { WorkflowShowPageEffect } from '@/workflow/components/WorkflowShowPageEffect';
 import { WorkflowShowPageHeader } from '@/workflow/components/WorkflowShowPageHeader';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
@@ -55,7 +55,7 @@ export const WorkflowShowPage = () => {
       <PageBody>
         <StyledFlowContainer>
           {workflowDiagram === undefined ? null : (
-            <WorkflowShowPageDiagram diagram={workflowDiagram} />
+            <WorkflowDiagramCanvas diagram={workflowDiagram} />
           )}
         </StyledFlowContainer>
       </PageBody>
