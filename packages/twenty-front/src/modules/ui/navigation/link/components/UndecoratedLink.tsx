@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 
-interface StyledLinkProps extends LinkProps {
+type StyledLinkProps = LinkProps & {
   fullWidth?: boolean;
-}
+};
 
 const StyledUndecoratedLink = styled(
   // eslint-disable-next-line react/jsx-props-no-spreading
