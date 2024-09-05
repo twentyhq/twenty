@@ -1,6 +1,7 @@
 import { forwardRef, InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
+import { useFocus } from '../../../input/hooks/useFocus';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -35,12 +36,15 @@ const StyledInput = styled.input`
 export const DropdownMenuSearchInput = forwardRef<
   HTMLInputElement,
   InputHTMLAttributes<HTMLInputElement>
->(({ value, onChange, autoFocus, placeholder = 'Search', type }, ref) => (
-  <StyledDropdownMenuSearchInputContainer>
-    <StyledInput
-      autoComplete="off"
-      {...{ autoFocus, onChange, placeholder, type, value }}
-      ref={ref}
-    />
-  </StyledDropdownMenuSearchInputContainer>
-));
+>(({ value, onChange, placeholder = 'Search', type }) => {
+  const {inputRef} = useFocus()
+  return (
+    <StyledDropdownMenuSearchInputContainer>
+      <StyledInput
+        autoComplete="off"
+        {...{ onChange, placeholder, type, value }}
+        ref={inputRef}
+      />
+    </StyledDropdownMenuSearchInputContainer>
+  );
+});
