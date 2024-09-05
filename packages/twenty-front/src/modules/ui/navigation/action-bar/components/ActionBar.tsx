@@ -23,7 +23,7 @@ const StyledContainerActionBar = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   height: 48px;
-
+  width: max-content;
   left: 50%;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
