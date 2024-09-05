@@ -9,6 +9,7 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
+import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
@@ -31,7 +32,8 @@ export const getFieldButtonIcon = (
       fieldDefinition.metadata.relationObjectMetadataNameSingular !==
         'workspaceMember') ||
     isFieldLinks(fieldDefinition) ||
-    isFieldEmails(fieldDefinition)
+    isFieldEmails(fieldDefinition) ||
+    isFieldArray(fieldDefinition)
   ) {
     return IconPencil;
   }

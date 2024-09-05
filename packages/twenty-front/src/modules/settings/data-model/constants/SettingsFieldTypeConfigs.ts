@@ -1,4 +1,5 @@
 import {
+  IconBracketsContain,
   IconCalendarEvent,
   IconCalendarTime,
   IconCheck,
@@ -146,6 +147,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Actor]: {
     label: 'Actor',
     Icon: IconCreativeCommonsSa,
+  },
+  [FieldMetadataType.Array]: {
+    label: 'Array',
+    Icon: IconBracketsContain,
+    exampleValue: ['value1', 'value2'],
   },
 } as const satisfies Record<
   SettingsSupportedFieldType,

@@ -157,6 +157,12 @@ export type FieldActorMetadata = {
   fieldName: string;
 };
 
+export type FieldArrayMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  values: { label: string; value: string }[];
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -174,7 +180,8 @@ export type FieldMetadata =
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldAddressMetadata
-  | FieldActorMetadata;
+  | FieldActorMetadata
+  | FieldArrayMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -230,3 +237,5 @@ export type FieldActorValue = {
   workspaceMemberId?: string;
   name: string;
 };
+
+export type FieldArrayValue = string[];

@@ -1,12 +1,10 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { MouseEvent, useContext } from 'react';
+import { useContext } from 'react';
 import { FONT_COMMON, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
-type RoundedLinkProps = {
-  href: string;
+type RoundedItemProps = {
   label?: string;
-  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
 const fontSizeMd = FONT_COMMON.size.md;
@@ -49,17 +47,9 @@ const StyledLink = styled.a<{
   text-overflow: ellipsis;
   user-select: none;
   white-space: nowrap;
-
-  &:hover {
-    background-color: ${({ backgroundHover }) => backgroundHover};
-  }
-
-  &:active {
-    background-color: ${({ backgroundActive }) => backgroundActive};
-  }
 `;
 
-export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
+export const RoundedItem = ({ label }: RoundedItemProps) => {
   const { theme } = useContext(ThemeContext);
 
   const background = theme.background.transparent.lighter;
@@ -72,18 +62,8 @@ export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
     return <></>;
   }
 
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-
-    onClick?.(event);
-  };
-
   return (
     <StyledLink
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      onClick={handleClick}
       color={color}
       background={background}
       backgroundHover={backgroundHover}

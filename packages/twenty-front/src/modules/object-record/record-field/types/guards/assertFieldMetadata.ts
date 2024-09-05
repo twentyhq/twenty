@@ -4,6 +4,7 @@ import { FieldDefinition } from '../FieldDefinition';
 import {
   FieldActorMetadata,
   FieldAddressMetadata,
+  FieldArrayMetadata,
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
   FieldDateMetadata,
@@ -69,7 +70,9 @@ type AssertFieldMetadataFunction = <
                                           ? FieldTextMetadata
                                           : E extends 'ACTOR'
                                             ? FieldActorMetadata
-                                            : never,
+                                            : E extends 'ARRAY'
+                                              ? FieldArrayMetadata
+                                              : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -260,6 +260,7 @@ export type FieldConnection = {
 export enum FieldMetadataType {
   Actor = 'ACTOR',
   Address = 'ADDRESS',
+  Array = 'ARRAY',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   Date = 'DATE',

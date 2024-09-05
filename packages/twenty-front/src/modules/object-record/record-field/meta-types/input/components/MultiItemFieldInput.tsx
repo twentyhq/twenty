@@ -35,6 +35,7 @@ type MultiItemFieldInputProps<T> = {
     handleDelete: () => void;
   }) => React.ReactNode;
   hotkeyScope: string;
+  newItemLabel?: string;
 };
 
 export const MultiItemFieldInput = <T,>({
@@ -46,6 +47,7 @@ export const MultiItemFieldInput = <T,>({
   formatInput,
   renderItem,
   hotkeyScope,
+  newItemLabel,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const handleDropdownClose = () => {
@@ -146,7 +148,7 @@ export const MultiItemFieldInput = <T,>({
           <MenuItem
             onClick={handleAddButtonClick}
             LeftIcon={IconPlus}
-            text={`Add ${placeholder}`}
+            text={newItemLabel || `Add ${placeholder}`}
           />
         </DropdownMenuItemsContainer>
       )}

@@ -228,6 +228,13 @@ const fieldEmailsMock = {
   defaultValue: [{ primaryEmail: '', additionalEmails: {} }],
 };
 
+const fieldArrayMock = {
+  name: 'fieldArray',
+  type: FieldMetadataType.ARRAY,
+  isNullable: true,
+  defaultValue: null,
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
@@ -251,6 +258,7 @@ export const fields = [
   fieldRawJsonMock,
   fieldRichTextMock,
   fieldActorMock,
+  fieldArrayMock,
 ];
 
 export const objectMetadataItemMock = {
