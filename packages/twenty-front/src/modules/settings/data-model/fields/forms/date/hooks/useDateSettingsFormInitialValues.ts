@@ -1,34 +1,27 @@
 import { useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { SettingsDataModelFieldDateFormValues } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
-import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const useDateSettingsFormInitialValues = ({
   fieldMetadataItem,
 }: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue'>;
+  fieldMetadataItem?: Pick<FieldMetadataItem, 'settings'>;
 }) => {
-  const initialAmountMicrosValue =
-    (fieldMetadataItem?.defaultValue?.amountMicros as number | null) ?? null;
-  const initialCurrencyCodeValue =
-    fieldMetadataItem?.defaultValue?.currencyCode ??
-    applySimpleQuotesToString(CurrencyCode.USD);
-  const initialDefaultValue = {
-    amountMicros: initialAmountMicrosValue,
-    currencyCode: initialCurrencyCodeValue,
-  };
+  const initialDisplayAsRelativeDateValue =
+    (fieldMetadataItem?.settings?.displayAsRelativeDate as boolean | null) ??
+    false;
 
   const { resetField } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
   const resetDefaultValueField = () =>
-    resetField('defaultValue', { defaultValue: initialDefaultValue });
+    resetField('settings.displayAsRelativeDate', {
+      defaultValue: initialDisplayAsRelativeDateValue,
+    });
 
   return {
-    initialAmountMicrosValue,
-    initialCurrencyCodeValue,
-    initialDefaultValue,
+    initialDisplayAsRelativeDateValue,
+    initialDefaultValue: initialDisplayAsRelativeDateValue,
     resetDefaultValueField,
   };
 };

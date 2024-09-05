@@ -1,23 +1,23 @@
-import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
-  SettingsDataModelFieldCurrencyForm,
-  SettingsDataModelFieldCurrencyFormValues,
-} from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
-import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
+  SettingsDataModelFieldDateForm,
+  SettingsDataModelFieldDateFormValues,
+} from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
+import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
-type SettingsDataModelFieldCurrencySettingsFormCardProps = {
+type SettingsDataModelFieldDateSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'icon' | 'label' | 'type' | 'settings'
   >;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
@@ -26,17 +26,17 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   flex: 1 1 100%;
 `;
 
-export const SettingsDataModelFieldCurrencySettingsFormCard = ({
+export const SettingsDataModelFieldDateSettingsFormCard = ({
   disabled,
   fieldMetadataItem,
   objectMetadataItem,
-}: SettingsDataModelFieldCurrencySettingsFormCardProps) => {
-  const { initialDefaultValue } = useCurrencySettingsFormInitialValues({
+}: SettingsDataModelFieldDateSettingsFormCardProps) => {
+  const { initialDefaultValue } = useDateSettingsFormInitialValues({
     fieldMetadataItem,
   });
 
   const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldCurrencyFormValues>();
+    useFormContext<SettingsDataModelFieldDateFormValues>();
 
   return (
     <SettingsDataModelPreviewFormCard
@@ -44,13 +44,16 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
         <StyledFieldPreviewCard
           fieldMetadataItem={{
             ...fieldMetadataItem,
-            defaultValue: watchFormValue('defaultValue', initialDefaultValue),
+            defaultValue: watchFormValue(
+              'settings.displayAsRelativeDate',
+              initialDefaultValue,
+            ),
           }}
           objectMetadataItem={objectMetadataItem}
         />
       }
       form={
-        <SettingsDataModelFieldCurrencyForm
+        <SettingsDataModelFieldDateForm
           disabled={disabled}
           fieldMetadataItem={fieldMetadataItem}
         />

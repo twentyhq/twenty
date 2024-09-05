@@ -337,6 +337,7 @@ export enum MessageChannelVisibility {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   addUserToWorkspace: User;
   authorizeApp: AuthorizeApp;
@@ -346,15 +347,14 @@ export type Mutation = {
   createOneObject: Object;
   createOneServerlessFunction: ServerlessFunction;
   createOneServerlessFunctionFromFile: ServerlessFunction;
+  deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
   disablePostgresProxy: PostgresCredentials;
-  disableWorkflowTrigger: Scalars['Boolean'];
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
-  enableWorkflowTrigger: Scalars['Boolean'];
   exchangeAuthorizationCode: ExchangeAuthCode;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
@@ -378,6 +378,11 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   verify: Verify;
+};
+
+
+export type MutationActivateWorkflowVersionArgs = {
+  workflowVersionId: Scalars['String'];
 };
 
 
@@ -422,6 +427,11 @@ export type MutationCreateOneServerlessFunctionFromFileArgs = {
 };
 
 
+export type MutationDeactivateWorkflowVersionArgs = {
+  workflowVersionId: Scalars['String'];
+};
+
+
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
 };
@@ -432,18 +442,8 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 };
 
 
-export type MutationDisableWorkflowTriggerArgs = {
-  workflowVersionId: Scalars['String'];
-};
-
-
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
-};
-
-
-export type MutationEnableWorkflowTriggerArgs = {
-  workflowVersionId: Scalars['String'];
 };
 
 

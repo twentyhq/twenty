@@ -67,6 +67,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                 }
                 defaultValue
                 options
+                settings
                 relationDefinition {
                   relationId
                   direction

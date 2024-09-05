@@ -2,33 +2,26 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/currencyFieldDefaultValueSchema';
-import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
-import { Select } from '@/ui/input/components/Select';
+// import { dateFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/dateFieldDefaultValueSchema';
+import { Toggle } from '@/ui/input/components/Toggle';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
-export const settingsDataModelFieldCurrencyFormSchema = z.object({
-  defaultValue: currencyFieldDefaultValueSchema,
+export const settingsDataModelFieldDateFormSchema = z.object({
+  settings: z
+    .object({
+      displayAsRelativeDate: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 export type SettingsDataModelFieldDateFormValues = z.infer<
-  typeof settingsDataModelFieldCurrencyFormSchema
+  typeof settingsDataModelFieldDateFormSchema
 >;
 
 type SettingsDataModelFieldDateFormProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'settings'>;
 };
-
-const OPTIONS = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
-  ([value, { label, Icon }]) => ({
-    label,
-    value: applySimpleQuotesToString(value),
-    Icon,
-  }),
-);
 
 export const SettingsDataModelFieldDateForm = ({
   disabled,
@@ -36,31 +29,19 @@ export const SettingsDataModelFieldDateForm = ({
 }: SettingsDataModelFieldDateFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
-  const { initialAmountMicrosValue, initialCurrencyCodeValue } =
-    useCurrencySettingsFormInitialValues({ fieldMetadataItem });
+  // const { dislpayAsRelativeDate } = useDateSettingsFormInitialValues({ fieldMetadataItem });
 
   return (
     <CardContent>
       <Controller
-        name="defaultValue.amountMicros"
+        name="settings.displayAsRelativeDate"
         control={control}
-        defaultValue={initialAmountMicrosValue}
-        render={() => <></>}
-      />
-      <Controller
-        name="defaultValue.currencyCode"
-        control={control}
-        defaultValue={initialCurrencyCodeValue}
+        defaultValue={false}
         render={({ field: { onChange, value } }) => (
-          <Select
-            fullWidth
-            disabled={disabled}
-            label="Default Unit"
-            dropdownId="currency-unit-select"
-            value={value}
-            options={OPTIONS}
-            onChange={onChange}
-          />
+          <div>
+            Display as relative date
+            <Toggle disabled={disabled} value={value} onChange={onChange} />
+          </div>
         )}
       />
     </CardContent>

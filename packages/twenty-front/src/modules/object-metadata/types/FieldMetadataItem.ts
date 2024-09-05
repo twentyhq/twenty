@@ -59,4 +59,5 @@ export type FieldMetadataItem = Omit<
       'id' | 'nameSingular' | 'namePlural'
     >;
   } | null;
+  settings?: any; // How to use types from backend? Do we need to copy the types or keep 'any'?
 };

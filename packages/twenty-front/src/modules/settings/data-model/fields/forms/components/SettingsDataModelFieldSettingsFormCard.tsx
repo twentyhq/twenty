@@ -9,6 +9,7 @@ import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/f
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
+import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
 import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
@@ -118,6 +119,19 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Currency) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
+        disabled={disableCurrencyForm}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (
+    fieldMetadataItem.type === FieldMetadataType.Date ||
+    fieldMetadataItem.type === FieldMetadataType.DateTime
+  ) {
+    return (
+      <SettingsDataModelFieldDateSettingsFormCard
         disabled={disableCurrencyForm}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}

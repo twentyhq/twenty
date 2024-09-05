@@ -14,8 +14,18 @@ type FieldMetadataNumberSettings = {
   dataType: NumberDataType;
 };
 
+type FieldMetadataDateSettings = {
+  displayAsRelativeDate?: boolean;
+};
+
+type FieldMetadataDateTimeSettings = {
+  displayAsRelativeDate?: boolean;
+};
+
 type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings;
+  [FieldMetadataType.DATE]: FieldMetadataDateSettings;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
 };
 
 type SettingsByFieldMetadata<T extends FieldMetadataType | 'default'> =
