@@ -28,7 +28,7 @@ export const ShowPageActivityContainer = ({
               | CoreObjectNameSingular.Task
           }
         />
-      </StyledShowPageActivityContainer>{' '}
+      </StyledShowPageActivityContainer>
     </ScrollWrapper>
   );
 };
