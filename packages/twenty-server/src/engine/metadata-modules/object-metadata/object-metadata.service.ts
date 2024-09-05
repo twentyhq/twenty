@@ -1283,7 +1283,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async createViewWorkspaceFavorite(
     workspaceId: string,
     viewId: string,
-  ): Promise<FavoriteWorkspaceEntity> {
+  ) {
     const favoriteRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
         workspaceId,
@@ -1292,7 +1292,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const favoriteCount = await favoriteRepository.count();
 
-    return favoriteRepository.save(
+    return favoriteRepository.insert(
       favoriteRepository.create({
         viewId,
         position: favoriteCount,
