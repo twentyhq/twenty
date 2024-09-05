@@ -26,7 +26,7 @@ export const useAddNewOpportunity = (position: string) => {
     useIsOpportunitiesCompanyFieldDisabled();
   const handleEntitySelect = useCallback(
     (company?: EntityForSelect) => {
-      // setIsCreatingCard(false);
+      setIsCreatingCard(false);
       goBackToPreviousHotkeyScope();
       resetSearchFilter();
       createOneRecord({
