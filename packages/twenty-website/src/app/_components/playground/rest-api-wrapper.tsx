@@ -23,7 +23,11 @@ export const RestApiWrapper = ({ openApiJson }: { openApiJson: any }) => {
         overflow: 'auto',
       }}
     >
-      <API apiDescriptionDocument={JSON.stringify(openApiJson)} router="hash" />
+      <API
+        apiDescriptionDocument={JSON.stringify(openApiJson)}
+        hideSchemas={true}
+        router="hash"
+      />
     </div>
   );
 };

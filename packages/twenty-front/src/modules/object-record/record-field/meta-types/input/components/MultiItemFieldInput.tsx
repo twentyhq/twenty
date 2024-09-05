@@ -48,7 +48,6 @@ export const MultiItemFieldInput = <T,>({
   hotkeyScope,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
   const handleDropdownClose = () => {
     onCancel?.();
   };
@@ -71,8 +70,9 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleEditButtonClick = (index: number) => {
+    const item = items[index] as { label: string; url: string };
     setItemToEditIndex(index);
-    setInputValue((items[index] as unknown as string) || '');
+    setInputValue(item.url || '');
     setIsInputDisplayed(true);
   };
 

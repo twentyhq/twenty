@@ -108,6 +108,7 @@ export const SettingsNavigationDrawerItems = () => {
           />
           {accountSubSettings.map((navigationItem, index) => (
             <SettingsNavigationDrawerItem
+              key={index}
               label={navigationItem.label}
               path={navigationItem.path}
               Icon={navigationItem.Icon}

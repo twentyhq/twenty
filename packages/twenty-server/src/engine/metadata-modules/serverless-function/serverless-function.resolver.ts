@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
+import graphqlTypeJson from 'graphql-type-json';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -51,7 +52,18 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Query(() => String)
+  @Query(() => graphqlTypeJson)
+  async getAvailablePackages(@AuthWorkspace() { id: workspaceId }: Workspace) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+
+      return await this.serverlessFunctionService.getAvailablePackages();
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Query(() => String, { nullable: true })
   async getServerlessFunctionSourceCode(
     @Args('input') input: GetServerlessFunctionSourceCodeInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,

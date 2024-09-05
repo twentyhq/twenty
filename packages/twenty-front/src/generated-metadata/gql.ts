@@ -39,6 +39,7 @@ const documents = {
     "\n  mutation ExecuteOneServerlessFunction(\n    $input: ExecuteServerlessFunctionInput!\n  ) {\n    executeOneServerlessFunction(input: $input) {\n      data\n      duration\n      status\n      error\n    }\n  }\n": types.ExecuteOneServerlessFunctionDocument,
     "\n  \n  mutation PublishOneServerlessFunction(\n    $input: PublishServerlessFunctionInput!\n  ) {\n    publishServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.PublishOneServerlessFunctionDocument,
     "\n  \n  mutation UpdateOneServerlessFunction($input: UpdateServerlessFunctionInput!) {\n    updateOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.UpdateOneServerlessFunctionDocument,
+    "\n  query FindManyAvailablePackages {\n    getAvailablePackages\n  }\n": types.FindManyAvailablePackagesDocument,
     "\n  \n  query GetManyServerlessFunctions {\n    serverlessFunctions(paging: { first: 100 }) {\n      edges {\n        node {\n          ...ServerlessFunctionFields\n        }\n      }\n    }\n  }\n": types.GetManyServerlessFunctionsDocument,
     "\n  \n  query GetOneServerlessFunction($id: UUID!) {\n    serverlessFunction(id: $id) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.GetOneServerlessFunctionDocument,
     "\n  query FindOneServerlessFunctionSourceCode(\n    $input: GetServerlessFunctionSourceCodeInput!\n  ) {\n    getServerlessFunctionSourceCode(input: $input)\n  }\n": types.FindOneServerlessFunctionSourceCodeDocument,
@@ -162,6 +163,10 @@ export function graphql(source: "\n  \n  mutation PublishOneServerlessFunction(\
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  \n  mutation UpdateOneServerlessFunction($input: UpdateServerlessFunctionInput!) {\n    updateOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation UpdateOneServerlessFunction($input: UpdateServerlessFunctionInput!) {\n    updateOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query FindManyAvailablePackages {\n    getAvailablePackages\n  }\n"): (typeof documents)["\n  query FindManyAvailablePackages {\n    getAvailablePackages\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

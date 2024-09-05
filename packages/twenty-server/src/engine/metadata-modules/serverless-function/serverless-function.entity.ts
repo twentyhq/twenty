@@ -35,6 +35,9 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
   runtime: ServerlessFunctionRuntime;
 
+  @Column({ nullable: true })
+  layerVersion: number;
+
   @Column({
     nullable: false,
     default: ServerlessFunctionSyncStatus.NOT_READY,

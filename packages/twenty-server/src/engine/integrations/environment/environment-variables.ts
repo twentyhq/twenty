@@ -130,7 +130,7 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_EXPIRES_IN = '30m';
+  REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @IsDuration()
   @IsOptional()
@@ -367,6 +367,10 @@ export class EnvironmentVariables {
 
   @CastToPositiveNumber()
   REDIS_PORT = 6379;
+
+  REDIS_USERNAME: string;
+
+  REDIS_PASSWORD: string;
 
   API_TOKEN_EXPIRES_IN = '100y';
 
