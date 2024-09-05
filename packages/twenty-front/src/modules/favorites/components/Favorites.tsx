@@ -48,7 +48,11 @@ export const Favorites = () => {
     return <FavoritesSkeletonLoader />;
   }
 
-  if (!favorites || favorites.length === 0) return <></>;
+  const myFavorites = favorites.filter(
+    (favorite) => favorite.workspaceMemberId === currentUser?.id,
+  );
+
+  if (!myFavorites || myFavorites.length === 0) return <></>;
 
   return (
     <StyledContainer>
@@ -61,7 +65,7 @@ export const Favorites = () => {
           onDragEnd={handleReorderFavorite}
           draggableItems={
             <>
-              {favorites.map((favorite, index) => {
+              {myFavorites.map((favorite, index) => {
                 const {
                   id,
                   labelIdentifier,

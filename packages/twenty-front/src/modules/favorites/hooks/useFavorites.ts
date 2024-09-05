@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -40,6 +40,15 @@ export const useFavorites = () => {
     {
       workspaceMemberId: {
         eq: currentWorkspaceMember?.id ?? '',
+      },
+    },
+  );
+
+  const { records: workspaceFavorites } = usePrefetchedData<Favorite>(
+    PrefetchKey.AllFavorites,
+    {
+      workspaceMemberId: {
+        eq: undefined,
       },
     },
   );
@@ -93,6 +102,45 @@ export const useFavorites = () => {
     favoriteRelationFieldMetadataItems,
     favorites,
     getObjectRecordIdentifierByNameSingular,
+  ]);
+
+  const workspaceFavoritesSorted = useMemo(() => {
+    return workspaceFavorites
+      .filter((favorite) => favorite.viewId)
+      .map((favorite) => {
+        for (const relationField of favoriteRelationFieldMetadataItems) {
+          if (isDefined(favorite[relationField.name])) {
+            const relationObject = favorite[relationField.name];
+
+            const relationObjectNameSingular =
+              relationField.toRelationMetadata?.fromObjectMetadata
+                .nameSingular ?? '';
+
+            const objectRecordIdentifier =
+              getObjectRecordIdentifierByNameSingular(
+                relationObject,
+                relationObjectNameSingular,
+              );
+
+            return {
+              id: favorite.id,
+              recordId: objectRecordIdentifier.id,
+              position: favorite.position,
+              avatarType: objectRecordIdentifier.avatarType,
+              avatarUrl: objectRecordIdentifier.avatarUrl,
+              labelIdentifier: objectRecordIdentifier.name,
+              link: '',
+            } as Favorite;
+          }
+        }
+
+        return favorite;
+      })
+      .sort((a, b) => a.position - b.position);
+  }, [
+    favoriteRelationFieldMetadataItems,
+    getObjectRecordIdentifierByNameSingular,
+    workspaceFavorites,
   ]);
 
   const createFavorite = (
@@ -157,6 +205,7 @@ export const useFavorites = () => {
 
   return {
     favorites: favoritesSorted,
+    workspaceFavorites: workspaceFavoritesSorted,
     createFavorite,
     handleReorderFavorite,
     deleteFavorite,

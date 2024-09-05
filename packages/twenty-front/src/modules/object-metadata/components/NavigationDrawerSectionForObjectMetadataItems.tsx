@@ -1,14 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
-import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
@@ -28,34 +23,25 @@ const ORDERED_STANDARD_OBJECTS = [
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   isRemote,
+  views,
+  objectMetadataItems,
 }: {
   isRemote: boolean;
+  views: View[];
+  objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const currentUser = useRecoilValue(currentUserState);
-
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
-    (item) => (isRemote ? item.isRemote : !item.isRemote),
-  );
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
 
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-  const loading = useIsPrefetchLoading();
-
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
-
-  if (loading && isDefined(currentUser)) {
-    return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
-  }
 
   // TODO: refactor this by splitting into separate components
   return (
-    filteredActiveObjectMetadataItems.length > 0 && (
+    objectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle
           label={isRemote ? 'Remote' : 'Workspace'}
@@ -64,7 +50,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 
         {isNavigationSectionOpen &&
           [
-            ...filteredActiveObjectMetadataItems
+            ...objectMetadataItems
               .filter((item) =>
                 ORDERED_STANDARD_OBJECTS.includes(item.nameSingular),
               )
@@ -82,7 +68,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
                 }
                 return indexA - indexB;
               }),
-            ...filteredActiveObjectMetadataItems
+            ...objectMetadataItems
               .filter(
                 (item) => !ORDERED_STANDARD_OBJECTS.includes(item.nameSingular),
               )
