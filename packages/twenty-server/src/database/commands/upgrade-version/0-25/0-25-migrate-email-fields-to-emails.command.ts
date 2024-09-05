@@ -61,7 +61,7 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
       'Running command to migrate email type fields to emails type',
     );
     const _workspaceIds = options.workspaceId
-      ? [...workspaceIds, options.workspaceId]
+      ? [options.workspaceId]
       : workspaceIds;
 
     for (const workspaceId of _workspaceIds) {
