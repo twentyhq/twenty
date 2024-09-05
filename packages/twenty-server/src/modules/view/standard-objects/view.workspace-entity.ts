@@ -14,6 +14,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { VIEW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
@@ -135,4 +136,16 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   viewSorts: Relation<ViewSortWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: VIEW_STANDARD_FIELD_IDS.favorites,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Favorites',
+    description: 'Favorites linked to the view',
+    icon: 'IconHeart',
+    inverseSideTarget: () => FavoriteWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  favorites: Relation<FavoriteWorkspaceEntity[]>;
 }

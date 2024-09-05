@@ -9,4 +9,5 @@ export enum FeatureFlagKey {
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
   IsMessageThreadSubscriberEnabled = 'IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED',
   IsQueryRunnerTwentyORMEnabled = 'IS_QUERY_RUNNER_TWENTY_ORM_ENABLED',
+  IsWorkspaceFavoriteEnabled = 'IS_WORKSPACE_FAVORITE_ENABLED',
 }

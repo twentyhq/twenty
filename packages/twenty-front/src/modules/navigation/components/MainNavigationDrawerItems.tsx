@@ -3,12 +3,14 @@ import { useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { Favorites } from '@/favorites/components/Favorites';
-import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
+import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
+import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
@@ -16,6 +18,9 @@ export const MainNavigationDrawerItems = () => {
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
+  );
+  const isWorkspaceFavoriteEnabled = useIsFeatureEnabled(
+    'IS_WORKSPACE_FAVORITE_ENABLED',
   );
 
   return (
@@ -39,10 +44,16 @@ export const MainNavigationDrawerItems = () => {
         </NavigationDrawerSection>
       )}
 
-      <Favorites />
+      <CurrentWorkspaceMemberFavorites />
 
-      <NavigationDrawerSectionForObjectMetadataItems isRemote={false} />
-      <NavigationDrawerSectionForObjectMetadataItems isRemote={true} />
+      {isWorkspaceFavoriteEnabled ? (
+        <WorkspaceFavorites />
+      ) : (
+        <NavigationDrawerSectionForObjectMetadataItemsWrapper
+          isRemote={false}
+        />
+      )}
+      <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
     </>
   );
 };
