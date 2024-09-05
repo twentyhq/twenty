@@ -24,6 +24,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Workflow } from '@/workflow/components/Workflow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -96,9 +97,12 @@ export const ShowPageRightContainer = ({
     CoreObjectNameSingular.Company,
     CoreObjectNameSingular.Person,
   ].includes(targetObjectNameSingular);
+
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
   const isWorkflow =
+    isWorkflowEnabled &&
     targetableObject.targetObjectNameSingular ===
-    CoreObjectNameSingular.Workflow;
+      CoreObjectNameSingular.Workflow;
 
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
