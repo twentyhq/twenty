@@ -22,10 +22,12 @@ const ORDERED_STANDARD_OBJECTS = [
 ];
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
+  sectionTitle,
   isRemote,
   views,
   objectMetadataItems,
 }: {
+  sectionTitle: string;
   isRemote: boolean;
   views: View[];
   objectMetadataItems: ObjectMetadataItem[];
@@ -44,7 +46,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
     objectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle
-          label={isRemote ? 'Remote' : 'Workspace'}
+          label={sectionTitle}
           onClick={() => toggleNavigationSection()}
         />
 

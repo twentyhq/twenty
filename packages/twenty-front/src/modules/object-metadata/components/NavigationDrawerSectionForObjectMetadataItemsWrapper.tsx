@@ -31,6 +31,7 @@ export const NavigationDrawerSectionForObjectMetadataItemsWrapper = ({
 
   return (
     <NavigationDrawerSectionForObjectMetadataItems
+      sectionTitle={isRemote ? 'Remote' : 'Workspace'}
       objectMetadataItems={filteredActiveObjectMetadataItems}
       views={views}
       isRemote={isRemote}
