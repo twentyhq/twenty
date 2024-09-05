@@ -23,7 +23,7 @@ export const useAddNewOpportunity = (position: string) => {
 
   const handleEntitySelect = useCallback(
     (company?: EntityForSelect) => {
-      setIsCreatingCard(false);
+      // setIsCreatingCard(false);
       goBackToPreviousHotkeyScope();
       resetSearchFilter();
 
