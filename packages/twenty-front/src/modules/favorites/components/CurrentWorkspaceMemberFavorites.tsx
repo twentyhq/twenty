@@ -34,7 +34,7 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
   }
 `;
 
-export const Favorites = () => {
+export const CurrentWorkspaceMemberFavorites = () => {
   const currentUser = useRecoilValue(currentUserState);
 
   const { favorites, handleReorderFavorite } = useFavorites();
@@ -48,7 +48,15 @@ export const Favorites = () => {
     return <FavoritesSkeletonLoader />;
   }
 
-  if (!favorites || favorites.length === 0) return <></>;
+  const currentWorkspaceMemberFavorites = favorites.filter(
+    (favorite) => favorite.workspaceMemberId === currentUser?.id,
+  );
+
+  if (
+    !currentWorkspaceMemberFavorites ||
+    currentWorkspaceMemberFavorites.length === 0
+  )
+    return <></>;
 
   return (
     <StyledContainer>
@@ -61,7 +69,7 @@ export const Favorites = () => {
           onDragEnd={handleReorderFavorite}
           draggableItems={
             <>
-              {favorites.map((favorite, index) => {
+              {currentWorkspaceMemberFavorites.map((favorite, index) => {
                 const {
                   id,
                   labelIdentifier,

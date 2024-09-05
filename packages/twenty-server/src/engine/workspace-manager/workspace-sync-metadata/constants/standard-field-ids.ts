@@ -203,6 +203,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   workflow: '20202020-b11b-4dc8-999a-6bd0a947b463',
   task: '20202020-1b1b-4b3b-8b1b-7f8d6a1d7d5c',
   note: '20202020-1f25-43fe-8b00-af212fdde824',
+  view: '20202020-5a93-4fa9-acce-e73481a0bbdf',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
 };
 
@@ -380,6 +381,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
+  favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
 };
 
 export const WEBHOOK_STANDARD_FIELD_IDS = {
