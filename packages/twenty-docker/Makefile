@@ -30,9 +30,12 @@ prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty
 
 prod-postgres-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-postgres/Dockerfile --tag twenty-postgres . && cd -
+	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-postgres/Dockerfile --tag twenty-postgres-spilo . && cd -
 
-prod-postgres-run:
+prod-postgres-build-spilo:
+	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-postgres-spilo/Dockerfile --tag twenty-postgres-spilo . && cd -
+
+prod-postgres-r	un:
 	@docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres --name twenty-postgres twenty-postgres
 
 prod-website-build:

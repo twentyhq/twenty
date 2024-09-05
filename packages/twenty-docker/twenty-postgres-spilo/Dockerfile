@@ -52,9 +52,15 @@ RUN set -eux; \
     aarch64|arm64) TARGETARCH='arm64';; \
     amd64|x86_64) TARGETARCH='amd64';; \
     *) echo "Unsupported arch: ${ARCH}"; exit 1;; \
-    esac;
+    esac; \
+    echo "Target architecture: $TARGETARCH"
 
 RUN apt update && apt install default-libmysqlclient-dev -y && rm -rf /var/lib/apt/lists/*
+
+# unable to locate libicu74
+RUN apt install -y libicu70 
+# arm64 needs to be a variable (TARGETARCH)
+RUN curl -L "https://github.com/paradedb/paradedb/releases/download/v0.9.3/postgresql-15-pg-search_0.9.3-1PARADEDB-bookworm_arm64.deb" -o /tmp/pg_search.deb && apt install -y /tmp/*.deb
 
 RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${POSTGRES_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb && \
     dpkg --install wrappers.deb && \
@@ -76,3 +82,21 @@ COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw.so \
     /usr/lib/postgresql/${POSTGRES_VERSION}/lib/mysql_fdw.so
 COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw*.sql /mysql_fdw/mysql_fdw.control /mysql_fdw/mysql_fdw_pushdown.config \
     /usr/share/postgresql/${POSTGRES_VERSION}/extension/
+
+COPY ./packages/twenty-docker/twenty-postgres/init.sql /docker-entrypoint-initdb.d/
+
+# Remplacez la ligne problématique par ces configurations
+ENV POSTGRES_SUPERUSER_USERNAME=twenty
+ENV POSTGRES_SUPERUSER_PASSWORD=twenty
+ENV ALLOW_NOSSL=true
+ENV POSTGRESQL_PGAUDIT_LOG=READ,WRITE
+ENV POSTGRESQL_ACCESS_BY_DEFAULT=0.0.0.0/0
+ENV POSTGRESQL_AUTHENTICATION_BY_DEFAULT=md5
+
+# Assurez-vous que le port est exposé
+#EXPOSE 5433
+
+# Ajoutez ces lignes pour créer une base de données par défaut
+# RUN mkdir -p /docker-entrypoint-initdb.d
+#RUN echo "CREATE DATABASE default;" > /docker-entrypoint-initdb.d/init.sql
+# RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/${POSTGRES_VERSION}/main/pg_hba.conf

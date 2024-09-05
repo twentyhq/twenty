@@ -1,4 +1,4 @@
-ARG IMAGE_TAG='15.5.0-debian-11-r15'
+ARG IMAGE_TAG='15-debian-12'
 
 FROM bitnami/postgresql:${IMAGE_TAG}
 
@@ -24,7 +24,9 @@ RUN set -eux; \
          ;; \
     esac;
 
+# RUN apt update && apt install build-essential git curl default-libmysqlclient-dev libicu72 -y
 RUN apt update && apt install build-essential git curl default-libmysqlclient-dev -y
+RUN curl -L "https://github.com/paradedb/paradedb/releases/download/v0.9.3/postgresql-16-pg-search_0.9.3-1PARADEDB-bookworm_amd64.deb" -o /tmp/pg_search.deb && apt install -y /tmp/*.deb
 
 # Install precompiled pg_graphql extensions
 COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
