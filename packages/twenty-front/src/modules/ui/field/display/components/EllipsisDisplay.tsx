@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
+export const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
   max-width: ${({ maxWidth }) => maxWidth ?? '100%'};
   overflow: hidden;
   text-overflow: ellipsis;

@@ -7,10 +7,11 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+// import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
+import EllipsisTextWithTooltip from '@/ui/field/display/components/EllipsisTextWithTooltip';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -120,11 +121,11 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && label && (
             <StyledLabelContainer width={labelWidth}>
-              <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
+              <EllipsisTextWithTooltip text={label} labelId={labelId} />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
-          {label && !fieldDefinition?.disableTooltip && (
+          {!showLabel && !fieldDefinition?.disableTooltip && (
             <AppTooltip
               anchorSelect={`#${labelId}`}
               content={label}
