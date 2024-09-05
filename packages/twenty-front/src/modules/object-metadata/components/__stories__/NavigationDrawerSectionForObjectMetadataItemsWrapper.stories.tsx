@@ -7,28 +7,32 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
+import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
 import { within } from '@storybook/test';
 import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 
-const meta: Meta<typeof NavigationDrawerSectionForObjectMetadataItems> = {
-  title: 'Modules/ObjectMetadata/NavigationDrawerSectionForObjectMetadataItems',
-  component: NavigationDrawerSectionForObjectMetadataItems,
-  decorators: [
-    IconsProviderDecorator,
-    ObjectMetadataItemsDecorator,
-    ComponentWithRouterDecorator,
-    ComponentWithRecoilScopeDecorator,
-    SnackBarDecorator,
-    PrefetchLoadedDecorator,
-  ],
-  parameters: {
-    msw: graphqlMocks,
-  },
-};
+const meta: Meta<typeof NavigationDrawerSectionForObjectMetadataItemsWrapper> =
+  {
+    title:
+      'Modules/ObjectMetadata/NavigationDrawerSectionForObjectMetadataItemsWrapper',
+    component: NavigationDrawerSectionForObjectMetadataItemsWrapper,
+    decorators: [
+      IconsProviderDecorator,
+      ObjectMetadataItemsDecorator,
+      ComponentWithRouterDecorator,
+      ComponentWithRecoilScopeDecorator,
+      SnackBarDecorator,
+      PrefetchLoadedDecorator,
+    ],
+    parameters: {
+      msw: graphqlMocks,
+    },
+  };
 
 export default meta;
-type Story = StoryObj<typeof NavigationDrawerSectionForObjectMetadataItems>;
+type Story = StoryObj<
+  typeof NavigationDrawerSectionForObjectMetadataItemsWrapper
+>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
