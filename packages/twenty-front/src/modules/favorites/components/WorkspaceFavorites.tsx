@@ -13,13 +13,16 @@ export const WorkspaceFavorites = () => {
 
   const { workspaceFavorites } = useFavorites();
 
-  const workspaceFavoriteIds = workspaceFavorites.map(
-    (favorite) => favorite.recordId,
+  const workspaceFavoriteIds = new Set(
+    workspaceFavorites.map((favorite) => favorite.recordId),
   );
 
-  const favoriteViewObjectMetadataIds = views
-    .filter((view) => workspaceFavoriteIds.includes(view.id))
-    .map((view) => view.objectMetadataId);
+  const favoriteViewObjectMetadataIds = views.reduce<string[]>((acc, view) => {
+    if (workspaceFavoriteIds.has(view.id)) {
+      acc.push(view.objectMetadataId);
+    }
+    return acc;
+  }, []);
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 

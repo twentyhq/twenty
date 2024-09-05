@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Favorite } from '@/favorites/types/Favorite';
+import { sortFavorites } from '@/favorites/utils/sort-favorites.util';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -13,7 +14,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const useFavorites = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -67,37 +67,12 @@ export const useFavorites = () => {
     useGetObjectRecordIdentifierByNameSingular();
 
   const favoritesSorted = useMemo(() => {
-    return favorites
-      .map((favorite) => {
-        for (const relationField of favoriteRelationFieldMetadataItems) {
-          if (isDefined(favorite[relationField.name])) {
-            const relationObject = favorite[relationField.name];
-
-            const relationObjectNameSingular =
-              relationField.toRelationMetadata?.fromObjectMetadata
-                .nameSingular ?? '';
-
-            const objectRecordIdentifier =
-              getObjectRecordIdentifierByNameSingular(
-                relationObject,
-                relationObjectNameSingular,
-              );
-
-            return {
-              id: favorite.id,
-              recordId: objectRecordIdentifier.id,
-              position: favorite.position,
-              avatarType: objectRecordIdentifier.avatarType,
-              avatarUrl: objectRecordIdentifier.avatarUrl,
-              labelIdentifier: objectRecordIdentifier.name,
-              link: objectRecordIdentifier.linkToShowPage,
-            } as Favorite;
-          }
-        }
-
-        return favorite;
-      })
-      .sort((a, b) => a.position - b.position);
+    return sortFavorites(
+      favorites,
+      favoriteRelationFieldMetadataItems,
+      getObjectRecordIdentifierByNameSingular,
+      true,
+    );
   }, [
     favoriteRelationFieldMetadataItems,
     favorites,
@@ -105,38 +80,12 @@ export const useFavorites = () => {
   ]);
 
   const workspaceFavoritesSorted = useMemo(() => {
-    return workspaceFavorites
-      .filter((favorite) => favorite.viewId)
-      .map((favorite) => {
-        for (const relationField of favoriteRelationFieldMetadataItems) {
-          if (isDefined(favorite[relationField.name])) {
-            const relationObject = favorite[relationField.name];
-
-            const relationObjectNameSingular =
-              relationField.toRelationMetadata?.fromObjectMetadata
-                .nameSingular ?? '';
-
-            const objectRecordIdentifier =
-              getObjectRecordIdentifierByNameSingular(
-                relationObject,
-                relationObjectNameSingular,
-              );
-
-            return {
-              id: favorite.id,
-              recordId: objectRecordIdentifier.id,
-              position: favorite.position,
-              avatarType: objectRecordIdentifier.avatarType,
-              avatarUrl: objectRecordIdentifier.avatarUrl,
-              labelIdentifier: objectRecordIdentifier.name,
-              link: '',
-            } as Favorite;
-          }
-        }
-
-        return favorite;
-      })
-      .sort((a, b) => a.position - b.position);
+    return sortFavorites(
+      workspaceFavorites.filter((favorite) => favorite.viewId),
+      favoriteRelationFieldMetadataItems,
+      getObjectRecordIdentifierByNameSingular,
+      false,
+    );
   }, [
     favoriteRelationFieldMetadataItems,
     getObjectRecordIdentifierByNameSingular,
