@@ -37,12 +37,12 @@ export class UpgradeTo0_24Command extends CommandRunner {
     passedParam: string[],
     options: UpdateTo0_24CommandOptions,
   ): Promise<void> {
+    await this.migrateEmailFieldsToEmails.run(passedParam, options);
     await this.syncWorkspaceMetadataCommand.run(passedParam, {
       ...options,
       force: true,
     });
     await this.setMessagesDirectionCommand.run(passedParam, options);
     await this.setCustomObjectIsSoftDeletableCommand.run(passedParam, options);
-    await this.migrateEmailFieldsToEmails.run(passedParam, options);
   }
 }

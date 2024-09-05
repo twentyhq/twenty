@@ -41,7 +41,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       firstName
       lastName
     }
-    email
+    emails
     {
         primaryEmail
         additionalEmails

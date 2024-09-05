@@ -55,13 +55,13 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   name: FullNameMetadata | null;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.email,
+    standardId: PERSON_STANDARD_FIELD_IDS.emails,
     type: FieldMetadataType.EMAILS,
-    label: 'Email',
-    description: 'Contact’s Email',
+    label: 'Emails',
+    description: 'Contact’s Emails',
     icon: 'IconMail',
   })
-  email: EmailsMetadata;
+  emails: EmailsMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,

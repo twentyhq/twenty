@@ -63,7 +63,7 @@ export class MatchParticipantService<
     const people = await personRepository.find(
       {
         where: {
-          email: Any(uniqueParticipantsHandles),
+          emails: Any(uniqueParticipantsHandles),
         },
       },
       transactionManager,
@@ -85,7 +85,7 @@ export class MatchParticipantService<
 
     for (const handle of uniqueParticipantsHandles) {
       const person = people.find(
-        (person) => person.email?.primaryEmail === handle,
+        (person) => person.emails?.primaryEmail === handle,
       );
 
       const workspaceMember = workspaceMembers.find(

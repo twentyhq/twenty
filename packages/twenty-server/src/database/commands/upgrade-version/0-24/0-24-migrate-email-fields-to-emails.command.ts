@@ -1,11 +1,12 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import { QueryRunner, Repository } from 'typeorm';
 
+import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -17,7 +18,6 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
@@ -29,9 +29,10 @@ interface MigrateEmailFieldsToEmailsCommandOptions {
   name: 'upgrade-0.24:migrate-email-fields-to-emails',
   description: 'Migrating fields of deprecated type EMAIL to type EMAILS',
 })
-export class MigrateEmailFieldsToEmailsCommand extends CommandRunner {
-  private readonly logger = new Logger(MigrateEmailFieldsToEmailsCommand.name);
+export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner {
   constructor(
+    @InjectRepository(Workspace, 'core')
+    protected readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -40,10 +41,9 @@ export class MigrateEmailFieldsToEmailsCommand extends CommandRunner {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    private readonly workspaceStatusService: WorkspaceStatusService,
     private readonly viewService: ViewService,
   ) {
-    super();
+    super(workspaceRepository);
   }
 
   @Option({
@@ -52,39 +52,19 @@ export class MigrateEmailFieldsToEmailsCommand extends CommandRunner {
       'workspace id. Command runs on all active workspaces if not provided',
     required: false,
   })
-  parseWorkspaceId(value: string): string {
-    return value;
-  }
-
-  async run(
+  async executeActiveWorkspacesCommand(
     _passedParam: string[],
     options: MigrateEmailFieldsToEmailsCommandOptions,
+    workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
       'Running command to migrate email type fields to emails type',
     );
-    let workspaceIds: string[] = [];
+    const _workspaceIds = options.workspaceId
+      ? [...workspaceIds, options.workspaceId]
+      : workspaceIds;
 
-    if (options.workspaceId) {
-      workspaceIds = [options.workspaceId];
-    } else {
-      const activeWorkspaceIds =
-        await this.workspaceStatusService.getActiveWorkspaceIds();
-
-      workspaceIds = activeWorkspaceIds;
-    }
-
-    if (!workspaceIds.length) {
-      this.logger.log(chalk.yellow('No workspace found'));
-
-      return;
-    } else {
-      this.logger.log(
-        chalk.green(`Running command on ${workspaceIds.length} workspaces`),
-      );
-    }
-
-    for (const workspaceId of workspaceIds) {
+    for (const workspaceId of _workspaceIds) {
       this.logger.log(`Running command for workspace ${workspaceId}`);
       try {
         const dataSourceMetadata =

@@ -32,7 +32,7 @@ export class MessageParticipantPersonListener {
     >,
   ) {
     for (const eventPayload of payload.events) {
-      if (!eventPayload.properties.after.email) {
+      if (!eventPayload.properties.after.emails) {
         continue;
       }
 
@@ -40,7 +40,7 @@ export class MessageParticipantPersonListener {
         MessageParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: eventPayload.properties.after.email.primaryEmail,
+          email: eventPayload.properties.after.emails.primaryEmail,
           personId: eventPayload.recordId,
         },
       );
@@ -64,7 +64,7 @@ export class MessageParticipantPersonListener {
           MessageParticipantUnmatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.before.email.primaryEmail,
+            email: eventPayload.properties.before.emails.primaryEmail,
             personId: eventPayload.recordId,
           },
         );
@@ -73,7 +73,7 @@ export class MessageParticipantPersonListener {
           MessageParticipantMatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.email.primaryEmail,
+            email: eventPayload.properties.after.emails.primaryEmail,
             personId: eventPayload.recordId,
           },
         );

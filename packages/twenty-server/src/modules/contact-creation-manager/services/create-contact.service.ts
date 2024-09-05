@@ -46,7 +46,7 @@ export class CreateContactService {
 
       return {
         id,
-        email: { primaryEmail: handle, additionalEmails: null },
+        emails: { primaryEmail: handle, additionalEmails: null },
         name: {
           firstName,
           lastName,

@@ -78,12 +78,12 @@ export class CreateCompanyAndContactService {
 
     const alreadyCreatedContacts = await personRepository.find({
       where: {
-        email: { primaryEmail: Any(uniqueHandles) },
+        emails: { primaryEmail: Any(uniqueHandles) },
       },
     });
 
     const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ email }) => email?.primaryEmail,
+      ({ emails }) => emails?.primaryEmail,
     );
 
     const filteredContactsToCreate = uniqueContacts.filter(

@@ -32,7 +32,7 @@ export class CalendarEventParticipantPersonListener {
     >,
   ) {
     for (const eventPayload of payload.events) {
-      if (eventPayload.properties.after.email.primaryEmail === null) {
+      if (eventPayload.properties.after.emails.primaryEmail === null) {
         continue;
       }
 
@@ -41,7 +41,7 @@ export class CalendarEventParticipantPersonListener {
         CalendarEventParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: eventPayload.properties.after.email.primaryEmail,
+          email: eventPayload.properties.after.emails.primaryEmail,
           personId: eventPayload.recordId,
         },
       );
@@ -66,7 +66,7 @@ export class CalendarEventParticipantPersonListener {
           CalendarEventParticipantUnmatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.before.email.primaryEmail,
+            email: eventPayload.properties.before.emails.primaryEmail,
             personId: eventPayload.recordId,
           },
         );
@@ -75,7 +75,7 @@ export class CalendarEventParticipantPersonListener {
           CalendarEventParticipantMatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.email.primaryEmail,
+            email: eventPayload.properties.after.emails.primaryEmail,
             personId: eventPayload.recordId,
           },
         );
