@@ -7,13 +7,11 @@ import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-type WorkflowShowPageEffectProps = {
+type WorkflowEffectProps = {
   workflowId: string;
 };
 
-export const WorkflowShowPageEffect = ({
-  workflowId,
-}: WorkflowShowPageEffectProps) => {
+export const WorkflowEffect = ({ workflowId }: WorkflowEffectProps) => {
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const setWorkflowId = useSetRecoilState(workflowIdState);
