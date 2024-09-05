@@ -7,7 +7,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-// import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
