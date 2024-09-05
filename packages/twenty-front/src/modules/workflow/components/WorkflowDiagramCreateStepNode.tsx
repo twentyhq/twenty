@@ -7,7 +7,7 @@ export const StyledTargetHandle = styled(Handle)`
   visibility: hidden;
 `;
 
-export const WorkflowShowPageDiagramCreateStepNode = () => {
+export const WorkflowDiagramCreateStepNode = () => {
   return (
     <>
       <StyledTargetHandle type="target" position={Position.Top} />
