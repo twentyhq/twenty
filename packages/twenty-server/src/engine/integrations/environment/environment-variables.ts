@@ -368,6 +368,10 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   REDIS_PORT = 6379;
 
+  REDIS_USERNAME: string;
+
+  REDIS_PASSWORD: string;
+
   API_TOKEN_EXPIRES_IN = '100y';
 
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
