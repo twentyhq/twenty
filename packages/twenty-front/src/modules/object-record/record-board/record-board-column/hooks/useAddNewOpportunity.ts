@@ -6,7 +6,6 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext, useState } from 'react';
-import { isDefined } from 'twenty-ui';
 
 export const useAddNewOpportunity = (position: string) => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
