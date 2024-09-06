@@ -40,7 +40,7 @@ export const MultipleRecordSelectDropdown = ({
     selectableListScopeId: selectableListId,
   });
 
-  const { handleResetSelectedPosition } = useSelectableList(selectableListId);
+  const { resetSelectedItem } = useSelectableList(selectableListId);
 
   const selectedItemId = useRecoilValue(selectedItemIdState);
 
@@ -75,10 +75,10 @@ export const MultipleRecordSelectDropdown = ({
     [Key.Escape],
     () => {
       closeDropdown();
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
     hotkeyScope,
-    [closeDropdown, handleResetSelectedPosition],
+    [closeDropdown, resetSelectedItem],
   );
 
   const showNoResult =
@@ -105,7 +105,7 @@ export const MultipleRecordSelectDropdown = ({
           recordsInDropdown[record],
           !recordIsSelectedInDropwdown,
         );
-        handleResetSelectedPosition();
+        resetSelectedItem();
       }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
@@ -116,7 +116,7 @@ export const MultipleRecordSelectDropdown = ({
               selected={record.isSelected}
               isKeySelected={record.id === selectedItemId}
               onSelectChange={(newCheckedValue) => {
-                handleResetSelectedPosition();
+                resetSelectedItem();
                 handleRecordSelectChange(record, newCheckedValue);
               }}
               avatar={

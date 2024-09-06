@@ -48,7 +48,7 @@ export const MultiRecordSelect = ({
   const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
     useObjectRecordMultiSelectScopedStates(relationPickerScopedId);
 
-  const { handleResetSelectedPosition } = useSelectableList(
+  const { resetSelectedItem } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
   const recordMultiSelectIsLoading = useRecoilValue(
@@ -79,10 +79,10 @@ export const MultiRecordSelect = ({
     () => {
       onSubmit?.();
       goBackToPreviousHotkeyScope();
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
     relationPickerScopedId,
-    [onSubmit, goBackToPreviousHotkeyScope, handleResetSelectedPosition],
+    [onSubmit, goBackToPreviousHotkeyScope, resetSelectedItem],
   );
 
   const debouncedOnCreate = useDebouncedCallback(
@@ -123,7 +123,7 @@ export const MultiRecordSelect = ({
                 hotkeyScope={relationPickerScopedId}
                 onEnter={(selectedId) => {
                   onChange?.(selectedId);
-                  handleResetSelectedPosition();
+                  resetSelectedItem();
                 }}
               >
                 {objectRecordsIdsMultiSelect?.map((recordId) => {
@@ -133,7 +133,7 @@ export const MultiRecordSelect = ({
                       objectRecordId={recordId}
                       onChange={(recordId) => {
                         onChange?.(recordId);
-                        handleResetSelectedPosition();
+                        resetSelectedItem();
                       }}
                     />
                   );
