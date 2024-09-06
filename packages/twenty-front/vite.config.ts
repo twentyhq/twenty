@@ -30,32 +30,32 @@ export default defineConfig(({ command, mode }) => {
     overlay: false,
   };
 
-  // if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
-  //   console.log(
-  //     `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
-  //   );
-  // }
+  if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
+    console.log(
+      `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
+    );
+  }
 
-  // if (VITE_DISABLE_ESLINT_CHECKER === 'true') {
-  //   console.log(`VITE_DISABLE_ESLINT_CHECKER: ${VITE_DISABLE_ESLINT_CHECKER}`);
-  // }
+  if (VITE_DISABLE_ESLINT_CHECKER === 'true') {
+    console.log(`VITE_DISABLE_ESLINT_CHECKER: ${VITE_DISABLE_ESLINT_CHECKER}`);
+  }
 
-  // if (VITE_BUILD_SOURCEMAP === 'true') {
-  //   console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
-  // }
+  if (VITE_BUILD_SOURCEMAP === 'true') {
+    console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
+  }
 
-  // if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
-  //   checkers['typescript'] = {
-  //     tsconfigPath: tsConfigPath,
-  //   };
-  // }
+  if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
+    checkers['typescript'] = {
+      tsconfigPath: tsConfigPath,
+    };
+  }
 
-  // if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
-  //   checkers['eslint'] = {
-  //     lintCommand:
-  //       'eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
-  //   };
-  // }
+  if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
+    checkers['eslint'] = {
+      lintCommand:
+        'eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+    };
+  }
 
   return {
     root: __dirname,
