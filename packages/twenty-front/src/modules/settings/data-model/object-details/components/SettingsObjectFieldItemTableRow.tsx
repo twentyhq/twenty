@@ -269,6 +269,7 @@ export const SettingsObjectFieldItemTableRow = ({
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
             scopeKey={fieldMetadataItem.id}
+            onEdit={() => navigate(linkToNavigate)}
             onActivate={() => activateMetadataField(fieldMetadataItem)}
             onDelete={() => deleteMetadataField(fieldMetadataItem)}
           />
