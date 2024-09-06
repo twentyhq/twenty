@@ -94,7 +94,6 @@
     "facepaint": "^1.2.1",
     "file-type": "16.5.4",
     "framer-motion": "^10.12.17",
-    "fs-extra": "^11.2.0",
     "googleapis": "105",
     "graphiql": "^3.1.1",
     "graphql": "16.8.0",

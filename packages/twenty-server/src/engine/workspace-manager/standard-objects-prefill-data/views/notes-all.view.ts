@@ -12,7 +12,7 @@ export const notesAllView = async (
     name: 'All Notes',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.note].id,
     type: 'table',
-    key: null,
+    key: 'INDEX',
     position: 0,
     icon: 'IconNotes',
     kanbanFieldMetadataId: '',

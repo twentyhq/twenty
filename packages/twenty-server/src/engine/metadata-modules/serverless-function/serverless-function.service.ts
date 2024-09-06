@@ -27,6 +27,8 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { getLastLayerDependencies } from 'src/engine/integrations/serverless/drivers/utils/get-last-layer-dependencies';
+import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -46,22 +48,21 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     id: string,
     version: string,
   ) {
+    const serverlessFunction = await this.serverlessFunctionRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+    });
+
+    if (!serverlessFunction) {
+      throw new ServerlessFunctionException(
+        `Function does not exist`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
     try {
-      const serverlessFunction =
-        await this.serverlessFunctionRepository.findOne({
-          where: {
-            id,
-            workspaceId,
-          },
-        });
-
-      if (!serverlessFunction) {
-        throw new ServerlessFunctionException(
-          `Function does not exist`,
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-        );
-      }
-
       const folderPath = getServerlessFolder({
         serverlessFunction,
         version,
@@ -75,10 +76,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       return await readFileContent(fileStream);
     } catch (error) {
       if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-        throw new ServerlessFunctionException(
-          `Function Version '${version}' does not exist`,
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-        );
+        return;
       }
       throw error;
     }
@@ -87,7 +85,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
   async executeOneServerlessFunction(
     id: string,
     workspaceId: string,
-    payload: object | undefined = undefined,
+    payload: object,
     version = 'latest',
   ): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
@@ -104,15 +102,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
         `Function does not exist`,
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
       );
-    }
-
-    if (
-      functionToExecute.syncStatus === ServerlessFunctionSyncStatus.NOT_READY
-    ) {
-      await this.serverlessService.build(functionToExecute, version);
-      await super.updateOne(functionToExecute.id, {
-        syncStatus: ServerlessFunctionSyncStatus.READY,
-      });
     }
 
     return this.serverlessService.execute(functionToExecute, payload, version);
@@ -144,8 +133,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
 
       if (
-        serverlessFunctionCreateHash(latestCode) ===
-        serverlessFunctionCreateHash(draftCode)
+        serverlessFunctionCreateHash(latestCode || '') ===
+        serverlessFunctionCreateHash(draftCode || '')
       ) {
         throw new Error(
           'Cannot publish a new version when code has not changed',
@@ -224,6 +213,9 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       name: serverlessFunctionInput.name,
       description: serverlessFunctionInput.description,
       syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
+      sourceCodeHash: serverlessFunctionCreateHash(
+        serverlessFunctionInput.code,
+      ),
     });
 
     const fileFolder = getServerlessFolder({
@@ -238,7 +230,32 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       folder: fileFolder,
     });
 
+    await this.serverlessService.build(existingServerlessFunction, 'draft');
+    await super.updateOne(existingServerlessFunction.id, {
+      syncStatus: ServerlessFunctionSyncStatus.READY,
+    });
+
     return await this.findById(existingServerlessFunction.id);
+  }
+
+  async getAvailablePackages() {
+    const { packageJson, yarnLock } = await getLastLayerDependencies();
+
+    const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
+    const versions: Record<string, string> = {};
+
+    let match: RegExpExecArray | null;
+
+    while ((match = packageVersionRegex.exec(yarnLock)) !== null) {
+      const packageName = match[1].split('@', 1)[0];
+      const version = match[2];
+
+      if (packageJson.dependencies[packageName]) {
+        versions[packageName] = version;
+      }
+    }
+
+    return versions;
   }
 
   async createOneServerlessFunction(
@@ -258,6 +275,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       ...serverlessFunctionInput,
       workspaceId,
       sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
+      layerVersion: LAST_LAYER_VERSION,
     });
 
     const draftFileFolder = getServerlessFolder({
@@ -271,6 +289,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       mimeType: undefined,
       folder: draftFileFolder,
     });
+
+    await this.serverlessService.build(createdServerlessFunction, 'draft');
 
     return await this.findById(createdServerlessFunction.id);
   }

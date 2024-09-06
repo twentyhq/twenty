@@ -10,7 +10,7 @@ import {
   CalendarEventImportException,
   CalendarEventImportExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
-import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export enum CalendarEventImportSyncStep {
@@ -81,7 +81,7 @@ export class CalendarEventImportErrorHandlerService {
       calendarChannel.throttleFailureCount >= CALENDAR_THROTTLE_MAX_ATTEMPTS
     ) {
       await this.calendarChannelSyncStatusService.markAsFailedUnknownAndFlushCalendarEventsToImport(
-        calendarChannel.id,
+        [calendarChannel.id],
         workspaceId,
       );
 
@@ -104,19 +104,19 @@ export class CalendarEventImportErrorHandlerService {
     switch (syncStep) {
       case CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH:
         await this.calendarChannelSyncStatusService.scheduleFullCalendarEventListFetch(
-          calendarChannel.id,
+          [calendarChannel.id],
         );
         break;
 
       case CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH:
         await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
-          calendarChannel.id,
+          [calendarChannel.id],
         );
         break;
 
       case CalendarEventImportSyncStep.CALENDAR_EVENTS_IMPORT:
         await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
-          calendarChannel.id,
+          [calendarChannel.id],
         );
         break;
 
@@ -130,7 +130,7 @@ export class CalendarEventImportErrorHandlerService {
     workspaceId: string,
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushCalendarEventsToImport(
-      calendarChannel.id,
+      [calendarChannel.id],
       workspaceId,
     );
   }
@@ -141,7 +141,7 @@ export class CalendarEventImportErrorHandlerService {
     workspaceId: string,
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsFailedUnknownAndFlushCalendarEventsToImport(
-      calendarChannel.id,
+      [calendarChannel.id],
       workspaceId,
     );
 
@@ -163,7 +163,7 @@ export class CalendarEventImportErrorHandlerService {
     }
 
     await this.calendarChannelSyncStatusService.resetAndScheduleFullCalendarEventListFetch(
-      calendarChannel.id,
+      [calendarChannel.id],
       workspaceId,
     );
   }

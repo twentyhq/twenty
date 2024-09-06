@@ -3,8 +3,9 @@ import { insertStep } from '../insertStep';
 
 describe('insertStep', () => {
   it('returns a deep copy of the provided steps array instead of mutating it', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -15,7 +16,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-1',
       name: '',
@@ -40,8 +41,9 @@ describe('insertStep', () => {
   });
 
   it('adds the step when the steps array is empty', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -52,7 +54,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-1',
       name: '',
@@ -78,8 +80,9 @@ describe('insertStep', () => {
   });
 
   it('adds the step at the end of a non-empty steps array', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -117,7 +120,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-3',
       name: '',
@@ -147,8 +150,9 @@ describe('insertStep', () => {
   });
 
   it('adds the step in the middle of a non-empty steps array', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -186,7 +190,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-3',
       name: '',

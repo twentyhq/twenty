@@ -1,29 +1,17 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { GoogleAPIScopeConfig } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy';
 import { GoogleAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-request-code.auth.strategy';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
-  constructor(
-    private readonly environmentService: EnvironmentService,
-    private readonly tokenService: TokenService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-  ) {
+  constructor(private readonly environmentService: EnvironmentService) {
     super({
       prompt: 'select_account',
     });
@@ -42,23 +30,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
       );
     }
 
-    const { workspaceId } = await this.tokenService.verifyTransientToken(
-      request.query.transientToken,
-    );
-
-    const scopeConfig: GoogleAPIScopeConfig = {
-      isMessagingAliasFetchingEnabled:
-        !!(await this.featureFlagRepository.findOneBy({
-          workspaceId,
-          key: FeatureFlagKey.IsMessagingAliasFetchingEnabled,
-          value: true,
-        })),
-    };
-
-    new GoogleAPIsOauthRequestCodeStrategy(
-      this.environmentService,
-      scopeConfig,
-    );
+    new GoogleAPIsOauthRequestCodeStrategy(this.environmentService, {});
     setRequestExtraParams(request, {
       transientToken: request.query.transientToken,
       redirectLocation: request.query.redirectLocation,

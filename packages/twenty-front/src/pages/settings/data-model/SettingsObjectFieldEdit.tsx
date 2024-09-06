@@ -176,10 +176,15 @@ export const SettingsObjectFieldEdit = () => {
           title={
             <Breadcrumb
               links={[
-                { children: 'Objects', href: '/settings/objects' },
+                {
+                  children: 'Objects',
+                  href: '/settings/objects',
+                  styles: { minWidth: 'max-content' },
+                },
                 {
                   children: activeObjectMetadataItem.labelPlural,
                   href: `/settings/objects/${objectSlug}`,
+                  styles: { maxWidth: '60%' },
                 },
                 { children: activeMetadataField.label },
               ]}
@@ -235,6 +240,7 @@ export const SettingsObjectFieldEdit = () => {
                 />
                 <Button
                   Icon={IconArchive}
+                  variant="secondary"
                   title="Deactivate"
                   size="small"
                   onClick={handleDeactivate}

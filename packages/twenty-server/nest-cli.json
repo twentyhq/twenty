@@ -4,6 +4,21 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "builder": "swc",
-    "typeCheck": true
+    "typeCheck": true,
+    "assets": [
+      {
+        "include": "**/serverless/drivers/layers/*/package.json",
+        "outDir": "dist/src"
+      },
+      {
+        "include": "**/serverless/drivers/layers/*/yarn.lock",
+        "outDir": "dist/src"
+      },
+      {
+        "include": "**/serverless/drivers/layers/engine/**",
+        "outDir": "dist/src"
+      }
+    ],
+    "watchAssets": true
   }
 }
