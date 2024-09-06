@@ -1,10 +1,14 @@
 import styled from '@emotion/styled';
-import { CSSProperties, Fragment } from 'react';
+import { CSSProperties, Fragment, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 type BreadcrumbProps = {
   className?: string;
-  links: { children: string; href?: string; styles?: CSSProperties }[];
+  links: {
+    href?: string;
+    styles?: CSSProperties;
+    children?: string | ReactNode;
+  }[];
 };
 
 const StyledWrapper = styled.nav`
@@ -35,21 +39,28 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const Breadcrumb = ({ className, links }: BreadcrumbProps) => (
-  <StyledWrapper className={className}>
-    {links.map((link, index) => (
-      <Fragment key={index}>
-        {link.href ? (
-          <StyledLink style={link.styles} title={link.children} to={link.href}>
-            {link.children}
-          </StyledLink>
-        ) : (
-          <StyledText style={link.styles} title={link.children}>
-            {link.children}
-          </StyledText>
-        )}
-        {index < links.length - 1 && '/'}
-      </Fragment>
-    ))}
-  </StyledWrapper>
-);
+// TODO: not sure that passing styles to the link is a good idea
+export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
+  return (
+    <StyledWrapper className={className}>
+      {links.map((link, index) => {
+        const text = typeof link.children === 'string' ? link.children : '';
+
+        return (
+          <Fragment key={index}>
+            {link.href ? (
+              <StyledLink style={link.styles} title={text} to={link.href}>
+                {link.children}
+              </StyledLink>
+            ) : (
+              <StyledText style={link.styles} title={text}>
+                {link.children}
+              </StyledText>
+            )}
+            {index < links.length - 1 && '/'}
+          </Fragment>
+        );
+      })}
+    </StyledWrapper>
+  );
+};
