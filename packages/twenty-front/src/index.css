@@ -13,3 +13,13 @@ html {
 .grecaptcha-badge { 
   visibility: hidden !important;
 }
+.bn-inline-content code{
+  font-family: monospace;
+  color: darkred;
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  background-color: #1414140F;
+
+}
