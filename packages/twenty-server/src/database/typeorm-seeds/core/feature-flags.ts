@@ -50,6 +50,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKey.IsWorkspaceFavoriteEnabled,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };
