@@ -94,6 +94,10 @@ export type ActorFilter = {
   name?: StringFilter;
 };
 
+export type EmailsFilter = {
+  primaryEmail?: StringFilter;
+};
+
 export type LeafFilter =
   | UUIDFilter
   | StringFilter

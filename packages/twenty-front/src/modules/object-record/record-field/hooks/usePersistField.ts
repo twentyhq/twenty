@@ -7,6 +7,8 @@ import { isFieldAddress } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateValue } from '@/object-record/record-field/types/guards/isFieldDateValue';
+import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
+import { isFieldEmailsValue } from '@/object-record/record-field/types/guards/isFieldEmailsValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
@@ -65,6 +67,9 @@ export const usePersistField = () => {
         const fieldIsEmail =
           isFieldEmail(fieldDefinition) && isFieldEmailValue(valueToPersist);
 
+        const fieldIsEmails =
+          isFieldEmails(fieldDefinition) && isFieldEmailsValue(valueToPersist);
+
         const fieldIsDateTime =
           isFieldDateTime(fieldDefinition) &&
           isFieldDateTimeValue(valueToPersist);
@@ -119,6 +124,7 @@ export const usePersistField = () => {
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||
+          fieldIsEmails ||
           fieldIsRating ||
           fieldIsNumber ||
           fieldIsDateTime ||

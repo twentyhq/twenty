@@ -9,25 +9,46 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { IntermediaryMessages } from '@/activities/emails/right-drawer/components/IntermediaryMessages';
 import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
+import { Button } from '@/ui/input/button/components/Button';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { IconArrowBackUp } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 85%;
   justify-content: flex-start;
   overflow-y: auto;
   position: relative;
 `;
 
+const StyledButtonContainer = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  bottom: 0;
+  display: flex;
+  height: 110px;
+  left: 0;
+  padding-left: ${({ theme }) => theme.spacing(7)};
+  padding-top: ${({ theme }) => theme.spacing(5)};
+  position: fixed;
+  right: 0;
+`;
+
 export const RightDrawerEmailThread = () => {
   const setMessageThread = useSetRecoilState(messageThreadState);
 
-  const { thread, messages, fetchMoreMessages, loading } =
-    useRightDrawerEmailThread();
+  const {
+    thread,
+    messages,
+    fetchMoreMessages,
+    threadLoading,
+    messageThreadExternalId,
+    connectedAccountHandle,
+    messageChannelLoading,
+  } = useRightDrawerEmailThread();
 
   const visibleMessages = useMemo(() => {
     return messages.filter(({ messageParticipants }) => {
@@ -67,10 +88,6 @@ export const RightDrawerEmailThread = () => {
     ),
   });
 
-  if (!thread) {
-    return null;
-  }
-
   const visibleMessagesCount = visibleMessages.length;
   const is5OrMoreMessages = visibleMessagesCount >= 5;
   const firstMessages = visibleMessages.slice(
@@ -83,9 +100,26 @@ export const RightDrawerEmailThread = () => {
   const lastMessage = visibleMessages[visibleMessagesCount - 1];
   const subject = visibleMessages[0]?.subject;
 
+  const canReply = useMemo(() => {
+    return (
+      connectedAccountHandle && lastMessage && messageThreadExternalId != null
+    );
+  }, [connectedAccountHandle, lastMessage, messageThreadExternalId]);
+
+  const handleReplyClick = () => {
+    if (!canReply) {
+      return;
+    }
+
+    const url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
+    window.open(url, '_blank');
+  };
+  if (!thread) {
+    return null;
+  }
   return (
     <StyledContainer>
-      {loading ? (
+      {threadLoading ? (
         <EmailLoader loadingText="Loading thread" />
       ) : (
         <>
@@ -110,11 +144,21 @@ export const RightDrawerEmailThread = () => {
             isExpanded
           />
           <CustomResolverFetchMoreLoader
-            loading={loading}
+            loading={threadLoading}
             onLastRowVisible={fetchMoreMessages}
           />
         </>
       )}
+      {canReply && !messageChannelLoading ? (
+        <StyledButtonContainer>
+          <Button
+            onClick={handleReplyClick}
+            title="Reply (View in Gmail)"
+            Icon={IconArrowBackUp}
+            disabled={!canReply}
+          ></Button>
+        </StyledButtonContainer>
+      ) : null}
     </StyledContainer>
   );
 };

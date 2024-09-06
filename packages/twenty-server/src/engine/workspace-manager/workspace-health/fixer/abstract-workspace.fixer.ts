@@ -20,7 +20,7 @@ export abstract class AbstractWorkspaceFixer<
 > {
   private issueTypes: IssueTypes[];
 
-  constructor(...issueTypes: IssueTypes[]) {
+  protected constructor(...issueTypes: IssueTypes[]) {
     this.issueTypes = issueTypes;
   }
 

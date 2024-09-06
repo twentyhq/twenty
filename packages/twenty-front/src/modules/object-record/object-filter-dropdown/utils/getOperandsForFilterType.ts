@@ -15,6 +15,7 @@ export const getOperandsForFilterType = (
   switch (filterType) {
     case 'TEXT':
     case 'EMAIL':
+    case 'EMAILS':
     case 'FULL_NAME':
     case 'ADDRESS':
     case 'PHONE':

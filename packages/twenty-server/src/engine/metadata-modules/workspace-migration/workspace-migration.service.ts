@@ -18,8 +18,8 @@ export class WorkspaceMigrationService {
   /**
    * Get all pending migrations for a given workspaceId
    *
-   * @param workspaceId: string
    * @returns Promise<WorkspaceMigration[]>
+   * @param workspaceId
    */
   public async getPendingMigrations(
     workspaceId: string,
@@ -53,8 +53,8 @@ export class WorkspaceMigrationService {
    * Set appliedAt as current date for a given migration.
    * Should be called once the migration has been applied
    *
-   * @param workspaceId: string
-   * @param migration: WorkspaceMigration
+   * @param workspaceId
+   * @param migration
    */
   public async setAppliedAtForMigration(
     workspaceId: string,
@@ -69,6 +69,7 @@ export class WorkspaceMigrationService {
   /**
    * Create a new pending migration for a given workspaceId and expected changes
    *
+   * @param name
    * @param workspaceId
    * @param migrations
    */

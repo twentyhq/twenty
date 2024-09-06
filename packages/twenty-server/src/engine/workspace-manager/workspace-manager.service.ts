@@ -78,22 +78,6 @@ export class WorkspaceManagerService {
 
   /**
    *
-   * Check if the workspace schema has already been created or not
-   *
-   * @param workspaceId
-   * @Returns Promise<boolean>
-   */
-  public async doesDataSourceExist(workspaceId: string): Promise<boolean> {
-    const dataSource =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    return dataSource.length > 0;
-  }
-
-  /**
-   *
    * We are updating the pg_graphql max_rows from 30 (default value) to 60
    *
    * @params workspaceId, schemaName

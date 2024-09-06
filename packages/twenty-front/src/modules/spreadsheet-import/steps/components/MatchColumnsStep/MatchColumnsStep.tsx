@@ -21,8 +21,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
-import { initialComputedColumnsState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useRecoilState } from 'recoil';
@@ -63,7 +63,7 @@ export type MatchColumnsStepProps = {
   setPreviousStepState: (currentStepState: SpreadsheetImportStep) => void;
   currentStepState: SpreadsheetImportStep;
   nextStep: () => void;
-  errorToast: (message: string) => void;
+  onError: (message: string) => void;
 };
 
 export enum ColumnType {
@@ -136,7 +136,7 @@ export const MatchColumnsStep = <T extends string>({
   setPreviousStepState,
   currentStepState,
   nextStep,
-  errorToast,
+  onError,
 }: MatchColumnsStepProps) => {
   const { enqueueDialog } = useDialogManager();
   const { enqueueSnackBar } = useSnackBar();
@@ -145,7 +145,7 @@ export const MatchColumnsStep = <T extends string>({
     useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useRecoilState(
-    initialComputedColumnsState(headerValues),
+    initialComputedColumnsSelector(headerValues),
   );
 
   const { matchColumnsStepHook } = useSpreadsheetImportInternal();
@@ -215,7 +215,7 @@ export const MatchColumnsStep = <T extends string>({
     ],
   );
 
-  const onContinue = useCallback(
+  const handleContinue = useCallback(
     async (
       values: ImportedStructuredRow<string>[],
       rawData: ImportedRow[],
@@ -231,11 +231,11 @@ export const MatchColumnsStep = <T extends string>({
         setPreviousStepState(currentStepState);
         nextStep();
       } catch (e) {
-        errorToast((e as Error).message);
+        onError((e as Error).message);
       }
     },
     [
-      errorToast,
+      onError,
       matchColumnsStepHook,
       nextStep,
       setPreviousStepState,
@@ -263,9 +263,13 @@ export const MatchColumnsStep = <T extends string>({
 
   const handleAlertOnContinue = useCallback(async () => {
     setIsLoading(true);
-    await onContinue(normalizeTableData(columns, data, fields), data, columns);
+    await handleContinue(
+      normalizeTableData(columns, data, fields),
+      data,
+      columns,
+    );
     setIsLoading(false);
-  }, [onContinue, columns, data, fields]);
+  }, [handleContinue, columns, data, fields]);
 
   const handleOnContinue = useCallback(async () => {
     if (unmatchedRequiredFields.length > 0) {
@@ -293,7 +297,7 @@ export const MatchColumnsStep = <T extends string>({
       });
     } else {
       setIsLoading(true);
-      await onContinue(
+      await handleContinue(
         normalizeTableData(columns, data, fields),
         data,
         columns,
@@ -304,7 +308,7 @@ export const MatchColumnsStep = <T extends string>({
     unmatchedRequiredFields,
     enqueueDialog,
     handleAlertOnContinue,
-    onContinue,
+    handleContinue,
     columns,
     data,
     fields,

@@ -1,28 +1,30 @@
-import { join } from 'path';
-import { tmpdir } from 'os';
-import { promises as fs } from 'fs';
 import { fork } from 'child_process';
+import { promises as fs, existsSync } from 'fs';
+import { join } from 'path';
 
 import { v4 } from 'uuid';
 
+import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 import {
   ServerlessDriver,
   ServerlessExecuteError,
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
-import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
+import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
+import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
+import { COMMON_LAYER_NAME } from 'src/engine/integrations/serverless/drivers/constants/common-layer-name';
+import { copyAndBuildDependencies } from 'src/engine/integrations/serverless/drivers/utils/copy-and-build-dependencies';
+import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/integrations/serverless/drivers/constants/serverless-tmpdir-folder';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -39,22 +41,40 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
+  private getInMemoryLayerFolderPath = (version: number) => {
+    return join(SERVERLESS_TMPDIR_FOLDER, COMMON_LAYER_NAME, `${version}`);
+  };
+
+  private async createLayerIfNotExists(version: number) {
+    const inMemoryLastVersionLayerFolderPath =
+      this.getInMemoryLayerFolderPath(version);
+
+    if (existsSync(inMemoryLastVersionLayerFolderPath)) {
+      return;
+    }
+
+    await copyAndBuildDependencies(inMemoryLastVersionLayerFolderPath);
+  }
+
   async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
+    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
     const javascriptCode = await this.getCompiledCode(
       serverlessFunction,
       this.fileStorageService,
     );
 
+    const draftFolderPath = getServerlessFolder({
+      serverlessFunction,
+      version: 'draft',
+    });
+
     await this.fileStorageService.write({
       file: javascriptCode,
       name: BUILD_FILE_NAME,
       mimeType: undefined,
-      folder: getServerlessFolder({
-        serverlessFunction,
-        version: 'draft',
-      }),
+      folder: draftFolderPath,
     });
   }
 
@@ -68,9 +88,11 @@ export class LocalDriver
 
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
-    payload: object | undefined = undefined,
+    payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
+    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
+
     const startTime = Date.now();
     let fileContent = '';
 
@@ -94,7 +116,15 @@ export class LocalDriver
       throw error;
     }
 
-    const tmpFilePath = join(tmpdir(), `${v4()}.js`);
+    const tmpFolderPath = join(SERVERLESS_TMPDIR_FOLDER, v4());
+
+    const tmpFilePath = join(tmpFolderPath, 'index.js');
+
+    await fs.symlink(
+      this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
+      tmpFolderPath,
+      'dir',
+    );
 
     const modifiedContent = `
     process.on('message', async (message) => {
@@ -137,7 +167,7 @@ export class LocalDriver
           });
         }
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.stderr?.on('data', (data) => {
@@ -169,19 +199,19 @@ export class LocalDriver
           },
         });
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.on('error', (error) => {
         reject(error);
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.on('exit', (code) => {
         if (code && code !== 0) {
           reject(new Error(`Child process exited with code ${code}`));
-          fs.unlink(tmpFilePath);
+          fs.unlink(tmpFilePath).catch(console.error);
         }
       });
 

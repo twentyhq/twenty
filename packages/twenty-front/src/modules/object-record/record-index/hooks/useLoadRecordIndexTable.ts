@@ -53,6 +53,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     totalCount,
     fetchMoreRecords,
     queryStateIdentifier,
+    hasNextPage,
   } = useFindManyRecords({
     ...params,
     recordGqlFields,
@@ -74,5 +75,6 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     fetchMoreRecords,
     queryStateIdentifier,
     setRecordTableData,
+    hasNextPage,
   };
 };

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   EntityManager,
@@ -27,8 +27,6 @@ import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-syn
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
-  private readonly logger = new Logger(WorkspaceMetadataUpdaterService.name);
-
   async updateObjectMetadata(
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
@@ -127,12 +125,13 @@ export class WorkspaceMetadataUpdaterService {
     /**
      * Update field metadata
      */
-    const updatedFieldMetadataCollection = await this.updateEntities<
-      FieldMetadataEntity<'default'>
-    >(manager, FieldMetadataEntity, storage.fieldMetadataUpdateCollection, [
-      'objectMetadataId',
-      'workspaceId',
-    ]);
+    const updatedFieldMetadataCollection =
+      await this.updateEntities<FieldMetadataEntity>(
+        manager,
+        FieldMetadataEntity,
+        storage.fieldMetadataUpdateCollection,
+        ['objectMetadataId', 'workspaceId'],
+      );
 
     /**
      * Create field metadata

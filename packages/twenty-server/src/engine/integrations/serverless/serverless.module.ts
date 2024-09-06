@@ -1,14 +1,13 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
+import { LambdaDriver } from 'src/engine/integrations/serverless/drivers/lambda.driver';
+import { LocalDriver } from 'src/engine/integrations/serverless/drivers/local.driver';
+import { SERVERLESS_DRIVER } from 'src/engine/integrations/serverless/serverless.constants';
 import {
   ServerlessDriverType,
   ServerlessModuleAsyncOptions,
 } from 'src/engine/integrations/serverless/serverless.interface';
 import { ServerlessService } from 'src/engine/integrations/serverless/serverless.service';
-import { SERVERLESS_DRIVER } from 'src/engine/integrations/serverless/serverless.constants';
-import { LocalDriver } from 'src/engine/integrations/serverless/drivers/local.driver';
-import { LambdaDriver } from 'src/engine/integrations/serverless/drivers/lambda.driver';
-import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 
 @Global()
 export class ServerlessModule {
@@ -28,7 +27,7 @@ export class ServerlessModule {
     return {
       module: ServerlessModule,
       imports: options.imports || [],
-      providers: [ServerlessService, BuildDirectoryManagerService, provider],
+      providers: [ServerlessService, provider],
       exports: [ServerlessService],
     };
   }

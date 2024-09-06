@@ -93,7 +93,7 @@ export const ConfirmationModal = ({
                 setIsOpen(false);
               }
             }}
-            onEnter={onConfirmClick}
+            onEnter={!isValidValue ? undefined : onConfirmClick}
             isClosable={true}
             padding="large"
           >
@@ -109,6 +109,7 @@ export const ConfirmationModal = ({
             {confirmationValue && (
               <Section>
                 <TextInput
+                  dataTestId="confirmation-modal-input"
                   value={inputConfirmationValue}
                   onChange={handleInputConfimrationValueChange}
                   placeholder={confirmationPlaceholder}

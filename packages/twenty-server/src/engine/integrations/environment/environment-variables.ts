@@ -130,7 +130,7 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_EXPIRES_IN = '30m';
+  REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @IsDuration()
   @IsOptional()
@@ -368,6 +368,10 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   REDIS_PORT = 6379;
 
+  REDIS_USERNAME: string;
+
+  REDIS_PASSWORD: string;
+
   API_TOKEN_EXPIRES_IN = '100y';
 
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
@@ -421,6 +425,13 @@ export class EnvironmentVariables {
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   CHROME_EXTENSION_ID: string;
+
+  @CastToPositiveNumber()
+  SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT = 10;
+
+  // milliseconds
+  @CastToPositiveNumber()
+  SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
 }
 
 export const validate = (

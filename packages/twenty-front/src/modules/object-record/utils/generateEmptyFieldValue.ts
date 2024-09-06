@@ -12,6 +12,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.Text: {
       return '';
     }
+    case FieldMetadataType.Emails: {
+      return { primaryEmail: '', additionalEmails: null };
+    }
     case FieldMetadataType.Link: {
       return {
         label: '',

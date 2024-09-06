@@ -4,6 +4,7 @@ import {
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValueFullName,
   FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueLinks,
@@ -27,6 +28,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
   [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.EMAILS]: FieldMetadataDefaultValueEmails;
   [FieldMetadataType.DATE_TIME]:
     | FieldMetadataDefaultValueDateTime
     | FieldMetadataDefaultValueNowFunction;

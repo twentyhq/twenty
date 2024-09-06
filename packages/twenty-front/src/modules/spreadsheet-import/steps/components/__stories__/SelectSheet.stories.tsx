@@ -50,7 +50,7 @@ export const Default = () => (
               },
             },
           }}
-          errorToast={() => null}
+          onError={() => null}
           onBack={() => Promise.resolve()}
         />
       </ModalWrapper>

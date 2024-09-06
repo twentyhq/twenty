@@ -21,7 +21,10 @@ export async function determineRelationDetails(
   let fromObjectMetadata: ObjectMetadataEntity | undefined =
     fieldMetadata.object;
   let toObjectMetadata: ObjectMetadataEntity | undefined =
-    relationMetadata.toObjectMetadata;
+    objectMetadataCollection.find(
+      (objectMetadata) =>
+        objectMetadata.id === relationMetadata.toObjectMetadataId,
+    );
 
   // RelationMetadata always store the relation from the perspective of the `from` object, MANY_TO_ONE relations are not stored yet
   if (relationType === 'many-to-one') {
@@ -37,6 +40,16 @@ export async function determineRelationDetails(
     throw new Error('Object metadata not found');
   }
 
+  const toFieldMetadata = toObjectMetadata.fields.find((field) =>
+    relationType === 'many-to-one'
+      ? field.id === relationMetadata.fromFieldMetadataId
+      : field.id === relationMetadata.toFieldMetadataId,
+  );
+
+  if (!toFieldMetadata) {
+    throw new Error('To field metadata not found');
+  }
+
   // TODO: Support many to many relations
   if (relationType === 'many-to-many') {
     throw new Error('Many to many relations are not supported yet');
@@ -45,7 +58,7 @@ export async function determineRelationDetails(
   return {
     relationType,
     target: toObjectMetadata.nameSingular,
-    inverseSide: fromObjectMetadata.nameSingular,
+    inverseSide: toFieldMetadata.name,
     joinColumn:
       // TODO: This will work for now but we need to handle this better in the future for custom names on the join column
       relationType === 'many-to-one' ||

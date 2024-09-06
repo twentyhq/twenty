@@ -10,6 +10,19 @@ export const useFilteredObjectMetadataItems = () => {
   const activeObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,
   );
+
+  const alphaSortedActiveObjectMetadataItems = activeObjectMetadataItems.sort(
+    (a, b) => {
+      if (a.nameSingular < b.nameSingular) {
+        return -1;
+      }
+      if (a.nameSingular > b.nameSingular) {
+        return 1;
+      }
+      return 0;
+    },
+  );
+
   const inactiveObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => !isActive && !isSystem,
   );
@@ -37,5 +50,6 @@ export const useFilteredObjectMetadataItems = () => {
     findObjectMetadataItemByNamePlural,
     inactiveObjectMetadataItems,
     objectMetadataItems,
+    alphaSortedActiveObjectMetadataItems,
   };
 };

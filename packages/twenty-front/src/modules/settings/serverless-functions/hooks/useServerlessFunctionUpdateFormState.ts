@@ -18,7 +18,11 @@ type SetServerlessFunctionFormValues = Dispatch<
 
 export const useServerlessFunctionUpdateFormState = (
   serverlessFunctionId: string,
-): [ServerlessFunctionFormValues, SetServerlessFunctionFormValues] => {
+): {
+  formValues: ServerlessFunctionFormValues;
+  setFormValues: SetServerlessFunctionFormValues;
+  loading: boolean;
+} => {
   const [formValues, setFormValues] = useState<ServerlessFunctionFormValues>({
     name: '',
     description: '',
@@ -28,7 +32,7 @@ export const useServerlessFunctionUpdateFormState = (
   const { serverlessFunction } =
     useGetOneServerlessFunction(serverlessFunctionId);
 
-  useGetOneServerlessFunctionSourceCode({
+  const { loading } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
     version: 'draft',
     onCompleted: (data: FindOneServerlessFunctionSourceCodeQuery) => {
@@ -44,5 +48,5 @@ export const useServerlessFunctionUpdateFormState = (
     },
   });
 
-  return [formValues, setFormValues];
+  return { formValues, setFormValues, loading };
 };

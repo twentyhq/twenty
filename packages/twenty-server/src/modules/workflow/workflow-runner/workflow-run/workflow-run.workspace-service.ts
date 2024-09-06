@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/services/workflow-common.workspace-service';
 import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
@@ -13,7 +14,10 @@ import {
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMManager: TwentyORMManager,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+  ) {}
 
   async createWorkflowRun(workflowVersionId: string, createdBy: ActorMetadata) {
     const workflowRunRepository =
@@ -21,10 +25,16 @@ export class WorkflowRunWorkspaceService {
         'workflowRun',
       );
 
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
+        workflowVersionId,
+      );
+
     return (
       await workflowRunRepository.save({
         workflowVersionId,
         createdBy,
+        workflowId: workflowVersion.workflowId,
         status: WorkflowRunStatus.NOT_STARTED,
       })
     ).id;

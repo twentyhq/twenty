@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import {
   expect,
@@ -8,6 +7,7 @@ import {
   waitFor,
   within,
 } from '@storybook/test';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -141,7 +141,9 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText('John Wick');
+    const item = await canvas.findByText('John Wick', undefined, {
+      timeout: 3000,
+    });
 
     await waitFor(() => {
       userEvent.click(item);
@@ -156,7 +158,7 @@ export const Cancel: Story = {
     const canvas = within(canvasElement);
 
     expect(cancelJestFn).toHaveBeenCalledTimes(0);
-    await canvas.findByText('John Wick');
+    await canvas.findByText('John Wick', undefined, { timeout: 3000 });
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     fireEvent.click(emptyDiv);

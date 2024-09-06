@@ -52,7 +52,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (!workspace) {
       throw new AuthException(
         'Workspace not found',
-        AuthExceptionCode.INVALID_INPUT,
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
 

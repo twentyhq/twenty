@@ -2,14 +2,12 @@ import styled from '@emotion/styled';
 
 import { SelectOption } from '@/spreadsheet-import/types';
 
-import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useTheme } from '@emotion/react';
 import {
@@ -40,6 +38,7 @@ interface SelectInputProps {
   onFilterChange?: (filteredOptions: SelectOption[]) => void;
   onClear?: () => void;
   clearLabel?: string;
+  hotkeyScope: string;
 }
 
 export const SelectInput = ({
@@ -51,6 +50,7 @@ export const SelectInput = ({
   defaultOption,
   parentRef,
   onFilterChange,
+  hotkeyScope,
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -97,12 +97,6 @@ export const SelectInput = ({
     placement: 'bottom-start',
   });
 
-  const setHotkeyScope = useSetHotkeyScope();
-
-  useEffect(() => {
-    setHotkeyScope(SelectFieldHotkeyScope.SelectField);
-  }, [setHotkeyScope]);
-
   useEffect(() => {
     onFilterChange?.(optionsInDropDown);
   }, [onFilterChange, optionsInDropDown]);
@@ -132,7 +126,7 @@ export const SelectInput = ({
         handleOptionChange(selectedOption);
       }
     },
-    SelectFieldHotkeyScope.SelectField,
+    hotkeyScope,
     [searchFilter, optionsInDropDown],
   );
 

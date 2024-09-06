@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
 
@@ -15,8 +15,6 @@ import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
 export class FindDuplicatesQueryFactory {
-  private readonly logger = new Logger(FindDuplicatesQueryFactory.name);
-
   constructor(
     private readonly fieldsStringFactory: FieldsStringFactory,
     private readonly argsAliasFactory: ArgsAliasFactory,

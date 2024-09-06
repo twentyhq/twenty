@@ -20,9 +20,9 @@ import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { useDebouncedCallback } from 'use-debounce';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { useState } from 'react';
+import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -37,7 +37,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
-  const [formValues, setFormValues] =
+  const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
   const { code: latestVersionCode } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
@@ -68,7 +68,7 @@ export const SettingsServerlessFunctionDetail = () => {
     }
   };
 
-  const handleSave = useDebouncedCallback(save, 500);
+  const handleSave = usePreventOverlapCallback(save, 1000);
 
   const onChange = (key: string) => {
     return async (value: string | undefined) => {
@@ -201,7 +201,7 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   return (
-    formValues.name && (
+    !loading && (
       <SubMenuTopBarContainer
         Icon={IconFunction}
         title={

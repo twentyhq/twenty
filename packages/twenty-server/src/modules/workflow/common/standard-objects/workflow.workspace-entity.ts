@@ -15,14 +15,37 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKFLOW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
-import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
+import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+
+export enum WorkflowStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+}
+
+const WorkflowStatusOptions = [
+  {
+    value: WorkflowStatus.DRAFT,
+    label: 'Draft',
+    position: 0,
+    color: 'yellow',
+  },
+  {
+    value: WorkflowStatus.ACTIVE,
+    label: 'Active',
+    position: 1,
+    color: 'green',
+  },
+  {
+    value: WorkflowStatus.DEACTIVATED,
+    label: 'Deactivated',
+    position: 2,
+    color: 'grey',
+  },
+];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflow,
@@ -47,14 +70,24 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.publishedVersionId,
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId,
     type: FieldMetadataType.TEXT,
-    label: 'Published Version Id',
-    description: 'The workflow published version id',
+    label: 'Last published Version Id',
+    description: 'The workflow last published version id',
     icon: 'IconVersions',
   })
   @WorkspaceIsNullable()
-  publishedVersionId: string | null;
+  lastPublishedVersionId: string | null;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.statuses,
+    type: FieldMetadataType.MULTI_SELECT,
+    label: 'Statuses',
+    description: 'The current statuses of the workflow versions',
+    options: WorkflowStatusOptions,
+  })
+  @WorkspaceIsNullable()
+  statuses: WorkflowStatus[] | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.position,
@@ -81,6 +114,18 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   versions: Relation<WorkflowVersionWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.runs,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Runs',
+    description: 'Workflow runs linked to the workflow.',
+    icon: 'IconVersions',
+    inverseSideTarget: () => WorkflowRunWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  runs: Relation<WorkflowRunWorkspaceEntity>;
+
+  @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.eventListeners,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Event Listeners',
@@ -93,17 +138,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   eventListeners: Relation<WorkflowEventListenerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.activityTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the contact',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
@@ -114,50 +148,4 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.attachments,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Attachments',
-    description: 'Attachments linked to the contact.',
-    icon: 'IconFileImport',
-    inverseSideTarget: () => AttachmentWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  attachments: Relation<AttachmentWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Events',
-    description: 'Events linked to the workflow',
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.taskTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Tasks',
-    description: 'Tasks tied to the workflow',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => TaskTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.noteTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Notes',
-    description: 'Notes tied to the workflow',
-    icon: 'IconNotes',
-    inverseSideTarget: () => NoteTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 }

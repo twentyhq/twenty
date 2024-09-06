@@ -1,4 +1,4 @@
-import { IconPencil } from 'twenty-ui';
+import { IconSettings } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
@@ -42,8 +42,8 @@ export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
         actions: [
           {
             id: 'edit',
-            label: 'Edit from settings',
-            icon: IconPencil,
+            label: 'Edit from Settings',
+            icon: IconSettings,
             position: 0,
             callback: navigateToSelectSettings,
           },

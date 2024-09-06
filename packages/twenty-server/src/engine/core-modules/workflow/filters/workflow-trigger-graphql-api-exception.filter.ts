@@ -19,6 +19,7 @@ export class WorkflowTriggerGraphqlApiExceptionFilter
       case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION:
       case WorkflowTriggerExceptionCode.INVALID_ACTION_TYPE:
       case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER:
+      case WorkflowTriggerExceptionCode.FORBIDDEN:
         throw new UserInputError(exception.message);
       default:
         throw new InternalServerError(exception.message);

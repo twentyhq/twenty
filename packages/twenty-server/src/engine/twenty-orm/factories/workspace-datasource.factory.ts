@@ -9,11 +9,13 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
+import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
+  private cacheManager = new CacheManager<WorkspaceDataSource>();
+
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly environmentService: EnvironmentService,
@@ -48,7 +50,7 @@ export class WorkspaceDatasourceFactory {
       );
     }
 
-    const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
+    const workspaceDataSource = await this.cacheManager.execute(
       `${workspaceId}-${latestWorkspaceMetadataVersion}`,
       async () => {
         let cachedObjectMetadataCollection =

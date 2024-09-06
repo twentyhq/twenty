@@ -12,6 +12,7 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
 import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import { MessagingPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-partial-message-list-fetch.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
@@ -35,6 +36,7 @@ export class MessagingMessageListFetchJob {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
   @Process(MessagingMessageListFetchJob.name)

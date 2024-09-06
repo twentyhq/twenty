@@ -2,6 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_MESSAGE_CHANNEL_IDS } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { DEV_SEED_MESSAGE_IDS } from 'src/database/typeorm-seeds/workspace/messages';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 const tableName = 'messageChannelMessageAssociation';
 
@@ -27,6 +28,7 @@ export const seedMessageChannelMessageAssociation = async (
       'messageExternalId',
       'messageId',
       'messageChannelId',
+      'direction',
     ])
     .orIgnore()
     .values([
@@ -39,6 +41,7 @@ export const seedMessageChannelMessageAssociation = async (
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_1,
         messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
+        direction: MessageDirection.OUTGOING,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_IDS.MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_2,
@@ -49,6 +52,7 @@ export const seedMessageChannelMessageAssociation = async (
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_2,
         messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
+        direction: MessageDirection.OUTGOING,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_IDS.MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_3,
@@ -59,6 +63,7 @@ export const seedMessageChannelMessageAssociation = async (
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_3,
         messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
+        direction: MessageDirection.INCOMING,
       },
     ])
     .execute();

@@ -23,7 +23,8 @@ export type CompositeFieldMetadataType =
   | FieldMetadataType.CURRENCY
   | FieldMetadataType.FULL_NAME
   | FieldMetadataType.LINK
-  | FieldMetadataType.LINKS;
+  | FieldMetadataType.LINKS
+  | FieldMetadataType.EMAILS;
 
 @Injectable()
 export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<CompositeFieldMetadataType> {

@@ -866,20 +866,20 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                 "isNullable": false,
                                 "createdAt": "2024-08-02T16:00:05.938Z",
                                 "updatedAt": "2024-08-02T16:00:05.938Z",
-                                "defaultValue": "'incoming'",
+                                "defaultValue": "'INCOMING'",
                                 "options": [
                                     {
                                         "id": "09fd3f5f-5903-4a3a-8f8b-335825349389",
                                         "color": "green",
                                         "label": "Incoming",
-                                        "value": "incoming",
+                                        "value": "INCOMING",
                                         "position": 0
                                     },
                                     {
                                         "id": "0df4272e-dfef-450e-84b7-d1477e66ee7f",
                                         "color": "blue",
                                         "label": "Outgoing",
-                                        "value": "outgoing",
+                                        "value": "OUTGOING",
                                         "position": 1
                                     }
                                 ],

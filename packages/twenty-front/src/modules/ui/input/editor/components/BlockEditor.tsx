@@ -83,8 +83,8 @@ const StyledEditor = styled.div`
     border: 1px solid ${({ theme }) => theme.border.color.light};
   }
   & .bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item) svg {
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
   }
 
   & .bn-mantine .bn-side-menu > [draggable='true'] {
@@ -92,6 +92,16 @@ const StyledEditor = styled.div`
   }
   & .bn-color-picker-dropdown {
     margin-left: 8px;
+  }
+
+  & .bn-inline-content code {
+    font-family: monospace;
+    color: darkred;
+    padding: 2px 4px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+    background-color: #1414140f;
   }
 `;
 

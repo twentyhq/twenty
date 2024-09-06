@@ -18,7 +18,7 @@ const StyledContent = styled(Modal.Content)`
 type UploadStepProps = {
   setUploadedFile: (file: File) => void;
   setCurrentStepState: (data: any) => void;
-  errorToast: (message: string) => void;
+  onError: (message: string) => void;
   nextStep: () => void;
   setPreviousStepState: (data: any) => void;
   currentStepState: SpreadsheetImportStep;
@@ -27,7 +27,7 @@ type UploadStepProps = {
 export const UploadStep = ({
   setUploadedFile,
   setCurrentStepState,
-  errorToast,
+  onError,
   nextStep,
   setPreviousStepState,
   currentStepState,
@@ -36,7 +36,7 @@ export const UploadStep = ({
   const { maxRecords, uploadStepHook, selectHeaderStepHook, selectHeader } =
     useSpreadsheetImportInternal();
 
-  const onContinue = useCallback(
+  const handleContinue = useCallback(
     async (workbook: WorkBook, file: File) => {
       setUploadedFile(file);
       const isSingleSheet = workbook.SheetNames.length === 1;
@@ -45,9 +45,7 @@ export const UploadStep = ({
           maxRecords > 0 &&
           exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
         ) {
-          errorToast(
-            `Too many records. Up to ${maxRecords.toString()} allowed`,
-          );
+          onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
           return;
         }
         try {
@@ -72,7 +70,7 @@ export const UploadStep = ({
             });
           }
         } catch (e) {
-          errorToast((e as Error).message);
+          onError((e as Error).message);
         }
       } else {
         setCurrentStepState({
@@ -84,7 +82,7 @@ export const UploadStep = ({
       nextStep();
     },
     [
-      errorToast,
+      onError,
       maxRecords,
       nextStep,
       selectHeader,
@@ -100,10 +98,10 @@ export const UploadStep = ({
   const handleOnContinue = useCallback(
     async (data: WorkBook, file: File) => {
       setIsLoading(true);
-      await onContinue(data, file);
+      await handleContinue(data, file);
       setIsLoading(false);
     },
-    [onContinue],
+    [handleContinue],
   );
 
   return (

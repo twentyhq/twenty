@@ -1,86 +1,87 @@
-import { GoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/types/google-calendar-error.type';
 import {
-  CalendarEventError,
-  CalendarEventErrorCode,
-} from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
-export const parseGoogleCalendarError = (
-  error: GoogleCalendarError,
-): CalendarEventError => {
+export const parseGoogleCalendarError = (error: {
+  code?: number;
+  reason: string;
+  message: string;
+}): CalendarEventImportDriverException => {
   const { code, reason, message } = error;
 
   switch (code) {
     case 400:
       if (reason === 'invalid_grant') {
-        return {
-          code: CalendarEventErrorCode.INSUFFICIENT_PERMISSIONS,
+        return new CalendarEventImportDriverException(
           message,
-        };
+          CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
       }
       if (reason === 'failedPrecondition') {
-        return {
-          code: CalendarEventErrorCode.TEMPORARY_ERROR,
+        return new CalendarEventImportDriverException(
           message,
-        };
+          CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
       }
 
-      return {
-        code: CalendarEventErrorCode.UNKNOWN,
+      return new CalendarEventImportDriverException(
         message,
-      };
+        CalendarEventImportDriverExceptionCode.UNKNOWN,
+      );
 
     case 404:
-      return {
-        code: CalendarEventErrorCode.NOT_FOUND,
+      return new CalendarEventImportDriverException(
         message,
-      };
+        CalendarEventImportDriverExceptionCode.NOT_FOUND,
+      );
 
     case 429:
-      return {
-        code: CalendarEventErrorCode.TEMPORARY_ERROR,
+      return new CalendarEventImportDriverException(
         message,
-      };
+        CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
 
     case 403:
       if (
         reason === 'rateLimitExceeded' ||
         reason === 'userRateLimitExceeded'
       ) {
-        return {
-          code: CalendarEventErrorCode.TEMPORARY_ERROR,
+        return new CalendarEventImportDriverException(
           message,
-        };
+          CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
       } else {
-        return {
-          code: CalendarEventErrorCode.INSUFFICIENT_PERMISSIONS,
+        return new CalendarEventImportDriverException(
           message,
-        };
+          CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
       }
 
     case 401:
-      return {
-        code: CalendarEventErrorCode.INSUFFICIENT_PERMISSIONS,
+      return new CalendarEventImportDriverException(
         message,
-      };
+        CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      );
     case 500:
       if (reason === 'backendError') {
-        return {
-          code: CalendarEventErrorCode.TEMPORARY_ERROR,
+        return new CalendarEventImportDriverException(
           message,
-        };
+          CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
       } else {
-        return {
-          code: CalendarEventErrorCode.UNKNOWN,
+        return new CalendarEventImportDriverException(
           message,
-        };
+          CalendarEventImportDriverExceptionCode.UNKNOWN,
+        );
       }
 
     default:
       break;
   }
 
-  return {
-    code: CalendarEventErrorCode.UNKNOWN,
+  return new CalendarEventImportDriverException(
     message,
-  };
+    CalendarEventImportDriverExceptionCode.UNKNOWN,
+  );
 };

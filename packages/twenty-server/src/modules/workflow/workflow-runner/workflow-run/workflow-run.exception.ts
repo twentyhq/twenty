@@ -10,4 +10,5 @@ export class WorkflowRunException extends CustomException {
 export enum WorkflowRunExceptionCode {
   WORKFLOW_RUN_NOT_FOUND = 'WORKFLOW_RUN_NOT_FOUND',
   INVALID_OPERATION = 'INVALID_OPERATION',
+  INVALID_INPUT = 'INVALID_INPUT',
 }

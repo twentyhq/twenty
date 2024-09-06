@@ -1,8 +1,4 @@
-import {
-  ConfigurableModuleBuilder,
-  FactoryProvider,
-  ModuleMetadata,
-} from '@nestjs/common';
+import { ConfigurableModuleBuilder } from '@nestjs/common';
 
 import { ExceptionHandlerModuleOptions } from './interfaces';
 
@@ -16,10 +12,3 @@ export const {
 })
   .setClassMethodName('forRoot')
   .build();
-
-export type ExceptionHandlerModuleAsyncOptions = {
-  useFactory: (
-    ...args: any[]
-  ) => ExceptionHandlerModuleOptions | Promise<ExceptionHandlerModuleOptions>;
-} & Pick<ModuleMetadata, 'imports'> &
-  Pick<FactoryProvider, 'inject'>;

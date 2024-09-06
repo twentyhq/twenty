@@ -72,7 +72,7 @@ export const Default = () => (
           setPreviousStepState={() => null}
           currentStepState={{} as SpreadsheetImportStep}
           nextStep={() => null}
-          errorToast={() => null}
+          onError={() => null}
         />
       </ModalWrapper>
     </ReactSpreadsheetImportContextProvider>

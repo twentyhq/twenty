@@ -144,5 +144,13 @@ export const mapFieldMetadataToGraphqlQuery = (
         name
       }
     `;
+  } else if (fieldType === FieldMetadataType.EMAILS) {
+    return `
+      ${field.name}
+      {
+        primaryEmail
+        additionalEmails
+      }
+    `;
   }
 };
