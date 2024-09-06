@@ -4,6 +4,8 @@ import { Handle, Position } from '@xyflow/react';
 import React from 'react';
 import { capitalize } from '~/utils/string/capitalize';
 
+type Variant = 'placeholder';
+
 const StyledStepNodeContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -34,16 +36,19 @@ const StyledStepNodeType = styled.div`
   }
 `;
 
-const StyledStepNodeInnerContainer = styled.div`
+const StyledStepNodeInnerContainer = styled.div<{ variant?: Variant }>`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-style: ${({ variant }) =>
+    variant === 'placeholder' ? 'dashed' : null};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
 
   position: relative;
-  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
+  box-shadow: ${({ variant, theme }) =>
+    variant === 'placeholder' ? 'none' : theme.boxShadow.superHeavy};
 
   .selectable.selected &,
   .selectable:focus &,
@@ -53,12 +58,14 @@ const StyledStepNodeInnerContainer = styled.div`
   }
 `;
 
-const StyledStepNodeLabel = styled.div`
+const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
   align-items: center;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   column-gap: ${({ theme }) => theme.spacing(2)};
+  color: ${({ variant, theme }) =>
+    variant === 'placeholder' ? theme.font.color.extraLight : null};
 `;
 
 const StyledSourceHandle = styled(Handle)`
@@ -72,10 +79,12 @@ export const StyledTargetHandle = styled(Handle)`
 export const WorkflowDiagramBaseStepNode = ({
   nodeType,
   label,
+  variant,
   Icon,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   label: string;
+  variant?: Variant;
   Icon?: React.ReactNode;
 }) => {
   return (
@@ -84,10 +93,10 @@ export const WorkflowDiagramBaseStepNode = ({
         <StyledTargetHandle type="target" position={Position.Top} />
       ) : null}
 
-      <StyledStepNodeInnerContainer>
+      <StyledStepNodeInnerContainer variant={variant}>
         <StyledStepNodeType>{capitalize(nodeType)}</StyledStepNodeType>
 
-        <StyledStepNodeLabel>
+        <StyledStepNodeLabel variant={variant}>
           {Icon}
 
           {label}

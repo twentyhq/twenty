@@ -23,7 +23,10 @@ const getStepDefinitionOrThrow = ({
 
   if (stepId === TRIGGER_STEP_ID) {
     if (!isDefined(currentVersion.trigger)) {
-      throw new Error('Expected to find the definition of the trigger');
+      return {
+        type: 'trigger',
+        definition: undefined,
+      } as const;
     }
 
     return {
@@ -33,7 +36,9 @@ const getStepDefinitionOrThrow = ({
   }
 
   if (!isDefined(currentVersion.steps)) {
-    throw new Error('Expected to find an array of steps');
+    throw new Error(
+      'Expected to find an array of steps while trying to locate a specific step',
+    );
   }
 
   const selectedNodePosition = findStepPositionOrThrow({

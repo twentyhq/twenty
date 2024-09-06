@@ -1,5 +1,6 @@
 import { WorkflowDiagramCanvasEffect } from '@/workflow/components/WorkflowDiagramCanvasEffect';
 import { WorkflowDiagramCreateStepNode } from '@/workflow/components/WorkflowDiagramCreateStepNode';
+import { WorkflowDiagramEmptyTrigger } from '@/workflow/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramStepNode } from '@/workflow/components/WorkflowDiagramStepNode';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import {
@@ -72,6 +73,7 @@ export const WorkflowDiagramCanvas = ({
       nodeTypes={{
         default: WorkflowDiagramStepNode,
         'create-step': WorkflowDiagramCreateStepNode,
+        'empty-trigger': WorkflowDiagramEmptyTrigger,
       }}
       fitView
       nodes={nodes.map((node) => ({ ...node, draggable: false }))}
