@@ -54,8 +54,9 @@ export const WorkflowEffect = ({ workflowId }: WorkflowEffectProps) => {
       setIsCreatingInitialVersionState(true);
 
       createOneWorkflowVersion({
-        status: 'DRAFT',
         workflowId,
+        status: 'DRAFT',
+        name: 'v1',
       }).finally(() => {
         setIsCreatingInitialVersionState(false);
       });
