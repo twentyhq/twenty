@@ -1,5 +1,5 @@
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
 
 import { Strategy } from 'passport-google-oauth20';
 
@@ -24,11 +24,8 @@ export class GoogleAPIsOauthCommonStrategy extends PassportStrategy(
       'profile',
       'https://www.googleapis.com/auth/gmail.readonly',
       'https://www.googleapis.com/auth/calendar.events',
+      'https://www.googleapis.com/auth/profile.emails.read',
     ];
-
-    if (scopeConfig?.isMessagingAliasFetchingEnabled) {
-      scopes.push('https://www.googleapis.com/auth/profile.emails.read');
-    }
 
     super({
       clientID: environmentService.get('AUTH_GOOGLE_CLIENT_ID'),

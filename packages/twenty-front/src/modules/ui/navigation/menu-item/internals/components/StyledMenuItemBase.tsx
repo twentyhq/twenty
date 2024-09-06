@@ -69,7 +69,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 `;
 
 export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
   overflow: hidden;
@@ -143,7 +143,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
       case 'not-allowed':
         return 'not-allowed';
       default:
-        return 'default';
+        return 'pointer';
     }
   }};
 `;

@@ -776,7 +776,7 @@ export class WorkspaceQueryRunnerService {
 
     await this.triggerWebhooks<Record>(
       parsedResults,
-      CallWebhookJobsJobOperation.delete,
+      CallWebhookJobsJobOperation.create,
       options,
     );
 
@@ -1009,17 +1009,6 @@ export class WorkspaceQueryRunnerService {
     );
 
     return parseResult(resultWithGetters);
-  }
-
-  async executeAndParse<Result>(
-    query: string,
-    objectMetadataItem: ObjectMetadataInterface,
-    command: string,
-    workspaceId: string,
-  ): Promise<Result> {
-    const result = await this.execute(query, workspaceId);
-
-    return this.parseResult(result, objectMetadataItem, command, workspaceId);
   }
 
   async triggerWebhooks<Record>(

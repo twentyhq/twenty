@@ -37,7 +37,7 @@ export class CodeActionExecutor implements WorkflowStepExecutor {
       await this.serverlessFunctionService.executeOneServerlessFunction(
         step.settings.serverlessFunctionId,
         workspaceId,
-        payload,
+        payload || {},
       );
 
     return { data: result.data, ...(result.error && { error: result.error }) };

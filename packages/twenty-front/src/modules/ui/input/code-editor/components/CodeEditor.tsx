@@ -1,9 +1,12 @@
 import Editor, { Monaco, EditorProps } from '@monaco-editor/react';
+import { AutoTypings } from 'monaco-editor-auto-typings';
 import { editor, MarkerSeverity } from 'monaco-editor';
 import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
+import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
+import { isDefined } from '~/utils/isDefined';
 
 export const DEFAULT_CODE = `export const handler = async (
   event: object,
@@ -38,12 +41,24 @@ export const CodeEditor = ({
 }: CodeEditorProps) => {
   const theme = useTheme();
 
-  const handleEditorDidMount = (
+  const { availablePackages } = useGetAvailablePackages();
+
+  const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
   ) => {
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
+
+    if (language === 'typescript') {
+      await AutoTypings.create(editor, {
+        monaco,
+        preloadPackages: true,
+        onlySpecifiedPackages: true,
+        versions: availablePackages,
+        debounceDuration: 0,
+      });
+    }
   };
 
   const handleEditorValidation = (markers: editor.IMarker[]) => {
@@ -68,28 +83,31 @@ export const CodeEditor = ({
       document.head.removeChild(style);
     };
   }, []);
+
   return (
-    <div>
-      {header}
-      <StyledEditor
-        height={height}
-        language={language}
-        value={value}
-        onMount={handleEditorDidMount}
-        onChange={(value?: string) => value && onChange?.(value)}
-        onValidate={handleEditorValidation}
-        options={{
-          ...options,
-          overviewRulerLanes: 0,
-          scrollbar: {
-            vertical: 'hidden',
-            horizontal: 'hidden',
-          },
-          minimap: {
-            enabled: false,
-          },
-        }}
-      />
-    </div>
+    isDefined(availablePackages) && (
+      <>
+        {header}
+        <StyledEditor
+          height={height}
+          language={language}
+          value={value}
+          onMount={handleEditorDidMount}
+          onChange={(value?: string) => value && onChange?.(value)}
+          onValidate={handleEditorValidation}
+          options={{
+            ...options,
+            overviewRulerLanes: 0,
+            scrollbar: {
+              vertical: 'hidden',
+              horizontal: 'hidden',
+            },
+            minimap: {
+              enabled: false,
+            },
+          }}
+        />
+      </>
+    )
   );
 };

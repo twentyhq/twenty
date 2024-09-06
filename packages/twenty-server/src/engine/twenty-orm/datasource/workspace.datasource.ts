@@ -36,8 +36,4 @@ export class WorkspaceDataSource extends DataSource {
   ): WorkspaceEntityManager {
     return new WorkspaceEntityManager(this.internalContext, this, queryRunner);
   }
-
-  getWorkspaceId(): string {
-    return this.internalContext.workspaceId;
-  }
 }

@@ -4,6 +4,7 @@
  * Each object in the map contains the original object metadata and its fields as a nested map.
  *
  * @param arr - The array of ObjectMetadataEntity objects to convert.
+ * @param keyFactory
  * @returns A map of object metadata, with nameSingular as the key and the object as the value.
  */
 export const mapObjectMetadataByUniqueIdentifier = <

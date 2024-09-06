@@ -10,6 +10,8 @@ import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
@@ -40,6 +42,7 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -57,6 +60,7 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -81,6 +85,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(objectMetadataRepository);
   }
@@ -270,6 +276,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               defaultValue: 'now',
             },
             {
+              standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+              type: FieldMetadataType.DATE_TIME,
+              name: 'deletedAt',
+              label: 'Deleted at',
+              icon: 'IconCalendarClock',
+              description: 'Deletion date',
+              isNullable: true,
+              isActive: true,
+              isCustom: false,
+              isSystem: false,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: null,
+            },
+            {
               standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
               type: FieldMetadataType.ACTOR,
               name: 'createdBy',
@@ -342,7 +362,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     createdObjectMetadata.fields.map(async (field, index) => {
-      if (field.name === 'id') {
+      if (field.name === 'id' || field.name === 'deletedAt') {
         return;
       }
 
@@ -354,6 +374,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       }') RETURNING *`,
       );
     });
+
+    const isViewWorkspaceFavoriteEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsWorkspaceFavoriteEnabled,
+        objectMetadataInput.workspaceId,
+      );
+
+    if (isViewWorkspaceFavoriteEnabled) {
+      await this.createViewWorkspaceFavorite(
+        objectMetadataInput.workspaceId,
+        view[0].id,
+      );
+    }
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       objectMetadataInput.workspaceId,
@@ -397,31 +430,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
       },
     });
-  }
-
-  public async findOneOrFailWithinWorkspace(
-    workspaceId: string,
-    options: FindOneOptions<ObjectMetadataEntity>,
-  ): Promise<ObjectMetadataEntity> {
-    try {
-      return this.objectMetadataRepository.findOneOrFail({
-        relations: [
-          'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
-        ],
-        ...options,
-        where: {
-          ...options.where,
-          workspaceId,
-        },
-      });
-    } catch (error) {
-      throw new ObjectMetadataException(
-        'Object does not exist',
-        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
   }
 
   public async findManyWithinWorkspace(
@@ -1270,5 +1278,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         { isActive: isActive },
       );
     }
+  }
+
+  private async createViewWorkspaceFavorite(
+    workspaceId: string,
+    viewId: string,
+  ) {
+    const favoriteRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
+        workspaceId,
+        'favorite',
+      );
+
+    const favoriteCount = await favoriteRepository.count();
+
+    return favoriteRepository.insert(
+      favoriteRepository.create({
+        viewId,
+        position: favoriteCount,
+      }),
+    );
   }
 }

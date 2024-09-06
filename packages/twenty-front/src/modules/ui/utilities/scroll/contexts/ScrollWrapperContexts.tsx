@@ -16,7 +16,8 @@ export type ContextProviderName =
   | 'showPageLeftContainer'
   | 'tabList'
   | 'releases'
-  | 'test';
+  | 'test'
+  | 'showPageActivityContainer';
 
 const createScrollWrapperContext = (id: string) =>
   createContext<ScrollWrapperContextValue>({
@@ -44,6 +45,8 @@ export const TabListScrollWrapperContext =
   createScrollWrapperContext('tabList');
 export const ReleasesScrollWrapperContext =
   createScrollWrapperContext('releases');
+export const ShowPageActivityContainerScrollWrapperContext =
+  createScrollWrapperContext('showPageActivityContainer');
 export const TestScrollWrapperContext = createScrollWrapperContext('test');
 
 export const getContextByProviderName = (
@@ -72,6 +75,8 @@ export const getContextByProviderName = (
       return ReleasesScrollWrapperContext;
     case 'test':
       return TestScrollWrapperContext;
+    case 'showPageActivityContainer':
+      return ShowPageActivityContainerScrollWrapperContext;
     default:
       throw new Error('Context Provider not available');
   }

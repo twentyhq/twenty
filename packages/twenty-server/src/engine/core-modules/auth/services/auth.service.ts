@@ -41,12 +41,6 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 
 import { TokenService } from './token.service';
 
-export type UserPayload = {
-  firstName: string;
-  lastName: string;
-  email: string;
-};
-
 @Injectable()
 export class AuthService {
   constructor(

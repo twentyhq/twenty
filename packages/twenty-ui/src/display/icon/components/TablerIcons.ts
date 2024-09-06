@@ -135,6 +135,7 @@ export {
   IconPhoto,
   IconPilcrow,
   IconPlayerPlay,
+  IconPlaystationSquare,
   IconPlug,
   IconPlus,
   IconPresentation,
@@ -150,6 +151,7 @@ export {
   IconRestore,
   IconRocket,
   IconRotate,
+  IconRotate2,
   IconSearch,
   IconSend,
   IconSettings,
@@ -176,6 +178,7 @@ export {
   IconWand,
   IconWorld,
   IconX,
+  IconPlaylistAdd,
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';

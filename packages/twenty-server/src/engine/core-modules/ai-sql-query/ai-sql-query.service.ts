@@ -96,7 +96,7 @@ export class AISQLQueryService {
   }
 
   private getCreateTableStatement(tableName: string, colInfos: any[]) {
-    return `${`CREATE TABLE ${tableName} (\n`} ${colInfos
+    return `CREATE TABLE ${tableName} (\n ${colInfos
       .map(
         (colInfo) =>
           `${colInfo.column_name} ${colInfo.data_type} ${

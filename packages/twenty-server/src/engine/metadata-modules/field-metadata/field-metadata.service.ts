@@ -94,7 +94,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     try {
       const fieldMetadataRepository =
-        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
           FieldMetadataEntity,
         );
       const objectMetadata =
@@ -139,6 +139,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (fieldMetadataInput.type === FieldMetadataType.LINK) {
         throw new FieldMetadataException(
           '"Link" field types are being deprecated, please use Links type instead',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      if (fieldMetadataInput.type === FieldMetadataType.EMAIL) {
+        throw new FieldMetadataException(
+          '"Email" field types are being deprecated, please use Emails type instead',
           FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         );
       }
@@ -297,7 +304,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     try {
       const fieldMetadataRepository =
-        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
           FieldMetadataEntity,
         );
 
@@ -464,7 +471,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     try {
       const fieldMetadataRepository =
-        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
           FieldMetadataEntity,
         );
 
@@ -605,13 +612,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         workspaceId,
       },
     });
-  }
-
-  public async deleteFieldsMetadata(workspaceId: string) {
-    await this.fieldMetadataRepository.delete({ workspaceId });
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
   }
 
   private buildUpdatableStandardFieldInput(
