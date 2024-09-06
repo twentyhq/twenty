@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui';
-import { v4 } from 'uuid';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
@@ -69,7 +68,7 @@ export const MultipleObjectRecordSelectItem = ({
     : false;
 
   return (
-    <StyledSelectableItem itemId={objectRecordId} key={objectRecordId + v4()}>
+    <StyledSelectableItem itemId={objectRecordId} key={objectRecordId}>
       <MenuItemMultiSelectAvatar
         onSelectChange={(_isNewlySelectedValue) => handleSelectChange()}
         isKeySelected={isSelectedByKeyboard}

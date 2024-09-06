@@ -78,6 +78,7 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObject
   };
 
 const StyledSearchInput = styled(TextInput)`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 export type SettingsObjectFieldTableProps = {
