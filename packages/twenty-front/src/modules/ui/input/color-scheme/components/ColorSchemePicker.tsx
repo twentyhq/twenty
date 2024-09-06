@@ -11,6 +11,7 @@ const StyledContainer = styled.div`
   > * + * {
     margin-left: ${({ theme }) => theme.spacing(4)};
   }
+  overflow: scroll;
 `;
 
 const StyledCardContainer = styled.div`
