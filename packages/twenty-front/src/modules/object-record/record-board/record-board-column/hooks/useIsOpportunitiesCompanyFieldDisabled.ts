@@ -10,7 +10,7 @@ export const useIsOpportunitiesCompanyFieldDisabled = () => {
   const isOpportunitiesCompanyFieldDisabled =
     !opportunityMetadataItem.fields.find(
       (field) => field.name === CoreObjectNameSingular.Company,
-    )?.isActive;
+    )?.isActive || false;
   return {
     isOpportunitiesCompanyFieldDisabled,
   };
