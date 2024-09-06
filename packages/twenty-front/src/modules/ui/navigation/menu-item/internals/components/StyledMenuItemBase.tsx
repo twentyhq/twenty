@@ -8,12 +8,12 @@ export type MenuItemBaseProps = {
   accent?: MenuItemAccent;
   isKeySelected?: boolean;
   isHoverBackgroundDisabled?: boolean;
+  hovered?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
-
   align-items: center;
 
   border-radius: ${({ theme }) => theme.border.radius.sm};

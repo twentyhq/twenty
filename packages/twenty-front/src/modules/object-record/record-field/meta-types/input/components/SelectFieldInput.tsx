@@ -27,7 +27,7 @@ export const SelectFieldInput = ({
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
-  const { handleResetSelectedPosition } = useSelectableList(
+  const { resetSelectedItem } = useSelectableList(
     SINGLE_ENTITY_SELECT_BASE_LIST,
   );
   const clearField = useClearField();
@@ -44,17 +44,17 @@ export const SelectFieldInput = ({
   const handleSubmit = (option: SelectOption) => {
     onSubmit?.(() => persistField(option?.value));
 
-    handleResetSelectedPosition();
+    resetSelectedItem();
   };
 
   useScopedHotkeys(
     Key.Escape,
     () => {
       onCancel?.();
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
     hotkeyScope,
-    [onCancel, handleResetSelectedPosition],
+    [onCancel, resetSelectedItem],
   );
 
   const optionIds = [
@@ -74,7 +74,7 @@ export const SelectFieldInput = ({
           );
           if (isDefined(option)) {
             onSubmit?.(() => persistField(option.value));
-            handleResetSelectedPosition();
+            resetSelectedItem();
           }
         }}
       >
