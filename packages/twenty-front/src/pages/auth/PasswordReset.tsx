@@ -34,7 +34,7 @@ const validationSchema = z
     passwordResetToken: z.string(),
     newPassword: z
       .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+      .regex(PASSWORD_REGEX, 'A senha deve conter pelo menos 8 caracteres'),
   })
   .required();
 
@@ -101,7 +101,7 @@ export const PasswordReset = () => {
     },
     skip: !passwordResetToken,
     onError: (error) => {
-      enqueueSnackBar(error?.message ?? 'Token Invalid', {
+      enqueueSnackBar(error?.message ?? 'Token Inválido', {
         variant: SnackBarVariant.Error,
       });
       navigate(AppPath.Index);
@@ -131,14 +131,14 @@ export const PasswordReset = () => {
       });
 
       if (!data?.updatePasswordViaResetToken.success) {
-        enqueueSnackBar('There was an error while updating password.', {
+        enqueueSnackBar('Ocorreu um erro ao atualizar a senha.', {
           variant: SnackBarVariant.Error,
         });
         return;
       }
 
       if (isLoggedIn) {
-        enqueueSnackBar('Password has been updated', {
+        enqueueSnackBar('A senha foi atualizada', {
           variant: SnackBarVariant.Success,
         });
         navigate(AppPath.Index);
@@ -152,7 +152,7 @@ export const PasswordReset = () => {
     } catch (err) {
       logError(err);
       enqueueSnackBar(
-        (err as Error)?.message || 'An error occurred while updating password',
+        (err as Error)?.message || 'Ocorreu um erro ao atualizar a senha',
         {
           variant: SnackBarVariant.Error,
         },
@@ -166,7 +166,7 @@ export const PasswordReset = () => {
         <AnimatedEaseIn>
           <Logo />
         </AnimatedEaseIn>
-        <Title animate>Reset Password</Title>
+        <Title animate>Redefinir Senha</Title>
         <StyledContentContainer>
           {!email ? (
             <SkeletonTheme
@@ -223,7 +223,7 @@ export const PasswordReset = () => {
                         autoFocus
                         value={value}
                         type="password"
-                        placeholder="New Password"
+                        placeholder="Nova Senha"
                         onBlur={onBlur}
                         onChange={onChange}
                         error={error?.message}
@@ -236,7 +236,7 @@ export const PasswordReset = () => {
 
               <MainButton
                 variant="secondary"
-                title="Change Password"
+                title="Alterar a Senha"
                 type="submit"
                 fullWidth
                 disabled={isUpdatingPassword}

@@ -14,7 +14,7 @@ const selectOptionSchema = z
     value: z.string(),
   })
   .refine((option) => option.value === getOptionValueFromLabel(option.label), {
-    message: 'Value does not match label',
+    message: 'O valor não corresponde ao rótulo',
   })
   .refine(
     (option) => {
@@ -26,7 +26,7 @@ const selectOptionSchema = z
       }
     },
     {
-      message: 'Label is not transliterable',
+      message: 'O rótulo não é transliterável',
     },
   ) satisfies z.ZodType<FieldMetadataItemOption>;
 
@@ -39,7 +39,7 @@ export const selectOptionsSchema = z
       return new Set(optionIds).size === options.length;
     },
     {
-      message: 'Options must have unique ids',
+      message: 'As opções devem ter IDs únicos',
     },
   )
   .refine(
@@ -48,13 +48,13 @@ export const selectOptionsSchema = z
       return new Set(optionValues).size === options.length;
     },
     {
-      message: 'Options must have unique values',
+      message: 'As opções devem ter valores únicos',
     },
   )
   .refine(
     (options) =>
       [...options].sort().every((option, index) => option.position === index),
     {
-      message: 'Options positions must be sequential',
+      message: 'As posições das opções devem ser sequenciais',
     },
   );

@@ -34,10 +34,10 @@ export const RecordIndexRemoveSortingModal = ({
       <ConfirmationModal
         isOpen={isRemoveSortingModalOpen[0]}
         setIsOpen={isRemoveSortingModalOpen[1]}
-        title={'Remove sorting?'}
-        subtitle={<>This is required to enable manual row reordering.</>}
+        title={'Remover ordenação?'}
+        subtitle={<>Isso é necessário para permitir a reorganização manual das linhas.</>}
         onConfirmClick={() => handleRemoveClick()}
-        deleteButtonText={'Remove Sorting'}
+        deleteButtonText={'Remover Ordenação'}
       />
     </>
   );

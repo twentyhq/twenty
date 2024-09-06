@@ -147,13 +147,13 @@ export const RecordIndexOptionsDropdownContent = ({
           <MenuItem
             onClick={() => handleSelectMenu('fields')}
             LeftIcon={IconTag}
-            text="Fields"
+            text="Campos"
             hasSubMenu
           />
           <MenuItem
             onClick={() => openObjectRecordsSpreasheetImportDialog()}
             LeftIcon={IconFileImport}
-            text="Import"
+            text="Importar"
           />
           <MenuItem
             onClick={download}
@@ -166,7 +166,7 @@ export const RecordIndexOptionsDropdownContent = ({
               closeDropdown();
             }}
             LeftIcon={IconRotate2}
-            text={`Deleted ${objectNamePlural}`}
+            text={`Excluídos`}
           />
         </DropdownMenuItemsContainer>
       )}
@@ -176,7 +176,7 @@ export const RecordIndexOptionsDropdownContent = ({
             Fields
           </DropdownMenuHeader>
           <ViewFieldsVisibilityDropdownSection
-            title="Visible"
+            title="Visíveis"
             fields={visibleRecordFields}
             isDraggable
             onDragEnd={handleReorderFields}
@@ -189,7 +189,7 @@ export const RecordIndexOptionsDropdownContent = ({
             <MenuItemNavigate
               onClick={() => handleSelectMenu('hiddenFields')}
               LeftIcon={IconEyeOff}
-              text="Hidden Fields"
+              text="Campos Ocultos"
             />
           </DropdownMenuItemsContainer>
         </>
@@ -200,12 +200,12 @@ export const RecordIndexOptionsDropdownContent = ({
             StartIcon={IconChevronLeft}
             onClick={() => setCurrentMenu('fields')}
           >
-            Hidden Fields
+            Campos Ocultos
           </DropdownMenuHeader>
           {hiddenRecordFields.length > 0 && (
             <>
               <ViewFieldsVisibilityDropdownSection
-                title="Hidden"
+                title="Ocultos"
                 fields={hiddenRecordFields}
                 isDraggable={false}
                 onVisibilityChange={handleChangeFieldVisibility}
@@ -224,7 +224,7 @@ export const RecordIndexOptionsDropdownContent = ({
             }}
           >
             <DropdownMenuItemsContainer>
-              <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
+              <MenuItem LeftIcon={IconSettings} text="Editar Campos" />
             </DropdownMenuItemsContainer>
           </UndecoratedLink>
         </>
@@ -243,7 +243,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 )
               }
               toggled={isCompactModeActive}
-              text="Compact view"
+              text="Modo Compacto"
               toggleSize="small"
             />
           </DropdownMenuItemsContainer>

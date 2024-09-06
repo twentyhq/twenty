@@ -21,7 +21,7 @@ export const SupportButton = () => {
       <Button
         variant="tertiary"
         size="small"
-        title="Support"
+        title="Suporte"
         Icon={IconHelpCircle}
       />
     </StyledButtonContainer>

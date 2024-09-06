@@ -17,20 +17,20 @@ export const SettingsAccountsSettingsSection = () => {
   return (
     <Section>
       <H2Title
-        title="Settings"
-        description="Configure your emails and calendar settings."
+        title="Configurações"
+        description="Configure as suas configurações de email e calendário."
       />
       <StyledCardsContainer>
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.AccountsEmails)}>
           <SettingsNavigationCard Icon={IconMailCog} title="Emails">
-            Set email visibility, manage your blocklist and more.
+            Defina a visibilidade dos emails, gerencie sua lista de bloqueio e mais.
           </SettingsNavigationCard>
         </UndecoratedLink>
         <UndecoratedLink
           to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
         >
-          <SettingsNavigationCard Icon={IconCalendarEvent} title="Calendar">
-            Configure and customize your calendar preferences.
+          <SettingsNavigationCard Icon={IconCalendarEvent} title="Calendário">
+            Configure e personalize suas preferências de calendário.
           </SettingsNavigationCard>
         </UndecoratedLink>
       </StyledCardsContainer>

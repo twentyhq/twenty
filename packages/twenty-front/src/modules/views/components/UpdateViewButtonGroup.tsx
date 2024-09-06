@@ -87,7 +87,7 @@ export const UpdateViewButtonGroup = ({
     <StyledContainer>
       {currentViewWithCombinedFiltersAndSorts?.key !== 'INDEX' ? (
         <ButtonGroup size="small" accent="blue">
-          <Button title="Update view" onClick={handleViewUpdate} />
+          <Button title="Atualizar visualização" onClick={handleViewUpdate} />
           <Dropdown
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
             dropdownHotkeyScope={hotkeyScope}
@@ -105,7 +105,7 @@ export const UpdateViewButtonGroup = ({
                   <MenuItem
                     onClick={handleViewCreate}
                     LeftIcon={IconPlus}
-                    text="Create view"
+                    text="Criar visualização"
                   />
                 </DropdownMenuItemsContainer>
               </>
@@ -114,7 +114,7 @@ export const UpdateViewButtonGroup = ({
         </ButtonGroup>
       ) : (
         <Button
-          title="Save as new view"
+          title="Salvar como nova visualização"
           onClick={handleViewCreate}
           accent="blue"
           size="small"

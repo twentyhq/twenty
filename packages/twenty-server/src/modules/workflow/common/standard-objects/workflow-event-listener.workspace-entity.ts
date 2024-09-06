@@ -20,7 +20,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
   namePlural: 'workflowEventListeners',
   labelSingular: 'WorkflowEventListener',
   labelPlural: 'WorkflowEventListeners',
-  description: 'A workflow event listener',
+  description: 'Um ouvinte de evento do workflow',
   labelIdentifierStandardId:
     WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
 })
@@ -32,8 +32,8 @@ export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The workflow event listener name',
+    label: 'Nome',
+    description: 'O nome do ouvinte de evento do workflow',
     icon: 'IconPhoneCheck',
   })
   eventName: string;
@@ -43,7 +43,7 @@ export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow',
-    description: 'WorkflowEventListener workflow',
+    description: 'Workflow do ouvinte de evento',
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'eventListeners',

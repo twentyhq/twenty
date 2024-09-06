@@ -64,7 +64,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus,
   participants,
 }: {
-  responseStatus: 'Yes' | 'Maybe' | 'No';
+  responseStatus: 'Sim' | 'Talvez' | 'Não';
   participants: CalendarEventParticipant[];
 }) => {
   const theme = useTheme();
@@ -73,9 +73,9 @@ export const CalendarEventParticipantsResponseStatusField = ({
   );
 
   const Icon = {
-    Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
-    Maybe: <IconQuestionMark stroke={theme.icon.stroke.sm} />,
-    No: <IconX stroke={theme.icon.stroke.sm} />,
+    Sim: <IconCheck stroke={theme.icon.stroke.sm} />,
+    Talvez: <IconQuestionMark stroke={theme.icon.stroke.sm} />,
+    Não: <IconX stroke={theme.icon.stroke.sm} />,
   }[responseStatus];
 
   // We want to display external participants first

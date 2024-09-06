@@ -25,11 +25,11 @@ export const SignInUp = () => {
       signInUpStep === SignInUpStep.Init ||
       signInUpStep === SignInUpStep.Email
     ) {
-      return 'Welcome to Twenty';
+      return 'Olá, Bem-vindo!';
     }
     return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in to Twenty'
-      : 'Sign up to Twenty';
+      ? 'Entrar no CRM'
+      : 'Cadastre-se no CRM';
   }, [signInUpMode, signInUpStep]);
 
   if (isDefined(currentWorkspace)) {

@@ -65,7 +65,7 @@ export const TemplateColumn = <T extends string>({
   return (
     <StyledContainer>
       <MatchColumnSelect
-        placeholder="Select column..."
+        placeholder="Selecione a coluna..."
         value={isIgnored ? ignoreValue : selectValue}
         onChange={(value) => onChange(value?.value as T, column.index)}
         options={selectOptions}

@@ -84,10 +84,10 @@ export const NameField = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        label="Name"
+        label="Nome"
         value={displayName}
         onChange={setDisplayName}
-        placeholder="Apple"
+        placeholder="Acme Inc"
         fullWidth
       />
     </StyledComboInputContainer>

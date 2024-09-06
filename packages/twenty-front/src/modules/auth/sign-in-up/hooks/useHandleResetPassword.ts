@@ -12,7 +12,7 @@ export const useHandleResetPassword = () => {
     (email: string) => {
       return async () => {
         if (!email) {
-          enqueueSnackBar('Invalid email', {
+          enqueueSnackBar('Email inválido', {
             variant: SnackBarVariant.Error,
           });
           return;
@@ -24,11 +24,11 @@ export const useHandleResetPassword = () => {
           });
 
           if (data?.emailPasswordResetLink?.success === true) {
-            enqueueSnackBar('Password reset link has been sent to the email', {
+            enqueueSnackBar('Link para redefinição de senha foi enviado para o email', {
               variant: SnackBarVariant.Success,
             });
           } else {
-            enqueueSnackBar('There was some issue', {
+            enqueueSnackBar('Houve um problema', {
               variant: SnackBarVariant.Error,
             });
           }

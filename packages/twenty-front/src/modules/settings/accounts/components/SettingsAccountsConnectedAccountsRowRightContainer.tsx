@@ -39,18 +39,18 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
   return (
     <StyledRowRightContainer>
       {status === 'Failed' && (
-        <Status color="red" text="Sync failed" weight="medium" />
+        <Status color="red" text="Sincronização falhou" weight="medium" />
       )}
       {status === 'Synced' && (
-        <Status color="green" text="Synced" weight="medium" />
+        <Status color="green" text="Sincronizado" weight="medium" />
       )}
       {status === 'Not synced' && (
-        <Status color="orange" text="Not synced" weight="medium" />
+        <Status color="orange" text="Não sincronizado" weight="medium" />
       )}
       {status === 'Importing' && (
         <Status
           color="turquoise"
-          text="Importing"
+          text="Importando"
           weight="medium"
           isLoaderVisible
         />

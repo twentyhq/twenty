@@ -9,28 +9,28 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const COMPOSITE_FIELD_IMPORT_LABELS = {
   [FieldMetadataType.FullName]: {
-    firstNameLabel: 'First Name',
-    lastNameLabel: 'Last Name',
+    firstNameLabel: 'Nome',
+    lastNameLabel: 'Sobrenome',
   } satisfies CompositeFieldLabels<FieldFullNameValue>,
   [FieldMetadataType.Currency]: {
-    currencyCodeLabel: 'Currency Code',
-    amountMicrosLabel: 'Amount',
+    currencyCodeLabel: 'Código da Moeda',
+    amountMicrosLabel: 'Valor',
   } satisfies CompositeFieldLabels<FieldCurrencyValue>,
   [FieldMetadataType.Address]: {
-    addressStreet1Label: 'Address 1',
-    addressStreet2Label: 'Address 2',
-    addressCityLabel: 'City',
-    addressPostcodeLabel: 'Post Code',
-    addressStateLabel: 'State',
-    addressCountryLabel: 'Country',
+    addressStreet1Label: 'Endereço',
+    addressStreet2Label: 'Complemento do Endereço',
+    addressCityLabel: 'Cidade',
+    addressPostcodeLabel: 'Código Postal',
+    addressStateLabel: 'Estado',
+    addressCountryLabel: 'País',
     addressLatLabel: 'Latitude',
     addressLngLabel: 'Longitude',
   } satisfies CompositeFieldLabels<FieldAddressValue>,
   [FieldMetadataType.Links]: {
-    primaryLinkUrlLabel: 'Link URL',
-    primaryLinkLabelLabel: 'Link Label',
+    primaryLinkUrlLabel: 'URL do Link',
+    primaryLinkLabelLabel: 'Rótulo do Link',
   } satisfies Partial<CompositeFieldLabels<FieldLinksValue>>,
   [FieldMetadataType.Actor]: {
-    sourceLabel: 'Source',
+    sourceLabel: 'Fonte',
   },
 };

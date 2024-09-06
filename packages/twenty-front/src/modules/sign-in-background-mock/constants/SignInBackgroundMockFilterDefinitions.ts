@@ -4,31 +4,31 @@ import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/F
 export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
   {
     fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
-    label: 'Domain Name',
+    label: 'Domínio',
     iconName: 'IconLink',
     type: 'LINKS',
   },
   {
     fieldMetadataId: '20202020-7fbd-41ad-b64d-25a15ff62f04',
-    label: 'Employees',
+    label: 'Funcionários',
     iconName: 'IconUsers',
     type: 'NUMBER',
   },
   {
     fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
-    label: 'Name',
+    label: 'Nome',
     iconName: 'IconBuildingSkyscraper',
     type: 'TEXT',
   },
   {
     fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
-    label: 'Address',
+    label: 'Endereço',
     iconName: 'IconMap',
     type: 'ADDRESS',
   },
   {
     fieldMetadataId: '20202020-0739-495d-8e70-c0807f6b2268',
-    label: 'Account Owner',
+    label: 'Proprietário da Conta',
     iconName: 'IconUserCircle',
     relationObjectMetadataNamePlural: 'workspaceMembers',
     relationObjectMetadataNameSingular: 'workspaceMember',
@@ -36,7 +36,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
   },
   {
     fieldMetadataId: '20202020-4dc2-47c9-bb15-6e6f19ba9e46',
-    label: 'Creation date',
+    label: 'Data de Criação',
     iconName: 'IconCalendar',
     type: 'DATE_TIME',
   },

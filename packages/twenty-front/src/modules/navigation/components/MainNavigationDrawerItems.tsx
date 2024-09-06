@@ -28,13 +28,13 @@ export const MainNavigationDrawerItems = () => {
       {!isMobile && (
         <NavigationDrawerSection>
           <NavigationDrawerItem
-            label="Search"
+            label="Pesquisar"
             Icon={IconSearch}
             onClick={toggleCommandMenu}
             keyboard={['⌘', 'K']}
           />
           <NavigationDrawerItem
-            label="Settings"
+            label="Configurações"
             to={'/settings/profile'}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);

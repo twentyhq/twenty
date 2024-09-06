@@ -114,14 +114,14 @@ export const SettingsObjectEdit = () => {
             <Breadcrumb
               links={[
                 {
-                  children: 'Objects',
+                  children: 'Objetos',
                   href: settingsObjectsPagePath,
                 },
                 {
                   children: activeObjectMetadataItem.labelPlural,
                   href: `${settingsObjectsPagePath}/${objectSlug}`,
                 },
-                { children: 'Edit' },
+                { children: 'Editar' },
               ]}
             />
           }
@@ -141,8 +141,8 @@ export const SettingsObjectEdit = () => {
             </SettingsHeaderContainer>
             <Section>
               <H2Title
-                title="About"
-                description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+                title="Sobre"
+                description="Nome em formas singular (por exemplo, 'Fatura') e plural (por exemplo, 'Faturas')."
               />
               <SettingsDataModelObjectAboutForm
                 disabled={!activeObjectMetadataItem.isCustom}
@@ -152,18 +152,18 @@ export const SettingsObjectEdit = () => {
             </Section>
             <Section>
               <H2Title
-                title="Settings"
-                description="Choose the fields that will identify your records"
+                title="Configurações"
+                description="Escolha os campos que identificarão seus registros"
               />
               <SettingsDataModelObjectSettingsFormCard
                 objectMetadataItem={activeObjectMetadataItem}
               />
             </Section>
             <Section>
-              <H2Title title="Danger zone" description="Deactivate object" />
+              <H2Title title="Zona de perigo" description="Desativar objeto" />
               <Button
                 Icon={IconArchive}
-                title="Deactivate"
+                title="Desativar"
                 size="small"
                 onClick={handleDisable}
               />

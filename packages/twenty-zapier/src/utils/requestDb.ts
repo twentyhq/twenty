@@ -1,5 +1,6 @@
 import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
 
+import { SERVER_BASE_URL } from '../utils/contants';
 import { Schema } from '../utils/data.types';
 
 export const requestSchema = async (
@@ -40,7 +41,7 @@ const requestDb = async (
   endpoint = 'graphql',
 ) => {
   const options = {
-    url: `${bundle.authData.apiUrl || process.env.SERVER_BASE_URL}/${endpoint}`,
+    url: `${SERVER_BASE_URL}/${endpoint}`,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -81,9 +82,7 @@ export const requestDbViaRestApi = (
   objectNamePlural: string,
 ) => {
   const options = {
-    url: `${
-      bundle.authData.apiUrl || process.env.SERVER_BASE_URL
-    }/rest/${objectNamePlural}?limit:3`,
+    url: `${SERVER_BASE_URL}/rest/${objectNamePlural}?limit:3`,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

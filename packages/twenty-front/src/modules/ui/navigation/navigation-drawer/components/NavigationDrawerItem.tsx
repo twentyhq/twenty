@@ -197,7 +197,7 @@ export const NavigationDrawerItem = ({
           />
         )}
         <StyledItemLabel>{label}</StyledItemLabel>
-        {soon && <Pill label="Soon" />}
+        {soon && <Pill label="Em breve" />}
         {!!count && <StyledItemCount>{count}</StyledItemCount>}
         {keyboard && (
           <StyledKeyBoardShortcut className="keyboard-shortcuts">

@@ -7,14 +7,14 @@ import { Country } from '@/ui/input/components/internal/types/Country';
 
 export const useCountries = () => {
   return useMemo<Country[]>(() => {
-    const regionNamesInEnglish = new Intl.DisplayNames(['en'], {
+    const regionNames = new Intl.DisplayNames(['pt-BR'], {
       type: 'region',
     });
 
     const countryCodes = getCountries();
 
     return countryCodes.reduce<Country[]>((result, countryCode) => {
-      const countryName = regionNamesInEnglish.of(countryCode);
+      const countryName = regionNames.of(countryCode);
 
       if (!countryName) return result;
 

@@ -12,7 +12,7 @@ export const RecordIndexOptionsDropdownButton = () => {
       isUnfolded={isDropdownOpen}
       onClick={toggleDropdown}
     >
-      Options
+      Opções
     </StyledHeaderDropdownButton>
   );
 };

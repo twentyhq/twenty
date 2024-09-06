@@ -102,7 +102,7 @@ export const Authorize = () => {
         <StyledAppsContainer>
           <img
             src="/images/integrations/twenty-logo.svg"
-            alt="twenty-icon"
+            alt="crm-icon"
             height={40}
             width={40}
           />
@@ -114,12 +114,12 @@ export const Authorize = () => {
           />
           <img src={app?.logo} alt="app-icon" height={40} width={40} />
         </StyledAppsContainer>
-        <StyledText>{app?.name} wants to access your account</StyledText>
+        <StyledText>{app?.name} quer acessar sua conta</StyledText>
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>
-            <MainButton title="Cancel" variant="secondary" fullWidth />
+            <MainButton title="Cancelar" variant="secondary" fullWidth />
           </UndecoratedLink>
-          <MainButton title="Authorize" onClick={handleAuthorize} fullWidth />
+          <MainButton title="Autorizar" onClick={handleAuthorize} fullWidth />
         </StyledButtonContainer>
       </StyledCardWrapper>
     </StyledContainer>

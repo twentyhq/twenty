@@ -21,7 +21,7 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
   });
 
   if (isDefined(error)) {
-    return <Status color="red" text="Connection failed" />;
+    return <Status color="red" text="Falha na conexão" />;
   }
 
   const syncedTables = tables.filter(
@@ -39,11 +39,11 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
       color={updatesAvailable ? 'yellow' : 'green'}
       text={
         syncedTables.length === 1
-          ? `1 tracked table${
-              updatesAvailable ? ' (with pending schema updates)' : ''
+          ? `1 tabela rastreada${
+              updatesAvailable ? ' (com atualizações de esquema pendentes)' : ''
             }`
-          : `${syncedTables.length} tracked tables${
-              updatesAvailable ? ' (with pending schema updates)' : ''
+          : `${syncedTables.length} tabelas rastreadas${
+              updatesAvailable ? ' (com atualizações de esquema pendentes)' : ''
             }`
       }
     />

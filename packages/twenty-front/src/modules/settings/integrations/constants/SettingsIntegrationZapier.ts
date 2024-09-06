@@ -3,23 +3,28 @@ import { SettingsIntegrationCategory } from '@/settings/integrations/types/Setti
 export const SETTINGS_INTEGRATION_ZAPIER_CATEGORY: SettingsIntegrationCategory =
   {
     key: 'zapier',
-    title: 'With Zapier',
-    hyperlinkText: 'See all zaps',
-    hyperlink: 'https://zapier.com/apps/twenty/integrations',
+    title: 'Com Zapier',
+    // hyperlinkText: 'Ver todos os zaps',
+    hyperlinkText: 'Receber Convite de Acesso',
+    // hyperlink: 'https://zapier.com/apps/digitoservice/integrations',
+    hyperlink:
+      'https://zapier.com/developer/public-invite/210096/63c375ce94f41fe05ae65156ee9a55ba',
     integrations: [
       {
         from: { key: 'twenty', image: '/images/integrations/twenty-logo.svg' },
         to: { key: 'slack', image: '/images/integrations/slack-logo.png' },
         type: 'Use',
-        text: 'Post to Slack when a company is updated',
-        link: 'https://zapier.com/apps/twenty/integrations/slack',
+        text: 'Postar no Slack quando uma empresa for atualizada',
+        // link: 'https://zapier.com/apps/digitoservice/integrations/slack',
+        link: 'https://zapier.com/developer/public-invite/210096/63c375ce94f41fe05ae65156ee9a55ba',
       },
       {
         from: { key: 'cal', image: '/images/integrations/cal-logo.png' },
         to: { key: 'twenty', image: '/images/integrations/twenty-logo.svg' },
         type: 'Use',
-        text: 'Create a person when Cal.com event is created',
-        link: 'https://zapier.com/apps/twenty/integrations/calcom',
+        text: 'Criar uma pessoa quando um evento do Cal.com for criado',
+        // link: 'https://zapier.com/apps/digitoservice/integrations/calcom',
+        link: 'https://zapier.com/developer/public-invite/210096/63c375ce94f41fe05ae65156ee9a55ba',
       },
       {
         from: {
@@ -28,15 +33,17 @@ export const SETTINGS_INTEGRATION_ZAPIER_CATEGORY: SettingsIntegrationCategory =
         },
         to: { key: 'twenty', image: '/images/integrations/twenty-logo.svg' },
         type: 'Use',
-        text: 'Create a person when a MailChimp sub is created',
-        link: 'https://zapier.com/apps/twenty/integrations/mailchimp',
+        text: 'Criar uma pessoa quando um subscritor do MailChimp for criado',
+        // link: 'https://zapier.com/apps/digitoservice/integrations/mailchimp',
+        link: 'https://zapier.com/developer/public-invite/210096/63c375ce94f41fe05ae65156ee9a55ba',
       },
       {
         from: { key: 'tally', image: '/images/integrations/tally-logo.png' },
         to: { key: 'twenty', image: '/images/integrations/twenty-logo.svg' },
         type: 'Use',
-        text: 'Create a company when a Tally form is sent',
-        link: 'https://zapier.com/apps/twenty/integrations/tally',
+        text: 'Criar uma empresa quando um formulário do Tally for enviado',
+        // link: 'https://zapier.com/apps/digitoservice/integrations/tally',
+        link: 'https://zapier.com/developer/public-invite/210096/63c375ce94f41fe05ae65156ee9a55ba',
       },
     ],
   };

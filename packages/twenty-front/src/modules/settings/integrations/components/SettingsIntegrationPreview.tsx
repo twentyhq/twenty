@@ -71,7 +71,7 @@ export const SettingsIntegrationPreview = ({
         <StyledSyncImage />
         <StyledTwentyLogo alt="" src="/images/integrations/twenty-logo.svg" />
       </StyledLogosContainer>
-      <StyledLabel>Import your tables as remote objects</StyledLabel>
+      <StyledLabel>Importe suas tabelas como objetos remotos</StyledLabel>
     </StyledCardContent>
   </StyledCard>
 );

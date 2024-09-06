@@ -15,10 +15,10 @@ export const SettingsAccountsCalendars = () => {
         <Breadcrumb
           links={[
             {
-              children: 'Accounts',
+              children: 'Contas',
               href: getSettingsPagePath(SettingsPath.Accounts),
             },
-            { children: 'Calendars' },
+            { children: 'Calendários' },
           ]}
         />
       }

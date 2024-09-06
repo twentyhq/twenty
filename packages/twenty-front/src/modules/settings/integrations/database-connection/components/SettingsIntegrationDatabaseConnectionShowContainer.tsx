@@ -37,7 +37,7 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
       <Breadcrumb
         links={[
           {
-            children: 'Integrations',
+            children: 'Integrações',
             href: settingsIntegrationsPagePath,
           },
           {
@@ -48,7 +48,7 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
         ]}
       />
       <Section>
-        <H2Title title="About" description="About this remote object" />
+        <H2Title title="Sobre" description="Sobre este objeto remoto" />
         <SettingsIntegrationDatabaseConnectionSummaryCard
           databaseLogoUrl={integration.from.image}
           connectionId={connection.id}
@@ -58,8 +58,8 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
       </Section>
       <Section>
         <H2Title
-          title="Tables"
-          description="Select the tables that should be tracked"
+          title="Tabelas"
+          description="Selecione as tabelas que devem ser monitoradas"
         />
         {!!tables?.length && (
           <SettingsIntegrationDatabaseTablesListCard

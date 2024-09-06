@@ -11,21 +11,21 @@ export const CalendarEventParticipantsResponseStatus = ({
   const groupedParticipants = groupBy(participants, (participant) => {
     switch (participant.responseStatus) {
       case 'ACCEPTED':
-        return 'Yes';
+        return 'Sim';
       case 'DECLINED':
-        return 'No';
+        return 'Não';
       case 'NEEDS_ACTION':
       case 'TENTATIVE':
-        return 'Maybe';
+        return 'Talvez';
       default:
         return '';
     }
   });
 
-  const responseStatusOrder: ('Yes' | 'Maybe' | 'No')[] = [
-    'Yes',
-    'Maybe',
-    'No',
+  const responseStatusOrder: ('Sim' | 'Talvez' | 'Não')[] = [
+    'Sim',
+    'Talvez',
+    'Não',
   ];
 
   return (

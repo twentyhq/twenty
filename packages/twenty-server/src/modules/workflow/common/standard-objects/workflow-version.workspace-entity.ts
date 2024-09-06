@@ -34,25 +34,25 @@ export enum WorkflowVersionStatus {
 const WorkflowVersionStatusOptions = [
   {
     value: WorkflowVersionStatus.DRAFT,
-    label: 'Draft',
+    label: 'Rascunho',
     position: 0,
     color: 'yellow',
   },
   {
     value: WorkflowVersionStatus.ACTIVE,
-    label: 'Active',
+    label: 'Ativo',
     position: 1,
     color: 'green',
   },
   {
     value: WorkflowVersionStatus.DEACTIVATED,
-    label: 'Deactivated',
+    label: 'Desativado',
     position: 2,
     color: 'red',
   },
   {
     value: WorkflowVersionStatus.ARCHIVED,
-    label: 'Archived',
+    label: 'Arquivado',
     position: 3,
     color: 'grey',
   },
@@ -63,7 +63,7 @@ const WorkflowVersionStatusOptions = [
   namePlural: 'workflowVersions',
   labelSingular: 'WorkflowVersion',
   labelPlural: 'WorkflowVersions',
-  description: 'A workflow version',
+  description: 'Uma versão do workflow',
   icon: 'IconVersions',
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
 })
@@ -75,8 +75,8 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The workflow version name',
+    label: 'Nome',
+    description: 'O nome da versão do workflow',
     icon: 'IconVersions',
   })
   name: string;
@@ -84,8 +84,8 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Version trigger',
-    description: 'Json object to provide trigger',
+    label: 'Gatilho da Versão',
+    description: 'Objeto JSON para definir o gatilho',
   })
   @WorkspaceIsNullable()
   trigger: WorkflowTrigger | null;
@@ -93,8 +93,8 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.steps,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Version steps',
-    description: 'Json object to provide steps',
+    label: 'Etapas da Versão',
+    description: 'Objeto JSON para definir as etapas',
   })
   @WorkspaceIsNullable()
   steps: WorkflowStep[] | null;
@@ -102,8 +102,8 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
-    label: 'Version status',
-    description: 'The workflow version status',
+    label: 'Status da Versão',
+    description: 'O status da versão do workflow',
     options: WorkflowVersionStatusOptions,
     defaultValue: "'DRAFT'",
   })
@@ -114,7 +114,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow',
-    description: 'WorkflowVersion workflow',
+    description: 'Workflow da versão do workflow',
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'versions',
@@ -128,8 +128,8 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Runs',
-    description: 'Workflow runs linked to the version.',
+    label: 'Execuções',
+    description: 'Execuções de workflow vinculadas à versão.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,

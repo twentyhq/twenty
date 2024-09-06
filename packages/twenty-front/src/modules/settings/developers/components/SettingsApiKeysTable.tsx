@@ -28,8 +28,8 @@ export const SettingsApiKeysTable = () => {
   return (
     <Table>
       <StyledTableRow>
-        <TableHeader>Name</TableHeader>
-        <TableHeader>Expiration</TableHeader>
+        <TableHeader>Nome</TableHeader>
+        <TableHeader>Expiração</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
       {!!apiKeys.length && (

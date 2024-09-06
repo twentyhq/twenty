@@ -15,32 +15,31 @@ export const CleanInactiveWorkspaceEmail = ({
   userName,
   workspaceDisplayName,
 }: CleanInactiveWorkspaceEmailProps) => {
-  const dayOrDays = daysLeft > 1 ? 'days' : 'day';
+  const dayOrDays = daysLeft > 1 ? 'dias' : 'dia';
   const remainingDays = daysLeft > 1 ? `${daysLeft} ` : '';
 
-  const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
+  const helloString = userName?.length > 1 ? `Olá ${userName}` : 'Olá';
 
   return (
     <BaseEmail>
-      <Title value="Inactive Workspace 😴" />
-      <HighlightedText value={`${daysLeft} ${dayOrDays} left`} />
+      <Title value="Workspace Inativo 😴" />
+      <HighlightedText value={`faltam ${daysLeft} ${dayOrDays}`} />
       <MainText>
         {helloString},
         <br />
         <br />
-        It appears that there has been a period of inactivity on your{' '}
-        <b>{workspaceDisplayName}</b> workspace.
+        Parece que houve um período de inatividade no seu workspace{' '}
+        <b>{workspaceDisplayName}</b>.
         <br />
         <br />
-        Please note that the account is due for deactivation soon, and all
-        associated data within this workspace will be deleted.
+        Por favor, note que a conta está prestes a ser desativada em breve, e
+        todos os dados associados a este workspace serão excluídos.
         <br />
         <br />
-        No need for concern, though! Simply create or edit a record within the
-        next {remainingDays}
-        {dayOrDays} to retain access.
+        Sem preocupações! Basta criar ou editar um registro nos próximos{' '}
+        {remainingDays} {dayOrDays} para manter o acesso.
       </MainText>
-      <CallToAction href="https://app.twenty.com" value="Connect to Twenty" />
+      <CallToAction href="https://crm.digitoservice.com" value="Conectar ao CRM - Digito Service" />
     </BaseEmail>
   );
 };

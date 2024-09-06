@@ -9,7 +9,7 @@ export const companiesAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All',
+    name: 'Todos',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.company].id,
     type: 'table',
     key: 'INDEX',

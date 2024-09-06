@@ -7,11 +7,11 @@ export enum errors {
 export const getErrorMessageFromError = (error?: string) => {
   switch (error) {
     case errors.LabelEmpty:
-      return 'Name cannot be empty.';
+      return 'O nome não pode estar vazio.';
     case errors.LabelNotFormattable:
-      return 'Name should start with a letter.';
+      return 'O nome deve começar com uma letra.';
     case errors.LabelNotUnique:
-      return 'This name is already used.';
+      return 'Esse nome já está em uso.';
     default:
       return '';
   }

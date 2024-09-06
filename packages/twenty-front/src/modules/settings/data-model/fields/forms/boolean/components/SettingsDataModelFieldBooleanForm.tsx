@@ -47,7 +47,7 @@ export const SettingsDataModelFieldBooleanForm = ({
 
   return (
     <StyledContainer>
-      <StyledLabel>Default Value</StyledLabel>
+      <StyledLabel>Valor Padrão</StyledLabel>
       <Controller
         name="defaultValue"
         control={control}
@@ -65,12 +65,12 @@ export const SettingsDataModelFieldBooleanForm = ({
             options={[
               {
                 value: true,
-                label: 'True',
+                label: 'Verdadeiro',
                 Icon: IconCheck,
               },
               {
                 value: false,
-                label: 'False',
+                label: 'Falso',
                 Icon: IconX,
               },
             ]}

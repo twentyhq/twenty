@@ -5,23 +5,23 @@ export const getOperandLabel = (
 ) => {
   switch (operand) {
     case ViewFilterOperand.Contains:
-      return 'Contains';
+      return 'Contém';
     case ViewFilterOperand.DoesNotContain:
-      return "Doesn't contain";
+      return "Não contém";
     case ViewFilterOperand.GreaterThan:
-      return 'Greater than';
+      return 'Maior que';
     case ViewFilterOperand.LessThan:
-      return 'Less than';
+      return 'Menor que';
     case ViewFilterOperand.Is:
-      return 'Is';
+      return 'É';
     case ViewFilterOperand.IsNot:
-      return 'Is not';
+      return 'Não é';
     case ViewFilterOperand.IsNotNull:
-      return 'Is not null';
+      return 'Não é nulo';
     case ViewFilterOperand.IsEmpty:
-      return 'Is empty';
+      return 'Está vazio';
     case ViewFilterOperand.IsNotEmpty:
-      return 'Is not empty';
+      return 'Não está vazio';
     default:
       return '';
   }
@@ -36,13 +36,13 @@ export const getOperandLabelShort = (
       return ': ';
     case ViewFilterOperand.IsNot:
     case ViewFilterOperand.DoesNotContain:
-      return ': Not';
+      return ': Não';
     case ViewFilterOperand.IsNotNull:
-      return ': NotNull';
+      return ': NãoNulo';
     case ViewFilterOperand.IsNotEmpty:
-      return ': NotEmpty';
+      return ': NãoVazio';
     case ViewFilterOperand.IsEmpty:
-      return ': Empty';
+      return ': Vazio';
     case ViewFilterOperand.GreaterThan:
       return '\u00A0> ';
     case ViewFilterOperand.LessThan:

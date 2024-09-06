@@ -76,10 +76,10 @@ export const SettingsNewObject = () => {
           <Breadcrumb
             links={[
               {
-                children: 'Objects',
+                children: 'Objetos',
                 href: settingsObjectsPagePath,
               },
-              { children: 'New' },
+              { children: 'Novo' },
             ]}
           />
         }
@@ -96,8 +96,8 @@ export const SettingsNewObject = () => {
           <SettingsHeaderContainer></SettingsHeaderContainer>
           <Section>
             <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+              title="Sobre"
+              description="Nome nas formas singular (por exemplo, 'Fatura') e plural (por exemplo, 'Faturas')."
             />
             <SettingsDataModelObjectAboutForm />
           </Section>

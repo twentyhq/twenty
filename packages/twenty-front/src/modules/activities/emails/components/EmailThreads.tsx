@@ -84,10 +84,10 @@ export const EmailThreads = ({
         <AnimatedPlaceholder type="emptyInbox" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Empty Inbox
+            Inbox Vazia
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No email exchange has occurred with this record yet.
+            Nenhuma troca de emails ocorreu com este registro ainda.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

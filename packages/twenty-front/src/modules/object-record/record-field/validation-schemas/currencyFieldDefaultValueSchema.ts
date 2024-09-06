@@ -10,6 +10,6 @@ export const currencyFieldDefaultValueSchema = z.object({
   currencyCode: simpleQuotesStringSchema.refine(
     (value): value is `'${CurrencyCode}'` =>
       currencyCodeSchema.safeParse(stripSimpleQuotesFromString(value)).success,
-    { message: 'String is not a valid currencyCode' },
+    { message: 'A string não é um código de moeda válido' },
   ),
 });

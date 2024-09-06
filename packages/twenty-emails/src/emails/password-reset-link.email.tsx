@@ -15,11 +15,11 @@ export const PasswordResetLinkEmail = ({
 }: PasswordResetLinkEmailProps) => {
   return (
     <BaseEmail>
-      <Title value="Reset your password 🗝" />
-      <CallToAction href={link} value="Reset" />
+      <Title value="Redefinir sua senha 🗝" />
+      <CallToAction href={link} value="Redefinir" />
       <MainText>
-        This link is only valid for the next {duration}. If link does not work,
-        you can use the login verification link directly:
+        Este link é válido apenas para os próximos {duration}. Se o link não funcionar,
+        você pode usar o link de verificação de login diretamente:
         <br />
         <Link href={link} value={link} />
       </MainText>

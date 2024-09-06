@@ -141,7 +141,7 @@ export const ImageInput = ({
               Icon={IconX}
               onClick={onAbort}
               variant="secondary"
-              title="Abort"
+              title="Abortar"
               disabled={!pictureURI || disabled}
               fullWidth
             />
@@ -150,7 +150,7 @@ export const ImageInput = ({
               Icon={IconUpload}
               onClick={onUploadButtonClick}
               variant="secondary"
-              title="Upload"
+              title="Enviar"
               disabled={disabled}
               fullWidth
             />
@@ -159,13 +159,13 @@ export const ImageInput = ({
             Icon={IconTrash}
             onClick={onRemove}
             variant="secondary"
-            title="Remove"
+            title="Remover"
             disabled={!pictureURI || disabled}
             fullWidth
           />
         </StyledButtonContainer>
         <StyledText>
-          We support your best PNGs, JPEGs and GIFs portraits under 10MB
+          Suportamos suas melhores imagens PNGs, JPEGs e GIFs com menos de 10MB
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

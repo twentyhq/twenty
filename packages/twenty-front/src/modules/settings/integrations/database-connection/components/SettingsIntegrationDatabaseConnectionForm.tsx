@@ -73,27 +73,27 @@ const getFormFields = (
       return [
         {
           name: 'dbname' as const,
-          label: 'Database Name',
+          label: 'Nome do Banco de Dados',
           placeholder: 'default',
         },
         { name: 'host' as const, label: 'Host', placeholder: 'host' },
-        { name: 'port' as const, label: 'Port', placeholder: '5432' },
+        { name: 'port' as const, label: 'Porta', placeholder: '5432' },
         {
           name: 'user' as const,
-          label: 'User',
+          label: 'Usuário',
           placeholder: 'user',
         },
         {
           name: 'password' as const,
-          label: 'Password',
+          label: 'Senha',
           type: 'password',
           placeholder: '••••••',
         },
-        { name: 'schema' as const, label: 'Schema', placeholder: 'public' },
+        { name: 'schema' as const, label: 'Esquema', placeholder: 'public' },
         {
           name: 'label' as const,
-          label: 'Label',
-          placeholder: 'My database',
+          label: 'Rótulo',
+          placeholder: 'Meu banco de dados',
         },
       ];
     case 'stripe':
@@ -101,8 +101,8 @@ const getFormFields = (
         { name: 'api_key' as const, label: 'API Key', placeholder: 'API key' },
         {
           name: 'label' as const,
-          label: 'Label',
-          placeholder: 'My database',
+          label: 'Rótulo',
+          placeholder: 'Meu banco de dados',
         },
       ];
     default:

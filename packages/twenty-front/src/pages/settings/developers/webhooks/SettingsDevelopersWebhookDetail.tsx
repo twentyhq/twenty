@@ -61,7 +61,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   };
 
   const fieldTypeOptions = [
-    { value: '*', label: 'All Objects' },
+    { value: '*', label: 'Todos os Objetos' },
     ...objectMetadataItems.map((item) => ({
       value: item.nameSingular,
       label: item.labelSingular,
@@ -92,7 +92,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
           title={
             <Breadcrumb
               links={[
-                { children: 'Developers', href: '/settings/developers' },
+                { children: 'Desenvolvedores', href: '/settings/developers' },
                 { children: 'Webhook' },
               ]}
             />
@@ -110,8 +110,8 @@ export const SettingsDevelopersWebhooksDetail = () => {
           <SettingsPageContainer>
             <Section>
               <H2Title
-                title="Endpoint URL"
-                description="We will send POST requests to this endpoint for every new event"
+                title="URL do Endpoint"
+                description="Enviaremos requisições POST para este endpoint para cada novo evento"
               />
               <TextInput
                 placeholder="URL"
@@ -122,11 +122,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title="Description"
-                description="An optional description"
+                title="Descrição"
+                description="Uma descrição opcional"
               />
               <TextArea
-                placeholder="Write a description"
+                placeholder="Escreva uma descrição"
                 minRows={4}
                 value={description}
                 onChange={(description) => {
@@ -137,8 +137,8 @@ export const SettingsDevelopersWebhooksDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title="Filters"
-                description="Select the event you wish to send to this endpoint"
+                title="Filtros"
+                description="Selecione o evento que deseja enviar para este endpoint"
               />
               <StyledFilterRow>
                 <Select
@@ -160,23 +160,23 @@ export const SettingsDevelopersWebhooksDetail = () => {
                     setOperationAction(operationAction);
                   }}
                   options={[
-                    { value: '*', label: 'All Actions' },
-                    { value: 'create', label: 'Create' },
-                    { value: 'update', label: 'Update' },
-                    { value: 'delete', label: 'Delete' },
+                    { value: '*', label: 'Todas as Ações' },
+                    { value: 'create', label: 'Criar' },
+                    { value: 'update', label: 'Atualizar' },
+                    { value: 'delete', label: 'Excluir' },
                   ]}
                 />
               </StyledFilterRow>
             </Section>
             <Section>
               <H2Title
-                title="Danger zone"
-                description="Delete this integration"
+                title="Zona de Perigo"
+                description="Excluir esta integração"
               />
               <Button
                 accent="danger"
                 variant="secondary"
-                title="Delete"
+                title="Excluir"
                 Icon={IconTrash}
                 onClick={() => setIsDeleteWebhookModalOpen(true)}
               />
@@ -185,15 +185,15 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 confirmationValue="yes"
                 isOpen={isDeleteWebhookModalOpen}
                 setIsOpen={setIsDeleteWebhookModalOpen}
-                title="Delete webhook"
+                title="Excluir webhook"
                 subtitle={
                   <>
-                    Please type "yes" to confirm you want to delete this
+                    Por favor, digite "yes" para confirmar que deseja excluir este
                     webhook.
                   </>
                 }
                 onConfirmClick={deleteWebhook}
-                deleteButtonText="Delete webhook"
+                deleteButtonText="Excluir webhook"
               />
             </Section>
           </SettingsPageContainer>

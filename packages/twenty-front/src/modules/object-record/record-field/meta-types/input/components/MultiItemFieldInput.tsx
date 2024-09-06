@@ -146,7 +146,7 @@ export const MultiItemFieldInput = <T,>({
           <MenuItem
             onClick={handleAddButtonClick}
             LeftIcon={IconPlus}
-            text={`Add ${placeholder}`}
+            text={`Adicionar ${placeholder}`}
           />
         </DropdownMenuItemsContainer>
       )}

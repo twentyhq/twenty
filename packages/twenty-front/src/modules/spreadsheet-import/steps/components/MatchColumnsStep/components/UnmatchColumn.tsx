@@ -58,10 +58,10 @@ const getAccordionTitle = <T extends string>(
     (field) => 'value' in column && field.key === column.value,
   )?.label;
 
-  return `Match ${fieldLabel} (${
+  return `Corresponde ao ${fieldLabel} (${
     'matchedOptions' in column &&
     column.matchedOptions.filter((option) => !isDefined(option.value)).length
-  } Unmatched)`;
+  } Não correspondido)`;
 };
 
 type UnmatchColumnProps<T extends string> = {
@@ -99,7 +99,7 @@ export const UnmatchColumn = <T extends string>({
                   column={column}
                   onSubChange={onSubChange}
                   key={option.entry}
-                  placeholder="Select an option"
+                  placeholder="Selecione uma opção"
                 />
               ))}
             </AccordionPanel>

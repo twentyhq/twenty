@@ -219,7 +219,7 @@ export const AutosizeTextInput = ({
               autoFocus={
                 autoFocus || variant === AutosizeTextInputVariant.Button
               }
-              placeholder={placeholder ?? 'Write a comment'}
+              placeholder={placeholder ?? 'Escreva um comentário'}
               maxRows={MAX_ROWS}
               minRows={computedMinRows}
               onChange={handleInputChange}
@@ -251,14 +251,14 @@ export const AutosizeTextInput = ({
                     onFocus?.();
                   }}
                 >
-                  Write a comment
+                  Escreva um comentário
                 </StyledCommentText>
               ) : (
-                `${words} word${words === 1 ? '' : 's'}`
+                `${words} palavra${words === 1 ? '' : 's'}`
               )}
             </StyledWordCounter>
             <StyledSendButton
-              title={buttonTitle ?? 'Comment'}
+              title={buttonTitle ?? 'Comentar'}
               disabled={isSendButtonDisabled}
               onClick={handleOnClickSendButton}
             />

@@ -32,7 +32,7 @@ export enum WorkflowRunStatus {
   namePlural: 'workflowRuns',
   labelSingular: 'workflowRun',
   labelPlural: 'WorkflowRuns',
-  description: 'A workflow run',
+  description: 'Uma execução de workflow',
 })
 @WorkspaceGate({
   featureFlag: FeatureFlagKey.IsWorkflowEnabled,
@@ -42,8 +42,8 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Workflow run started at',
-    description: 'Workflow run started at',
+    label: 'Execução do workflow iniciada em',
+    description: 'Execução do workflow iniciada em',
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
@@ -52,8 +52,8 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Workflow run ended at',
-    description: 'Workflow run ended at',
+    label: 'Execução do workflow finalizada em',
+    description: 'Execução do workflow finalizada em',
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
@@ -62,31 +62,31 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
-    label: 'Workflow run status',
-    description: 'Workflow run status',
+    label: 'Status da execução do workflow',
+    description: 'Status da execução do workflow',
     icon: 'IconHistory',
     options: [
       {
         value: WorkflowRunStatus.NOT_STARTED,
-        label: 'Not started',
+        label: 'Não iniciado',
         position: 0,
         color: 'grey',
       },
       {
         value: WorkflowRunStatus.RUNNING,
-        label: 'Running',
+        label: 'Em execução',
         position: 1,
         color: 'yellow',
       },
       {
         value: WorkflowRunStatus.COMPLETED,
-        label: 'Completed',
+        label: 'Concluído',
         position: 2,
         color: 'green',
       },
       {
         value: WorkflowRunStatus.FAILED,
-        label: 'Failed',
+        label: 'Falhou',
         position: 3,
         color: 'red',
       },
@@ -98,9 +98,9 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Criado por',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'O criador do registro',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -112,8 +112,8 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workflow version',
-    description: 'Workflow version linked to the run.',
+    label: 'Versão do Workflow',
+    description: 'Versão do workflow vinculada à execução.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'runs',
@@ -127,7 +127,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow',
-    description: 'Workflow linked to the run.',
+    description: 'Workflow vinculado à execução.',
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'runs',

@@ -17,9 +17,9 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
   namePlural: 'calendarChannelEventAssociations',
-  labelSingular: 'Calendar Channel Event Association',
-  labelPlural: 'Calendar Channel Event Associations',
-  description: 'Calendar Channel Event Associations',
+  labelSingular: 'Associação de Evento do Canal de Calendário',
+  labelPlural: 'Associações de Eventos do Canal de Calendário',
+  description: 'Associações de Eventos do Canal de Calendário',
   icon: 'IconCalendar',
 })
 @WorkspaceIsSystem()
@@ -29,8 +29,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Event external ID',
-    description: 'Event external ID',
+    label: 'ID externo do evento',
+    description: 'ID externo do evento',
     icon: 'IconCalendar',
   })
   eventExternalId: string;
@@ -39,8 +39,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarChannel,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Channel ID',
-    description: 'Channel ID',
+    label: 'ID do canal',
+    description: 'ID do canal',
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
@@ -54,8 +54,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarEvent,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Event ID',
-    description: 'Event ID',
+    label: 'ID do evento',
+    description: 'ID do evento',
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',

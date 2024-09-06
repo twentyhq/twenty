@@ -238,13 +238,13 @@ export const ValidationStep = <T extends string>({
       submitData();
     } else {
       enqueueDialog({
-        title: 'Finish flow with errors',
+        title: 'Concluir fluxo com erros',
         message:
-          'There are still some rows that contain errors. Rows with errors will be ignored when submitting.',
+          'Ainda há algumas linhas que contêm erros. Linhas com erros serão ignoradas ao enviar.',
         buttons: [
-          { title: 'Cancel' },
+          { title: 'Cancelar' },
           {
-            title: 'Submit',
+            title: 'Enviar',
             variant: 'primary',
             onClick: submitData,
             role: 'confirm',
@@ -258,8 +258,8 @@ export const ValidationStep = <T extends string>({
     <>
       <StyledContent>
         <Heading
-          title="Review your import"
-          description="Correct the issues and fill the missing data."
+          title="Revise sua importação"
+          description="Corrija os problemas e preencha os dados faltantes."
         />
         <StyledToolbar>
           <StyledErrorToggle>
@@ -268,7 +268,7 @@ export const ValidationStep = <T extends string>({
               onChange={() => setFilterByErrors(!filterByErrors)}
             />
             <StyledErrorToggleDescription>
-              Show only rows with errors
+              Mostrar apenas linhas com erros
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <StyledErrorToggle>
@@ -277,12 +277,12 @@ export const ValidationStep = <T extends string>({
               onChange={() => setShowUnmatchedColumns(!showUnmatchedColumns)}
             />
             <StyledErrorToggleDescription>
-              Show unmatched columns
+              Mostrar colunas não mapeadas
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <Button
             Icon={IconTrash}
-            title="Remove"
+            title="Remover"
             accent="danger"
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
@@ -300,8 +300,8 @@ export const ValidationStep = <T extends string>({
               noRowsFallback: (
                 <StyledNoRowsContainer>
                   {filterByErrors
-                    ? 'No data containing errors'
-                    : 'No data found'}
+                    ? 'Nenhum dado contendo erros'
+                    : 'Nenhum dado encontrado'}
                 </StyledNoRowsContainer>
               ),
             }}
@@ -311,7 +311,7 @@ export const ValidationStep = <T extends string>({
       <StepNavigationButton
         onClick={onContinue}
         onBack={onBack}
-        title="Confirm"
+        title="Confirmar"
       />
     </>
   );

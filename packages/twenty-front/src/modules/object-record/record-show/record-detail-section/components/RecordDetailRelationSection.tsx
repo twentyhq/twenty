@@ -155,7 +155,7 @@ export const RecordDetailRelationSection = ({
           isFromManyObjects
             ? {
                 to: filterLinkHref,
-                label: `All (${relationRecords.length})`,
+                label: `Todos (${relationRecords.length})`,
               }
             : undefined
         }

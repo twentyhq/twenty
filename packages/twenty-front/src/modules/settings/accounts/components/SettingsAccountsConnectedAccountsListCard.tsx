@@ -32,7 +32,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       )}
       hasFooter
-      footerButtonLabel="Add account"
+      footerButtonLabel="Adicionar conta"
       onFooterButtonClick={() =>
         navigate(getSettingsPagePath(SettingsPath.NewAccount))
       }

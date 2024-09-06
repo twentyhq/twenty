@@ -9,7 +9,7 @@ export const notesAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All Notes',
+    name: 'Todos',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.note].id,
     type: 'table',
     key: 'INDEX',

@@ -51,15 +51,15 @@ export const Notes = ({
         <AnimatedPlaceholder type="noNote" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No notes
+            Nenhuma notas
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no associated notes with this record.
+            Não há notas associadas a este registro.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
           Icon={IconPlus}
-          title="New note"
+          title="Adicionar nota"
           variant="secondary"
           onClick={() =>
             openCreateActivity({
@@ -74,14 +74,14 @@ export const Notes = ({
   return (
     <StyledNotesContainer>
       <NoteList
-        title="All"
+        title="Todos"
         notes={notes}
         button={
           <Button
             Icon={IconPlus}
             size="small"
             variant="secondary"
-            title="Add note"
+            title="Adicionar nota"
             onClick={() =>
               openCreateActivity({
                 targetableObjects: [targetableObject],

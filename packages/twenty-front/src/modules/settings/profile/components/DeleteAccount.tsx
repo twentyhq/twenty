@@ -25,15 +25,15 @@ export const DeleteAccount = () => {
   return (
     <>
       <H2Title
-        title="Danger zone"
-        description="Delete account and all the associated data"
+        title="Zona de Perigo"
+        description="Excluir conta e todos os dados associados"
       />
 
       <Button
         accent="danger"
         onClick={() => setIsDeleteAccountModalOpen(true)}
         variant="secondary"
-        title="Delete account"
+        title="Excluir conta"
       />
 
       <ConfirmationModal
@@ -41,15 +41,15 @@ export const DeleteAccount = () => {
         confirmationPlaceholder={userEmail ?? ''}
         isOpen={isDeleteAccountModalOpen}
         setIsOpen={setIsDeleteAccountModalOpen}
-        title="Account Deletion"
+        title="Excluir Conta"
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete your
-            entire account. <br /> Please type in your email to confirm.
+            Esta ação não pode ser desfeita. Isso excluirá permanentemente toda
+            a sua conta. <br /> Por favor, digite seu email para confirmar.
           </>
         }
         onConfirmClick={deleteAccount}
-        deleteButtonText="Delete account"
+        deleteButtonText="Excluir conta"
       />
     </>
   );

@@ -41,11 +41,11 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
       return;
     }
     enqueueDialog({
-      title: 'Exit import flow',
-      message: 'Are you sure? Your current information will not be saved.',
+      title: 'Sair do fluxo de importação',
+      message: 'Tem certeza? Suas informações atuais não serão salvas.',
       buttons: [
-        { title: 'Cancel' },
-        { title: 'Exit', onClick: onClose, accent: 'danger', role: 'confirm' },
+        { title: 'Cancelar' },
+        { title: 'Sair', onClick: onClose, accent: 'danger', role: 'confirm' },
       ],
     });
   };

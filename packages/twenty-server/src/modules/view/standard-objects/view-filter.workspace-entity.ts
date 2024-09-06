@@ -17,9 +17,9 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewFilter,
   namePlural: 'viewFilters',
-  labelSingular: 'View Filter',
-  labelPlural: 'View Filters',
-  description: '(System) View Filters',
+  labelSingular: 'Filtro de Visualização',
+  labelPlural: 'Filtros de Visualização',
+  description: '(Sistema) Filtros de Visualização',
   icon: 'IconFilterBolt',
 })
 @WorkspaceIsNotAuditLogged()
@@ -28,16 +28,16 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
-    description: 'View Filter target field',
+    label: 'ID de Metadados do Campo',
+    description: 'Campo alvo do filtro de visualização',
   })
   fieldMetadataId: string;
 
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.operand,
     type: FieldMetadataType.TEXT,
-    label: 'Operand',
-    description: 'View Filter operand',
+    label: 'Operador',
+    description: 'Operador do filtro de visualização',
     defaultValue: "'Contains'",
   })
   operand: string;
@@ -45,24 +45,24 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.value,
     type: FieldMetadataType.TEXT,
-    label: 'Value',
-    description: 'View Filter value',
+    label: 'Valor',
+    description: 'Valor do filtro de visualização',
   })
   value: string;
 
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.displayValue,
     type: FieldMetadataType.TEXT,
-    label: 'Display Value',
-    description: 'View Filter Display Value',
+    label: 'Valor de Exibição',
+    description: 'Valor de exibição do filtro de visualização',
   })
   displayValue: string;
 
   @WorkspaceRelation({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View Filter related view',
+    label: 'Visualização',
+    description: 'Visualização relacionada ao filtro de visualização',
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFilters',

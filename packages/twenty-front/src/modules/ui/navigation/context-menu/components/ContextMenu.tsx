@@ -49,7 +49,7 @@ export const ContextMenu = () => {
   }
 
   const width = contextMenuEntries.some(
-    (contextMenuEntry) => contextMenuEntry.label === 'Remove from favorites',
+    (contextMenuEntry) => contextMenuEntry.label === 'Remover dos favoritos',
   )
     ? 200
     : undefined;

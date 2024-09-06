@@ -1,6 +1,7 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { DateTime } from 'luxon';
 import moize from 'moize';
 
@@ -8,7 +9,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { logError } from './logError';
 
-export const DEFAULT_DATE_LOCALE = 'en-EN';
+export const DEFAULT_DATE_LOCALE = 'pt-BR';
 
 export const parseDate = (dateToParse: Date | string | number) => {
   if (dateToParse === 'now') return DateTime.fromJSDate(new Date());
@@ -62,7 +63,7 @@ export const beautifyExactDateTime = (
 
 export const beautifyExactDate = (dateToBeautify: Date | string | number) => {
   const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local());
-  const dateFormat = isToday ? "'Today'" : 'DD';
+  const dateFormat = isToday ? "'Hoje'" : 'DD';
   return formatDate(dateToBeautify, dateFormat);
 };
 
@@ -74,7 +75,8 @@ export const beautifyPastDateRelativeToNow = (
 
     return formatDistanceToNow(parsedDate.toJSDate(), {
       addSuffix: true,
-    }).replace('less than a minute ago', 'now');
+      locale: ptBR,
+    }).replace('há menos de um minuto', 'agora');
   } catch (error) {
     logError(error);
     return '';
@@ -128,11 +130,11 @@ export const beautifyDateDiff = (
     ['years', 'days'],
   );
   let result = '';
-  if (dateDiff.years) result = result + `${dateDiff.years} year`;
+  if (dateDiff.years) result = result + `${dateDiff.years} ano`;
   if (![0, 1].includes(dateDiff.years)) result = result + 's';
   if (short && dateDiff.years) return result;
-  if (dateDiff.years && dateDiff.days) result = result + ' and ';
-  if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} day`;
+  if (dateDiff.years && dateDiff.days) result = result + ' e ';
+  if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} dia`;
   if (![0, 1].includes(dateDiff.days)) result = result + 's';
   return result;
 };

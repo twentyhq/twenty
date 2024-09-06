@@ -110,17 +110,17 @@ export const NameFields = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        label="First Name"
+        label="Nome"
         value={firstName}
         onChange={setFirstName}
-        placeholder="Tim"
+        placeholder="João"
         fullWidth
       />
       <TextInput
-        label="Last Name"
+        label="Sobrenome"
         value={lastName}
         onChange={setLastName}
-        placeholder="Cook"
+        placeholder="Silva"
         fullWidth
       />
     </StyledComboInputContainer>

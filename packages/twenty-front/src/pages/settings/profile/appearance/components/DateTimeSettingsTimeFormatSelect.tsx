@@ -20,12 +20,12 @@ export const DateTimeSettingsTimeFormatSelect = ({
     <Select
       dropdownId="datetime-settings-time-format"
       dropdownWidth={218}
-      label="Time format"
+      label="Formato de hora"
       fullWidth
       value={value}
       options={[
         {
-          label: 'System settings',
+          label: 'Configurações do sistema',
           value: TimeFormat.SYSTEM,
         },
         {

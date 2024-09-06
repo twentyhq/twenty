@@ -26,9 +26,9 @@ export enum ConnectedAccountProvider {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.connectedAccount,
   namePlural: 'connectedAccounts',
-  labelSingular: 'Connected Account',
-  labelPlural: 'Connected Accounts',
-  description: 'A connected account',
+  labelSingular: 'Conta Conectada',
+  labelPlural: 'Contas Conectadas',
+  description: 'Uma conta conectada',
   icon: 'IconAt',
   labelIdentifierStandardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
 })
@@ -38,8 +38,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'handle',
-    description: 'The account handle (email, username, phone number, etc.)',
+    label: 'Identificador',
+    description: 'O identificador da conta (email, nome de usuário, número de telefone, etc.)',
     icon: 'IconMail',
   })
   handle: string;
@@ -47,8 +47,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
     type: FieldMetadataType.TEXT,
-    label: 'provider',
-    description: 'The account provider',
+    label: 'Provedor',
+    description: 'O provedor da conta',
     icon: 'IconSettings',
   })
   provider: ConnectedAccountProvider; // field metadata should be a SELECT
@@ -56,8 +56,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
     type: FieldMetadataType.TEXT,
-    label: 'Access Token',
-    description: 'Messaging provider access token',
+    label: 'Token de Acesso',
+    description: 'Token de acesso do provedor de mensagens',
     icon: 'IconKey',
   })
   accessToken: string;
@@ -65,8 +65,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
     type: FieldMetadataType.TEXT,
-    label: 'Refresh Token',
-    description: 'Messaging provider refresh token',
+    label: 'Token de Atualização',
+    description: 'Token de atualização do provedor de mensagens',
     icon: 'IconKey',
   })
   refreshToken: string;
@@ -74,8 +74,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     type: FieldMetadataType.TEXT,
-    label: 'Last sync history ID',
-    description: 'Last sync history ID',
+    label: 'ID do Último Histórico de Sincronização',
+    description: 'ID do último histórico de sincronização',
     icon: 'IconHistory',
   })
   lastSyncHistoryId: string;
@@ -83,8 +83,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Auth failed at',
-    description: 'Auth failed at',
+    label: 'Falha na Autenticação em',
+    description: 'Data e hora da falha na autenticação',
     icon: 'IconX',
   })
   @WorkspaceIsNullable()
@@ -93,8 +93,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handleAliases,
     type: FieldMetadataType.TEXT,
-    label: 'Handle Aliases',
-    description: 'Handle Aliases',
+    label: 'Aliases do Identificador',
+    description: 'Aliases do identificador',
     icon: 'IconMail',
   })
   handleAliases: string;
@@ -102,8 +102,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Account Owner',
-    description: 'Account Owner',
+    label: 'Proprietário da Conta',
+    description: 'Proprietário da conta',
     icon: 'IconUserCircle',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'connectedAccounts',
@@ -116,8 +116,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channels',
-    description: 'Message Channels',
+    label: 'Canais de Mensagens',
+    description: 'Canais de mensagens associados',
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -127,8 +127,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.calendarChannels,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Calendar Channels',
-    description: 'Calendar Channels',
+    label: 'Canais de Calendário',
+    description: 'Canais de calendário associados',
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

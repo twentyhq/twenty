@@ -46,7 +46,7 @@ export const EmailThreadHeader = ({
         <StyledHeading>{subject}</StyledHeading>
         {lastMessageSentAt && (
           <StyledContent>
-            Last message {beautifyPastDateRelativeToNow(lastMessageSentAt)}
+            Última mensagem {beautifyPastDateRelativeToNow(lastMessageSentAt)}
           </StyledContent>
         )}
       </StyledHead>

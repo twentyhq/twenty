@@ -27,7 +27,7 @@ export const AddObjectFilterFromDetailsButton = ({
     <LightButton
       onClick={handleClick}
       Icon={IconPlus}
-      title="Add filter"
+      title="Adicionar filtro"
       accent="tertiary"
     />
   );

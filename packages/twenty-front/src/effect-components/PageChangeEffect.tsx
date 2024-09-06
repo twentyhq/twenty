@@ -150,7 +150,7 @@ export const PageChangeEffect = () => {
       {
         id: 'create-task',
         to: '',
-        label: 'Create Task',
+        label: 'Criar Tarefa',
         type: CommandType.Create,
         Icon: IconCheckbox,
         onCommandClick: () =>

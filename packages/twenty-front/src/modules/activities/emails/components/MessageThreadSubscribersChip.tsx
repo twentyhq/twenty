@@ -25,7 +25,7 @@ export const MessageThreadSubscribersChip = ({
 
   const isPrivateThread = isOnlyOneSubscriber;
 
-  const privateLabel = 'Private';
+  const privateLabel = 'Privado';
 
   const susbcriberAvatarUrls = messageThreadSubscribers
     .map((member) => member.workspaceMember.avatarUrl)

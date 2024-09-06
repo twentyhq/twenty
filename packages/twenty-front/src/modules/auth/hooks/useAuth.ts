@@ -118,7 +118,7 @@ export const useAuth = () => {
           (workspaceMember) => ({
             ...workspaceMember,
             colorScheme: workspaceMember.colorScheme as ColorScheme,
-            locale: workspaceMember.locale ?? 'en',
+            locale: workspaceMember.locale ?? 'pt-BR',
           }),
         );
 
@@ -129,7 +129,7 @@ export const useAuth = () => {
         workspaceMember = {
           ...user.workspaceMember,
           colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-          locale: user.workspaceMember?.locale ?? 'en',
+          locale: user.workspaceMember?.locale ?? 'pt-BR',
         };
 
         setCurrentWorkspaceMember(workspaceMember);

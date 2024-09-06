@@ -35,9 +35,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
   namePlural: 'companies',
-  labelSingular: 'Company',
-  labelPlural: 'Companies',
-  description: 'A company',
+  labelSingular: 'Empresa',
+  labelPlural: 'Empresas',
+  description: 'Uma empresa',
   icon: 'IconBuildingSkyscraper',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
   softDelete: true,
@@ -46,8 +46,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The company name',
+    label: 'Nome',
+    description: 'O nome da empresa',
     icon: 'IconBuildingSkyscraper',
   })
   name: string;
@@ -55,9 +55,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
     type: FieldMetadataType.LINKS,
-    label: 'Domain Name',
+    label: 'Nome de Domínio',
     description:
-      'The company website URL. We use this url to fetch the company icon',
+      'A URL do site da empresa. Usamos esta URL para buscar o ícone da empresa',
     icon: 'IconLink',
   })
   domainName?: LinksMetadata;
@@ -65,8 +65,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
     type: FieldMetadataType.NUMBER,
-    label: 'Employees',
-    description: 'Number of employees in the company',
+    label: 'Funcionários',
+    description: 'Número de funcionários na empresa',
     icon: 'IconUsers',
   })
   @WorkspaceIsNullable()
@@ -76,7 +76,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINKS,
     label: 'Linkedin',
-    description: 'The company Linkedin account',
+    description: 'A conta da empresa no Linkedin',
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
@@ -86,7 +86,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINKS,
     label: 'X',
-    description: 'The company Twitter/X account',
+    description: 'A conta da empresa no Twitter/X',
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
@@ -97,7 +97,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.CURRENCY,
     label: 'ARR',
     description:
-      'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
+      'Receita Recorrente Anual: A receita anual real ou estimada da empresa',
     icon: 'IconMoneybag',
   })
   @WorkspaceIsNullable()
@@ -106,8 +106,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address,
     type: FieldMetadataType.ADDRESS,
-    label: 'Address',
-    description: 'Address of the company',
+    label: 'Endereço',
+    description: 'Endereço da empresa',
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
@@ -118,7 +118,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.BOOLEAN,
     label: 'ICP',
     description:
-      'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
+      'Perfil de Cliente Ideal: Indica se a empresa é o cliente mais adequado e valioso para você',
     icon: 'IconTarget',
     defaultValue: false,
   })
@@ -127,8 +127,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Company record position',
+    label: 'Posição',
+    description: 'Posição do registro da empresa',
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -138,9 +138,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Criado por',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'O criador do registro',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -152,8 +152,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.people,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'People',
-    description: 'People linked to the company.',
+    label: 'Pessoas',
+    description: 'Pessoas vinculadas à empresa.',
     icon: 'IconUsers',
     inverseSideTarget: () => PersonWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -164,9 +164,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Account Owner',
+    label: 'Responsável pela Conta',
     description:
-      'Your team member responsible for managing the company account',
+      'Membro da sua equipe responsável por gerenciar a conta da empresa',
     icon: 'IconUserCircle',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'accountOwnerForCompanies',
@@ -181,8 +181,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.activityTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the company',
+    label: 'Atividades',
+    description: 'Atividades vinculadas à empresa',
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -194,8 +194,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.taskTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Tasks',
-    description: 'Tasks tied to the company',
+    label: 'Tarefas',
+    description: 'Tarefas vinculadas à empresa',
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -205,8 +205,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.noteTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Notes',
-    description: 'Notes tied to the company',
+    label: 'Notas',
+    description: 'Notas vinculadas à empresa',
     icon: 'IconNotes',
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -216,8 +216,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.opportunities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Opportunities',
-    description: 'Opportunities linked to the company.',
+    label: 'Oportunidades',
+    description: 'Oportunidades vinculadas à empresa.',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -228,8 +228,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the company',
+    label: 'Favoritos',
+    description: 'Favoritos vinculados à empresa',
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -241,8 +241,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.attachments,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Attachments',
-    description: 'Attachments linked to the company',
+    label: 'Anexos',
+    description: 'Anexos vinculados à empresa',
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -253,8 +253,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the company',
+    label: 'Atividades da Linha do Tempo',
+    description: 'Atividades da Linha do Tempo vinculadas à empresa',
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -266,9 +266,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
     type: FieldMetadataType.TEXT,
-    label: 'Address (deprecated) ',
+    label: 'Endereço (obsoleto) ',
     description:
-      'Address of the company - deprecated in favor of new address field',
+      'Endereço da empresa - obsoleto em favor do novo campo de endereço',
     icon: 'IconMap',
   })
   @WorkspaceIsDeprecated()

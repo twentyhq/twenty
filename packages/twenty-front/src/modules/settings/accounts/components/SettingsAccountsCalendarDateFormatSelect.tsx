@@ -16,7 +16,7 @@ export const SettingsAccountsCalendarDateFormatSelect = ({
 }: SettingsAccountsCalendarDateFormatSelectProps) => (
   <Select
     dropdownId="settings-accounts-calendar-date-format"
-    label="Date format"
+    label="Formato de data"
     fullWidth
     value={value}
     options={[

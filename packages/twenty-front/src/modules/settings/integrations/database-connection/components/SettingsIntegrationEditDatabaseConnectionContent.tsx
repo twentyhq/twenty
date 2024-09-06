@@ -105,7 +105,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
           <Breadcrumb
             links={[
               {
-                children: 'Integrations',
+                children: 'Integrações',
                 href: settingsIntegrationsPagePath,
               },
               {
@@ -126,15 +126,15 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         {hasSyncedTables && (
           <Info
             text={
-              'You cannot edit this connection because it has tracked tables.\nIf you need to make changes, please create a new connection or unsync the tables first.'
+              'Você não pode editar esta conexão porque ela possui tabelas rastreadas.\nSe precisar fazer alterações, por favor, crie uma nova conexão ou desassocie as tabelas primeiro.'
             }
             accent={'blue'}
           />
         )}
         <Section>
           <H2Title
-            title="Edit Connection"
-            description="Edit the information to connect your database"
+            title="Editar Conexão"
+            description="Edite as informações para conectar seu banco de dados"
           />
 
           <SettingsIntegrationDatabaseConnectionForm

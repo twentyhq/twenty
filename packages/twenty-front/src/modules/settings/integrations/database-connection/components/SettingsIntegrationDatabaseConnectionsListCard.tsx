@@ -56,7 +56,7 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
       onRowClick={(connection) => navigate(`./${connection.id}`)}
       getItemLabel={(connection) => connection.label}
       hasFooter
-      footerButtonLabel="Add connection"
+      footerButtonLabel="Adicionar conexão"
       onFooterButtonClick={() => navigate('./new')}
     />
   );

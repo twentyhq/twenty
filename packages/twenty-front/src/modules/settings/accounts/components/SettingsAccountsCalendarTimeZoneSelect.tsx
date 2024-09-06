@@ -16,7 +16,7 @@ export const SettingsAccountsCalendarTimeZoneSelect = ({
   <Select
     dropdownId="settings-accounts-calendar-time-zone"
     dropdownWidth={416}
-    label="Time zone"
+    label="Fuso horário"
     fullWidth
     value={findAvailableTimeZoneOption(value)?.value}
     options={AVAILABLE_TIMEZONE_OPTIONS}

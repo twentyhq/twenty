@@ -28,9 +28,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.favorite,
   namePlural: 'favorites',
-  labelSingular: 'Favorite',
-  labelPlural: 'Favorites',
-  description: 'A favorite',
+  labelSingular: 'Favorito',
+  labelPlural: 'Favoritos',
+  description: 'Um favorito',
   icon: 'IconHeart',
 })
 @WorkspaceIsNotAuditLogged()
@@ -39,8 +39,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'Favorite position',
+    label: 'Posição',
+    description: 'Posição do favorito',
     icon: 'IconList',
     defaultValue: 0,
   })
@@ -50,8 +50,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
-    description: 'Favorite workspace member',
+    label: 'Membro do Workspace',
+    description: 'Membro do workspace favorito',
     icon: 'IconCircleUser',
     inverseSideFieldKey: 'favorites',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
@@ -65,8 +65,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
-    description: 'Favorite person',
+    label: 'Pessoa',
+    description: 'Pessoa favorita',
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
@@ -80,8 +80,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
-    description: 'Favorite company',
+    label: 'Empresa',
+    description: 'Empresa favorita',
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
@@ -95,8 +95,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Opportunity',
-    description: 'Favorite opportunity',
+    label: 'Oportunidade',
+    description: 'Oportunidade favorita',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
@@ -111,7 +111,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: FAVORITE_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow',
-    description: 'Favorite workflow',
+    description: 'Workflow favorito',
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
@@ -131,8 +131,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.task,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Task',
-    description: 'Favorite task',
+    label: 'Tarefa',
+    description: 'Tarefa favorita',
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
@@ -146,8 +146,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.note,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Note',
-    description: 'Favorite note',
+    label: 'Nota',
+    description: 'Nota favorita',
     icon: 'IconNotes',
     inverseSideTarget: () => NoteWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
@@ -161,8 +161,8 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'Favorite view',
+    label: 'Visualização',
+    description: 'Visualização favorita',
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
@@ -179,7 +179,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
       standardId: FAVORITE_STANDARD_FIELD_IDS.custom,
       name: oppositeObjectMetadata.nameSingular,
       label: oppositeObjectMetadata.labelSingular,
-      description: `Favorite ${oppositeObjectMetadata.labelSingular}`,
+      description: `${oppositeObjectMetadata.labelSingular} favorito`,
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconHeart',
     }),

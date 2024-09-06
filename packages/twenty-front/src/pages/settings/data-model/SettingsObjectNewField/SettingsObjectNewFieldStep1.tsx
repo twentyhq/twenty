@@ -89,12 +89,12 @@ export const SettingsObjectNewFieldStep1 = () => {
       title={
         <Breadcrumb
           links={[
-            { children: 'Objects', href: '/settings/objects' },
+            { children: 'Objetos', href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
               href: `/settings/objects/${objectSlug}`,
             },
-            { children: 'New Field' },
+            { children: 'Novo Campo' },
           ]}
         />
       }
@@ -111,8 +111,8 @@ export const SettingsObjectNewFieldStep1 = () => {
       <SettingsPageContainer>
         <StyledSection>
           <H2Title
-            title="Check deactivated fields"
-            description="Before creating a custom field, check if it already exists in the deactivated section."
+            title="Verificar campos desativados"
+            description="Antes de criar um campo personalizado, verifique se ele já existe na seção desativada."
           />
           <SettingsObjectFieldTable
             objectMetadataItem={activeObjectMetadataItem}
@@ -120,7 +120,7 @@ export const SettingsObjectNewFieldStep1 = () => {
           />
           <StyledAddCustomFieldButton
             Icon={IconPlus}
-            title="Add Custom Field"
+            title="Adicionar Campo Personalizado"
             size="small"
             variant="secondary"
             to={`/settings/objects/${objectSlug}/new-field/step-2`}

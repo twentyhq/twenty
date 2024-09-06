@@ -2,14 +2,14 @@ import { Shortcut, ShortcutType } from '../types/Shortcut';
 
 export const KEYBOARD_SHORTCUTS_GENERAL: Shortcut[] = [
   {
-    label: 'Open search',
+    label: 'Abrir pesquisa',
     type: ShortcutType.General,
     firstHotKey: '⌘',
     secondHotKey: 'K',
     areSimultaneous: false,
   },
   {
-    label: 'Mark as favourite',
+    label: 'Marcar como favorito',
     type: ShortcutType.General,
     firstHotKey: '⇧',
     secondHotKey: 'F',

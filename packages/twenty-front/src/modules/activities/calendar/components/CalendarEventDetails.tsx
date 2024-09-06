@@ -127,14 +127,14 @@ export const CalendarEventDetails = ({
         variant={ChipVariant.Highlighted}
         clickable={false}
         leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
-        label="Event"
+        label="Evento"
       />
       <StyledHeader>
         <StyledTitle canceled={calendarEvent.isCanceled}>
           {calendarEvent.title}
         </StyledTitle>
         <StyledCreatedAt>
-          Created{' '}
+          Criado{' '}
           {beautifyPastDateRelativeToNow(
             new Date(calendarEvent.externalCreatedAt),
           )}

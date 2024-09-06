@@ -95,11 +95,11 @@ const StyledDescription = styled.div`
 `;
 
 const defaultTitleByVariant: Record<SnackBarVariant, string> = {
-  [SnackBarVariant.Default]: 'Alert',
-  [SnackBarVariant.Error]: 'Error',
-  [SnackBarVariant.Info]: 'Info',
-  [SnackBarVariant.Success]: 'Success',
-  [SnackBarVariant.Warning]: 'Warning',
+  [SnackBarVariant.Default]: 'Alerta',
+  [SnackBarVariant.Error]: 'Erro',
+  [SnackBarVariant.Info]: 'Informação',
+  [SnackBarVariant.Success]: 'Sucesso',
+  [SnackBarVariant.Warning]: 'Aviso',
 };
 
 export const SnackBar = ({
@@ -187,10 +187,10 @@ export const SnackBar = ({
         {icon}
         {title}
         <StyledActions>
-          {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
+          {!!onCancel && <LightButton title="Cancelar" onClick={onCancel} />}
 
           {!!onClose && (
-            <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
+            <LightIconButton title="Fechar" Icon={IconX} onClick={onClose} />
           )}
         </StyledActions>
       </StyledHeader>

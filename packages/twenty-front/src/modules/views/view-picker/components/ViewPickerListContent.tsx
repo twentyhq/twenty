@@ -135,7 +135,7 @@ export const ViewPickerListContent = () => {
         <MenuItem
           onClick={handleAddViewButtonClick}
           LeftIcon={IconPlus}
-          text="Add view"
+          text="Adicionar visualização"
         />
       </StyledBoldDropdownMenuItemsContainer>
     </>

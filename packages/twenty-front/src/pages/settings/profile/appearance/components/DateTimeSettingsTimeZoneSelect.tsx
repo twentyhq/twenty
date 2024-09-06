@@ -16,15 +16,15 @@ export const DateTimeSettingsTimeZoneSelect = ({
     <Select
       dropdownId="settings-accounts-calendar-time-zone"
       dropdownWidth={416}
-      label="Time zone"
+      label="Fuso horário"
       fullWidth
       value={
         value === 'system'
-          ? 'System settings'
+          ? 'Configurações do sistema'
           : findAvailableTimeZoneOption(value)?.value
       }
       options={[
-        { label: 'System settings', value: 'system' },
+        { label: 'Configurações do sistema', value: 'system' },
         ...AVAILABLE_TIMEZONE_OPTIONS,
       ]}
       onChange={onChange}

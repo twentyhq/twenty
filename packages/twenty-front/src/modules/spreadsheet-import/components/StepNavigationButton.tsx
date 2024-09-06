@@ -30,7 +30,7 @@ export const StepNavigationButton = ({
       {!isUndefinedOrNull(onBack) && (
         <MainButton
           Icon={isLoading ? CircularProgressBar : undefined}
-          title="Back"
+          title="Voltar"
           onClick={!isLoading ? onBack : undefined}
           variant="secondary"
         />

@@ -35,7 +35,7 @@ export const customTableDefaultColumns = (
     name: 'name',
     type: 'text',
     isNullable: false,
-    default: "'Untitled'",
+    default: "'Sem título'",
   },
   {
     name: 'createdBySource',

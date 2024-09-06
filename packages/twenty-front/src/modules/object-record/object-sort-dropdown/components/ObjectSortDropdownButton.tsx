@@ -90,7 +90,7 @@ export const ObjectSortDropdownButton = ({
             isUnfolded={isDropdownOpen}
             onClick={handleButtonClick}
           >
-            Sort
+            Ordenar
           </StyledHeaderDropdownButton>
         }
         dropdownComponents={
@@ -104,7 +104,7 @@ export const ObjectSortDropdownButton = ({
                       setSelectedSortDirection(sortOrder);
                       setIsSortDirectionMenuUnfolded(false);
                     }}
-                    text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                    text={sortOrder === 'asc' ? 'Crescente' : 'Decrescente'}
                   />
                 ))}
               </DropdownMenuItemsContainer>
@@ -114,12 +114,12 @@ export const ObjectSortDropdownButton = ({
                   EndIcon={IconChevronDown}
                   onClick={() => setIsSortDirectionMenuUnfolded(true)}
                 >
-                  {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                  {selectedSortDirection === 'asc' ? 'Crescente' : 'Decrescente'}
                 </DropdownMenuHeader>
                 <StyledInput
                   autoFocus
                   value={objectSortDropdownSearchInput}
-                  placeholder="Search fields"
+                  placeholder="Buscar campos"
                   onChange={(event) =>
                     setObjectSortDropdownSearchInput(event.target.value)
                   }

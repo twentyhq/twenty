@@ -73,7 +73,7 @@ export const addErrorsAndRunHooks = <T extends string>(
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field must be unique',
+                    'Campo deve ser único',
                 },
               };
             }
@@ -93,7 +93,7 @@ export const addErrorsAndRunHooks = <T extends string>(
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field is required',
+                    'Campo é obrigatório',
                 },
               };
             }
@@ -115,7 +115,7 @@ export const addErrorsAndRunHooks = <T extends string>(
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    `Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags} `,
+                    `Campo não corresponde ao padrão /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags} `,
                 },
               };
             }
@@ -136,7 +136,7 @@ export const addErrorsAndRunHooks = <T extends string>(
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field is invalid',
+                    'Campo é inválido',
                 },
               };
             }

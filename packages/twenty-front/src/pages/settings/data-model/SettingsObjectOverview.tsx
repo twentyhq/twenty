@@ -12,9 +12,9 @@ export const SettingsObjectOverview = () => {
       title={
         <Breadcrumb
           links={[
-            { children: 'Data model', href: '/settings/objects' },
+            { children: 'Modelo de Dados', href: '/settings/objects' },
             {
-              children: 'Overview',
+              children: 'Visão Geral',
             },
           ]}
         />

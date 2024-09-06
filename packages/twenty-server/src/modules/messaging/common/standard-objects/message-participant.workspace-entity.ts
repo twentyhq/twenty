@@ -19,9 +19,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageParticipant,
   namePlural: 'messageParticipants',
-  labelSingular: 'Message Participant',
-  labelPlural: 'Message Participants',
-  description: 'Message Participants',
+  labelSingular: 'Participante de Mensagem',
+  labelPlural: 'Participantes de Mensagem',
+  description: 'Participantes de Mensagem',
   icon: 'IconUserCircle',
   labelIdentifierStandardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
 })
@@ -31,12 +31,12 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
-    label: 'Role',
-    description: 'Role',
+    label: 'Função',
+    description: 'Função',
     icon: 'IconAt',
     options: [
-      { value: 'from', label: 'From', position: 0, color: 'green' },
-      { value: 'to', label: 'To', position: 1, color: 'blue' },
+      { value: 'from', label: 'De', position: 0, color: 'green' },
+      { value: 'to', label: 'Para', position: 1, color: 'blue' },
       { value: 'cc', label: 'Cc', position: 2, color: 'orange' },
       { value: 'bcc', label: 'Bcc', position: 3, color: 'red' },
     ],
@@ -47,8 +47,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'Handle',
-    description: 'Handle',
+    label: 'Identificador',
+    description: 'Identificador',
     icon: 'IconAt',
   })
   handle: string;
@@ -56,8 +56,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
-    label: 'Display Name',
-    description: 'Display Name',
+    label: 'Nome de Exibição',
+    description: 'Nome de Exibição',
     icon: 'IconUser',
   })
   displayName: string;
@@ -65,8 +65,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message',
-    description: 'Message',
+    label: 'Mensagem',
+    description: 'Mensagem',
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
@@ -79,8 +79,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
-    description: 'Person',
+    label: 'Pessoa',
+    description: 'Pessoa',
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
@@ -94,8 +94,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
-    description: 'Workspace member',
+    label: 'Membro do Workspace',
+    description: 'Membro do Workspace',
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',

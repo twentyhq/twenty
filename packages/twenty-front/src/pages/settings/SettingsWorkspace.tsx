@@ -9,21 +9,21 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsWorkspace = () => (
-  <SubMenuTopBarContainer Icon={IconSettings} title="General">
+  <SubMenuTopBarContainer Icon={IconSettings} title="Geral">
     <SettingsPageContainer>
       <Section>
-        <H2Title title="Picture" />
+        <H2Title title="Imagem" />
         <WorkspaceLogoUploader />
       </Section>
       <Section>
-        <H2Title title="Name" description="Name of your workspace" />
+        <H2Title title="Nome" description="Nome do seu workspace" />
         <NameField />
       </Section>
       <Section>
         <H2Title
-          title="Support"
+          title="Suporte"
           addornment={<ToggleImpersonate />}
-          description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+          description="Conceda à equipe de suporte do Digito Service acesso temporário ao seu workspace para que possamos solucionar problemas ou recuperar conteúdo em seu nome. Você pode revogar o acesso a qualquer momento."
         />
       </Section>
       <Section>

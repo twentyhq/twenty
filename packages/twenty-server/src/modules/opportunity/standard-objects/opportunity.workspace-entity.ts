@@ -34,9 +34,9 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
   namePlural: 'opportunities',
-  labelSingular: 'Opportunity',
-  labelPlural: 'Opportunities',
-  description: 'An opportunity',
+  labelSingular: 'Oportunidade',
+  labelPlural: 'Oportunidades',
+  description: 'Uma oportunidade',
   icon: 'IconTargetArrow',
   labelIdentifierStandardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
   softDelete: true,
@@ -46,8 +46,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The opportunity name',
+    label: 'Nome',
+    description: 'O nome da oportunidade',
     icon: 'IconTargetArrow',
   })
   name: string;
@@ -55,8 +55,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
-    label: 'Amount',
-    description: 'Opportunity amount',
+    label: 'Valor',
+    description: 'Valor da oportunidade',
     icon: 'IconCurrencyDollar',
   })
   @WorkspaceIsNullable()
@@ -65,8 +65,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Close date',
-    description: 'Opportunity close date',
+    label: 'Data de Fechamento',
+    description: 'Data de fechamento da oportunidade',
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
@@ -75,20 +75,20 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
-    label: 'Stage',
-    description: 'Opportunity stage',
+    label: 'Etapa',
+    description: 'Etapa da oportunidade',
     icon: 'IconProgressCheck',
     options: [
-      { value: 'NEW', label: 'New', position: 0, color: 'red' },
-      { value: 'SCREENING', label: 'Screening', position: 1, color: 'purple' },
-      { value: 'MEETING', label: 'Meeting', position: 2, color: 'sky' },
+      { value: 'NEW', label: 'Novo', position: 0, color: 'red' },
+      { value: 'SCREENING', label: 'Triagem', position: 1, color: 'purple' },
+      { value: 'MEETING', label: 'Reunião', position: 2, color: 'sky' },
       {
         value: 'PROPOSAL',
-        label: 'Proposal',
+        label: 'Proposta',
         position: 3,
         color: 'turquoise',
       },
-      { value: 'CUSTOMER', label: 'Customer', position: 4, color: 'yellow' },
+      { value: 'CUSTOMER', label: 'Cliente', position: 4, color: 'yellow' },
     ],
     defaultValue: "'NEW'",
   })
@@ -98,8 +98,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Opportunity record position',
+    label: 'Posição',
+    description: 'Posição do registro da oportunidade',
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -109,9 +109,9 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Criado por',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'O criador do registro',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -122,8 +122,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Point of Contact',
-    description: 'Opportunity point of contact',
+    label: 'Ponto de Contato',
+    description: 'Ponto de contato da oportunidade',
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContactForOpportunities',
@@ -138,8 +138,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
-    description: 'Opportunity company',
+    label: 'Empresa',
+    description: 'Empresa da oportunidade',
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'opportunities',
@@ -154,8 +154,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the opportunity',
+    label: 'Favoritos',
+    description: 'Favoritos vinculados à oportunidade',
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -167,8 +167,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.activityTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the opportunity',
+    label: 'Atividades',
+    description: 'Atividades vinculadas à oportunidade',
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -180,8 +180,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Tasks',
-    description: 'Tasks tied to the opportunity',
+    label: 'Tarefas',
+    description: 'Tarefas vinculadas à oportunidade',
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -191,8 +191,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.noteTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Notes',
-    description: 'Notes tied to the opportunity',
+    label: 'Notas',
+    description: 'Notas vinculadas à oportunidade',
     icon: 'IconNotes',
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -202,8 +202,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Attachments',
-    description: 'Attachments linked to the opportunity',
+    label: 'Anexos',
+    description: 'Anexos vinculados à oportunidade',
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -214,8 +214,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the opportunity.',
+    label: 'Atividades da Linha do Tempo',
+    description: 'Atividades da linha do tempo vinculadas à oportunidade.',
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -226,8 +226,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
     type: FieldMetadataType.TEXT,
-    label: 'Probability',
-    description: 'Opportunity probability',
+    label: 'Probabilidade',
+    description: 'Probabilidade da oportunidade',
     icon: 'IconProgressCheck',
     defaultValue: "'0'",
   })

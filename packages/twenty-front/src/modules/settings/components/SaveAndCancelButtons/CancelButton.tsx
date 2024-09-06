@@ -11,7 +11,7 @@ export const CancelButton = ({
 }: CancelButtonProps) => {
   return (
     <LightButton
-      title="Cancel"
+      title="Cancelar"
       accent="tertiary"
       onClick={onCancel}
       disabled={disabled}

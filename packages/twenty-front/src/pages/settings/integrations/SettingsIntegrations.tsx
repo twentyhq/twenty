@@ -8,7 +8,7 @@ export const SettingsIntegrations = () => {
   const integrationCategories = useSettingsIntegrationCategories();
 
   return (
-    <SubMenuTopBarContainer Icon={IconApps} title="Integrations">
+    <SubMenuTopBarContainer Icon={IconApps} title="Integrações">
       <SettingsPageContainer>
         {integrationCategories.map((group) => (
           <SettingsIntegrationGroup key={group.key} integrationGroup={group} />

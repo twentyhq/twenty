@@ -57,7 +57,7 @@ export const SettingsDataModelObjectAboutForm = ({
     <>
       <StyledInputsContainer>
         <StyledInputContainer>
-          <StyledLabel>Icon</StyledLabel>
+          <StyledLabel>Ícone</StyledLabel>
           <Controller
             name="icon"
             control={control}
@@ -75,13 +75,13 @@ export const SettingsDataModelObjectAboutForm = ({
           {
             label: 'Singular',
             fieldName: 'labelSingular' as const,
-            placeholder: 'Listing',
+            placeholder: 'Listagem',
             defaultValue: objectMetadataItem?.labelSingular,
           },
           {
             label: 'Plural',
             fieldName: 'labelPlural' as const,
-            placeholder: 'Listings',
+            placeholder: 'Listagens',
             defaultValue: objectMetadataItem?.labelPlural,
           },
         ].map(({ defaultValue, fieldName, label, placeholder }) => (
@@ -110,7 +110,7 @@ export const SettingsDataModelObjectAboutForm = ({
         defaultValue={objectMetadataItem?.description ?? null}
         render={({ field: { onChange, value } }) => (
           <TextArea
-            placeholder="Write a description"
+            placeholder="Escreva uma descrição"
             minRows={4}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}

@@ -94,14 +94,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
         <MenuItem
           LeftIcon={IconFilter}
           onClick={handleFilterClick}
-          text="Filter"
+          text="Filtrar"
         />
       )}
       {isSortable && (
         <MenuItem
           LeftIcon={IconSortDescending}
           onClick={handleSortClick}
-          text="Sort"
+          text="Ordenar"
         />
       )}
       {showSeparator && <DropdownMenuSeparator />}
@@ -109,21 +109,21 @@ export const RecordTableColumnHeadDropdownMenu = ({
         <MenuItem
           LeftIcon={IconArrowLeft}
           onClick={handleColumnMoveLeft}
-          text="Move left"
+          text="Mover para a esquerda"
         />
       )}
       {canMoveRight && (
         <MenuItem
           LeftIcon={IconArrowRight}
           onClick={handleColumnMoveRight}
-          text="Move right"
+          text="Mover para a direita"
         />
       )}
       {canHide && (
         <MenuItem
           LeftIcon={IconEyeOff}
           onClick={handleColumnVisibility}
-          text="Hide"
+          text="Ocultar"
         />
       )}
     </DropdownMenuItemsContainer>

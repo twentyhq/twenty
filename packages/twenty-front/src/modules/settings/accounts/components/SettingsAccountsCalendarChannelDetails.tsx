@@ -50,8 +50,8 @@ export const SettingsAccountsCalendarChannelDetails = ({
     <StyledDetailsContainer>
       <Section>
         <H2Title
-          title="Event visibility"
-          description="Define what will be visible to other users in your workspace"
+          title="Visibilidade de eventos"
+          description="Defina o que será visível para outros usuários no seu workspace"
         />
         <SettingsAccountsEventVisibilitySettingsCard
           value={calendarChannel.visibility}
@@ -60,15 +60,15 @@ export const SettingsAccountsCalendarChannelDetails = ({
       </Section>
       <Section>
         <H2Title
-          title="Contact auto-creation"
-          description="Automatically create contacts for people you've participated in an event with."
+          title="Criação automática de contatos"
+          description="Crie automaticamente contatos para as pessoas com quem você participou de um evento."
         />
         <SettingsAccountsToggleSettingCard
           parameters={[
             {
               value: !!calendarChannel.isContactAutoCreationEnabled,
-              title: 'Auto-creation',
-              description: 'Automatically create contacts for people.',
+              title: 'Criação automática',
+              description: 'Crie automaticamente contatos para as pessoas.',
               onToggle: handleContactAutoCreationToggle,
             },
           ]}

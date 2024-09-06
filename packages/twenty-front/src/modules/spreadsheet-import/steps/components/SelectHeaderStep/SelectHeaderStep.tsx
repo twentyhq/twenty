@@ -90,7 +90,7 @@ export const SelectHeaderStep = ({
   return (
     <>
       <Modal.Content>
-        <StyledHeading title="Select header row" />
+        <StyledHeading title="Selecione a linha de cabeçalho" />
         <StyledTableContainer>
           <SelectHeaderTable
             importedRows={importedRows}
@@ -102,7 +102,7 @@ export const SelectHeaderStep = ({
       <StepNavigationButton
         onClick={handleOnContinue}
         onBack={onBack}
-        title="Continue"
+        title="Continuar"
         isLoading={isLoading}
       />
     </>

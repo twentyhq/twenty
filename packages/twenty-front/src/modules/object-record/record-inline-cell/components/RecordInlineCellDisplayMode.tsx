@@ -80,7 +80,7 @@ export const RecordInlineCellDisplayMode = ({
 
   const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
 
-  const emptyPlaceHolder = showLabel ? 'Empty' : label;
+  const emptyPlaceHolder = showLabel ? 'Vazio' : label;
 
   return (
     <>

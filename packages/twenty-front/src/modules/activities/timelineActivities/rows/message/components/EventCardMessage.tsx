@@ -95,14 +95,14 @@ export const EventCardMessage = ({
     );
 
     if (shouldHandleNotFound) {
-      return <div>Message not found</div>;
+      return <div>Mensagem não encontrada</div>;
     }
 
-    return <div>Error loading message</div>;
+    return <div>Erro ao carregar a mensagem</div>;
   }
 
   if (loading || isUndefined(message)) {
-    return <div>Loading...</div>;
+    return <div>Carregando...</div>;
   }
 
   const messageParticipantHandles = message.messageParticipants

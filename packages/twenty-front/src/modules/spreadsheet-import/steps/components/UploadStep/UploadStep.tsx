@@ -45,7 +45,7 @@ export const UploadStep = ({
           maxRecords > 0 &&
           exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
         ) {
-          onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
+          onError(`Muitos registros. Até ${maxRecords.toString()} são permitidos`);
           return;
         }
         try {

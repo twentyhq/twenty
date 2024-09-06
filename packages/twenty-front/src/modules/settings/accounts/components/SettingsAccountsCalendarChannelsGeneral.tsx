@@ -57,7 +57,7 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
     description: '',
     isCanceled: false,
     location: '',
-    title: 'Onboarding call',
+    title: 'Chamada de integração',
     visibility: CalendarChannelVisibility.ShareEverything,
   };
 
@@ -65,15 +65,15 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
     <StyledGeneralContainer>
       <Section>
         <H2Title
-          title="Display"
-          description="Configure how we should display your events in your calendar"
+          title="Exibição"
+          description="Configure como devemos exibir seus eventos no seu calendário"
         />
         <SettingsAccountsCalendarDisplaySettings />
       </Section>
       <Section>
         <H2Title
-          title="Color code"
-          description="Events you participated in are displayed in red."
+          title="Código de cores"
+          description="Os eventos em que você participou são exibidos em vermelho."
         />
         <CalendarContext.Provider
           value={{

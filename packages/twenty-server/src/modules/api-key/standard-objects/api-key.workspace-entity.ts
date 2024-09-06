@@ -13,7 +13,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
   namePlural: 'apiKeys',
   labelSingular: 'Api Key',
   labelPlural: 'Api Keys',
-  description: 'An api key',
+  description: 'Uma api key',
   icon: 'IconRobot',
   labelIdentifierStandardId: API_KEY_STANDARD_FIELD_IDS.name,
 })
@@ -23,8 +23,8 @@ export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: API_KEY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'ApiKey name',
+    label: 'Nome',
+    description: 'Nome da ApiKey',
     icon: 'IconLink',
   })
   name: string;
@@ -32,8 +32,8 @@ export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: API_KEY_STANDARD_FIELD_IDS.expiresAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Expiration date',
-    description: 'ApiKey expiration date',
+    label: 'Data de expiração',
+    description: 'Data de expiração da ApiKey',
     icon: 'IconCalendar',
   })
   expiresAt: Date;
@@ -41,8 +41,8 @@ export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: API_KEY_STANDARD_FIELD_IDS.revokedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Revocation date',
-    description: 'ApiKey revocation date',
+    label: 'Data de revogação',
+    description: 'Data de revogação da ApiKey',
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()

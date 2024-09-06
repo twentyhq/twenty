@@ -65,11 +65,11 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
                 <DropdownMenuItemsContainer>
                   <MenuItem
                     LeftIcon={IconTrash}
-                    text="Remove"
+                    text="Remover"
                     onClick={onRemove}
                   />
                   <UndecoratedLink to="./edit">
-                    <MenuItem LeftIcon={IconPencil} text="Edit" />
+                    <MenuItem LeftIcon={IconPencil} text="Editar" />
                   </UndecoratedLink>
                 </DropdownMenuItemsContainer>
               </DropdownMenu>

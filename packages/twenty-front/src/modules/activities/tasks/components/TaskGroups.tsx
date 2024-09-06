@@ -71,15 +71,15 @@ export const TaskGroups = ({
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Mission accomplished!
+            Missão cumprida!
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            All tasks addressed. Maintain the momentum.
+            Todas as tarefas foram resolvidas. Mantenha o ritmo.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
           Icon={IconPlus}
-          title="New task"
+          title="Nova tarefa"
           variant={'secondary'}
           onClick={() =>
             openCreateActivity({

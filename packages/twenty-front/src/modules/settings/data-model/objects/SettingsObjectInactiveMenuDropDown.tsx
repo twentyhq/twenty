@@ -44,13 +44,13 @@ export const SettingsObjectInactiveMenuDropDown = ({
         <DropdownMenu width="160px">
           <DropdownMenuItemsContainer>
             <MenuItem
-              text="Activate"
+              text="Ativar"
               LeftIcon={IconArchiveOff}
               onClick={handleActivate}
             />
             {isCustomObject && (
               <MenuItem
-                text="Delete"
+                text="Excluir"
                 LeftIcon={IconTrash}
                 accent="danger"
                 onClick={handleDelete}

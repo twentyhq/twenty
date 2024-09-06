@@ -65,7 +65,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}
         >
-          <MenuItem LeftIcon={IconSettings} text="Customize fields" />
+          <MenuItem LeftIcon={IconSettings} text="Personalizar campos" />
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </>

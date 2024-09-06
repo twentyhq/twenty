@@ -27,7 +27,7 @@ export const SettingsIntegrationRemoteTableSchemaUpdate = ({
       {updatesText && (
         <Button
           Icon={IconReload}
-          title="Update"
+          title="Atualizar"
           size="small"
           onClick={onUpdate}
         />

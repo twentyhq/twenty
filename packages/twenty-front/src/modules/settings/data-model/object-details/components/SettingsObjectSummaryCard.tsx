@@ -76,7 +76,7 @@ export const SettingsObjectSummaryCard = ({
             dropdownId={dropdownId}
             clickableComponent={
               <LightIconButton
-                aria-label="Object Options"
+                aria-label="Opções do Objeto"
                 Icon={IconDotsVertical}
                 accent="tertiary"
               />
@@ -85,12 +85,12 @@ export const SettingsObjectSummaryCard = ({
               <DropdownMenu width="160px">
                 <DropdownMenuItemsContainer>
                   <MenuItem
-                    text="Edit"
+                    text="Editar"
                     LeftIcon={IconPencil}
                     onClick={handleEdit}
                   />
                   <MenuItem
-                    text="Deactivate"
+                    text="Desativar"
                     LeftIcon={IconArchive}
                     onClick={handleDeactivate}
                   />

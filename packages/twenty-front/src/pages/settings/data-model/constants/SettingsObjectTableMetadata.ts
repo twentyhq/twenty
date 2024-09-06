@@ -6,25 +6,25 @@ export const SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTableIt
     tableId: 'settingsObject',
     fields: [
       {
-        fieldLabel: 'Name',
+        fieldLabel: 'Nome',
         fieldName: 'labelPlural',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Type',
+        fieldLabel: 'Tipo',
         fieldName: 'objectTypeLabel',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Fields',
+        fieldLabel: 'Campos',
         fieldName: 'fieldsCount',
         fieldType: 'number',
         align: 'right',
       },
       {
-        fieldLabel: 'Instances',
+        fieldLabel: 'Instâncias',
         fieldName: 'totalObjectCount',
         fieldType: 'number',
         align: 'right',

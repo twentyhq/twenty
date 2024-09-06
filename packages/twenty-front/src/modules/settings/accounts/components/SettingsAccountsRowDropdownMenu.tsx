@@ -52,7 +52,7 @@ export const SettingsAccountsRowDropdownMenu = ({
           <DropdownMenuItemsContainer>
             <MenuItem
               LeftIcon={IconMail}
-              text="Emails settings"
+              text="Configurações de emails"
               onClick={() => {
                 navigate(`/settings/accounts/emails`);
                 closeDropdown();
@@ -60,7 +60,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             />
             <MenuItem
               LeftIcon={IconCalendarEvent}
-              text="Calendar settings"
+              text="Configurações de calendário"
               onClick={() => {
                 navigate(`/settings/accounts/calendars`);
                 closeDropdown();
@@ -69,7 +69,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             {account.authFailedAt && (
               <MenuItem
                 LeftIcon={IconRefresh}
-                text="Reconnect"
+                text="Reconectar"
                 onClick={() => {
                   triggerGoogleApisOAuth();
                   closeDropdown();
@@ -79,7 +79,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
-              text="Remove account"
+              text="Remover conta"
               onClick={() => {
                 deleteOneRecord(account.id);
                 closeDropdown();

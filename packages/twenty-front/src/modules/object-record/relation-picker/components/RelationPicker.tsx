@@ -66,7 +66,7 @@ export const RelationPicker = ({
   return (
     <SingleEntitySelect
       EmptyIcon={IconForbid}
-      emptyLabel={'No ' + fieldDefinition.label}
+      emptyLabel={'Nenhum ' + fieldDefinition.label}
       onCancel={onCancel}
       onCreate={createNewRecordAndOpenRightDrawer}
       onEntitySelected={handleEntitySelected}

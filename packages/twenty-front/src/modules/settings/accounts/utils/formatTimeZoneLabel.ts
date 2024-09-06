@@ -1,4 +1,4 @@
-import defaultLocale from 'date-fns/locale/en-US';
+import defaultLocale from 'date-fns/locale/pt-BR';
 import { formatInTimeZone } from 'date-fns-tz';
 
 /**

@@ -76,13 +76,13 @@ export const ShowPageAddButton = ({
                 onClick={() => handleSelect(CoreObjectNameSingular.Note)}
                 accent="default"
                 LeftIcon={IconNotes}
-                text="Note"
+                text="Nota"
               />
               <MenuItem
                 onClick={() => handleSelect(CoreObjectNameSingular.Task)}
                 accent="default"
                 LeftIcon={IconCheckbox}
-                text="Task"
+                text="Tarefa"
               />
             </DropdownMenuItemsContainer>
           </DropdownMenu>

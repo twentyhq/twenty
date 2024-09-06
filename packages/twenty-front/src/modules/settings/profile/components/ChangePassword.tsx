@@ -16,7 +16,7 @@ export const ChangePassword = () => {
 
   const handlePasswordResetClick = async () => {
     if (!currentUser?.email) {
-      enqueueSnackBar('Invalid email', {
+      enqueueSnackBar('Email inválido', {
         variant: SnackBarVariant.Error,
       });
       return;
@@ -29,11 +29,11 @@ export const ChangePassword = () => {
         },
       });
       if (data?.emailPasswordResetLink?.success === true) {
-        enqueueSnackBar('Password reset link has been sent to the email', {
+        enqueueSnackBar('O link para redefinir a senha foi enviado para o email', {
           variant: SnackBarVariant.Success,
         });
       } else {
-        enqueueSnackBar('There was some issue', {
+        enqueueSnackBar('Houve um problema', {
           variant: SnackBarVariant.Error,
         });
       }
@@ -47,13 +47,13 @@ export const ChangePassword = () => {
   return (
     <>
       <H2Title
-        title="Change Password"
-        description="Receive an email containing password update link"
+        title="Alterar Senha"
+        description="Receba um email contendo o link para atualizar a senha"
       />
       <Button
         onClick={handlePasswordResetClick}
         variant="secondary"
-        title="Change Password"
+        title="Alterar Senha"
       />
     </>
   );

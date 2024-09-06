@@ -34,9 +34,9 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
   namePlural: 'people',
-  labelSingular: 'Person',
-  labelPlural: 'People',
-  description: 'A person',
+  labelSingular: 'Pessoa',
+  labelPlural: 'Pessoas',
+  description: 'Uma pessoa',
   icon: 'IconUser',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
@@ -46,8 +46,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.FULL_NAME,
-    label: 'Name',
-    description: 'Contact’s name',
+    label: 'Nome',
+    description: 'Nome do contato',
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
@@ -57,7 +57,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.email,
     type: FieldMetadataType.EMAIL,
     label: 'Email',
-    description: 'Contact’s Email',
+    description: 'Email do contato',
     icon: 'IconMail',
   })
   email: string;
@@ -65,8 +65,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINKS,
-    label: 'Linkedin',
-    description: 'Contact’s Linkedin account',
+    label: 'LinkedIn',
+    description: 'Conta LinkedIn do contato',
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
@@ -76,7 +76,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINKS,
     label: 'X',
-    description: 'Contact’s X/Twitter account',
+    description: 'Conta X/Twitter do contato',
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
@@ -85,8 +85,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.jobTitle,
     type: FieldMetadataType.TEXT,
-    label: 'Job Title',
-    description: 'Contact’s job title',
+    label: 'Cargo',
+    description: 'Cargo do contato',
     icon: 'IconBriefcase',
   })
   jobTitle: string;
@@ -94,8 +94,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phone,
     type: FieldMetadataType.TEXT,
-    label: 'Phone',
-    description: 'Contact’s phone number',
+    label: 'Telefone',
+    description: 'Número de telefone do contato',
     icon: 'IconPhone',
   })
   phone: string;
@@ -103,8 +103,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.city,
     type: FieldMetadataType.TEXT,
-    label: 'City',
-    description: 'Contact’s city',
+    label: 'Cidade',
+    description: 'Cidade do contato',
     icon: 'IconMap',
   })
   city: string;
@@ -113,7 +113,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: 'Avatar',
-    description: 'Contact’s avatar',
+    description: 'Avatar do contato',
     icon: 'IconFileUpload',
   })
   @WorkspaceIsSystem()
@@ -122,8 +122,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Person record Position',
+    label: 'Posição',
+    description: 'Posição do registro da pessoa',
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -133,9 +133,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Criado por',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'O criador do registro',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -147,8 +147,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
-    description: 'Contact’s company',
+    label: 'Empresa',
+    description: 'Empresa do contato',
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'people',
@@ -162,9 +162,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Linked Opportunities',
+    label: 'Oportunidades Vinculadas',
     description:
-      'List of opportunities for which that person is the point of contact',
+      'Lista de oportunidades para as quais essa pessoa é o ponto de contato',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContact',
@@ -175,8 +175,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.activityTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the contact',
+    label: 'Atividades',
+    description: 'Atividades vinculadas ao contato',
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -187,8 +187,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.taskTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Tasks',
-    description: 'Tasks tied to the contact',
+    label: 'Tarefas',
+    description: 'Tarefas vinculadas ao contato',
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -198,8 +198,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.noteTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Notes',
-    description: 'Notes tied to the contact',
+    label: 'Notas',
+    description: 'Notas vinculadas ao contato',
     icon: 'IconNotes',
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -209,8 +209,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the contact',
+    label: 'Favoritos',
+    description: 'Favoritos vinculados ao contato',
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -221,8 +221,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.attachments,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Attachments',
-    description: 'Attachments linked to the contact.',
+    label: 'Anexos',
+    description: 'Anexos vinculados ao contato.',
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -232,8 +232,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Participants',
-    description: 'Message Participants',
+    label: 'Participantes de Mensagens',
+    description: 'Participantes de mensagens',
     icon: 'IconUserCircle',
     inverseSideTarget: () => MessageParticipantWorkspaceEntity,
     inverseSideFieldKey: 'person',
@@ -245,8 +245,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Calendar Event Participants',
-    description: 'Calendar Event Participants',
+    label: 'Participantes de Eventos de Calendário',
+    description: 'Participantes de eventos de calendário',
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventParticipantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -259,8 +259,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Events',
-    description: 'Events linked to the person',
+    label: 'Eventos',
+    description: 'Eventos vinculados à pessoa',
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

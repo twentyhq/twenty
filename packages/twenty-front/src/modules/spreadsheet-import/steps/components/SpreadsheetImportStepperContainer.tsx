@@ -24,9 +24,9 @@ const StyledHeader = styled(Modal.Header)`
 `;
 
 const stepTitles = {
-  uploadStep: 'Upload file',
-  matchColumnsStep: 'Match columns',
-  validationStep: 'Validate data',
+  uploadStep: 'Enviar arquivo',
+  matchColumnsStep: 'Mapear colunas',
+  validationStep: 'Validar dados',
 } as const;
 
 export const SpreadsheetImportStepperContainer = () => {

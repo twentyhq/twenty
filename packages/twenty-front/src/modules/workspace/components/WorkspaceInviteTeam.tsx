@@ -25,7 +25,7 @@ const StyledLinkContainer = styled.div`
 `;
 
 const emailValidationSchema = (email: string) =>
-  z.string().email(`Invalid email '${email}'`);
+  z.string().email(`Email inválido '${email}'`);
 
 const validationSchema = () =>
   z
@@ -38,7 +38,7 @@ const validationSchema = () =>
         if (emails.length === 0) {
           ctx.addIssue({
             code: z.ZodIssueCode.invalid_string,
-            message: 'Emails should not be empty',
+            message: 'Os emails não devem estar vazios',
             validation: 'email',
           });
         }
@@ -54,8 +54,8 @@ const validationSchema = () =>
             code: z.ZodIssueCode.invalid_string,
             message:
               invalidEmails.length > 1
-                ? 'Emails "' + invalidEmails.join('", "') + '" are invalid'
-                : 'Email "' + invalidEmails.join('", "') + '" is invalid',
+                ? 'Emails "' + invalidEmails.join('", "') + '" são inválidos'
+                : 'Email "' + invalidEmails.join('", "') + '" é inválido',
             validation: 'email',
           });
         }
@@ -85,7 +85,7 @@ export const WorkspaceInviteTeam = () => {
     if (isDefined(result.errors)) {
       throw result.errors;
     }
-    enqueueSnackBar('Invite link sent to email addresses', {
+    enqueueSnackBar('Link de convite enviado para endereços de email', {
       variant: SnackBarVariant.Success,
       duration: 2000,
     });
@@ -115,7 +115,7 @@ export const WorkspaceInviteTeam = () => {
             render={({ field: { value, onChange }, fieldState: { error } }) => {
               return (
                 <TextInput
-                  placeholder="tim@apple.com, jony.ive@apple.dev"
+                  placeholder="joao@acme.com, maria@acme.com"
                   LeftIcon={IconMail}
                   value={value}
                   onChange={onChange}
@@ -131,7 +131,7 @@ export const WorkspaceInviteTeam = () => {
           Icon={IconSend}
           variant="primary"
           accent="blue"
-          title="Invite"
+          title="Convidar"
           type="submit"
         />
       </StyledContainer>

@@ -36,7 +36,7 @@ export const useWorkspaceFromInviteHash = () => {
         ) {
           initiallyLoggedIn &&
             enqueueSnackBar(
-              `You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
+              `Você já pertence ao workspace ${data?.findWorkspaceFromInviteHash?.displayName}`,
               {
                 variant: SnackBarVariant.Info,
               },

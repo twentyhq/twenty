@@ -9,7 +9,7 @@ export const tasksAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All Tasks',
+    name: 'Todos',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.task].id,
     type: 'table',
     key: 'INDEX',

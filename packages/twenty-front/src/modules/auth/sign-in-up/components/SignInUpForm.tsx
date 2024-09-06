@@ -88,14 +88,14 @@ export const SignInUpForm = () => {
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return 'Continue With Email';
+      return 'Continuar com Email';
     }
 
     if (signInUpStep === SignInUpStep.Email) {
-      return 'Continue';
+      return 'Continuar';
     }
 
-    return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
+    return signInUpMode === SignInUpMode.SignIn ? 'Entar' : 'Cadastrar-se';
   }, [signInUpMode, signInUpStep]);
 
   const theme = useTheme();
@@ -128,7 +128,7 @@ export const SignInUpForm = () => {
           <>
             <MainButton
               Icon={() => <IconGoogle size={theme.icon.size.lg} />}
-              title="Continue with Google"
+              title="Continuar com Google"
               onClick={signInWithGoogle}
               fullWidth
             />
@@ -140,7 +140,7 @@ export const SignInUpForm = () => {
           <>
             <MainButton
               Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
-              title="Continue with Microsoft"
+              title="Continuar com Microsoft"
               onClick={signInWithMicrosoft}
               fullWidth
             />
@@ -215,7 +215,7 @@ export const SignInUpForm = () => {
                         autoFocus
                         value={value}
                         type="password"
-                        placeholder="Password"
+                        placeholder="Senha"
                         onBlur={onBlur}
                         onChange={onChange}
                         error={showErrors ? error?.message : undefined}
@@ -253,26 +253,26 @@ export const SignInUpForm = () => {
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
-          Forgot your password?
+          Esqueceu sua senha?
         </ActionLink>
       )}
       {signInUpStep === SignInUpStep.Init && (
         <FooterNote>
-          By using Twenty, you agree to the{' '}
+          Ao usar os serviços da Digito Service, você concorda com os{' '}
           <a
-            href="https://twenty.com/legal/terms"
+            href="https://digitoservice.com/legal/terms"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Terms of Service
+            Termos de Serviço
           </a>{' '}
-          and{' '}
+          e{' '}
           <a
-            href="https://twenty.com/legal/privacy"
+            href="https://digitoservice.com/legal/privacy"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Privacy Policy
+            Política de Privacidade
           </a>
           .
         </FooterNote>

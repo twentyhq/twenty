@@ -154,7 +154,7 @@ export class CleanInactiveWorkspaceJob {
         from: `${this.environmentService.get(
           'EMAIL_FROM_NAME',
         )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-        subject: 'Action Needed to Prevent Workspace Deletion',
+        subject: 'Ação Necessária para Prevenir a Exclusão do Workspace',
         html,
         text,
       });
@@ -202,7 +202,7 @@ export class CleanInactiveWorkspaceJob {
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-      subject: 'Action Needed to Delete Workspaces',
+      subject: 'Ação Necessária para Excluir Workspaces',
       html,
       text,
     });

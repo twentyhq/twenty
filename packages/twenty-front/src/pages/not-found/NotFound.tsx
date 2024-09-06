@@ -35,22 +35,22 @@ const StyledButtonContainer = styled.div`
 export const NotFound = () => {
   return (
     <>
-      <PageTitle title="Page Not Found | Twenty" />
+      <PageTitle title="Página Não Encontrada | CRM - Digito Service" />
       <StyledBackDrop>
         <AnimatedPlaceholderErrorContainer>
           <AnimatedPlaceholder type="error404" />
           <AnimatedPlaceholderEmptyTextContainer>
             <AnimatedPlaceholderErrorTitle>
-              Off the beaten path
+              Fora do caminho comum
             </AnimatedPlaceholderErrorTitle>
             <AnimatedPlaceholderErrorSubTitle>
-              The page you're seeking is either gone or never was. Let's get you
-              back on track
+              A página que você está procurando pode ter sido removida ou nunca existiu.
+              Vamos te ajudar a voltar ao caminho certo.
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
             <UndecoratedLink to={AppPath.Index}>
-              <MainButton title="Back to content" fullWidth />
+              <MainButton title="Voltar ao conteúdo" fullWidth />
             </UndecoratedLink>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>

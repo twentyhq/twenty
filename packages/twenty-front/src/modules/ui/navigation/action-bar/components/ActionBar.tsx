@@ -76,7 +76,7 @@ export const ActionBar = ({
         ref={wrapperRef}
       >
         {showSelectedNumberLabel && (
-          <StyledLabel>{selectedNumberLabel} selected:</StyledLabel>
+          <StyledLabel>{selectedNumberLabel} selecionado:</StyledLabel>
         )}
         {actionBarEntries.map((item, index) => (
           <ActionBarItem key={index} item={item} />

@@ -57,19 +57,19 @@ export const SettingsDataModelObjectIdentifiersForm = ({
 
   const emptyOption: SelectOption<string | null> = {
     Icon: IconCircleOff,
-    label: 'None',
+    label: 'Nenhum',
     value: null,
   };
   return (
     <StyledContainer>
       {[
         {
-          label: 'Record label',
+          label: 'Rótulo do registro',
           fieldName: 'labelIdentifierFieldMetadataId' as const,
           options: labelIdentifierFieldOptions,
         },
         {
-          label: 'Record image',
+          label: 'Imagem do registro',
           fieldName: 'imageIdentifierFieldMetadataId' as const,
           options: imageIdentifierFieldOptions,
         },

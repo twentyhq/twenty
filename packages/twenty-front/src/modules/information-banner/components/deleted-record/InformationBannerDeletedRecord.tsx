@@ -27,8 +27,8 @@ export const InformationBannerDeletedRecord = ({
     <StyledInformationBannerDeletedRecord>
       <InformationBanner
         variant="danger"
-        message={`This record has been deleted`}
-        buttonTitle="Restore"
+        message={`Este registro foi excluído`}
+        buttonTitle="Restaurar"
         buttonIcon={IconRefresh}
         buttonOnClick={() => restoreManyRecords([recordId])}
       />

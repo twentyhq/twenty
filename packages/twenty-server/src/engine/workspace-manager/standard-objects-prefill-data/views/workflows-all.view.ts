@@ -6,7 +6,7 @@ export const workflowsAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All Workflows',
+    name: 'Todos',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.workflow].id,
     type: 'table',
     key: null,

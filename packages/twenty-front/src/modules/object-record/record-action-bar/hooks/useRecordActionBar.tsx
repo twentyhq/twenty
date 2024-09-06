@@ -108,7 +108,7 @@ export const useRecordActionBar = ({
         } satisfies ContextMenuEntry,
         canDelete
           ? ({
-              label: 'Delete',
+              label: 'Excluir',
               Icon: IconTrash,
               accent: 'danger',
               onClick: () => {
@@ -118,19 +118,19 @@ export const useRecordActionBar = ({
                 <ConfirmationModal
                   isOpen={isDeleteRecordsModalOpen}
                   setIsOpen={setIsDeleteRecordsModalOpen}
-                  title={`Delete ${numberOfSelectedRecords} ${
-                    numberOfSelectedRecords === 1 ? `record` : 'records'
+                  title={`Excluir ${numberOfSelectedRecords} ${
+                    numberOfSelectedRecords === 1 ? `registro` : 'registros'
                   }`}
-                  subtitle={`Are you sure you want to delete ${
+                  subtitle={`Tem certeza de que deseja excluir ${
                     numberOfSelectedRecords === 1
-                      ? 'this record'
-                      : 'these records'
+                      ? 'este registro'
+                      : 'estes registros'
                   }? ${
-                    numberOfSelectedRecords === 1 ? 'It' : 'They'
-                  } can be recovered from the Options menu.`}
+                    numberOfSelectedRecords === 1 ? 'Ele' : 'Eles'
+                  } podem ser recuperados no menu de Opções.`}
                   onConfirmClick={() => handleDeleteClick()}
-                  deleteButtonText={`Delete ${
-                    numberOfSelectedRecords > 1 ? 'Records' : 'Record'
+                  deleteButtonText={`Excluir ${
+                    numberOfSelectedRecords > 1 ? 'Registros' : 'Registro'
                   }`}
                 />
               ),
@@ -160,7 +160,7 @@ export const useRecordActionBar = ({
         ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
           ? [
               {
-                label: 'Remove from favorites',
+                label: 'Remover dos favoritos',
                 Icon: IconHeartOff,
                 onClick: handleFavoriteButtonClick,
               },
@@ -169,7 +169,7 @@ export const useRecordActionBar = ({
         ...(!isRemoteObject && !isFavorite && hasOnlyOneRecordSelected
           ? [
               {
-                label: 'Add to favorites',
+                label: 'Adicionar aos favoritos',
                 Icon: IconHeart,
                 onClick: handleFavoriteButtonClick,
               },

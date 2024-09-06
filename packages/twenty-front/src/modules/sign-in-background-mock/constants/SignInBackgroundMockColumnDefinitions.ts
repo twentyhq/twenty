@@ -9,12 +9,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 0,
       fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
-      label: 'Domain Name',
+      label: 'Domínio',
       size: 100,
       type: FieldMetadataType.Links,
       metadata: {
         fieldName: 'domainName',
-        placeHolder: 'Domain Name',
+        placeHolder: 'Domínio',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -26,12 +26,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 1,
       fieldMetadataId: '20202020-7fbd-41ad-b64d-25a15ff62f04',
-      label: 'Employees',
+      label: 'Funcionários',
       size: 100,
       type: FieldMetadataType.Number,
       metadata: {
         fieldName: 'employees',
-        placeHolder: 'Employees',
+        placeHolder: 'Funcionários',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -43,12 +43,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 2,
       fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
-      label: 'Name',
+      label: 'Nome',
       size: 100,
       type: FieldMetadataType.Text,
       metadata: {
         fieldName: 'name',
-        placeHolder: 'Name',
+        placeHolder: 'Nome',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -60,7 +60,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 3,
       fieldMetadataId: '20202020-e7c8-4771-8cc4-ce0e8c36a3c0',
-      label: 'Favorites',
+      label: 'Favoritos',
       size: 100,
       type: FieldMetadataType.Relation,
       metadata: {
@@ -77,12 +77,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 4,
       fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
-      label: 'Address',
+      label: 'Endereço',
       size: 100,
       type: FieldMetadataType.Address,
       metadata: {
         fieldName: 'address',
-        placeHolder: 'Address',
+        placeHolder: 'Endereço',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -94,7 +94,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 5,
       fieldMetadataId: '20202020-0739-495d-8e70-c0807f6b2268',
-      label: 'Account Owner',
+      label: 'Proprietário da Conta',
       size: 100,
       type: FieldMetadataType.Relation,
       metadata: {
@@ -111,7 +111,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 6,
       fieldMetadataId: '20202020-68b4-4c8e-af19-738eba2a42a5',
-      label: 'People',
+      label: 'Pessoas',
       size: 100,
       type: FieldMetadataType.Relation,
       metadata: {
@@ -128,7 +128,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 7,
       fieldMetadataId: '20202020-61af-4ffd-b79b-baed6db8ad11',
-      label: 'Attachments',
+      label: 'Anexos',
       size: 100,
       type: FieldMetadataType.Relation,
       metadata: {
@@ -145,12 +145,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 8,
       fieldMetadataId: '20202020-4dc2-47c9-bb15-6e6f19ba9e46',
-      label: 'Creation date',
+      label: 'Data de Criação',
       size: 100,
       type: FieldMetadataType.DateTime,
       metadata: {
         fieldName: 'createdAt',
-        placeHolder: 'Creation date',
+        placeHolder: 'Data de Criação',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -196,7 +196,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 11,
       fieldMetadataId: '20202020-e3fc-46ff-b552-3e757843f06e',
-      label: 'Opportunities',
+      label: 'Oportunidades',
       size: 100,
       type: FieldMetadataType.Relation,
       metadata: {
@@ -230,7 +230,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     {
       position: 13,
       fieldMetadataId: '20202020-4a2e-4b41-8562-279963e8947e',
-      label: 'Activities',
+      label: 'Atividades',
       size: 100,
       type: FieldMetadataType.Relation,
       metadata: {

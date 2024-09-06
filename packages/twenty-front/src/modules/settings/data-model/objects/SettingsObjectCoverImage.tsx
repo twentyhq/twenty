@@ -33,7 +33,7 @@ export const SettingsObjectCoverImage = () => {
       <StyledButtonContainer>
         <FloatingButton
           Icon={IconEye}
-          title="Visualize"
+          title="Visualizar"
           size="small"
           to={'/settings/' + SettingsPath.ObjectOverview}
         />

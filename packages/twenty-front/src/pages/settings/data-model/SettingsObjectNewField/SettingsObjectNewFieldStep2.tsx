@@ -176,13 +176,13 @@ export const SettingsObjectNewFieldStep2 = () => {
       <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
         {...formConfig}
       >
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SubMenuTopBarContainer Icon={IconSettings} title="Configurações">
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb
                 links={[
                   {
-                    children: 'Objects',
+                    children: 'Objetos',
                     href: '/settings/objects',
                     styles: { minWidth: 'max-content' },
                   },
@@ -191,7 +191,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                     href: `/settings/objects/${objectSlug}`,
                     styles: { maxWidth: '50%' },
                   },
-                  { children: 'New Field' },
+                  { children: 'Novo Campo' },
                 ]}
               />
               {!activeObjectMetadataItem.isRemote && (
@@ -205,8 +205,8 @@ export const SettingsObjectNewFieldStep2 = () => {
             </SettingsHeaderContainer>
             <Section>
               <H2Title
-                title="Name and description"
-                description="The name and description of this field"
+                title="Nome e descrição"
+                description="O nome e a descrição deste campo"
               />
               <SettingsDataModelFieldAboutForm
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
@@ -214,8 +214,8 @@ export const SettingsObjectNewFieldStep2 = () => {
             </Section>
             <Section>
               <H2Title
-                title="Type and values"
-                description="The field's type and values."
+                title="Tipo e valores"
+                description="O tipo e os valores do campo."
               />
               <StyledSettingsObjectFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
@@ -226,7 +226,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               <SettingsDataModelFieldSettingsFormCard
                 fieldMetadataItem={{
                   icon: formConfig.watch('icon'),
-                  label: formConfig.watch('label') || 'Employees',
+                  label: formConfig.watch('label') || 'Funcionários',
                   type: formConfig.watch('type'),
                 }}
                 objectMetadataItem={activeObjectMetadataItem}

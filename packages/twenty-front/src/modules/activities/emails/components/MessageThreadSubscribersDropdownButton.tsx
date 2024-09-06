@@ -96,7 +96,7 @@ export const MessageThreadSubscribersDropdownButton = ({
               <MenuItem
                 LeftIcon={IconPlus}
                 onClick={handleAddSubscriberClick}
-                text="Add subscriber"
+                text="Adicionar assinante"
               />
             </DropdownMenuItemsContainer>
           )}

@@ -59,10 +59,10 @@ export const TimelineActivities = ({
         <AnimatedPlaceholder type="emptyTimeline" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Add your first Activity
+            Adicione sua primeira Atividade
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no activities associated with this record.{' '}
+            Não há atividades associadas a este registro.{' '}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <TimelineCreateButtonGroup isInRightDrawer={isInRightDrawer} />
@@ -74,7 +74,7 @@ export const TimelineActivities = ({
     <StyledMainContainer>
       <EventList
         targetableObject={targetableObject}
-        title="All"
+        title="Todos"
         events={timelineActivities ?? []}
       />
       <CustomResolverFetchMoreLoader

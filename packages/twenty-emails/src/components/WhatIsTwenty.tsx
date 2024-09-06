@@ -8,39 +8,32 @@ import { SubTitle } from 'src/components/SubTitle';
 export const WhatIsTwenty = () => {
   return (
     <>
-      <SubTitle value="What is Twenty?" />
+      <SubTitle value="O que é o CRM - Digito Service?" />
       <MainText>
-        A software to help businesses manage their customer data and
-        relationships efficiently.
+        Um software para ajudar as empresas a gerenciar seus dados e
+        relacionamentos com os clientes de forma eficiente.
       </MainText>
       <Row>
         <Column>
           <ShadowText>
-            <Link href="https://twenty.com/" value="Website" />
+            <Link href="https://digitoservice.com/" value="Website" />
           </ShadowText>
         </Column>
         <Column>
           <ShadowText>
-            <Link href="https://github.com/twentyhq/twenty" value="Github" />
+            <Link href="https://digitoservice.com/docs/user-guide/" value="Guia do usuário" />
           </ShadowText>
         </Column>
         <Column>
           <ShadowText>
-            <Link href="https://twenty.com/user-guide" value="User guide" />
-          </ShadowText>
-        </Column>
-        <Column>
-          <ShadowText>
-            <Link href="https://docs.twenty.com/" value="Developers" />
+            <Link href="https://digitoservice.com/docs/developers/" value="Desenvolvedores" />
           </ShadowText>
         </Column>
       </Row>
       <ShadowText>
-        Twenty.com Public Benefit Corporation
+        Digito Service Tecnologia
         <br />
-        2261 Market Street #5275
-        <br />
-        San Francisco, CA 94114
+        Tubarão, SC - Brasil
       </ShadowText>
     </>
   );

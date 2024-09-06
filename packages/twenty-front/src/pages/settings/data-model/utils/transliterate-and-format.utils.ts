@@ -18,7 +18,7 @@ export const transliterateAndFormatOrThrow = (
   );
 
   if (!formattedString.match(validStringPattern)) {
-    throw new Error(`"${string}" is not a valid name`);
+    throw new Error(`"${string}" não é um nome válido`);
   }
 
   return formattedString;

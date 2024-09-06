@@ -40,7 +40,7 @@ const StyledButtonContainer = styled.div`
 
 const validationSchema = z
   .object({
-    name: z.string().min(1, { message: 'Name can not be empty' }),
+    name: z.string().min(1, { message: 'O nome não pode estar vazio' }),
   })
   .required();
 
@@ -113,20 +113,20 @@ export const CreateWorkspace = () => {
 
   return (
     <>
-      <Title noMarginTop>Create your workspace</Title>
+      <Title noMarginTop>Crie seu workspace</Title>
       <SubTitle>
-        A shared environment where you will be able to manage your customer
-        relations with your team.
+        Um ambiente compartilhado onde você poderá gerenciar suas relações
+        com os clientes junto com sua equipe.
       </SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <H2Title title="Workspace logo" />
+          <H2Title title="Logotipo do workspace" />
           <WorkspaceLogoUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <H2Title
-            title="Workspace name"
-            description="The name of your organization"
+            title="Nome do workspace"
+            description="O nome da sua organização"
           />
           <Controller
             name="name"
@@ -138,7 +138,7 @@ export const CreateWorkspace = () => {
               <TextInputV2
                 autoFocus
                 value={value}
-                placeholder="Apple"
+                placeholder="Acme Inc"
                 onBlur={onBlur}
                 onChange={onChange}
                 error={error?.message}
@@ -151,7 +151,7 @@ export const CreateWorkspace = () => {
       </StyledContentContainer>
       <StyledButtonContainer>
         <MainButton
-          title="Continue"
+          title="Continuar"
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid || isSubmitting}
           Icon={() => isSubmitting && <Loader />}

@@ -115,7 +115,7 @@ export const PhoneInput = ({
     <StyledContainer ref={wrapperRef}>
       <StyledCustomPhoneInput
         autoFocus={autoFocus}
-        placeholder="Phone number"
+        placeholder="Número de telefone"
         value={value}
         onChange={handleChange}
         international={true}

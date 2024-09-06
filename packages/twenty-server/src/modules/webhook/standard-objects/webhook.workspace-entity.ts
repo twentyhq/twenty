@@ -13,7 +13,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
   namePlural: 'webhooks',
   labelSingular: 'Webhook',
   labelPlural: 'Webhooks',
-  description: 'A webhook',
+  description: 'Um webhook',
   icon: 'IconRobot',
   labelIdentifierStandardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
 })
@@ -23,8 +23,8 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
     type: FieldMetadataType.TEXT,
-    label: 'Target Url',
-    description: 'Webhook target url',
+    label: 'URL de Destino',
+    description: 'URL de destino do webhook',
     icon: 'IconLink',
   })
   targetUrl: string;
@@ -32,8 +32,8 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.operation,
     type: FieldMetadataType.TEXT,
-    label: 'Operation',
-    description: 'Webhook operation',
+    label: 'Operação',
+    description: 'Operação do webhook',
     icon: 'IconCheckbox',
   })
   operation: string;
@@ -41,7 +41,7 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.description,
     type: FieldMetadataType.TEXT,
-    label: 'Description',
+    label: 'Descrição',
     description: undefined,
     icon: 'IconInfo',
   })

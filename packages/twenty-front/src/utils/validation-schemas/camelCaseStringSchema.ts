@@ -4,5 +4,5 @@ import { z } from 'zod';
 export const camelCaseStringSchema = z
   .string()
   .refine((value) => camelCase(value) === value, {
-    message: 'String should be camel case',
+    message: 'A string deve estar em camel case',
   });

@@ -58,7 +58,7 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   return (
     <Card fullWidth>
       <StyledTopCardContent divider>
-        <SettingsDataModelCardTitle>Preview</SettingsDataModelCardTitle>
+        <SettingsDataModelCardTitle>Prévia</SettingsDataModelCardTitle>
         {labelIdentifierFieldMetadataItem ? (
           <StyledFieldPreviewCard
             objectMetadataItem={objectMetadataItem}

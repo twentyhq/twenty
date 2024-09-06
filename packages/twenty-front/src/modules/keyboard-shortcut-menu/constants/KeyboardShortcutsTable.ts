@@ -2,19 +2,19 @@ import { Shortcut, ShortcutType } from '../types/Shortcut';
 
 export const KEYBOARD_SHORTCUTS_TABLE: Shortcut[] = [
   {
-    label: 'Move right',
+    label: 'Mover para a direita',
     type: ShortcutType.Table,
     firstHotKey: '→',
     areSimultaneous: true,
   },
   {
-    label: 'Move left',
+    label: 'Mover para a esquerda',
     type: ShortcutType.Table,
     firstHotKey: '←',
     areSimultaneous: true,
   },
   {
-    label: 'Clear selection',
+    label: 'Limpar seleção',
     type: ShortcutType.Table,
     firstHotKey: 'esc',
     areSimultaneous: true,

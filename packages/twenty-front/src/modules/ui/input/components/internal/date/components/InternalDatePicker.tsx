@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { ptBR } from 'date-fns/locale';
 import { DateTime } from 'luxon';
 import ReactDatePicker from 'react-datepicker';
 import { Key } from 'ts-key-enum';
@@ -22,18 +23,18 @@ import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const months = [
-  { label: 'January', value: 0 },
-  { label: 'February', value: 1 },
-  { label: 'March', value: 2 },
-  { label: 'April', value: 3 },
-  { label: 'May', value: 4 },
-  { label: 'June', value: 5 },
-  { label: 'July', value: 6 },
-  { label: 'August', value: 7 },
-  { label: 'September', value: 8 },
-  { label: 'October', value: 9 },
-  { label: 'November', value: 10 },
-  { label: 'December', value: 11 },
+  { label: 'Janeiro', value: 0 },
+  { label: 'Fevereiro', value: 1 },
+  { label: 'Março', value: 2 },
+  { label: 'Abril', value: 3 },
+  { label: 'Maio', value: 4 },
+  { label: 'Junho', value: 5 },
+  { label: 'Julho', value: 6 },
+  { label: 'Agosto', value: 7 },
+  { label: 'Setembro', value: 8 },
+  { label: 'Outubro', value: 9 },
+  { label: 'Novembro', value: 10 },
+  { label: 'Dezembro', value: 11 },
 ];
 
 const years = Array.from(
@@ -473,6 +474,7 @@ export const InternalDatePicker = ({
     <StyledContainer onKeyDown={handleKeyDown}>
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
+          locale={ptBR}
           open={true}
           selected={dateToUse}
           openToDate={isDefined(dateToUse) ? dateToUse : undefined}
@@ -534,7 +536,7 @@ export const InternalDatePicker = ({
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear}>
-          <StyledButton LeftIcon={IconCalendarX} text="Clear" />
+          <StyledButton LeftIcon={IconCalendarX} text="Limpar" />
         </StyledButtonContainer>
       )}
     </StyledContainer>

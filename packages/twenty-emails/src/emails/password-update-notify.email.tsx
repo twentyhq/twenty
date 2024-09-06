@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -16,23 +17,23 @@ export const PasswordUpdateNotifyEmail = ({
   email,
   link,
 }: PasswordUpdateNotifyEmailProps) => {
-  const helloString = userName?.length > 1 ? `Dear ${userName}` : 'Dear';
+  const helloString = userName?.length > 1 ? `Querido(a) ${userName}` : 'Querido(a)';
   return (
     <BaseEmail>
-      <Title value="Password updated" />
+      <Title value="Senha atualizada" />
       <MainText>
         {helloString},
         <br />
         <br />
-        This is a confirmation that password for your account ({email}) was
-        successfully changed on {format(new Date(), 'MMMM d, yyyy')}.
+        Esta é uma confirmação de que a senha da sua conta ({email}) foi
+        alterada com sucesso em {format(new Date(), 'd MMMM yyyy', { locale: ptBR })}.
         <br />
         <br />
-        If you did not initiate this change, please contact your workspace owner
-        immediately.
+        Se você não iniciou essa alteração, entre em contato com o proprietário do
+        workspace imediatamente.
         <br />
       </MainText>
-      <CallToAction value="Connect to Twenty" href={link} />
+      <CallToAction value="Conectar ao CRM - Digito Service" href={link} />
     </BaseEmail>
   );
 };

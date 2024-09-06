@@ -29,8 +29,8 @@ export const SettingsAccountsBlocklistTable = ({
       {blocklist.length > 0 && (
         <StyledTable>
           <TableRow>
-            <TableHeader>Email/Domain</TableHeader>
-            <TableHeader>Added to blocklist</TableHeader>
+            <TableHeader>Email/Domínio</TableHeader>
+            <TableHeader>Adicionado à blocklist</TableHeader>
             <TableHeader></TableHeader>
           </TableRow>
           <StyledTableBody>

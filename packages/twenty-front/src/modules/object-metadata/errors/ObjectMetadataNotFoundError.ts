@@ -2,9 +2,9 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export class ObjectMetadataItemNotFoundError extends Error {
   constructor(objectName: string, objectMetadataItems: ObjectMetadataItem[]) {
-    const message = `Object metadata item "${objectName}" cannot be found in an array of ${
+    const message = `Item de metadado do objeto "${objectName}" não pode ser encontrado em um array de ${
       objectMetadataItems?.length ?? 0
-    } elements`;
+    } elementos`;
 
     super(message);
 

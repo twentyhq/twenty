@@ -91,7 +91,7 @@ export const ViewPickerDropdown = () => {
             <IconList size={theme.icon.size.md} />
           )}
           <StyledViewName>
-            {currentViewWithCombinedFiltersAndSorts?.name ?? 'All'}
+            {currentViewWithCombinedFiltersAndSorts?.name ?? 'Todos'}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(entityCountInCurrentView) && (

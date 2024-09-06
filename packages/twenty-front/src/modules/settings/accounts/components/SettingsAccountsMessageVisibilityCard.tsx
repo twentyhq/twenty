@@ -9,8 +9,8 @@ type SettingsAccountsMessageVisibilityCardProps = {
 
 const inboxSettingsVisibilityOptions = [
   {
-    title: 'Everything',
-    description: 'Subject, body and attachments will be shared with your team.',
+    title: 'Tudo',
+    description: 'Assunto, corpo e anexos serão compartilhados com sua equipe.',
     value: MessageChannelVisibility.ShareEverything,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
@@ -21,8 +21,8 @@ const inboxSettingsVisibilityOptions = [
     ),
   },
   {
-    title: 'Subject and metadata',
-    description: 'Subject and metadata will be shared with your team.',
+    title: 'Assunto e metadados',
+    description: 'Assunto e metadados serão compartilhados com sua equipe.',
     value: MessageChannelVisibility.Subject,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
@@ -33,8 +33,8 @@ const inboxSettingsVisibilityOptions = [
     ),
   },
   {
-    title: 'Metadata',
-    description: 'Timestamp and participants will be shared with your team.',
+    title: 'Metadados',
+    description: 'Data e participantes serão compartilhados com sua equipe.',
     value: MessageChannelVisibility.Metadata,
     cardMedia: (
       <SettingsAccountsVisibilityIcon

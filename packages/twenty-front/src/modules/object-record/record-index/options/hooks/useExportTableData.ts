@@ -107,20 +107,20 @@ const percentage = (part: number, whole: number): number => {
 
 export const displayedExportProgress = (progress?: ExportProgress): string => {
   if (isUndefinedOrNull(progress?.exportedRecordCount)) {
-    return 'Export';
+    return 'Exportar';
   }
 
   if (
     progress.displayType === 'percentage' &&
     isDefined(progress?.totalRecordCount)
   ) {
-    return `Export (${percentage(
+    return `Exportar (${percentage(
       progress.exportedRecordCount,
       progress.totalRecordCount,
     )}%)`;
   }
 
-  return `Export (${progress.exportedRecordCount})`;
+  return `Exportar (${progress.exportedRecordCount})`;
 };
 
 const downloader = (mimeType: string, generator: GenerateExport) => {

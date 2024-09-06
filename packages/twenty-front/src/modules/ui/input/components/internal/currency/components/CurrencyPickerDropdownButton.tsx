@@ -73,7 +73,7 @@ export const CurrencyPickerDropdownButton = ({
 
   const currency = currencies.find(({ value }) => value === valueCode);
 
-  const currencyCode = currency?.value ?? CurrencyCode.USD;
+  const currencyCode = currency?.value ?? CurrencyCode.BRL;
 
   return (
     <Dropdown

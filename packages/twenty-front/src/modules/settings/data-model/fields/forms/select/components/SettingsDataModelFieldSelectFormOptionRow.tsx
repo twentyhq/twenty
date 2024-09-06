@@ -147,7 +147,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
               {isDefault ? (
                 <MenuItem
                   LeftIcon={IconX}
-                  text="Remove as default"
+                  text="Remover como padrão"
                   onClick={() => {
                     onRemoveAsDefault?.();
                     closeActionsDropdown();
@@ -156,7 +156,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
               ) : (
                 <MenuItem
                   LeftIcon={IconCheck}
-                  text="Set as default"
+                  text="Definir como padrão"
                   onClick={() => {
                     onSetAsDefault?.();
                     closeActionsDropdown();
@@ -167,7 +167,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                 <MenuItem
                   accent="danger"
                   LeftIcon={IconTrash}
-                  text="Remove option"
+                  text="Remover opção"
                   onClick={() => {
                     onRemove();
                     closeActionsDropdown();

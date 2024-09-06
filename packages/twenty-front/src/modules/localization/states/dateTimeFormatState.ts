@@ -11,7 +11,7 @@ export const dateTimeFormatState = createState<{
   key: 'dateTimeFormatState',
   defaultValue: {
     timeZone: detectTimeZone(),
-    dateFormat: DateFormat.MONTH_FIRST,
+    dateFormat: DateFormat.DAY_FIRST,
     timeFormat: TimeFormat['HOUR_24'],
   },
 });
