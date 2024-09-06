@@ -26,7 +26,7 @@ interface MigrateEmailFieldsToEmailsCommandOptions {
 }
 
 @Command({
-  name: 'upgrade-0.24:migrate-email-fields-to-emails',
+  name: 'upgrade-0.25:migrate-email-fields-to-emails',
   description: 'Migrating fields of deprecated type EMAIL to type EMAILS',
 })
 export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner {
