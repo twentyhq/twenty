@@ -114,7 +114,7 @@ export const MultiRecordSelect = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {recordMultiSelectIsLoading ? (
-            <MenuItem text="Loading..." />
+            <MenuItem text="Carregando..." />
           ) : (
             <>
               <SelectableList
@@ -140,7 +140,7 @@ export const MultiRecordSelect = ({
                 })}
               </SelectableList>
               {objectRecordsIdsMultiSelect?.length === 0 && (
-                <MenuItem text="No result" />
+                <MenuItem text="Nenhum resultado" />
               )}
             </>
           )}
@@ -152,7 +152,7 @@ export const MultiRecordSelect = ({
               <CreateNewButton
                 onClick={debouncedOnCreate}
                 LeftIcon={IconPlus}
-                text="Add New"
+                text="Adicionar Novo"
               />
             </>
           )}

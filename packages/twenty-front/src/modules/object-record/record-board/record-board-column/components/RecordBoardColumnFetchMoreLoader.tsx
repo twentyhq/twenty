@@ -38,7 +38,7 @@ export const RecordBoardColumnFetchMoreLoader = () => {
 
   return (
     <div ref={ref}>
-      {isFetchingRecord && <StyledText>Loading more...</StyledText>}
+      {isFetchingRecord && <StyledText>Carregando mais...</StyledText>}
     </div>
   );
 };

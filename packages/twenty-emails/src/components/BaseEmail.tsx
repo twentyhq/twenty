@@ -10,7 +10,7 @@ type BaseEmailProps = PropsWithChildren<{
 
 export const BaseEmail = ({ children, width }: BaseEmailProps) => {
   return (
-    <Html lang="en">
+    <Html lang="pt-BR">
       <BaseHead />
       <Container width={width || 290}>
         <Logo />

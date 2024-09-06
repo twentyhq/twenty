@@ -20,21 +20,21 @@ export const TimelineCreateButtonGroup = ({
     <ButtonGroup variant={'secondary'}>
       <Button
         Icon={IconNotes}
-        title="Note"
+        title="Nota"
         onClick={() => {
           setActiveTabId('notes');
         }}
       />
       <Button
         Icon={IconCheckbox}
-        title="Task"
+        title="Tarefa"
         onClick={() => {
           setActiveTabId('tasks');
         }}
       />
       <Button
         Icon={IconPaperclip}
-        title="File"
+        title="Arquivo"
         onClick={() => setActiveTabId('files')}
       />
     </ButtonGroup>

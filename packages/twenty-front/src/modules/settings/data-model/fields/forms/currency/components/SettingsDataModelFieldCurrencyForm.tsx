@@ -56,7 +56,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
           <Select
             fullWidth
             disabled={disabled}
-            label="Default Unit"
+            label="Unidade Padrão"
             dropdownId="currency-unit-select"
             value={value}
             options={OPTIONS}

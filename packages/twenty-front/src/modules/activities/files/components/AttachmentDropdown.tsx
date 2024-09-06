@@ -59,12 +59,12 @@ export const AttachmentDropdown = ({
               onClick={handleDownload}
             />
             <MenuItem
-              text="Rename"
+              text="Renomear"
               LeftIcon={IconPencil}
               onClick={handleRename}
             />
             <MenuItem
-              text="Delete"
+              text="Excluir"
               accent="danger"
               LeftIcon={IconTrash}
               onClick={handleDelete}

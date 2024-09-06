@@ -117,7 +117,7 @@ export const EventCardCalendarEvent = ({
     );
 
     if (shouldHideMessageContent) {
-      return <div>Calendar event not shared</div>;
+      return <div>Evento de calendário não compartilhado</div>;
     }
 
     const shouldHandleNotFound = error.graphQLErrors.some(
@@ -125,14 +125,14 @@ export const EventCardCalendarEvent = ({
     );
 
     if (shouldHandleNotFound) {
-      return <div>Calendar event not found</div>;
+      return <div>Evento de calendário não encontrado</div>;
     }
 
-    return <div>Error loading calendar event</div>;
+    return <div>Erro ao carregar o evento de calendário</div>;
   }
 
   if (loading || isUndefined(calendarEvent)) {
-    return <div>Loading...</div>;
+    return <div>Carregando...</div>;
   }
 
   const startsAtDate = calendarEvent?.startsAt;

@@ -14,13 +14,13 @@ export const PromiseRejectionEffect = () => {
       // TODO: connect Sentry here
       if (error instanceof ObjectMetadataItemNotFoundError) {
         enqueueSnackBar(
-          `Error with custom object that cannot be found : ${event.reason}`,
+          `Erro com o objeto personalizado que não pode ser encontrado : ${event.reason}`,
           {
             variant: SnackBarVariant.Error,
           },
         );
       } else {
-        enqueueSnackBar(`Error: ${event.reason}`, {
+        enqueueSnackBar(`Erro: ${event.reason}`, {
           variant: SnackBarVariant.Error,
         });
       }

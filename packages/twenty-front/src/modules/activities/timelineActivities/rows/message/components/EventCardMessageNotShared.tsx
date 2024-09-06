@@ -69,7 +69,7 @@ export const EventCardMessageNotShared = ({
       <StyledEmailContent>
         <StyledEmailTop>
           <StyledEmailTitle>
-            <span>Subject not shared</span>
+            <span>Assunto não compartilhado</span>
           </StyledEmailTitle>
         </StyledEmailTop>
         <StyledEmailBodyNotShareContainer>
@@ -77,7 +77,7 @@ export const EventCardMessageNotShared = ({
             <StyledEmailBodyNotSharedIconContainer>
               <IconLock />
             </StyledEmailBodyNotSharedIconContainer>
-            <span>Not shared by {sharedByFullName}</span>
+            <span>Não compartilhado por {sharedByFullName}</span>
           </StyledEmailBodyNotShare>
         </StyledEmailBodyNotShareContainer>
       </StyledEmailContent>

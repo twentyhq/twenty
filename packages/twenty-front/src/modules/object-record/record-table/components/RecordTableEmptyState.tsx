@@ -30,22 +30,22 @@ export const RecordTableEmptyState = ({
 
   const [title, subTitle, Icon, onClick, buttonTitle] = isRemote
     ? [
-        'No Data Available for Remote Table',
-        'If this is unexpected, please verify your settings.',
+        'Nenhum Dado Disponível para a Tabela Remota',
+        'Se isso for inesperado, verifique suas configurações.',
         IconSettings,
         () => navigate('/settings/integrations'),
-        'Go to Settings',
+        'Ir para Configurações',
       ]
     : [
         noExistingRecords
-          ? `Add your first ${objectLabel}`
-          : `No ${objectLabel} found`,
+          ? `Adicione seu primeiro ${objectLabel}`
+          : `Nenhum ${objectLabel} encontrado`,
         noExistingRecords
-          ? `Use our API or add your first ${objectLabel} manually`
-          : 'No records matching the filter criteria were found.',
+          ? `Use nossa API ou adicione seu primeiro ${objectLabel} manualmente`
+          : 'Nenhum registro correspondente aos critérios de filtro foi encontrado.',
         IconPlus,
         createRecord,
-        `Add a ${objectLabel}`,
+        `Adicionar um ${objectLabel}`,
       ];
 
   return (

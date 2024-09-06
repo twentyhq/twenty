@@ -1,9 +1,9 @@
 import { Field, Fields } from '@/spreadsheet-import/types';
 
 const titleMap: Record<Field<string>['fieldType']['type'], string> = {
-  checkbox: 'Boolean',
-  select: 'Options',
-  input: 'Text',
+  checkbox: 'Booleano',
+  select: 'Opções',
+  input: 'Texto',
 };
 
 export const generateExampleRow = <T extends string>(fields: Fields<T>) => [

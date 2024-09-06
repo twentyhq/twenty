@@ -25,9 +25,9 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.note,
   namePlural: 'notes',
-  labelSingular: 'Note',
-  labelPlural: 'Notes',
-  description: 'A note',
+  labelSingular: 'Nota',
+  labelPlural: 'Notas',
+  description: 'Uma nota',
   icon: 'IconNotes',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
   softDelete: true,
@@ -36,8 +36,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Note record position',
+    label: 'Posição',
+    description: 'Posição do registro da nota',
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -47,8 +47,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
-    label: 'Title',
-    description: 'Note title',
+    label: 'Título',
+    description: 'Título da nota',
     icon: 'IconNotes',
   })
   title: string;
@@ -56,8 +56,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.RICH_TEXT,
-    label: 'Body',
-    description: 'Note body',
+    label: 'Descrição',
+    description: 'Descrição da nota',
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
@@ -66,9 +66,9 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Criado por',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'O criador do registro',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -78,8 +78,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
-    label: 'Targets',
-    description: 'Note targets',
+    label: 'Alvos',
+    description: 'Alvos da nota',
     icon: 'IconCheckbox',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
@@ -91,8 +91,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
-    description: 'Note attachments',
+    label: 'Anexos',
+    description: 'Anexos da nota',
     icon: 'IconFileImport',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentWorkspaceEntity,
@@ -104,8 +104,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the note.',
+    label: 'Atividades da Linha do Tempo',
+    description: 'Atividades da linha do tempo vinculadas à nota.',
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -116,8 +116,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the note',
+    label: 'Favoritos',
+    description: 'Favoritos vinculados à nota',
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

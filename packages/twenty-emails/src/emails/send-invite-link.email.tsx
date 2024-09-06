@@ -30,17 +30,17 @@ export const SendInviteLinkEmail = ({
   const workspaceLogo = getImageAbsoluteURI(workspace.logo, serverUrl);
   return (
     <BaseEmail width={333}>
-      <Title value="Join your team on Twenty" />
+      <Title value="Junte-se à sua equipe no CRM - Digito Service" />
       <MainText>
         {capitalize(sender.firstName)} (
-        <Link href={sender.email} value={sender.email} />) has invited you to
-        join a workspace called <b>{workspace.name}</b>
+        <Link href={sender.email} value={sender.email} />) convidou você para
+        participar de um workspace chamado <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>
         {workspaceLogo && <Img src={workspaceLogo} width={40} height={40} />}
         {workspace.name && <HighlightedText value={workspace.name} />}
-        <CallToAction href={link} value="Accept invite" />
+        <CallToAction href={link} value="Aceitar convite" />
       </HighlightedContainer>
       <WhatIsTwenty />
     </BaseEmail>

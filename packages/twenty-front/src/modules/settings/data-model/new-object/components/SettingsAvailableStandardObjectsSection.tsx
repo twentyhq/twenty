@@ -24,15 +24,15 @@ export const SettingsAvailableStandardObjectsSection = ({
 }: SettingsAvailableStandardObjectsSectionProps) => (
   <Section>
     <H2Title
-      title="Available"
-      description="Select one or several standard objects to activate below"
+      title="Disponível"
+      description="Selecione um ou vários objetos padrão para ativar abaixo"
     />
     <Table>
       <StyledAvailableStandardObjectTableRow>
         <TableHeader></TableHeader>
-        <TableHeader>Name</TableHeader>
-        <TableHeader>Description</TableHeader>
-        <TableHeader align="right">Fields</TableHeader>
+        <TableHeader>Nome</TableHeader>
+        <TableHeader>Descrição</TableHeader>
+        <TableHeader align="right">Campos</TableHeader>
       </StyledAvailableStandardObjectTableRow>
       <TableBody>
         {objectItems.map((objectItem) => (

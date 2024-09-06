@@ -90,7 +90,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
                 watchFormValue(
                   'relation.field.label',
                   initialRelationFieldMetadataItem.label,
-                ) || 'Field name',
+                ) || 'Nome do campo',
               type: FieldMetadataType.Relation,
             }}
             shrink

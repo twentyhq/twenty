@@ -5,12 +5,12 @@ import { Button } from '@/ui/input/button/components/Button';
 export const SettingsReadDocumentationButton = () => {
   return (
     <Button
-      title="Read documentation"
+      title="Ler documentação"
       variant="primary"
       accent="default"
       size="small"
       Icon={IconBook2}
-      to={'https://docs.twenty.com'}
+      to={'https://digitoservice.com/docs/developers'}
       target="_blank"
     ></Button>
   );

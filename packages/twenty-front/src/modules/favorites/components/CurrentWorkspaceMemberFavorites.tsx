@@ -61,7 +61,7 @@ export const CurrentWorkspaceMemberFavorites = () => {
   return (
     <StyledContainer>
       <NavigationDrawerSectionTitle
-        label="Favorites"
+        label="Favoritos"
         onClick={() => toggleNavigationSection()}
       />
       {isNavigationSectionOpen && (

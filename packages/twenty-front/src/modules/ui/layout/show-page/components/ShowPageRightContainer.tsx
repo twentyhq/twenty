@@ -112,7 +112,7 @@ export const ShowPageRightContainer = ({
   const tabs = [
     {
       id: 'richText',
-      title: 'Note',
+      title: 'Nota',
       Icon: IconNotes,
       hide:
         loading ||
@@ -123,19 +123,19 @@ export const ShowPageRightContainer = ({
     },
     {
       id: 'fields',
-      title: 'Fields',
+      title: 'Campos',
       Icon: IconList,
       hide: !isMobile,
     },
     {
       id: 'timeline',
-      title: 'Timeline',
+      title: 'Linha do Tempo',
       Icon: IconTimelineEvent,
       hide: !timeline || isInRightDrawer || isWorkflow,
     },
     {
       id: 'tasks',
-      title: 'Tasks',
+      title: 'Tarefas',
       Icon: IconCheckbox,
       hide:
         !tasks ||
@@ -147,7 +147,7 @@ export const ShowPageRightContainer = ({
     },
     {
       id: 'notes',
-      title: 'Notes',
+      title: 'Notas',
       Icon: IconNotes,
       hide:
         !notes ||
@@ -159,7 +159,7 @@ export const ShowPageRightContainer = ({
     },
     {
       id: 'files',
-      title: 'Files',
+      title: 'Arquivos',
       Icon: IconPaperclip,
       hide: !notes || isWorkflow,
     },
@@ -171,7 +171,7 @@ export const ShowPageRightContainer = ({
     },
     {
       id: 'calendar',
-      title: 'Calendar',
+      title: 'Calendário',
       Icon: IconCalendarEvent,
       hide: !shouldDisplayCalendarTab,
     },

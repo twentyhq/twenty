@@ -99,7 +99,7 @@ export class StripeService {
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
         ),
       },
-      automatic_tax: { enabled: true },
+      allow_promotion_codes: true,
       tax_id_collection: { enabled: true },
       customer: stripeCustomerId,
       customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
@@ -142,6 +142,13 @@ export class StripeService {
   }
 
   formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {
+    const monthlyPriceId = this.environmentService.get(
+      'BILLING_STRIPE_MONTHLY_PRICE_ID',
+    );
+    const annualPriceId = this.environmentService.get(
+      'BILLING_STRIPE_ANNUAL_PRICE_ID',
+    );
+
     const productPrices: ProductPriceEntity[] = Object.values(
       prices
         .filter((item) => item.recurring?.interval && item.unit_amount)
@@ -152,7 +159,7 @@ export class StripeService {
             return acc;
           }
 
-          if (!acc[interval] || item.created > acc[interval].created) {
+          if (item.id === monthlyPriceId || item.id === annualPriceId) {
             acc[interval] = {
               unitAmount: item.unit_amount,
               recurringInterval: interval,

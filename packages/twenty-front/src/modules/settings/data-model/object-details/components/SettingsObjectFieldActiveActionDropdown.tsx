@@ -52,7 +52,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
       dropdownId={dropdownId}
       clickableComponent={
         <LightIconButton
-          aria-label="Active Field Options"
+          aria-label="Opções de Campo Ativo"
           Icon={IconDotsVertical}
           accent="tertiary"
         />
@@ -61,20 +61,20 @@ export const SettingsObjectFieldActiveActionDropdown = ({
         <DropdownMenu width="160px">
           <DropdownMenuItemsContainer>
             <MenuItem
-              text={isCustomField ? 'Edit' : 'View'}
+              text={isCustomField ? 'Editar' : 'Visualizar'}
               LeftIcon={isCustomField ? IconPencil : IconEye}
               onClick={handleEdit}
             />
             {!!onSetAsLabelIdentifier && (
               <MenuItem
-                text="Set as record text"
+                text="Definir como texto do registro"
                 LeftIcon={IconTextSize}
                 onClick={handleSetAsLabelIdentifier}
               />
             )}
             {!!onDeactivate && (
               <MenuItem
-                text="Deactivate"
+                text="Desativar"
                 LeftIcon={IconArchive}
                 onClick={handleDeactivate}
               />

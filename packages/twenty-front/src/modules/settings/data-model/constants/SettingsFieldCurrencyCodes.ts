@@ -21,8 +21,12 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   CurrencyCode,
   { label: string; Icon: IconComponent }
 > = {
+  BRL: {
+    label: 'Real brasileiro',
+    Icon: IconCurrencyReal,
+  },
   USD: {
-    label: 'United States dollar',
+    label: 'Dólar americano',
     Icon: IconCurrencyDollar,
   },
   EUR: {
@@ -30,67 +34,63 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
     Icon: IconCurrencyEuro,
   },
   JPY: {
-    label: 'Japanese yen',
+    label: 'Iene japonês',
     Icon: IconCurrencyYen,
   },
   GBP: {
-    label: 'British pound',
+    label: 'Libra esterlina',
     Icon: IconCurrencyPound,
   },
   CAD: {
-    label: 'Canadian dollar',
+    label: 'Dólar canadense',
     Icon: IconCurrencyDollar,
   },
   CHF: {
-    label: 'Swiss franc',
+    label: 'Franco suíço',
     Icon: IconCurrencyFrank,
   },
   CNY: {
-    label: 'Chinese yuan',
+    label: 'Yuan chinês',
     Icon: IconCurrencyYuan,
   },
   CZK: {
-    label: 'Czech koruna',
+    label: 'Coroa tcheca',
     Icon: IconCurrencyKroneCzech,
   },
   HKD: {
-    label: 'Hong Kong dollar',
+    label: 'Dólar de Hong Kong',
     Icon: IconCurrencyDollar,
   },
   NOK: {
-    label: 'Norwegian krone',
+    label: 'Coroa norueguesa',
     Icon: IconCurrencyKroneSwedish,
   },
   SEK: {
-    label: 'Swedish krona',
+    label: 'Coroa sueca',
     Icon: IconCurrencyKroneSwedish,
   },
   BHT: {
-    label: 'Thai Baht',
+    label: 'Baht tailandês',
     Icon: IconCurrencyBaht,
   },
   MAD: {
-    label: 'Moroccan dirham',
+    label: 'Dirham marroquino',
     Icon: IconCurrencyDirham,
   },
   QAR: {
-    label: 'Qatari riyal',
+    label: 'Rial catariano',
     Icon: IconCurrencyRiyal,
   },
   AED: {
-    label: 'UAE dirham',
+    label: 'Dirham dos Emirados Árabes Unidos',
     Icon: IconCurrencyDirham,
   },
   KRW: {
-    label: 'South Korean won',
+    label: 'Won sul-coreano',
     Icon: IconCurrencyWon,
   },
-  BRL: {
-    label: 'Brazilian real',
-    Icon: IconCurrencyReal,
-  },
   AUD: {
-    label: 'Australian dollar',
+    label: 'Dólar australiano',
     Icon: IconCurrencyDollar,
   },
 };

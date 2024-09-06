@@ -16,7 +16,7 @@ export const multiSelectFieldDefaultValueSchema = (
       simpleQuotesStringSchema.refine(
         (value) => optionValues.includes(stripSimpleQuotesFromString(value)),
         {
-          message: `String is not a valid multi-select option, available options are: ${options.join(
+          message: `A string não é uma opção válida de múltipla seleção, as opções disponíveis são: ${options.join(
             ', ',
           )}`,
         },

@@ -102,7 +102,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationType}
           render={({ field: { onChange, value } }) => (
             <Select
-              label="Relation type"
+              label="Tipo de Relação"
               dropdownId="relation-type-select"
               fullWidth
               disabled={disableRelationEdition}
@@ -118,7 +118,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationObjectMetadataItem.id}
           render={({ field: { onChange, value } }) => (
             <Select
-              label="Object destination"
+              label="Destino do Objeto"
               dropdownId="object-destination-select"
               fullWidth
               disabled={disableRelationEdition}
@@ -136,7 +136,7 @@ export const SettingsDataModelFieldRelationForm = ({
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>
-        Field on {selectedObjectMetadataItem?.labelPlural}
+        Campo em {selectedObjectMetadataItem?.labelPlural}
       </StyledInputsLabel>
       <StyledInputsContainer>
         <Controller
@@ -160,7 +160,7 @@ export const SettingsDataModelFieldRelationForm = ({
           render={({ field: { onChange, value } }) => (
             <TextInput
               disabled={disableFieldEdition}
-              placeholder="Field name"
+              placeholder="Nome do campo"
               value={value}
               onChange={onChange}
               fullWidth

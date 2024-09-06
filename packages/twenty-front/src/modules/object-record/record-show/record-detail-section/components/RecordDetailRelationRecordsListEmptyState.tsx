@@ -29,7 +29,7 @@ export const RecordDetailRelationRecordsListEmptyState = ({
   return (
     <StyledRelationRecordsListEmptyState>
       <Icon size={theme.icon.size.sm} />
-      <div>No {relationObjectMetadataItem.labelSingular}</div>
+      <div>Nenhum {relationObjectMetadataItem.labelSingular}</div>
     </StyledRelationRecordsListEmptyState>
   );
 };

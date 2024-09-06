@@ -20,7 +20,7 @@ export const MultipleFiltersButton = () => {
       isUnfolded={isDropdownOpen}
       onClick={handleClick}
     >
-      Filter
+      Filtro
     </StyledHeaderDropdownButton>
   );
 };

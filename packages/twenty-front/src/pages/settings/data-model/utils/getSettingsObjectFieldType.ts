@@ -16,15 +16,15 @@ export const getSettingsObjectFieldType = (
 
   if (variant === 'field-type') {
     return objectMetadataItem.isRemote
-      ? 'Remote'
+      ? 'Remoto'
       : fieldMetadataItem.isCustom
         ? 'Custom'
-        : 'Standard';
+        : 'Padrão';
   } else {
     return isDefined(identifierType)
       ? identifierType === 'label'
-        ? 'Record text'
-        : 'Record image'
+        ? 'Texto do registro'
+        : 'Imagem do registro'
       : null;
   }
 };

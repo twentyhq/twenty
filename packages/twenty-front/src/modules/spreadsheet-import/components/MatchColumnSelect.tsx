@@ -151,7 +151,7 @@ export const MatchColumnSelect = ({
                         <AppTooltip
                           key={option.value}
                           anchorSelect={`#${option.value}`}
-                          content="You are already importing this column."
+                          content="Você já está importando esta coluna."
                           place="right"
                           offset={-20}
                         />,
@@ -160,7 +160,7 @@ export const MatchColumnSelect = ({
                   </React.Fragment>
                 ))}
                 {options?.length === 0 && (
-                  <MenuItem key="No result" text="No result" />
+                  <MenuItem key="No result" text="Nenhum resultado" />
                 )}
               </DropdownMenuItemsContainer>
             </DropdownMenu>

@@ -62,7 +62,7 @@ export const ConfirmationModal = ({
   subtitle,
   setIsOpen,
   onConfirmClick,
-  deleteButtonText = 'Delete',
+  deleteButtonText = 'Excluir',
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
@@ -121,7 +121,7 @@ export const ConfirmationModal = ({
             <StyledCenteredButton
               onClick={() => setIsOpen(false)}
               variant="secondary"
-              title="Cancel"
+              title="Cancelar"
               fullWidth
             />
             <StyledCenteredButton

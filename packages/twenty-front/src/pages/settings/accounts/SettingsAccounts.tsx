@@ -33,7 +33,7 @@ export const SettingsAccounts = () => {
   });
 
   return (
-    <SubMenuTopBarContainer Icon={IconAt} title="Account">
+    <SubMenuTopBarContainer Icon={IconAt} title="Conta">
       <SettingsPageContainer>
         {loading ? (
           <SettingsAccountLoader />
@@ -41,8 +41,8 @@ export const SettingsAccounts = () => {
           <>
             <Section>
               <H2Title
-                title="Connected accounts"
-                description="Manage your internet accounts."
+                title="Contas conectadas"
+                description="Gerencie suas contas de internet."
               />
               <SettingsAccountsConnectedAccountsListCard
                 accounts={accounts}

@@ -725,7 +725,7 @@ export class TokenService {
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: 'Action Needed to Reset Password',
+      subject: 'Ação Necessária para Redefinir a Senha',
       text,
       html,
     });

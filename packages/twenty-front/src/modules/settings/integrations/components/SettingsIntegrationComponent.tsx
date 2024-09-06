@@ -77,14 +77,14 @@ export const SettingsIntegrationComponent = ({
         {integration.text}
       </StyledSection>
       {integration.type === 'Soon' ? (
-        <StyledSoonPill label="Soon" />
+        <StyledSoonPill label="Em breve" />
       ) : integration.type === 'Active' ? (
-        <Status color="green" text="Active" />
+        <Status color="green" text="Ativo" />
       ) : integration.type === 'Add' ? (
         <Button
           to={integration.link}
           Icon={IconPlus}
-          title="Add"
+          title="Adicionar"
           size="small"
         />
       ) : integration.type === 'Use' ? (
@@ -92,7 +92,7 @@ export const SettingsIntegrationComponent = ({
           to={integration.link}
           target="_blank"
           Icon={IconBolt}
-          title="Use"
+          title="Usar"
           size="small"
         />
       ) : (

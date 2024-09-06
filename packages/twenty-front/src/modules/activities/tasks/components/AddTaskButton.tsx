@@ -24,7 +24,7 @@ export const AddTaskButton = ({
       Icon={IconPlus}
       size="small"
       variant="secondary"
-      title="Add task"
+      title="Adicionar tarefa"
       onClick={() =>
         openCreateActivity({
           targetableObjects: activityTargetableObjects,

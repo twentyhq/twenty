@@ -59,7 +59,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
       <StyledInput
         value={searchText}
         autoFocus
-        placeholder="Search fields"
+        placeholder="Buscar campos"
         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           setSearchText(event.target.value)
         }

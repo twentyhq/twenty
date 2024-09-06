@@ -132,7 +132,7 @@ export const MultipleRecordSelectDropdown = ({
             />
           );
         })}
-        {showNoResult && <MenuItem text="No result" />}
+        {showNoResult && <MenuItem text="Nenhum resultado" />}
         {loadingRecords && <DropdownMenuSkeletonItem />}
       </DropdownMenuItemsContainer>
     </SelectableList>

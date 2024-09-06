@@ -110,7 +110,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       setLoading(false);
       fileRejections.forEach((fileRejection) => {
         enqueueSnackBar(fileRejection.errors[0].message, {
-          title: `${fileRejection.file.name} upload rejected`,
+          title: `Envio de ${fileRejection.file.name} rejeitado`,
           variant: SnackBarVariant.Error,
         });
       });
@@ -141,13 +141,13 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
         {...getInputProps()}
       />
       {isDragActive ? (
-        <StyledText>Drop file here...</StyledText>
+        <StyledText>Solte o arquivo aqui...</StyledText>
       ) : loading || isLoading ? (
-        <StyledText>Processing...</StyledText>
+        <StyledText>Processando...</StyledText>
       ) : (
         <>
-          <StyledText>Upload .xlsx, .xls or .csv file</StyledText>
-          <MainButton onClick={open} title="Select file" />
+          <StyledText>Envie um arquivo .xlsx, .xls ou .csv</StyledText>
+          <MainButton onClick={open} title="Selecionar arquivo" />
         </>
       )}
     </StyledContainer>

@@ -38,9 +38,9 @@ export const WorkspaceInviteLink = ({
         Icon={IconLink}
         variant="primary"
         accent="blue"
-        title="Copy link"
+        title="Copiar link"
         onClick={() => {
-          enqueueSnackBar('Link copied to clipboard', {
+          enqueueSnackBar('Link copiado para a área de transferência', {
             variant: SnackBarVariant.Success,
             icon: <IconCopy size={theme.icon.size.md} />,
             duration: 2000,

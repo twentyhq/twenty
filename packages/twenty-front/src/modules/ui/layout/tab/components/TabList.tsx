@@ -33,6 +33,7 @@ const StyledContainer = styled.div`
   height: 40px;
   padding-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+  white-space: nowrap;
 `;
 
 export const TabList = ({

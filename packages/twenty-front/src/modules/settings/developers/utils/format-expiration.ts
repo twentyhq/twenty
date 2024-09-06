@@ -20,13 +20,13 @@ export const formatExpiration = (
   short = true,
 ) => {
   if (!isNonEmptyString(expiresAt) || doesNeverExpire(expiresAt)) {
-    return withExpiresMention ? 'Never expires' : 'Never';
+    return withExpiresMention ? 'Nunca expira' : 'Nunca';
   }
   const dateDiff = beautifyDateDiff(expiresAt, undefined, short);
   if (dateDiff.includes('-')) {
-    return 'Expired';
+    return 'Expirado';
   }
-  return withExpiresMention ? `Expires in ${dateDiff}` : `In ${dateDiff}`;
+  return withExpiresMention ? `Expira em ${dateDiff}` : `Em ${dateDiff}`;
 };
 
 export const formatExpirations = (

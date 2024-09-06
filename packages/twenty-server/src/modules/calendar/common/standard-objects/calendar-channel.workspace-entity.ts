@@ -50,9 +50,9 @@ export enum CalendarChannelContactAutoCreationPolicy {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
   namePlural: 'calendarChannels',
-  labelSingular: 'Calendar Channel',
-  labelPlural: 'Calendar Channels',
-  description: 'Calendar Channels',
+  labelSingular: 'Canal de Calendário',
+  labelPlural: 'Canais de Calendário',
+  description: 'Canais de Calendário',
   icon: 'IconCalendar',
   labelIdentifierStandardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
 })
@@ -62,8 +62,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'Handle',
-    description: 'Handle',
+    label: 'Identificador',
+    description: 'Identificador',
     icon: 'IconAt',
   })
   handle: string;
@@ -71,37 +71,37 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
-    label: 'Sync status',
-    description: 'Sync status',
+    label: 'Status de Sincronização',
+    description: 'Status de Sincronização',
     icon: 'IconStatusChange',
     options: [
       {
         value: CalendarChannelSyncStatus.ONGOING,
-        label: 'Ongoing',
+        label: 'Em Andamento',
         position: 1,
         color: 'yellow',
       },
       {
         value: CalendarChannelSyncStatus.NOT_SYNCED,
-        label: 'Not Synced',
+        label: 'Não Sincronizado',
         position: 2,
         color: 'blue',
       },
       {
         value: CalendarChannelSyncStatus.ACTIVE,
-        label: 'Active',
+        label: 'Ativo',
         position: 3,
         color: 'green',
       },
       {
         value: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-        label: 'Failed Insufficient Permissions',
+        label: 'Falha por Permissões Insuficientes',
         position: 4,
         color: 'red',
       },
       {
         value: CalendarChannelSyncStatus.FAILED_UNKNOWN,
-        label: 'Failed Unknown',
+        label: 'Falha Desconhecida',
         position: 5,
         color: 'red',
       },
@@ -113,44 +113,44 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
     type: FieldMetadataType.SELECT,
-    label: 'Sync stage',
-    description: 'Sync stage',
+    label: 'Estágio de Sincronização',
+    description: 'Estágio de Sincronização',
     icon: 'IconStatusChange',
     options: [
       {
         value: CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-        label: 'Full calendar event list fetch pending',
+        label: 'Aguardando Busca Completa de Eventos',
         position: 0,
         color: 'blue',
       },
       {
         value:
           CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-        label: 'Partial calendar event list fetch pending',
+        label: 'Aguardando Busca Parcial de Eventos',
         position: 1,
         color: 'blue',
       },
       {
         value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
-        label: 'Calendar event list fetch ongoing',
+        label: 'Busca de Eventos em Andamento',
         position: 2,
         color: 'orange',
       },
       {
         value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
-        label: 'Calendar events import pending',
+        label: 'Aguardando Importação de Eventos',
         position: 3,
         color: 'blue',
       },
       {
         value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
-        label: 'Calendar events import ongoing',
+        label: 'Importação de Eventos em Andamento',
         position: 4,
         color: 'orange',
       },
       {
         value: CalendarChannelSyncStage.FAILED,
-        label: 'Failed',
+        label: 'Falhou',
         position: 5,
         color: 'red',
       },
@@ -162,19 +162,19 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
-    label: 'Visibility',
-    description: 'Visibility',
+    label: 'Visibilidade',
+    description: 'Visibilidade',
     icon: 'IconEyeglass',
     options: [
       {
         value: CalendarChannelVisibility.METADATA,
-        label: 'Metadata',
+        label: 'Metadados',
         position: 0,
         color: 'green',
       },
       {
         value: CalendarChannelVisibility.SHARE_EVERYTHING,
-        label: 'Share Everything',
+        label: 'Compartilhar Tudo',
         position: 1,
         color: 'orange',
       },
@@ -187,8 +187,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId:
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is Contact Auto Creation Enabled',
-    description: 'Is Contact Auto Creation Enabled',
+    label: 'Criação Automática de Contato Ativada',
+    description: 'Criação Automática de Contato Ativada',
     icon: 'IconUserCircle',
     defaultValue: true,
   })
@@ -197,33 +197,33 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
-    label: 'Contact auto creation policy',
+    label: 'Política de Criação Automática de Contato',
     description:
-      'Automatically create records for people you participated with in an event.',
+      'Crie automaticamente registros para pessoas com as quais você participou de um evento.',
     icon: 'IconUserCircle',
     options: [
       {
         value:
           CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT_AND_ORGANIZER,
-        label: 'As Participant and Organizer',
+        label: 'Como Participante e Organizador',
         color: 'green',
         position: 0,
       },
       {
         value: CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT,
-        label: 'As Participant',
+        label: 'Como Participante',
         color: 'orange',
         position: 1,
       },
       {
         value: CalendarChannelContactAutoCreationPolicy.AS_ORGANIZER,
-        label: 'As Organizer',
+        label: 'Como Organizador',
         color: 'blue',
         position: 2,
       },
       {
         value: CalendarChannelContactAutoCreationPolicy.NONE,
-        label: 'None',
+        label: 'Nenhum',
         color: 'red',
         position: 3,
       },
@@ -235,8 +235,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is Sync Enabled',
-    description: 'Is Sync Enabled',
+    label: 'Sincronização Ativada',
+    description: 'Sincronização Ativada',
     icon: 'IconRefresh',
     defaultValue: true,
   })
@@ -245,9 +245,9 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
-    label: 'Sync Cursor',
+    label: 'Cursor de Sincronização',
     description:
-      'Sync Cursor. Used for syncing events from the calendar provider',
+      'Cursor de Sincronização. Usado para sincronizar eventos do provedor de calendário',
     icon: 'IconReload',
   })
   syncCursor: string;
@@ -255,8 +255,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Sync stage started at',
-    description: 'Sync stage started at',
+    label: 'Estágio de Sincronização Iniciado em',
+    description: 'Estágio de Sincronização Iniciado em',
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
@@ -265,8 +265,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
-    label: 'Throttle Failure Count',
-    description: 'Throttle Failure Count',
+    label: 'Contagem de Falhas por Limitação',
+    description: 'Contagem de Falhas por Limitação',
     icon: 'IconX',
     defaultValue: 0,
   })
@@ -275,8 +275,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Connected Account',
-    description: 'Connected Account',
+    label: 'Conta Conectada',
+    description: 'Conta Conectada',
     icon: 'IconUserCircle',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannels',
@@ -290,8 +290,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId:
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Calendar Channel Event Associations',
-    description: 'Calendar Channel Event Associations',
+    label: 'Associações de Eventos do Canal de Calendário',
+    description: 'Associações de Eventos do Canal de Calendário',
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelEventAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

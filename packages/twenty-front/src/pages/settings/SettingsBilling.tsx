@@ -45,16 +45,16 @@ type SwitchInfo = {
 
 const MONTHLY_SWITCH_INFO: SwitchInfo = {
   newInterval: SubscriptionInterval.Year,
-  to: 'to yearly',
-  from: 'from monthly to yearly',
-  impact: 'You will be charged immediately for the full year.',
+  to: 'para anual',
+  from: 'de mensal para anual',
+  impact: 'Você será cobrado imediatamente pelo ano completo.',
 };
 
 const YEARLY_SWITCH_INFO: SwitchInfo = {
   newInterval: SubscriptionInterval.Month,
-  to: 'to monthly',
-  from: 'from yearly to monthly',
-  impact: 'Your credit balance will be used to pay the monthly bills.',
+  to: 'para mensal',
+  from: 'de anual para mensal',
+  impact: 'Seu saldo de crédito será usado para pagar as faturas mensais.',
 };
 
 const SWITCH_INFOS = {
@@ -126,12 +126,12 @@ export const SettingsBilling = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(`Subscription has been switched ${switchingInfo.to}`, {
+      enqueueSnackBar(`A assinatura foi alterada ${switchingInfo.to}`, {
         variant: SnackBarVariant.Success,
       });
     } catch (error: any) {
       enqueueSnackBar(
-        `Error while switching subscription ${switchingInfo.to}.`,
+        `Erro ao alterar a assinatura ${switchingInfo.to}.`,
         {
           variant: SnackBarVariant.Error,
         },
@@ -140,30 +140,30 @@ export const SettingsBilling = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
+    <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Cobrança">
       <SettingsPageContainer>
-        <StyledH1Title title="Billing" />
+        <StyledH1Title title="Cobrança" />
         <SettingsBillingCoverImage />
         {displayPaymentFailInfo && (
           <Info
-            text={'Last payment failed. Please update your billing details.'}
-            buttonTitle={'Update'}
+            text={'Último pagamento falhou. Por favor, atualize seus dados de cobrança.'}
+            buttonTitle={'Atualizar'}
             accent={'danger'}
             onClick={openBillingPortal}
           />
         )}
         {displaySubscriptionCanceledInfo && (
           <Info
-            text={'Subscription canceled. Please start a new one'}
-            buttonTitle={'Subscribe'}
+            text={'Assinatura cancelada. Por favor, inicie uma nova.'}
+            buttonTitle={'Assinar'}
             accent={'danger'}
             to={AppPath.PlanRequired}
           />
         )}
         {displaySubscribeInfo ? (
           <Info
-            text={'Your workspace does not have an active subscription'}
-            buttonTitle={'Subscribe'}
+            text={'Seu workspace não tem uma assinatura ativa'}
+            buttonTitle={'Assinar'}
             accent={'danger'}
             to={AppPath.PlanRequired}
           />
@@ -171,12 +171,12 @@ export const SettingsBilling = () => {
           <>
             <Section>
               <H2Title
-                title="Manage your subscription"
-                description="Edit payment method, see your invoices and more"
+                title="Gerencie sua assinatura"
+                description="Edite o método de pagamento, veja suas faturas e mais"
               />
               <Button
                 Icon={IconCreditCard}
-                title="View billing details"
+                title="Ver detalhes de cobrança"
                 variant="secondary"
                 onClick={openBillingPortal}
                 disabled={billingPortalButtonDisabled}
@@ -184,12 +184,12 @@ export const SettingsBilling = () => {
             </Section>
             <Section>
               <H2Title
-                title="Edit billing interval"
-                description={`Switch ${switchingInfo.from}`}
+                title="Editar intervalo de cobrança"
+                description={`Mudar ${switchingInfo.from}`}
               />
               <Button
                 Icon={IconCalendarEvent}
-                title={`Switch ${switchingInfo.to}`}
+                title={`Mudar ${switchingInfo.to}`}
                 variant="secondary"
                 onClick={openSwitchingIntervalModal}
                 disabled={switchIntervalButtonDisabled}
@@ -197,12 +197,12 @@ export const SettingsBilling = () => {
             </Section>
             <Section>
               <H2Title
-                title="Cancel your subscription"
-                description="Your workspace will be disabled"
+                title="Cancelar sua assinatura"
+                description="Seu workspace será desativado"
               />
               <Button
                 Icon={IconCircleX}
-                title="Cancel Plan"
+                title="Cancelar Plano"
                 variant="secondary"
                 accent="danger"
                 onClick={openBillingPortal}
@@ -215,15 +215,15 @@ export const SettingsBilling = () => {
       <ConfirmationModal
         isOpen={isSwitchingIntervalModalOpen}
         setIsOpen={setIsSwitchingIntervalModalOpen}
-        title={`Switch billing ${switchingInfo.to}`}
+        title={`Mudar cobrança ${switchingInfo.to}`}
         subtitle={
           <>
-            {`Are you sure that you want to change your billing interval? 
+            {`Tem certeza de que deseja mudar o intervalo de cobrança? 
             ${switchingInfo.impact}`}
           </>
         }
         onConfirmClick={switchInterval}
-        deleteButtonText={`Change ${switchingInfo.to}`}
+        deleteButtonText={`Mudar ${switchingInfo.to}`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>

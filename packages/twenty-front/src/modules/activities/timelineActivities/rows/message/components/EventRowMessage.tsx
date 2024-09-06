@@ -41,7 +41,7 @@ export const EventRowMessage = ({
       <StyledRowContainer>
         <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         <StyledEventRowItemAction>
-          linked an email with
+          vinculou um email com
         </StyledEventRowItemAction>
         <StyledEventRowItemColumn>
           {labelIdentifierValue}

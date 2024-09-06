@@ -52,7 +52,7 @@ export const SettingsObjectDetailPageContent = ({
       title={
         <Breadcrumb
           links={[
-            { children: 'Objects', href: '/settings/objects' },
+            { children: 'Objetos', href: '/settings/objects' },
             { children: objectMetadataItem.labelPlural },
           ]}
         />
@@ -60,7 +60,7 @@ export const SettingsObjectDetailPageContent = ({
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="About" description="Manage your object" />
+          <H2Title title="Sobre" description="Gerencie seu objeto" />
           <SettingsObjectSummaryCard
             iconKey={objectMetadataItem.icon ?? undefined}
             name={objectMetadataItem.labelPlural || ''}
@@ -71,8 +71,8 @@ export const SettingsObjectDetailPageContent = ({
         </Section>
         <Section>
           <H2Title
-            title="Fields"
-            description={`Customise the fields available in the ${objectMetadataItem.labelSingular} views and their display order in the ${objectMetadataItem.labelSingular} detail view and menus.`}
+            title="Campos"
+            description={`Personalize os campos disponíveis nas visualizações de ${objectMetadataItem.labelSingular} e sua ordem de exibição na visualização de detalhes e menus de ${objectMetadataItem.labelSingular}.`}
           />
           <SettingsObjectFieldTable
             objectMetadataItem={objectMetadataItem}
@@ -89,7 +89,7 @@ export const SettingsObjectDetailPageContent = ({
               >
                 <Button
                   Icon={IconPlus}
-                  title="Add Field"
+                  title="Adicionar Campo"
                   size="small"
                   variant="secondary"
                 />

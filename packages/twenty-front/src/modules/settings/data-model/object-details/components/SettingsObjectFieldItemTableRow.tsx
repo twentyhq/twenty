@@ -189,15 +189,15 @@ export const SettingsObjectFieldItemTableRow = ({
   const typeLabel =
     variant === 'field-type'
       ? isRemoteObjectField
-        ? 'Remote'
+        ? 'Remoto'
         : fieldMetadataItem.isCustom
           ? 'Custom'
-          : 'Standard'
+          : 'Padrão'
       : variant === 'identifier'
         ? isDefined(identifierType)
           ? identifierType === 'label'
-            ? 'Record text'
-            : 'Record image'
+            ? 'Texto do registro'
+            : 'Imagem do registro'
           : ''
         : '';
 

@@ -84,7 +84,7 @@ export const crudRecordKey = 'crud_record';
 
 export default {
   display: {
-    description: 'Create, Update or Delete a Record in Twenty.',
+    description: 'Create, Update or Delete a Record in CRM.',
     hidden: false,
     label: 'Create, Update or Delete Record',
   },

@@ -20,9 +20,9 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThread,
   namePlural: 'messageThreads',
-  labelSingular: 'Message Thread',
-  labelPlural: 'Message Threads',
-  description: 'Message Thread',
+  labelSingular: 'Discussão de Mensagem',
+  labelPlural: 'Discussões de Mensagem',
+  description: 'Discussão de Mensagem',
   icon: 'IconMessage',
 })
 @WorkspaceIsNotAuditLogged()
@@ -31,8 +31,8 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Messages',
-    description: 'Messages from the thread.',
+    label: 'Mensagens',
+    description: 'Mensagens da discussão.',
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -43,8 +43,8 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messageThreadSubscribers,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Thread Subscribers',
-    description: 'Message Thread Subscribers',
+    label: 'Assinantes da Discussão de Mensagem',
+    description: 'Assinantes da Discussão de Mensagem',
     icon: 'IconMessage',
     inverseSideTarget: () => MessageThreadSubscriberWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

@@ -4,27 +4,27 @@ import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortD
 export const SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS = [
   {
     fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
-    label: 'Domain Name',
+    label: 'Domínio',
     iconName: 'IconLink',
   },
   {
     fieldMetadataId: '20202020-7fbd-41ad-b64d-25a15ff62f04',
-    label: 'Employees',
+    label: 'Funcionários',
     iconName: 'IconUsers',
   },
   {
     fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
-    label: 'Name',
+    label: 'Nome',
     iconName: 'IconBuildingSkyscraper',
   },
   {
     fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
-    label: 'Address',
+    label: 'Endereço',
     iconName: 'IconMap',
   },
   {
     fieldMetadataId: '20202020-4dc2-47c9-bb15-6e6f19ba9e46',
-    label: 'Creation date',
+    label: 'Data de Criação',
     iconName: 'IconCalendar',
   },
   {

@@ -15,9 +15,9 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewField,
   namePlural: 'viewFields',
-  labelSingular: 'View Field',
-  labelPlural: 'View Fields',
-  description: '(System) View Fields',
+  labelSingular: 'Campo de Visualização',
+  labelPlural: 'Campos de Visualização',
+  description: '(Sistema) Campos de Visualização',
   icon: 'IconTag',
 })
 @WorkspaceIsNotAuditLogged()
@@ -26,8 +26,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
-    description: 'View Field target field',
+    label: 'ID de Metadados do Campo',
+    description: 'Campo alvo do campo de visualização',
     icon: 'IconTag',
   })
   fieldMetadataId: string;
@@ -35,8 +35,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.isVisible,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Visible',
-    description: 'View Field visibility',
+    label: 'Visível',
+    description: 'Visibilidade do campo de visualização',
     icon: 'IconEye',
     defaultValue: true,
   })
@@ -45,8 +45,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.size,
     type: FieldMetadataType.NUMBER,
-    label: 'Size',
-    description: 'View Field size',
+    label: 'Tamanho',
+    description: 'Tamanho do campo de visualização',
     icon: 'IconEye',
     defaultValue: 0,
   })
@@ -55,8 +55,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'View Field position',
+    label: 'Posição',
+    description: 'Posição do campo de visualização',
     icon: 'IconList',
     defaultValue: 0,
   })
@@ -65,8 +65,8 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View Field related view',
+    label: 'Visualização',
+    description: 'Visualização relacionada ao campo de visualização',
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFields',

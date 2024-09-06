@@ -22,9 +22,9 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
   namePlural: 'messages',
-  labelSingular: 'Message',
-  labelPlural: 'Messages',
-  description: 'Message',
+  labelSingular: 'Mensagem',
+  labelPlural: 'Mensagens',
+  description: 'Mensagem',
   icon: 'IconMessage',
   labelIdentifierStandardId: MESSAGE_STANDARD_FIELD_IDS.subject,
 })
@@ -34,8 +34,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     type: FieldMetadataType.TEXT,
-    label: 'Header message Id',
-    description: 'Message id from the message header',
+    label: 'ID da Mensagem no Cabeçalho',
+    description: 'ID da mensagem no cabeçalho da mensagem',
     icon: 'IconHash',
   })
   headerMessageId: string;
@@ -43,8 +43,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
-    label: 'Subject',
-    description: 'Subject',
+    label: 'Assunto',
+    description: 'Assunto',
     icon: 'IconMessage',
   })
   subject: string;
@@ -52,8 +52,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.text,
     type: FieldMetadataType.TEXT,
-    label: 'Text',
-    description: 'Text',
+    label: 'Texto',
+    description: 'Texto',
     icon: 'IconMessage',
   })
   text: string;
@@ -61,8 +61,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Received At',
-    description: 'The date the message was received',
+    label: 'Recebido Em',
+    description: 'Data em que a mensagem foi recebida',
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()
@@ -71,8 +71,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Thread Id',
-    description: 'Message Thread Id',
+    label: 'ID do Tópico da Mensagem',
+    description: 'ID do Tópico da Mensagem',
     icon: 'IconHash',
     inverseSideTarget: () => MessageThreadWorkspaceEntity,
     inverseSideFieldKey: 'messages',
@@ -87,8 +87,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Participants',
-    description: 'Message Participants',
+    label: 'Participantes da Mensagem',
+    description: 'Participantes da Mensagem',
     icon: 'IconUserCircle',
     inverseSideTarget: () => MessageParticipantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -99,8 +99,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channel Association',
-    description: 'Messages from the channel.',
+    label: 'Associação de Canal de Mensagem',
+    description: 'Mensagens do canal.',
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

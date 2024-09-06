@@ -102,22 +102,22 @@ export const InviteTeam = () => {
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
-      return 'tim@apple.dev';
+      return 'joao@acme.com';
     }
     if (emailIndex === 1) {
-      return 'craig@apple.dev';
+      return 'carlos@acme.com';
     }
     if (emailIndex === 2) {
-      return 'mike@apple.dev';
+      return 'maria@acme.com';
     }
-    return 'phil@apple.dev';
+    return 'ana@acme.com';
   };
 
   const copyInviteLink = () => {
     if (isDefined(currentWorkspace?.inviteHash)) {
       const inviteLink = `${window.location.origin}/invite/${currentWorkspace?.inviteHash}`;
       navigator.clipboard.writeText(inviteLink);
-      enqueueSnackBar('Link copied to clipboard', {
+      enqueueSnackBar('Link copiado para a área de transferência', {
         variant: SnackBarVariant.Success,
         icon: <IconCopy size={theme.icon.size.md} />,
         duration: 2000,
@@ -142,7 +142,7 @@ export const InviteTeam = () => {
         throw result.errors;
       }
       if (emails.length > 0) {
-        enqueueSnackBar('Invite link sent to email addresses', {
+        enqueueSnackBar('Link de convite enviado para endereços de email', {
           variant: SnackBarVariant.Success,
           duration: 2000,
         });
@@ -166,9 +166,9 @@ export const InviteTeam = () => {
 
   return (
     <>
-      <Title noMarginTop>Invite your team</Title>
+      <Title noMarginTop>Convide sua equipe</Title>
       <SubTitle>
-        Get the most out of your workspace by inviting your team.
+        Aproveite ao máximo seu workspace convidando sua equipe.
       </SubTitle>
       <StyledAnimatedContainer>
         {fields.map((field, index) => (
@@ -198,10 +198,10 @@ export const InviteTeam = () => {
         ))}
         {isDefined(currentWorkspace?.inviteHash) && (
           <>
-            <SeparatorLineText>Or</SeparatorLineText>
+            <SeparatorLineText>Ou</SeparatorLineText>
             <StyledActionLinkContainer>
               <LightButton
-                title="Copy invitation link"
+                title="Copiar link de convite"
                 accent="tertiary"
                 onClick={copyInviteLink}
                 Icon={IconCopy}
@@ -212,7 +212,7 @@ export const InviteTeam = () => {
       </StyledAnimatedContainer>
       <StyledButtonContainer>
         <MainButton
-          title="Finish"
+          title="Finalizar"
           disabled={!isValid || isSubmitting}
           onClick={handleSubmit(onSubmit)}
           fullWidth

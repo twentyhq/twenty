@@ -63,7 +63,7 @@ export const useOpenObjectRecordsSpreasheetImportDialog = (
         try {
           await createManyRecords(createInputs, true);
         } catch (error: any) {
-          enqueueSnackBar(error?.message || 'Something went wrong', {
+          enqueueSnackBar(error?.message || 'Algo deu errado', {
             variant: SnackBarVariant.Error,
           });
         }

@@ -37,16 +37,16 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       const firstName: NodeField = {
         type: 'TEXT',
         name: 'firstName',
-        label: 'First Name',
-        description: 'First Name',
+        label: 'Nome',
+        description: 'Nome',
         isNullable: true,
         defaultValue: null,
       };
       const lastName: NodeField = {
         type: 'TEXT',
         name: 'lastName',
-        label: 'Last Name',
-        description: 'Last Name',
+        label: 'Sobrenome',
+        description: 'Sobrenome',
         isNullable: true,
         defaultValue: null,
       };
@@ -57,15 +57,15 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         type: 'TEXT',
         name: 'url',
         label: 'Url',
-        description: 'Link Url',
+        description: 'URL do Link',
         isNullable: true,
         defaultValue: null,
       };
       const label: NodeField = {
         type: 'TEXT',
         name: 'label',
-        label: 'Label',
-        description: 'Link Label',
+        label: 'Rótulo',
+        description: 'Rótulo do Link',
         isNullable: true,
         defaultValue: null,
       };
@@ -75,16 +75,16 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       const amountMicros: NodeField = {
         type: 'NUMBER',
         name: 'amountMicros',
-        label: 'Amount Micros',
-        description: 'Amount Micros. eg: set 3210000 for 3.21$',
+        label: 'Quantia em Micros',
+        description: 'Quantia em Micros. ex: defina 3210000 para R$3.21',
         isNullable: true,
         defaultValue: null,
       };
       const currencyCode: NodeField = {
         type: 'TEXT',
         name: 'currencyCode',
-        label: 'Currency Code',
-        description: 'Currency Code. eg: USD, EUR, etc...',
+        label: 'Código da Moeda',
+        description: 'Código da Moeda. ex: BRL, USD, EUR, etc...',
         isNullable: true,
         defaultValue: null,
       };
@@ -94,48 +94,48 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       const address1: NodeField = {
         type: 'TEXT',
         name: 'addressStreet1',
-        label: 'Address',
-        description: 'Address',
+        label: 'Endereço',
+        description: 'Endereço',
         isNullable: true,
         defaultValue: null,
       };
       const address2: NodeField = {
         type: 'TEXT',
         name: 'addressStreet2',
-        label: 'Address 2',
-        description: 'Address 2',
+        label: 'Complemento do Endereço',
+        description: 'Complemento do Endereço',
         isNullable: true,
         defaultValue: null,
       };
       const city: NodeField = {
         type: 'TEXT',
         name: 'addressCity',
-        label: 'City',
-        description: 'City',
+        label: 'Cidade',
+        description: 'Cidade',
         isNullable: true,
         defaultValue: null,
       };
       const state: NodeField = {
         type: 'TEXT',
         name: 'addressState',
-        label: 'State',
-        description: 'State',
+        label: 'Estado',
+        description: 'Estado',
         isNullable: true,
         defaultValue: null,
       };
       const postalCode: NodeField = {
         type: 'TEXT',
         name: 'addressPostalCode',
-        label: 'Postal Code',
-        description: 'Postal Code',
+        label: 'Código Postal',
+        description: 'Código Postal',
         isNullable: true,
         defaultValue: null,
       };
       const country: NodeField = {
         type: 'TEXT',
         name: 'addressCountry',
-        label: 'Country',
-        description: 'Country',
+        label: 'País',
+        description: 'País',
         isNullable: true,
         defaultValue: null,
       };

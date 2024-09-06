@@ -44,7 +44,7 @@ export const ColorSchemePicker = ({
         variant="Light"
         selected={value === 'Light'}
       />
-      <StyledLabel>Light</StyledLabel>
+      <StyledLabel>Claro</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
@@ -52,7 +52,7 @@ export const ColorSchemePicker = ({
         variant="Dark"
         selected={value === 'Dark'}
       />
-      <StyledLabel>Dark</StyledLabel>
+      <StyledLabel>Escuro</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
@@ -60,7 +60,7 @@ export const ColorSchemePicker = ({
         variant="System"
         selected={value === 'System'}
       />
-      <StyledLabel>System settings</StyledLabel>
+      <StyledLabel>Configurações do sistema</StyledLabel>
     </StyledCardContainer>
   </StyledContainer>
 );

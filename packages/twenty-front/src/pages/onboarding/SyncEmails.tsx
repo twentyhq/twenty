@@ -81,9 +81,9 @@ export const SyncEmails = () => {
 
   return (
     <>
-      <Title noMarginTop>Emails and Calendar</Title>
+      <Title noMarginTop>Emails e Calendário</Title>
       <SubTitle>
-        Sync your Emails and Calendar with Twenty. Choose your privacy settings.
+        Sincronize seus emails e calendário com o CRM. Escolha suas configurações de privacidade.
       </SubTitle>
       <StyledSyncEmailsContainer>
         <OnboardingSyncEmailsSettingsCard
@@ -92,14 +92,14 @@ export const SyncEmails = () => {
         />
       </StyledSyncEmailsContainer>
       <MainButton
-        title="Sync with Google"
+        title="Sincronizar com o Google"
         onClick={handleButtonClick}
-        width={200}
+        width={220}
         Icon={() => <IconGoogle size={theme.icon.size.sm} />}
       />
       <StyledActionLinkContainer>
         <ActionLink onClick={continueWithoutSync}>
-          Continue without sync
+          Continuar sem sincronização
         </ActionLink>
       </StyledActionLinkContainer>
     </>

@@ -20,7 +20,7 @@ export const KeyboardMenuDialog = ({
   return (
     <StyledDialog>
       <StyledHeading>
-        Keyboard shortcuts
+        Atalhos de teclado
         <IconButton variant="tertiary" Icon={IconX} onClick={onClose} />
       </StyledHeading>
       <StyledContainer>{children}</StyledContainer>

@@ -85,7 +85,7 @@ export const ShowPageMoreButton = ({
                   onClick={handleDelete}
                   accent="danger"
                   LeftIcon={IconTrash}
-                  text="Delete"
+                  text="Excluir"
                 />
               )}
               {recordFromStore && recordFromStore.deletedAt && (
@@ -94,12 +94,12 @@ export const ShowPageMoreButton = ({
                     onClick={handleDestroy}
                     accent="danger"
                     LeftIcon={IconTrash}
-                    text="Destroy"
+                    text="Excluir permanentemente"
                   />
                   <MenuItem
                     onClick={handleRestore}
                     LeftIcon={IconRestore}
-                    text="Restore"
+                    text="Restaurar"
                   />
                 </>
               )}

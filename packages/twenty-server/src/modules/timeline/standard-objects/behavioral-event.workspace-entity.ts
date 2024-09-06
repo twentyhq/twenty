@@ -12,9 +12,9 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.behavioralEvent,
   namePlural: 'behavioralEvents',
-  labelSingular: 'Behavioral Event',
-  labelPlural: 'Behavioral Events',
-  description: 'An event related to user behavior',
+  labelSingular: 'Evento Comportamental',
+  labelPlural: 'Eventos Comportamentais',
+  description: 'Um evento relacionado ao comportamento do usuário',
   icon: 'IconIconTimelineEvent',
 })
 @WorkspaceIsSystem()
@@ -42,8 +42,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Event name',
-    description: 'Event name',
+    label: 'Nome do Evento',
+    description: 'Nome do evento',
     icon: 'IconAbc',
   })
   name: string;
@@ -51,8 +51,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event details',
-    description: 'Json value for event details',
+    label: 'Detalhes do Evento',
+    description: 'Valor JSON para detalhes do evento',
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -61,9 +61,9 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event context',
+    label: 'Contexto do Evento',
     description:
-      'Json object to provide context (user, device, workspace, etc.)',
+      'Objeto JSON para fornecer contexto (usuário, dispositivo, espaço de trabalho, etc.)',
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -72,8 +72,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
-    label: 'Object name',
-    description: 'If the event is related to a particular object',
+    label: 'Nome do Objeto',
+    description: 'Se o evento está relacionado a um objeto específico',
     icon: 'IconAbc',
   })
   objectName: string;
@@ -81,8 +81,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
-    label: 'Object id',
-    description: 'Event name/type',
+    label: 'ID do Objeto',
+    description: 'ID do objeto relacionado ao evento',
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()

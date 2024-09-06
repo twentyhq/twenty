@@ -49,7 +49,7 @@ export const CurrencyFieldInput = ({
     ? draftCurrencyCode
     : defaultCurrencyCodeIsNotEmpty
       ? defaultCurrencyCodeWithoutSQLQuotes
-      : CurrencyCode.USD;
+      : CurrencyCode.BRL;
 
   const handleEnter = (newValue: string) => {
     onEnter?.(() => {
@@ -119,7 +119,7 @@ export const CurrencyFieldInput = ({
         value={draftValue?.amount?.toString() ?? ''}
         currencyCode={currencyCode}
         autoFocus
-        placeholder="Currency"
+        placeholder="Moeda"
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

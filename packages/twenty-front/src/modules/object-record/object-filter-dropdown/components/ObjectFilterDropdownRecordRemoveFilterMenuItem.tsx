@@ -20,7 +20,7 @@ export const ObjectFilterDropdownRecordRemoveFilterMenuItem = () => {
       <MenuItem
         onClick={handleRemoveFilter}
         LeftIcon={IconFilterOff}
-        text={'Remove filter'}
+        text={'Remover filtro'}
       />
     </DropdownMenuItemsContainer>
   );

@@ -177,7 +177,7 @@ export const SettingsObjectFieldEdit = () => {
             <Breadcrumb
               links={[
                 {
-                  children: 'Objects',
+                  children: 'Objetos',
                   href: '/settings/objects',
                   styles: { minWidth: 'max-content' },
                 },
@@ -204,8 +204,8 @@ export const SettingsObjectFieldEdit = () => {
           <SettingsPageContainer>
             <Section>
               <H2Title
-                title="Name and description"
-                description="The name and description of this field"
+                title="Nome e descrição"
+                description="O nome e a descrição deste campo"
               />
               <SettingsDataModelFieldAboutForm
                 disabled={!activeMetadataField.isCustom}
@@ -215,8 +215,8 @@ export const SettingsObjectFieldEdit = () => {
             </Section>
             <Section>
               <H2Title
-                title="Type and values"
-                description="The field's type and values."
+                title="Tipo e valores"
+                description="O tipo e os valores deste campo."
               />
               <StyledSettingsObjectFieldTypeSelect
                 disabled
@@ -235,13 +235,13 @@ export const SettingsObjectFieldEdit = () => {
             {!isLabelIdentifier && (
               <Section>
                 <H2Title
-                  title="Danger zone"
-                  description="Deactivate this field"
+                  title="Zona de perigo"
+                  description="Desativar este campo"
                 />
                 <Button
                   Icon={IconArchive}
                   variant="secondary"
-                  title="Deactivate"
+                  title="Desativar"
                   size="small"
                   onClick={handleDeactivate}
                 />

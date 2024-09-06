@@ -366,7 +366,7 @@ export class AuthService {
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: user.email,
-      subject: 'Your Password Has Been Successfully Changed',
+      subject: 'Sua Senha foi Alterada com Sucesso',
       text,
       html,
     });

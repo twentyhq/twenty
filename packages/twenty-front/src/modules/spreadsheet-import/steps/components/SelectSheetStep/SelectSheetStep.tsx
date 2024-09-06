@@ -66,7 +66,7 @@ export const SelectSheetStep = ({
           maxRecords,
         )
       ) {
-        onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
+        onError(`Muitos registros. Até ${maxRecords.toString()} são permitidos`);
         return;
       }
       try {
@@ -104,7 +104,7 @@ export const SelectSheetStep = ({
   return (
     <>
       <StyledContent>
-        <StyledHeading title="Select the sheet to use" />
+        <StyledHeading title="Selecione a planilha para usar" />
         <StyledRadioContainer>
           <RadioGroup onValueChange={(value) => setValue(value)} value={value}>
             {sheetNames.map((sheetName) => (
@@ -117,7 +117,7 @@ export const SelectSheetStep = ({
         onClick={() => handleOnContinue(value)}
         onBack={onBack}
         isLoading={isLoading}
-        title="Next Step"
+        title="Próximo Passo"
       />
     </>
   );

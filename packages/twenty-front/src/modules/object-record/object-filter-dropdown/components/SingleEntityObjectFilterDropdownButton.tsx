@@ -67,7 +67,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
               }
             />
           ) : (
-            'Filter'
+            'Filtro'
           )}
           <IconChevronDown size={theme.icon.size.md} />
         </StyledHeaderDropdownButton>

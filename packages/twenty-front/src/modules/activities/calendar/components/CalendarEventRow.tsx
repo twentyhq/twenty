@@ -118,7 +118,7 @@ export const CalendarEventRow = ({
   const hasEnded = hasCalendarEventEnded(calendarEvent);
 
   const startTimeLabel = calendarEvent.isFullDay
-    ? 'All day'
+    ? 'Dia todo'
     : format(startsAt, 'HH:mm');
   const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 
@@ -157,7 +157,7 @@ export const CalendarEventRow = ({
           <StyledVisibilityCard active={!hasEnded}>
             <StyledVisibilityCardContent>
               <IconLock size={theme.icon.size.sm} />
-              Not shared
+              Não compartilhado
             </StyledVisibilityCardContent>
           </StyledVisibilityCard>
         )}

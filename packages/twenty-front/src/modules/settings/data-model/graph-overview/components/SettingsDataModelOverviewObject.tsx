@@ -149,7 +149,7 @@ export const SettingsDataModelOverviewObject = ({
               ) : (
                 <IconChevronDown size={theme.icon.size.md} />
               )}
-              <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
+              <StyledCardRowText>{countNonRelation} campos</StyledCardRowText>
             </StyledCardRowOther>
             {otherFieldsExpanded &&
               fields

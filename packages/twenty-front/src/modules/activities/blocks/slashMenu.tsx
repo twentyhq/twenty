@@ -42,7 +42,7 @@ export const getSlashMenu = (editor: typeof blockSchema.BlockNoteEditor) => {
       Icon: Icons[x.title],
     })),
     {
-      title: 'File',
+      title: 'Arquivo',
       aliases: ['file', 'folder'],
       Icon: IconFile,
       onItemClick: () => {

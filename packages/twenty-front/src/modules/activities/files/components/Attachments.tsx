@@ -80,10 +80,10 @@ export const Attachments = ({
             <AnimatedPlaceholder type="noFile" />
             <AnimatedPlaceholderEmptyTextContainer>
               <AnimatedPlaceholderEmptyTitle>
-                No Files
+                Nenhum Arquivos
               </AnimatedPlaceholderEmptyTitle>
               <AnimatedPlaceholderEmptySubTitle>
-                There are no associated files with this record.
+                Não há arquivos associados a este registro.
               </AnimatedPlaceholderEmptySubTitle>
             </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput
@@ -93,7 +93,7 @@ export const Attachments = ({
             />
             <Button
               Icon={IconPlus}
-              title="Add file"
+              title="Adicionar arquivo"
               variant="secondary"
               onClick={handleUploadFileClick}
             />
@@ -112,14 +112,14 @@ export const Attachments = ({
       />
       <AttachmentList
         targetableObject={targetableObject}
-        title="All"
+        title="Todos"
         attachments={attachments ?? []}
         button={
           <Button
             Icon={IconPlus}
             size="small"
             variant="secondary"
-            title="Add file"
+            title="Adicionar arquivo"
             onClick={handleUploadFileClick}
           ></Button>
         }

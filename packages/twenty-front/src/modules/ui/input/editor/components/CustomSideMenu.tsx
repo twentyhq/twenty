@@ -35,7 +35,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                 <CustomAddBlockItem editor={editor}>
                   <CustomSideMenuOptions
                     LeftIcon={IconPlus}
-                    text={'Add Block'}
+                    text={'Adicionar Bloco'}
                     Variant="normal"
                   />
                 </CustomAddBlockItem>
@@ -43,7 +43,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                 <BlockColorsItem {...props}>
                   <CustomSideMenuOptions
                     LeftIcon={IconColorSwatch}
-                    text={'Change Color'}
+                    text={'Alterar Cor'}
                     Variant="normal"
                   />
                 </BlockColorsItem>
@@ -52,7 +52,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                   {' '}
                   <CustomSideMenuOptions
                     LeftIcon={IconTrash}
-                    text={'Delete'}
+                    text={'Excluir'}
                     Variant="danger"
                   />
                 </RemoveBlockItem>

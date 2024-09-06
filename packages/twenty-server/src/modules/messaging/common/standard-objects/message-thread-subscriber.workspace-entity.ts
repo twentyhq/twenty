@@ -17,9 +17,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThreadSubscriber,
   namePlural: 'messageThreadSubscriber',
-  labelSingular: 'Message Thread Subscriber',
-  labelPlural: 'Message Threads Subscribers',
-  description: 'Message Thread Subscribers',
+  labelSingular: 'Assinante de Discussão de Mensagem',
+  labelPlural: 'Assinantes de Discussão de Mensagem',
+  description: 'Assinantes de Discussão de Mensagem',
   icon: 'IconPerson',
 })
 @WorkspaceIsNotAuditLogged()
@@ -31,8 +31,8 @@ export class MessageThreadSubscriberWorkspaceEntity extends BaseWorkspaceEntity 
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS.messageThread,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Thread',
-    description: 'Message Thread',
+    label: 'Discussão de Mensagem',
+    description: 'Discussão de Mensagem',
     icon: 'IconMessage',
     inverseSideFieldKey: 'subscribers',
     inverseSideTarget: () => MessageThreadWorkspaceEntity,
@@ -45,8 +45,8 @@ export class MessageThreadSubscriberWorkspaceEntity extends BaseWorkspaceEntity 
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
-    description: 'Workspace Member that is part of the message thread',
+    label: 'Membro do Workspace',
+    description: 'Membro do Workspace que faz parte da discussão de mensagem',
     icon: 'IconCircleUser',
     inverseSideFieldKey: 'messageThreadSubscribers',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,

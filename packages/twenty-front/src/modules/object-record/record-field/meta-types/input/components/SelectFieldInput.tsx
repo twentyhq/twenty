@@ -58,7 +58,7 @@ export const SelectFieldInput = ({
   );
 
   const optionIds = [
-    `No ${fieldDefinition.label}`,
+    `Nenhum ${fieldDefinition.label}`,
     ...filteredOptions.map((option) => option.value),
   ];
 

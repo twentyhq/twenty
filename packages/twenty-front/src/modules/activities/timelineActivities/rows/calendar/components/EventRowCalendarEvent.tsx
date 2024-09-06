@@ -41,7 +41,7 @@ export const EventRowCalendarEvent = ({
       <StyledRowContainer>
         <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         <StyledEventRowItemAction>
-          linked a calendar event with {labelIdentifierValue}
+          vinculou um evento de calendário com {labelIdentifierValue}
         </StyledEventRowItemAction>
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>

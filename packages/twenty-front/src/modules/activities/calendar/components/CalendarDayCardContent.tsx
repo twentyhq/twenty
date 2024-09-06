@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
@@ -57,7 +58,7 @@ export const CalendarDayCardContent = ({
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
-  const weekDayLabel = format(endOfDayDate, 'EE');
+  const weekDayLabel = format(endOfDayDate, 'EE', { locale: ptBR });
   const monthDayLabel = format(endOfDayDate, 'dd');
 
   const upcomingDayCardContentVariants = {

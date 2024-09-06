@@ -65,7 +65,7 @@ export const SettingsNavigationDrawerItems = () => {
       indentationLevel: 2,
     },
     {
-      label: 'Calendars',
+      label: 'Calendários',
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
       matchSubPages: true,
@@ -89,20 +89,20 @@ export const SettingsNavigationDrawerItems = () => {
   return (
     <>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="User" />
+        <NavigationDrawerSectionTitle label="Usuário" />
         <SettingsNavigationDrawerItem
-          label="Profile"
+          label="Perfil"
           path={SettingsPath.ProfilePage}
           Icon={IconUserCircle}
         />
         <SettingsNavigationDrawerItem
-          label="Appearance"
+          label="Aparência"
           path={SettingsPath.Appearance}
           Icon={IconColorSwatch}
         />
         <NavigationDrawerItemGroup>
           <SettingsNavigationDrawerItem
-            label="Accounts"
+            label="Contas"
             path={SettingsPath.Accounts}
             Icon={IconAt}
           />
@@ -125,30 +125,30 @@ export const SettingsNavigationDrawerItems = () => {
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <SettingsNavigationDrawerItem
-          label="General"
+          label="Geral"
           path={SettingsPath.Workspace}
           Icon={IconSettings}
         />
         <SettingsNavigationDrawerItem
-          label="Members"
+          label="Membros"
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Billing"
+            label="Cobrança"
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
           />
         )}
         <SettingsNavigationDrawerItem
-          label="Data model"
+          label="Modelo de Dados"
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
           matchSubPages
         />
         <SettingsNavigationDrawerItem
-          label="Developers"
+          label="Desenvolvedores"
           path={SettingsPath.Developers}
           Icon={IconCode}
         />
@@ -160,7 +160,7 @@ export const SettingsNavigationDrawerItems = () => {
           />
         )}
         <SettingsNavigationDrawerItem
-          label="Integrations"
+          label="Integrações"
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
@@ -173,14 +173,14 @@ export const SettingsNavigationDrawerItems = () => {
         )}
       </NavigationDrawerSection>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Other" />
-        <SettingsNavigationDrawerItem
+        <NavigationDrawerSectionTitle label="Outros" />
+        {/* <SettingsNavigationDrawerItem
           label="Releases"
           path={SettingsPath.Releases}
           Icon={IconRocket}
-        />
+        /> */}
         <NavigationDrawerItem
-          label="Logout"
+          label="Sair"
           onClick={signOut}
           Icon={IconDoorEnter}
         />

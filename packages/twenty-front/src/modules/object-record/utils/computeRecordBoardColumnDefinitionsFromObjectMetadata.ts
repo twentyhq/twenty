@@ -42,7 +42,7 @@ export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
         actions: [
           {
             id: 'edit',
-            label: 'Edit from Settings',
+            label: 'Editar nas configurações',
             icon: IconSettings,
             position: 0,
             callback: navigateToSelectSettings,
@@ -53,7 +53,7 @@ export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
 
   const noValueColumn = {
     id: 'no-value',
-    title: 'No Value',
+    title: 'Sem Valor',
     type: RecordBoardColumnDefinitionType.NoValue,
     value: null,
     actions: [],

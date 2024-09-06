@@ -10,7 +10,7 @@ type SaveButtonProps = {
 export const SaveButton = ({ onSave, disabled }: SaveButtonProps) => {
   return (
     <Button
-      title="Save"
+      title="Salvar"
       variant="primary"
       size="small"
       accent="blue"

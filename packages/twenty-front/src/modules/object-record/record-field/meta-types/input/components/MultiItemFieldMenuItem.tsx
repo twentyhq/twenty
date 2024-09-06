@@ -77,19 +77,19 @@ export const MultiItemFieldMenuItem = <T,>({
                       {!isPrimary && (
                         <MenuItem
                           LeftIcon={IconBookmarkPlus}
-                          text="Set as Primary"
+                          text="Definir como Principal"
                           onClick={onSetAsPrimary}
                         />
                       )}
                       <MenuItem
                         LeftIcon={IconPencil}
-                        text="Edit"
+                        text="Editar"
                         onClick={onEdit}
                       />
                       <MenuItem
                         accent="danger"
                         LeftIcon={IconTrash}
-                        text="Delete"
+                        text="Excluir"
                         onClick={handleDeleteClick}
                       />
                     </DropdownMenuItemsContainer>

@@ -21,8 +21,8 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Creation date',
-    description: 'Creation date',
+    label: 'Data de criação',
+    description: 'Data de criação',
     icon: 'IconCalendar',
     defaultValue: 'now',
   })
@@ -31,8 +31,8 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Last update',
-    description: 'Last time the record was changed',
+    label: 'Última atualização',
+    description: 'Última vez que o registro foi alterado',
     icon: 'IconCalendarClock',
     defaultValue: 'now',
   })
@@ -41,8 +41,8 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Deleted at',
-    description: 'Date when the record was deleted',
+    label: 'Excluído em',
+    description: 'Data em que o registro foi excluído',
     icon: 'IconCalendarMinus',
   })
   @WorkspaceIsNullable()

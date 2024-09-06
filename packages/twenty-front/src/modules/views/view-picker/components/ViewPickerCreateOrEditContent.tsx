@@ -115,7 +115,7 @@ export const ViewPickerCreateOrEditContent = () => {
         StartIcon={viewPickerMode === 'create' ? IconX : IconChevronLeft}
         onClick={handleClose}
       >
-        {viewPickerMode === 'create' ? 'Create view' : 'Edit view'}
+        {viewPickerMode === 'create' ? 'Criar visualização' : 'Editar visualização'}
       </DropdownMenuHeader>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
@@ -139,7 +139,7 @@ export const ViewPickerCreateOrEditContent = () => {
           <StyledSelectContainer>
             <Select
               disableBlur
-              label="View type"
+              label="Tipo de visualização"
               fullWidth
               value={viewPickerType}
               onChange={(value) => {
@@ -147,7 +147,7 @@ export const ViewPickerCreateOrEditContent = () => {
                 setViewPickerType(value);
               }}
               options={[
-                { value: ViewType.Table, label: 'Table', Icon: IconTable },
+                { value: ViewType.Table, label: 'Tabela', Icon: IconTable },
                 {
                   value: ViewType.Kanban,
                   label: 'Kanban',
@@ -163,7 +163,7 @@ export const ViewPickerCreateOrEditContent = () => {
             <StyledSelectContainer>
               <Select
                 disableBlur
-                label="Stages"
+                label="Etapas"
                 fullWidth
                 value={viewPickerKanbanFieldMetadataId}
                 onChange={(value) => {
@@ -176,14 +176,14 @@ export const ViewPickerCreateOrEditContent = () => {
                         value: field.id,
                         label: field.label,
                       }))
-                    : [{ value: '', label: 'No Select field' }]
+                    : [{ value: '', label: 'Nenhum campo de seleção' }]
                 }
                 dropdownId={VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID}
               />
             </StyledSelectContainer>
             {availableFieldsForKanban.length === 0 && (
               <StyledNoKanbanFieldAvailableContainer>
-                Set up a Select field on Companies to create a Kanban
+                Configure um campo de Seleção em Empresas para criar um Kanban
               </StyledNoKanbanFieldAvailableContainer>
             )}
           </>

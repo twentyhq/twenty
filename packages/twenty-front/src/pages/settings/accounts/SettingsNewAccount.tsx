@@ -11,8 +11,8 @@ export const SettingsNewAccount = () => {
       title={
         <Breadcrumb
           links={[
-            { children: 'Accounts', href: '/settings/accounts' },
-            { children: `New` },
+            { children: 'Contas', href: '/settings/accounts' },
+            { children: `Novo` },
           ]}
         />
       }

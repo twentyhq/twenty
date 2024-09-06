@@ -307,7 +307,7 @@ export const CommandMenu = () => {
     id: 'copilot',
     to: '', // TODO
     Icon: IconSparkles,
-    label: 'Open Copilot',
+    label: 'Abrir Copilot',
     type: CommandType.Navigate,
     onCommandClick: () => {
       setCopilotQuery(commandMenuSearch);
@@ -334,7 +334,7 @@ export const CommandMenu = () => {
             <StyledInput
               autoFocus
               value={commandMenuSearch}
-              placeholder="Search"
+              placeholder="Pesquisar"
               onChange={handleSearchChange}
             />
             {!isMobile && (
@@ -374,7 +374,7 @@ export const CommandMenu = () => {
                     !companies.length &&
                     !notes.length &&
                     !opportunities.length && (
-                      <StyledEmpty>No results found</StyledEmpty>
+                      <StyledEmpty>Nenhum resultado encontrado</StyledEmpty>
                     )}
                   {isCopilotEnabled && (
                     <CommandGroup heading="Copilot">
@@ -392,7 +392,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     </CommandGroup>
                   )}
-                  <CommandGroup heading="Create">
+                  <CommandGroup heading="Criar">
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
                         <CommandMenuItem
@@ -408,7 +408,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Navigate">
+                  <CommandGroup heading="Navegar">
                     {matchingNavigateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
                         <CommandMenuItem
@@ -424,7 +424,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="People">
+                  <CommandGroup heading="Pessoas">
                     {people.map((person) => (
                       <SelectableItem itemId={person.id} key={person.id}>
                         <CommandMenuItem
@@ -450,7 +450,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Companies">
+                  <CommandGroup heading="Empresas">
                     {companies.map((company) => (
                       <SelectableItem itemId={company.id} key={company.id}>
                         <CommandMenuItem
@@ -471,7 +471,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Opportunities">
+                  <CommandGroup heading="Oportunidades">
                     {opportunities.map((opportunity) => (
                       <SelectableItem
                         itemId={opportunity.id}
@@ -494,7 +494,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Notes">
+                  <CommandGroup heading="Notas">
                     {notes.map((note) => (
                       <SelectableItem itemId={note.id} key={note.id}>
                         <CommandMenuItem

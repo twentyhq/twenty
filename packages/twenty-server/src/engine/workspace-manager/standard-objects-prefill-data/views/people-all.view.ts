@@ -9,7 +9,7 @@ export const peopleAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All',
+    name: 'Todos',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.person].id,
     type: 'table',
     key: 'INDEX',

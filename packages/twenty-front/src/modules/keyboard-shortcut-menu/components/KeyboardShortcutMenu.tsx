@@ -45,12 +45,12 @@ export const KeyboardShortcutMenu = () => {
     <>
       {isKeyboardShortcutMenuOpened && (
         <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>
-          <KeyboardMenuGroup heading="Table">
+          <KeyboardMenuGroup heading="Tabela">
             {KEYBOARD_SHORTCUTS_TABLE.map((TableShortcut, index) => (
               <KeyboardMenuItem shortcut={TableShortcut} key={index} />
             ))}
           </KeyboardMenuGroup>
-          <KeyboardMenuGroup heading="General">
+          <KeyboardMenuGroup heading="Geral">
             {KEYBOARD_SHORTCUTS_GENERAL.map((GeneralShortcut) => (
               <KeyboardMenuItem shortcut={GeneralShortcut} />
             ))}

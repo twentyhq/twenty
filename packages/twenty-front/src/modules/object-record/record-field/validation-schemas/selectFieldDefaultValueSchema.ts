@@ -13,7 +13,7 @@ export const selectFieldDefaultValueSchema = (
     .refine(
       (value) => optionValues.includes(stripSimpleQuotesFromString(value)),
       {
-        message: `String is not a valid select option, available options are: ${options.join(
+        message: `A string não é uma opção válida de seleção, as opções disponíveis são: ${options.join(
           ', ',
         )}`,
       },

@@ -27,18 +27,18 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
-    label: 'Name',
-    description: 'Name',
+    label: 'Nome',
+    description: 'Nome',
     type: FieldMetadataType.TEXT,
     icon: 'IconAbc',
-    defaultValue: "'Untitled'",
+    defaultValue: "'Sem título'",
   })
   name: string;
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
-    label: 'Position',
-    description: 'Position',
+    label: 'Posição',
+    description: 'Posição',
     type: FieldMetadataType.POSITION,
     icon: 'IconHierarchy2',
   })
@@ -49,9 +49,9 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Criado por',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'O criador do registro',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -61,10 +61,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,
-    label: 'Activities',
+    label: 'Atividades',
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) =>
-      `Activities tied to the ${objectMetadata.labelSingular}`,
+      `Atividades vinculadas ao ${objectMetadata.labelSingular}`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -74,10 +74,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,
-    label: 'Notes',
+    label: 'Notas',
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) =>
-      `Notes tied to the ${objectMetadata.labelSingular}`,
+      `Notas vinculadas ao ${objectMetadata.labelSingular}`,
     icon: 'IconNotes',
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -87,10 +87,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.taskTargets,
-    label: 'Tasks',
+    label: 'Tarefas',
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) =>
-      `Tasks tied to the ${objectMetadata.labelSingular}`,
+      `Tarefas vinculadas ao ${objectMetadata.labelSingular}`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -100,10 +100,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
-    label: 'Favorites',
+    label: 'Favoritos',
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) =>
-      `Favorites tied to the ${objectMetadata.labelSingular}`,
+      `Favoritos vinculados ao ${objectMetadata.labelSingular}`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -114,10 +114,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
+    label: 'Anexos',
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) =>
-      `Attachments tied to the ${objectMetadata.labelSingular}`,
+      `Anexos vinculados ao ${objectMetadata.labelSingular}`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -127,10 +127,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
-    label: 'Timeline Activities',
+    label: 'Atividades da Linha do Tempo',
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) =>
-      `Timeline Activities tied to the ${objectMetadata.labelSingular}`,
+      `Atividades da Linha do Tempo vinculadas ao ${objectMetadata.labelSingular}`,
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

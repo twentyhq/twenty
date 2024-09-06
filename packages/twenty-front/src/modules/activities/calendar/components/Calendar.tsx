@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { H3Title } from 'twenty-ui';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
@@ -100,11 +101,11 @@ export const Calendar = ({
         <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No Events
+            Nenhum Evento
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No events have been scheduled with this{' '}
-            {targetableObject.targetObjectNameSingular} yet.
+            Nenhum evento foi agendado com este(a){' '}
+            {targetableObject.targetObjectNameSingular} ainda.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
@@ -127,7 +128,7 @@ export const Calendar = ({
           const year = getYear(monthTime);
           const lastMonthTimeOfYear = monthTimesByYear[year]?.[0];
           const isLastMonthOfYear = lastMonthTimeOfYear === monthTime;
-          const monthLabel = format(monthTime, 'MMMM');
+          const monthLabel = format(monthTime, 'MMMM', { locale: ptBR });
 
           return (
             <Section key={monthTime}>

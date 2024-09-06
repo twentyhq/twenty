@@ -33,11 +33,11 @@ export const SettingsAccountsListEmptyStateCard = ({
 
   return (
     <Card>
-      <StyledHeader>{label || 'No connected account'}</StyledHeader>
+      <StyledHeader>{label || 'Nenhuma conta conectada'}</StyledHeader>
       <StyledBody>
         <Button
           Icon={IconGoogle}
-          title="Connect with Google"
+          title="Conecte-se com o Google"
           variant="secondary"
           onClick={handleOnClick}
         />

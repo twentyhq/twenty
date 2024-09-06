@@ -27,7 +27,7 @@ export const CustomResolverFetchMoreLoader = ({
 
   return (
     <div ref={tbodyRef}>
-      {loading && <StyledText>Loading more...</StyledText>}
+      {loading && <StyledText>Carregando mais...</StyledText>}
     </div>
   );
 };

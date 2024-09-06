@@ -3,16 +3,16 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
 export enum SettingsPageTitles {
-  Accounts = 'Account - Settings',
-  Appearance = 'Appearance - Settings',
-  Profile = 'Profile - Settings',
-  Objects = 'Data model - Settings',
-  Members = 'Members - Settings',
-  Developers = 'Developers - Settings',
-  Integration = 'Integrations - Settings',
-  ServerlessFunctions = 'Functions - Settings',
-  General = 'General - Settings',
-  Default = 'Settings',
+  Accounts = 'Conta - Configurações',
+  Appearance = 'Aparência - Configurações',
+  Profile = 'Perfil - Configurações',
+  Objects = 'Modelo de Dados - Configurações',
+  Members = 'Membros - Configurações',
+  Developers = 'Desenvolvedores - Configurações',
+  Integration = 'Integrações - Configurações',
+  ServerlessFunctions = 'Funções - Configurações',
+  General = 'Geral - Configurações',
+  Default = 'Configurações',
 }
 
 enum SettingsPathPrefixes {
@@ -40,15 +40,15 @@ export const getPageTitleFromPath = (pathname: string): string => {
   const pathnameOrPrefix = getPathnameOrPrefix(pathname);
   switch (pathnameOrPrefix) {
     case AppPath.Verify:
-      return 'Verify';
+      return 'Verificar';
     case AppPath.SignInUp:
-      return 'Sign in or Create an account';
+      return 'Entrar ou Criar uma conta';
     case AppPath.Invite:
-      return 'Invite';
+      return 'Convidar';
     case AppPath.CreateWorkspace:
-      return 'Create Workspace';
+      return 'Criar Workspace';
     case AppPath.CreateProfile:
-      return 'Create Profile';
+      return 'Criar Perfil';
     case SettingsPathPrefixes.Appearance:
       return SettingsPageTitles.Appearance;
     case SettingsPathPrefixes.Accounts:
@@ -68,6 +68,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case SettingsPathPrefixes.General:
       return SettingsPageTitles.General;
     default:
-      return 'Twenty';
+      return 'CRM - Digito Service';
   }
 };

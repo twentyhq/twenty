@@ -125,7 +125,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           title={
             <Breadcrumb
               links={[
-                { children: 'Developers', href: '/settings/developers' },
+                { children: 'Desenvolvedores', href: '/settings/developers' },
                 { children: `${apiKeyName} API Key` },
               ]}
             />
@@ -137,7 +137,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 <>
                   <H2Title
                     title="API Key"
-                    description="Copy this key as it will only be visible this one time"
+                    description="Copie esta key, pois será visível apenas uma vez"
                   />
                   <ApiKeyInput apiKey={apiKeyToken} />
                   <StyledInfo>
@@ -148,11 +148,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 <>
                   <H2Title
                     title="API Key"
-                    description="Regenerate an API key"
+                    description="Regenerar uma API key"
                   />
                   <StyledInputContainer>
                     <Button
-                      title="Regenerate Key"
+                      title="Regenerar Key"
                       Icon={IconRepeat}
                       onClick={() => setIsRegenerateKeyModalOpen(true)}
                     />
@@ -168,7 +168,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               )}
             </Section>
             <Section>
-              <H2Title title="Name" description="Name of your API key" />
+              <H2Title title="Nome" description="Nome da sua API key" />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
                 apiKeyId={apiKeyData?.id}
@@ -178,11 +178,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title="Expiration"
-                description="When the key will be diasbled"
+                title="Expiração"
+                description="Quando a key será desativada"
               />
               <TextInput
-                placeholder="E.g. backoffice integration"
+                placeholder="Ex: integração com backoffice"
                 value={formatExpiration(
                   apiKeyData?.expiresAt || '',
                   true,
@@ -194,13 +194,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title="Danger zone"
-                description="Delete this integration"
+                title="Zona de perigo"
+                description="Excluir esta integração"
               />
               <Button
                 accent="danger"
                 variant="secondary"
-                title="Delete"
+                title="Excluir"
                 Icon={IconTrash}
                 onClick={() => setIsDeleteApiKeyModalOpen(true)}
               />
@@ -213,31 +213,31 @@ export const SettingsDevelopersApiKeyDetail = () => {
         confirmationValue="yes"
         isOpen={isDeleteApiKeyModalOpen}
         setIsOpen={setIsDeleteApiKeyModalOpen}
-        title="Delete API key"
+        title="Excluir API key"
         subtitle={
           <>
-            Please type "yes" to confirm you want to delete this API Key. Be
-            aware that any script using this key will stop working.
+            Por favor, digite "yes" para confirmar que deseja excluir esta API Key. 
+            Esteja ciente de que qualquer script usando esta key deixará de funcionar.
           </>
         }
         onConfirmClick={deleteIntegration}
-        deleteButtonText="Delete"
+        deleteButtonText="Excluir"
       />
       <ConfirmationModal
         confirmationPlaceholder="yes"
         confirmationValue="yes"
         isOpen={isRegenerateKeyModalOpen}
         setIsOpen={setIsRegenerateKeyModalOpen}
-        title="Regenerate an API key"
+        title="Regenerar uma API key"
         subtitle={
           <>
-            If you’ve lost this key, you can regenerate it, but be aware that
-            any script using this key will need to be updated. Please type "yes"
-            to confirm.
+            Se você perdeu esta key, pode regenerá-la, mas esteja ciente de que 
+            qualquer script usando esta key precisará ser atualizado. Por favor, 
+            digite "yes" para confirmar.
           </>
         }
         onConfirmClick={regenerateApiKey}
-        deleteButtonText="Regenerate key"
+        deleteButtonText="Regenerar key"
       />
     </>
   );

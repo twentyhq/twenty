@@ -17,9 +17,9 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
 
   return (
     <InformationBanner
-      message={`Sync lost with mailbox ${accountToReconnect?.handle}. Please
-    reconnect for updates:`}
-      buttonTitle="Reconnect"
+      message={`Sincronização perdida com a mailbox ${accountToReconnect?.handle}. Por favor,
+    reconecte para atualizar:`}
+      buttonTitle="Reconectar"
       buttonIcon={IconRefresh}
       buttonOnClick={() => triggerGoogleApisOAuth()}
     />

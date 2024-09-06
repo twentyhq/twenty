@@ -23,7 +23,7 @@ export const EmailThreadMessageReceivers = ({
     .map((receiver) => getDisplayNameFromParticipant({ participant: receiver }))
     .join(', ');
 
-  const body = `to: ${displayedReceivers}`;
+  const body = `para: ${displayedReceivers}`;
 
   return (
     <StyledThreadMessageReceivers>

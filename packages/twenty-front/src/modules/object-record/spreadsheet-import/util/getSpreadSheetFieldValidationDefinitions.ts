@@ -28,7 +28,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               typeof lastName === 'string'
             );
           },
-          errorMessage: fieldName + ' must be a full name',
+          errorMessage: fieldName + ' deve ser um nome completo',
           level: 'error',
         },
       ];
@@ -37,7 +37,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
         {
           rule: 'regex',
           value: '^\\d+$',
-          errorMessage: fieldName + ' must be a number',
+          errorMessage: fieldName + ' deve ser um número',
           level: 'error',
         },
       ];
@@ -46,7 +46,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
         {
           rule: 'function',
           isValid: (value: string) => isValidPhoneNumber(value),
-          errorMessage: fieldName + ' is not valid',
+          errorMessage: fieldName + ' não é válido',
           level: 'error',
         },
       ];
@@ -55,7 +55,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
         {
           rule: 'function',
           isValid: (value: string) => isValidUuid(value),
-          errorMessage: fieldName + ' is not valid',
+          errorMessage: fieldName + ' não é válido',
           level: 'error',
         },
       ];

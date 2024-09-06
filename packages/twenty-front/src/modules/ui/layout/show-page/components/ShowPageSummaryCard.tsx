@@ -145,7 +145,7 @@ export const ShowPageSummaryCard = ({
         <StyledTitle isMobile={isMobile}>{title}</StyledTitle>
         {beautifiedCreatedAt && (
           <StyledDate isMobile={isMobile} id={dateElementId}>
-            Added {beautifiedCreatedAt}
+            Adicionado {beautifiedCreatedAt}
           </StyledDate>
         )}
         <AppTooltip

@@ -10,7 +10,7 @@ export const enum RecordBoardColumnDefinitionType {
 export type RecordBoardColumnDefinitionNoValue = {
   id: 'no-value';
   type: RecordBoardColumnDefinitionType.NoValue;
-  title: 'No Value';
+  title: 'Sem Valor';
   position: number;
   value: null;
   actions: RecordBoardColumnAction[];

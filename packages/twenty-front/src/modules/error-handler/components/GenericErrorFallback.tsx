@@ -39,7 +39,7 @@ export const GenericErrorFallback = ({
         <AnimatedPlaceholder type="errorIndex" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Server’s on a coffee break
+            Servidor em uma pausa para o café
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
             {error.message}
@@ -47,7 +47,7 @@ export const GenericErrorFallback = ({
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
           Icon={IconRefresh}
-          title="Reload"
+          title="Recarregar"
           variant={'secondary'}
           onClick={() => resetErrorBoundary()}
         />

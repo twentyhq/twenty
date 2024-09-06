@@ -27,7 +27,7 @@ export const RecordBoardColumnNewButton = () => {
   return (
     <StyledButton onClick={handleAddNewCardClick}>
       <IconPlus size={theme.icon.size.md} />
-      New
+      Novo
     </StyledButton>
   );
 };

@@ -21,17 +21,17 @@ export const RELATION_TYPES: Record<
   }
 > = {
   [RelationMetadataType.OneToMany]: {
-    label: 'Has many',
+    label: 'Tem muitos(as)',
     Icon: IconRelationOneToMany,
     imageSrc: OneToManySvg,
   },
   [RelationMetadataType.OneToOne]: {
-    label: 'Has one',
+    label: 'Tem um(a)',
     Icon: IconRelationOneToOne,
     imageSrc: OneToOneSvg,
   },
   MANY_TO_ONE: {
-    label: 'Belongs to one',
+    label: 'Pertence a um(a)',
     Icon: IconRelationManyToOne,
     imageSrc: OneToManySvg,
     isImageFlipped: true,

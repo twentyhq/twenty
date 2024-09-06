@@ -27,9 +27,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.task,
   namePlural: 'tasks',
-  labelSingular: 'Task',
-  labelPlural: 'Tasks',
-  description: 'A task',
+  labelSingular: 'Tarefa',
+  labelPlural: 'Tarefas',
+  description: 'Uma tarefa',
   icon: 'IconCheckbox',
   labelIdentifierStandardId: TASK_STANDARD_FIELD_IDS.title,
   softDelete: true,
@@ -38,8 +38,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Task record position',
+    label: 'Posição',
+    description: 'Posição do registro da tarefa',
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -49,8 +49,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
-    label: 'Title',
-    description: 'Task title',
+    label: 'Título',
+    description: 'Título da tarefa',
     icon: 'IconNotes',
   })
   title: string;
@@ -58,8 +58,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.RICH_TEXT,
-    label: 'Body',
-    description: 'Task body',
+    label: 'Descrição',
+    description: 'Descrição da tarefa',
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
@@ -68,8 +68,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Due Date',
-    description: 'Task due date',
+    label: 'Data de Vencimento',
+    description: 'Data de vencimento da tarefa',
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
@@ -79,20 +79,20 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: TASK_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: 'Status',
-    description: 'Task status',
+    description: 'Status da tarefa',
     icon: 'IconCheck',
     defaultValue: "'TODO'",
     options: [
-      { value: 'TODO', label: 'To do', position: 0, color: 'sky' },
+      { value: 'TODO', label: 'A Fazer', position: 0, color: 'sky' },
       {
         value: 'IN_PROGESS',
-        label: 'In progress',
+        label: 'Em Progresso',
         position: 1,
         color: 'purple',
       },
       {
         value: 'DONE',
-        label: 'Done',
+        label: 'Concluída',
         position: 1,
         color: 'green',
       },
@@ -104,9 +104,9 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Criado por',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'O criador do registro',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -116,8 +116,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.taskTargets,
-    label: 'Targets',
-    description: 'Task targets',
+    label: 'Alvos',
+    description: 'Alvos da tarefa',
     icon: 'IconCheckbox',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
@@ -129,8 +129,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
-    description: 'Task attachments',
+    label: 'Anexos',
+    description: 'Anexos da tarefa',
     icon: 'IconFileImport',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentWorkspaceEntity,
@@ -141,8 +141,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.assignee,
-    label: 'Assignee',
-    description: 'Task assignee',
+    label: 'Responsável',
+    description: 'Responsável pela tarefa',
     icon: 'IconUserCircle',
     type: RelationMetadataType.MANY_TO_ONE,
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
@@ -158,8 +158,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the task.',
+    label: 'Atividades de Linha do Tempo',
+    description: 'Atividades de linha do tempo vinculadas à tarefa.',
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -170,8 +170,8 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the task',
+    label: 'Favoritos',
+    description: 'Favoritos vinculados à tarefa',
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

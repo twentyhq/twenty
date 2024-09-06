@@ -120,7 +120,7 @@ export const RightDrawerEmailThread = () => {
   return (
     <StyledContainer>
       {threadLoading ? (
-        <EmailLoader loadingText="Loading thread" />
+        <EmailLoader loadingText="Carregando conversa" />
       ) : (
         <>
           <EmailThreadHeader
@@ -153,7 +153,7 @@ export const RightDrawerEmailThread = () => {
         <StyledButtonContainer>
           <Button
             onClick={handleReplyClick}
-            title="Reply (View in Gmail)"
+            title="Responder (Ver no Gmail)"
             Icon={IconArrowBackUp}
             disabled={!canReply}
           ></Button>

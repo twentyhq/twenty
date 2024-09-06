@@ -5,7 +5,7 @@ export const downloadFile = (fullPath: string, fileName: string) => {
     .then((resp) =>
       resp.status === 200
         ? resp.blob()
-        : Promise.reject('Failed downloading file'),
+        : Promise.reject('Falha ao baixar o arquivo'),
     )
     .then((blob) => {
       const url = window.URL.createObjectURL(blob);

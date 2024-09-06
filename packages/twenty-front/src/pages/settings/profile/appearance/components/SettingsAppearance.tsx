@@ -11,16 +11,16 @@ export const SettingsAppearance = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
-    <SubMenuTopBarContainer Icon={IconColorSwatch} title="Appearance">
+    <SubMenuTopBarContainer Icon={IconColorSwatch} title="Aparência">
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Theme" />
+          <H2Title title="Tema" />
           <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
         </Section>
         <Section>
           <H2Title
-            title="Date and time"
-            description="Configure how dates are displayed across the app"
+            title="Data e hora"
+            description="Configure como as datas são exibidas no aplicativo"
           />
           <DateTimeSettings />
         </Section>

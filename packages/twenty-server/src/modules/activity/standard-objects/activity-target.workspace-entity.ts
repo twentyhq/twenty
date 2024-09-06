@@ -19,9 +19,9 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.activityTarget,
   namePlural: 'activityTargets',
-  labelSingular: 'Activity Target',
-  labelPlural: 'Activity Targets',
-  description: 'An activity target',
+  labelSingular: 'Alvo da Atividade',
+  labelPlural: 'Alvos da Atividade',
+  description: 'Um alvo da atividade',
   icon: 'IconCheckbox',
 })
 @WorkspaceIsSystem()
@@ -29,8 +29,8 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.activity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Activity',
-    description: 'ActivityTarget activity',
+    label: 'Atividade',
+    description: 'Atividade do alvo',
     icon: 'IconNotes',
     inverseSideTarget: () => ActivityWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
@@ -44,8 +44,8 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
-    description: 'ActivityTarget person',
+    label: 'Pessoa',
+    description: 'Pessoa alvo da atividade',
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
@@ -59,8 +59,8 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
-    description: 'ActivityTarget company',
+    label: 'Empresa',
+    description: 'Empresa alvo da atividade',
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
@@ -74,8 +74,8 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.opportunity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Opportunity',
-    description: 'ActivityTarget opportunity',
+    label: 'Oportunidade',
+    description: 'Oportunidade alvo da atividade',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
@@ -92,7 +92,7 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
       standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.custom,
       name: oppositeObjectMetadata.nameSingular,
       label: oppositeObjectMetadata.labelSingular,
-      description: `ActivityTarget ${oppositeObjectMetadata.labelSingular}`,
+      description: `${oppositeObjectMetadata.labelSingular} alvo da atividade`,
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconBuildingSkyscraper',
     }),

@@ -37,19 +37,19 @@ const getDistantTableUpdatesText = (
   schemaPendingUpdates: DistantTableUpdate[],
 ) => {
   if (schemaPendingUpdates.includes(DistantTableUpdate.TableDeleted)) {
-    return 'Table has been deleted';
+    return 'A tabela foi excluída';
   }
   if (
     schemaPendingUpdates.includes(DistantTableUpdate.ColumnsAdded) &&
     schemaPendingUpdates.includes(DistantTableUpdate.ColumnsDeleted)
   ) {
-    return 'Columns have been added and other deleted';
+    return 'Colunas foram adicionadas e outras excluídas';
   }
   if (schemaPendingUpdates.includes(DistantTableUpdate.ColumnsAdded)) {
-    return 'Columns have been added';
+    return 'Colunas foram adicionadas';
   }
   if (schemaPendingUpdates.includes(DistantTableUpdate.ColumnsDeleted)) {
-    return 'Columns have been deleted';
+    return 'Colunas foram excluídas';
   }
   return null;
 };

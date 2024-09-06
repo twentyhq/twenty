@@ -98,7 +98,7 @@ export const ObjectFilterDropdownRecordSelect = ({
 
     const filterDisplayValue =
       selectedRecordNames.length > MAX_RECORDS_TO_DISPLAY
-        ? `${selectedRecordNames.length} companies`
+        ? `${selectedRecordNames.length} empresas`
         : selectedRecordNames.join(', ');
 
     if (

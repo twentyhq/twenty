@@ -116,7 +116,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
 
     const filterDisplayValue =
       selectedOptions.length > MAX_OPTIONS_TO_DISPLAY
-        ? `${selectedOptions.length} options`
+        ? `${selectedOptions.length} opções`
         : selectedOptions.map((option) => option.label).join(', ');
 
     if (
@@ -176,7 +176,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
           />
         ))}
       </DropdownMenuItemsContainer>
-      {showNoResult && <MenuItem text="No result" />}
+      {showNoResult && <MenuItem text="Nenhum resultado" />}
     </SelectableList>
   );
 };

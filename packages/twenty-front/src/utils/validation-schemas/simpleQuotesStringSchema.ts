@@ -10,6 +10,6 @@ export const simpleQuotesStringSchema: z.ZodType<
     (value: string): value is `'${string}'` =>
       value.startsWith("'") && value.endsWith("'"),
     {
-      message: 'String should be wrapped in simple quotes',
+      message: 'A string deve estar envolvida em aspas simples',
     },
   );

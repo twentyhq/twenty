@@ -51,7 +51,7 @@ export const DateTimeInput = ({
   isDateTimeInput,
   userTimezone,
 }: DateTimeInputProps) => {
-  const parsingFormat = isDateTimeInput ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy';
+  const parsingFormat = isDateTimeInput ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy';
 
   const [hasError, setHasError] = useState(false);
 
@@ -136,8 +136,8 @@ export const DateTimeInput = ({
       <StyledInput
         type="text"
         ref={ref as any}
-        placeholder={`Type date${
-          isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
+        placeholder={`Digite a data${
+          isDateTimeInput ? ' e hora' : ' (dd/mm/aaaa)'
         }`}
         value={value}
         onChange={() => {}} // Prevent React warning

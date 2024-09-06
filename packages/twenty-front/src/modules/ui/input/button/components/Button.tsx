@@ -400,7 +400,7 @@ export const Button = ({
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
-      {soon && <StyledSoonPill label="Soon" />}
+      {soon && <StyledSoonPill label="Em breve" />}
     </StyledButton>
   );
 };

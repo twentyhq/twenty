@@ -16,7 +16,7 @@ export const SettingsAccountsCalendarTimeFormatSelect = ({
 }: SettingsAccountsCalendarTimeFormatSelectProps) => (
   <Select
     dropdownId="settings-accounts-calendar-time-format"
-    label="Time format"
+    label="Formato de hora"
     fullWidth
     value={value}
     options={[

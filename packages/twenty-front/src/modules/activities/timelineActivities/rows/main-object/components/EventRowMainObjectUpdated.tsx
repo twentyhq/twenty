@@ -58,7 +58,7 @@ export const EventRowMainObjectUpdated = ({
       <StyledRowContainer>
         <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         <StyledEventRowItemAction>
-          updated
+          atualizou
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
@@ -71,7 +71,7 @@ export const EventRowMainObjectUpdated = ({
           {diffEntries.length > 1 && (
             <>
               <span>
-                {diffEntries.length} fields on {labelIdentifierValue}
+                {diffEntries.length} campos em {labelIdentifierValue}
               </span>
               <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
             </>

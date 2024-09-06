@@ -22,9 +22,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.activity,
   namePlural: 'activities',
-  labelSingular: 'Activity',
-  labelPlural: 'Activities',
-  description: 'An activity',
+  labelSingular: 'Atividade',
+  labelPlural: 'Atividades',
+  description: 'Uma atividade',
   icon: 'IconCheckbox',
   labelIdentifierStandardId: ACTIVITY_STANDARD_FIELD_IDS.title,
 })
@@ -33,8 +33,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
-    label: 'Title',
-    description: 'Activity title',
+    label: 'Título',
+    description: 'Título da atividade',
     icon: 'IconNotes',
   })
   title: string;
@@ -42,8 +42,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.TEXT,
-    label: 'Body',
-    description: 'Activity body',
+    label: 'Corpo',
+    description: 'Corpo da atividade',
     icon: 'IconList',
   })
   body: string;
@@ -51,18 +51,18 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
-    label: 'Type',
-    description: 'Activity type',
+    label: 'Tipo',
+    description: 'Tipo de atividade',
     icon: 'IconCheckbox',
-    defaultValue: "'Note'",
+    defaultValue: "'Nota'",
   })
   type: string;
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.reminderAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Reminder Date',
-    description: 'Activity reminder date',
+    label: 'Data de Lembrete',
+    description: 'Data de lembrete da atividade',
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
@@ -71,8 +71,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.dueAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Due Date',
-    description: 'Activity due date',
+    label: 'Data de Vencimento',
+    description: 'Data de vencimento da atividade',
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
@@ -81,8 +81,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.completedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Completion Date',
-    description: 'Activity completion date',
+    label: 'Data de Conclusão',
+    description: 'Data de conclusão da atividade',
     icon: 'IconCheck',
   })
   @WorkspaceIsNullable()
@@ -90,8 +90,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.activityTargets,
-    label: 'Targets',
-    description: 'Activity targets',
+    label: 'Alvos',
+    description: 'Alvos da atividade',
     icon: 'IconCheckbox',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
@@ -102,8 +102,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
-    description: 'Activity attachments',
+    label: 'Anexos',
+    description: 'Anexos da atividade',
     icon: 'IconFileImport',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentWorkspaceEntity,
@@ -114,8 +114,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.comments,
-    label: 'Comments',
-    description: 'Activity comments',
+    label: 'Comentários',
+    description: 'Comentários da atividade',
     icon: 'IconComment',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CommentWorkspaceEntity,
@@ -126,8 +126,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.author,
-    label: 'Author',
-    description: 'Activity author',
+    label: 'Autor',
+    description: 'Autor da atividade',
     icon: 'IconUserCircle',
     type: RelationMetadataType.MANY_TO_ONE,
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
@@ -142,8 +142,8 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.assignee,
-    label: 'Assignee',
-    description: 'Activity assignee',
+    label: 'Responsável',
+    description: 'Responsável pela atividade',
     icon: 'IconUserCircle',
     type: RelationMetadataType.MANY_TO_ONE,
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,

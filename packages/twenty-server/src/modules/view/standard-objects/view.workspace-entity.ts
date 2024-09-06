@@ -22,9 +22,9 @@ import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.view,
   namePlural: 'views',
-  labelSingular: 'View',
-  labelPlural: 'Views',
-  description: '(System) Views',
+  labelSingular: 'Visualização',
+  labelPlural: 'Visualizações',
+  description: '(Sistema) Visualizações',
   icon: 'IconLayoutCollage',
   labelIdentifierStandardId: VIEW_STANDARD_FIELD_IDS.name,
 })
@@ -34,24 +34,24 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'View name',
+    label: 'Nome',
+    description: 'Nome da visualização',
   })
   name: string;
 
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.objectMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Object Metadata Id',
-    description: 'View target object',
+    label: 'ID do Metadado do Objeto',
+    description: 'Objeto alvo da visualização',
   })
   objectMetadataId: string;
 
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
-    label: 'Type',
-    description: 'View type',
+    label: 'Tipo',
+    description: 'Tipo da visualização',
     defaultValue: "'table'",
   })
   type: string;
@@ -59,9 +59,9 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.key,
     type: FieldMetadataType.SELECT,
-    label: 'Key',
-    description: 'View key',
-    options: [{ value: 'INDEX', label: 'Index', position: 0, color: 'red' }],
+    label: 'Chave',
+    description: 'Chave da visualização',
+    options: [{ value: 'INDEX', label: 'Índice', position: 0, color: 'red' }],
     defaultValue: "'INDEX'",
   })
   @WorkspaceIsNullable()
@@ -70,8 +70,8 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.icon,
     type: FieldMetadataType.TEXT,
-    label: 'Icon',
-    description: 'View icon',
+    label: 'Ícone',
+    description: 'Ícone da visualização',
   })
   icon: string;
 
@@ -79,15 +79,15 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanFieldMetadataId,
     type: FieldMetadataType.TEXT,
     label: 'kanbanfieldMetadataId',
-    description: 'View Kanban column field',
+    description: 'Campo da coluna Kanban da visualização',
   })
   kanbanFieldMetadataId: string;
 
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'View position',
+    label: 'Posição',
+    description: 'Posição da visualização',
   })
   @WorkspaceIsNullable()
   position: number;
@@ -95,8 +95,8 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.isCompact,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Compact View',
-    description: 'Describes if the view is in compact mode',
+    label: 'Visualização Compacta',
+    description: 'Descreve se a visualização está no modo compacto',
     defaultValue: false,
   })
   isCompact: boolean;
@@ -104,8 +104,8 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFields,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'View Fields',
-    description: 'View Fields',
+    label: 'Campos da Visualização',
+    description: 'Campos da visualização',
     icon: 'IconTag',
     inverseSideTarget: () => ViewFieldWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -116,8 +116,8 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'View Filters',
-    description: 'View Filters',
+    label: 'Filtros da Visualização',
+    description: 'Filtros da visualização',
     icon: 'IconFilterBolt',
     inverseSideTarget: () => ViewFilterWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -128,8 +128,8 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewSorts,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'View Sorts',
-    description: 'View Sorts',
+    label: 'Ordenações da Visualização',
+    description: 'Ordenações da visualização',
     icon: 'IconArrowsSort',
     inverseSideTarget: () => ViewSortWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -140,8 +140,8 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the view',
+    label: 'Favoritos',
+    description: 'Favoritos vinculados à visualização',
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

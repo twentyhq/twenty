@@ -24,14 +24,14 @@ export const LightCopyIconButton = ({ copyText }: LightCopyIconButtonProps) => {
         className="copy-button"
         Icon={IconCopy}
         onClick={() => {
-          enqueueSnackBar('Text copied to clipboard', {
+          enqueueSnackBar('Texto copiado para a área de transferência', {
             variant: SnackBarVariant.Success,
             icon: <IconCopy size={theme.icon.size.md} />,
             duration: 2000,
           });
           navigator.clipboard.writeText(copyText);
         }}
-        aria-label="Copy to Clipboard"
+        aria-label="Copiar para a área de transferência"
       />
     </StyledButtonContainer>
   );

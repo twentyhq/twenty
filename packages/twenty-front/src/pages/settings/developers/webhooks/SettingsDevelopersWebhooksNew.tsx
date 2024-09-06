@@ -52,8 +52,8 @@ export const SettingsDevelopersWebhooksNew = () => {
       title={
         <Breadcrumb
           links={[
-            { children: 'Developers', href: '/settings/developers' },
-            { children: 'New webhook' },
+            { children: 'Desenvolvedores', href: '/settings/developers' },
+            { children: 'Novo webhook' },
           ]}
         />
       }
@@ -70,13 +70,13 @@ export const SettingsDevelopersWebhooksNew = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title="Endpoint URL"
-            description="We will send POST requests to this endpoint for every new event"
+            title="URL do Endpoint"
+            description="Enviaremos requisições POST para este endpoint para cada novo evento"
           />
           <TextInput
             placeholder="URL"
             value={formValues.targetUrl}
-            error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
+            error={!isTargetUrlValid ? 'Por favor, insira uma URL válida' : undefined}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleSave();

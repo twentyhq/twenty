@@ -16,7 +16,7 @@ export const getSettingsIntegrationAll = ({
   isStripeIntegrationActive: boolean;
 }): SettingsIntegrationCategory => ({
   key: 'all',
-  title: 'All',
+  title: 'Todos',
   integrations: [
     {
       from: {

@@ -154,10 +154,10 @@ export const IconPicker = ({
         dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
           <IconButton
-            ariaLabel={`Click to select icon ${
+            ariaLabel={`Clique para selecionar ícone ${
               selectedIconKey
-                ? `(selected: ${selectedIconKey})`
-                : `(no icon selected)`
+                ? `(selecionado: ${selectedIconKey})`
+                : `(nenhum ícone selecionado)`
             }`}
             disabled={disabled}
             Icon={selectedIconKey ? getIcon(selectedIconKey) : IconApps}
@@ -178,7 +178,7 @@ export const IconPicker = ({
           >
             <DropdownMenu width={176}>
               <DropdownMenuSearchInput
-                placeholder="Search icon"
+                placeholder="Pesquisar ícone"
                 autoFocus
                 onChange={(event) => {
                   setSearchString(event.target.value);

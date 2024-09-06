@@ -46,20 +46,20 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconUsers} title="Members">
+    <SubMenuTopBarContainer Icon={IconUsers} title="Membros">
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title="Invite by email"
-            description="Send an invite email to your team"
+            title="Convidar por email"
+            description="Envie um email de convite para sua equipe"
           />
           <WorkspaceInviteTeam />
         </Section>
         {currentWorkspace?.inviteHash && (
           <Section>
             <H2Title
-              title="Or send an invite link"
-              description="Copy and send an invite link directly"
+              title="Ou envie um link de convite"
+              description="Copie e envie um link de convite diretamente"
             />
             <WorkspaceInviteLink
               inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
@@ -68,8 +68,8 @@ export const SettingsWorkspaceMembers = () => {
         )}
         <Section>
           <H2Title
-            title="Members"
-            description="Manage the members of your space here"
+            title="Membros"
+            description="Gerencie os membros do seu workspace aqui"
           />
           {workspaceMembers?.map((member) => (
             <WorkspaceMemberCard
@@ -97,18 +97,18 @@ export const SettingsWorkspaceMembers = () => {
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         setIsOpen={setIsConfirmationModalOpen}
-        title="Account Deletion"
+        title="Exclusão de Conta"
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete this user
-            and remove them from all their assignements.
+            Esta ação não pode ser desfeita. Isso excluirá permanentemente este usuário
+            e o removerá de todas as suas atribuições.
           </>
         }
         onConfirmClick={() =>
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
-        deleteButtonText="Delete account"
+        deleteButtonText="Excluir conta"
       />
     </SubMenuTopBarContainer>
   );

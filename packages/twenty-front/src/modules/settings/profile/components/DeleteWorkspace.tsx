@@ -24,11 +24,11 @@ export const DeleteWorkspace = () => {
 
   return (
     <>
-      <H2Title title="Danger zone" description="Delete your whole workspace" />
+      <H2Title title="Zona de Perigo" description="Excluir seu workspace inteiro" />
       <Button
         accent="danger"
         variant="secondary"
-        title="Delete workspace"
+        title="Excluir workspace"
         Icon={IconTrash}
         onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
       />
@@ -38,15 +38,15 @@ export const DeleteWorkspace = () => {
         confirmationValue={userEmail}
         isOpen={isDeleteWorkSpaceModalOpen}
         setIsOpen={setIsDeleteWorkSpaceModalOpen}
-        title="Workspace Deletion"
+        title="Exclusão de Workspace"
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete your
-            entire workspace. <br /> Please type in your email to confirm.
+            Esta ação não pode ser desfeita. Isso excluirá permanentemente seu
+            workspace inteiro. <br /> Por favor, digite seu email para confirmar.
           </>
         }
         onConfirmClick={deleteWorkspace}
-        deleteButtonText="Delete workspace"
+        deleteButtonText="Excluir workspace"
       />
     </>
   );

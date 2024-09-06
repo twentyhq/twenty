@@ -23,7 +23,7 @@ export const EmailThreadNotShared = () => {
   return (
     <StyledContainer>
       <IconLock size={theme.icon.size.md} />
-      Not shared
+      Não compartilhado
     </StyledContainer>
   );
 };

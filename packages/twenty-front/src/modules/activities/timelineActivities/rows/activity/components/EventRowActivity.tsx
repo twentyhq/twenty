@@ -42,7 +42,7 @@ export const EventRowActivity = ({
     <>
       <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
       <StyledEventRowItemAction>
-        {`${eventAction} a related ${eventObject}`}
+        {`${eventAction} um(a) ${eventObject} relacionado(a)`}
       </StyledEventRowItemAction>
       {activityInStore ? (
         <StyledLinkedActivity

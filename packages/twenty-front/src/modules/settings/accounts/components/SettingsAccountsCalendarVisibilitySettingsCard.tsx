@@ -15,14 +15,14 @@ const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
 
 const eventSettingsVisibilityOptions = [
   {
-    title: 'Everything',
-    description: 'The whole event details will be shared with your team.',
+    title: 'Tudo',
+    description: 'Todos os detalhes do evento serão compartilhados com sua equipe.',
     value: CalendarChannelVisibility.ShareEverything,
     cardMedia: <StyledCardMedia subject="active" body="active" />,
   },
   {
-    title: 'Metadata',
-    description: 'Only date & participants will be shared with your team.',
+    title: 'Metadados',
+    description: 'Apenas a data e os participantes serão compartilhados com sua equipe.',
     value: CalendarChannelVisibility.Metadata,
     cardMedia: <StyledCardMedia subject="active" body="inactive" />,
   },

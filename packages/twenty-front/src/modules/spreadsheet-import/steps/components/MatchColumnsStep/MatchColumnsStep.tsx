@@ -192,8 +192,8 @@ export const MatchColumnsStep = <T extends string>({
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
-              enqueueSnackBar('Columns cannot duplicate', {
-                title: 'Another column unselected',
+              enqueueSnackBar('As colunas não podem ser duplicadas', {
+                title: 'Outra coluna desmarcada',
                 variant: SnackBarVariant.Error,
               });
               return setColumn(column);
@@ -274,21 +274,21 @@ export const MatchColumnsStep = <T extends string>({
   const handleOnContinue = useCallback(async () => {
     if (unmatchedRequiredFields.length > 0) {
       enqueueDialog({
-        title: 'Not all columns matched',
+        title: 'Nem todas as colunas foram mapeadas',
         message:
-          'There are required columns that are not matched or ignored. Do you want to continue?',
+          'Há colunas obrigatórias que não foram mapeadas ou foram ignoradas. Deseja continuar?',
         children: (
           <StyledColumnsContainer>
-            <StyledColumns>Columns not matched:</StyledColumns>
+            <StyledColumns>Colunas não mapeadas:</StyledColumns>
             {unmatchedRequiredFields.map((field) => (
               <StyledColumn key={field}>{field}</StyledColumn>
             ))}
           </StyledColumnsContainer>
         ),
         buttons: [
-          { title: 'Cancel' },
+          { title: 'Cancelar' },
           {
-            title: 'Continue',
+            title: 'Continuar',
             onClick: handleAlertOnContinue,
             variant: 'primary',
             role: 'confirm',
@@ -328,8 +328,8 @@ export const MatchColumnsStep = <T extends string>({
     <>
       <StyledContent>
         <Heading
-          title="Match Columns"
-          description="Select the correct field for each column you'd like to import."
+          title="Mapear Colunas"
+          description="Selecione o campo correto para cada coluna que você deseja importar."
         />
         <ColumnGrid
           columns={columns}
@@ -360,7 +360,7 @@ export const MatchColumnsStep = <T extends string>({
       <StepNavigationButton
         onClick={handleOnContinue}
         isLoading={isLoading}
-        title="Next Step"
+        title="Próximo Passo"
         onBack={() => {
           onBack?.();
           setColumns([]);

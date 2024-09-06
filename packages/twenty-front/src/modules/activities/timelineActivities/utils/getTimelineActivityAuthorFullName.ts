@@ -8,8 +8,8 @@ export const getTimelineActivityAuthorFullName = (
 ) => {
   if (isDefined(event.workspaceMember)) {
     return currentWorkspaceMember.id === event.workspaceMember.id
-      ? 'You'
+      ? 'Você'
       : `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`;
   }
-  return 'Twenty';
+  return 'CRM - Digito Service';
 };

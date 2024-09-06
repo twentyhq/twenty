@@ -30,7 +30,7 @@ export const EventRowMainObject = ({
           <StyledEventRowItemColumn>
             {labelIdentifierValue}
           </StyledEventRowItemColumn>
-          <StyledEventRowItemAction>was created by</StyledEventRowItemAction>
+          <StyledEventRowItemAction>foi criado por</StyledEventRowItemAction>
           <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         </StyledMainContainer>
       );
@@ -51,7 +51,7 @@ export const EventRowMainObject = ({
           <StyledEventRowItemColumn>
             {labelIdentifierValue}
           </StyledEventRowItemColumn>
-          <StyledEventRowItemAction>was deleted by</StyledEventRowItemAction>
+          <StyledEventRowItemAction>foi deletado por</StyledEventRowItemAction>
           <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         </StyledMainContainer>
       );

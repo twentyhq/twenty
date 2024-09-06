@@ -34,5 +34,5 @@ export const getDisplayNameFromParticipant = ({
     return participant.handle;
   }
 
-  return 'Unknown';
+  return 'Desconhecido';
 };

@@ -147,7 +147,7 @@ export const SelectInput = ({
             <MenuItemSelectTag
               key={`No ${clearLabel}`}
               selected={false}
-              text={`No ${clearLabel}`}
+              text={`Nenhum ${clearLabel}`}
               color="transparent"
               variant="outline"
               onClick={() => {

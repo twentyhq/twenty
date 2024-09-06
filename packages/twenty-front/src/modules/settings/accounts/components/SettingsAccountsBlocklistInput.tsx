@@ -30,18 +30,18 @@ const validationSchema = (blockedEmailOrDomainList: string[]) =>
       emailOrDomain: z
         .string()
         .trim()
-        .email('Invalid email or domain')
+        .email('Email ou domínio inválido')
         .or(
           z
             .string()
             .refine(
               (value) => value.startsWith('@') && isDomain(value.slice(1)),
-              'Invalid email or domain',
+              'Email ou domínio inválido',
             ),
         )
         .refine(
           (value) => !blockedEmailOrDomainList.includes(value),
-          'Email or domain is already in blocklist',
+          'O email ou domínio já está na blocklist',
         ),
     })
     .required();
@@ -89,7 +89,7 @@ export const SettingsAccountsBlocklistInput = ({
             control={control}
             render={({ field: { value, onChange }, fieldState: { error } }) => (
               <TextInput
-                placeholder="eddy@gmail.com, @apple.com"
+                placeholder="joao@acme.com, @acme.com"
                 value={value}
                 onChange={onChange}
                 error={error?.message}
@@ -99,7 +99,7 @@ export const SettingsAccountsBlocklistInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title="Add to blocklist" type="submit" />
+        <Button title="Adicionar à blocklist" type="submit" />
       </StyledContainer>
     </form>
   );

@@ -62,7 +62,7 @@ export const buildRecordFromImportedStructuredRow = (
             ),
             currencyCode:
               importedStructuredRow[`${currencyCodeLabel} (${field.name})`] ||
-              'USD',
+              'BRL',
           };
         }
         break;

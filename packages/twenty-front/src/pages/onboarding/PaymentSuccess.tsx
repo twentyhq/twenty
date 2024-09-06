@@ -47,11 +47,11 @@ export const PaymentSuccess = () => {
           <IconCheck color={color} size={24} stroke={3} />
         </StyledCheckContainer>
       </AnimatedEaseIn>
-      <Title>All set!</Title>
-      <SubTitle>Your account has been activated.</SubTitle>
+      <Title>Tudo pronto!</Title>
+      <SubTitle>Sua conta foi ativada.</SubTitle>
       <StyledButtonContainer>
         <UndecoratedLink to={AppPath.CreateWorkspace}>
-          <MainButton title="Start" width={200} />
+          <MainButton title="Iniciar" width={200} />
         </UndecoratedLink>
       </StyledButtonContainer>
     </>

@@ -79,7 +79,7 @@ export const SettingsNavigationCard = ({
           <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
           <StyledTitle disabled={disabled}>
             {title}
-            {soon && <Pill label="Soon" />}
+            {soon && <Pill label="Em breve" />}
           </StyledTitle>
           <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>

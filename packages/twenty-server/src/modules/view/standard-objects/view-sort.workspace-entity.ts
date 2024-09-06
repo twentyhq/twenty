@@ -17,9 +17,9 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewSort,
   namePlural: 'viewSorts',
-  labelSingular: 'View Sort',
-  labelPlural: 'View Sorts',
-  description: '(System) View Sorts',
+  labelSingular: 'Ordenação de Visualização',
+  labelPlural: 'Ordenações de Visualização',
+  description: '(Sistema) Ordenações de Visualização',
   icon: 'IconArrowsSort',
 })
 @WorkspaceIsNotAuditLogged()
@@ -28,8 +28,8 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
-    description: 'View Sort target field',
+    label: 'ID de Metadados do Campo',
+    description: 'Campo alvo da ordenação de visualização',
     icon: 'IconTag',
   })
   fieldMetadataId: string;
@@ -37,8 +37,8 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.TEXT,
-    label: 'Direction',
-    description: 'View Sort direction',
+    label: 'Direção',
+    description: 'Direção da ordenação de visualização',
     defaultValue: "'asc'",
   })
   direction: string;
@@ -46,8 +46,8 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View Sort related view',
+    label: 'Visualização',
+    description: 'Visualização relacionada à ordenação de visualização',
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewSorts',

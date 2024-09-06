@@ -6,7 +6,7 @@ export type ObjectTypeLabel =
   | RemoteObjectTypeLabel;
 
 type StandardObjectTypeLabel = {
-  labelText: 'Standard';
+  labelText: 'Padrão';
   labelColor: 'blue';
 };
 
@@ -16,7 +16,7 @@ type CustomObjectTypeLabel = {
 };
 
 type RemoteObjectTypeLabel = {
-  labelText: 'Remote';
+  labelText: 'Remoto';
   labelColor: 'green';
 };
 
@@ -30,10 +30,10 @@ export const getObjectTypeLabel = (
       }
     : objectMetadataItem.isRemote
       ? {
-          labelText: 'Remote',
+          labelText: 'Remoto',
           labelColor: 'green',
         }
       : {
-          labelText: 'Standard',
+          labelText: 'Padrão',
           labelColor: 'blue',
         };

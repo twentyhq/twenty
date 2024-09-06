@@ -24,16 +24,16 @@ type MenuItemSelectColorProps = {
 };
 
 export const colorLabels: Record<ThemeColor, string> = {
-  green: 'Green',
-  turquoise: 'Turquoise',
-  sky: 'Sky',
-  blue: 'Blue',
-  purple: 'Purple',
-  pink: 'Pink',
-  red: 'Red',
-  orange: 'Orange',
-  yellow: 'Yellow',
-  gray: 'Gray',
+  green: 'Verde',
+  turquoise: 'Turquesa',
+  sky: 'Céu',
+  blue: 'Azul',
+  purple: 'Roxo',
+  pink: 'Rosa',
+  red: 'Vermelho',
+  orange: 'Laranja',
+  yellow: 'Amarelo',
+  gray: 'Cinza',
 };
 
 export const MenuItemSelectColor = ({

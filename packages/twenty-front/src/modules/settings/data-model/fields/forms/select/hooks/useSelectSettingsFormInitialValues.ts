@@ -12,9 +12,9 @@ import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/sele
 const DEFAULT_OPTION: FieldMetadataItemOption = {
   color: 'green',
   id: v4(),
-  label: 'Option 1',
+  label: 'Opção 1',
   position: 0,
-  value: getOptionValueFromLabel('Option 1'),
+  value: getOptionValueFromLabel('Opção 1'),
 };
 
 export const useSelectSettingsFormInitialValues = ({

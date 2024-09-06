@@ -1,4 +1,5 @@
 import { formatInTimeZone } from 'date-fns-tz';
+import { ptBR } from 'date-fns/locale';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
@@ -20,12 +21,12 @@ export const DateTimeSettingsDateFormatSelect = ({
     <Select
       dropdownId="datetime-settings-date-format"
       dropdownWidth={218}
-      label="Date format"
+      label="Formato de data"
       fullWidth
       value={value}
       options={[
         {
-          label: `System settings`,
+          label: `Configurações do sistema`,
           value: DateFormat.SYSTEM,
         },
         {
@@ -33,6 +34,7 @@ export const DateTimeSettingsDateFormatSelect = ({
             Date.now(),
             setTimeZone,
             DateFormat.MONTH_FIRST,
+            { locale: ptBR },
           )}`,
           value: DateFormat.MONTH_FIRST,
         },
@@ -41,6 +43,7 @@ export const DateTimeSettingsDateFormatSelect = ({
             Date.now(),
             setTimeZone,
             DateFormat.DAY_FIRST,
+            { locale: ptBR },
           )}`,
           value: DateFormat.DAY_FIRST,
         },
@@ -49,6 +52,7 @@ export const DateTimeSettingsDateFormatSelect = ({
             Date.now(),
             setTimeZone,
             DateFormat.YEAR_FIRST,
+            { locale: ptBR },
           )}`,
           value: DateFormat.YEAR_FIRST,
         },

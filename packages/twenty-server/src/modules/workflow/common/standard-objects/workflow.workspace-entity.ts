@@ -29,19 +29,19 @@ export enum WorkflowStatus {
 const WorkflowStatusOptions = [
   {
     value: WorkflowStatus.DRAFT,
-    label: 'Draft',
+    label: 'Rascunho',
     position: 0,
     color: 'yellow',
   },
   {
     value: WorkflowStatus.ACTIVE,
-    label: 'Active',
+    label: 'Ativo',
     position: 1,
     color: 'green',
   },
   {
     value: WorkflowStatus.DEACTIVATED,
-    label: 'Deactivated',
+    label: 'Desativado',
     position: 2,
     color: 'grey',
   },
@@ -52,7 +52,7 @@ const WorkflowStatusOptions = [
   namePlural: 'workflows',
   labelSingular: 'Workflow',
   labelPlural: 'Workflows',
-  description: 'A workflow',
+  description: 'Um workflow',
   icon: 'IconSettingsAutomation',
   labelIdentifierStandardId: WORKFLOW_STANDARD_FIELD_IDS.name,
 })
@@ -63,8 +63,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The workflow name',
+    label: 'Nome',
+    description: 'O nome do workflow',
     icon: 'IconSettingsAutomation',
   })
   name: string;
@@ -72,8 +72,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId,
     type: FieldMetadataType.TEXT,
-    label: 'Last published Version Id',
-    description: 'The workflow last published version id',
+    label: 'ID da Última Versão Publicada',
+    description: 'O ID da última versão publicada do workflow',
     icon: 'IconVersions',
   })
   @WorkspaceIsNullable()
@@ -82,8 +82,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.statuses,
     type: FieldMetadataType.MULTI_SELECT,
-    label: 'Statuses',
-    description: 'The current statuses of the workflow versions',
+    label: 'Status',
+    description: 'Os status atuais das versões do workflow',
     options: WorkflowStatusOptions,
   })
   @WorkspaceIsNullable()
@@ -92,8 +92,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Workflow record position',
+    label: 'Posição',
+    description: 'Posição do registro do workflow',
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -104,8 +104,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.versions,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Versions',
-    description: 'Workflow versions linked to the workflow.',
+    label: 'Versões',
+    description: 'Versões do workflow vinculadas ao workflow.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -116,8 +116,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.runs,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Runs',
-    description: 'Workflow runs linked to the workflow.',
+    label: 'Execuções',
+    description: 'Execuções de workflow vinculadas ao workflow.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -128,8 +128,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.eventListeners,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Event Listeners',
-    description: 'Workflow event listeners linked to the workflow.',
+    label: 'Ouvintes de Evento',
+    description: 'Ouvintes de evento do workflow vinculados ao workflow.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowEventListenerWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -140,8 +140,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites linked to the contact',
+    label: 'Favoritos',
+    description: 'Favoritos vinculados ao contato',
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

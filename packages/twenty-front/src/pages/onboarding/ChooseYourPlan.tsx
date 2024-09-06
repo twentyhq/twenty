@@ -64,13 +64,13 @@ const StyledLinkGroup = styled.div`
 `;
 
 const benefits = [
-  'Full access',
-  'Unlimited contacts',
-  'Email integration',
-  'Custom objects',
-  'API & Webhooks',
-  'Frequent updates',
-  'And much more',
+  'Acesso Completo',
+  'Contatos Ilimitados',
+  'Integração de E-mail',
+  'Objetos Personalizados',
+  'API e Webhooks',
+  'Atualizações Frequentes',
+  'E muito mais',
 ];
 
 export const ChooseYourPlan = () => {
@@ -103,7 +103,7 @@ export const ChooseYourPlan = () => {
     prices: ProductPriceEntity[],
   ): string => {
     if (price.recurringInterval !== SubscriptionInterval.Year) {
-      return 'Cancel anytime';
+      return 'Cancele quando quiser';
     }
     const monthPrice = prices.filter(
       (price) => price.recurringInterval === SubscriptionInterval.Month,
@@ -115,9 +115,9 @@ export const ChooseYourPlan = () => {
       isNumber(price.unitAmount) &&
       price.unitAmount > 0
     ) {
-      return `Save $${(12 * monthPrice.unitAmount - price.unitAmount) / 100}`;
+      return `Economize US$${(12 * monthPrice.unitAmount - price.unitAmount) / 100}`;
     }
-    return 'Cancel anytime';
+    return 'Cancele quando quiser';
   };
 
   const handleButtonClick = async () => {
@@ -131,7 +131,7 @@ export const ChooseYourPlan = () => {
     setIsSubmitting(false);
     if (!data?.checkoutSession.url) {
       enqueueSnackBar(
-        'Checkout session error. Please retry or contact Twenty team',
+        'Erro na sessão de pagamento. Por favor, tente novamente ou entre em contato com a equipe Digito Service',
         {
           variant: SnackBarVariant.Error,
         },
@@ -144,9 +144,9 @@ export const ChooseYourPlan = () => {
   return (
     prices?.getProductPrices?.productPrices && (
       <>
-        <Title noMarginTop>Choose your Plan</Title>
+        <Title noMarginTop>Escolha seu plano</Title>
         <SubTitle>
-          Enjoy a {billing?.billingFreeTrialDurationInDays}-day free trial
+          Aproveite uma avaliação gratuita de {billing?.billingFreeTrialDurationInDays} dias
         </SubTitle>
         <StyledChoosePlanContainer>
           {prices.getProductPrices.productPrices.map((price, index) => (
@@ -156,7 +156,7 @@ export const ChooseYourPlan = () => {
               key={index}
             >
               <SubscriptionCard
-                type={price.recurringInterval}
+                type={price.recurringInterval === SubscriptionInterval.Month ? 'Mês' : 'Ano'}
                 price={price.unitAmount / 100}
                 info={computeInfo(price, prices.getProductPrices.productPrices)}
               />
@@ -169,17 +169,17 @@ export const ChooseYourPlan = () => {
           ))}
         </StyledBenefitsContainer>
         <MainButton
-          title="Continue"
+          title="Continuar"
           onClick={handleButtonClick}
           width={200}
           Icon={() => isSubmitting && <Loader />}
           disabled={isSubmitting}
         />
         <StyledLinkGroup>
-          <ActionLink onClick={signOut}>Log out</ActionLink>
+          <ActionLink onClick={signOut}>Sair</ActionLink>
           <span />
           <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
-            Book a Call
+            Agende uma Ligação
           </ActionLink>
         </StyledLinkGroup>
       </>

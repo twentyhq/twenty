@@ -85,9 +85,9 @@ export const DropZone = ({
             stroke={theme.icon.stroke.sm}
             size={theme.icon.size.lg}
           />
-          <StyledUploadDragTitle>Upload a file</StyledUploadDragTitle>
+          <StyledUploadDragTitle>Enviar um arquivo</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>
-            Drag and Drop Here
+            Arraste e Solte Aqui
           </StyledUploadDragSubTitle>
         </>
       )}

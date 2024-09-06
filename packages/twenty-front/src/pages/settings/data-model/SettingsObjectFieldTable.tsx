@@ -24,19 +24,19 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObje
     tableId: 'settingsObjectDetail',
     fields: [
       {
-        fieldLabel: 'Name',
+        fieldLabel: 'Nome',
         fieldName: 'label',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Field type',
+        fieldLabel: 'Tipo de campo',
         fieldName: 'fieldType',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Data type',
+        fieldLabel: 'Tipo de dados',
         fieldName: 'dataType',
         fieldType: 'string',
         align: 'left',
@@ -53,19 +53,19 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObject
     tableId: 'settingsObjectDetail',
     fields: [
       {
-        fieldLabel: 'Name',
+        fieldLabel: 'Nome',
         fieldName: 'label',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Identifier',
+        fieldLabel: 'Identificador',
         fieldName: 'identifierType',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Data type',
+        fieldLabel: 'Tipo de dados',
         fieldName: 'dataType',
         fieldType: 'string',
         align: 'left',
@@ -176,7 +176,7 @@ export const SettingsObjectFieldTable = ({
     <>
       <StyledSearchInput
         LeftIcon={IconSearch}
-        placeholder="Search a field..."
+        placeholder="Buscar um campo..."
         value={searchTerm}
         onChange={setSearchTerm}
       />
@@ -194,7 +194,7 @@ export const SettingsObjectFieldTable = ({
           <TableHeader></TableHeader>
         </StyledObjectFieldTableRow>
         {isNonEmptyArray(filteredActiveItems) && (
-          <TableSection title="Active">
+          <TableSection title="Ativos">
             {filteredActiveItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
@@ -208,7 +208,7 @@ export const SettingsObjectFieldTable = ({
         {isNonEmptyArray(filteredDisabledItems) && (
           <TableSection
             isInitiallyExpanded={mode === 'new-field' ? true : false}
-            title="Inactive"
+            title="Inativos"
           >
             {filteredDisabledItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow

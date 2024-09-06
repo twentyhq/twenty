@@ -113,7 +113,7 @@ export const FileBlock = createReactBlockSpec(
             />
             <Button
               onClick={handleUploadFileClick}
-              title="Upload File"
+              title="Enviar Arquivo"
             ></Button>
           </StyledUploadFileContainer>
         </AppThemeProvider>

@@ -19,10 +19,10 @@ export const DeleteInactiveWorkspaceEmail = (
   );
   return (
     <BaseEmail width={350}>
-      <Title value="Dead Workspaces 😵 that should be deleted" />
+      <Title value="Workspaces inativos 😵 que devem ser deletados" />
       <MainText>
-        List of <b>workspaceIds</b> inactive since at least{' '}
-        <b>{minDaysSinceInactive} days</b>:
+        Lista de <b>workspaceIds</b> inativos desde pelo menos{' '}
+        <b>{minDaysSinceInactive} dias</b>:
         <Section>
           {workspacesToDelete.map((workspaceToDelete) => {
             return (

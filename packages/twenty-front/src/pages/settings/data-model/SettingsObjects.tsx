@@ -134,12 +134,12 @@ export const SettingsObjects = () => {
   return (
     <SubMenuTopBarContainer
       Icon={IconHierarchy2}
-      title="Data model"
+      title="Modelo de Dados"
       actionButton={
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
-            title="Add object"
+            title="Adicionar objeto"
             accent="blue"
             size="small"
           />
@@ -150,11 +150,11 @@ export const SettingsObjects = () => {
         <>
           <SettingsObjectCoverImage />
           <Section>
-            <H2Title title="Existing objects" />
+            <H2Title title="Objetos existentes" />
 
             <StyledSearchInput
               LeftIcon={IconSearch}
-              placeholder="Search an object..."
+              placeholder="Pesquisar um objeto..."
               value={searchTerm}
               onChange={setSearchTerm}
             />
@@ -176,7 +176,7 @@ export const SettingsObjects = () => {
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
               {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
-                <TableSection title="Active">
+                <TableSection title="Ativos">
                   {filteredActiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
@@ -200,7 +200,7 @@ export const SettingsObjects = () => {
                 </TableSection>
               )}
               {isNonEmptyArray(inactiveObjectMetadataItems) && (
-                <TableSection title="Inactive">
+                <TableSection title="Inativos">
                   {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow

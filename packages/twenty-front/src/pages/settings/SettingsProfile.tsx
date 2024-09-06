@@ -10,20 +10,20 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsProfile = () => (
-  <SubMenuTopBarContainer Icon={IconUserCircle} title="Profile">
+  <SubMenuTopBarContainer Icon={IconUserCircle} title="Perfil">
     <SettingsPageContainer>
       <Section>
-        <H2Title title="Picture" />
+        <H2Title title="Imagem" />
         <ProfilePictureUploader />
       </Section>
       <Section>
-        <H2Title title="Name" description="Your name as it will be displayed" />
+        <H2Title title="Nome" description="Seu nome como será exibido" />
         <NameFields />
       </Section>
       <Section>
         <H2Title
           title="Email"
-          description="The email associated to your account"
+          description="O email associado à sua conta"
         />
         <EmailField />
       </Section>

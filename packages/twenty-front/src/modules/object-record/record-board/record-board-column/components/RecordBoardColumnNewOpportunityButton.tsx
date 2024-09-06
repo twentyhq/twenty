@@ -45,7 +45,7 @@ export const RecordBoardColumnNewOpportunityButton = () => {
       ) : (
         <StyledButton onClick={handleAddNewOpportunityClick}>
           <IconPlus size={theme.icon.size.md} />
-          New
+          Novo
         </StyledButton>
       )}
     </>

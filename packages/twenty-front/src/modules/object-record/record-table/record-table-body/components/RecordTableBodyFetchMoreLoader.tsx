@@ -55,7 +55,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
   return (
     <tr ref={tbodyRef}>
       <td colSpan={7}>
-        <StyledText>Loading more...</StyledText>
+        <StyledText>Carregando mais...</StyledText>
       </td>
       <td colSpan={7} />
     </tr>

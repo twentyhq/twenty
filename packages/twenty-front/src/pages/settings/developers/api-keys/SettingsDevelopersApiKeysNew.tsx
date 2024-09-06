@@ -68,8 +68,8 @@ export const SettingsDevelopersApiKeysNew = () => {
       title={
         <Breadcrumb
           links={[
-            { children: 'Developers', href: '/settings/developers' },
-            { children: 'New API Key' },
+            { children: 'Desenvolvedores', href: '/settings/developers' },
+            { children: 'Nova API Key' },
           ]}
         />
       }
@@ -85,9 +85,9 @@ export const SettingsDevelopersApiKeysNew = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Name" description="Name of your API key" />
+          <H2Title title="Nome" description="Nome da sua API key" />
           <TextInput
-            placeholder="E.g. backoffice integration"
+            placeholder="Ex: integração com backoffice"
             value={formValues.name}
             onKeyDown={(e) => {
               if (e.key === Key.Enter) {
@@ -105,8 +105,8 @@ export const SettingsDevelopersApiKeysNew = () => {
         </Section>
         <Section>
           <H2Title
-            title="Expiration Date"
-            description="When the API key will expire."
+            title="Data de Expiração"
+            description="Quando a API key irá expirar."
           />
           <Select
             dropdownId="object-field-type-select"

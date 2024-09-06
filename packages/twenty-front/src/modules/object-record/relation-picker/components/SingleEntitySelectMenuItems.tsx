@@ -61,7 +61,7 @@ export const SingleEntitySelectMenuItems = ({
     ? {
         __typename: '',
         id: 'add-new',
-        name: 'Add New',
+        name: 'Adicionar Novo',
       }
     : null;
 
@@ -142,13 +142,13 @@ export const SingleEntitySelectMenuItems = ({
             <DropdownMenuSkeletonItem />
           ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
             <>
-              <MenuItem text="No result" />
+              <MenuItem text="Nenhum resultado" />
               {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
               <CreateNewButton
                 key="add-new"
                 onClick={onCreate}
                 LeftIcon={IconPlus}
-                text="Add New"
+                text="Adicionar Novo"
                 hovered={isSelectedAddNewButton}
               />
             </>
@@ -163,7 +163,7 @@ export const SingleEntitySelectMenuItems = ({
                         key={entity.id}
                         onClick={onCreate}
                         LeftIcon={IconPlus}
-                        text="Add New"
+                        text="Adicionar Novo"
                         hovered={isSelectedAddNewButton}
                       />
                     </>

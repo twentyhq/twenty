@@ -17,7 +17,7 @@ export const SupportDropdown = () => {
   };
 
   const handleUserGuide = () => {
-    window.open('https://twenty.com/user-guide', '_blank');
+    window.open('https://digitoservice.com/docs/user-guide', '_blank');
     closeDropdown();
   };
 
@@ -31,12 +31,12 @@ export const SupportDropdown = () => {
         <DropdownMenu width="160px">
           <DropdownMenuItemsContainer>
             <MenuItem
-              text="Talk to us"
+              text="Fale conosco"
               LeftIcon={IconMessage}
               onClick={handleTalkToUs}
             />
             <MenuItem
-              text="Documentation"
+              text="Documentação"
               LeftIcon={IconHelpCircle}
               onClick={handleUserGuide}
             />

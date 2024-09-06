@@ -19,20 +19,20 @@ export const SettingsDevelopers = () => {
   return (
     <SubMenuTopBarContainer
       Icon={IconCode}
-      title="Developers"
+      title="Desenvolvedores"
       actionButton={<SettingsReadDocumentationButton />}
     >
       <SettingsPageContainer>
         <Section>
           <H2Title
             title="API keys"
-            description="Active APIs keys created by you or your team."
+            description="APIs keys ativas criadas por você ou sua equipe."
           />
           <SettingsApiKeysTable />
           <StyledButtonContainer>
             <Button
               Icon={IconPlus}
-              title="Create API key"
+              title="Criar API key"
               size="small"
               variant="secondary"
               to={'/settings/developers/api-keys/new'}
@@ -42,13 +42,13 @@ export const SettingsDevelopers = () => {
         <Section>
           <H2Title
             title="Webhooks"
-            description="Establish Webhook endpoints for notifications on asynchronous events."
+            description="Estabeleça endpoints de Webhook para notificações em eventos assíncronos."
           />
           <SettingsWebhooksTable />
           <StyledButtonContainer>
             <Button
               Icon={IconPlus}
-              title="Create Webhook"
+              title="Criar Webhook"
               size="small"
               variant="secondary"
               to={'/settings/developers/webhooks/new'}

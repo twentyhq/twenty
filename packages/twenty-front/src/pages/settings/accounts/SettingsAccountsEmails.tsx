@@ -11,7 +11,7 @@ export const SettingsAccountsEmails = () => (
     title={
       <Breadcrumb
         links={[
-          { children: 'Accounts', href: '/settings/accounts' },
+          { children: 'Contas', href: '/settings/accounts' },
           { children: 'Emails' },
         ]}
       />

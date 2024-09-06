@@ -9,7 +9,7 @@ export const tasksByStatusView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'By status',
+    name: 'Por Status',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.task].id,
     type: 'kanban',
     key: null,

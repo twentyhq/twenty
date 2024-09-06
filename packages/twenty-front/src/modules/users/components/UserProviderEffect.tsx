@@ -64,7 +64,7 @@ export const UserProviderEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
-        locale: workspaceMember.locale ?? 'en',
+        locale: workspaceMember.locale ?? 'pt-BR',
       };
     };
 

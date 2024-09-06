@@ -6,7 +6,7 @@ export const opportunitiesByStageView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'By Stage',
+    name: 'Por Etapa',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].id,
     type: 'kanban',
     key: null,

@@ -28,7 +28,7 @@ export const CountrySelect = ({
       fullWidth
       dropdownId={SELECT_COUNTRY_DROPDOWN_ID}
       options={options}
-      label="COUNTRY"
+      label="PAÍS"
       withSearchInput
       onChange={onChange}
       value={selectedCountryName}

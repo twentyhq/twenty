@@ -22,9 +22,9 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
   namePlural: 'messageChannelMessageAssociations',
-  labelSingular: 'Message Channel Message Association',
-  labelPlural: 'Message Channel Message Associations',
-  description: 'Message Synced with a Message Channel',
+  labelSingular: 'Associação de Canal de Mensagem',
+  labelPlural: 'Associações de Canal de Mensagem',
+  description: 'Mensagem sincronizada com um Canal de Mensagem',
   icon: 'IconMessage',
 })
 @WorkspaceIsNotAuditLogged()
@@ -34,8 +34,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Message External Id',
-    description: 'Message id from the messaging provider',
+    label: 'ID Externo da Mensagem',
+    description: 'ID da mensagem do provedor de mensagens',
     icon: 'IconHash',
   })
   @WorkspaceIsNullable()
@@ -45,8 +45,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Thread External Id',
-    description: 'Thread id from the messaging provider',
+    label: 'ID Externo do Tópico',
+    description: 'ID do tópico do provedor de mensagens',
     icon: 'IconHash',
   })
   @WorkspaceIsNullable()
@@ -55,19 +55,19 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.SELECT,
-    label: 'Direction',
-    description: 'Message Direction',
+    label: 'Direção',
+    description: 'Direção da mensagem',
     icon: 'IconDirection',
     options: [
       {
         value: MessageDirection.INCOMING,
-        label: 'Incoming',
+        label: 'Entrada',
         position: 0,
         color: 'green',
       },
       {
         value: MessageDirection.OUTGOING,
-        label: 'Outgoing',
+        label: 'Saída',
         position: 1,
         color: 'blue',
       },
@@ -80,8 +80,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageChannel,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Channel Id',
-    description: 'Message Channel Id',
+    label: 'ID do Canal de Mensagem',
+    description: 'ID do Canal de Mensagem',
     icon: 'IconHash',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
     inverseSideFieldKey: 'messageChannelMessageAssociations',
@@ -95,8 +95,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   @WorkspaceRelation({
     standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Id',
-    description: 'Message Id',
+    label: 'ID da Mensagem',
+    description: 'ID da Mensagem',
     icon: 'IconHash',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageChannelMessageAssociations',

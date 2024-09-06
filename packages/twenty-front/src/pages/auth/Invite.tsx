@@ -30,7 +30,7 @@ export const Invite = () => {
   const { switchWorkspace } = useWorkspaceSwitching();
 
   const title = useMemo(() => {
-    return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
+    return `Junte-se à equipe ${workspaceFromInviteHash?.displayName ?? ''}`;
   }, [workspaceFromInviteHash?.displayName]);
 
   const handleUserJoinWorkspace = async () => {
@@ -66,7 +66,7 @@ export const Invite = () => {
         <>
           <StyledContentContainer>
             <MainButton
-              title="Continue"
+              title="Continuar"
               type="submit"
               onClick={handleUserJoinWorkspace}
               Icon={() => form.formState.isSubmitting && <Loader />}
@@ -74,21 +74,21 @@ export const Invite = () => {
             />
           </StyledContentContainer>
           <FooterNote>
-            By using Twenty, you agree to the{' '}
+            Ao usar os serviços da Digito Service, você concorda com os{' '}
             <a
-              href="https://twenty.com/legal/terms"
+              href="https://digitoservice.com/legal/terms"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Terms of Service
+              Termos de Serviço
             </a>{' '}
-            and{' '}
+            e{' '}
             <a
-              href="https://twenty.com/legal/privacy"
+              href="https://digitoservice.com/legal/privacy"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Privacy Policy
+              Política de Privacidade
             </a>
             .
           </FooterNote>

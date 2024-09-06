@@ -211,7 +211,7 @@ export const SettingsDataModelFieldSelectForm = ({
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainer>
-              <StyledLabel>Options</StyledLabel>
+              <StyledLabel>Opções</StyledLabel>
               <DraggableList
                 onDragEnd={(result) => handleDragEnd(options, result, onChange)}
                 draggableItems={
@@ -275,7 +275,7 @@ export const SettingsDataModelFieldSelectForm = ({
             </StyledContainer>
             <StyledFooter>
               <StyledButton
-                title="Add option"
+                title="Adicionar opção"
                 Icon={IconPlus}
                 onClick={handleAddOption}
               />

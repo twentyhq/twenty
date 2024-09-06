@@ -7,10 +7,10 @@ export const SettingsNewAccountSection = () => {
   return (
     <Section>
       <H2Title
-        title="New account"
-        description="Connect a new account to your workspace"
+        title="Nova conta"
+        description="Conecte uma nova conta ao seu workspace"
       />
-      <SettingsAccountsListEmptyStateCard label="Connect a Google account" />
+      <SettingsAccountsListEmptyStateCard label="Conectar uma conta Google" />
     </Section>
   );
 };

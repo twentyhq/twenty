@@ -156,7 +156,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           'EMAIL_FROM_NAME',
         )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
         to: email,
-        subject: 'Join your team on Twenty',
+        subject: 'Junta-te à tua Equipa no CRM',
         text,
         html,
       });

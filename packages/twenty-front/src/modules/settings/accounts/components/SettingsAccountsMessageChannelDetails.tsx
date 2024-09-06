@@ -80,8 +80,8 @@ export const SettingsAccountsMessageChannelDetails = ({
     <StyledDetailsContainer>
       <Section>
         <H2Title
-          title="Visibility"
-          description="Define what will be visible to other users in your workspace"
+          title="Visibilidade"
+          description="Defina o que será visível para outros usuários no seu workspace"
         />
         <SettingsAccountsMessageVisibilityCard
           value={messageChannel.visibility}
@@ -90,8 +90,8 @@ export const SettingsAccountsMessageChannelDetails = ({
       </Section>
       <Section>
         <H2Title
-          title="Contact auto-creation"
-          description="Automatically create People records when receiving or sending emails"
+          title="Criação automática de contatos"
+          description="Crie automaticamente registros de Pessoas ao receber ou enviar emails"
         />
         <SettingsAccountsMessageAutoCreationCard
           value={messageChannel.contactAutoCreationPolicy}
@@ -102,14 +102,14 @@ export const SettingsAccountsMessageChannelDetails = ({
         <SettingsAccountsToggleSettingCard
           parameters={[
             {
-              title: 'Exclude non-professional emails',
-              description: 'Don’t sync emails from/to Gmail, Outlook...',
+              title: 'Excluir emails não profissionais',
+              description: 'Não sincronizar emails de/para Gmail, Outlook...',
               value: !!messageChannel.excludeNonProfessionalEmails,
               onToggle: handleIsNonProfessionalEmailExcludedToggle,
             },
             {
-              title: 'Exclude group emails',
-              description: 'Don’t sync emails from team@ support@ noreply@...',
+              title: 'Excluir emails de grupos',
+              description: 'Não sincronizar emails de team@ support@ noreply@...',
               value: !!messageChannel.excludeGroupEmails,
               onToggle: handleIsGroupEmailExcludedToggle,
             },

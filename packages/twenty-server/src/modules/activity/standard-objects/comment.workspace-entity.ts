@@ -16,9 +16,9 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.comment,
   namePlural: 'comments',
-  labelSingular: 'Comment',
-  labelPlural: 'Comments',
-  description: 'A comment',
+  labelSingular: 'Comentário',
+  labelPlural: 'Comentários',
+  description: 'Um comentário',
   icon: 'IconMessageCircle',
 })
 @WorkspaceIsSystem()
@@ -26,8 +26,8 @@ export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMMENT_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.TEXT,
-    label: 'Body',
-    description: 'Comment body',
+    label: 'Corpo',
+    description: 'Corpo do comentário',
     icon: 'IconLink',
   })
   body: string;
@@ -35,8 +35,8 @@ export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMMENT_STANDARD_FIELD_IDS.author,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Author',
-    description: 'Comment author',
+    label: 'Autor',
+    description: 'Autor do comentário',
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredComments',
@@ -49,8 +49,8 @@ export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMMENT_STANDARD_FIELD_IDS.activity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Activity',
-    description: 'Comment activity',
+    label: 'Atividade',
+    description: 'Atividade do comentário',
     icon: 'IconNotes',
     inverseSideTarget: () => ActivityWorkspaceEntity,
     inverseSideFieldKey: 'comments',

@@ -22,7 +22,7 @@ export const RecordDetailDuplicatesSection = ({
 
   return (
     <RecordDetailSection>
-      <RecordDetailSectionHeader title="Duplicates" />
+      <RecordDetailSectionHeader title="Duplicados" />
       <RecordDetailRecordsList>
         {queryResults[0].slice(0, 5).map((duplicateRecord) => (
           <RecordDetailRecordsListItem key={duplicateRecord.id}>
