@@ -1,0 +1,60 @@
+version: "1.0"
+name: crm
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+    volumes:
+      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
+      - docker-data:/app/docker-data
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: ${PORT:-3000}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:3000/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+    command: ["yarn", "worker:prod"]
+    environment:
+      ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    restart: always
+
+  db:
+    build:
+      context: .
+      dockerfile: packages/twenty-docker/twenty-postgres/Dockerfile
+    volumes:
+      - db-data:/bitnami/postgresql
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+    healthcheck:
+      test: pg_isready -U postgres -d default
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+volumes:
+  docker-data:
+  db-data:
+  server-local-data:
