@@ -30,19 +30,16 @@ export default defineConfig(({ command, mode }) => {
   };
 
   if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
-    // eslint-disable-next-line no-console
     console.log(
       `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
     );
   }
 
   if (VITE_DISABLE_ESLINT_CHECKER === 'true') {
-    // eslint-disable-next-line no-console
     console.log(`VITE_DISABLE_ESLINT_CHECKER: ${VITE_DISABLE_ESLINT_CHECKER}`);
   }
 
   if (VITE_BUILD_SOURCEMAP === 'true') {
-    // eslint-disable-next-line no-console
     console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
   }
 
