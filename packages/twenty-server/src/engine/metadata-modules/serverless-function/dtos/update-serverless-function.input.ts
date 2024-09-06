@@ -14,7 +14,6 @@ export class UpdateServerlessFunctionInput {
   id: string;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   name: string;
 

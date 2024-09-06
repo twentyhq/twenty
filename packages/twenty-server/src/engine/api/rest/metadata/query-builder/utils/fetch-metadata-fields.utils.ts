@@ -1,4 +1,28 @@
 export const fetchMetadataFields = (objectNamePlural: string) => {
+  const fromRelations = `
+          toObjectMetadata {
+            id
+            dataSourceId
+            nameSingular
+            namePlural
+            isSystem
+            isRemote
+          }
+          toFieldMetadataId
+        `;
+
+  const toRelations = `
+          fromObjectMetadata {
+            id
+            dataSourceId
+            nameSingular
+            namePlural
+            isSystem
+            isRemote
+          }
+          fromFieldMetadataId
+        `;
+
   const fields = `
           type
           name
@@ -14,26 +38,12 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
           fromRelationMetadata {
             id
             relationType
-            toObjectMetadata {
-              id
-              dataSourceId
-              nameSingular
-              namePlural
-              isSystem
-            }
-            toFieldMetadataId
+            ${fromRelations}
           }
           toRelationMetadata {
             id
             relationType
-            fromObjectMetadata {
-              id
-              dataSourceId
-              nameSingular
-              namePlural
-              isSystem
-            }
-            fromFieldMetadataId
+            ${toRelations}
           }
           defaultValue
           options
@@ -69,25 +79,10 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
       return fields;
     case 'relations':
       return `
+          id
           relationType
-          fromObjectMetadata {
-            id
-            dataSourceId
-            nameSingular
-            namePlural
-            isSystem
-          }
-          fromObjectMetadataId
-          toObjectMetadata {
-            id
-            dataSourceId
-            nameSingular
-            namePlural
-            isSystem
-          }
-          toObjectMetadataId
-          fromFieldMetadataId
-          toFieldMetadataId
+          ${fromRelations}
+          ${toRelations}
         `;
   }
 };

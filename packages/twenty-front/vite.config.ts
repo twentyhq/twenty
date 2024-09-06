@@ -127,5 +127,11 @@ export default defineConfig(({ command, mode }) => {
         localsConvention: 'camelCaseOnly',
       },
     },
+
+    resolve: {
+      alias: {
+        path: 'rollup-plugin-node-polyfills/polyfills/path',
+      },
+    },
   };
 });

@@ -7,6 +7,7 @@ import {
   IconMail,
   IconNotes,
   IconPaperclip,
+  IconSettings,
   IconTimelineEvent,
 } from 'twenty-ui';
 
@@ -22,6 +23,8 @@ import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/Show
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { Workflow } from '@/workflow/components/Workflow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -95,6 +98,12 @@ export const ShowPageRightContainer = ({
     CoreObjectNameSingular.Person,
   ].includes(targetObjectNameSingular);
 
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isWorkflow =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.Workflow;
+
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
@@ -122,7 +131,7 @@ export const ShowPageRightContainer = ({
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isInRightDrawer,
+      hide: !timeline || isInRightDrawer || isWorkflow,
     },
     {
       id: 'tasks',
@@ -133,7 +142,8 @@ export const ShowPageRightContainer = ({
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Task,
+          CoreObjectNameSingular.Task ||
+        isWorkflow,
     },
     {
       id: 'notes',
@@ -144,13 +154,14 @@ export const ShowPageRightContainer = ({
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Task,
+          CoreObjectNameSingular.Task ||
+        isWorkflow,
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: !notes,
+      hide: !notes || isWorkflow,
     },
     {
       id: 'emails',
@@ -163,6 +174,12 @@ export const ShowPageRightContainer = ({
       title: 'Calendar',
       Icon: IconCalendarEvent,
       hide: !shouldDisplayCalendarTab,
+    },
+    {
+      id: 'workflow',
+      title: 'Workflow',
+      Icon: IconSettings,
+      hide: !isWorkflow,
     },
   ];
   const renderActiveTabContent = () => {
@@ -202,6 +219,8 @@ export const ShowPageRightContainer = ({
         return <EmailThreads targetableObject={targetableObject} />;
       case 'calendar':
         return <Calendar targetableObject={targetableObject} />;
+      case 'workflow':
+        return <Workflow targetableObject={targetableObject} />;
       default:
         return <></>;
     }

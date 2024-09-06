@@ -20,6 +20,8 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
+import { isDefined } from 'src/utils/is-defined';
+
 import { StorageDriver } from './interfaces/storage-driver.interface';
 
 export interface S3DriverOptions extends S3ClientConfig {
@@ -191,35 +193,80 @@ export class S3Driver implements StorageDriver {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
+    if (!params.from.filename && params.to.filename) {
+      throw new Error('Cannot copy folder to file');
+    }
+
     const fromKey = `${params.from.folderPath}/${params.from.filename || ''}`;
     const toKey = `${params.to.folderPath}/${params.to.filename || ''}`;
 
-    try {
-      // Check if the source file exists
-      await this.s3Client.send(
-        new HeadObjectCommand({
-          Bucket: this.bucketName,
-          Key: fromKey,
-        }),
+    if (isDefined(params.from.filename)) {
+      try {
+        // Check if the source file exists
+        await this.s3Client.send(
+          new HeadObjectCommand({
+            Bucket: this.bucketName,
+            Key: fromKey,
+          }),
+        );
+
+        // Copy the object to the new location
+        await this.s3Client.send(
+          new CopyObjectCommand({
+            CopySource: `${this.bucketName}/${fromKey}`,
+            Bucket: this.bucketName,
+            Key: toKey,
+          }),
+        );
+
+        return;
+      } catch (error) {
+        if (error.name === 'NotFound') {
+          throw new FileStorageException(
+            'File not found',
+            FileStorageExceptionCode.FILE_NOT_FOUND,
+          );
+        }
+        // For other errors, throw the original error
+        throw error;
+      }
+    }
+
+    const listedObjects = await this.s3Client.send(
+      new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: fromKey,
+      }),
+    );
+
+    if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+      throw new Error('No objects found in the source folder.');
+    }
+
+    for (const object of listedObjects.Contents) {
+      const match = object.Key?.match(/(.*)\/(.*)/);
+
+      if (!isDefined(match)) {
+        continue;
+      }
+      const fromFolderPath = match[1];
+      const filename = match[2];
+      const toFolderPath = fromFolderPath.replace(
+        params.from.folderPath,
+        params.to.folderPath,
       );
 
-      // Copy the object to the new location
-      await this.s3Client.send(
-        new CopyObjectCommand({
-          CopySource: `${this.bucketName}/${fromKey}`,
-          Bucket: this.bucketName,
-          Key: toKey,
-        }),
-      );
-    } catch (error) {
-      if (error.name === 'NotFound') {
-        throw new FileStorageException(
-          'File not found',
-          FileStorageExceptionCode.FILE_NOT_FOUND,
-        );
+      if (!isDefined(toFolderPath)) {
+        continue;
       }
-      // For other errors, throw the original error
-      throw error;
+
+      await this.copy({
+        from: {
+          folderPath: fromFolderPath,
+          filename,
+        },
+        to: { folderPath: toFolderPath, filename },
+      });
     }
   }
 

@@ -25,6 +25,12 @@ const StyledNameTableCell = styled(TableCell)`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledNameLabel = styled.div`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
 const StyledActionTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -46,9 +52,15 @@ export const SettingsObjectMetadataItemTableRow = ({
     <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
       <StyledNameTableCell>
         {!!Icon && (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon
+            style={{ minWidth: theme.icon.size.md }}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         )}
-        {objectMetadataItem.labelPlural}
+        <StyledNameLabel title={objectMetadataItem.labelPlural}>
+          {objectMetadataItem.labelPlural}
+        </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
         <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />

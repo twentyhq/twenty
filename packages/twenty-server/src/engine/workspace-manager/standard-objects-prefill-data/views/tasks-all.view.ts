@@ -12,7 +12,7 @@ export const tasksAllView = async (
     name: 'All Tasks',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.task].id,
     type: 'table',
-    key: null,
+    key: 'INDEX',
     position: 0,
     icon: 'IconCheckbox',
     kanbanFieldMetadataId: '',
