@@ -9,6 +9,7 @@ import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/f
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
+import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
 import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
@@ -31,6 +32,14 @@ const currencyFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Currency) })
   .merge(settingsDataModelFieldCurrencyFormSchema);
 
+const dateFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Date) })
+  .merge(settingsDataModelFieldDateFormSchema);
+
+const dateTimeFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.DateTime) })
+  .merge(settingsDataModelFieldDateFormSchema);
+
 const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Relation) })
   .merge(settingsDataModelFieldRelationFormSchema);
@@ -52,6 +61,8 @@ const otherFieldsFormSchema = z.object({
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
         FieldMetadataType.MultiSelect,
+        FieldMetadataType.Date,
+        FieldMetadataType.DateTime,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
   ),
@@ -62,6 +73,8 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   [
     booleanFieldFormSchema,
     currencyFieldFormSchema,
+    dateFieldFormSchema,
+    dateTimeFieldFormSchema,
     relationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,

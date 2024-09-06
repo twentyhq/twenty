@@ -54,6 +54,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
       )
       .nullable()
       .optional(),
+    settings: z.any().optional(),
     relationDefinition: z
       .object({
         __typename: z.literal('RelationDefinition').optional(),

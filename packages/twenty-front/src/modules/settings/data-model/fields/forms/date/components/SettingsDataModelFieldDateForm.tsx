@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 // import { dateFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/dateFieldDefaultValueSchema';
+import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
@@ -29,14 +30,17 @@ export const SettingsDataModelFieldDateForm = ({
 }: SettingsDataModelFieldDateFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
-  // const { dislpayAsRelativeDate } = useDateSettingsFormInitialValues({ fieldMetadataItem });
+  const { initialDisplayAsRelativeDateValue } =
+    useDateSettingsFormInitialValues({
+      fieldMetadataItem,
+    });
 
   return (
     <CardContent>
       <Controller
         name="settings.displayAsRelativeDate"
         control={control}
-        defaultValue={false}
+        defaultValue={initialDisplayAsRelativeDateValue}
         render={({ field: { onChange, value } }) => (
           <div>
             Display as relative date
