@@ -1,5 +1,5 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
@@ -8,8 +8,8 @@ import { CountrySelect } from '@/ui/input/components/internal/country/components
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { isDefined } from '~/utils/isDefined';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledAddressContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -27,7 +27,7 @@ const StyledAddressContainer = styled.div`
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     min-width: 100px;
-    max-width: 240px;
+    max-width: 200px;
     overflow: hidden;
     > div {
       margin-bottom: 8px;
