@@ -47,7 +47,7 @@ export const useAddNewOpportunity = (position: string) => {
   );
 
   const handleAddNewOpportunityClick = useCallback(() => {
-    if (isDefined(isOpportunitiesCompanyFieldDisabled)) {
+    if (isOpportunitiesCompanyFieldDisabled) {
       handleEntitySelect();
     } else {
       setIsCreatingCard(true);
