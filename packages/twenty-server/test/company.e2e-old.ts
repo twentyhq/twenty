@@ -1,6 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 
 import request from 'supertest';
+import {
+  readPreviousResponseTime,
+  storeResponseTime,
+} from 'test/utils/response-time-storage';
 
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 
@@ -102,6 +106,44 @@ describe('CompanyResolver (e2e)', () => {
         const instagramCompany = data.find((c) => c.name === 'Instagram');
 
         expect(instagramCompany).toBeUndefined();
+      });
+  });
+
+  it('find many company response time', () => {
+    const start = Date.now();
+    const queryData = {
+      query: `
+        query FindManyCompany {
+          findManyCompany {
+            id
+            name
+            domainName
+            address {
+              addressCity
+            }
+          }
+        }
+      `,
+    };
+
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send(queryData)
+      .expect(200)
+      .expect(() => {
+        const duration = Date.now() - start;
+        const previousResponseTime = readPreviousResponseTime();
+
+        storeResponseTime(duration);
+
+        if (previousResponseTime !== null) {
+          // Define the 10% threshold
+          const allowedMaxTime = previousResponseTime * 1.1;
+
+          expect(duration).toBeLessThan(allowedMaxTime);
+        } else {
+          console.log('No previous response time found.');
+        }
       });
   });
 

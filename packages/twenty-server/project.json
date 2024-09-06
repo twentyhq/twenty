@@ -108,6 +108,13 @@
         "command": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand"
       }
     },
+    "jest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "jest"
+      }
+    },
     "test:e2e": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],

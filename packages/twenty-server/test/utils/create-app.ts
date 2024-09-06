@@ -43,14 +43,15 @@ export const createApp = async (
   }
 
   const mockAuthHandler: RequestHandler = (req, _res, next) => {
-    req.user = {
-      user: mockUser,
-      workspace: mockWorkspace,
-    };
+    req.user = mockUser as any;
+    req.workspace = mockWorkspace as any;
+    req.workspaceId = mockWorkspace.id;
     next();
   };
 
   app.use(mockAuthHandler);
 
-  return [await app.init(), moduleFixture];
+  await app.init();
+
+  return [app, moduleFixture];
 };
