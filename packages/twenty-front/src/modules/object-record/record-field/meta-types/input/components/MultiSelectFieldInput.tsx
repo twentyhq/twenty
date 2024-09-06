@@ -33,7 +33,7 @@ export const MultiSelectFieldInput = ({
   const { selectedItemIdState } = useSelectableListStates({
     selectableListScopeId: MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   });
-  const { handleResetSelectedPosition } = useSelectableList(
+  const { resetSelectedItem } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
   const { persistField, fieldDefinition, fieldValues, hotkeyScope } =
@@ -65,10 +65,10 @@ export const MultiSelectFieldInput = ({
     Key.Escape,
     () => {
       onCancel?.();
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
     hotkeyScope,
-    [onCancel, handleResetSelectedPosition],
+    [onCancel, resetSelectedItem],
   );
 
   useListenClickOutside({
@@ -83,7 +83,7 @@ export const MultiSelectFieldInput = ({
       if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
         onCancel();
       }
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
   });
 

@@ -17,7 +17,6 @@ import { LLMTracingModule } from 'src/engine/integrations/llm-tracing/llm-tracin
 import { llmTracingModuleFactory } from 'src/engine/integrations/llm-tracing/llm-tracing.module-factory';
 import { loggerModuleFactory } from 'src/engine/integrations/logger/logger.module-factory';
 import { messageQueueModuleFactory } from 'src/engine/integrations/message-queue/message-queue.module-factory';
-import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 import { serverlessModuleFactory } from 'src/engine/integrations/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.module';
 
@@ -68,11 +67,7 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     }),
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
-      inject: [
-        EnvironmentService,
-        FileStorageService,
-        BuildDirectoryManagerService,
-      ],
+      inject: [EnvironmentService, FileStorageService],
     }),
   ],
   exports: [],

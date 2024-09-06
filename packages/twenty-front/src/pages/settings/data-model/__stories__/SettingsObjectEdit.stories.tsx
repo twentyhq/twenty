@@ -34,6 +34,6 @@ export const StandardObject: Story = {
 
 export const CustomObject: Story = {
   args: {
-    routeParams: { ':objectSlug': 'listings' },
+    routeParams: { ':objectSlug': 'my-custom-objects' },
   },
 };

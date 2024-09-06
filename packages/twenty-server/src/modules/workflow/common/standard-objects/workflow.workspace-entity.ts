@@ -18,11 +18,34 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  WorkflowVersionStatus,
-  WorkflowVersionStatusOptions,
-  WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+
+export enum WorkflowStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+}
+
+const WorkflowStatusOptions = [
+  {
+    value: WorkflowStatus.DRAFT,
+    label: 'Draft',
+    position: 0,
+    color: 'yellow',
+  },
+  {
+    value: WorkflowStatus.ACTIVE,
+    label: 'Active',
+    position: 1,
+    color: 'green',
+  },
+  {
+    value: WorkflowStatus.DEACTIVATED,
+    label: 'Deactivated',
+    position: 2,
+    color: 'grey',
+  },
+];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflow,
@@ -61,10 +84,10 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.MULTI_SELECT,
     label: 'Statuses',
     description: 'The current statuses of the workflow versions',
-    options: WorkflowVersionStatusOptions,
+    options: WorkflowStatusOptions,
   })
   @WorkspaceIsNullable()
-  statuses: WorkflowVersionStatus[] | null;
+  statuses: WorkflowStatus[] | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.position,

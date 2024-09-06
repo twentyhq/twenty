@@ -1,20 +1,21 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { Any, ILike } from 'typeorm';
+import { And, Any, ILike, In, Not, Or } from 'typeorm';
 
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
-export type BlocklistItemDeleteCalendarEventsJobData = {
-  workspaceId: string;
-  blocklistItemId: string;
-};
+export type BlocklistItemDeleteCalendarEventsJobData = WorkspaceEventBatch<
+  ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
+>;
 
 @Processor({
   queueName: MessageQueue.calendarQueue,
@@ -27,77 +28,133 @@ export class BlocklistItemDeleteCalendarEventsJob {
 
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
-    private readonly blocklistRepository: BlocklistRepository,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
   @Process(BlocklistItemDeleteCalendarEventsJob.name)
   async handle(data: BlocklistItemDeleteCalendarEventsJobData): Promise<void> {
-    const { workspaceId, blocklistItemId } = data;
+    const workspaceId = data.workspaceId;
 
-    const blocklistItem = await this.blocklistRepository.getById(
-      blocklistItemId,
-      workspaceId,
+    const blocklistItemIds = data.events.map(
+      (eventPayload) => eventPayload.recordId,
     );
 
-    if (!blocklistItem) {
-      this.logger.log(
-        `Blocklist item with id ${blocklistItemId} not found in workspace ${workspaceId}`,
+    const blocklistRepository =
+      await this.twentyORMManager.getRepository<BlocklistWorkspaceEntity>(
+        'blocklist',
       );
 
-      return;
-    }
-
-    const { handle, workspaceMemberId } = blocklistItem;
-
-    this.logger.log(
-      `Deleting calendar events from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
-    );
-
-    if (!workspaceMemberId) {
-      throw new Error(
-        `Workspace member ID is undefined for blocklist item ${blocklistItemId} in workspace ${workspaceId}`,
-      );
-    }
-
-    const calendarChannelRepository =
-      await this.twentyORMManager.getRepository('calendarChannel');
-
-    const calendarChannels = await calendarChannelRepository.find({
+    const blocklist = await blocklistRepository.find({
       where: {
-        connectedAccount: {
-          accountOwnerId: workspaceMemberId,
-        },
+        id: Any(blocklistItemIds),
       },
     });
 
-    const calendarChannelIds = calendarChannels.map(({ id }) => id);
+    const handlesToDeleteByWorkspaceMemberIdMap = blocklist.reduce(
+      (acc, blocklistItem) => {
+        const { handle, workspaceMemberId } = blocklistItem;
 
-    const isHandleDomain = handle.startsWith('@');
+        if (!acc.has(workspaceMemberId)) {
+          acc.set(workspaceMemberId, []);
+        }
+
+        acc.get(workspaceMemberId)?.push(handle);
+
+        return acc;
+      },
+      new Map<string, string[]>(),
+    );
+
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
 
     const calendarChannelEventAssociationRepository =
-      await this.twentyORMManager.getRepository(
+      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
         'calendarChannelEventAssociation',
       );
 
-    await calendarChannelEventAssociationRepository.delete({
-      calendarEvent: {
-        calendarEventParticipants: {
-          handle: isHandleDomain ? ILike(`%${handle}`) : handle,
+    for (const workspaceMemberId of handlesToDeleteByWorkspaceMemberIdMap.keys()) {
+      const handles =
+        handlesToDeleteByWorkspaceMemberIdMap.get(workspaceMemberId);
+
+      if (!handles) {
+        continue;
+      }
+
+      this.logger.log(
+        `Deleting calendar events from ${handles.join(
+          ', ',
+        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
+      );
+
+      const calendarChannels = await calendarChannelRepository.find({
+        select: {
+          id: true,
+          handle: true,
+          connectedAccount: {
+            handleAliases: true,
+          },
         },
-        calendarChannelEventAssociations: {
-          calendarChannelId: Any(calendarChannelIds),
+        where: {
+          connectedAccount: {
+            accountOwnerId: workspaceMemberId,
+          },
         },
-      },
-    });
+        relations: ['connectedAccount'],
+      });
+
+      for (const calendarChannel of calendarChannels) {
+        const calendarChannelHandles = [calendarChannel.handle];
+
+        if (calendarChannel.connectedAccount.handleAliases) {
+          calendarChannelHandles.push(
+            ...calendarChannel.connectedAccount.handleAliases.split(','),
+          );
+        }
+
+        const handleConditions = handles.map((handle) => {
+          const isHandleDomain = handle.startsWith('@');
+
+          return isHandleDomain
+            ? {
+                handle: And(
+                  Or(ILike(`%${handle}`), ILike(`%.${handle.slice(1)}`)),
+                  Not(In(calendarChannelHandles)),
+                ),
+              }
+            : { handle };
+        });
+
+        const calendarEventsAssociationsToDelete =
+          await calendarChannelEventAssociationRepository.find({
+            where: {
+              calendarChannelId: calendarChannel.id,
+              calendarEvent: {
+                calendarEventParticipants: handleConditions,
+              },
+            },
+          });
+
+        if (calendarEventsAssociationsToDelete.length === 0) {
+          continue;
+        }
+
+        await calendarChannelEventAssociationRepository.delete(
+          calendarEventsAssociationsToDelete.map(({ id }) => id),
+        );
+      }
+
+      this.logger.log(
+        `Deleted calendar events from handle ${handles.join(
+          ', ',
+        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
+      );
+    }
 
     await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
       workspaceId,
-    );
-
-    this.logger.log(
-      `Deleted calendar events from handle ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
     );
   }
 }

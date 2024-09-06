@@ -51,9 +51,6 @@ const config: StorybookConfig = {
 
     return mergeConfig(config, {
       // Add dependencies to pre-optimization
-      optimizeDeps: {
-        exclude: ['@tabler/icons-react'],
-      },
     });
   },
 };

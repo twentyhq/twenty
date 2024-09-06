@@ -42,6 +42,7 @@ const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 const StyledSearchInput = styled(TextInput)`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 export const SettingsObjects = () => {

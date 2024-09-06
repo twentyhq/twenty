@@ -34,7 +34,7 @@ export class MessagingFullMessageListFetchService {
   ) {
     try {
       await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
-        messageChannel.id,
+        [messageChannel.id],
       );
 
       const { messageExternalIds, nextSyncCursor } =
@@ -95,9 +95,9 @@ export class MessagingFullMessageListFetchService {
         },
       );
 
-      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+      await this.messageChannelSyncStatusService.scheduleMessagesImport([
         messageChannel.id,
-      );
+      ]);
     } catch (error) {
       await this.messageImportErrorHandlerService.handleDriverException(
         error,

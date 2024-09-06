@@ -12,6 +12,20 @@ export const getRequestBody = (name: string) => {
   };
 };
 
+export const getUpdateRequestBody = (name: string) => {
+  return {
+    description: 'body',
+    required: true,
+    content: {
+      'application/json': {
+        schema: {
+          $ref: `#/components/schemas/${name} for Update`,
+        },
+      },
+    },
+  };
+};
+
 export const getArrayRequestBody = (name: string) => {
   return {
     required: true,
@@ -45,10 +59,6 @@ export const getFindDuplicatesRequestBody = (name: string) => {
             },
             ids: {
               type: 'array',
-              items: {
-                type: 'string',
-                format: 'uuid',
-              },
             },
           },
         },

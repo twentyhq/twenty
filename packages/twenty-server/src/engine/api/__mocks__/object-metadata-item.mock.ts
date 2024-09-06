@@ -156,7 +156,23 @@ const fieldRatingMock = {
   name: 'fieldRating',
   type: FieldMetadataType.RATING,
   isNullable: true,
-  defaultValue: null,
+  defaultValue: 'RATING_1',
+  options: [
+    {
+      id: '9a519a86-422b-4598-88ae-78751353f683',
+      color: 'red',
+      label: 'Opt 1',
+      value: 'RATING_1',
+      position: 0,
+    },
+    {
+      id: '33f28d51-bc82-4e1d-ae4b-d9e4c0ed0ab4',
+      color: 'purple',
+      label: 'Opt 2',
+      value: 'RATING_2',
+      position: 1,
+    },
+  ],
 };
 
 const fieldPositionMock = {

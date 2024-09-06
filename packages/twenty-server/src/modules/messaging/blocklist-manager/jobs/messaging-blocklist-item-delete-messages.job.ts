@@ -1,21 +1,21 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { And, Any, ILike, In, Not, Or } from 'typeorm';
 
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
-export type BlocklistItemDeleteMessagesJobData = {
-  workspaceId: string;
-  blocklistItemId: string;
-};
+export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
+  ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
+>;
 
 @Processor({
   queueName: MessageQueue.messagingQueue,
@@ -25,66 +25,135 @@ export class BlocklistItemDeleteMessagesJob {
   private readonly logger = new Logger(BlocklistItemDeleteMessagesJob.name);
 
   constructor(
-    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
-    private readonly blocklistRepository: BlocklistRepository,
     private readonly threadCleanerService: MessagingMessageCleanerService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @Process(BlocklistItemDeleteMessagesJob.name)
   async handle(data: BlocklistItemDeleteMessagesJobData): Promise<void> {
-    const { workspaceId, blocklistItemId } = data;
+    const workspaceId = data.workspaceId;
 
-    const blocklistItem = await this.blocklistRepository.getById(
-      blocklistItemId,
-      workspaceId,
+    const blocklistItemIds = data.events.map(
+      (eventPayload) => eventPayload.recordId,
     );
 
-    if (!blocklistItem) {
-      this.logger.log(
-        `Blocklist item with id ${blocklistItemId} not found in workspace ${workspaceId}`,
+    const blocklistRepository =
+      await this.twentyORMManager.getRepository<BlocklistWorkspaceEntity>(
+        'blocklist',
       );
 
-      return;
-    }
+    const blocklist = await blocklistRepository.find({
+      where: {
+        id: Any(blocklistItemIds),
+      },
+    });
 
-    const { handle, workspaceMemberId } = blocklistItem;
+    const handlesToDeleteByWorkspaceMemberIdMap = blocklist.reduce(
+      (acc, blocklistItem) => {
+        const { handle, workspaceMemberId } = blocklistItem;
 
-    this.logger.log(
-      `Deleting messages from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
+        if (!acc.has(workspaceMemberId)) {
+          acc.set(workspaceMemberId, []);
+        }
+
+        acc.get(workspaceMemberId)?.push(handle);
+
+        return acc;
+      },
+      new Map<string, string[]>(),
     );
 
-    if (!workspaceMemberId) {
-      throw new Error(
-        `Workspace member ID is not defined for blocklist item ${blocklistItemId} in workspace ${workspaceId}`,
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
       );
-    }
 
     const messageChannelMessageAssociationRepository =
       await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
       );
 
-    const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
+    for (const workspaceMemberId of handlesToDeleteByWorkspaceMemberIdMap.keys()) {
+      const handles =
+        handlesToDeleteByWorkspaceMemberIdMap.get(workspaceMemberId);
 
-    await messageChannelMessageAssociationRepository.delete({
-      messageChannel: {
-        connectedAccount: {
-          accountOwnerId: workspaceMemberId,
+      if (!handles) {
+        continue;
+      }
+
+      this.logger.log(
+        `Deleting messages from ${handles.join(
+          ', ',
+        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
+      );
+
+      const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
+
+      const messageChannels = await messageChannelRepository.find({
+        select: {
+          id: true,
+          handle: true,
+          connectedAccount: {
+            handleAliases: true,
+          },
         },
-      },
-      message: {
-        messageParticipants: {
-          handle,
-          role: Any(rolesToDelete),
+        where: {
+          connectedAccount: {
+            accountOwnerId: workspaceMemberId,
+          },
         },
-      },
-    });
+        relations: ['connectedAccount'],
+      });
+
+      for (const messageChannel of messageChannels) {
+        const messageChannelHandles = [messageChannel.handle];
+
+        if (messageChannel.connectedAccount.handleAliases) {
+          messageChannelHandles.push(
+            ...messageChannel.connectedAccount.handleAliases.split(','),
+          );
+        }
+
+        const handleConditions = handles.map((handle) => {
+          const isHandleDomain = handle.startsWith('@');
+
+          return isHandleDomain
+            ? {
+                handle: And(
+                  Or(ILike(`%${handle}`), ILike(`%.${handle.slice(1)}`)),
+                  Not(In(messageChannelHandles)),
+                ),
+                role: In(rolesToDelete),
+              }
+            : { handle, role: In(rolesToDelete) };
+        });
+
+        const messageChannelMessageAssociationsToDelete =
+          await messageChannelMessageAssociationRepository.find({
+            where: {
+              messageChannelId: messageChannel.id,
+              message: {
+                messageParticipants: handleConditions,
+              },
+            },
+          });
+
+        if (messageChannelMessageAssociationsToDelete.length === 0) {
+          continue;
+        }
+
+        await messageChannelMessageAssociationRepository.delete(
+          messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+        );
+      }
+
+      this.logger.log(
+        `Deleted messages from handle ${handles.join(
+          ', ',
+        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
+      );
+    }
 
     await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);
-
-    this.logger.log(
-      `Deleted messages from handle ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
-    );
   }
 }
