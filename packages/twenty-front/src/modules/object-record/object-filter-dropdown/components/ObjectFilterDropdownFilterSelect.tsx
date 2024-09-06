@@ -7,9 +7,12 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useHandleClick } from '@/object-record/object-filter-dropdown/hooks/useHandleClick';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { isDefined } from 'twenty-ui';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -51,7 +54,29 @@ export const ObjectFilterDropdownFilterSelect = () => {
     .filter((item) =>
       item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
     );
-  const { handleClick } = useHandleClick();
+
+  const selectableListItemIds = sortedAvailableFilterDefinitions.map(
+    (item) => item.fieldMetadataId,
+  );
+
+  const { selectFilter } = useSelectFilter();
+
+  const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
+
+  const handleEnter = (itemId: string) => {
+    const selectedFilterDefinition = sortedAvailableFilterDefinitions.find(
+      (item) => item.fieldMetadataId === itemId,
+    );
+
+    if (!isDefined(selectedFilterDefinition)) {
+      return;
+    }
+
+    resetSelectedItem();
+
+    selectFilter({ filterDefinition: selectedFilterDefinition });
+  };
+
   return (
     <>
       <StyledInput
@@ -64,26 +89,21 @@ export const ObjectFilterDropdownFilterSelect = () => {
       />
       <SelectableList
         hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
-        selectableItemIdArray={sortedAvailableFilterDefinitions.map(
-          (item) => item.fieldMetadataId,
-        )}
+        selectableItemIdArray={selectableListItemIds}
         selectableListId={OBJECT_FILTER_DROPDOWN_ID}
-        onEnter={(itemId) => {
-          const selectedFilterDefinition =
-            sortedAvailableFilterDefinitions.find(
-              (item) => item.fieldMetadataId === itemId,
-            );
-          if (!selectedFilterDefinition) return;
-          handleClick({ filterDefinition: selectedFilterDefinition });
-        }}
+        onEnter={handleEnter}
       >
         <DropdownMenuItemsContainer>
           {sortedAvailableFilterDefinitions.map(
             (availableFilterDefinition, index) => (
-              <ObjectFilterDropdownFilterSelectMenuItem
-                key={`select-filter-${index}`}
-                filterDefinition={availableFilterDefinition}
-              />
+              <SelectableItem
+                itemId={availableFilterDefinition.fieldMetadataId}
+              >
+                <ObjectFilterDropdownFilterSelectMenuItem
+                  key={`select-filter-${index}`}
+                  filterDefinition={availableFilterDefinition}
+                />
+              </SelectableItem>
             ),
           )}
         </DropdownMenuItemsContainer>

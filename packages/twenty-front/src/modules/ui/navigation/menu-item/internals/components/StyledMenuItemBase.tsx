@@ -8,7 +8,7 @@ export type MenuItemBaseProps = {
   accent?: MenuItemAccent;
   isKeySelected?: boolean;
   isHoverBackgroundDisabled?: boolean;
-  hovered?:boolean;
+  hovered?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`

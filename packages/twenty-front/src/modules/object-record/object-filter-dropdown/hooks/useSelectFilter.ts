@@ -4,17 +4,20 @@ import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-type HandleClickParams = {
+type SelectFilterParams = {
   filterDefinition: FilterDefinition;
 };
-export const useHandleClick = () => {
+
+export const useSelectFilter = () => {
   const {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
   } = useFilterDropdown();
+
   const setHotkeyScope = useSetHotkeyScope();
-  const handleClick = ({ filterDefinition }: HandleClickParams) => {
+
+  const selectFilter = ({ filterDefinition }: SelectFilterParams) => {
     setFilterDefinitionUsedInDropdown(filterDefinition);
 
     if (
@@ -30,7 +33,8 @@ export const useHandleClick = () => {
 
     setObjectFilterDropdownSearchInput('');
   };
+
   return {
-    handleClick,
+    selectFilter,
   };
 };
