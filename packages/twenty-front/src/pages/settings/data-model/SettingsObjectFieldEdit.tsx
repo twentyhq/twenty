@@ -93,6 +93,7 @@ export const SettingsObjectFieldEdit = () => {
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
+    shouldUnregister: true,
   });
 
   useEffect(() => {
