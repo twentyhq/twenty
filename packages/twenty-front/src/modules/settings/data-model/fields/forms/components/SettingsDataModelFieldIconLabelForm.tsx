@@ -66,7 +66,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
         defaultValue={fieldMetadataItem?.label}
         render={({ field: { onChange, value } }) => (
           <TextInput
-            placeholder="Employees"
+            placeholder="Funcionários"
             value={value}
             onChange={(e) => {
               onChange(e);

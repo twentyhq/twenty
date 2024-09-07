@@ -141,7 +141,7 @@ export const SettingsDataModelFieldTypeSelect = ({
           <Section>
             <StyledSearchInput
               LeftIcon={IconSearch}
-              placeholder="Search a type"
+              placeholder="Buscar um tipo"
               value={searchQuery}
               onChange={setSearchQuery}
             />

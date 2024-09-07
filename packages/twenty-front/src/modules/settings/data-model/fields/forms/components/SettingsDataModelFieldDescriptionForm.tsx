@@ -35,7 +35,7 @@ export const SettingsDataModelFieldDescriptionForm = ({
       defaultValue={fieldMetadataItem?.description}
       render={({ field: { onChange, value } }) => (
         <TextArea
-          placeholder="Write a description"
+          placeholder="Escreva uma descrição"
           minRows={4}
           value={value ?? undefined}
           onChange={onChange}
