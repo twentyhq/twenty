@@ -37,7 +37,6 @@ export const ActivityTargetsInlineCell = ({
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
     activity,
-    activityObjectNameSingular,
   );
 
   const { closeInlineCell } = useInlineCell();
