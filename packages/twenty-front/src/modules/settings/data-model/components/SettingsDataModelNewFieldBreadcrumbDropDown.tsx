@@ -72,9 +72,9 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = ({
           <StyledButtonContainer>
             <StyledDownChevron size={theme.icon.size.md} />
             {isConfigureStep ? (
-              <StyledButton variant="tertiary" title="2. Configure" />
+              <StyledButton variant="tertiary" title="2. Configurar" />
             ) : (
-              <StyledButton variant="tertiary" title="1. Type" />
+              <StyledButton variant="tertiary" title="1. Tipo" />
             )}
           </StyledButtonContainer>
         }
@@ -82,12 +82,12 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = ({
           <DropdownMenu>
             <DropdownMenuItemsContainer>
               <StyledMenuItem
-                text="1. Type"
+                text="1. Tipo"
                 onClick={() => handleClick(false)}
                 selected={!isConfigureStep}
               />
               <StyledMenuItem
-                text="2. Configure"
+                text="2. Configurar"
                 onClick={() => handleClick(true)}
                 selected={isConfigureStep}
               />
