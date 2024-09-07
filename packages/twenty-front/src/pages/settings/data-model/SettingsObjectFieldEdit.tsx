@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
@@ -22,9 +21,9 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
-import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
+import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
+import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
-import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -39,12 +38,6 @@ import { isDefined } from '~/utils/isDefined';
 type SettingsDataModelFieldEditFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 >;
-
-const StyledSettingsObjectFieldTypeSelect = styled(
-  SettingsDataModelFieldTypeSelect,
-)`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
 
 const canPersistFieldMetadataItemUpdate = (
   fieldMetadataItem: FieldMetadataItem,
@@ -204,32 +197,31 @@ export const SettingsObjectFieldEdit = () => {
           <SettingsPageContainer>
             <Section>
               <H2Title
-                title="Nome e descrição"
-                description="O nome e a descrição deste campo"
+                title="Ícone e Nome"
+                description="O nome e o ícone deste campo"
               />
-              <SettingsDataModelFieldAboutForm
+              <SettingsDataModelFieldIconLabelForm
                 disabled={!activeMetadataField.isCustom}
                 fieldMetadataItem={activeMetadataField}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
               />
             </Section>
             <Section>
-              <H2Title
-                title="Tipo e valores"
-                description="O tipo e os valores deste campo."
-              />
-              <StyledSettingsObjectFieldTypeSelect
-                disabled
-                fieldMetadataItem={activeMetadataField}
-                excludedFieldTypes={[
-                  FieldMetadataType.Link,
-                  FieldMetadataType.Email,
-                ]}
-              />
+              <H2Title title="Valores" description="Os valores deste campo" />
               <SettingsDataModelFieldSettingsFormCard
                 disableCurrencyForm
                 fieldMetadataItem={activeMetadataField}
                 objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Descrição"
+                description="A descrição deste campo"
+              />
+              <SettingsDataModelFieldDescriptionForm
+                disabled={!activeMetadataField.isCustom}
+                fieldMetadataItem={activeMetadataField}
               />
             </Section>
             {!isLabelIdentifier && (

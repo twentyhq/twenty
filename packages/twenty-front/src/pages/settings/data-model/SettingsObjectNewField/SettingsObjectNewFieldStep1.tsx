@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconHierarchy2, IconPlus } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -85,7 +85,7 @@ export const SettingsObjectNewFieldStep1 = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconSettings}
+      Icon={IconHierarchy2}
       title={
         <Breadcrumb
           links={[
