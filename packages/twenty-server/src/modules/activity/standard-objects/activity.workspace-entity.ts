@@ -54,7 +54,7 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Tipo',
     description: 'Tipo de atividade',
     icon: 'IconCheckbox',
-    defaultValue: "'Nota'",
+    defaultValue: "'Note'",
   })
   type: string;
 
