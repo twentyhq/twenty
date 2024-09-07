@@ -228,7 +228,6 @@ export const SettingsObjectFieldEdit = () => {
                 ]}
               />
               <SettingsDataModelFieldSettingsFormCard
-                disableCurrencyForm
                 fieldMetadataItem={activeMetadataField}
                 objectMetadataItem={activeObjectMetadataItem}
               />

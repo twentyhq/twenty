@@ -83,7 +83,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
 );
 
 type SettingsDataModelFieldSettingsFormCardProps = {
-  disableCurrencyForm?: boolean;
+  isCreatingField?: boolean;
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
@@ -114,7 +114,7 @@ const previewableTypes = [
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
-  disableCurrencyForm,
+  isCreatingField,
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
@@ -132,7 +132,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Currency) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
-        disabled={disableCurrencyForm}
+        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -145,7 +145,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
-        disabled={disableCurrencyForm}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />

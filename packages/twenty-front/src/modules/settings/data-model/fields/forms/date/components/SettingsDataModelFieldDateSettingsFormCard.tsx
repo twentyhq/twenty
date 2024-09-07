@@ -44,10 +44,12 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
         <StyledFieldPreviewCard
           fieldMetadataItem={{
             ...fieldMetadataItem,
-            defaultValue: watchFormValue(
-              'settings.displayAsRelativeDate',
-              initialDefaultValue,
-            ),
+            settings: {
+              displayAsRelativeDate: watchFormValue(
+                'settings.displayAsRelativeDate',
+                initialDefaultValue,
+              ),
+            },
           }}
           objectMetadataItem={objectMetadataItem}
         />
