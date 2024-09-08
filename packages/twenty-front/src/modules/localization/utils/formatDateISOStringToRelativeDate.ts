@@ -9,7 +9,7 @@ import {
 
 type TimeUnit = 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute';
 
-type TimeInterval = { unit: TimeUnit; value: number; maxAbsValue?: number };
+type TimeUnitConfig = { unit: TimeUnit; value: number; maxAbsValue?: number };
 
 const yearSpecialNamesByOffset = new Map([
   [-1, 'Last year'],
@@ -50,7 +50,7 @@ export const formatDateISOStringToRelativeDate = (
 
   const now = Date.now();
 
-  const timeIntervals: TimeInterval[] = [
+  const timeUnitConfigs: TimeUnitConfig[] = [
     { unit: 'year' as const, value: differenceInCalendarYears(date, now) },
     {
       unit: 'month' as const,
@@ -60,50 +60,50 @@ export const formatDateISOStringToRelativeDate = (
     {
       unit: 'week' as const,
       value: differenceInCalendarWeeks(date, now),
-      maxAbsValue: 4,
+      maxAbsValue: 6,
     },
     {
       unit: 'day' as const,
       value: differenceInCalendarDays(date, now),
-      maxAbsValue: 7,
+      maxAbsValue: 6,
     },
     {
       unit: 'hour' as const,
       value: differenceInHours(date, now),
-      maxAbsValue: 24,
+      maxAbsValue: 23,
     },
     {
       unit: 'minute' as const,
       value: differenceInMinutes(date, now),
-      maxAbsValue: 60,
+      maxAbsValue: 59,
     },
   ];
 
-  const timeIntervalsUpToMaximumPrecision = (
-    isDayMaximumPrecision ? timeIntervals.slice(0, -2) : timeIntervals
-  ).filter(
+  const timeUnitConfigsUpToMaximumPrecision = isDayMaximumPrecision
+    ? timeUnitConfigs.slice(0, -2)
+    : timeUnitConfigs;
+
+  const validTimeUnitConfigs = timeUnitConfigsUpToMaximumPrecision.filter(
     (interval) =>
       interval.maxAbsValue === undefined ||
-      Math.abs(interval.value) < interval.maxAbsValue,
+      Math.abs(interval.value) <= interval.maxAbsValue,
   );
 
-  const displayInterval = timeIntervalsUpToMaximumPrecision.findLast(
-    (interval) => {
-      return Math.abs(interval.value) > 0;
-    },
-  );
+  const displayTimeUnitConfig = validTimeUnitConfigs.findLast((interval) => {
+    return Math.abs(interval.value) > 0;
+  });
 
   const isPast = date.getTime() < now;
 
-  if (displayInterval !== undefined) {
+  if (displayTimeUnitConfig !== undefined) {
     const specialName = specialNamesByOffsetByTimeUnit
-      .get(displayInterval?.unit)
-      ?.get(displayInterval?.value);
+      .get(displayTimeUnitConfig?.unit)
+      ?.get(displayTimeUnitConfig?.value);
 
     if (specialName !== undefined) return specialName;
 
-    const dateAndUnitText = `${Math.abs(displayInterval.value)} ${displayInterval.unit}${
-      Math.abs(displayInterval.value) > 1 ? 's' : ''
+    const dateAndUnitText = `${Math.abs(displayTimeUnitConfig.value)} ${displayTimeUnitConfig.unit}${
+      Math.abs(displayTimeUnitConfig.value) > 1 ? 's' : ''
     }`;
 
     if (isPast) {
@@ -113,9 +113,9 @@ export const formatDateISOStringToRelativeDate = (
     return `In ${dateAndUnitText}`;
   }
 
-  if (!isDayMaximumPrecision) {
-    return `Just now`;
+  if (isDayMaximumPrecision) {
+    return 'Today';
   }
 
-  return 'Today';
+  return `Just now`;
 };
