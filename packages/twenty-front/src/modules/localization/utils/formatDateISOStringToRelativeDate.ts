@@ -9,6 +9,8 @@ import {
 
 type TimeUnit = 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute';
 
+type TimeInterval = { unit: TimeUnit; value: number; maxAbsValue?: number };
+
 const yearSpecialNamesByOffset = new Map([
   [-1, 'Last year'],
   [0, 'This year'],
@@ -48,28 +50,46 @@ export const formatDateISOStringToRelativeDate = (
 
   const now = Date.now();
 
-  const timeIntervals: { unit: TimeUnit; value: number }[] = [
-    { unit: 'year', value: differenceInCalendarYears(date, now) },
-    { unit: 'month', value: differenceInCalendarMonths(date, now) },
-    { unit: 'week', value: differenceInCalendarWeeks(date, now) },
-    { unit: 'day', value: differenceInCalendarDays(date, now) },
-    { unit: 'hour', value: differenceInHours(date, now) },
-    { unit: 'minute', value: differenceInMinutes(date, now) },
+  const timeIntervals: TimeInterval[] = [
+    { unit: 'year' as const, value: differenceInCalendarYears(date, now) },
+    {
+      unit: 'month' as const,
+      value: differenceInCalendarMonths(date, now),
+      maxAbsValue: 12,
+    },
+    {
+      unit: 'week' as const,
+      value: differenceInCalendarWeeks(date, now),
+      maxAbsValue: 4,
+    },
+    {
+      unit: 'day' as const,
+      value: differenceInCalendarDays(date, now),
+      maxAbsValue: 7,
+    },
+    {
+      unit: 'hour' as const,
+      value: differenceInHours(date, now),
+      maxAbsValue: 24,
+    },
+    {
+      unit: 'minute' as const,
+      value: differenceInMinutes(date, now),
+      maxAbsValue: 60,
+    },
   ];
 
-  const dayIndex = timeIntervals.findIndex((i) => i.unit === 'day');
+  const timeIntervalsUpToMaximumPrecision = (
+    isDayMaximumPrecision ? timeIntervals.slice(0, -2) : timeIntervals
+  ).filter(
+    (interval) =>
+      interval.maxAbsValue === undefined ||
+      Math.abs(interval.value) < interval.maxAbsValue,
+  );
 
-  const timeIntervalsUpToMaximumPrecision = isDayMaximumPrecision
-    ? timeIntervals.slice(0, dayIndex + 1)
-    : timeIntervals;
-
-  const displayInterval = timeIntervalsUpToMaximumPrecision.find(
-    (interval, i) => {
-      const isLast = i === timeIntervalsUpToMaximumPrecision.length - 1;
-
-      return isLast
-        ? Math.abs(interval.value) > 0
-        : Math.abs(interval.value) > 1;
+  const displayInterval = timeIntervalsUpToMaximumPrecision.findLast(
+    (interval) => {
+      return Math.abs(interval.value) > 0;
     },
   );
 
@@ -94,7 +114,7 @@ export const formatDateISOStringToRelativeDate = (
   }
 
   if (!isDayMaximumPrecision) {
-    return `Just now ${isPast ? 'is Past' : 'is Future'}`;
+    return `Just now`;
   }
 
   return 'Today';
