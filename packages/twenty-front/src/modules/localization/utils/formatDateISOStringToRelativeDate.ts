@@ -6,7 +6,10 @@ export const formatDateISOStringToRelativeDate = (
 ) => {
   const date = new Date(Date.parse(isoDate));
 
-  const timeElapsed = Date.now() - date.getTime();
+  const now = Date.now();
+  const timeElapsed = Math.abs(now - date.getTime());
+  const isPast = date.getTime() < now;
+
   const minutesElapsed = Math.floor(timeElapsed / (1000 * 60));
   const hoursElapsed = Math.floor(timeElapsed / (1000 * 60 * 60));
   const daysElapsed = Math.floor(timeElapsed / (1000 * 60 * 60 * 24));
@@ -35,14 +38,24 @@ export const formatDateISOStringToRelativeDate = (
   );
 
   if (firstNonZeroInterval !== undefined) {
-    return `${firstNonZeroInterval.value} ${firstNonZeroInterval.unit}${
+    const dateAndUnitText = `${firstNonZeroInterval.value} ${firstNonZeroInterval.unit}${
       firstNonZeroInterval.value > 1 ? 's' : ''
-    } ago`;
+    }`;
+
+    if (isPast) {
+      return `${dateAndUnitText} ago`;
+    }
+
+    return `In ${dateAndUnitText}`;
   }
 
   if (maximumPrecision === 'minute') {
     return 'Just now';
   }
 
-  return `Less than 1 ${maximumPrecision} ago`;
+  if (isPast) {
+    return `Less than 1 ${maximumPrecision} ago`; // TODO: 'Today' or Yesterday
+  }
+
+  return `In less than 1 ${maximumPrecision}`; // TODO: 'Today' or 'Tomorrow'
 };
