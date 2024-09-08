@@ -43,6 +43,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
     useState(false);
   const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
 
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
@@ -67,12 +68,17 @@ export const SettingsDevelopersApiKeyDetail = () => {
   });
 
   const deleteIntegration = async (redirect = true) => {
-    await updateApiKey?.({
-      idToUpdate: apiKeyId,
-      updateOneRecordInput: { revokedAt: DateTime.now().toString() },
-    });
-    if (redirect) {
-      navigate('/settings/developers');
+    setisLoading(true);
+    try {
+      await updateApiKey?.({
+        idToUpdate: apiKeyId,
+        updateOneRecordInput: { revokedAt: DateTime.now().toString() },
+      });
+      if (redirect) {
+        navigate('/settings/developers');
+      }
+    } finally {
+      setisLoading(false);
     }
   };
 
@@ -102,18 +108,23 @@ export const SettingsDevelopersApiKeyDetail = () => {
   };
 
   const regenerateApiKey = async () => {
-    if (isNonEmptyString(apiKeyData?.name)) {
-      const newExpiresAt = computeNewExpirationDate(
-        apiKeyData?.expiresAt,
-        apiKeyData?.createdAt,
-      );
-      const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
-      await deleteIntegration(false);
+    setisLoading(true);
+    try {
+      if (isNonEmptyString(apiKeyData?.name)) {
+        const newExpiresAt = computeNewExpirationDate(
+          apiKeyData?.expiresAt,
+          apiKeyData?.createdAt,
+        );
+        const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
+        await deleteIntegration(false);
 
-      if (isNonEmptyString(apiKey?.token)) {
-        setApiKeyToken(apiKey.token);
-        navigate(`/settings/developers/api-keys/${apiKey.id}`);
+        if (isNonEmptyString(apiKey?.token)) {
+          setApiKeyToken(apiKey.token);
+          navigate(`/settings/developers/api-keys/${apiKey.id}`);
+        }
       }
+    } finally {
+      setisLoading(false);
     }
   };
 
@@ -222,6 +233,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
         onConfirmClick={deleteIntegration}
         deleteButtonText="Delete"
+        loading={isLoading}
       />
       <ConfirmationModal
         confirmationPlaceholder="yes"
@@ -238,6 +250,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
         onConfirmClick={regenerateApiKey}
         deleteButtonText="Regenerate key"
+        loading={isLoading}
       />
     </>
   );
