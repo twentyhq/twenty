@@ -1,61 +1,101 @@
-type TimeUnit = 'year' | 'month' | 'day' | 'hour' | 'minute';
+import {
+  differenceInCalendarDays,
+  differenceInCalendarMonths,
+  differenceInCalendarWeeks,
+  differenceInCalendarYears,
+  differenceInHours,
+  differenceInMinutes,
+} from 'date-fns';
+
+type TimeUnit = 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute';
+
+const yearSpecialNamesByOffset = new Map([
+  [-1, 'Last year'],
+  [0, 'This year'],
+  [1, 'Next year'],
+]);
+
+const monthSpecialNamesByOffset = new Map([
+  [-1, 'Last month'],
+  [0, 'This month'],
+  [1, 'Next month'],
+]);
+
+const weekSpecialNamesByOffset = new Map([
+  [-1, 'Last week'],
+  [0, 'This week'],
+  [1, 'Next week'],
+]);
+
+const daySpecialNamesByOffset = new Map([
+  [-1, 'Yesterday'],
+  [0, 'Today'],
+  [1, 'Tomorrow'],
+]);
+
+const specialNamesByOffsetByTimeUnit = new Map<TimeUnit, Map<number, string>>([
+  ['year', yearSpecialNamesByOffset],
+  ['month', monthSpecialNamesByOffset],
+  ['week', weekSpecialNamesByOffset],
+  ['day', daySpecialNamesByOffset],
+]);
 
 export const formatDateISOStringToRelativeDate = (
   isoDate: string,
-  maximumPrecision: TimeUnit = 'minute',
+  isDayMaximumPrecision = false,
 ) => {
   const date = new Date(Date.parse(isoDate));
 
   const now = Date.now();
-  const timeElapsed = Math.abs(now - date.getTime());
-  const isPast = date.getTime() < now;
-
-  const minutesElapsed = Math.floor(timeElapsed / (1000 * 60));
-  const hoursElapsed = Math.floor(timeElapsed / (1000 * 60 * 60));
-  const daysElapsed = Math.floor(timeElapsed / (1000 * 60 * 60 * 24));
-  const monthsElapsed = Math.floor(timeElapsed / (1000 * 60 * 60 * 24 * 30.44));
-  const yearsElapsed = Math.floor(timeElapsed / (1000 * 60 * 60 * 24 * 365.25));
 
   const timeIntervals: { unit: TimeUnit; value: number }[] = [
-    { unit: 'year', value: yearsElapsed },
-    { unit: 'month', value: monthsElapsed },
-    { unit: 'day', value: daysElapsed },
-    { unit: 'hour', value: hoursElapsed },
-    { unit: 'minute', value: minutesElapsed },
+    { unit: 'year', value: differenceInCalendarYears(date, now) },
+    { unit: 'month', value: differenceInCalendarMonths(date, now) },
+    { unit: 'week', value: differenceInCalendarWeeks(date, now) },
+    { unit: 'day', value: differenceInCalendarDays(date, now) },
+    { unit: 'hour', value: differenceInHours(date, now) },
+    { unit: 'minute', value: differenceInMinutes(date, now) },
   ];
 
-  const maxPrecisionIndex = timeIntervals.findIndex(
-    (i) => i.unit === maximumPrecision,
+  const dayIndex = timeIntervals.findIndex((i) => i.unit === 'day');
+
+  const timeIntervalsUpToMaximumPrecision = isDayMaximumPrecision
+    ? timeIntervals.slice(0, dayIndex + 1)
+    : timeIntervals;
+
+  const displayInterval = timeIntervalsUpToMaximumPrecision.find(
+    (interval, i) => {
+      const isLast = i === timeIntervalsUpToMaximumPrecision.length - 1;
+
+      return isLast
+        ? Math.abs(interval.value) > 0
+        : Math.abs(interval.value) > 1;
+    },
   );
 
-  const timeIntervalsUpToMaximumPrecision = timeIntervals.slice(
-    0,
-    maxPrecisionIndex + 1,
-  );
+  const isPast2 = date.getTime() < now;
 
-  const firstNonZeroInterval = timeIntervalsUpToMaximumPrecision.find(
-    (i) => i.value > 0,
-  );
+  if (displayInterval !== undefined) {
+    const specialName = specialNamesByOffsetByTimeUnit
+      .get(displayInterval?.unit)
+      ?.get(displayInterval?.value);
 
-  if (firstNonZeroInterval !== undefined) {
-    const dateAndUnitText = `${firstNonZeroInterval.value} ${firstNonZeroInterval.unit}${
-      firstNonZeroInterval.value > 1 ? 's' : ''
+    if (specialName !== undefined) return specialName;
+
+    const dateAndUnitText = `${Math.abs(displayInterval.value)} ${displayInterval.unit}${
+      Math.abs(displayInterval.value) > 1 ? 's' : ''
     }`;
 
-    if (isPast) {
+    if (isPast2) {
       return `${dateAndUnitText} ago`;
     }
 
     return `In ${dateAndUnitText}`;
   }
 
-  if (maximumPrecision === 'minute') {
-    return 'Just now';
+  if (!isDayMaximumPrecision) {
+    return `Just now ${isPast2 ? 'is Past' : 'is Future'}`;
   }
 
-  if (isPast) {
-    return `Less than 1 ${maximumPrecision} ago`; // TODO: 'Today' or Yesterday
-  }
-
-  return `In less than 1 ${maximumPrecision}`; // TODO: 'Today' or 'Tomorrow'
+  return 'Today';
 };
