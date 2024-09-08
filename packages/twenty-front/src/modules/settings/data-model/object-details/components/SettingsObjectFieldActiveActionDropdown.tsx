@@ -35,7 +35,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
   const handleEdit = () => {
     onEdit();
     closeDropdown();
-  };
+  }
 
   const handleDeactivate = () => {
     onDeactivate?.();
