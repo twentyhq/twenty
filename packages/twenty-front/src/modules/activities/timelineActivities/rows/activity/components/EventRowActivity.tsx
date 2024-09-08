@@ -13,8 +13,13 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
 const StyledLinkedActivity = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   text-decoration: underline;
+`;
+
+export const StyledEventRowItemText = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 export const EventRowActivity = ({
@@ -51,7 +56,9 @@ export const EventRowActivity = ({
           {event.linkedRecordCachedName}
         </StyledLinkedActivity>
       ) : (
-        <span>{event.linkedRecordCachedName}</span>
+        <StyledEventRowItemText>
+          {event.linkedRecordCachedName}
+        </StyledEventRowItemText>
       )}
     </>
   );
