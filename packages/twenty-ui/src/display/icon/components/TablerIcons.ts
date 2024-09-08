@@ -47,6 +47,7 @@ export {
   IconCircleX,
   IconClick,
   IconClockHour8,
+  IconClockShare,
   IconCode,
   IconCoins,
   IconColorSwatch,

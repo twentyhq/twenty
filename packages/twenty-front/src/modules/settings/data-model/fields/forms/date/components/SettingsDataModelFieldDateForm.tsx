@@ -3,9 +3,10 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 // import { dateFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/dateFieldDefaultValueSchema';
+import { SettingsDataModelFieldToggle } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldToggle';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
-import { Toggle } from '@/ui/input/components/Toggle';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { IconClockShare } from 'twenty-ui';
 
 export const settingsDataModelFieldDateFormSchema = z.object({
   settings: z
@@ -42,10 +43,16 @@ export const SettingsDataModelFieldDateForm = ({
         control={control}
         defaultValue={initialDisplayAsRelativeDateValue}
         render={({ field: { onChange, value } }) => (
-          <div>
-            Display as relative date
-            <Toggle disabled={disabled} value={value} onChange={onChange} />
-          </div>
+          <SettingsDataModelFieldToggle
+            label="Display as relative date"
+            Icon={IconClockShare}
+            onChange={onChange}
+            value={value}
+            disabled={disabled}
+            tooltip={
+              'Show dates in a human-friendly format. Example: "13 mins ago" instead of "Jul 30, 2024 7:11pm"'
+            }
+          />
         )}
       />
     </CardContent>
