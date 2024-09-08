@@ -10,6 +10,7 @@ import { MouseEvent, useContext } from 'react';
 
 export type AvatarChipProps = {
   name: string;
+  email?: string;
   avatarUrl?: string;
   avatarType?: Nullable<AvatarType>;
   variant?: AvatarChipVariant;
@@ -37,6 +38,7 @@ const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
 
 export const AvatarChip = ({
   name,
+  email,
   avatarUrl,
   avatarType = 'rounded',
   variant = AvatarChipVariant.Regular,
@@ -50,7 +52,8 @@ export const AvatarChip = ({
 
   return (
     <Chip
-      label={name}
+      maxWidth={email ? 350 : 200}
+      label={email ? `${name} <${email}>` : name}
       variant={
         isDefined(onClick)
           ? variant === AvatarChipVariant.Regular

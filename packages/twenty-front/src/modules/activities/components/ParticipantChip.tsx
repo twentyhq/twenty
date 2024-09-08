@@ -68,6 +68,7 @@ export const ParticipantChip = ({
         <StyledRecordChip
           objectNameSingular={CoreObjectNameSingular.Person}
           record={person}
+          email={person.email}
           participantChipVariant={variant}
         />
       ) : (

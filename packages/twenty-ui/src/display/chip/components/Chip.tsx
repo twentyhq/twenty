@@ -123,6 +123,7 @@ export const Chip = ({
   rightComponent,
   accent = ChipAccent.TextPrimary,
   onClick,
+  maxWidth,
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -133,6 +134,7 @@ export const Chip = ({
       size={size}
       variant={variant}
       onClick={onClick}
+      maxWidth={maxWidth}
     >
       {leftComponent}
       <OverflowingTextWithTooltip

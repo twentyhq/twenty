@@ -8,6 +8,7 @@ import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
+  email?: string;
   className?: string;
   variant?: AvatarChipVariant;
 };
@@ -15,6 +16,7 @@ export type RecordChipProps = {
 export const RecordChip = ({
   objectNameSingular,
   record,
+  email,
   className,
   variant,
 }: RecordChipProps) => {
@@ -28,6 +30,7 @@ export const RecordChip = ({
       <AvatarChip
         placeholderColorSeed={record.id}
         name={recordChipData.name}
+        email={email}
         avatarType={recordChipData.avatarType}
         avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
