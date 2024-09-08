@@ -17,7 +17,6 @@ const StyledContainer = styled.div<{ disabled?: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.tertiary : theme.font.color.primary};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
@@ -28,6 +27,7 @@ const StyledContainer = styled.div<{ disabled?: boolean }>`
 const StyledGroup = styled.div`
   align-items: center;
   display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 interface SettingsDataModelFieldToggleProps {
@@ -53,12 +53,18 @@ export const SettingsDataModelFieldToggle = ({
   return (
     <StyledContainer>
       <StyledGroup>
-        {Icon && <Icon />}
+        {Icon && (
+          <Icon color={theme.font.color.tertiary} size={theme.icon.size.md} />
+        )}
         {label}
       </StyledGroup>
       <StyledGroup>
         {tooltip && (
-          <IconInfoCircle id={infoCircleElementId} size={theme.icon.size.md} />
+          <IconInfoCircle
+            id={infoCircleElementId}
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
         )}
         {tooltip &&
           createPortal(
@@ -66,11 +72,10 @@ export const SettingsDataModelFieldToggle = ({
               anchorSelect={`#${infoCircleElementId}`}
               content={tooltip}
               offset={5}
-              isOpen
               noArrow
               place="bottom"
               positionStrategy="absolute"
-              delay={TooltipDelay.mediumDelay}
+              delay={TooltipDelay.shortDelay}
             >
               <pre>{tooltip}</pre>
             </AppTooltip>,

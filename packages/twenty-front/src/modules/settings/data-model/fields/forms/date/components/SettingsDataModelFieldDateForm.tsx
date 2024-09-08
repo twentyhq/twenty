@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 // import { dateFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/dateFieldDefaultValueSchema';
+import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
 import { SettingsDataModelFieldToggle } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldToggle';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -43,16 +44,19 @@ export const SettingsDataModelFieldDateForm = ({
         control={control}
         defaultValue={initialDisplayAsRelativeDateValue}
         render={({ field: { onChange, value } }) => (
-          <SettingsDataModelFieldToggle
-            label="Display as relative date"
-            Icon={IconClockShare}
-            onChange={onChange}
-            value={value}
-            disabled={disabled}
-            tooltip={
-              'Show dates in a human-friendly format. Example: "13 mins ago" instead of "Jul 30, 2024 7:11pm"'
-            }
-          />
+          <>
+            <StyledFormCardTitle>Options</StyledFormCardTitle>
+            <SettingsDataModelFieldToggle
+              label="Display as relative date"
+              Icon={IconClockShare}
+              onChange={onChange}
+              value={value}
+              disabled={disabled}
+              tooltip={
+                'Show dates in a human-friendly format. Example: "13 mins ago" instead of "Jul 30, 2024 7:11pm"'
+              }
+            />
+          </>
         )}
       />
     </CardContent>
