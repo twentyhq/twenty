@@ -179,7 +179,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
             <Section>
               <H2Title
                 title="Expiration"
-                description="When the key will be diasbled"
+                description="When the key will be disabled"
               />
               <TextInput
                 placeholder="E.g. backoffice integration"
