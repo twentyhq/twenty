@@ -73,7 +73,7 @@ export const formatDateISOStringToRelativeDate = (
     },
   );
 
-  const isPast2 = date.getTime() < now;
+  const isPast = date.getTime() < now;
 
   if (displayInterval !== undefined) {
     const specialName = specialNamesByOffsetByTimeUnit
@@ -86,7 +86,7 @@ export const formatDateISOStringToRelativeDate = (
       Math.abs(displayInterval.value) > 1 ? 's' : ''
     }`;
 
-    if (isPast2) {
+    if (isPast) {
       return `${dateAndUnitText} ago`;
     }
 
@@ -94,7 +94,7 @@ export const formatDateISOStringToRelativeDate = (
   }
 
   if (!isDayMaximumPrecision) {
-    return `Just now ${isPast2 ? 'is Past' : 'is Future'}`;
+    return `Just now ${isPast ? 'is Past' : 'is Future'}`;
   }
 
   return 'Today';
