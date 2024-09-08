@@ -43,7 +43,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
     useState(false);
   const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
-  const [isLoading, setisLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
@@ -68,7 +68,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   });
 
   const deleteIntegration = async (redirect = true) => {
-    setisLoading(true);
+    setIsLoading(true);
     try {
       await updateApiKey?.({
         idToUpdate: apiKeyId,
@@ -78,7 +78,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         navigate('/settings/developers');
       }
     } finally {
-      setisLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -108,7 +108,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   };
 
   const regenerateApiKey = async () => {
-    setisLoading(true);
+    setIsLoading(true);
     try {
       if (isNonEmptyString(apiKeyData?.name)) {
         const newExpiresAt = computeNewExpirationDate(
@@ -124,7 +124,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
       }
     } finally {
-      setisLoading(false);
+      setIsLoading(false);
     }
   };
 
