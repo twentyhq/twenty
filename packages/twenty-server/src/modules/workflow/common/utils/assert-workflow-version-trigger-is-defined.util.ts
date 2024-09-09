@@ -15,7 +15,7 @@ export function assertWorkflowVersionTriggerIsDefined(
 } {
   if (!workflowVersion.trigger) {
     throw new WorkflowTriggerException(
-      'Workflow version does not contains trigger',
+      'Workflow version does not contain trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
     );
   }
