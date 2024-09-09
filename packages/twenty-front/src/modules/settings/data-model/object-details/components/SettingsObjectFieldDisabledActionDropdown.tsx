@@ -41,7 +41,8 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
   const handleEdit = () => {
     onEdit();
     closeDropdown();
-  }
+  };
+
   const isDeletable = isCustomField;
 
   return (
