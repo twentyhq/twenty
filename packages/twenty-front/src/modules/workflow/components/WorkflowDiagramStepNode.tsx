@@ -64,7 +64,7 @@ export const StyledTargetHandle = styled(Handle)`
   visibility: hidden;
 `;
 
-export const WorkflowShowPageDiagramStepNode = ({
+export const WorkflowDiagramStepNode = ({
   data,
 }: {
   data: WorkflowDiagramStepNodeData;

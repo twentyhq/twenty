@@ -776,7 +776,7 @@ export class WorkspaceQueryRunnerService {
 
     await this.triggerWebhooks<Record>(
       parsedResults,
-      CallWebhookJobsJobOperation.delete,
+      CallWebhookJobsJobOperation.create,
       options,
     );
 

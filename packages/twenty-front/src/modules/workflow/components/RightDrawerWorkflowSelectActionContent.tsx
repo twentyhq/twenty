@@ -1,18 +1,8 @@
-import { TabList } from '@/ui/layout/tab/components/TabList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useRightDrawerWorkflowSelectAction } from '@/workflow/hooks/useRightDrawerWorkflowSelectAction';
-import { Workflow } from '@/workflow/types/Workflow';
+import { ACTIONS } from '@/workflow/constants/Actions';
+import { useCreateStep } from '@/workflow/hooks/useCreateStep';
+import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
-
-// FIXME: copy-pasted
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-`;
 
 const StyledActionListContainer = styled.div`
   display: flex;
@@ -24,33 +14,24 @@ const StyledActionListContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const TAB_LIST_COMPONENT_ID =
-  'workflow-select-action-page-right-tab-list';
-
 export const RightDrawerWorkflowSelectActionContent = ({
   workflow,
 }: {
-  workflow: Workflow;
+  workflow: WorkflowWithCurrentVersion;
 }) => {
-  const tabListId = `${TAB_LIST_COMPONENT_ID}`;
-
-  const { tabs, options, handleActionClick } =
-    useRightDrawerWorkflowSelectAction({ tabListId, workflow });
+  const { createStep } = useCreateStep({
+    workflow,
+  });
 
   return (
     <>
-      <StyledTabListContainer>
-        <TabList loading={false} tabListId={tabListId} tabs={tabs} />
-      </StyledTabListContainer>
-
       <StyledActionListContainer>
-        {options.map((option) => (
+        {ACTIONS.map((action) => (
           <MenuItem
-            key={option.id}
-            LeftIcon={option.icon}
-            text={option.name}
+            LeftIcon={action.icon}
+            text={action.label}
             onClick={() => {
-              handleActionClick(option.id);
+              return createStep(action.type);
             }}
           />
         ))}
