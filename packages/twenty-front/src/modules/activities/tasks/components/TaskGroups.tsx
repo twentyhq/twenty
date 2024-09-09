@@ -91,28 +91,24 @@ export const TaskGroups = ({
     );
   }
 
+  const sortedTasksByStatus = Object.entries(
+    groupBy(tasks, ({ status }) => status),
+  ).toSorted(([statusA], [statusB]) => statusB.localeCompare(statusA));
+
   return (
     <StyledContainer>
-      {
-        Object.entries(groupBy(tasks, ({ status }) => status))
-        .toSorted(
-          // maintains order of status as TODO -> IN_PROGRESS -> DONE (which is coincidentally reverse alphabetical)
-          ([statusA], [statusB]) => (statusB.localeCompare(statusA))
-        )
-        .map(
-          ([status, tasksByStatus]: [string, Task[]]) => (
-            <TaskList
-              key={status}
-              title={status}
-              tasks={tasksByStatus}
-              button={
-                showAddButton && (
-                  <AddTaskButton activityTargetableObjects={targetableObjects} />
-                )
-              }
-            />
-          ),
-      )}
+      {sortedTasksByStatus.map(([status, tasksByStatus]: [string, Task[]]) => (
+        <TaskList
+          key={status}
+          title={status}
+          tasks={tasksByStatus}
+          button={
+            showAddButton && (
+              <AddTaskButton activityTargetableObjects={targetableObjects} />
+            )
+          }
+        />
+      ))}
     </StyledContainer>
   );
 };
