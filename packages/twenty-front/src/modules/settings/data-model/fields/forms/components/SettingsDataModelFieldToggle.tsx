@@ -48,7 +48,7 @@ export const SettingsDataModelFieldToggle = ({
   onChange,
 }: SettingsDataModelFieldToggleProps) => {
   const theme = useTheme();
-  const infoCircleElementId = `info-circle-id-${+new Date()}`;
+  const infoCircleElementId = `info-circle-id-${Math.random().toString(36).slice(2)}`;
 
   return (
     <StyledContainer>
@@ -76,9 +76,7 @@ export const SettingsDataModelFieldToggle = ({
               place="bottom"
               positionStrategy="absolute"
               delay={TooltipDelay.shortDelay}
-            >
-              <pre>{tooltip}</pre>
-            </AppTooltip>,
+            />,
             document.body,
           )}
         <Toggle

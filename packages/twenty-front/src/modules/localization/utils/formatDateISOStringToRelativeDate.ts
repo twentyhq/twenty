@@ -10,7 +10,7 @@ export const formatDateISOStringToRelativeDate = (
   isDayMaximumPrecision = false,
 ) => {
   const now = new Date();
-  const targetDate = new Date(Date.parse(isoDate));
+  const targetDate = new Date(isoDate);
 
   if (isDayMaximumPrecision && isToday(targetDate)) return 'Today';
 
