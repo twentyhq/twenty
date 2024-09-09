@@ -351,6 +351,7 @@ export type Mutation = {
   deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
   disablePostgresProxy: PostgresCredentials;
+  disableWorkflowTrigger: Scalars['Boolean'];
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
   enableWorkflowTrigger: Scalars['Boolean'];
@@ -428,6 +429,11 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationDeleteOneServerlessFunctionArgs = {
   input: DeleteServerlessFunctionInput;
+};
+
+
+export type MutationDisableWorkflowTriggerArgs = {
+  workflowVersionId: Scalars['String'];
 };
 
 
@@ -1186,6 +1192,7 @@ export type Field = {
   isSystem?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
   name: Scalars['String'];
+  object?: Maybe<Object>;
   options?: Maybe<Scalars['JSON']>;
   relationDefinition?: Maybe<RelationDefinition>;
   settings?: Maybe<Scalars['JSON']>;

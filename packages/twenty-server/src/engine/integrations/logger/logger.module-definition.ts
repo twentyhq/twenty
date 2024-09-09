@@ -1,8 +1,4 @@
-import {
-  ConfigurableModuleBuilder,
-  FactoryProvider,
-  ModuleMetadata,
-} from '@nestjs/common';
+import { ConfigurableModuleBuilder } from '@nestjs/common';
 
 import { LoggerModuleOptions } from './interfaces';
 
@@ -16,10 +12,3 @@ export const {
 })
   .setClassMethodName('forRoot')
   .build();
-
-export type LoggerModuleAsyncOptions = {
-  useFactory: (
-    ...args: any[]
-  ) => LoggerModuleOptions | Promise<LoggerModuleOptions>;
-} & Pick<ModuleMetadata, 'imports'> &
-  Pick<FactoryProvider, 'inject'>;

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
@@ -11,8 +11,6 @@ import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
 export class FindOneQueryFactory {
-  private readonly logger = new Logger(FindOneQueryFactory.name);
-
   constructor(
     private readonly fieldsStringFactory: FieldsStringFactory,
     private readonly argsStringFactory: ArgsStringFactory,

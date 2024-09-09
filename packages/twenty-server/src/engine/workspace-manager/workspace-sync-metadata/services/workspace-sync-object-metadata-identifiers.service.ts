@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EntityManager, Repository } from 'typeorm';
 
@@ -17,10 +17,6 @@ import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manage
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataIdentifiersService {
-  private readonly logger = new Logger(
-    WorkspaceSyncObjectMetadataIdentifiersService.name,
-  );
-
   constructor(private readonly standardObjectFactory: StandardObjectFactory) {}
 
   async synchronize(

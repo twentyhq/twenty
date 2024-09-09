@@ -64,7 +64,7 @@ export class RecordPositionFactory {
     dataSourceSchema: string,
     workspaceId: string,
   ) {
-    const [query, params] = await this.recordPositionQueryFactory.create(
+    const [query, params] = this.recordPositionQueryFactory.create(
       recordPositionQueryArgs,
       objectMetadata,
       dataSourceSchema,

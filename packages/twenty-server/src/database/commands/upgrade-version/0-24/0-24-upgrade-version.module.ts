@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { SetCustomObjectIsSoftDeletableCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-custom-object-is-soft-deletable.command';
 import { SetMessageDirectionCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-message-direction.command';
 import { UpgradeTo0_24Command } from 'src/database/commands/upgrade-version/0-24/0-24-upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -33,6 +34,10 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     ),
     TypeORMModule,
   ],
-  providers: [UpgradeTo0_24Command, SetMessageDirectionCommand],
+  providers: [
+    UpgradeTo0_24Command,
+    SetMessageDirectionCommand,
+    SetCustomObjectIsSoftDeletableCommand,
+  ],
 })
 export class UpgradeTo0_24CommandModule {}

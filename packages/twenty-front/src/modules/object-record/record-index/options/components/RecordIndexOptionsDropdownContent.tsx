@@ -6,9 +6,9 @@ import {
   IconEyeOff,
   IconFileExport,
   IconFileImport,
+  IconRotate2,
   IconSettings,
   IconTag,
-  IconTrash,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -165,8 +165,8 @@ export const RecordIndexOptionsDropdownContent = ({
               handleToggleTrashColumnFilter();
               closeDropdown();
             }}
-            LeftIcon={IconTrash}
-            text="Trash"
+            LeftIcon={IconRotate2}
+            text={`Deleted ${objectNamePlural}`}
           />
         </DropdownMenuItemsContainer>
       )}

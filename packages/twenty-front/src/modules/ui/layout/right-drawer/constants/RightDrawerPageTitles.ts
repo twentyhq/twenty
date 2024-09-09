@@ -5,5 +5,6 @@ export const RIGHT_DRAWER_PAGE_TITLES = {
   [RightDrawerPages.ViewCalendarEvent]: 'Calendar Event',
   [RightDrawerPages.ViewRecord]: 'Record Editor',
   [RightDrawerPages.Copilot]: 'Copilot',
-  [RightDrawerPages.Workflow]: 'Workflow',
+  [RightDrawerPages.WorkflowStepEdit]: 'Workflow',
+  [RightDrawerPages.WorkflowStepSelectAction]: 'Workflow',
 };

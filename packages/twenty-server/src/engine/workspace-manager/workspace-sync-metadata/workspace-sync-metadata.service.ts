@@ -42,8 +42,8 @@ export class WorkspaceSyncMetadataService {
    * Sync all standard objects and fields metadata for a given workspace and data source
    * This will update the metadata if it has changed and generate migrations based on the diff.
    *
-   * @param dataSourceId
-   * @param workspaceId
+   * @param context
+   * @param options
    */
   public async synchronize(
     context: WorkspaceSyncContext,

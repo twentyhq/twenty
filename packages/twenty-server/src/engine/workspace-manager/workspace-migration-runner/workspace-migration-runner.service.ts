@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   QueryRunner,
@@ -32,8 +32,6 @@ import { customTableDefaultColumns } from './utils/custom-table-default-column.u
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
-  private readonly logger = new Logger(WorkspaceMigrationRunnerService.name);
-
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,

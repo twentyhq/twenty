@@ -14,6 +14,7 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledTimelineItemContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   height: 'auto';

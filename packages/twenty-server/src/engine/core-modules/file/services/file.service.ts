@@ -38,7 +38,7 @@ export class FileService {
 
     const expirationDate = addMilliseconds(new Date(), ms(fileTokenExpiresIn));
 
-    const signedPayload = await this.jwtWrapperService.sign(
+    const signedPayload = this.jwtWrapperService.sign(
       {
         expiration_date: expirationDate,
         ...payloadToEncode,

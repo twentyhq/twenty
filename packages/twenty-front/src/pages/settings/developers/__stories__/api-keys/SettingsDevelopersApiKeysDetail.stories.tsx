@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
+import { fireEvent, userEvent, within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
@@ -50,24 +50,26 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Settings');
-    await canvas.findByText('sfsfdsf API Key');
+    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
   },
 };
 
 export const RegenerateApiKey: Story = {
-  play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await canvas.findByText('Settings');
+  play: async ({ step }) => {
+    const canvas = within(document.body);
+    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Regenerate Key'));
 
     await canvas.findByText('Cancel');
-    const confirmationInput = await canvas.findByPlaceholderText('yes');
-    await userEvent.click(confirmationInput);
-    await userEvent.keyboard('y');
-    await userEvent.keyboard('e');
-    await userEvent.keyboard('s');
+
+    const confirmationInput = await canvas.findByTestId(
+      'confirmation-modal-input',
+    );
+
+    fireEvent.change(confirmationInput, {
+      target: { value: 'yes' },
+    });
 
     const confirmButton = await canvas.findByTestId(
       'confirmation-modal-confirm-button',
@@ -83,16 +85,18 @@ export const RegenerateApiKey: Story = {
 export const DeleteApiKey: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Settings');
+    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Delete'));
 
     await canvas.findByText('Cancel');
-    const confirmationInput = await canvas.findByPlaceholderText('yes');
-    await userEvent.click(confirmationInput);
-    await userEvent.keyboard('y');
-    await userEvent.keyboard('e');
-    await userEvent.keyboard('s');
+    const confirmationInput = await canvas.findByTestId(
+      'confirmation-modal-input',
+    );
+
+    fireEvent.change(confirmationInput, {
+      target: { value: 'yes' },
+    });
 
     const confirmButton = await canvas.findByTestId(
       'confirmation-modal-confirm-button',

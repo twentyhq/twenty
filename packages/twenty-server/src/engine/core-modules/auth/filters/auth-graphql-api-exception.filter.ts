@@ -16,7 +16,6 @@ import {
 export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: AuthException) {
     switch (exception.code) {
-      case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.CLIENT_NOT_FOUND:
         throw new NotFoundError(exception.message);
       case AuthExceptionCode.INVALID_INPUT:
@@ -24,6 +23,8 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
         throw new ForbiddenError(exception.message);
       case AuthExceptionCode.UNAUTHENTICATED:
+      case AuthExceptionCode.USER_NOT_FOUND:
+      case AuthExceptionCode.WORKSPACE_NOT_FOUND:
         throw new AuthenticationError(exception.message);
       case AuthExceptionCode.INVALID_DATA:
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
