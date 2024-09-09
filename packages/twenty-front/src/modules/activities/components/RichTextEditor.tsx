@@ -256,10 +256,16 @@ export const RichTextEditor = ({
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
+  // See https://github.com/twentyhq/twenty/issues/6724 for explanation
+  const setActivityBodyDebouncedToAvoidDragBug = useDebouncedCallback(
+    setActivityBody,
+    100,
+  );
+
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
-    setActivityBody(newStringifiedBody);
+    setActivityBodyDebouncedToAvoidDragBug(newStringifiedBody);
 
     handleBodyChangeDebounced(newStringifiedBody);
   };
