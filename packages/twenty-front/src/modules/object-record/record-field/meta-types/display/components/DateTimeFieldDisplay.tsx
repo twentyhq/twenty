@@ -5,7 +5,7 @@ export const DateTimeFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useDateTimeFieldDisplay();
 
   const displayAsRelativeDate =
-    fieldDefinition.metadata?.settings?.displayAsRelativeDate ?? false;
+    fieldDefinition.metadata?.settings?.displayAsRelativeDate;
 
   return (
     <DateTimeDisplay
