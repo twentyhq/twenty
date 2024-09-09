@@ -1,12 +1,12 @@
+import { WorkflowSystemStep } from 'src/modules/workflow/common/types/workflow-step.type';
 import { WorkflowStepResult } from 'src/modules/workflow/common/types/workflow-step-result.type';
-import { WorkflowStep } from 'src/modules/workflow/common/types/workflow-step.type';
 
-export interface WorkflowStepExecutor {
+export interface WorkflowSystemAction {
   execute({
     step,
     payload,
   }: {
-    step: WorkflowStep;
+    step: WorkflowSystemStep;
     payload?: object;
   }): Promise<WorkflowStepResult>;
 }

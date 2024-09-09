@@ -4,7 +4,7 @@ type WorkflowError = {
   stackTrace: string;
 };
 
-export type WorkflowResult = {
+export type WorkflowStepResult = {
   data: object | null;
   error?: WorkflowError;
 };

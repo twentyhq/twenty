@@ -1,3 +1,5 @@
+import { WorkflowSystemActionType } from 'src/modules/workflow/common/types/workflow-system-action.type';
+
 type BaseWorkflowSettings = {
   errorHandlingOptions: {
     retryOnFailure: {
@@ -11,4 +13,8 @@ type BaseWorkflowSettings = {
 
 export type WorkflowCodeSettings = BaseWorkflowSettings & {
   serverlessFunctionId: string;
+};
+
+export type WorkflowSystemActionSettings = BaseWorkflowSettings & {
+  systemActionType: WorkflowSystemActionType;
 };

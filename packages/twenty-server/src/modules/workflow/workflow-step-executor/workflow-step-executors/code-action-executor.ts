@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { WorkflowResult } from 'src/modules/workflow/common/types/workflow-result.type';
+import { WorkflowStepResult } from 'src/modules/workflow/common/types/workflow-step-result.type';
 import { WorkflowCodeStep } from 'src/modules/workflow/common/types/workflow-step.type';
 import {
   WorkflowStepExecutorException,
@@ -23,7 +23,7 @@ export class CodeActionExecutor implements WorkflowStepExecutor {
   }: {
     step: WorkflowCodeStep;
     payload?: object;
-  }): Promise<WorkflowResult> {
+  }): Promise<WorkflowStepResult> {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
