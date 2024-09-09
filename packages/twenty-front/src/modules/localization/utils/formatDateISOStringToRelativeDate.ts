@@ -12,21 +12,14 @@ export const formatDateISOStringToRelativeDate = (
   const now = new Date();
   const targetDate = new Date(Date.parse(isoDate));
 
-  if (isDayMaximumPrecision && isToday(targetDate)) {
-    return 'Today';
-  }
+  if (isDayMaximumPrecision && isToday(targetDate)) return 'Today';
 
-  if (
-    isDayMaximumPrecision ||
-    Math.abs(differenceInDays(targetDate, now)) > 0
-  ) {
-    const startOfToday = startOfDay(now);
-    const startOfTargetDate = startOfDay(targetDate);
+  const isWithin24h = Math.abs(differenceInDays(targetDate, now)) < 1;
 
-    return formatDistance(startOfTargetDate, startOfToday, {
+  if (isDayMaximumPrecision || isWithin24h)
+    return formatDistance(startOfDay(targetDate), startOfDay(now), {
       addSuffix: true,
     });
-  }
 
   return formatDistance(targetDate, now, { addSuffix: true });
 };
