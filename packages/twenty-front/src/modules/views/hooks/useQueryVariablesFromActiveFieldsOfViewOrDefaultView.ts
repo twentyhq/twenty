@@ -1,6 +1,7 @@
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
+import { View } from '@/views/types/View';
 import { getQueryVariablesFromView } from '@/views/utils/getQueryVariablesFromView';
 
 export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
@@ -22,7 +23,7 @@ export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
   const { filter, orderBy } = getQueryVariablesFromView({
     fieldMetadataItems: activeFieldMetadataItems,
     objectMetadataItem,
-    view,
+    view: view as View,
   });
 
   return {
