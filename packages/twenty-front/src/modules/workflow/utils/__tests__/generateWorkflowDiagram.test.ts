@@ -18,7 +18,7 @@ describe('generateWorkflowDiagram', () => {
 
     expect(result.nodes[0]).toMatchObject({
       data: {
-        label: trigger.settings.eventName,
+        label: 'Company is Created',
         nodeType: 'trigger',
       },
     });

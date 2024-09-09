@@ -1,17 +1,23 @@
-import fs from 'fs';
+import * as fs from 'fs/promises';
+import { join } from 'path';
 
 import {
   CreateFunctionCommand,
   DeleteFunctionCommand,
   GetFunctionCommand,
   InvokeCommand,
+  InvokeCommandInput,
   Lambda,
   LambdaClientConfig,
+  PublishLayerVersionCommand,
+  PublishLayerVersionCommandInput,
   PublishVersionCommand,
   PublishVersionCommandInput,
   ResourceNotFoundException,
   UpdateFunctionCodeCommand,
   waitUntilFunctionUpdatedV2,
+  ListLayerVersionsCommandInput,
+  ListLayerVersionsCommand,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
@@ -21,20 +27,28 @@ import {
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
+import {
+  ServerlessFunctionEntity,
+  ServerlessFunctionRuntime,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import {
+  LambdaBuildDirectoryManager,
+  NODE_LAYER_SUBFOLDER,
+} from 'src/engine/integrations/serverless/drivers/utils/lambda-build-directory-manager';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
-import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { isDefined } from 'src/utils/is-defined';
+import { COMMON_LAYER_NAME } from 'src/engine/integrations/serverless/drivers/constants/common-layer-name';
+import { copyAndBuildDependencies } from 'src/engine/integrations/serverless/drivers/utils/copy-and-build-dependencies';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
-  buildDirectoryManagerService: BuildDirectoryManagerService;
   region: string;
   role: string;
 }
@@ -46,7 +60,6 @@ export class LambdaDriver
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
   private readonly fileStorageService: FileStorageService;
-  private readonly buildDirectoryManagerService: BuildDirectoryManagerService;
 
   constructor(options: LambdaDriverOptions) {
     super();
@@ -55,7 +68,69 @@ export class LambdaDriver
     this.lambdaClient = new Lambda({ ...lambdaOptions, region });
     this.lambdaRole = role;
     this.fileStorageService = options.fileStorageService;
-    this.buildDirectoryManagerService = options.buildDirectoryManagerService;
+  }
+
+  private async waitFunctionUpdates(
+    serverlessFunctionId: string,
+    maxWaitTime: number,
+  ) {
+    const waitParams = { FunctionName: serverlessFunctionId };
+
+    await waitUntilFunctionUpdatedV2(
+      { client: this.lambdaClient, maxWaitTime },
+      waitParams,
+    );
+  }
+
+  private async createLayerIfNotExists(version: number): Promise<string> {
+    const listLayerParams: ListLayerVersionsCommandInput = {
+      LayerName: COMMON_LAYER_NAME,
+      MaxItems: 1,
+    };
+    const listLayerCommand = new ListLayerVersionsCommand(listLayerParams);
+    const listLayerResult = await this.lambdaClient.send(listLayerCommand);
+
+    if (
+      isDefined(listLayerResult.LayerVersions) &&
+      listLayerResult.LayerVersions?.[0].Description === `${version}` &&
+      isDefined(listLayerResult.LayerVersions[0].LayerVersionArn)
+    ) {
+      return listLayerResult.LayerVersions[0].LayerVersionArn;
+    }
+
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await lambdaBuildDirectoryManager.init();
+
+    const nodeDependenciesFolder = join(
+      sourceTemporaryDir,
+      NODE_LAYER_SUBFOLDER,
+    );
+
+    await copyAndBuildDependencies(nodeDependenciesFolder);
+
+    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+    const params: PublishLayerVersionCommandInput = {
+      LayerName: COMMON_LAYER_NAME,
+      Content: {
+        ZipFile: await fs.readFile(lambdaZipPath),
+      },
+      CompatibleRuntimes: [ServerlessFunctionRuntime.NODE18],
+      Description: `${version}`,
+    };
+
+    const command = new PublishLayerVersionCommand(params);
+
+    const result = await this.lambdaClient.send(command);
+
+    await lambdaBuildDirectoryManager.clean();
+
+    if (!isDefined(result.LayerVersionArn)) {
+      throw new Error('new layer version arn si undefined');
+    }
+
+    return result.LayerVersionArn;
   }
 
   private async checkFunctionExists(functionName: string): Promise<boolean> {
@@ -95,14 +170,16 @@ export class LambdaDriver
       this.fileStorageService,
     );
 
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+
     const {
       sourceTemporaryDir,
       lambdaZipPath,
       javascriptFilePath,
       lambdaHandler,
-    } = await this.buildDirectoryManagerService.init();
+    } = await lambdaBuildDirectoryManager.init();
 
-    await fs.promises.writeFile(javascriptFilePath, javascriptCode);
+    await fs.writeFile(javascriptFilePath, javascriptCode);
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
@@ -111,12 +188,17 @@ export class LambdaDriver
     );
 
     if (!functionExists) {
+      const layerArn = await this.createLayerIfNotExists(
+        serverlessFunction.layerVersion,
+      );
+
       const params: CreateFunctionCommandInput = {
         Code: {
-          ZipFile: await fs.promises.readFile(lambdaZipPath),
+          ZipFile: await fs.readFile(lambdaZipPath),
         },
         FunctionName: serverlessFunction.id,
         Handler: lambdaHandler,
+        Layers: [layerArn],
         Role: this.lambdaRole,
         Runtime: serverlessFunction.runtime,
         Description: 'Lambda function to run user script',
@@ -128,7 +210,7 @@ export class LambdaDriver
       await this.lambdaClient.send(command);
     } else {
       const params: UpdateFunctionCodeCommandInput = {
-        ZipFile: await fs.promises.readFile(lambdaZipPath),
+        ZipFile: await fs.readFile(lambdaZipPath),
         FunctionName: serverlessFunction.id,
       };
 
@@ -137,14 +219,9 @@ export class LambdaDriver
       await this.lambdaClient.send(command);
     }
 
-    const waitParams = { FunctionName: serverlessFunction.id };
+    await this.waitFunctionUpdates(serverlessFunction.id, 10);
 
-    await waitUntilFunctionUpdatedV2(
-      { client: this.lambdaClient, maxWaitTime: 5 },
-      waitParams,
-    );
-
-    await this.buildDirectoryManagerService.clean();
+    await lambdaBuildDirectoryManager.clean();
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
@@ -167,7 +244,7 @@ export class LambdaDriver
 
   async execute(
     functionToExecute: ServerlessFunctionEntity,
-    payload: object | undefined = undefined,
+    payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
     const computedVersion =
@@ -177,8 +254,11 @@ export class LambdaDriver
       computedVersion === 'draft'
         ? functionToExecute.id
         : `${functionToExecute.id}:${computedVersion}`;
+
+    await this.waitFunctionUpdates(functionToExecute.id, 10);
+
     const startTime = Date.now();
-    const params = {
+    const params: InvokeCommandInput = {
       FunctionName: functionName,
       Payload: JSON.stringify(payload),
     };

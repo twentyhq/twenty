@@ -29,12 +29,17 @@ export const cacheStorageModuleFactory = (
         );
       }
 
+      const username = environmentService.get('REDIS_USERNAME');
+      const password = environmentService.get('REDIS_PASSWORD');
+
       return {
         ...cacheModuleOptions,
         store: redisStore,
         socket: {
           host,
           port,
+          username,
+          password,
         },
       };
     }
