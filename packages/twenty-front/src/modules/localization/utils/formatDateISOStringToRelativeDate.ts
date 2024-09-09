@@ -28,5 +28,5 @@ export const formatDateISOStringToRelativeDate = (
     });
   }
 
-  return formatDistance(targetDate, new Date(), { addSuffix: true });
+  return formatDistance(targetDate, now, { addSuffix: true });
 };
