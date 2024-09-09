@@ -1,7 +1,5 @@
-import {
-  WorkflowCodeSettings,
-  WorkflowSystemActionSettings,
-} from 'src/modules/workflow/common/types/workflow-settings.type';
+import { WorkflowCodeSettings } from 'src/modules/workflow/common/types/settings/workflow-code-settings.type';
+import { WorkflowSystemActionSettings } from 'src/modules/workflow/common/types/settings/workflow-system-action-settings.type';
 
 export enum WorkflowStepType {
   CODE_ACTION = 'CODE_ACTION',
