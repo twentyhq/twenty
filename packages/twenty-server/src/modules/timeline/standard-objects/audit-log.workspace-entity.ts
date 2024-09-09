@@ -48,7 +48,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.RAW_JSON,
     label: 'Contexto do Evento',
     description:
-      'Objeto JSON para fornecer contexto (usuário, dispositivo, espaço de trabalho, etc.)',
+      'Objeto JSON para fornecer contexto (usuário, dispositivo, workspace, etc.)',
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
