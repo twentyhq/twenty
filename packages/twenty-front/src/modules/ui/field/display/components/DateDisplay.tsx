@@ -17,7 +17,7 @@ export const DateDisplay = ({
 
   const formattedDate = value
     ? displayAsRelativeDate
-      ? formatDateISOStringToRelativeDate(value, 'day')
+      ? formatDateISOStringToRelativeDate(value, true)
       : formatDateISOStringToDate(value, timeZone, dateFormat)
     : '';
 
