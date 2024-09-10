@@ -24,6 +24,8 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -40,6 +42,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SettingsDevelopersApiKeyDetail = () => {
+  const { enqueueSnackBar } = useSnackBar();
   const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
     useState(false);
   const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
@@ -77,6 +80,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
       if (redirect) {
         navigate('/settings/developers');
       }
+    } catch (err) {
+      enqueueSnackBar('Error deleting api key', {
+        variant: SnackBarVariant.Error,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +113,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
       token: tokenData.data?.generateApiKeyToken.token,
     };
   };
-
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
@@ -123,6 +129,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
           navigate(`/settings/developers/api-keys/${apiKey.id}`);
         }
       }
+    } catch (err) {
+      enqueueSnackBar('Error regenerating api key', {
+        variant: SnackBarVariant.Error,
+      });
     } finally {
       setIsLoading(false);
     }

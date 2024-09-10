@@ -89,6 +89,11 @@ export const ConfirmationModal = ({
     await onConfirmClick();
     setIsOpen(false);
   };
+  const handleEnter = () => {
+    if (isValidValue) {
+      handleConfirmClick();
+    }
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -100,7 +105,7 @@ export const ConfirmationModal = ({
                 setIsOpen(false);
               }
             }}
-            onEnter={!isValidValue ? undefined : handleConfirmClick}
+            onEnter={handleEnter}
             isClosable={true}
             padding="large"
           >
