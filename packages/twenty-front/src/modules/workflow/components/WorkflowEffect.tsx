@@ -1,6 +1,6 @@
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
@@ -9,11 +9,13 @@ import { isDefined } from 'twenty-ui';
 
 type WorkflowEffectProps = {
   workflowId: string;
+  workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
 };
 
-export const WorkflowEffect = ({ workflowId }: WorkflowEffectProps) => {
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
-
+export const WorkflowEffect = ({
+  workflowId,
+  workflowWithCurrentVersion,
+}: WorkflowEffectProps) => {
   const setWorkflowId = useSetRecoilState(workflowIdState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
