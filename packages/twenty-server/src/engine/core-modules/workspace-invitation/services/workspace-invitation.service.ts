@@ -66,7 +66,7 @@ export class WorkspaceInvitationService {
   async createWorkspaceInvitation(email: string, workspace: Workspace) {
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
-      email,
+      email.toLowerCase(),
     );
 
     if (maybeWorkspaceInvitation) {

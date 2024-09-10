@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Key } from 'ts-key-enum';
-import { IconMail, IconSend } from 'twenty-ui';
+import { IconSend } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -131,7 +131,6 @@ export const WorkspaceInviteTeam = () => {
               return (
                 <TextInput
                   placeholder="tim@apple.com, jony.ive@apple.dev"
-                  LeftIcon={IconMail}
                   value={value}
                   onChange={onChange}
                   error={error?.message}
