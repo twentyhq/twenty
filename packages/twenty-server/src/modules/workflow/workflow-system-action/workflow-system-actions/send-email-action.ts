@@ -5,13 +5,13 @@ import { render } from '@react-email/components';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
+import Handlebars from 'handlebars';
 
 import { WorkflowSystemAction } from 'src/modules/workflow/workflow-system-action/workflow-system-action.interface';
 import { WorkflowSystemStep } from 'src/modules/workflow/common/types/workflow-step.type';
 import { WorkflowStepResult } from 'src/modules/workflow/common/types/workflow-step-result.type';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { EmailService } from 'src/engine/integrations/email/email.service';
-import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class SendEmailAction implements WorkflowSystemAction {
@@ -41,14 +41,8 @@ export class SendEmailAction implements WorkflowSystemAction {
       return { data: { success: false } };
     }
 
-    let mainText = step.settings.template;
+    const mainText = Handlebars.compile(step.settings.template)(payload);
 
-    if (isDefined(payload)) {
-      Object.keys(payload).forEach(
-        (key: string) =>
-          (mainText = mainText?.replace(`{{${key}}}`, payload[key])),
-      );
-    }
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
     const safeHTML = purify.sanitize(mainText || '');
