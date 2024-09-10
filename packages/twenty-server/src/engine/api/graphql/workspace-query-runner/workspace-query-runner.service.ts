@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
-import { DataSource } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 
 import {
   Record as IRecord,
@@ -498,7 +498,7 @@ export class WorkspaceQueryRunnerService {
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
     const existingRecords = await repository.find({
-      where: { id: { in: args.filter?.id?.in } },
+      where: { id: In(args.filter?.id?.in) },
     });
     const mappedRecords = new Map(
       existingRecords.map((record) => [record.id, record]),
@@ -618,6 +618,19 @@ export class WorkspaceQueryRunnerService {
       });
     }
 
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        objectMetadataItem.nameSingular,
+      );
+
+    const existingRecords = await repository.find({
+      where: { id: In(args.filter?.id?.in) },
+    });
+    const mappedRecords = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
+
     const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
@@ -637,17 +650,21 @@ export class WorkspaceQueryRunnerService {
 
     this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.deleted`,
-      parsedResults.map(
-        (record) =>
-          ({
-            userId: authContext.user?.id,
-            recordId: record.id,
-            objectMetadata: objectMetadataItem,
-            properties: {
-              before: this.removeNestedProperties(record),
-            },
-          }) satisfies ObjectRecordDeleteEvent<any>,
-      ),
+      parsedResults.map((record) => {
+        const existingRecord = mappedRecords.get(record.id);
+
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: this.removeNestedProperties({
+              ...existingRecord,
+              ...record,
+            }),
+          },
+        } satisfies ObjectRecordDeleteEvent<any>;
+      }),
       authContext.workspace.id,
     );
 
