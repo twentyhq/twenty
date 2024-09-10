@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: packages/twenty-docker/twenty/Dockerfile
     volumes:
-      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
+      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH}
       - docker-data:/app/docker-data
     ports:
       - "${PORT:-3000}:3000"
