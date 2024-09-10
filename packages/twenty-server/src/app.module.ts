@@ -43,7 +43,7 @@ import { IntegrationsModule } from './engine/integrations/integrations.module';
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [CoreEngineModule, GraphQLConfigModule],
+      imports: [GraphQLConfigModule],
       useClass: GraphQLConfigService,
     }),
     TwentyORMModule,

@@ -15,7 +15,7 @@ import { WorkspaceSchemaFactory } from './workspace-schema.factory';
     // we should investigate this issue
     // GraphQLModule.forRootAsync<YogaDriverConfig>({
     //   driver: YogaDriver,
-    //   imports: [CoreEngineModule, GraphQLConfigModule],
+    //   imports: [GraphQLConfigModule],
     //   useClass: GraphQLConfigService,
     // }),
     MetadataEngineModule,

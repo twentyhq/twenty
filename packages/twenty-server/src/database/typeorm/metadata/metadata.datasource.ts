@@ -1,5 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
+import { join } from 'path';
+
 import { config } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 config();
@@ -9,11 +11,21 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   type: 'postgres',
   logging: ['error'],
   schema: 'metadata',
-  entities: ['dist/src/engine/metadata-modules/**/*.entity{.ts,.js}'],
+  entities: [
+    join(
+      __dirname,
+      '../../../../src/engine/metadata-modules/**/*.entity{.ts,.js}',
+    ),
+  ],
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
-  migrations: ['dist/src/database/typeorm/metadata/migrations/*{.ts,.js}'],
+  migrations: [
+    join(
+      __dirname,
+      '../../../../src/database/typeorm/metadata/migrations/*{.ts,.js}',
+    ),
+  ],
   ssl:
     process.env.PG_SSL_ALLOW_SELF_SIGNED === 'true'
       ? {

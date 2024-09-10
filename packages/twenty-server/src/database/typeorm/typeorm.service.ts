@@ -4,6 +4,15 @@ import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -18,15 +27,15 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
       logging: false,
       schema: 'core',
       entities: [
-        // User,
-        // Workspace,
-        // UserWorkspace,
-        // AppToken,
-        // KeyValuePair,
-        // FeatureFlagEntity,
-        // BillingSubscription,
-        // BillingSubscriptionItem,
-        // PostgresCredentials,
+        User,
+        Workspace,
+        UserWorkspace,
+        AppToken,
+        KeyValuePair,
+        FeatureFlagEntity,
+        BillingSubscription,
+        BillingSubscriptionItem,
+        PostgresCredentials,
       ],
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {

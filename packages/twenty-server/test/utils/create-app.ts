@@ -1,10 +1,6 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 
-import mockUser from 'test/mock-data/user.json';
-import mockWorkspace from 'test/mock-data/workspace.json';
-import { RequestHandler } from 'express';
-
 import { AppModule } from 'src/app.module';
 
 interface TestingModuleCreatePreHook {
@@ -41,15 +37,6 @@ export const createApp = async (
   if (config.appInitHook) {
     await config.appInitHook(app);
   }
-
-  const mockAuthHandler: RequestHandler = (req, _res, next) => {
-    req.user = mockUser as any;
-    req.workspace = mockWorkspace as any;
-    req.workspaceId = mockWorkspace.id;
-    next();
-  };
-
-  app.use(mockAuthHandler);
 
   await app.init();
 
