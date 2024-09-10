@@ -1,9 +1,17 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 
-const StyledUndecoratedLink = styled(Link)`
+type StyledLinkProps = LinkProps & {
+  fullWidth?: boolean;
+};
+
+const StyledUndecoratedLink = styled(
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  ({ fullWidth: _, ...props }: StyledLinkProps) => <Link {...props} />,
+)<StyledLinkProps>`
   text-decoration: none;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 type UndecoratedLinkProps = {
@@ -11,6 +19,7 @@ type UndecoratedLinkProps = {
   children: React.ReactNode;
   replace?: boolean;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  fullWidth?: boolean;
 };
 
 export const UndecoratedLink = ({
@@ -18,12 +27,14 @@ export const UndecoratedLink = ({
   to,
   replace = false,
   onClick,
+  fullWidth = false,
 }: UndecoratedLinkProps) => {
   return (
     <StyledUndecoratedLink
       to={to as string}
       replace={replace}
       onClick={onClick}
+      fullWidth={fullWidth}
     >
       {children}
     </StyledUndecoratedLink>

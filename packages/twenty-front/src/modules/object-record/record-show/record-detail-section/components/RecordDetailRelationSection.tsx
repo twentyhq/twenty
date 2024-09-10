@@ -4,10 +4,13 @@ import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
 
+import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
+import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
@@ -16,6 +19,7 @@ import { RecordDetailSection } from '@/object-record/record-show/record-detail-s
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
@@ -110,6 +114,10 @@ export const RecordDetailRelationSection = ({
     });
   };
 
+  const { updateRelation } = useUpdateRelationFromManyFieldInput({
+    scopeId: dropdownId,
+  });
+
   const filterQueryParams: FilterQueryParams = {
     filter: {
       [relationFieldMetadataItem?.name || '']: {
@@ -175,16 +183,28 @@ export const RecordDetailRelationSection = ({
               }
               dropdownComponents={
                 <RelationPickerScope relationPickerScopeId={dropdownId}>
-                  <SingleEntitySelectMenuItemsWithSearch
-                    EmptyIcon={IconForbid}
-                    onEntitySelected={handleRelationPickerEntitySelected}
-                    selectedRelationRecordIds={relationRecordIds}
-                    relationObjectNameSingular={
-                      relationObjectMetadataNameSingular
-                    }
-                    relationPickerScopeId={dropdownId}
-                    onCreate={createNewRecordAndOpenRightDrawer}
-                  />
+                  {isToOneObject ? (
+                    <SingleEntitySelectMenuItemsWithSearch
+                      EmptyIcon={IconForbid}
+                      onEntitySelected={handleRelationPickerEntitySelected}
+                      selectedRelationRecordIds={relationRecordIds}
+                      relationObjectNameSingular={
+                        relationObjectMetadataNameSingular
+                      }
+                      relationPickerScopeId={dropdownId}
+                      onCreate={createNewRecordAndOpenRightDrawer}
+                    />
+                  ) : (
+                    <>
+                      <ObjectMetadataItemsRelationPickerEffect />
+                      <RelationFromManyFieldInputMultiRecordsEffect />
+                      <MultiRecordSelect
+                        onCreate={createNewRecordAndOpenRightDrawer}
+                        onChange={updateRelation}
+                        onSubmit={closeDropdown}
+                      />
+                    </>
+                  )}
                 </RelationPickerScope>
               }
               dropdownHotkeyScope={{

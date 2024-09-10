@@ -1,13 +1,17 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement, useContext } from 'react';
-import { AppTooltip, IconComponent, TooltipDelay } from 'twenty-ui';
+import {
+  AppTooltip,
+  IconComponent,
+  TooltipDelay,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
@@ -120,7 +124,7 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && label && (
             <StyledLabelContainer width={labelWidth}>
-              <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
+              <OverflowingTextWithTooltip text={label} />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}

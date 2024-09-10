@@ -157,6 +157,7 @@ export const ImageInput = ({
           )}
           <Button
             Icon={IconTrash}
+            accent="danger"
             onClick={onRemove}
             variant="secondary"
             title="Remove"

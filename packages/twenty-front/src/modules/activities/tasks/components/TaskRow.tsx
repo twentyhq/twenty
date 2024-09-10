@@ -35,6 +35,10 @@ const StyledTaskBody = styled.div`
   display: flex;
   text-overflow: ellipsis;
   max-width: 40%;
+  max-width: 100%;
+  flex: 1;
+  overflow: hidden;
+  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -43,10 +47,13 @@ const StyledTaskTitle = styled.div<{
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  align-items: center;
 `;
 
 const StyledDueDate = styled.div<{
@@ -74,6 +81,8 @@ const StyledPlaceholder = styled.div`
 const StyledLeftSideContainer = styled.div`
   align-items: center;
   display: inline-flex;
+  display: flex;
+  flex: 1;
   overflow: hidden;
 `;
 

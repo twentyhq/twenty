@@ -227,6 +227,7 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
+      case FieldMetadataType.Date:
       case FieldMetadataType.DateTime: {
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,

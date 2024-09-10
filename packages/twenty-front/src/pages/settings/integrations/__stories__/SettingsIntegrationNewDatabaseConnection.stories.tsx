@@ -7,7 +7,6 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Integrations/SettingsIntegrationNewDatabaseConnection',
@@ -29,8 +28,9 @@ export type Story = StoryObj<typeof SettingsIntegrationNewDatabaseConnection>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    sleep(100);
 
-    await canvas.findByText('Connect a new database');
+    await canvas.findByText('Connect a new database', undefined, {
+      timeout: 3000,
+    });
   },
 };
