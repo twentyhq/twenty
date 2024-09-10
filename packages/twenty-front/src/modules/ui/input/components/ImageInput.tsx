@@ -52,8 +52,9 @@ const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
   margin-left: ${({ theme }) => theme.spacing(4)};
+  gap:5px;
 `;
 
 const StyledButtonContainer = styled.div`
@@ -157,7 +158,6 @@ export const ImageInput = ({
           )}
           <Button
             Icon={IconTrash}
-            accent="danger"
             onClick={onRemove}
             variant="secondary"
             title="Remove"
