@@ -1,4 +1,4 @@
-import { useActivitiesTitle } from '@/activities/timelineActivities/hooks/useActivitiesTitle';
+import { useLinkedObjectsTitle } from '@/activities/timelineActivities/hooks/useLinkedObjectsTitle';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
@@ -43,9 +43,10 @@ export const useTimelineActivities = (
     .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
     .map((timelineActivity) => timelineActivity.linkedRecordId);
 
-  const { loading: loadingActivitiesTitle } = useActivitiesTitle(activityIds);
+  const { loading: loadingLinkedObjectsTitle } =
+    useLinkedObjectsTitle(activityIds);
 
-  const loading = loadingTimelineActivities || loadingActivitiesTitle;
+  const loading = loadingTimelineActivities || loadingLinkedObjectsTitle;
 
   return {
     timelineActivities,

@@ -2,16 +2,16 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { isNonEmptyArray } from '@sniptt/guards';
 
-export const useActivitiesTitle = (activityIds: string[]) => {
+export const useLinkedObjectsTitle = (linkedObjectIds: string[]) => {
   const { loading } = useCombinedFindManyRecords({
-    skip: !isNonEmptyArray(activityIds),
+    skip: !isNonEmptyArray(linkedObjectIds),
     operationSignatures: [
       {
         objectNameSingular: CoreObjectNameSingular.Task,
         variables: {
           filter: {
             id: {
-              in: activityIds ?? [],
+              in: linkedObjectIds ?? [],
             },
           },
         },
@@ -25,7 +25,7 @@ export const useActivitiesTitle = (activityIds: string[]) => {
         variables: {
           filter: {
             id: {
-              in: activityIds ?? [],
+              in: linkedObjectIds ?? [],
             },
           },
         },
