@@ -25,6 +25,7 @@ export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
   PHONE = 'PHONE',
+  PHONES = 'PHONES',
   EMAIL = 'EMAIL',
   EMAILS = 'EMAILS',
   DATE_TIME = 'DATE_TIME',

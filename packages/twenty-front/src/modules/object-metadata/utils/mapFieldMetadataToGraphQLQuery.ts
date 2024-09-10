@@ -164,5 +164,14 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
+  if (fieldType === FieldMetadataType.Phones) {
+    return `${field.name}
+    {
+      primaryPhoneNumber
+      primaryPhoneCountryCode
+      additionalPhones
+    }`;
+  }
+
   return '';
 };

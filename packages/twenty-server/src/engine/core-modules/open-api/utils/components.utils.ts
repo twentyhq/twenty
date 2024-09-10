@@ -137,6 +137,7 @@ const getSchemaComponentsProperties = ({
       case FieldMetadataType.ADDRESS:
       case FieldMetadataType.ACTOR:
       case FieldMetadataType.EMAILS:
+      case FieldMetadataType.PHONES:
         itemProperty = {
           type: 'object',
           properties: compositeTypeDefinitions
