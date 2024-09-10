@@ -46,7 +46,9 @@ export const MultiSelectFieldInput = ({
     fieldValues?.includes(option.value),
   );
 
-  const optionsInDropDown = fieldDefinition.metadata.options;
+  const filteredOptionsInDropDown = fieldDefinition.metadata.options.filter(
+    (option) => option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+  );
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
@@ -87,7 +89,7 @@ export const MultiSelectFieldInput = ({
     },
   });
 
-  const optionIds = optionsInDropDown.map((option) => option.value);
+  const optionIds = filteredOptionsInDropDown.map((option) => option.value);
 
   return (
     <SelectableList
@@ -95,7 +97,7 @@ export const MultiSelectFieldInput = ({
       selectableItemIdArray={optionIds}
       hotkeyScope={hotkeyScope}
       onEnter={(itemId) => {
-        const option = optionsInDropDown.find(
+        const option = filteredOptionsInDropDown.find(
           (option) => option.value === itemId,
         );
         if (isDefined(option)) {
@@ -112,7 +114,7 @@ export const MultiSelectFieldInput = ({
           />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight>
-            {optionsInDropDown.map((option) => {
+            {filteredOptionsInDropDown.map((option) => {
               return (
                 <MenuItemMultiSelectTag
                   key={option.value}
