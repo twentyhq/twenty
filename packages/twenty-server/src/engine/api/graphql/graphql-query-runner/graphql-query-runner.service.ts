@@ -79,8 +79,11 @@ export class GraphqlQueryRunnerService {
       selectedFields,
     );
 
+    const isBackwardPagination = isDefined(args.before);
+    const isForwardPagination = !isBackwardPagination;
+
     const order = args.orderBy
-      ? graphqlQueryParser.parseOrder(args.orderBy)
+      ? graphqlQueryParser.parseOrder(args.orderBy, isForwardPagination)
       : undefined;
 
     const where = args.filter
@@ -97,6 +100,14 @@ export class GraphqlQueryRunnerService {
 
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
+    const fieldsToAdd = new Set(['id', ...Object.keys(order || {})]);
+
+    for (const field of fieldsToAdd) {
+      if (!select[field]) {
+        select[field] = true;
+      }
+    }
+
     const findOptions: FindManyOptions<ObjectLiteral> = {
       where,
       order,
@@ -110,19 +121,19 @@ export class GraphqlQueryRunnerService {
     });
 
     if (cursor) {
-      applyRangeFilter(where, order, cursor);
+      applyRangeFilter(where, cursor, isForwardPagination);
     }
 
     const objectRecords = await repository.find(findOptions);
 
     const hasMoreRecords = objectRecords.length > limit;
 
-    const hasNextPage = isDefined(args.after) && hasMoreRecords;
-    const hasPreviousPage = isDefined(args.before) && hasMoreRecords;
-
     if (hasMoreRecords) {
       objectRecords.pop();
     }
+
+    const hasPreviousPage = isBackwardPagination && hasMoreRecords;
+    const hasNextPage = isForwardPagination && hasMoreRecords;
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
@@ -142,6 +153,27 @@ export class GraphqlQueryRunnerService {
     if (args.first && args.last) {
       throw new GraphqlQueryRunnerException(
         'Cannot provide both first and last',
+        GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
+      );
+    }
+
+    if (args.before && args.after) {
+      throw new GraphqlQueryRunnerException(
+        'Cannot provide both before and after',
+        GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
+      );
+    }
+
+    if (args.before && args.first) {
+      throw new GraphqlQueryRunnerException(
+        'Cannot provide both before and first',
+        GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
+      );
+    }
+
+    if (args.after && args.last) {
+      throw new GraphqlQueryRunnerException(
+        'Cannot provide both after and last',
         GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
       );
     }

@@ -40,12 +40,15 @@ export class GraphqlQueryParser {
     return graphqlQueryFilterParser.parse(recordFilter);
   }
 
-  parseOrder(orderBy: RecordOrderBy): Record<string, FindOptionsOrderValue> {
+  parseOrder(
+    orderBy: RecordOrderBy,
+    isForwardPagination = true,
+  ): Record<string, FindOptionsOrderValue> {
     const graphqlQueryOrderParser = new GraphqlQueryOrderParser(
       this.fieldMetadataMap,
     );
 
-    return graphqlQueryOrderParser.parse(orderBy);
+    return graphqlQueryOrderParser.parse(orderBy, isForwardPagination);
   }
 
   parseSelectedFields(
