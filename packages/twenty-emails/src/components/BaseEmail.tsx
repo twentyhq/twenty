@@ -6,14 +6,19 @@ import { Logo } from 'src/components/Logo';
 
 type BaseEmailProps = PropsWithChildren<{
   width?: number;
+  withLogo?: boolean;
 }>;
 
-export const BaseEmail = ({ children, width }: BaseEmailProps) => {
+export const BaseEmail = ({
+  children,
+  width,
+  withLogo = true,
+}: BaseEmailProps) => {
   return (
     <Html lang="en">
       <BaseHead />
       <Container width={width || 290}>
-        <Logo />
+        {withLogo && <Logo />}
         {children}
       </Container>
     </Html>

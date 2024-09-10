@@ -17,7 +17,7 @@ export const WorkflowActionEmail = ({
   callToAction,
 }: WorkflowActionEmailProps) => {
   return (
-    <BaseEmail>
+    <BaseEmail withLogo={false}>
       {title && <Title value={title} />}
       {mainText && <MainText>{mainText}</MainText>}
       {callToAction && (
