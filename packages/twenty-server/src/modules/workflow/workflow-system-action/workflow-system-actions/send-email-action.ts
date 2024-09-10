@@ -63,6 +63,6 @@ export class SendEmailAction implements WorkflowSystemAction {
       html,
     });
 
-    return { data: null };
+    return { data: {} };
   }
 }

@@ -18,10 +18,14 @@ export class SystemActionExecutor implements WorkflowStepExecutor {
     step: WorkflowSystemStep;
     payload?: object;
   }): Promise<WorkflowStepResult> {
-    const workflowSystemAction = this.workflowSystemActionFactory.get(
-      step.settings.systemActionType,
-    );
+    try {
+      const workflowSystemAction = this.workflowSystemActionFactory.get(
+        step.settings.systemActionType,
+      );
 
-    return await workflowSystemAction.execute({ step, payload });
+      return await workflowSystemAction.execute({ step, payload });
+    } catch (error) {
+      return { error };
+    }
   }
 }

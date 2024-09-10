@@ -40,6 +40,10 @@ export class CodeActionExecutor implements WorkflowStepExecutor {
         payload || {},
       );
 
-    return { data: result.data, ...(result.error && { error: result.error }) };
+    if (result.error) {
+      return { error: result.error };
+    }
+
+    return { data: result.data || {} };
   }
 }
