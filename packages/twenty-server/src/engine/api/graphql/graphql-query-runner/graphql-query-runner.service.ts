@@ -82,13 +82,12 @@ export class GraphqlQueryRunnerService {
     const isBackwardPagination = isDefined(args.before);
     const isForwardPagination = !isBackwardPagination;
 
-    const order = args.orderBy
-      ? graphqlQueryParser.parseOrder(args.orderBy, isForwardPagination)
-      : undefined;
+    const order = graphqlQueryParser.parseOrder(
+      args.orderBy ?? [],
+      isForwardPagination,
+    );
 
-    const where = args.filter
-      ? graphqlQueryParser.parseFilter(args.filter)
-      : {};
+    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     let cursor: Record<string, any> | undefined;
 
@@ -100,11 +99,11 @@ export class GraphqlQueryRunnerService {
 
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
-    const fieldsToAdd = new Set(['id', ...Object.keys(order || {})]);
+    const orderByColumnsToAddToSelect = new Set(Object.keys(order || {}));
 
-    for (const field of fieldsToAdd) {
-      if (!select[field]) {
-        select[field] = true;
+    for (const column of orderByColumnsToAddToSelect) {
+      if (!select[column]) {
+        select[column] = true;
       }
     }
 
