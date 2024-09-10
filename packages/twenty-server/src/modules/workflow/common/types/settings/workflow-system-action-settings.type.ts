@@ -6,7 +6,7 @@ type BaseSystemActionSettings = BaseWorkflowSettings & {
 };
 
 export type WorkflowSystemSendEmailActionSettings = BaseSystemActionSettings & {
-  subject: string;
+  subject?: string;
   template?: string;
   title?: string;
   callToAction?: {

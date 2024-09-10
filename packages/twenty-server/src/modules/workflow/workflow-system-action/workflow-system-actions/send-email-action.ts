@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkflowActionEmail } from 'twenty-emails';
 import { render } from '@react-email/components';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
 
 import { WorkflowSystemAction } from 'src/modules/workflow/workflow-system-action/workflow-system-action.interface';
 import { WorkflowSystemStep } from 'src/modules/workflow/common/types/workflow-step.type';
@@ -35,9 +37,12 @@ export class SendEmailAction implements WorkflowSystemAction {
           (mainText = mainText?.replace(`{{${key}}}`, payload[key])),
       );
     }
+    const window = new JSDOM('').window;
+    const purify = DOMPurify(window);
+    const safeHTML = purify.sanitize(mainText || '');
 
     const email = WorkflowActionEmail({
-      mainText: mainText,
+      dangerousHTML: safeHTML,
       title: step.settings.title,
       callToAction: step.settings.callToAction,
     });
@@ -53,7 +58,7 @@ export class SendEmailAction implements WorkflowSystemAction {
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: payload.email,
-      subject: step.settings.subject,
+      subject: step.settings.subject || '',
       text,
       html,
     });

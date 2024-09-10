@@ -1,10 +1,9 @@
 import { BaseEmail } from 'src/components/BaseEmail';
 import { Title } from 'src/components/Title';
-import { MainText } from 'src/components/MainText';
 import { CallToAction } from 'src/components/CallToAction';
 
 type WorkflowActionEmailProps = {
-  mainText?: string;
+  dangerousHTML?: string;
   title?: string;
   callToAction?: {
     value: string;
@@ -12,14 +11,16 @@ type WorkflowActionEmailProps = {
   };
 };
 export const WorkflowActionEmail = ({
-  mainText,
+  dangerousHTML,
   title,
   callToAction,
 }: WorkflowActionEmailProps) => {
   return (
     <BaseEmail withLogo={false}>
       {title && <Title value={title} />}
-      {mainText && <MainText>{mainText}</MainText>}
+      {dangerousHTML && (
+        <div dangerouslySetInnerHTML={{ __html: dangerousHTML }} />
+      )}
       {callToAction && (
         <CallToAction value={callToAction.value} href={callToAction.href} />
       )}
