@@ -18,13 +18,13 @@ const StyledContainer = styled.div`
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   height: ${({ theme }) => theme.spacing(12)};
   min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
   max-width: calc(100% - ${({ theme }) => theme.spacing(8)});
   padding: 0 ${({ theme }) => theme.spacing(4)};
   overflow: hidden;
-
+  max-inline-size: 60vh;
   &:last-child {
     border-bottom: 0;
   }
@@ -33,9 +33,9 @@ const StyledContainer = styled.div`
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  max-width: 100%;
-  flex: 1;
   overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30vh;
 `;
 
 const StyledTaskTitle = styled.div<{
