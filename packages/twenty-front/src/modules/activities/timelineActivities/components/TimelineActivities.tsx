@@ -46,7 +46,7 @@ export const TimelineActivities = ({
   const isTimelineActivitiesEmpty =
     !timelineActivities || timelineActivities.length === 0;
 
-  if (loading && isTimelineActivitiesEmpty) {
+  if (loading) {
     return <SkeletonLoader withSubSections />;
   }
 
