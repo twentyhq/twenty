@@ -16,7 +16,7 @@ export const formatDateISOStringToRelativeDate = (
 
   const isWithin24h = Math.abs(differenceInDays(targetDate, now)) < 1;
 
-  if (isDayMaximumPrecision || isWithin24h)
+  if (isDayMaximumPrecision || !isWithin24h)
     return formatDistance(startOfDay(targetDate), startOfDay(now), {
       addSuffix: true,
     });
