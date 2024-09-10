@@ -90,7 +90,7 @@ export const RecordIndexOptionsDropdownContent = ({
     hiddenTableColumns,
   } = useRecordIndexOptionsForTable(recordIndexId);
 
-  const [handleToggleTrashColumnFilter, toggleSoftDeleteFilterState] =
+  const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
     useHandleToggleTrashColumnFilter({
       objectNameSingular,
       viewBarId: recordIndexId,

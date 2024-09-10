@@ -68,10 +68,13 @@ export const useHandleToggleTrashColumnFilter = ({
 
   const toggleSoftDeleteFilterState = useRecoilCallback(
     ({ set }) =>
-      (currentState?: boolean) => {
-        set(isSoftDeleteActiveState, Boolean(currentState));
+      (currentState: boolean) => {
+        set(isSoftDeleteActiveState, currentState);
       },
     [isSoftDeleteActiveState],
   );
-  return [handleToggleTrashColumnFilter, toggleSoftDeleteFilterState];
+  return {
+    handleToggleTrashColumnFilter,
+    toggleSoftDeleteFilterState,
+  };
 };

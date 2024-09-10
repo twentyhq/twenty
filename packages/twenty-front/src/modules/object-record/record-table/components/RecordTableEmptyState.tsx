@@ -41,7 +41,7 @@ export const RecordTableEmptyState = ({
 
   const tableFilters = useRecoilValue(tableFiltersState);
 
-  const [, toggleSoftDeleteFilterState] = useHandleToggleTrashColumnFilter({
+  const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
     objectNameSingular,
     viewBarId: recordTableId,
   });
@@ -57,29 +57,39 @@ export const RecordTableEmptyState = ({
     toggleSoftDeleteFilterState(false);
   };
 
-  const [title, subTitle, Icon, onClick, buttonTitle] = isRemote
-    ? [
-        'No Data Available for Remote Table',
-        'If this is unexpected, please verify your settings.',
-        IconSettings,
-        () => navigate('/settings/integrations'),
-        'Go to Settings',
-      ]
-    : [
-        isSoftDeleteActive
-          ? `No Deleted ${objectLabel} found`
-          : noExistingRecords
-            ? `Add your first ${objectLabel}`
-            : `No ${objectLabel} found`,
-        isSoftDeleteActive
-          ? `No deleted records matching the filter criteria were found.`
-          : noExistingRecords
-            ? `Use our API or add your first ${objectLabel} manually`
-            : 'No records matching the filter criteria were found.',
-        isSoftDeleteActive ? IconFilterOff : IconPlus,
-        isSoftDeleteActive ? handleRemoveSoftDeleteFilter : createRecord,
-        isSoftDeleteActive ? 'Remove Deleted filter' : `Add a ${objectLabel}`,
-      ];
+  const title = isRemote
+    ? 'No Data Available for Remote Table'
+    : isSoftDeleteActive
+      ? `No Deleted ${objectLabel} found`
+      : noExistingRecords
+        ? `Add your first ${objectLabel}`
+        : `No ${objectLabel} found`;
+
+  const subTitle = isRemote
+    ? 'If this is unexpected, please verify your settings.'
+    : isSoftDeleteActive
+      ? `No deleted records matching the filter criteria were found.`
+      : noExistingRecords
+        ? `Use our API or add your first ${objectLabel} manually`
+        : 'No records matching the filter criteria were found.';
+
+  const Icon = isRemote
+    ? IconSettings
+    : isSoftDeleteActive
+      ? IconFilterOff
+      : IconPlus;
+
+  const onClick = isRemote
+    ? () => navigate('/settings/integrations')
+    : isSoftDeleteActive
+      ? handleRemoveSoftDeleteFilter
+      : createRecord;
+
+  const buttonTitle = isRemote
+    ? 'Go to Settings'
+    : isSoftDeleteActive
+      ? 'Remove Deleted filter'
+      : `Add a ${objectLabel}`;
 
   return (
     <AnimatedPlaceholderEmptyContainer>

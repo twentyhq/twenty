@@ -24,7 +24,7 @@ export const VariantFilterChip = ({
     objectNamePlural: objectNamePlural ?? '',
   });
 
-  const [, toggleSoftDeleteFilterState] = useHandleToggleTrashColumnFilter({
+  const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
     objectNameSingular,
     viewBarId,
   });
