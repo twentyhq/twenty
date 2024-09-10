@@ -123,7 +123,7 @@ export const RecordIndexPageKanbanAddButton = ({
           size="medium"
           variant="secondary"
           accent="default"
-          ariaLabel="Add"
+          ariaLabel="Adicionar"
         />
       }
       dropdownId={dropdownId}
