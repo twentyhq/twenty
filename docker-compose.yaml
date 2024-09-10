@@ -16,6 +16,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
       interval: 5s
@@ -34,6 +36,8 @@ services:
       db:
         condition: service_healthy
       server:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: always
 
@@ -54,7 +58,21 @@ services:
       retries: 10
     restart: always
 
+  redis:
+    image: redis:latest
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
 volumes:
   docker-data:
   db-data:
   server-local-data:
+  redis-data:
