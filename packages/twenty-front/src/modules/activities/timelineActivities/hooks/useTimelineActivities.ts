@@ -1,3 +1,4 @@
+import { useLinkedObjectsTitle } from '@/activities/timelineActivities/hooks/useLinkedObjectsTitle';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
@@ -19,10 +20,10 @@ export const useTimelineActivities = (
   });
 
   const {
-    records: TimelineActivities,
-    loading,
+    records: timelineActivities,
+    loading: loadingTimelineActivities,
     fetchMoreRecords,
-  } = useFindManyRecords({
+  } = useFindManyRecords<TimelineActivity>({
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     filter: {
       [targetableObjectFieldIdName]: {
@@ -38,8 +39,17 @@ export const useTimelineActivities = (
     fetchPolicy: 'cache-and-network',
   });
 
+  const activityIds = timelineActivities
+    .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
+    .map((timelineActivity) => timelineActivity.linkedRecordId);
+
+  const { loading: loadingLinkedObjectsTitle } =
+    useLinkedObjectsTitle(activityIds);
+
+  const loading = loadingTimelineActivities || loadingLinkedObjectsTitle;
+
   return {
-    timelineActivities: TimelineActivities as TimelineActivity[],
+    timelineActivities,
     loading,
     fetchMoreRecords,
   };
