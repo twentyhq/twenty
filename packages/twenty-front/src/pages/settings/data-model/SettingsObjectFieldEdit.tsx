@@ -25,6 +25,7 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -85,11 +86,20 @@ export const SettingsObjectFieldEdit = () => {
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema()),
-    shouldUnregister: true,
+    resolver: zodResolver(
+      settingsFieldFormSchema(
+        activeObjectMetadataItem?.fields
+          .filter((field) => field.id !== activeMetadataField?.id)
+          .map((field) => field.name),
+      ),
+    ),
   });
 
   useEffect(() => {
+    formConfig.reset({
+      type: activeMetadataField?.type as SettingsSupportedFieldType,
+    });
+
     if (!activeObjectMetadataItem || !activeMetadataField) {
       navigate(AppPath.NotFound);
     }
