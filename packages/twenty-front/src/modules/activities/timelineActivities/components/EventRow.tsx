@@ -3,7 +3,8 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
-import { useLinkedObject } from '@/activities/timelineActivities/hooks/useLinkedObject';
+
+import { useLinkedObjectObjectMetadataItem } from '@/activities/timelineActivities/hooks/useLinkedObjectObjectMetadataItem';
 import { EventIconDynamicComponent } from '@/activities/timelineActivities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
@@ -14,6 +15,7 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledTimelineItemContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   height: 'auto';
@@ -99,7 +101,7 @@ export const EventRow = ({
 
   const { labelIdentifierValue } = useContext(TimelineActivityContext);
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
-  const linkedObjectMetadataItem = useLinkedObject(
+  const linkedObjectMetadataItem = useLinkedObjectObjectMetadataItem(
     event.linkedObjectMetadataId,
   );
 
