@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { WorkflowActionEmail } from 'twenty-emails';
 import { render } from '@react-email/components';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
+import { z } from 'zod';
 
 import { WorkflowSystemAction } from 'src/modules/workflow/workflow-system-action/workflow-system-action.interface';
 import { WorkflowSystemStep } from 'src/modules/workflow/common/types/workflow-step.type';
@@ -14,6 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class SendEmailAction implements WorkflowSystemAction {
+  private readonly logger = new Logger(SendEmailAction.name);
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
@@ -29,6 +31,16 @@ export class SendEmailAction implements WorkflowSystemAction {
       [key: string]: string;
     };
   }): Promise<WorkflowStepResult> {
+    const emailSchema = z.string().trim().email('Invalid email');
+
+    const result = emailSchema.safeParse(payload.email);
+
+    if (!result.success) {
+      this.logger.warn(`Email '${payload.email}' invalid`);
+
+      return { data: { success: false } };
+    }
+
     let mainText = step.settings.template;
 
     if (isDefined(payload)) {
@@ -63,6 +75,6 @@ export class SendEmailAction implements WorkflowSystemAction {
       html,
     });
 
-    return { data: {} };
+    return { data: { success: true } };
   }
 }
