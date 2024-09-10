@@ -15,6 +15,7 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -53,6 +54,16 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   name: FullNameMetadata | null;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.email,
+    type: FieldMetadataType.EMAIL,
+    label: 'Email',
+    description: 'Contact’s Email',
+    icon: 'IconMail',
+  })
+  @WorkspaceIsDeprecated()
+  email: string;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.emails,
