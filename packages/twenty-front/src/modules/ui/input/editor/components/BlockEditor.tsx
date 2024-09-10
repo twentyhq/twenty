@@ -96,12 +96,12 @@ const StyledEditor = styled.div`
 
   & .bn-inline-content code {
     font-family: monospace;
-    color: darkred;
+    color: ${({ theme }) => theme.font.color.danger};
     padding: 2px 4px;
     border-radius: 4px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid ${({ theme }) => theme.font.color.extraLight};
     font-size: 0.9rem;
-    background-color: #1414140f;
+    background-color: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 
