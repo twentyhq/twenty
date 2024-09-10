@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import {
@@ -8,7 +7,8 @@ import {
   StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { isNonEmptyString } from '@sniptt/guards';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
@@ -35,9 +35,21 @@ export const EventRowActivity = ({
     throw new Error('Could not find linked record id for event');
   }
 
-  const [activityInStore] = useRecoilState(
-    recordStoreFamilyState(event.linkedRecordId),
-  );
+  const getActivityFromCache = useGetRecordFromCache({
+    objectNameSingular,
+    recordGqlFields: {
+      id: true,
+      title: true,
+    },
+  });
+
+  const activityInStore = getActivityFromCache(event.linkedRecordId);
+
+  const activityTitle = isNonEmptyString(activityInStore?.title)
+    ? activityInStore?.title
+    : isNonEmptyString(event.linkedRecordCachedName)
+      ? event.linkedRecordCachedName
+      : 'Untitled';
 
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular,
@@ -49,17 +61,11 @@ export const EventRowActivity = ({
       <StyledEventRowItemAction>
         {`${eventAction} a related ${eventObject}`}
       </StyledEventRowItemAction>
-      {activityInStore ? (
-        <StyledLinkedActivity
-          onClick={() => openActivityRightDrawer(event.linkedRecordId)}
-        >
-          {event.linkedRecordCachedName}
-        </StyledLinkedActivity>
-      ) : (
-        <StyledEventRowItemText>
-          {event.linkedRecordCachedName}
-        </StyledEventRowItemText>
-      )}
+      <StyledLinkedActivity
+        onClick={() => openActivityRightDrawer(event.linkedRecordId)}
+      >
+        {activityTitle}
+      </StyledLinkedActivity>
     </>
   );
 };
