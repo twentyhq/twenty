@@ -7,10 +7,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
-import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
-import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
-import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
-import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
+import { SettingsDataModelFieldConfigurationForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldConfigurationForm';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
@@ -18,7 +15,6 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
@@ -29,19 +25,20 @@ import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { H1Title, H1TitleFontColor, H2Title, IconHierarchy2 } from 'twenty-ui';
+import { H1Title, H1TitleFontColor, IconHierarchy2 } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-type SettingsDataModelNewFieldFormValues = z.infer<
+export type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 >;
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
+
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
@@ -236,39 +233,11 @@ export const SettingsObjectNewFieldStep2 = () => {
                 onFieldTypeSelect={() => setIsConfigureStep(true)}
               />
             ) : (
-              <>
-                <Section>
-                  <H2Title
-                    title="Icon and Name"
-                    description="The name and icon of this field"
-                  />
-                  <SettingsDataModelFieldIconLabelForm
-                    maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-                  />
-                </Section>
-                <Section>
-                  <H2Title
-                    title="Values"
-                    description="The values of this field"
-                  />
-
-                  <SettingsDataModelFieldSettingsFormCard
-                    fieldMetadataItem={{
-                      icon: formConfig.watch('icon'),
-                      label: formConfig.watch('label') || 'Employees',
-                      type: formConfig.watch('type'),
-                    }}
-                    objectMetadataItem={activeObjectMetadataItem}
-                  />
-                </Section>
-                <Section>
-                  <H2Title
-                    title="Description"
-                    description="The description of this field"
-                  />
-                  <SettingsDataModelFieldDescriptionForm />
-                </Section>
-              </>
+              <SettingsDataModelFieldConfigurationForm
+                formConfig={formConfig}
+                activeObjectMetadataItem={activeObjectMetadataItem}
+                setIsConfigureStep={setIsConfigureStep}
+              />
             )}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
