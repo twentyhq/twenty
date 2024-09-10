@@ -8,6 +8,7 @@ export class GraphqlQueryRunnerException extends CustomException {
 }
 
 export enum GraphqlQueryRunnerExceptionCode {
+  INVALID_QUERY_INPUT = 'INVALID_QUERY_INPUT',
   MAX_DEPTH_REACHED = 'MAX_DEPTH_REACHED',
   INVALID_CURSOR = 'INVALID_CURSOR',
   INVALID_DIRECTION = 'INVALID_DIRECTION',

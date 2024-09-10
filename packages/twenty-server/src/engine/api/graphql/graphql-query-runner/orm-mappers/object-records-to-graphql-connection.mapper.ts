@@ -32,6 +32,8 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     totalCount: number,
     order: Record<string, FindOptionsOrderValue> | undefined,
     objectName: string,
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
     depth = 0,
   ): IConnection<ObjectRecord> {
     const edges = (objectRecords ?? []).map((objectRecord) => ({
@@ -49,8 +51,8 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     return {
       edges,
       pageInfo: {
-        hasNextPage: objectRecords.length === take && totalCount > take,
-        hasPreviousPage: false,
+        hasNextPage,
+        hasPreviousPage,
         startCursor: edges[0]?.cursor,
         endCursor: edges[edges.length - 1]?.cursor,
       },
@@ -101,6 +103,8 @@ export class ObjectRecordsToGraphqlConnectionMapper {
             order,
             getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
               .nameSingular,
+            false,
+            false,
             depth + 1,
           );
         } else if (isPlainObject(value)) {

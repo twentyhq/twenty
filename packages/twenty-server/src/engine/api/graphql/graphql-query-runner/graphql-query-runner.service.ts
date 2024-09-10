@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
 import { FindManyOptions, ObjectLiteral } from 'typeorm';
 
@@ -42,6 +43,8 @@ export class GraphqlQueryRunnerService {
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataItem, info, objectMetadataCollection } =
       options;
+
+    this.validateArgsOrThrow(args);
 
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -92,21 +95,14 @@ export class GraphqlQueryRunnerService {
       cursor = decodeCursor(args.before);
     }
 
-    if (args.first && args.last) {
-      throw new GraphqlQueryRunnerException(
-        'Cannot provide both first and last',
-        GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
-      );
-    }
-
-    const take = args.first ?? args.last ?? QUERY_MAX_RECORDS;
+    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
     const findOptions: FindManyOptions<ObjectLiteral> = {
       where,
       order,
       select,
       relations,
-      take,
+      take: limit + 1,
     };
 
     const totalCount = await repository.count({
@@ -119,15 +115,49 @@ export class GraphqlQueryRunnerService {
 
     const objectRecords = await repository.find(findOptions);
 
+    const hasMoreRecords = objectRecords.length > limit;
+
+    const hasNextPage = isDefined(args.after) && hasMoreRecords;
+    const hasPreviousPage = isDefined(args.before) && hasMoreRecords;
+
+    if (hasMoreRecords) {
+      objectRecords.pop();
+    }
+
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
     return typeORMObjectRecordsParser.createConnection(
       (objectRecords as ObjectRecord[]) ?? [],
-      take,
+      limit,
       totalCount,
       order,
       objectMetadataItem.nameSingular,
+      hasNextPage,
+      hasPreviousPage,
     );
+  }
+
+  private validateArgsOrThrow(args: FindManyResolverArgs<any, any>) {
+    if (args.first && args.last) {
+      throw new GraphqlQueryRunnerException(
+        'Cannot provide both first and last',
+        GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
+      );
+    }
+
+    if (args.first !== undefined && args.first < 0) {
+      throw new GraphqlQueryRunnerException(
+        'First argument must be non-negative',
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
+
+    if (args.last !== undefined && args.last < 0) {
+      throw new GraphqlQueryRunnerException(
+        'Last argument must be non-negative',
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
   }
 }
