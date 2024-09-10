@@ -81,7 +81,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         navigate('/settings/developers');
       }
     } catch (err) {
-      enqueueSnackBar('Error deleting api key', {
+      enqueueSnackBar(`Error deleting api key: ${err}`, {
         variant: SnackBarVariant.Error,
       });
     } finally {
@@ -130,7 +130,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
       }
     } catch (err) {
-      enqueueSnackBar('Error regenerating api key', {
+      enqueueSnackBar(`Error regenerating api key: ${err}`, {
         variant: SnackBarVariant.Error,
       });
     } finally {
