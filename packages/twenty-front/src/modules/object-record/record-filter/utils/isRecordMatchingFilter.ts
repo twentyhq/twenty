@@ -14,6 +14,7 @@ import {
   LinksFilter,
   NotObjectRecordFilter,
   OrObjectRecordFilter,
+  PhonesFilter,
   RecordGqlOperationFilter,
   StringFilter,
   URLFilter,
@@ -280,6 +281,26 @@ export const isRecordMatchingFilter = ({
         return isMatchingStringFilter({
           stringFilter: emailsFilter.primaryEmail,
           value: record[filterKey].primaryEmail,
+        });
+      }
+      case FieldMetadataType.Phones: {
+        const phonesFilter = filterValue as PhonesFilter;
+
+        const keys: (keyof PhonesFilter)[] = [
+          'primaryPhoneNumber',
+          'primaryPhoneCountryCode',
+        ];
+
+        return keys.some((key) => {
+          const value = phonesFilter[key];
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
         });
       }
       case FieldMetadataType.Relation: {

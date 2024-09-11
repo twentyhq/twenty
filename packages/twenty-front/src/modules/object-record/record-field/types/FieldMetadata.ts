@@ -157,6 +157,11 @@ export type FieldActorMetadata = {
   fieldName: string;
 };
 
+export type FieldPhonesMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -229,4 +234,12 @@ export type FieldActorValue = {
   source: string;
   workspaceMemberId?: string;
   name: string;
+};
+
+export type PhoneRecord = { number: string; countryCode: string };
+
+export type FieldPhonesValue = {
+  primaryPhoneNumber: string;
+  primaryPhoneCountryCode: string;
+  additionalPhones?: PhoneRecord[] | null;
 };

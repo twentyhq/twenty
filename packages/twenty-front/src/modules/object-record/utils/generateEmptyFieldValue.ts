@@ -97,6 +97,13 @@ export const generateEmptyFieldValue = (
         name: '',
       };
     }
+    case FieldMetadataType.Phones: {
+      return {
+        primaryPhoneNumber: '',
+        primaryPhoneCountryCode: '',
+        additionalPhones: null,
+      };
+    }
     default: {
       throw new Error('Unhandled FieldMetadataType');
     }

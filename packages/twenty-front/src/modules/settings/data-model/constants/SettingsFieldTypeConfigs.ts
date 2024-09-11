@@ -130,6 +130,15 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     exampleValue: '+1234-567-890',
     category: 'Basic',
   },
+  [FieldMetadataType.Phones]: {
+    label: 'Phones',
+    Icon: IconPhone,
+    exampleValue: {
+      primaryPhoneNumber: '234-567-890',
+      primaryPhoneCountryCode: '+1',
+    },
+    category: 'Basic',
+  },
   [FieldMetadataType.Rating]: {
     label: 'Rating',
     Icon: IconTwentyStar,
