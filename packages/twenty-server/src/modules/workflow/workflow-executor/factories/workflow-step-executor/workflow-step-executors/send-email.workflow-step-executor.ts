@@ -7,8 +7,8 @@ import DOMPurify from 'dompurify';
 import { WorkflowActionEmail } from 'twenty-emails';
 import { render } from '@react-email/components';
 
-import { WorkflowStepResult } from 'src/modules/workflow/common/types/workflow-step-result.type';
-import { WorkflowSendEmailStep } from 'src/modules/workflow/common/types/workflow-step.type';
+import { WorkflowStepResult } from 'src/modules/workflow/workflow-executor/types/workflow-step-result.type';
+import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 

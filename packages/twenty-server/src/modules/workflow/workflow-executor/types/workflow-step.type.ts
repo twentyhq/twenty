@@ -1,7 +1,7 @@
 import {
   WorkflowCodeStepSettings,
   WorkflowSendEmailStepSettings,
-} from 'src/modules/workflow/common/types/workflow-step-settings.type';
+} from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
 
 export enum WorkflowStepType {
   CODE_ACTION = 'CODE_ACTION',

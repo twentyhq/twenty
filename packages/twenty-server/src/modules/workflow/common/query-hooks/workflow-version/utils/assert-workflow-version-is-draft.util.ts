@@ -6,7 +6,7 @@ import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export const assertWorkflowVersionIsDraft = (
   workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {

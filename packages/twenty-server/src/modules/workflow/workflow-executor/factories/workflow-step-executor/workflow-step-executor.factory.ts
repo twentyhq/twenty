@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-step-executor.interface';
 
-import { WorkflowStepType } from 'src/modules/workflow/common/types/workflow-step.type';
+import { WorkflowStepType } from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,

@@ -6,7 +6,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import {
   WorkflowTrigger,
   WorkflowTriggerType,
-} from 'src/modules/workflow/common/types/workflow-trigger.type';
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
