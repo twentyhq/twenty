@@ -47,6 +47,13 @@ cd twenty
 ```shell
 git checkout -b your-branch-name
 ```
+<!-- last modified -->
+
+#### **Example**
+
+```shell
+git checkout -b twenty-my-branch
+```
 
 4. **Make Changes:** Make your desired changes and ensure that your code adheres to Twenty's coding standards.
 
@@ -60,6 +67,7 @@ git checkout -b your-branch-name
 ```shell
 git commit -m "Add your detailed description here"
 ```
+
 7. **Push Changes:** Push your changes to your forked repository.
 
 
