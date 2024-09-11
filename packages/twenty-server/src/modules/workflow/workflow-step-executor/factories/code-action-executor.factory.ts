@@ -8,10 +8,9 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-step-executor/workflow-step-executor.exception';
-import { WorkflowStepExecutor } from 'src/modules/workflow/workflow-step-executor/workflow-step-executor.interface';
 
 @Injectable()
-export class CodeActionExecutor implements WorkflowStepExecutor {
+export class CodeActionExecutorFactory {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
