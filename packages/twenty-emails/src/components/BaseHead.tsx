@@ -5,7 +5,7 @@ import { emailTheme } from 'src/common-style';
 export const BaseHead = () => {
   return (
     <Head>
-      <title>An email from Twenty</title>
+      <title>Twenty email</title>
       <Font
         fontFamily={emailTheme.font.family}
         fallbackFontFamily="sans-serif"

@@ -16,7 +16,7 @@ export const WorkflowActionEmail = ({
   callToAction,
 }: WorkflowActionEmailProps) => {
   return (
-    <BaseEmail withLogo={false}>
+    <BaseEmail>
       {title && <Title value={title} />}
       {dangerousHTML && (
         <div dangerouslySetInnerHTML={{ __html: dangerousHTML }} />
