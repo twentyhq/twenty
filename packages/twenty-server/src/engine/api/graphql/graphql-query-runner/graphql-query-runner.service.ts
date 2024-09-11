@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
-import { FindManyOptions, ObjectLiteral } from 'typeorm';
+import { FindManyOptions, FindOneOptions, ObjectLiteral } from 'typeorm';
 
 import {
   Record as IRecord,
@@ -11,7 +11,10 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import {
+  FindManyResolverArgs,
+  FindOneResolverArgs,
+} from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
@@ -31,6 +34,78 @@ export class GraphqlQueryRunnerService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
+
+  @LogExecutionTime()
+  async findOneWithTwentyOrm<
+    ObjectRecord extends IRecord = IRecord,
+    Filter extends RecordFilter = RecordFilter,
+  >(
+    args: FindOneResolverArgs<Filter>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord | undefined> {
+    const { authContext, objectMetadataItem, info, objectMetadataCollection } =
+      options;
+
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        objectMetadataItem.nameSingular,
+      );
+
+    const selectedFields = graphqlFields(info);
+
+    const objectMetadataMap = convertObjectMetadataToMap(
+      objectMetadataCollection,
+    );
+
+    const objectMetadata = objectMetadataMap[objectMetadataItem.nameSingular];
+
+    if (!objectMetadata) {
+      throw new GraphqlQueryRunnerException(
+        `Object metadata not found for ${objectMetadataItem.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    const fieldMetadataMap = objectMetadata.fields;
+
+    const graphqlQueryParser = new GraphqlQueryParser(
+      fieldMetadataMap,
+      objectMetadataMap,
+    );
+
+    const { select, relations } = graphqlQueryParser.parseSelectedFields(
+      objectMetadataItem,
+      selectedFields,
+    );
+
+    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
+
+    const findOneOptions: FindOneOptions<ObjectLiteral> = {
+      where,
+      select,
+      relations,
+    };
+
+    const objectRecord = await repository.findOne(findOneOptions);
+
+    if (!objectRecord) {
+      throw new GraphqlQueryRunnerException(
+        `Record not found`,
+        GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+      );
+    }
+
+    const typeORMObjectRecordsParser =
+      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+
+    return typeORMObjectRecordsParser.processRecord(
+      objectRecord,
+      objectMetadataItem.nameSingular,
+      1,
+      1,
+    ) as ObjectRecord;
+  }
 
   @LogExecutionTime()
   async findManyWithTwentyOrm<
@@ -87,7 +162,10 @@ export class GraphqlQueryRunnerService {
       isForwardPagination,
     );
 
-    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
+    const where = graphqlQueryParser.parseFilter(
+      args.filter ?? ({} as Filter),
+      true,
+    );
 
     let cursor: Record<string, any> | undefined;
 
@@ -139,10 +217,10 @@ export class GraphqlQueryRunnerService {
 
     return typeORMObjectRecordsParser.createConnection(
       (objectRecords as ObjectRecord[]) ?? [],
+      objectMetadataItem.nameSingular,
       limit,
       totalCount,
       order,
-      objectMetadataItem.nameSingular,
       hasNextPage,
       hasPreviousPage,
     );

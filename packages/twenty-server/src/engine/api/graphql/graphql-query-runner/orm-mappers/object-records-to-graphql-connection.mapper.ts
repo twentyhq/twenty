@@ -28,10 +28,10 @@ export class ObjectRecordsToGraphqlConnectionMapper {
 
   public createConnection<ObjectRecord extends IRecord = IRecord>(
     objectRecords: ObjectRecord[],
+    objectName: string,
     take: number,
     totalCount: number,
     order: Record<string, FindOptionsOrderValue> | undefined,
-    objectName: string,
     hasNextPage: boolean,
     hasPreviousPage: boolean,
     depth = 0,
@@ -39,10 +39,10 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     const edges = (objectRecords ?? []).map((objectRecord) => ({
       node: this.processRecord(
         objectRecord,
+        objectName,
         take,
         totalCount,
         order,
-        objectName,
         depth,
       ),
       cursor: encodeCursor(objectRecord, order),
@@ -60,12 +60,12 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     };
   }
 
-  private processRecord<T extends Record<string, any>>(
+  public processRecord<T extends Record<string, any>>(
     objectRecord: T,
+    objectName: string,
     take: number,
     totalCount: number,
-    order: Record<string, FindOptionsOrderValue> | undefined,
-    objectName: string,
+    order: Record<string, FindOptionsOrderValue> | undefined = {},
     depth = 0,
   ): T {
     if (depth >= CONNECTION_MAX_DEPTH) {
@@ -98,11 +98,11 @@ export class ObjectRecordsToGraphqlConnectionMapper {
         if (Array.isArray(value)) {
           processedObjectRecord[key] = this.createConnection(
             value,
+            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
+              .nameSingular,
             take,
             value.length,
             order,
-            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
-              .nameSingular,
             false,
             false,
             depth + 1,
@@ -110,11 +110,11 @@ export class ObjectRecordsToGraphqlConnectionMapper {
         } else if (isPlainObject(value)) {
           processedObjectRecord[key] = this.processRecord(
             value,
+            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
+              .nameSingular,
             take,
             totalCount,
             order,
-            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
-              .nameSingular,
             depth + 1,
           );
         }

@@ -169,6 +169,12 @@ export class WorkspaceQueryRunnerService {
     }
     const { authContext, objectMetadataItem } = options;
 
+    const isQueryRunnerTwentyORMEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        authContext.workspace.id,
+      );
+
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
@@ -182,6 +188,13 @@ export class WorkspaceQueryRunnerService {
       options,
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
+
+    if (isQueryRunnerTwentyORMEnabled) {
+      return this.graphqlQueryRunnerService.findOneWithTwentyOrm(
+        computedArgs,
+        options,
+      );
+    }
 
     const query = await this.workspaceQueryBuilderFactory.findOne(
       computedArgs,

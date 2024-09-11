@@ -33,34 +33,44 @@ export class GraphqlQueryParser {
 
   parseFilter(
     recordFilter: RecordFilter,
+    shouldAddDefaultSoftDeleteCondition = false,
   ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
     const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
       this.fieldMetadataMap,
     );
 
-    const filters = graphqlQueryFilterParser.parse(recordFilter);
+    const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
 
-    if (!('deletedAt' in this.fieldMetadataMap)) {
-      return filters;
+    if (
+      !shouldAddDefaultSoftDeleteCondition ||
+      !('deletedAt' in this.fieldMetadataMap)
+    ) {
+      return parsedFilter;
     }
 
-    if (Array.isArray(filters)) {
-      return filters.map(this.addDefaultSoftDeleteCondition);
-    }
-
-    return this.addDefaultSoftDeleteCondition(filters);
+    return this.addDefaultSoftDeleteCondition(parsedFilter);
   }
 
-  addDefaultSoftDeleteCondition(
-    filters:
-      | FindOptionsWhere<ObjectLiteral>
-      | FindOptionsWhere<ObjectLiteral>[],
+  private addDefaultSoftDeleteCondition(
+    filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
   ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
-    if (!('deletedAt' in filters)) {
-      return { ...filters, deletedAt: IsNull() };
+    if (Array.isArray(filter)) {
+      return filter.map((condition) =>
+        this.addSoftDeleteToCondition(condition),
+      );
     }
 
-    return filters;
+    return this.addSoftDeleteToCondition(filter);
+  }
+
+  private addSoftDeleteToCondition(
+    condition: FindOptionsWhere<ObjectLiteral>,
+  ): FindOptionsWhere<ObjectLiteral> {
+    if (!('deletedAt' in condition)) {
+      return { ...condition, deletedAt: IsNull() };
+    }
+
+    return condition;
   }
 
   parseOrder(
