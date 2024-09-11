@@ -8,6 +8,7 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/services/workflow-common.workspace-service';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -17,7 +18,6 @@ import {
   WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
 import { WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { DatabaseEventTriggerService } from 'src/modules/workflow/workflow-trigger/database-event-trigger/database-event-trigger.service';

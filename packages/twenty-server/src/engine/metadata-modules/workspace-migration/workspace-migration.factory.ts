@@ -101,6 +101,10 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.EMAILS,
         { factory: this.compositeColumnActionFactory },
       ],
+      [
+        FieldMetadataType.PHONES,
+        { factory: this.compositeColumnActionFactory },
+      ],
     ]);
   }
 

@@ -4609,6 +4609,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild-plugins/node-modules-polyfill@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "@esbuild-plugins/node-modules-polyfill@npm:0.2.2"
+  dependencies:
+    escape-string-regexp: "npm:^4.0.0"
+    rollup-plugin-node-polyfills: "npm:^0.2.1"
+  peerDependencies:
+    esbuild: "*"
+  checksum: 10c0/8573eb409d19769ea6a2f621d8d7e344d84a9f19d03f37f4ace053e23dab8eeea08feea871c1704a2d39c0859adadfba808b59a50de4d227cb3879dbd90e7f52
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.19.12":
   version: 0.19.12
   resolution: "@esbuild/aix-ppc64@npm:0.19.12"
@@ -17350,6 +17362,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/unzipper@npm:^0":
+  version: 0.10.10
+  resolution: "@types/unzipper@npm:0.10.10"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/10e9da33791be1087adb25adc2fe4d5ab267dae51fbcf7b1f10d0aca3130a13ef5fed994d7be45af8c465ff3946bc360a53eff6e5aab4eb9ac9489477535342f
+  languageName: node
+  linkType: hard
+
 "@types/use-sync-external-store@npm:^0.0.3":
   version: 0.0.3
   resolution: "@types/use-sync-external-store@npm:0.0.3"
@@ -20977,7 +20998,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bluebird@npm:*, bluebird@npm:3.7.2":
+"bluebird@npm:*, bluebird@npm:3.7.2, bluebird@npm:~3.7.2":
   version: 3.7.2
   resolution: "bluebird@npm:3.7.2"
   checksum: 10c0/680de03adc54ff925eaa6c7bb9a47a0690e8b5de60f4792604aae8ed618c65e6b63a7893b57ca924beaf53eee69c5af4f8314148c08124c550fe1df1add897d2
@@ -25379,7 +25400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"duplexer2@npm:^0.1.2, duplexer2@npm:~0.1.0, duplexer2@npm:~0.1.2":
+"duplexer2@npm:^0.1.2, duplexer2@npm:~0.1.0, duplexer2@npm:~0.1.2, duplexer2@npm:~0.1.4":
   version: 0.1.4
   resolution: "duplexer2@npm:0.1.4"
   dependencies:
@@ -26849,6 +26870,13 @@ __metadata:
     "@types/estree-jsx": "npm:^1.0.0"
     "@types/unist": "npm:^3.0.0"
   checksum: 10c0/acda8b03cc8f890d79c7c7361f6c95331ba84b7ccc0c32b49f447fc30206b20002b37ffdfc97b6ad16e6fe065c63ecbae1622492e2b6b4775c15966606217f39
+  languageName: node
+  linkType: hard
+
+"estree-walker@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "estree-walker@npm:0.6.1"
+  checksum: 10c0/6dabc855faa04a1ffb17b6a9121b6008ba75ab5a163ad9dc3d7fca05cfda374c5f5e91418d783496620ca75e99a73c40874d8b75f23b4117508cc8bde78e7b41
   languageName: node
   linkType: hard
 
@@ -29034,7 +29062,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.5, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.3, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
+"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.5, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.2, graceful-fs@npm:^4.2.3, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: 10c0/386d011a553e02bc594ac2ca0bd6d9e4c22d7fa8cfbfc448a6d148c59ea881b092db9dbe3547ae4b88e55f1b01f7c4a2ecc53b310c042793e63aa44cf6c257f2
@@ -34801,6 +34829,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.25.3":
+  version: 0.25.9
+  resolution: "magic-string@npm:0.25.9"
+  dependencies:
+    sourcemap-codec: "npm:^1.4.8"
+  checksum: 10c0/37f5e01a7e8b19a072091f0b45ff127cda676232d373ce2c551a162dd4053c575ec048b9cbb4587a1f03adb6c5d0fd0dd49e8ab070cd2c83a4992b2182d9cb56
+  languageName: node
+  linkType: hard
+
 "magic-string@npm:^0.26.0":
   version: 0.26.7
   resolution: "magic-string@npm:0.26.7"
@@ -37377,10 +37414,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:^0.50.0":
-  version: 0.50.0
-  resolution: "monaco-editor@npm:0.50.0"
-  checksum: 10c0/79189c926c2fc1e3a3b9118e80911599bf18108018fe176c7b47a27b4856b544129f9a59c9a5c321d154d6a30a8d9c231684246e9382f4f18329a548d11cb4d6
+"monaco-editor-auto-typings@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "monaco-editor-auto-typings@npm:0.4.5"
+  peerDependencies:
+    monaco-editor: "*"
+  checksum: 10c0/1127183865f3ed486eb3bad407da3d8d8ca47ba3bd382a146a692741f9de4eb4f2335dc616b612cdaadfb3844e9b948060d407ea8a585c6710043b8bba29ed77
+  languageName: node
+  linkType: hard
+
+"monaco-editor@npm:^0.51.0":
+  version: 0.51.0
+  resolution: "monaco-editor@npm:0.51.0"
+  checksum: 10c0/7fde310c747e46cd7293e1a0f5e1fa85c389df9a1f8db03b9ccd58fd45356ab021a591b46198d19345566ad54556158f6489e2da4ad428a7a6ca3ea7b504afcb
   languageName: node
   linkType: hard
 
@@ -43738,6 +43784,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-inject@npm:^3.0.0":
+  version: 3.0.2
+  resolution: "rollup-plugin-inject@npm:3.0.2"
+  dependencies:
+    estree-walker: "npm:^0.6.1"
+    magic-string: "npm:^0.25.3"
+    rollup-pluginutils: "npm:^2.8.1"
+  checksum: 10c0/35b9d955039b56b43750a9e458bb51b7956b048b6d3ca57b1f03462aa5a0cb176d1b677d95e909b64eee4e9adf73c02f569ad8c0ab5aafdec818ff51700c114c
+  languageName: node
+  linkType: hard
+
+"rollup-plugin-node-polyfills@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "rollup-plugin-node-polyfills@npm:0.2.1"
+  dependencies:
+    rollup-plugin-inject: "npm:^3.0.0"
+  checksum: 10c0/30f9e09cbbf979b1212e0c455d74c3a061994fc19ddf160da4634b11377222cea5903a5ba05db66be849f550cde9ffc80ecbfcfb48544045d08bfc408501417d
+  languageName: node
+  linkType: hard
+
+"rollup-pluginutils@npm:^2.8.1":
+  version: 2.8.2
+  resolution: "rollup-pluginutils@npm:2.8.2"
+  dependencies:
+    estree-walker: "npm:^0.6.1"
+  checksum: 10c0/20947bec5a5dd68b5c5c8423911e6e7c0ad834c451f1a929b1f4e2bc08836ad3f1a722ef2bfcbeca921870a0a283f13f064a317dc7a6768496e98c9a641ba290
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^2.25.0 || ^3.3.0":
   version: 3.29.4
   resolution: "rollup@npm:3.29.4"
@@ -47067,6 +47142,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
+    "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch"
     "@langchain/mistralai": "npm:^0.0.24"
     "@langchain/openai": "npm:^0.1.3"
@@ -47090,6 +47166,7 @@ __metadata:
     "@types/lodash.uniqby": "npm:^4.7.9"
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/react": "npm:^18.2.39"
+    "@types/unzipper": "npm:^0"
     cache-manager: "npm:^5.4.0"
     cache-manager-redis-yet: "npm:^4.1.2"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
@@ -47103,13 +47180,15 @@ __metadata:
     lodash.omitby: "npm:^4.6.0"
     lodash.uniq: "npm:^4.5.0"
     lodash.uniqby: "npm:^4.7.0"
-    monaco-editor: "npm:^0.50.0"
+    monaco-editor: "npm:^0.51.0"
+    monaco-editor-auto-typings: "npm:^0.4.5"
     passport: "npm:^0.7.0"
     psl: "npm:^1.9.0"
     rimraf: "npm:^5.0.5"
     tsconfig-paths: "npm:^4.2.0"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     typescript: "npm:5.3.3"
+    unzipper: "npm:^0.12.3"
     zod-to-json-schema: "npm:^3.23.1"
   languageName: unknown
   linkType: soft
@@ -47352,7 +47431,6 @@ __metadata:
     facepaint: "npm:^1.2.1"
     file-type: "npm:16.5.4"
     framer-motion: "npm:^10.12.17"
-    fs-extra: "npm:^11.2.0"
     googleapis: "npm:105"
     graphiql: "npm:^3.1.1"
     graphql: "npm:16.8.0"
@@ -48392,6 +48470,19 @@ __metadata:
   version: 4.0.0
   resolution: "untildify@npm:4.0.0"
   checksum: 10c0/d758e624c707d49f76f7511d75d09a8eda7f2020d231ec52b67ff4896bcf7013be3f9522d8375f57e586e9a2e827f5641c7e06ee46ab9c435fc2b2b2e9de517a
+  languageName: node
+  linkType: hard
+
+"unzipper@npm:^0.12.3":
+  version: 0.12.3
+  resolution: "unzipper@npm:0.12.3"
+  dependencies:
+    bluebird: "npm:~3.7.2"
+    duplexer2: "npm:~0.1.4"
+    fs-extra: "npm:^11.2.0"
+    graceful-fs: "npm:^4.2.2"
+    node-int64: "npm:^0.4.0"
+  checksum: 10c0/4cae2ad23bfd47011d5f8a6d61fb1dc0e4b5008bc3896e6f3d5ab946a64e9482714992a988128bce541440aa646e16e5e5c9bf35e49097edbaf833e7f814d36d
   languageName: node
   linkType: hard
 

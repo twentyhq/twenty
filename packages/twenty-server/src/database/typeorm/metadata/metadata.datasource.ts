@@ -1,7 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
+import { DataSource, DataSourceOptions } from 'typeorm';
 config();
 
 export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {

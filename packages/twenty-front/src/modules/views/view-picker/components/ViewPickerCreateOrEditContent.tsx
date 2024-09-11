@@ -82,6 +82,8 @@ export const ViewPickerCreateOrEditContent = () => {
 
   const { handleCreate, handleUpdate } = useViewPickerPersistView();
 
+  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
+
   useScopedHotkeys(
     Key.Enter,
     async () => {
@@ -89,6 +91,12 @@ export const ViewPickerCreateOrEditContent = () => {
         return;
       }
       if (viewPickerMode === 'create') {
+        if (
+          viewPickerType === ViewType.Kanban &&
+          availableFieldsForKanban.length === 0
+        ) {
+          return;
+        }
         await handleCreate();
       }
       if (viewPickerMode === 'edit') {
@@ -102,8 +110,6 @@ export const ViewPickerCreateOrEditContent = () => {
     setViewPickerIsDirty(true);
     setViewPickerSelectedIcon(iconKey);
   };
-
-  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
   const handleClose = async () => {
     if (viewPickerMode === 'edit') {

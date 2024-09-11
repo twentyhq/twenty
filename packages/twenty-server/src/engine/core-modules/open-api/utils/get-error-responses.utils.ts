@@ -9,7 +9,7 @@ export const get400ErrorResponses = (): OpenAPIV3_1.ResponseObject => {
           type: 'object',
           properties: {
             statusCode: { type: 'number' },
-            message: { type: 'string' },
+            messages: { type: 'array', items: { type: 'string' } },
             error: { type: 'string' },
           },
           example: {

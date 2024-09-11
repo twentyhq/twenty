@@ -18,6 +18,7 @@ import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/worksp
 import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
 import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connected-account';
+import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
 import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
 import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
@@ -206,11 +207,17 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               );
             }
 
-            await viewPrefillData(
+            const viewDefinitionsWithId = await viewPrefillData(
               entityManager,
               dataSourceMetadata.schema,
               objectMetadataMap,
               featureFlags,
+            );
+
+            await seedWorkspaceFavorites(
+              viewDefinitionsWithId.map((view) => view.id),
+              entityManager,
+              dataSourceMetadata.schema,
             );
           },
         );

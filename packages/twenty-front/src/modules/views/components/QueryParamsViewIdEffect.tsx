@@ -4,6 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
@@ -37,6 +38,14 @@ export const QueryParamsViewIdEffect = () => {
     objectMetadataItemId?.id,
     lastVisitedObjectMetadataItemId,
   );
+
+  const { resetCurrentView } = useResetCurrentView();
+
+  useEffect(() => {
+    if (isDefined(currentViewId)) {
+      resetCurrentView();
+    }
+  }, [resetCurrentView, currentViewId]);
 
   useEffect(() => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');

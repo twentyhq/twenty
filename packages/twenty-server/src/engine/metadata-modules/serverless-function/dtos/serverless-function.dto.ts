@@ -43,7 +43,6 @@ export class ServerlessFunctionDTO {
   id: string;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   name: string;
 
