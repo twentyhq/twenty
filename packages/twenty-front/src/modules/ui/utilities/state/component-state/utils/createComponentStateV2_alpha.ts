@@ -1,8 +1,9 @@
 import { AtomEffect, atomFamily } from 'recoil';
 
 import { ScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopeInternalContext';
-import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+
+import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 import { isDefined } from '~/utils/isDefined';
 
 type CreateComponentStateV2Type<ValueType> = {
@@ -17,7 +18,7 @@ export const createComponentStateV2_alpha = <ValueType>({
   defaultValue,
   componentContext,
   effects,
-}: CreateComponentStateV2Type<ValueType>): ComponentState<ValueType> => {
+}: CreateComponentStateV2Type<ValueType>): RecoilComponentState<ValueType> => {
   if (isDefined(componentContext)) {
     if (!isDefined((window as any).componentContextStateMap)) {
       (window as any).componentContextStateMap = new Map();
@@ -28,7 +29,7 @@ export const createComponentStateV2_alpha = <ValueType>({
 
   return {
     key,
-    atomFamily: atomFamily<ValueType, ComponentStateKey>({
+    atomFamily: atomFamily<ValueType, RecoilComponentStateKey>({
       key,
       default: defaultValue,
       effects: effects,

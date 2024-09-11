@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
@@ -19,7 +19,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
   decorators: [
     (Story) => {
       const instanceId = 'entity-tasks-filter-scope';
-      const setAvailableFilterDefinitions = useSetRecoilComponentState(
+      const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
         availableFilterDefinitionsComponentState,
         instanceId,
       );
