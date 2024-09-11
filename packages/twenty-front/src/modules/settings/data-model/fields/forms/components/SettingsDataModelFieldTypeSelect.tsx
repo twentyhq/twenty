@@ -119,12 +119,12 @@ export const SettingsDataModelFieldTypeSelect = ({
 
   const initialType = getValues('type');
 
-  const flattenedConfigs = getFlattenedConfigs();
+  const getInitialFocusedIndex = useCallback(() => {
+    const flattenedConfigs = getFlattenedConfigs();
+    return flattenedConfigs.findIndex(([key]) => key === initialType);
+  }, [getFlattenedConfigs, initialType]);
 
-  const initialFocusedIndex = flattenedConfigs.findIndex(
-    ([key]) => key === initialType,
-  );
-  const [focusedIndex, setFocusedIndex] = useState<number>(initialFocusedIndex);
+  const [focusedIndex, setFocusedIndex] = useState(getInitialFocusedIndex());
 
   useHotkeyScopeOnMount(
     SettingsDataModelHotkeyScope.SettingsDataModelFieldTypeSelect,
