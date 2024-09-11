@@ -1,10 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command, Option } from 'nest-commander';
+import { Command } from 'nest-commander';
 import { QueryRunner, Repository } from 'typeorm';
 
-import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import {
+  ActiveWorkspacesCommandOptions,
+  ActiveWorkspacesCommandRunner,
+} from 'src/database/commands/active-workspaces.command';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -20,13 +23,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
-
-interface MigrateEmailFieldsToEmailsCommandOptions {
-  workspaceId?: string;
-}
-
 @Command({
-  name: 'upgrade-0.25:migrate-email-fields-to-emails',
+  name: 'upgrade-0.30:migrate-email-fields-to-emails',
   description: 'Migrating fields of deprecated type EMAIL to type EMAILS',
 })
 export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner {
@@ -46,25 +44,16 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
     super(workspaceRepository);
   }
 
-  @Option({
-    flags: '-w, --workspace-id [workspace_id]',
-    description:
-      'workspace id. Command runs on all active workspaces if not provided',
-    required: false,
-  })
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    options: MigrateEmailFieldsToEmailsCommandOptions,
+    _options: ActiveWorkspacesCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
       'Running command to migrate email type fields to emails type',
     );
-    const _workspaceIds = options.workspaceId
-      ? [options.workspaceId]
-      : workspaceIds;
 
-    for (const workspaceId of _workspaceIds) {
+    for (const workspaceId of workspaceIds) {
       this.logger.log(`Running command for workspace ${workspaceId}`);
       try {
         const dataSourceMetadata =
@@ -92,6 +81,7 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
             workspaceId,
             type: FieldMetadataType.EMAIL,
           },
+          relations: ['object'],
         });
 
         for (const fieldWithEmailType of fieldsWithEmailType) {
