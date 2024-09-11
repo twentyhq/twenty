@@ -3,7 +3,7 @@ import { InstanceState } from '@/ui/utilities/state/instance/types/InstanceState
 import { globalInstanceContextMap } from '@/ui/utilities/state/instance/utils/globalInstanceContextMap';
 import { useRecoilValue } from 'recoil';
 
-export const useRecoilInstanceValue = <StateType>(
+export const useRecoilComponentValue = <StateType>(
   instanceState: InstanceState<StateType>,
   instanceIdFromProps?: string,
 ) => {

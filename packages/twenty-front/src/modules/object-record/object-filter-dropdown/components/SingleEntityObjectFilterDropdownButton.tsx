@@ -13,7 +13,7 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
@@ -32,7 +32,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
     setSelectedOperandInDropdown,
   } = useFilterDropdown();
 
-  const availableFilterDefinitions = useRecoilInstanceValue(
+  const availableFilterDefinitions = useRecoilComponentValue(
     availableFilterDefinitionsInstanceState,
   );
   const selectedFilter = useRecoilValue(selectedFilterState);

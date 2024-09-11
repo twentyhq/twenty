@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
 import { availableSortDefinitionsInstanceState } from '@/views/states/availableSortDefinitionsInstanceState';
@@ -19,7 +19,7 @@ export const ViewBarSortEffect = ({
   const { upsertCombinedViewSort } = useCombinedViewSorts();
 
   // TDOO: verify this instance id works
-  const availableSortDefinitions = useRecoilInstanceValue(
+  const availableSortDefinitions = useRecoilComponentValue(
     availableSortDefinitionsInstanceState,
   );
 

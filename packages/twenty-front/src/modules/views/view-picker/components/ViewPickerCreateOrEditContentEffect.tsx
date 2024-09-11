@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
@@ -29,15 +29,15 @@ export const ViewPickerCreateOrEditContentEffect = () => {
     viewPickerTypeInstanceState,
   );
 
-  const viewPickerReferenceViewId = useRecoilInstanceValue(
+  const viewPickerReferenceViewId = useRecoilComponentValue(
     viewPickerReferenceViewIdInstanceState,
   );
 
-  const viewPickerIsDirty = useRecoilInstanceValue(
+  const viewPickerIsDirty = useRecoilComponentValue(
     viewPickerIsDirtyInstanceState,
   );
 
-  const viewPickerIsPersisting = useRecoilInstanceValue(
+  const viewPickerIsPersisting = useRecoilComponentValue(
     viewPickerIsPersistingInstanceState,
   );
 

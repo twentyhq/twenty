@@ -11,7 +11,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewType } from '@/views/types/ViewType';
@@ -64,7 +64,7 @@ export const ViewPickerCreateOrEditContent = () => {
   );
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilInstanceState(viewPickerSelectedIconInstanceState);
-  const viewPickerIsPersisting = useRecoilInstanceValue(
+  const viewPickerIsPersisting = useRecoilComponentValue(
     viewPickerIsPersistingInstanceState,
   );
   const setViewPickerIsDirty = useSetRecoilInstanceState(

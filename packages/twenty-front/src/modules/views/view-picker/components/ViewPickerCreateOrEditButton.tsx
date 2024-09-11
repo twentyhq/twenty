@@ -1,5 +1,5 @@
 import { Button } from '@/ui/input/button/components/Button';
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -13,11 +13,11 @@ export const ViewPickerCreateOrEditButton = () => {
     useGetAvailableFieldsForKanban();
 
   const { viewPickerMode } = useViewPickerMode();
-  const viewPickerType = useRecoilInstanceValue(viewPickerTypeInstanceState);
-  const viewPickerIsPersisting = useRecoilInstanceValue(
+  const viewPickerType = useRecoilComponentValue(viewPickerTypeInstanceState);
+  const viewPickerIsPersisting = useRecoilComponentValue(
     viewPickerIsPersistingInstanceState,
   );
-  const viewPickerKanbanFieldMetadataId = useRecoilInstanceValue(
+  const viewPickerKanbanFieldMetadataId = useRecoilComponentValue(
     viewPickerKanbanFieldMetadataIdInstanceState,
   );
 

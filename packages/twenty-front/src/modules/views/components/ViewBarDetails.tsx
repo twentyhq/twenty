@@ -6,7 +6,7 @@ import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdow
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useRecoilInstanceSelectorValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceSelectorValue';
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
@@ -104,7 +104,7 @@ export const ViewBarDetails = ({
 }: ViewBarDetailsProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const isViewBarExpanded = useRecoilInstanceValue(
+  const isViewBarExpanded = useRecoilComponentValue(
     isViewBarExpandedInstanceState,
   );
 
@@ -114,11 +114,11 @@ export const ViewBarDetails = ({
     canPersistViewInstanceSelector,
   );
 
-  const availableFilterDefinitions = useRecoilInstanceValue(
+  const availableFilterDefinitions = useRecoilComponentValue(
     availableFilterDefinitionsInstanceState,
   );
 
-  const availableSortDefinitions = useRecoilInstanceValue(
+  const availableSortDefinitions = useRecoilComponentValue(
     availableSortDefinitionsInstanceState,
   );
 

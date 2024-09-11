@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
 
 export const RecordTableActionBar = ({
@@ -17,7 +17,7 @@ export const RecordTableActionBar = ({
   } = useRecordTableStates(recordTableId);
 
   // TODO: verify this instance id works
-  const entityCountInCurrentView = useRecoilInstanceValue(
+  const entityCountInCurrentView = useRecoilComponentValue(
     entityCountInCurrentViewInstanceState,
     recordTableId,
   );

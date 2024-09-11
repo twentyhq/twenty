@@ -1,6 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
-import { useRecoilInstanceValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
 import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ export const useHandleIndexIdentifierClick = ({
 }) => {
   const navigate = useNavigate();
 
-  const currentViewId = useRecoilInstanceValue(
+  const currentViewId = useRecoilComponentValue(
     currentViewIdInstanceState,
     recordIndexId,
   );
