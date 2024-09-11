@@ -9,10 +9,9 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
+import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-
-import { MessageQueueDriver } from 'packages/twenty-server/src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 export type BullMQDriverOptions = QueueOptions;
 

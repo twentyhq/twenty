@@ -5,7 +5,7 @@ import {
   LoggerService as LoggerServiceInterface,
 } from '@nestjs/common';
 
-import { LOGGER_DRIVER } from 'packages/twenty-server/src/engine/core-modules/logger/logger.constants';
+import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';
 
 @Injectable()
 export class LoggerService implements LoggerServiceInterface {

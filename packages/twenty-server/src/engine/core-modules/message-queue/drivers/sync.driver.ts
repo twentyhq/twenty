@@ -4,10 +4,9 @@ import {
   MessageQueueJobData,
   MessageQueueJob,
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-
-import { MessageQueueDriver } from 'packages/twenty-server/src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);

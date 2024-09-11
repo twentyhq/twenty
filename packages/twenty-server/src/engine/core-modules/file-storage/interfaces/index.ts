@@ -1,1 +1,1 @@
-export * from 'packages/twenty-server/src/engine/core-modules/file-storage/interfaces/file-storage.interface';
+export * from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';

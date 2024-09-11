@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 
-import { EnvironmentService } from 'packages/twenty-server/src/engine/core-modules/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 describe('EnvironmentService', () => {
   let service: EnvironmentService;

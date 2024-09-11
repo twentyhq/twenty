@@ -1,14 +1,14 @@
 import { DynamicModule, Global, ConsoleLogger, Module } from '@nestjs/common';
 
-import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
-
-import { LoggerService } from 'packages/twenty-server/src/engine/core-modules/logger/logger.service';
-import { LOGGER_DRIVER } from 'packages/twenty-server/src/engine/core-modules/logger/logger.constants';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';
 import {
   ASYNC_OPTIONS_TYPE,
   ConfigurableModuleClass,
   OPTIONS_TYPE,
-} from 'packages/twenty-server/src/engine/core-modules/logger/logger.module-definition';
+} from 'src/engine/core-modules/logger/logger.module-definition';
+
+import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 
 @Global()
 @Module({

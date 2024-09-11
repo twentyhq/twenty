@@ -1,6 +1,6 @@
 import { OperationTypeNode } from 'graphql';
 
-import { ExceptionHandlerUser } from 'packages/twenty-server/src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 
 export interface ExceptionHandlerOptions {
   operation?: {

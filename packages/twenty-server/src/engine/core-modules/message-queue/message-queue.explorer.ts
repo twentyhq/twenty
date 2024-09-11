@@ -9,6 +9,8 @@ import { Module } from '@nestjs/core/injector/module';
 import { Injector } from '@nestjs/core/injector/injector';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
+import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
+
 import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 import {
   MessageQueueJob,
@@ -19,8 +21,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
-
-import { MessageQueueMetadataAccessor } from 'packages/twenty-server/src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 
 interface ProcessorGroup {
   instance: object;

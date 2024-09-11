@@ -14,11 +14,18 @@ import {
   ValidateIf,
   validateSync,
 } from 'class-validator';
+import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
+import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
+import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
+import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
+import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
 
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
+import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
+import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
@@ -30,14 +37,6 @@ import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { assert } from 'src/utils/assert';
-
-import { CastToBoolean } from 'packages/twenty-server/src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
-import { CastToLogLevelArray } from 'packages/twenty-server/src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
-import { CastToPositiveNumber } from 'packages/twenty-server/src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
-import { IsAWSRegion } from 'packages/twenty-server/src/engine/core-modules/environment/decorators/is-aws-region.decorator';
-import { IsDuration } from 'packages/twenty-server/src/engine/core-modules/environment/decorators/is-duration.decorator';
-import { AwsRegion } from 'packages/twenty-server/src/engine/core-modules/environment/interfaces/aws-region.interface';
-import { SupportDriver } from 'packages/twenty-server/src/engine/core-modules/environment/interfaces/support.interface';
 
 export class EnvironmentVariables {
   // Misc

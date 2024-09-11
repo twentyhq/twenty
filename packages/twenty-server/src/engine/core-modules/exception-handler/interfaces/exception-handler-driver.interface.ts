@@ -1,5 +1,5 @@
-import { ExceptionHandlerOptions } from 'packages/twenty-server/src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
-import { ExceptionHandlerUser } from 'packages/twenty-server/src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
+import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 
 export interface ExceptionHandlerDriverInterface {
   captureExceptions(

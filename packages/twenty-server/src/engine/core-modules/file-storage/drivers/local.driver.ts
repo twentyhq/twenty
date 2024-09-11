@@ -7,8 +7,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
-import { StorageDriver } from 'packages/twenty-server/src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 export interface LocalDriverOptions {
   storagePath: string;

@@ -19,10 +19,9 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 import { isDefined } from 'src/utils/is-defined';
-
-import { StorageDriver } from 'packages/twenty-server/src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;

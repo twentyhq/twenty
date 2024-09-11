@@ -1,16 +1,16 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 
-import { ExceptionHandlerSentryDriver } from 'src/engine/core-modules/exception-handler/drivers/sentry.driver';
-import { ExceptionHandlerConsoleDriver } from 'src/engine/core-modules/exception-handler/drivers/console.driver';
-
-import { ExceptionHandlerService } from 'packages/twenty-server/src/engine/core-modules/exception-handler/exception-handler.service';
-import { ExceptionHandlerDriver } from 'packages/twenty-server/src/engine/core-modules/exception-handler/interfaces';
-import { EXCEPTION_HANDLER_DRIVER } from 'packages/twenty-server/src/engine/core-modules/exception-handler/exception-handler.constants';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
+import { EXCEPTION_HANDLER_DRIVER } from 'src/engine/core-modules/exception-handler/exception-handler.constants';
 import {
   ConfigurableModuleClass,
   OPTIONS_TYPE,
   ASYNC_OPTIONS_TYPE,
-} from 'packages/twenty-server/src/engine/core-modules/exception-handler/exception-handler.module-definition';
+} from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
+
+import { ExceptionHandlerConsoleDriver } from 'src/engine/core-modules/exception-handler/drivers/console.driver';
+import { ExceptionHandlerSentryDriver } from 'src/engine/core-modules/exception-handler/drivers/sentry.driver';
 
 @Global()
 @Module({

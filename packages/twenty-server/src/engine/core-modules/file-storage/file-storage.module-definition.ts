@@ -1,6 +1,6 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
 
-import { FileStorageModuleOptions } from 'packages/twenty-server/src/engine/core-modules/file-storage/interfaces';
+import { FileStorageModuleOptions } from 'src/engine/core-modules/file-storage/interfaces';
 
 export const {
   ConfigurableModuleClass,

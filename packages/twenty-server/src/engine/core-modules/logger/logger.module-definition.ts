@@ -1,6 +1,6 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
 
-import { LoggerModuleOptions } from 'packages/twenty-server/src/engine/core-modules/logger/interfaces';
+import { LoggerModuleOptions } from 'src/engine/core-modules/logger/interfaces';
 
 export const {
   ConfigurableModuleClass,

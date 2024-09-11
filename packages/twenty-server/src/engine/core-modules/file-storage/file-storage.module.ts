@@ -1,14 +1,13 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
-import { FileStorageService } from 'packages/twenty-server/src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   FileStorageModuleAsyncOptions,
   FileStorageModuleOptions,
-} from 'packages/twenty-server/src/engine/core-modules/file-storage/interfaces';
-import { STORAGE_DRIVER } from 'packages/twenty-server/src/engine/core-modules/file-storage/file-storage.constants';
-
-import { LocalDriver } from 'packages/twenty-server/src/engine/core-modules/file-storage/drivers/local.driver';
-import { S3Driver } from 'packages/twenty-server/src/engine/core-modules/file-storage/drivers/s3.driver';
+} from 'src/engine/core-modules/file-storage/interfaces';
+import { STORAGE_DRIVER } from 'src/engine/core-modules/file-storage/file-storage.constants';
+import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
+import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
 
 @Global()
 export class FileStorageModule {
