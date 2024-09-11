@@ -17,7 +17,7 @@ export const useActivityTargetObjectRecords = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (!isDefined(activity) && !isDefined(activityTargets)) {
-    throw new Error(`No activity or activity targets`);
+    return { activityTargetObjectRecords: [] };
   }
 
   const targets = activityTargets
