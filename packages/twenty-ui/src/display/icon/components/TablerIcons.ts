@@ -137,6 +137,8 @@ export {
   IconPhotoUp,
   IconPilcrow,
   IconPlayerPlay,
+  IconPlayerStop,
+  IconPower,
   IconPlaystationSquare,
   IconPlug,
   IconPlus,
