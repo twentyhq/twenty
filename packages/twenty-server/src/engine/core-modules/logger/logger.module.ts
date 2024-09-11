@@ -7,7 +7,6 @@ import {
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from 'src/engine/core-modules/logger/logger.module-definition';
-
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 
 @Global()

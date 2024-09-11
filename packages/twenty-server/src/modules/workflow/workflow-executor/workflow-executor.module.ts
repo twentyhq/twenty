@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
-import { WorkflowStepExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor.factory';
-import { CodeWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executors/code.workflow-step-executor';
-import { SendEmailWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executors/send-email.workflow-step-executor';
+import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { CodeWorkflowAction } from 'src/modules/serverless/workflow-actions/code.workflow-action';
+import { SendEmailWorkflowAction } from 'src/modules/mail-sender/workflow-actions/send-email.workflow-action';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 
@@ -13,9 +13,9 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
   providers: [
     WorkflowExecutorWorkspaceService,
     ScopedWorkspaceContextFactory,
-    WorkflowStepExecutorFactory,
-    CodeWorkflowStepExecutor,
-    SendEmailWorkflowStepExecutor,
+    WorkflowActionFactory,
+    CodeWorkflowAction,
+    SendEmailWorkflowAction,
   ],
   exports: [WorkflowExecutorWorkspaceService],
 })

@@ -8,7 +8,6 @@ import {
   OPTIONS_TYPE,
   ASYNC_OPTIONS_TYPE,
 } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
-
 import { ExceptionHandlerConsoleDriver } from 'src/engine/core-modules/exception-handler/drivers/console.driver';
 import { ExceptionHandlerSentryDriver } from 'src/engine/core-modules/exception-handler/drivers/sentry.driver';
 

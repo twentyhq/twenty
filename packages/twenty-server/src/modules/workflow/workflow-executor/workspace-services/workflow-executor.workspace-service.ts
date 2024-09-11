@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
+import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import {
   WorkflowExecutorException,
   WorkflowExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-executor.exception';
-import { WorkflowStepExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor.factory';
+import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -16,9 +16,7 @@ export type WorkflowExecutionOutput = {
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
-  constructor(
-    private readonly workflowStepExecutorFactory: WorkflowStepExecutorFactory,
-  ) {}
+  constructor(private readonly workflowActionFactory: WorkflowActionFactory) {}
 
   async execute({
     currentStepIndex,
@@ -39,11 +37,9 @@ export class WorkflowExecutorWorkspaceService {
 
     const step = steps[currentStepIndex];
 
-    const workflowStepExecutor = this.workflowStepExecutorFactory.get(
-      step.type,
-    );
+    const workflowAction = this.workflowActionFactory.get(step.type);
 
-    const result = await workflowStepExecutor.execute({
+    const result = await workflowAction.execute({
       step,
       payload,
     });

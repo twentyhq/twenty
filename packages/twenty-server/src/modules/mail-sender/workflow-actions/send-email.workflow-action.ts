@@ -7,14 +7,14 @@ import DOMPurify from 'dompurify';
 import { WorkflowActionEmail } from 'twenty-emails';
 import { render } from '@react-email/components';
 
-import { WorkflowStepResult } from 'src/modules/workflow/workflow-executor/types/workflow-step-result.type';
-import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
+import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
+import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 
 @Injectable()
-export class SendEmailWorkflowStepExecutor {
-  private readonly logger = new Logger(SendEmailWorkflowStepExecutor.name);
+export class SendEmailWorkflowAction {
+  private readonly logger = new Logger(SendEmailWorkflowAction.name);
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
@@ -29,7 +29,7 @@ export class SendEmailWorkflowStepExecutor {
       email: string;
       [key: string]: string;
     };
-  }): Promise<WorkflowStepResult> {
+  }): Promise<WorkflowActionResult> {
     try {
       const emailSchema = z.string().trim().email('Invalid email');
 
