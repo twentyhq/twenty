@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-executor.workspace-service';
+import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowStepExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor.factory';
 import { CodeWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executors/code.workflow-step-executor';
 import { SendEmailWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executors/send-email.workflow-step-executor';

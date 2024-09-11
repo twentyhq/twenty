@@ -10,11 +10,11 @@ import {
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/services/workflow-runner.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
-} from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export type WorkflowEventTriggerJobData = {
   workspaceId: string;

@@ -13,7 +13,7 @@ import { WorkflowCreateManyPreQueryHook } from 'src/modules/workflow/common/quer
 import { WorkflowCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow/workflow-create-one.pre-query.hook';
 import { WorkflowUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow/workflow-update-many.pre-query.hook';
 import { WorkflowUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow/workflow-update-one.pre-query.hook';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/services/workflow-common.workspace-service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Module({
   providers: [
