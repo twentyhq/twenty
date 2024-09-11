@@ -98,6 +98,11 @@ export type EmailsFilter = {
   primaryEmail?: StringFilter;
 };
 
+export type PhonesFilter = {
+  primaryPhoneNumber?: StringFilter;
+  primaryPhoneCountryCode?: StringFilter;
+};
+
 export type LeafFilter =
   | UUIDFilter
   | StringFilter
@@ -110,6 +115,7 @@ export type LeafFilter =
   | AddressFilter
   | LinksFilter
   | ActorFilter
+  | PhonesFilter
   | undefined;
 
 export type AndObjectRecordFilter = {

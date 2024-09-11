@@ -11,6 +11,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  max-height: 260px;
+  overflow-y: auto;
 `;
 
 const StyledTableRow = styled(TableRow)`

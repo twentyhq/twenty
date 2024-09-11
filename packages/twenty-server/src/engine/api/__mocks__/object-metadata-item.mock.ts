@@ -7,6 +7,7 @@ export const FIELD_CURRENCY_MOCK_NAME = 'fieldCurrency';
 export const FIELD_ADDRESS_MOCK_NAME = 'fieldAddress';
 export const FIELD_ACTOR_MOCK_NAME = 'fieldActor';
 export const FIELD_FULL_NAME_MOCK_NAME = 'fieldFullName';
+export const FIELD_PHONES_MOCK_NAME = 'fieldPhones';
 
 export const fieldNumberMock = {
   name: 'fieldNumber',
@@ -221,6 +222,7 @@ const fieldActorMock = {
     name: '',
   },
 };
+
 const fieldEmailsMock = {
   name: 'fieldEmails',
   type: FieldMetadataType.EMAILS,
@@ -228,10 +230,24 @@ const fieldEmailsMock = {
   defaultValue: [{ primaryEmail: '', additionalEmails: {} }],
 };
 
+const fieldPhonesMock = {
+  name: FIELD_PHONES_MOCK_NAME,
+  type: FieldMetadataType.PHONES,
+  isNullable: false,
+  defaultValue: [
+    {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: {},
+    },
+  ],
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
   fieldPhoneMock,
+  fieldPhonesMock,
   fieldEmailMock,
   fieldEmailsMock,
   fieldDateTimeMock,

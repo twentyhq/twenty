@@ -24,6 +24,8 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldPhone } from '@/object-record/record-field/types/guards/isFieldPhone';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
+import { isFieldPhonesValue } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { isFieldPosition } from '@/object-record/record-field/types/guards/isFieldPosition';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
@@ -125,6 +127,13 @@ export const isFieldValueEmpty = ({
   if (isFieldEmails(fieldDefinition)) {
     return (
       !isFieldEmailsValue(fieldValue) || isValueEmpty(fieldValue.primaryEmail)
+    );
+  }
+
+  if (isFieldPhones(fieldDefinition)) {
+    return (
+      !isFieldPhonesValue(fieldValue) ||
+      isValueEmpty(fieldValue.primaryPhoneNumber)
     );
   }
 

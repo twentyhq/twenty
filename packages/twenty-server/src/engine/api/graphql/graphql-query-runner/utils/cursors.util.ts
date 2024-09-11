@@ -7,7 +7,11 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 
-export const decodeCursor = (cursor: string): Record<string, any> => {
+export interface CursorData {
+  [key: string]: any;
+}
+
+export const decodeCursor = (cursor: string): CursorData => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
   } catch (err) {
@@ -22,13 +26,16 @@ export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
   objectRecord: ObjectRecord,
   order: Record<string, FindOptionsOrderValue> | undefined,
 ): string => {
-  const cursor = {};
+  const orderByValues: Record<string, any> = {};
 
-  Object.keys(order ?? []).forEach((key) => {
-    cursor[key] = objectRecord[key];
+  Object.keys(order ?? {}).forEach((key) => {
+    orderByValues[key] = objectRecord[key];
   });
 
-  cursor['id'] = objectRecord.id;
+  const cursorData: CursorData = {
+    ...orderByValues,
+    id: objectRecord.id,
+  };
 
-  return Buffer.from(JSON.stringify(Object.values(cursor))).toString('base64');
+  return Buffer.from(JSON.stringify(cursorData)).toString('base64');
 };
