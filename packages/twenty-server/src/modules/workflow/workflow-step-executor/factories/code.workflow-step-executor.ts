@@ -10,7 +10,7 @@ import {
 } from 'src/modules/workflow/workflow-step-executor/workflow-step-executor.exception';
 
 @Injectable()
-export class CodeActionExecutorFactory {
+export class CodeWorkflowStepExecutor {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,

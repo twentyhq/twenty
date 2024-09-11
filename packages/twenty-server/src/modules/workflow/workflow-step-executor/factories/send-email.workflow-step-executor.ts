@@ -13,8 +13,8 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { EmailService } from 'src/engine/integrations/email/email.service';
 
 @Injectable()
-export class SendEmailActionExecutorFactory {
-  private readonly logger = new Logger(SendEmailActionExecutorFactory.name);
+export class SendEmailWorkflowStepExecutor {
+  private readonly logger = new Logger(SendEmailWorkflowStepExecutor.name);
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
