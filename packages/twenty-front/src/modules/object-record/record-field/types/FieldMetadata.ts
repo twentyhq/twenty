@@ -163,6 +163,11 @@ export type FieldArrayMetadata = {
   values: { label: string; value: string }[];
 };
 
+export type FieldPhonesMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -239,3 +244,11 @@ export type FieldActorValue = {
 };
 
 export type FieldArrayValue = string[];
+
+export type PhoneRecord = { number: string; countryCode: string };
+
+export type FieldPhonesValue = {
+  primaryPhoneNumber: string;
+  primaryPhoneCountryCode: string;
+  additionalPhones?: PhoneRecord[] | null;
+};

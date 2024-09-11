@@ -153,5 +153,14 @@ export const mapFieldMetadataToGraphqlQuery = (
         additionalEmails
       }
     `;
+  } else if (fieldType === FieldMetadataType.PHONES) {
+    return `
+      ${field.name}
+      {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        additionalPhones
+      }
+    `;
   }
 };

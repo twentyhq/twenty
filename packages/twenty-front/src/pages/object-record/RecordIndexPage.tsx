@@ -42,7 +42,11 @@ export const RecordIndexPage = () => {
   return (
     <PageContainer>
       <PageTitle title={`${capitalize(objectNamePlural)}`} />
-      <RecordIndexPageHeader createRecord={handleAddButtonClick} />
+      <RecordIndexPageHeader
+        createRecord={handleAddButtonClick}
+        recordIndexId={recordIndexId}
+        objectNamePlural={objectNamePlural}
+      />
       <PageBody>
         <StyledIndexContainer>
           <RecordIndexContainer

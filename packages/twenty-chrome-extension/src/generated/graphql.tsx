@@ -2527,6 +2527,7 @@ export enum FieldMetadataType {
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
+  Phones = 'PHONES',
   Position = 'POSITION',
   Rating = 'RATING',
   RawJson = 'RAW_JSON',

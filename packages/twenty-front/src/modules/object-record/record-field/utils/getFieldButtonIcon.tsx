@@ -6,6 +6,7 @@ import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guar
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -33,7 +34,8 @@ export const getFieldButtonIcon = (
         'workspaceMember') ||
     isFieldLinks(fieldDefinition) ||
     isFieldEmails(fieldDefinition) ||
-    isFieldArray(fieldDefinition)
+    isFieldArray(fieldDefinition) ||
+    isFieldPhones(fieldDefinition)
   ) {
     return IconPencil;
   }

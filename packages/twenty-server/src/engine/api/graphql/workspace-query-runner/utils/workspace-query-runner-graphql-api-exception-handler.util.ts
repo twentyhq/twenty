@@ -1,4 +1,8 @@
 import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
@@ -27,6 +31,24 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       case WorkspaceQueryRunnerExceptionCode.QUERY_TIMEOUT:
         throw new TimeoutError(error.message);
       case WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
+      default:
+        throw new InternalServerError(error.message);
+    }
+  }
+
+  if (error instanceof GraphqlQueryRunnerException) {
+    switch (error.code) {
+      case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
+      case GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND:
+      case GraphqlQueryRunnerExceptionCode.MAX_DEPTH_REACHED:
+      case GraphqlQueryRunnerExceptionCode.INVALID_CURSOR:
+      case GraphqlQueryRunnerExceptionCode.INVALID_DIRECTION:
+      case GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR:
+      case GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT:
+      case GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND:
+        throw new UserInputError(error.message);
+      case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
+        throw new NotFoundError(error.message);
       default:
         throw new InternalServerError(error.message);
     }
