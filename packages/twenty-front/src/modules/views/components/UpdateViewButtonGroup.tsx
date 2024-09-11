@@ -9,7 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { useRecoilInstanceSelectorValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceSelectorValue';
 import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
@@ -43,7 +43,7 @@ export const UpdateViewButtonGroup = ({
   const canPersistView = useRecoilInstanceSelectorValue(
     canPersistViewInstanceSelector,
   );
-  const currentViewId = useRecoilComponentValue(currentViewIdInstanceState);
+  const currentViewId = useRecoilComponentValueV2(currentViewIdInstanceState);
 
   const { closeDropdown: closeUpdateViewButtonDropdown } = useDropdown(
     UPDATE_VIEW_BUTTON_DROPDOWN_ID,

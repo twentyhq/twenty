@@ -10,7 +10,7 @@ import {
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
@@ -53,7 +53,7 @@ export const ViewPickerDropdown = () => {
 
   const { handleUpdate } = useViewPickerPersistView();
 
-  const entityCountInCurrentView = useRecoilComponentValue(
+  const entityCountInCurrentView = useRecoilComponentValueV2(
     entityCountInCurrentViewInstanceState,
   );
 

@@ -10,7 +10,7 @@ import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
 import { isDefined } from 'twenty-ui';
 
@@ -43,7 +43,7 @@ export const StyledInput = styled.input`
 export const ObjectFilterDropdownFilterSelect = () => {
   const [searchText, setSearchText] = useState('');
 
-  const availableFilterDefinitions = useRecoilComponentValue(
+  const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsInstanceState,
   );
 

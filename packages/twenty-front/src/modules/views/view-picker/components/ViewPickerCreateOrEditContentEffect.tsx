@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
 import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -29,15 +29,15 @@ export const ViewPickerCreateOrEditContentEffect = () => {
     viewPickerTypeInstanceState,
   );
 
-  const viewPickerReferenceViewId = useRecoilComponentValue(
+  const viewPickerReferenceViewId = useRecoilComponentValueV2(
     viewPickerReferenceViewIdInstanceState,
   );
 
-  const viewPickerIsDirty = useRecoilComponentValue(
+  const viewPickerIsDirty = useRecoilComponentValueV2(
     viewPickerIsDirtyInstanceState,
   );
 
-  const viewPickerIsPersisting = useRecoilComponentValue(
+  const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingInstanceState,
   );
 

@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -22,7 +22,7 @@ export const ViewBarFilterEffect = ({
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const availableFilterDefinitions = useRecoilComponentValue(
+  const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsInstanceState,
   );
 

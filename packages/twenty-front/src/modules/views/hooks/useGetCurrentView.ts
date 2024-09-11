@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useAvailableInstanceIdOrThrow } from '@/ui/utilities/state/instance/hooks/useAvailableInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
 import { ViewInstanceContext } from '@/views/states/contexts/ViewInstanceContext';
 import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
@@ -27,12 +27,12 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     currentViewIdInstanceState,
     instanceId,
   );
 
-  const viewObjectMetadataId = useRecoilComponentValue(
+  const viewObjectMetadataId = useRecoilComponentValueV2(
     viewObjectMetadataIdInstanceState,
     instanceId,
   );
@@ -61,22 +61,22 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
     views,
   );
 
-  const unsavedToUpsertViewFilters = useRecoilComponentValue(
+  const unsavedToUpsertViewFilters = useRecoilComponentValueV2(
     unsavedToUpsertViewFiltersInstanceState,
     instanceId,
   );
 
-  const unsavedToUpsertViewSorts = useRecoilComponentValue(
+  const unsavedToUpsertViewSorts = useRecoilComponentValueV2(
     unsavedToUpsertViewSortsInstanceState,
     instanceId,
   );
 
-  const unsavedToDeleteViewFilterIds = useRecoilComponentValue(
+  const unsavedToDeleteViewFilterIds = useRecoilComponentValueV2(
     unsavedToDeleteViewFilterIdsInstanceState,
     instanceId,
   );
 
-  const unsavedToDeleteViewSortIds = useRecoilComponentValue(
+  const unsavedToDeleteViewSortIds = useRecoilComponentValueV2(
     unsavedToDeleteViewSortIdsInstanceState,
     instanceId,
   );

@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { useContext, useEffect, useState } from 'react';
 
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
@@ -23,12 +23,12 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
     View | undefined
   >(undefined);
 
-  const availableFilterDefinitions = useRecoilComponentValue(
+  const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsInstanceState,
     viewBarId,
   );
 
-  const isPersistingViewFields = useRecoilComponentValue(
+  const isPersistingViewFields = useRecoilComponentValueV2(
     isPersistingViewFieldsInstanceState,
     viewBarId,
   );
