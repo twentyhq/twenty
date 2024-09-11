@@ -2,6 +2,7 @@ import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/us
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-ui';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type EmailsFieldInputProps = {
@@ -34,6 +35,7 @@ export const EmailsFieldInput = ({ onCancel }: EmailsFieldInputProps) => {
       onPersist={handlePersistEmails}
       onCancel={onCancel}
       placeholder="Email"
+      fieldMetadataType={FieldMetadataType.Emails}
       renderItem={({
         value: email,
         index,

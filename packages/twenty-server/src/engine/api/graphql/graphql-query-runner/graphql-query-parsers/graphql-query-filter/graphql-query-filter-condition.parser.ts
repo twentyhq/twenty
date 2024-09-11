@@ -26,21 +26,29 @@ export class GraphqlQueryFilterConditionParser {
     }
 
     const result: FindOptionsWhere<ObjectLiteral> = {};
+    let orCondition: FindOptionsWhere<ObjectLiteral>[] | null = null;
 
     for (const [key, value] of Object.entries(conditions)) {
       switch (key) {
         case 'and':
-          return this.parseAndCondition(value, isNegated);
+          Object.assign(result, this.parseAndCondition(value, isNegated));
+          break;
         case 'or':
-          return this.parseOrCondition(value, isNegated);
+          orCondition = this.parseOrCondition(value, isNegated);
+          break;
         case 'not':
-          return this.parse(value, !isNegated);
+          Object.assign(result, this.parse(value, !isNegated));
+          break;
         default:
           Object.assign(
             result,
             this.fieldConditionParser.parse(key, value, isNegated),
           );
       }
+    }
+
+    if (orCondition) {
+      return orCondition.map((condition) => ({ ...result, ...condition }));
     }
 
     return result;

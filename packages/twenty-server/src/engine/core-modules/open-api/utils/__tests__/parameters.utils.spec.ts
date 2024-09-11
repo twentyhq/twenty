@@ -64,7 +64,10 @@ describe('computeParameters', () => {
       expect(computeDepthParameters()).toEqual({
         name: 'depth',
         in: 'query',
-        description: 'Limits the depth objects returned.',
+        description: `Determines the level of nested related objects to include in the response.  
+    - 0: Returns only the primary object's information.  
+    - 1: Returns the primary object along with its directly related objects (with no additional nesting for related objects).  
+    - 2: Returns the primary object, its directly related objects, and the related objects of those related objects.`,
         required: false,
         schema: {
           type: 'integer',

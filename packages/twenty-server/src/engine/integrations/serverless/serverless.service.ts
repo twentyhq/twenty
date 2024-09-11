@@ -29,7 +29,7 @@ export class ServerlessService implements ServerlessDriver {
 
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
-    payload: object | undefined = undefined,
+    payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult> {
     return this.driver.execute(serverlessFunction, payload, version);

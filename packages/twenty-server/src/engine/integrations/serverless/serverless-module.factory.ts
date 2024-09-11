@@ -2,7 +2,6 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 import {
   ServerlessDriverType,
   ServerlessModuleOptions,
@@ -11,7 +10,6 @@ import {
 export const serverlessModuleFactory = async (
   environmentService: EnvironmentService,
   fileStorageService: FileStorageService,
-  buildDirectoryManagerService: BuildDirectoryManagerService,
 ): Promise<ServerlessModuleOptions> => {
   const driverType = environmentService.get('SERVERLESS_TYPE');
   const options = { fileStorageService };
@@ -37,7 +35,6 @@ export const serverlessModuleFactory = async (
         type: ServerlessDriverType.Lambda,
         options: {
           ...options,
-          buildDirectoryManagerService,
           credentials: accessKeyId
             ? {
                 accessKeyId,

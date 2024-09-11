@@ -19,19 +19,19 @@ export class WorkflowTriggerResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  async enableWorkflowTrigger(
+  async activateWorkflowVersion(
     @Args('workflowVersionId') workflowVersionId: string,
   ) {
-    return await this.workflowTriggerWorkspaceService.enableWorkflowTrigger(
+    return await this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
     );
   }
 
   @Mutation(() => Boolean)
-  async disableWorkflowTrigger(
+  async deactivateWorkflowVersion(
     @Args('workflowVersionId') workflowVersionId: string,
   ) {
-    return await this.workflowTriggerWorkspaceService.disableWorkflowTrigger(
+    return await this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
       workflowVersionId,
     );
   }

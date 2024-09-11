@@ -33,7 +33,7 @@ export const MultiSelectFieldInput = ({
   const { selectedItemIdState } = useSelectableListStates({
     selectableListScopeId: MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   });
-  const { handleResetSelectedPosition } = useSelectableList(
+  const { resetSelectedItem } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
   const { persistField, fieldDefinition, fieldValues, hotkeyScope } =
@@ -46,7 +46,9 @@ export const MultiSelectFieldInput = ({
     fieldValues?.includes(option.value),
   );
 
-  const optionsInDropDown = fieldDefinition.metadata.options;
+  const filteredOptionsInDropDown = fieldDefinition.metadata.options.filter(
+    (option) => option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+  );
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
@@ -65,10 +67,10 @@ export const MultiSelectFieldInput = ({
     Key.Escape,
     () => {
       onCancel?.();
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
     hotkeyScope,
-    [onCancel, handleResetSelectedPosition],
+    [onCancel, resetSelectedItem],
   );
 
   useListenClickOutside({
@@ -83,11 +85,11 @@ export const MultiSelectFieldInput = ({
       if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
         onCancel();
       }
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
   });
 
-  const optionIds = optionsInDropDown.map((option) => option.value);
+  const optionIds = filteredOptionsInDropDown.map((option) => option.value);
 
   return (
     <SelectableList
@@ -95,7 +97,7 @@ export const MultiSelectFieldInput = ({
       selectableItemIdArray={optionIds}
       hotkeyScope={hotkeyScope}
       onEnter={(itemId) => {
-        const option = optionsInDropDown.find(
+        const option = filteredOptionsInDropDown.find(
           (option) => option.value === itemId,
         );
         if (isDefined(option)) {
@@ -112,7 +114,7 @@ export const MultiSelectFieldInput = ({
           />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight>
-            {optionsInDropDown.map((option) => {
+            {filteredOptionsInDropDown.map((option) => {
               return (
                 <MenuItemMultiSelectTag
                   key={option.value}

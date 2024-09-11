@@ -67,6 +67,7 @@ export const MultipleFiltersDropdownContent = ({
               'LINKS',
               'ADDRESS',
               'ACTOR',
+              'PHONES',
             ].includes(filterDefinitionUsedInDropdown.type) && (
               <ObjectFilterDropdownTextSearchInput />
             )}
@@ -76,9 +77,9 @@ export const MultipleFiltersDropdownContent = ({
             {filterDefinitionUsedInDropdown.type === 'RATING' && (
               <ObjectFilterDropdownRatingInput />
             )}
-            {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
-              <ObjectFilterDropdownDateInput />
-            )}
+            {['DATE_TIME', 'DATE'].includes(
+              filterDefinitionUsedInDropdown.type,
+            ) && <ObjectFilterDropdownDateInput />}
             {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <>
                 <ObjectFilterDropdownSearchInput />

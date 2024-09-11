@@ -23,7 +23,7 @@ export interface ServerlessDriver {
   publish(serverlessFunction: ServerlessFunctionEntity): Promise<string>;
   execute(
     serverlessFunction: ServerlessFunctionEntity,
-    payload: object | undefined,
+    payload: object,
     version: string,
   ): Promise<ServerlessExecuteResult>;
 }
