@@ -122,10 +122,7 @@ export class WorkspaceQueryRunnerService {
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
     if (isQueryRunnerTwentyORMEnabled) {
-      return this.graphqlQueryRunnerService.findManyWithTwentyOrm(
-        computedArgs,
-        options,
-      );
+      return this.graphqlQueryRunnerService.findMany(computedArgs, options);
     }
 
     const query = await this.workspaceQueryBuilderFactory.findMany(
@@ -169,6 +166,12 @@ export class WorkspaceQueryRunnerService {
     }
     const { authContext, objectMetadataItem } = options;
 
+    const isQueryRunnerTwentyORMEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        authContext.workspace.id,
+      );
+
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
@@ -182,6 +185,10 @@ export class WorkspaceQueryRunnerService {
       options,
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
+
+    if (isQueryRunnerTwentyORMEnabled) {
+      return this.graphqlQueryRunnerService.findOne(computedArgs, options);
+    }
 
     const query = await this.workspaceQueryBuilderFactory.findOne(
       computedArgs,
