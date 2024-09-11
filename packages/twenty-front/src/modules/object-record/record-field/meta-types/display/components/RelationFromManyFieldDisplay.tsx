@@ -5,7 +5,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFromManyFieldDisplay';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 export const RelationFromManyFieldDisplay = () => {
@@ -26,22 +25,6 @@ export const RelationFromManyFieldDisplay = () => {
     return null;
   }
 
-  const renderExpandableList = (
-    records: ObjectRecord[],
-    objectNameSingular: string,
-    recordProp = '',
-  ) => (
-    <ExpandableList isChipCountDisplayed={isFocused}>
-      {records.map((record) => (
-        <RecordChip
-          key={record.id}
-          objectNameSingular={objectNameSingular}
-          record={recordProp ? record[recordProp] : record}
-        />
-      ))}
-    </ExpandableList>
-  );
-
   const isRelationFromActivityTargets =
     (fieldName === 'noteTargets' &&
       objectMetadataNameSingular === CoreObjectNameSingular.Note) ||
@@ -54,38 +37,26 @@ export const RelationFromManyFieldDisplay = () => {
     (fieldName === 'taskTargets' &&
       objectMetadataNameSingular !== CoreObjectNameSingular.Task);
 
-  const isRelationFromManyObjects =
-    !isRelationFromActivityTargets && !isRelationFromManyActivities;
-
-  console.log({
-    fieldName,
-    objectMetadataNameSingular,
-    relationObjectNameSingular,
-    isRelationFromActivityTargets,
-    isRelationFromManyActivities,
-    isRelationFromManyObjects,
-  });
-
-  if (
-    (fieldName === 'noteTargets' &&
-      objectMetadataNameSingular !== CoreObjectNameSingular.Note) ||
-    (fieldName === 'taskTargets' &&
-      objectMetadataNameSingular !== CoreObjectNameSingular.Task)
-  ) {
+  if (isRelationFromManyActivities) {
     const objectNameSingular =
       fieldName === 'noteTargets'
         ? CoreObjectNameSingular.Note
         : CoreObjectNameSingular.Task;
-    const recordProp = fieldName === 'noteTargets' ? 'note' : 'task';
-    return renderExpandableList(fieldValue, objectNameSingular, recordProp);
-  }
 
-  if (
-    (fieldName === 'taskTargets' &&
-      objectMetadataNameSingular === CoreObjectNameSingular.Task) ||
-    (fieldName === 'noteTargets' &&
-      objectMetadataNameSingular === CoreObjectNameSingular.Note)
-  ) {
+    const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
+
+    return (
+      <ExpandableList isChipCountDisplayed={isFocused}>
+        {fieldValue.map((record) => (
+          <RecordChip
+            key={record.id}
+            objectNameSingular={objectNameSingular}
+            record={record[relationFieldName]}
+          />
+        ))}
+      </ExpandableList>
+    );
+  } else if (isRelationFromActivityTargets) {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
         {activityTargetObjectRecords.map((record) => (
@@ -97,7 +68,17 @@ export const RelationFromManyFieldDisplay = () => {
         ))}
       </ExpandableList>
     );
+  } else {
+    return (
+      <ExpandableList isChipCountDisplayed={isFocused}>
+        {fieldValue.map((record) => (
+          <RecordChip
+            key={record.id}
+            objectNameSingular={relationObjectNameSingular}
+            record={record}
+          />
+        ))}
+      </ExpandableList>
+    );
   }
-
-  return renderExpandableList(fieldValue, relationObjectNameSingular);
 };
