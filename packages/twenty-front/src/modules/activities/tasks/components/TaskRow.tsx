@@ -33,10 +33,8 @@ const StyledContainer = styled.div`
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
+  max-width: calc(50% - ${({ theme }) => theme.spacing(12)});
   text-overflow: ellipsis;
-  max-width: 40%;
-  max-width: 100%;
-  flex: 1;
   overflow: hidden;
   padding-bottom: ${({ theme }) => theme.spacing(0.25)};
 `;
