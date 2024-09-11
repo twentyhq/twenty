@@ -25,14 +25,17 @@ export const WorkflowDiagramStepNode = ({
       case 'trigger': {
         return (
           <StyledStepNodeLabelIconContainer>
-            <IconPlaylistAdd size={16} color={theme.font.color.tertiary} />
+            <IconPlaylistAdd
+              size={theme.icon.size.sm}
+              color={theme.font.color.tertiary}
+            />
           </StyledStepNodeLabelIconContainer>
         );
       }
       case 'action': {
         return (
           <StyledStepNodeLabelIconContainer>
-            <IconCode size={16} color={theme.color.orange} />
+            <IconCode size={theme.icon.size.sm} color={theme.color.orange} />
           </StyledStepNodeLabelIconContainer>
         );
       }
