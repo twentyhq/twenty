@@ -185,3 +185,17 @@ export class FieldMetadataDefaultValueEmails {
   @IsObject()
   additionalEmails: string[] | null;
 }
+
+export class FieldMetadataDefaultValuePhones {
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryPhoneNumber: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryPhoneCountryCode: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsObject()
+  additionalPhones: object | null;
+}

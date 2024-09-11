@@ -24,7 +24,8 @@ export type CompositeFieldMetadataType =
   | FieldMetadataType.FULL_NAME
   | FieldMetadataType.LINK
   | FieldMetadataType.LINKS
-  | FieldMetadataType.EMAILS;
+  | FieldMetadataType.EMAILS
+  | FieldMetadataType.PHONES;
 
 @Injectable()
 export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<CompositeFieldMetadataType> {
