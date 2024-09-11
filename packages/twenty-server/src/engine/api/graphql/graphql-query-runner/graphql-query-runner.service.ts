@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import graphqlFields from 'graphql-fields';
+
 import {
   Record as IRecord,
   RecordFilter,
@@ -10,14 +12,21 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import {
   FindManyResolverArgs,
   FindOneResolverArgs,
+  SearchResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
+import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ObjectLiteral } from 'typeorm';
 
 @Injectable()
 export class GraphqlQueryRunnerService {
@@ -54,80 +63,109 @@ export class GraphqlQueryRunnerService {
     return graphqlQueryFindManyResolverService.findMany(args, options);
   }
 
-  async searchPerson(
-    repository: WorkspaceRepository<ObjectLiteral>,
-    select: Record<string, any>,
-    searchTerm: string,
-  ) {
-    const selectedFieldsWithoutRelations =
-      this.getSelectedFieldsWithoutRelations(select);
+  async search<ObjectRecord extends IRecord = IRecord>(
+    args: SearchResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<IConnection<ObjectRecord>> {
+    const { authContext, objectMetadataItem, objectMetadataCollection, info } =
+      options;
 
-    const getResultsWithTrigram = false;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        objectMetadataItem.nameSingular,
+      );
 
-    if (getResultsWithTrigram) {
-      const similarityThreshold = 0.2;
-      const resultsWithTrigram = await repository
-        .createQueryBuilder()
-        .select(selectedFieldsWithoutRelations)
-        .where('similarity("nameLastName", :searchTerm) > :threshold', {
-          searchTerm,
-          threshold: similarityThreshold,
-        })
-        .orWhere('similarity("nameFirstName", :searchTerm) > :threshold', {
-          searchTerm,
-          threshold: similarityThreshold,
-        })
+    const objectMetadataMap = convertObjectMetadataToMap(
+      objectMetadataCollection,
+    );
 
-        .orWhere('email % :searchTerm', { searchTerm })
-        .orWhere('phone % :searchTerm', { searchTerm })
-        .orWhere('"jobTitle" % :searchTerm', { searchTerm })
-        .orderBy(
-          '(similarity("nameFirstName", :searchTerm) + similarity("nameLastName", :searchTerm))',
-          'DESC',
-        )
-        .setParameter('searchTerm', searchTerm)
-        .execute();
+    const objectMetadata = objectMetadataMap[objectMetadataItem.nameSingular];
 
-      return resultsWithTrigram;
-    } else {
-      const searchTerms = this.formatSearchTerms(searchTerm);
-
-      const resultsWithTsVector = await repository
-        .createQueryBuilder()
-        .select(selectedFieldsWithoutRelations)
-        .where('search_vector @@ to_tsquery(:searchTerms)', {
-          searchTerms,
-        })
-        .orderBy('ts_rank(search_vector, to_tsquery(:searchTerms))', 'DESC')
-        .setParameter('searchTerms', searchTerms)
-        .execute();
-
-      return resultsWithTsVector;
+    if (!objectMetadata) {
+      throw new GraphqlQueryRunnerException(
+        `Object metadata not found for ${objectMetadataItem.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
     }
-  }
 
-  private getSelectedFieldsWithoutRelations(select: Record<string, any>) {
-    const selectForQueryBuilder: string[] = [];
+    const graphqlQueryParser = new GraphqlQueryParser(
+      objectMetadata.fields,
+      objectMetadataMap,
+    );
 
-    Object.keys(select).forEach((key) => {
-      if (select[key] === true) {
-        selectForQueryBuilder.push(`"${key}"`);
-      }
+    if (!args.searchInput) {
+      return {} as IConnection<ObjectRecord>;
+    }
+    const searchTerms = this.formatSearchTerms(args.searchInput);
+
+    const { select } = graphqlQueryParser.parseSelectedFields(
+      objectMetadataItem,
+      graphqlFields(info),
+    );
+
+    const columnsToSelect = this.formatSelectedColumns(select);
+
+    const resultsWithTsVector = await repository
+      .createQueryBuilder()
+      .select(columnsToSelect) // TODO do not stop relations
+      .where('search_vector @@ to_tsquery(:searchTerms)', {
+        searchTerms,
+      })
+      .orderBy('ts_rank(search_vector, to_tsquery(:searchTerms))', 'DESC')
+      .setParameter('searchTerms', searchTerms)
+      .execute();
+
+    const objectRecords = await repository.formatResult(resultsWithTsVector);
+    const typeORMObjectRecordsParser =
+      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+
+    const limit = QUERY_MAX_RECORDS; // TODO: make it an arg
+    const where = {};
+    const totalCount = await repository.count({
+      where,
     });
+    const order = undefined;
+    const { hasNextPage, hasPreviousPage } = this.getPaginationInfo(
+      objectRecords,
+      limit,
+    );
 
-    return selectForQueryBuilder;
+    return typeORMObjectRecordsParser.createConnection(
+      objectRecords ?? [],
+      objectMetadataItem.nameSingular,
+      limit,
+      totalCount,
+      order,
+      hasNextPage,
+      hasPreviousPage,
+    );
   }
 
   private formatSearchTerms(searchTerm: string) {
-    // Diviser la chaîne d'entrée en mots en utilisant les espaces comme séparateurs
     const words = searchTerm.trim().split(/\s+/);
-
-    // Transformer chaque mot pour le mettre au format souhaité
     const formattedWords = words.map((word) => `${word}:*`);
 
-    // Joindre les mots formatés avec " | "
-    const result = formattedWords.join(' | ');
+    return formattedWords.join(' | '); // TODO: also do that for emails?
+  }
 
-    return result;
+  private formatSelectedColumns(obj: Record<string, any>) {
+    return Object.entries(obj)
+      .filter(([_, value]) => value === true)
+      .map(([key, _]) => `"${key}"`)
+      .join(', ');
+  }
+
+  private getPaginationInfo(
+    // CCed from find many resolver
+    objectRecords: any[],
+    limit: number,
+  ) {
+    const hasMoreRecords = objectRecords.length > limit;
+
+    return {
+      hasNextPage: hasMoreRecords,
+      hasPreviousPage: false, // TODO
+    };
   }
 }
