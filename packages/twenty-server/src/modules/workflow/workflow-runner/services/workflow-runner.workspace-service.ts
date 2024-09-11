@@ -8,7 +8,7 @@ import {
   RunWorkflowJob,
   RunWorkflowJobData,
 } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/services/workflow-run.workspace-service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {

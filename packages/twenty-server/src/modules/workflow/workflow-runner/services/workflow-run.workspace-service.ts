@@ -10,7 +10,7 @@ import {
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
-} from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.exception';
+} from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
