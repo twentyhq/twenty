@@ -43,6 +43,6 @@ export class CodeWorkflowStepExecutor {
       return { error: result.error };
     }
 
-    return { data: result.data || {} };
+    return { result: result.data || {} };
   }
 }

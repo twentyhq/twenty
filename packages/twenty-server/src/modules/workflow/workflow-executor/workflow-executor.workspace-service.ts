@@ -10,7 +10,7 @@ import { WorkflowStepExecutorFactory } from 'src/modules/workflow/workflow-step-
 const MAX_RETRIES_ON_FAILURE = 3;
 
 export type WorkflowExecutionOutput = {
-  data?: object;
+  result?: object;
   error?: object;
 };
 
@@ -33,7 +33,7 @@ export class WorkflowExecutorWorkspaceService {
   }): Promise<WorkflowExecutionOutput> {
     if (currentStepIndex >= steps.length) {
       return {
-        data: payload,
+        result: payload,
       };
     }
 
@@ -48,11 +48,11 @@ export class WorkflowExecutorWorkspaceService {
       payload,
     });
 
-    if (result.data) {
+    if (result.result) {
       return await this.execute({
         currentStepIndex: currentStepIndex + 1,
         steps,
-        payload: result.data,
+        payload: result.result,
       });
     }
 

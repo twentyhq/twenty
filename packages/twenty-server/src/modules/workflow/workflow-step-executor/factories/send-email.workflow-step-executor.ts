@@ -38,7 +38,7 @@ export class SendEmailWorkflowStepExecutor {
       if (!result.success) {
         this.logger.warn(`Email '${payload.email}' invalid`);
 
-        return { data: { success: false } };
+        return { result: { success: false } };
       }
 
       const mainText = Handlebars.compile(step.settings.template)(payload);
@@ -69,7 +69,7 @@ export class SendEmailWorkflowStepExecutor {
         html,
       });
 
-      return { data: { success: true } };
+      return { result: { success: true } };
     } catch (error) {
       return { error };
     }
