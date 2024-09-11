@@ -2,6 +2,7 @@ import { useArrayField } from '@/object-record/record-field/meta-types/hooks/use
 import { ArrayFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiItemFieldInput';
 import { useMemo } from 'react';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ArrayFieldInputProps = {
   onCancel?: () => void;
@@ -23,6 +24,7 @@ export const ArrayFieldInput = ({ onCancel }: ArrayFieldInputProps) => {
       onPersist={persistArrayField}
       onCancel={onCancel}
       placeholder="Enter value"
+      fieldMetadataType={FieldMetadataType.Array}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
           key={index}
