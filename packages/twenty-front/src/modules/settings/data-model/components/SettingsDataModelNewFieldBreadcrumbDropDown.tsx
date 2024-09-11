@@ -6,7 +6,9 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useFormContext } from 'react-hook-form';
 import { IconChevronDown } from 'twenty-ui';
+import { SettingsDataModelNewFieldFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 
 type SettingsDataModelNewFieldBreadcrumbDropDownProps = {
   isConfigureStep: boolean;
@@ -16,10 +18,11 @@ type SettingsDataModelNewFieldBreadcrumbDropDownProps = {
 const StyledContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
+  cursor: default;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
 `;
+
 const StyledButtonContainer = styled.div`
   position: relative;
   width: 100%;
@@ -33,10 +36,19 @@ const StyledDownChevron = styled(IconChevronDown)`
   transform: translateY(-50%);
 `;
 
-const StyledMenuItem = styled(MenuItem)<{ selected?: boolean }>`
+const StyledMenuItemWrapper = styled.div<{ disabled?: boolean }>`
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  width: 100%;
+`;
+
+const StyledMenuItem = styled(MenuItem)<{
+  selected?: boolean;
+  disabled?: boolean;
+}>`
   background: ${({ theme, selected }) =>
     selected ? theme.background.quaternary : 'transparent'};
-  cursor: pointer;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 `;
 
 const StyledSpan = styled.span`
@@ -55,6 +67,9 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = ({
   const dropdownId = `settings-object-new-field-breadcrumb-dropdown`;
 
   const { closeDropdown } = useDropdown(dropdownId);
+
+  const { getValues } = useFormContext<SettingsDataModelNewFieldFormValues>();
+  const selectedType = getValues('type');
 
   const handleClick = (step: boolean) => {
     onBreadcrumbClick(step);
@@ -81,16 +96,21 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = ({
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>
-              <StyledMenuItem
-                text="1. Type"
-                onClick={() => handleClick(false)}
-                selected={!isConfigureStep}
-              />
-              <StyledMenuItem
-                text="2. Configure"
-                onClick={() => handleClick(true)}
-                selected={isConfigureStep}
-              />
+              <StyledMenuItemWrapper>
+                <StyledMenuItem
+                  text="1. Type"
+                  onClick={() => handleClick(false)}
+                  selected={!isConfigureStep}
+                />
+              </StyledMenuItemWrapper>
+              <StyledMenuItemWrapper disabled={!selectedType}>
+                <StyledMenuItem
+                  text="2. Configure"
+                  onClick={() => (selectedType ? handleClick(true) : null)}
+                  selected={isConfigureStep}
+                  disabled={!selectedType}
+                />
+              </StyledMenuItemWrapper>
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }

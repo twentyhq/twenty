@@ -118,6 +118,7 @@ export const SettingsDataModelFieldTypeSelect = ({
   }, [fieldTypeConfigs]);
 
   const initialType = getValues('type');
+
   const flattenedConfigs = getFlattenedConfigs();
 
   const initialFocusedIndex = flattenedConfigs.findIndex(

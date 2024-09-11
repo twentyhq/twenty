@@ -198,20 +198,16 @@ export const SettingsObjectNewFieldStep2 = () => {
             />
           }
           actionButton={
-            !activeObjectMetadataItem.isRemote && (
+            !activeObjectMetadataItem.isRemote && isConfigureStep ? (
               <SaveAndCancelButtons
                 isSaveDisabled={!canSave}
                 isCancelDisabled={isSubmitting}
                 onCancel={() => {
-                  if (!isConfigureStep) {
-                    navigate(`/settings/objects/${objectSlug}`);
-                  } else {
-                    setIsConfigureStep(false);
-                  }
+                  setIsConfigureStep(false);
                 }}
                 onSave={formConfig.handleSubmit(handleSave)}
               />
-            )
+            ) : null
           }
         >
           <SettingsPageContainer>
