@@ -122,10 +122,7 @@ export class WorkspaceQueryRunnerService {
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
     if (isQueryRunnerTwentyORMEnabled) {
-      return this.graphqlQueryRunnerService.findManyWithTwentyOrm(
-        computedArgs,
-        options,
-      );
+      return this.graphqlQueryRunnerService.findMany(computedArgs, options);
     }
 
     const query = await this.workspaceQueryBuilderFactory.findMany(
@@ -190,10 +187,7 @@ export class WorkspaceQueryRunnerService {
     )) as FindOneResolverArgs<Filter>;
 
     if (isQueryRunnerTwentyORMEnabled) {
-      return this.graphqlQueryRunnerService.findOneWithTwentyOrm(
-        computedArgs,
-        options,
-      );
+      return this.graphqlQueryRunnerService.findOne(computedArgs, options);
     }
 
     const query = await this.workspaceQueryBuilderFactory.findOne(
