@@ -51,6 +51,27 @@ export const CodeEditor = ({
     monaco.editor.setTheme('codeEditorTheme');
 
     if (language === 'typescript') {
+      const environmentVariables = {};
+
+      const environmentDefinition = `
+      declare namespace NodeJS {
+        interface ProcessEnv {
+          ${Object.keys(environmentVariables)
+            .map((key) => `${key}: string;`)
+            .join('\n')}
+        }
+      }
+
+      declare const process: {
+        env: NodeJS.ProcessEnv;
+      };
+    `;
+
+      monaco.languages.typescript.typescriptDefaults.addExtraLib(
+        environmentDefinition,
+        'ts:process-env.d.ts',
+      );
+
       await AutoTypings.create(editor, {
         monaco,
         preloadPackages: true,
