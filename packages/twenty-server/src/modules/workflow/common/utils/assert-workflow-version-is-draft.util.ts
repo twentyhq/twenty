@@ -1,7 +1,7 @@
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,

@@ -1,13 +1,13 @@
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
-export const assertWorkflowStatusesNotSet = (
+export const assertWorkflowStatusesNotSetOrEmpty = (
   statuses?: WorkflowStatus[] | null,
 ) => {
-  if (statuses) {
+  if (statuses && statuses.length > 0) {
     throw new WorkflowQueryValidationException(
       'Statuses cannot be set manually.',
       WorkflowQueryValidationExceptionCode.FORBIDDEN,

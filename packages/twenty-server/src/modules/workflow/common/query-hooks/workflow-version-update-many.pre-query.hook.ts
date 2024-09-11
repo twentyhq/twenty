@@ -5,14 +5,16 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
-@WorkspaceQueryHook(`workflow.updateMany`)
-export class WorkflowUpdateManyPreQueryHook
+@WorkspaceQueryHook(`workflowVersion.updateMany`)
+export class WorkflowVersionUpdateManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
-  async execute(): Promise<UpdateManyResolverArgs<WorkflowWorkspaceEntity>> {
+  async execute(): Promise<
+    UpdateManyResolverArgs<WorkflowVersionWorkspaceEntity>
+  > {
     throw new WorkflowQueryValidationException(
       'Method not allowed.',
       WorkflowQueryValidationExceptionCode.FORBIDDEN,

@@ -3,7 +3,7 @@ import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/query-hooks/workflow-version/services/workflow-version-validation.workspace-service';
+import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @WorkspaceQueryHook(`workflowVersion.updateOne`)

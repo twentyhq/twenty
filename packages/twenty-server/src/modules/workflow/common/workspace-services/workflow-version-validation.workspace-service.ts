@@ -10,8 +10,8 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
-} from 'src/modules/workflow/common/query-hooks/workflow-query-validation.exception';
-import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/query-hooks/workflow-version/utils/assert-workflow-version-is-draft.util';
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
+import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowVersionStatus,
