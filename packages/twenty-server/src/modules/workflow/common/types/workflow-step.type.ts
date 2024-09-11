@@ -1,18 +1,12 @@
+import {
+  WorkflowCodeStepSettings,
+  WorkflowSendEmailStepSettings,
+} from 'src/modules/workflow/common/types/workflow-step-settings.type';
+
 export enum WorkflowStepType {
   CODE_ACTION = 'CODE_ACTION',
   SEND_EMAIL_ACTION = 'SEND_EMAIL_ACTION',
 }
-
-type BaseWorkflowSettings = {
-  errorHandlingOptions: {
-    retryOnFailure: {
-      value: boolean;
-    };
-    continueOnFailure: {
-      value: boolean;
-    };
-  };
-};
 
 type BaseWorkflowStep = {
   id: string;
@@ -22,22 +16,12 @@ type BaseWorkflowStep = {
 
 export type WorkflowCodeStep = BaseWorkflowStep & {
   type: WorkflowStepType.CODE_ACTION;
-  settings: BaseWorkflowSettings & {
-    serverlessFunctionId: string;
-  };
+  settings: WorkflowCodeStepSettings;
 };
 
 export type WorkflowSendEmailStep = BaseWorkflowStep & {
   type: WorkflowStepType.SEND_EMAIL_ACTION;
-  settings: BaseWorkflowSettings & {
-    subject?: string;
-    template?: string;
-    title?: string;
-    callToAction?: {
-      value: string;
-      href: string;
-    };
-  };
+  settings: WorkflowSendEmailStepSettings;
 };
 
 export type WorkflowStep = WorkflowCodeStep | WorkflowSendEmailStep;
