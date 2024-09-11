@@ -47,10 +47,10 @@ const StyledTriggerSettings = styled.div`
 
 export const WorkflowEditTriggerForm = ({
   trigger,
-  onUpdateTrigger,
+  onTriggerUpdate,
 }: {
   trigger: WorkflowTrigger | undefined;
-  onUpdateTrigger: (trigger: WorkflowTrigger) => void;
+  onTriggerUpdate: (trigger: WorkflowTrigger) => void;
 }) => {
   const theme = useTheme();
 
@@ -105,7 +105,7 @@ export const WorkflowEditTriggerForm = ({
           value={triggerEvent?.objectType}
           options={availableMetadata}
           onChange={(updatedRecordType) => {
-            onUpdateTrigger(
+            onTriggerUpdate(
               isDefined(trigger) && isDefined(triggerEvent)
                 ? {
                     ...trigger,
@@ -130,7 +130,7 @@ export const WorkflowEditTriggerForm = ({
           value={triggerEvent?.event}
           options={OBJECT_EVENT_TRIGGERS}
           onChange={(updatedEvent) => {
-            onUpdateTrigger(
+            onTriggerUpdate(
               isDefined(trigger) && isDefined(triggerEvent)
                 ? {
                     ...trigger,

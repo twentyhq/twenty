@@ -79,7 +79,7 @@ export const RightDrawerWorkflowEditStepContent = ({
     return (
       <WorkflowEditTriggerForm
         trigger={stepDefinition.definition}
-        onUpdateTrigger={updateTrigger}
+        onTriggerUpdate={updateTrigger}
       />
     );
   }
@@ -87,7 +87,7 @@ export const RightDrawerWorkflowEditStepContent = ({
   return (
     <WorkflowEditActionForm
       action={stepDefinition.definition}
-      onUpdateAction={updateStep}
+      onActionUpdate={updateStep}
     />
   );
 };
