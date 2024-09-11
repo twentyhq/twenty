@@ -37,7 +37,7 @@ const getStepDefinitionOrThrow = ({
 
   if (!isDefined(currentVersion.steps)) {
     throw new Error(
-      'Expected to find an array of steps while trying to locate a specific step',
+      'Expected the steps to be defined while trying to locate a specific step',
     );
   }
 
