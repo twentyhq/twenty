@@ -1,16 +1,16 @@
 import { useRecoilCallback } from 'recoil';
 
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
-import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
-import { unsavedToDeleteViewFilterIdsInstanceState } from '@/views/states/unsavedToDeleteViewFilterIdsInstanceState';
-import { unsavedToDeleteViewSortIdsInstanceState } from '@/views/states/unsavedToDeleteViewSortIdsInstanceState';
-import { unsavedToUpsertViewFiltersInstanceState } from '@/views/states/unsavedToUpsertViewFiltersInstanceState';
-import { unsavedToUpsertViewSortsInstanceState } from '@/views/states/unsavedToUpsertViewSortsInstanceState';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { unsavedToDeleteViewFilterIdsComponentState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentState';
+import { unsavedToDeleteViewSortIdsComponentState } from '@/views/states/unsavedToDeleteViewSortIdsComponentState';
+import { unsavedToUpsertViewFiltersComponentState } from '@/views/states/unsavedToUpsertViewFiltersComponentState';
+import { unsavedToUpsertViewSortsComponentState } from '@/views/states/unsavedToUpsertViewSortsComponentState';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -19,31 +19,32 @@ export const useSaveCurrentViewFiltersAndSorts = (
 ) => {
   const { getViewFromCache } = useGetViewFromCache();
 
-  const currentViewIdCallbackState = useRecoilInstanceCallbackState(
-    currentViewIdInstanceState,
+  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+    currentViewIdComponentState,
     viewBarComponentId,
   );
 
   const unsavedToDeleteViewSortIdsCallbackState =
-    useRecoilInstanceCallbackState(
-      unsavedToDeleteViewSortIdsInstanceState,
+    useRecoilComponentCallbackStateV2(
+      unsavedToDeleteViewSortIdsComponentState,
       viewBarComponentId,
     );
 
-  const unsavedToUpsertViewSortsCallbackState = useRecoilInstanceCallbackState(
-    unsavedToUpsertViewSortsInstanceState,
-    viewBarComponentId,
-  );
+  const unsavedToUpsertViewSortsCallbackState =
+    useRecoilComponentCallbackStateV2(
+      unsavedToUpsertViewSortsComponentState,
+      viewBarComponentId,
+    );
 
   const unsavedToDeleteViewFilterIdsCallbackState =
-    useRecoilInstanceCallbackState(
-      unsavedToDeleteViewFilterIdsInstanceState,
+    useRecoilComponentCallbackStateV2(
+      unsavedToDeleteViewFilterIdsComponentState,
       viewBarComponentId,
     );
 
   const unsavedToUpsertViewFiltersCallbackState =
-    useRecoilInstanceCallbackState(
-      unsavedToUpsertViewFiltersInstanceState,
+    useRecoilComponentCallbackStateV2(
+      unsavedToUpsertViewFiltersComponentState,
       viewBarComponentId,
     );
 

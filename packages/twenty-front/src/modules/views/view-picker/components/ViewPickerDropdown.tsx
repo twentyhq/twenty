@@ -10,9 +10,9 @@ import {
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
+import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerCreateOrEditContent } from '@/views/view-picker/components/ViewPickerCreateOrEditContent';
 import { ViewPickerCreateOrEditContentEffect } from '@/views/view-picker/components/ViewPickerCreateOrEditContentEffect';
@@ -54,7 +54,7 @@ export const ViewPickerDropdown = () => {
   const { handleUpdate } = useViewPickerPersistView();
 
   const entityCountInCurrentView = useRecoilComponentValueV2(
-    entityCountInCurrentViewInstanceState,
+    entityCountInCurrentViewComponentState,
   );
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(

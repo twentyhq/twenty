@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
-import { isPersistingViewFieldsInstanceState } from '@/views/states/isPersistingViewFieldsInstanceState';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { ViewField } from '@/views/types/ViewField';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
@@ -16,13 +16,13 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
 
   const { getViewFromCache } = useGetViewFromCache();
 
-  const currentViewIdCallbackState = useRecoilInstanceCallbackState(
-    currentViewIdInstanceState,
+  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+    currentViewIdComponentState,
     viewBarComponentId,
   );
 
-  const isPersistingViewFieldsCallbackState = useRecoilInstanceCallbackState(
-    isPersistingViewFieldsInstanceState,
+  const isPersistingViewFieldsCallbackState = useRecoilComponentCallbackStateV2(
+    isPersistingViewFieldsComponentState,
     viewBarComponentId,
   );
 

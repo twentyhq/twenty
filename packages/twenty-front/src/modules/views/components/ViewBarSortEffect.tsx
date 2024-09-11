@@ -3,10 +3,10 @@ import { useSetRecoilState } from 'recoil';
 
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
-import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
-import { availableSortDefinitionsInstanceState } from '@/views/states/availableSortDefinitionsInstanceState';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarSortEffectProps = {
@@ -20,7 +20,7 @@ export const ViewBarSortEffect = ({
 
   // TDOO: verify this instance id works
   const availableSortDefinitions = useRecoilComponentValueV2(
-    availableSortDefinitionsInstanceState,
+    availableSortDefinitionsComponentState,
   );
 
   const { onSortSelectState } = useSortDropdown({
@@ -28,10 +28,11 @@ export const ViewBarSortEffect = ({
   });
 
   // TDOO: verify this instance id works
-  const setAvailableSortDefinitionsInSortDropdown = useSetRecoilInstanceState(
-    availableSortDefinitionsInstanceState,
-    sortDropdownId,
-  );
+  const setAvailableSortDefinitionsInSortDropdown =
+    useSetRecoilComponentStateV2(
+      availableSortDefinitionsComponentState,
+      sortDropdownId,
+    );
   const setOnSortSelect = useSetRecoilState(onSortSelectState);
 
   useEffect(() => {

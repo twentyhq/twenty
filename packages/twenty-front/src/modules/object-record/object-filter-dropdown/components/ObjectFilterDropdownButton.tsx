@@ -2,7 +2,7 @@ import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdow
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
-import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityObjectFilterDropdownButton } from './SingleEntityObjectFilterDropdownButton';
 
@@ -16,7 +16,7 @@ export const ObjectFilterDropdownButton = ({
   hotkeyScope,
 }: ObjectFilterDropdownButtonProps) => {
   const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsInstanceState,
+    availableFilterDefinitionsComponentState,
     filterDropdownId,
   );
 

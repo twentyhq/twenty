@@ -1,27 +1,27 @@
-import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
-import { availableFieldDefinitionsInstanceState } from '@/views/states/availableFieldDefinitionsInstanceState';
-import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
-import { availableSortDefinitionsInstanceState } from '@/views/states/availableSortDefinitionsInstanceState';
-import { viewObjectMetadataIdInstanceState } from '@/views/states/viewObjectMetadataIdInstanceState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { availableFieldDefinitionsComponentState } from '@/views/states/availableFieldDefinitionsComponentState';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 
 export const useInitViewBar = (viewBarInstanceId?: string) => {
-  const setAvailableFieldDefinitions = useSetRecoilInstanceState(
-    availableFieldDefinitionsInstanceState,
+  const setAvailableFieldDefinitions = useSetRecoilComponentStateV2(
+    availableFieldDefinitionsComponentState,
     viewBarInstanceId,
   );
 
-  const setAvailableSortDefinitions = useSetRecoilInstanceState(
-    availableSortDefinitionsInstanceState,
+  const setAvailableSortDefinitions = useSetRecoilComponentStateV2(
+    availableSortDefinitionsComponentState,
     viewBarInstanceId,
   );
 
-  const setAvailableFilterDefinitions = useSetRecoilInstanceState(
-    availableFilterDefinitionsInstanceState,
+  const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
+    availableFilterDefinitionsComponentState,
     viewBarInstanceId,
   );
 
-  const setViewObjectMetadataId = useSetRecoilInstanceState(
-    viewObjectMetadataIdInstanceState,
+  const setViewObjectMetadataId = useSetRecoilComponentStateV2(
+    viewObjectMetadataIdComponentState,
     viewBarInstanceId,
   );
 

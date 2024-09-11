@@ -19,7 +19,7 @@ import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDro
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
-import { ViewInstanceContext } from '@/views/states/contexts/ViewInstanceContext';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
 
@@ -48,7 +48,7 @@ export const ViewBar = ({
   }
 
   return (
-    <ViewInstanceContext.Provider value={{ instanceId: viewBarId }}>
+    <ViewComponentInstanceContext.Provider value={{ instanceId: viewBarId }}>
       <ViewEventContext.Provider value={{ onCurrentViewChange }}>
         <ViewBarEffect viewBarId={viewBarId} />
         <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
@@ -96,6 +96,6 @@ export const ViewBar = ({
           }
         />
       </ViewEventContext.Provider>
-    </ViewInstanceContext.Provider>
+    </ViewComponentInstanceContext.Provider>
   );
 };

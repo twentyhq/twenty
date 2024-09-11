@@ -6,8 +6,8 @@ import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useS
 import { useSortDropdownStates } from '@/object-record/object-sort-dropdown/hooks/useSortDropdownStates';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
-import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
-import { availableSortDefinitionsInstanceState } from '@/views/states/availableSortDefinitionsInstanceState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>{children}</RecoilRoot>
@@ -29,8 +29,8 @@ describe('useSortDropdown', () => {
 
       // TODO: verify this instance id works
       const [availableSortDefinitions, setAvailableSortDefinitions] =
-        useRecoilInstanceState(
-          availableSortDefinitionsInstanceState,
+        useRecoilComponentStateV2(
+          availableSortDefinitionsComponentState,
           sortDropdownId,
         );
 

@@ -2,29 +2,29 @@ import { useRecoilCallback } from 'recoil';
 
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
-import { unsavedToDeleteViewFilterIdsInstanceState } from '@/views/states/unsavedToDeleteViewFilterIdsInstanceState';
-import { unsavedToUpsertViewFiltersInstanceState } from '@/views/states/unsavedToUpsertViewFiltersInstanceState';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { unsavedToDeleteViewFilterIdsComponentState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentState';
+import { unsavedToUpsertViewFiltersComponentState } from '@/views/states/unsavedToUpsertViewFiltersComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { isDefined } from '~/utils/isDefined';
 
 export const useCombinedViewFilters = (viewBarComponentId?: string) => {
   const unsavedToUpsertViewFiltersCallbackState =
-    useRecoilInstanceCallbackState(
-      unsavedToUpsertViewFiltersInstanceState,
+    useRecoilComponentCallbackStateV2(
+      unsavedToUpsertViewFiltersComponentState,
       viewBarComponentId,
     );
 
   const unsavedToDeleteViewFilterIdsCallbackState =
-    useRecoilInstanceCallbackState(
-      unsavedToDeleteViewFilterIdsInstanceState,
+    useRecoilComponentCallbackStateV2(
+      unsavedToDeleteViewFilterIdsComponentState,
       viewBarComponentId,
     );
 
-  const currentViewIdCallbackState = useRecoilInstanceCallbackState(
-    currentViewIdInstanceState,
+  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+    currentViewIdComponentState,
     viewBarComponentId,
   );
 

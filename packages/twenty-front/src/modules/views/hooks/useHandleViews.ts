@@ -8,13 +8,13 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
-import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
-import { isPersistingViewFieldsInstanceState } from '@/views/states/isPersistingViewFieldsInstanceState';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { isDefined } from '~/utils/isDefined';
@@ -24,13 +24,13 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const useHandleViews = (viewBarComponentId?: string) => {
   const { resetCurrentView } = useResetCurrentView(viewBarComponentId);
 
-  const currentViewIdCallbackState = useRecoilInstanceCallbackState(
-    currentViewIdInstanceState,
+  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+    currentViewIdComponentState,
     viewBarComponentId,
   );
 
-  const isPersistingViewFieldsCallbackState = useRecoilInstanceCallbackState(
-    isPersistingViewFieldsInstanceState,
+  const isPersistingViewFieldsCallbackState = useRecoilComponentCallbackStateV2(
+    isPersistingViewFieldsComponentState,
     viewBarComponentId,
   );
 

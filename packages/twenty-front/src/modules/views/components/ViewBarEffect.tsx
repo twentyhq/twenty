@@ -1,11 +1,11 @@
 import { isUndefined } from '@sniptt/guards';
 import { useContext, useEffect, useState } from 'react';
 
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
-import { isPersistingViewFieldsInstanceState } from '@/views/states/isPersistingViewFieldsInstanceState';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { View } from '@/views/types/View';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -24,12 +24,12 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
   >(undefined);
 
   const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsInstanceState,
+    availableFilterDefinitionsComponentState,
     viewBarId,
   );
 
   const isPersistingViewFields = useRecoilComponentValueV2(
-    isPersistingViewFieldsInstanceState,
+    isPersistingViewFieldsComponentState,
     viewBarId,
   );
 

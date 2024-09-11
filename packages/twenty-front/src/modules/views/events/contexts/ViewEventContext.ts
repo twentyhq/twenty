@@ -1,5 +1,5 @@
-import { createEventContext } from '@/ui/utilities/state/instance/utils/createEventContext';
 import { View } from '@/views/types/View';
+import { createEventContext } from '~/utils/createEventContext';
 
 type ViewEventContextType = {
   onCurrentViewChange: (view: View | undefined) => void | Promise<void>;

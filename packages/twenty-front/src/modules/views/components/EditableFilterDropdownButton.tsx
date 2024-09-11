@@ -7,10 +7,10 @@ import { FilterOperand } from '@/object-record/object-filter-dropdown/types/Filt
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
-import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
 
 type EditableFilterDropdownButtonProps = {
@@ -34,7 +34,7 @@ export const EditableFilterDropdownButton = ({
 
   // TODO: verify this instance id works
   const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsInstanceState,
+    availableFilterDefinitionsComponentState,
     viewFilterDropdownId,
   );
 

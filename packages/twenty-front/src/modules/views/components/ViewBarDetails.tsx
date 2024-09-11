@@ -5,18 +5,18 @@ import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
-import { useRecoilInstanceSelectorValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceSelectorValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
-import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
-import { availableSortDefinitionsInstanceState } from '@/views/states/availableSortDefinitionsInstanceState';
-import { isViewBarExpandedInstanceState } from '@/views/states/isViewBarExpandedInstanceState';
-import { canPersistViewInstanceSelector } from '@/views/states/selectors/canPersistViewInstanceSelector';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
+import { canPersistViewComponentSelector } from '@/views/states/selectors/canPersistViewComponentSelector';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { VariantFilterChip } from './VariantFilterChip';
@@ -105,21 +105,21 @@ export const ViewBarDetails = ({
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const isViewBarExpanded = useRecoilComponentValueV2(
-    isViewBarExpandedInstanceState,
+    isViewBarExpandedComponentState,
   );
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
-  const canPersistView = useRecoilInstanceSelectorValue(
-    canPersistViewInstanceSelector,
+  const canPersistView = useRecoilComponentSelectorValueV2(
+    canPersistViewComponentSelector,
   );
 
   const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsInstanceState,
+    availableFilterDefinitionsComponentState,
   );
 
   const availableSortDefinitions = useRecoilComponentValueV2(
-    availableSortDefinitionsInstanceState,
+    availableSortDefinitionsComponentState,
   );
 
   const { resetCurrentView } = useResetCurrentView();

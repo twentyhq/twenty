@@ -10,7 +10,7 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
-import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
+import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 
 type RecordIndexTableContainerEffectProps = {
   objectNameSingular: string;
@@ -53,7 +53,7 @@ export const RecordIndexTableContainerEffect = ({
 
   // TODO: verify this instance id works
   const entityCountInCurrentView = useRecoilComponentValueV2(
-    entityCountInCurrentViewInstanceState,
+    entityCountInCurrentViewComponentState,
     recordTableId,
   );
   const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);

@@ -9,18 +9,18 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
-import { useRecoilInstanceSelectorValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceSelectorValue';
-import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
-import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
-import { canPersistViewInstanceSelector } from '@/views/states/selectors/canPersistViewInstanceSelector';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { canPersistViewComponentSelector } from '@/views/states/selectors/canPersistViewComponentSelector';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { viewPickerReferenceViewIdInstanceState } from '@/views/view-picker/states/viewPickerReferenceViewIdInstanceState';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 
 const StyledContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -40,10 +40,10 @@ export const UpdateViewButtonGroup = ({
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const canPersistView = useRecoilInstanceSelectorValue(
-    canPersistViewInstanceSelector,
+  const canPersistView = useRecoilComponentSelectorValueV2(
+    canPersistViewComponentSelector,
   );
-  const currentViewId = useRecoilComponentValueV2(currentViewIdInstanceState);
+  const currentViewId = useRecoilComponentValueV2(currentViewIdComponentState);
 
   const { closeDropdown: closeUpdateViewButtonDropdown } = useDropdown(
     UPDATE_VIEW_BUTTON_DROPDOWN_ID,
@@ -53,8 +53,8 @@ export const UpdateViewButtonGroup = ({
   );
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const setViewPickerReferenceViewId = useSetRecoilInstanceState(
-    viewPickerReferenceViewIdInstanceState,
+  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
+    viewPickerReferenceViewIdComponentState,
   );
 
   const handleViewCreate = useCallback(() => {

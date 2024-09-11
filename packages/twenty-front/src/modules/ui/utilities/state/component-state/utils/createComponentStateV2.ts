@@ -1,34 +1,31 @@
+import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentStateKeyV2';
+import { ComponentStateV2 } from '@/ui/utilities/state/component-state/types/ComponentStateV2';
+import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { AtomEffect, atomFamily } from 'recoil';
 
-import { ScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopeInternalContext';
-import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
-import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 import { isDefined } from '~/utils/isDefined';
 
-type CreateComponentStateV2Type<ValueType> = {
+type CreateComponentInstanceStateArgs<ValueType> = {
   key: string;
   defaultValue: ValueType;
-  componentContext?: ScopeInternalContext<any> | null;
+  componentInstanceContext: ComponentInstanceStateContext<any> | null;
   effects?: AtomEffect<ValueType>[];
 };
 
 export const createComponentStateV2 = <ValueType>({
   key,
   defaultValue,
-  componentContext,
+  componentInstanceContext,
   effects,
-}: CreateComponentStateV2Type<ValueType>): RecoilComponentState<ValueType> => {
-  if (isDefined(componentContext)) {
-    if (!isDefined((window as any).componentContextStateMap)) {
-      (window as any).componentContextStateMap = new Map();
-    }
-
-    (window as any).componentContextStateMap.set(key, componentContext);
+}: CreateComponentInstanceStateArgs<ValueType>): ComponentStateV2<ValueType> => {
+  if (isDefined(componentInstanceContext)) {
+    globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
   return {
     key,
-    atomFamily: atomFamily<ValueType, RecoilComponentStateKey>({
+    atomFamily: atomFamily<ValueType, ComponentStateKeyV2>({
       key,
       default: defaultValue,
       effects: effects,

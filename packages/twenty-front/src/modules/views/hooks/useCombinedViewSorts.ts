@@ -3,28 +3,29 @@ import { v4 } from 'uuid';
 
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilInstanceCallbackState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceCallbackState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { currentViewIdInstanceState } from '@/views/states/currentViewIdInstanceState';
-import { unsavedToDeleteViewSortIdsInstanceState } from '@/views/states/unsavedToDeleteViewSortIdsInstanceState';
-import { unsavedToUpsertViewSortsInstanceState } from '@/views/states/unsavedToUpsertViewSortsInstanceState';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { unsavedToDeleteViewSortIdsComponentState } from '@/views/states/unsavedToDeleteViewSortIdsComponentState';
+import { unsavedToUpsertViewSortsComponentState } from '@/views/states/unsavedToUpsertViewSortsComponentState';
 import { ViewSort } from '@/views/types/ViewSort';
 import { isDefined } from '~/utils/isDefined';
 
 export const useCombinedViewSorts = (viewBarComponentId?: string) => {
-  const currentViewIdCallbackState = useRecoilInstanceCallbackState(
-    currentViewIdInstanceState,
+  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+    currentViewIdComponentState,
     viewBarComponentId,
   );
 
-  const unsavedToUpsertViewSortsCallbackState = useRecoilInstanceCallbackState(
-    unsavedToUpsertViewSortsInstanceState,
-    viewBarComponentId,
-  );
+  const unsavedToUpsertViewSortsCallbackState =
+    useRecoilComponentCallbackStateV2(
+      unsavedToUpsertViewSortsComponentState,
+      viewBarComponentId,
+    );
 
   const unsavedToDeleteViewSortIdsCallbackState =
-    useRecoilInstanceCallbackState(
-      unsavedToDeleteViewSortIdsInstanceState,
+    useRecoilComponentCallbackStateV2(
+      unsavedToDeleteViewSortIdsComponentState,
       viewBarComponentId,
     );
 

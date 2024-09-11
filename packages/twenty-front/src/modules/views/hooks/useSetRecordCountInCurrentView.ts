@@ -1,9 +1,9 @@
-import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
-import { entityCountInCurrentViewInstanceState } from '@/views/states/entityCountInCurrentViewInstanceState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 
 export const useSetRecordCountInCurrentView = (viewBarComponentId?: string) => {
-  const setEntityCountInCurrentView = useSetRecoilInstanceState(
-    entityCountInCurrentViewInstanceState,
+  const setEntityCountInCurrentView = useSetRecoilComponentStateV2(
+    entityCountInCurrentViewComponentState,
     viewBarComponentId,
   );
 

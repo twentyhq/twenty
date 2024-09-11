@@ -4,11 +4,11 @@ import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
-import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarFilterEffectProps = {
@@ -23,7 +23,7 @@ export const ViewBarFilterEffect = ({
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsInstanceState,
+    availableFilterDefinitionsComponentState,
   );
 
   const {
@@ -38,8 +38,8 @@ export const ViewBarFilterEffect = ({
   );
 
   // TODO: verify this instance id works
-  const setAvailableFilterDefinitions = useSetRecoilInstanceState(
-    availableFilterDefinitionsInstanceState,
+  const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
+    availableFilterDefinitionsComponentState,
     filterDropdownId,
   );
 

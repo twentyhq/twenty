@@ -1,24 +1,26 @@
 import { Button } from '@/ui/input/button/components/Button';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
-import { viewPickerIsPersistingInstanceState } from '@/views/view-picker/states/viewPickerIsPersistingInstanceState';
-import { viewPickerKanbanFieldMetadataIdInstanceState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdInstanceState';
-import { viewPickerTypeInstanceState } from '@/views/view-picker/states/viewPickerTypeInstanceState';
+import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
+import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
+import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 
 export const ViewPickerCreateOrEditButton = () => {
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
 
   const { viewPickerMode } = useViewPickerMode();
-  const viewPickerType = useRecoilComponentValueV2(viewPickerTypeInstanceState);
+  const viewPickerType = useRecoilComponentValueV2(
+    viewPickerTypeComponentState,
+  );
   const viewPickerIsPersisting = useRecoilComponentValueV2(
-    viewPickerIsPersistingInstanceState,
+    viewPickerIsPersistingComponentState,
   );
   const viewPickerKanbanFieldMetadataId = useRecoilComponentValueV2(
-    viewPickerKanbanFieldMetadataIdInstanceState,
+    viewPickerKanbanFieldMetadataIdComponentState,
   );
 
   const { handleCreate, handleDelete } = useViewPickerPersistView();

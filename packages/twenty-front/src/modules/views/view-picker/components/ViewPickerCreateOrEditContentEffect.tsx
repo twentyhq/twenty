@@ -1,44 +1,44 @@
 import { useEffect } from 'react';
 
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
-import { useRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceState';
-import { useSetRecoilInstanceState } from '@/ui/utilities/state/instance/hooks/useSetRecoilInstanceState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
-import { viewPickerInputNameInstanceState } from '@/views/view-picker/states/viewPickerInputNameInstanceState';
-import { viewPickerIsDirtyInstanceState } from '@/views/view-picker/states/viewPickerIsDirtyInstanceState';
-import { viewPickerIsPersistingInstanceState } from '@/views/view-picker/states/viewPickerIsPersistingInstanceState';
-import { viewPickerKanbanFieldMetadataIdInstanceState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdInstanceState';
-import { viewPickerReferenceViewIdInstanceState } from '@/views/view-picker/states/viewPickerReferenceViewIdInstanceState';
-import { viewPickerSelectedIconInstanceState } from '@/views/view-picker/states/viewPickerSelectedIconInstanceState';
-import { viewPickerTypeInstanceState } from '@/views/view-picker/states/viewPickerTypeInstanceState';
+import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
+import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
+import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
+import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
+import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { isDefined } from '~/utils/isDefined';
 
 export const ViewPickerCreateOrEditContentEffect = () => {
-  const setViewPickerSelectedIcon = useSetRecoilInstanceState(
-    viewPickerSelectedIconInstanceState,
+  const setViewPickerSelectedIcon = useSetRecoilComponentStateV2(
+    viewPickerSelectedIconComponentState,
   );
-  const setViewPickerInputName = useSetRecoilInstanceState(
-    viewPickerInputNameInstanceState,
+  const setViewPickerInputName = useSetRecoilComponentStateV2(
+    viewPickerInputNameComponentState,
   );
 
   const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
-    useRecoilInstanceState(viewPickerKanbanFieldMetadataIdInstanceState);
+    useRecoilComponentStateV2(viewPickerKanbanFieldMetadataIdComponentState);
 
-  const setViewPickerType = useSetRecoilInstanceState(
-    viewPickerTypeInstanceState,
+  const setViewPickerType = useSetRecoilComponentStateV2(
+    viewPickerTypeComponentState,
   );
 
   const viewPickerReferenceViewId = useRecoilComponentValueV2(
-    viewPickerReferenceViewIdInstanceState,
+    viewPickerReferenceViewIdComponentState,
   );
 
   const viewPickerIsDirty = useRecoilComponentValueV2(
-    viewPickerIsDirtyInstanceState,
+    viewPickerIsDirtyComponentState,
   );
 
   const viewPickerIsPersisting = useRecoilComponentValueV2(
-    viewPickerIsPersistingInstanceState,
+    viewPickerIsPersistingComponentState,
   );
 
   const { viewsOnCurrentObject } = useGetCurrentView();
