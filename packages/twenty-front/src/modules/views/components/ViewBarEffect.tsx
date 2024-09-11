@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { useContext, useEffect, useState } from 'react';
 
-import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilInstanceValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValue';
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsInstanceState } from '@/views/states/availableFilterDefinitionsInstanceState';
