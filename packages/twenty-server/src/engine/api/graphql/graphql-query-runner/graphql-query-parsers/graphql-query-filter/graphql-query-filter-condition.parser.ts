@@ -26,16 +26,22 @@ export class GraphqlQueryFilterConditionParser {
     }
 
     const result: FindOptionsWhere<ObjectLiteral> = {};
-    let orCondition: FindOptionsWhere<ObjectLiteral>[] | null = null;
 
     for (const [key, value] of Object.entries(conditions)) {
       switch (key) {
-        case 'and':
-          Object.assign(result, this.parseAndCondition(value, isNegated));
-          break;
-        case 'or':
-          orCondition = this.parseOrCondition(value, isNegated);
-          break;
+        case 'and': {
+          const andConditions = this.parseAndCondition(value, isNegated);
+
+          return andConditions.map((condition) => ({
+            ...result,
+            ...condition,
+          }));
+        }
+        case 'or': {
+          const orConditions = this.parseOrCondition(value, isNegated);
+
+          return orConditions.map((condition) => ({ ...result, ...condition }));
+        }
         case 'not':
           Object.assign(result, this.parse(value, !isNegated));
           break;
@@ -45,10 +51,6 @@ export class GraphqlQueryFilterConditionParser {
             this.fieldConditionParser.parse(key, value, isNegated),
           );
       }
-    }
-
-    if (orCondition) {
-      return orCondition.map((condition) => ({ ...result, ...condition }));
     }
 
     return result;
@@ -84,32 +86,28 @@ export class GraphqlQueryFilterConditionParser {
     combineType: 'and' | 'or',
   ): FindOptionsWhere<ObjectLiteral>[] {
     if (combineType === 'and') {
-      let result: FindOptionsWhere<ObjectLiteral>[] = [{}];
-
-      for (const condition of conditions) {
-        if (Array.isArray(condition)) {
-          const newResult: FindOptionsWhere<ObjectLiteral>[] = [];
-
-          for (const existingCondition of result) {
-            for (const orCondition of condition) {
-              newResult.push({
-                ...existingCondition,
-                ...orCondition,
-              });
-            }
+      return conditions.reduce<FindOptionsWhere<ObjectLiteral>[]>(
+        (acc, condition) => {
+          if (Array.isArray(condition)) {
+            return acc.flatMap((accCondition) =>
+              condition.map((subCondition) => ({
+                ...accCondition,
+                ...subCondition,
+              })),
+            );
           }
-          result = newResult;
-        } else {
-          result = result.map((existingCondition) => ({
-            ...existingCondition,
+
+          return acc.map((accCondition) => ({
+            ...accCondition,
             ...condition,
           }));
-        }
-      }
-
-      return result;
+        },
+        [{}],
+      );
     }
 
-    return conditions.flat();
+    return conditions.flatMap((condition) =>
+      Array.isArray(condition) ? condition : [condition],
+    );
   }
 }
