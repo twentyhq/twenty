@@ -1,4 +1,4 @@
-import { ComponentFamilyStateKeyV2 } from '@/ui/utilities/state/instance/types/ComponentFamilyStateKeyV2';
+import { ComponentFamilyStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKeyV2';
 import { RecoilState, SerializableParam } from 'recoil';
 
 export type ComponentFamilyStateV2<

@@ -1,6 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { useNavigate } from 'react-router-dom';
 

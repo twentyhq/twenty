@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 
 export const RecordTableActionBar = ({

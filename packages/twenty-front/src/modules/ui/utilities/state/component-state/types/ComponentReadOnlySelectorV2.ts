@@ -1,4 +1,4 @@
-import { ComponentStateKeyV2 } from '@/ui/utilities/state/instance/types/ComponentStateKeyV2';
+import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentStateKeyV2';
 import { RecoilValueReadOnly } from 'recoil';
 
 export type ComponentReadOnlySelectorV2<StateType> = {

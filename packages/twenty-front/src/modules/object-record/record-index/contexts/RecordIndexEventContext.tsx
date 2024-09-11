@@ -1,4 +1,4 @@
-import { createEventContext } from '@/ui/utilities/state/instance/utils/createEventContext';
+import { createEventContext } from '~/utils/createEventContext';
 
 export type RecordIndexEventContextProps = {
   onIndexIdentifierClick: (recordId: string) => void;

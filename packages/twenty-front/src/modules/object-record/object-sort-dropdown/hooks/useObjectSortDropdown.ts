@@ -7,11 +7,11 @@ import selectedSortDirectionState from '@/object-record/object-sort-dropdown/sta
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/instance/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import {
-    OBJECT_SORT_DROPDOWN_ID,
-    VIEW_SORT_DROPDOWN_ID,
+  OBJECT_SORT_DROPDOWN_ID,
+  VIEW_SORT_DROPDOWN_ID,
 } from '../constants/ObjectSortDropdownId';
 
 // TODO: merge this with useSortDropdown
