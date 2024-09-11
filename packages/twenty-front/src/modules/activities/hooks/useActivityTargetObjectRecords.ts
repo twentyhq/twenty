@@ -16,25 +16,22 @@ export const useActivityTargetObjectRecords = (
 ) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if(!isDefined(activity) && !isDefined(activityTargets)) {
-    throw new Error(
-      `No activity or activity targets`,
-    );
+  if (!isDefined(activity) && !isDefined(activityTargets)) {
+    throw new Error(`No activity or activity targets`);
   }
 
-  const targets = activityTargets ? activityTargets :
-  (activity && 'noteTargets' in activity && activity.noteTargets
+  const targets = activityTargets
+    ? activityTargets
+    : activity && 'noteTargets' in activity && activity.noteTargets
       ? activity.noteTargets
       : activity && 'taskTargets' in activity && activity.taskTargets
         ? activity.taskTargets
-        : []);
+        : [];
 
   const activityTargetObjectRecords = targets
     .map<Nullable<ActivityTargetWithTargetRecord>>((activityTarget) => {
       if (!isDefined(activityTarget)) {
-        throw new Error(
-          `Cannot find activity target`,
-        );
+        throw new Error(`Cannot find activity target`);
       }
 
       const correspondingObjectMetadataItem = objectMetadataItems.find(
@@ -50,7 +47,7 @@ export const useActivityTargetObjectRecords = (
       }
 
       const targetObjectRecord =
-      activityTarget[correspondingObjectMetadataItem.nameSingular];
+        activityTarget[correspondingObjectMetadataItem.nameSingular];
 
       if (!targetObjectRecord) {
         throw new Error(

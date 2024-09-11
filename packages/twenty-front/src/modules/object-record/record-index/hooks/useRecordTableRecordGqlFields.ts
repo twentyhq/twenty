@@ -29,14 +29,16 @@ export const useRecordTableRecordGqlFields = ({
   if (isDefined(imageIdentifierFieldMetadataItem)) {
     identifierQueryFields[imageIdentifierFieldMetadataItem.name] = true;
   }
-  
-  const { objectMetadataItem: noteTargetObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.NoteTarget,
-  });
 
-  const { objectMetadataItem: taskTargetObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.TaskTarget,
-  });
+  const { objectMetadataItem: noteTargetObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.NoteTarget,
+    });
+
+  const { objectMetadataItem: taskTargetObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.TaskTarget,
+    });
 
   const recordGqlFields: Record<string, any> = {
     id: true,
@@ -45,8 +47,12 @@ export const useRecordTableRecordGqlFields = ({
     ),
     ...identifierQueryFields,
     position: true,
-    noteTargets: generateDepthOneRecordGqlFields({ objectMetadataItem: noteTargetObjectMetadataItem }),
-    taskTargets: generateDepthOneRecordGqlFields({ objectMetadataItem: taskTargetObjectMetadataItem }),
+    noteTargets: generateDepthOneRecordGqlFields({
+      objectMetadataItem: noteTargetObjectMetadataItem,
+    }),
+    taskTargets: generateDepthOneRecordGqlFields({
+      objectMetadataItem: taskTargetObjectMetadataItem,
+    }),
   };
 
   return recordGqlFields;
