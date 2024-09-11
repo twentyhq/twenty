@@ -31,7 +31,17 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('Objects');
-    await canvas.findByText('Name and description');
+    await canvas.findByText('1. Select a field type');
+
+    const searchInput = await canvas.findByPlaceholderText('Search a type');
+
+    await userEvent.type(searchInput, 'Num');
+
+    const numberTypeButton = await canvas.findByText('Number');
+
+    await userEvent.click(numberTypeButton);
+
+    await canvas.findByText('2. Configure field');
 
     const employeeInput = await canvas.findByPlaceholderText('Employees');
     await userEvent.type(employeeInput, 'Test');
@@ -41,7 +51,6 @@ export const Default: Story = {
     );
 
     await userEvent.type(descriptionInput, 'Test description');
-    await canvas.findByText('Type and values');
 
     const saveButton = await canvas.findByText('Save');
 
