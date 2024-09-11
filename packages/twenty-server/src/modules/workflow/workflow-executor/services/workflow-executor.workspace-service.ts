@@ -5,7 +5,7 @@ import {
   WorkflowExecutorException,
   WorkflowExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-executor.exception';
-import { WorkflowStepExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor/workflow-step-executor.factory';
+import { WorkflowStepExecutorFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor.factory';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 

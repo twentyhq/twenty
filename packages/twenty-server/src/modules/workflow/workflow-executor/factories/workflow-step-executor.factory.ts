@@ -7,8 +7,8 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { CodeWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor/workflow-step-executors/code.workflow-step-executor';
-import { SendEmailWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor/workflow-step-executors/send-email.workflow-step-executor';
+import { CodeWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executors/code.workflow-step-executor';
+import { SendEmailWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executors/send-email.workflow-step-executor';
 
 @Injectable()
 export class WorkflowStepExecutorFactory {
