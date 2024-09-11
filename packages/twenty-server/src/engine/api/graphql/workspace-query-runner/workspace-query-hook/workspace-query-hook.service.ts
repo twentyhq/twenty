@@ -69,12 +69,12 @@ export class WorkspaceQueryHookService {
       return;
     }
 
-    for (const preHookInstance of postHookInstances) {
+    for (const postHookInstance of postHookInstances) {
       await this.workspaceQueryHookExplorer.handleHook(
         [authContext, objectName, payload],
-        preHookInstance.instance,
-        preHookInstance.host,
-        preHookInstance.isRequestScoped,
+        postHookInstance.instance,
+        postHookInstance.host,
+        postHookInstance.isRequestScoped,
       );
     }
   }
