@@ -9,7 +9,7 @@ import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
 import {
   AppToken,
@@ -36,8 +36,8 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EmailService } from 'src/engine/integrations/email/email.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 import { TokenService } from './token.service';
 

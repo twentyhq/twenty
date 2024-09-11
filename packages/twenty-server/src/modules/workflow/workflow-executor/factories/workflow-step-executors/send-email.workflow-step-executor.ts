@@ -9,8 +9,8 @@ import { render } from '@react-email/components';
 
 import { WorkflowStepResult } from 'src/modules/workflow/workflow-executor/types/workflow-step-result.type';
 import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-step.type';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { EmailService } from 'src/engine/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
 
 @Injectable()
 export class SendEmailWorkflowStepExecutor {

@@ -19,8 +19,8 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EmailService } from 'src/engine/integrations/email/email.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

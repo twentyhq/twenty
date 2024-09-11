@@ -20,7 +20,7 @@ import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)

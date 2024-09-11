@@ -13,7 +13,7 @@ import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
 import { AppModule } from './app.module';
 
 import { settings } from './engine/constants/settings';
-import { LoggerService } from './engine/integrations/logger/logger.service';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { generateFrontConfig } from './utils/generate-front-config';
 
 const bootstrap = async () => {

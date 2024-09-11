@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
