@@ -57,7 +57,6 @@ const StyledTitleContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  max-width: 50%;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
