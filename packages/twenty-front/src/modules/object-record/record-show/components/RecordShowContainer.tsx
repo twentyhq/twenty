@@ -9,6 +9,7 @@ import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/use
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { GetAvatarIcon } from '@/object-metadata/utils/getAvatarIcon';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -153,7 +154,7 @@ export const RecordShowContainer = ({
       objectNameSingular !== CoreObjectNameSingular.Task &&
       fieldMetadataItem.name !== 'taskTargets',
   );
-
+  const { icon: Icon, iconColor } = GetAvatarIcon(objectNameSingular);
   const isReadOnly = objectMetadataItem.isRemote;
   const isMobile = useIsMobile() || isInRightDrawer;
   const isPrefetchLoading = useIsPrefetchLoading();
@@ -163,6 +164,8 @@ export const RecordShowContainer = ({
       isMobile={isMobile}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+      Icon={Icon}
+      IconColor={iconColor}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordFromStore.createdAt ?? ''}
       loading={isPrefetchLoading || loading || recordLoading}

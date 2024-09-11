@@ -1,9 +1,9 @@
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
-
+import { GetAvatarIcon } from '@/object-metadata/utils/getAvatarIcon';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
+import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 
 export type RecordIdentifierChipProps = {
   objectNameSingular: string;
@@ -17,7 +17,6 @@ export const RecordIdentifierChip = ({
   variant,
 }: RecordIdentifierChipProps) => {
   const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
-
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
@@ -27,6 +26,7 @@ export const RecordIdentifierChip = ({
     onIndexIdentifierClick(record.id);
   };
 
+  const { icon: LeftIcon, iconColor } = GetAvatarIcon(objectNameSingular);
   return (
     <AvatarChip
       placeholderColorSeed={record.id}
@@ -35,6 +35,8 @@ export const RecordIdentifierChip = ({
       avatarUrl={recordChipData.avatarUrl ?? ''}
       onClick={handleAvatarChipClick}
       variant={variant}
+      LeftIcon={LeftIcon}
+      LeftIconColor={iconColor}
     />
   );
 };

@@ -10,6 +10,7 @@ export const SECONDARY_COLORS = {
   yellow30: '#ffedaf',
   yellow20: '#fff6d7',
   yellow10: '#fffbeb',
+  yellowIcon: '#ffd338',
 
   green80: '#1d2d1b',
   green70: '#23421e',
@@ -46,6 +47,7 @@ export const SECONDARY_COLORS = {
   blue30: '#a3c0f8',
   blue20: '#d1dffb',
   blue10: '#e8effd',
+  blueIcon: '#1961ed',
 
   purple80: '#231e2e',
   purple70: '#2f2545',

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { useContext, useMemo } from 'react';
+import { ReactNode, useContext, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
@@ -51,6 +51,7 @@ export type AvatarProps = {
   size?: AvatarSize;
   placeholder: string | undefined;
   placeholderColorSeed?: string;
+  Icon?: ReactNode;
   type?: Nullable<AvatarType>;
   color?: string;
   backgroundColor?: string;
@@ -63,6 +64,7 @@ export const Avatar = ({
   size = 'md',
   placeholder,
   placeholderColorSeed = placeholder,
+  Icon,
   onClick,
   type = 'squared',
   color,
@@ -101,14 +103,22 @@ export const Avatar = ({
   return (
     <StyledAvatar
       size={size}
-      backgroundColor={showBackgroundColor ? fixedBackgroundColor : 'none'}
+      backgroundColor={
+        Icon
+          ? theme.background.tertiary
+          : showBackgroundColor
+            ? fixedBackgroundColor
+            : 'none'
+      }
       color={fixedColor}
       clickable={!isUndefined(onClick)}
       rounded={type === 'rounded'}
       onClick={onClick}
       backgroundTransparentLight={theme.background.transparent.light}
     >
-      {showPlaceholder ? (
+      {Icon ? (
+        Icon
+      ) : showPlaceholder ? (
         placeholderChar
       ) : (
         <StyledImage src={avatarImageURI} onError={handleImageError} alt="" />
