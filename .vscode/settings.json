@@ -45,6 +45,5 @@
   "search.exclude": {
     "**/.yarn": true,
   },
-  "eslint.debug": true,
-  "svg.preview.background": "editor"
+  "eslint.debug": true
 }
