@@ -7,7 +7,7 @@ import { WorkflowCodeStep } from 'src/modules/workflow/common/types/workflow-ste
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-step-executor/workflow-step-executor.exception';
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
 @Injectable()
 export class CodeWorkflowStepExecutor {

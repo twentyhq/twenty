@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-step-executor.interface';
+
 import { WorkflowStepType } from 'src/modules/workflow/common/types/workflow-step.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-step-executor/workflow-step-executor.exception';
-import { WorkflowStepExecutor } from 'src/modules/workflow/workflow-step-executor/workflow-step-executor.interface';
-import { CodeWorkflowStepExecutor } from 'src/modules/workflow/workflow-step-executor/factories/code.workflow-step-executor';
-import { SendEmailWorkflowStepExecutor } from 'src/modules/workflow/workflow-step-executor/factories/send-email.workflow-step-executor';
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { CodeWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor/workflow-step-executors/code.workflow-step-executor';
+import { SendEmailWorkflowStepExecutor } from 'src/modules/workflow/workflow-executor/factories/workflow-step-executor/workflow-step-executors/send-email.workflow-step-executor';
 
 @Injectable()
 export class WorkflowStepExecutorFactory {
