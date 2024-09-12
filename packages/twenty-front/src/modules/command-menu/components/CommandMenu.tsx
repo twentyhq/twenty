@@ -34,6 +34,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 const SEARCH_BAR_HEIGHT = 56;
 const SEARCH_BAR_PADDING = 3;
@@ -165,12 +166,31 @@ export const CommandMenu = () => {
     [closeCommandMenu],
   );
 
-  const { records: people } = useSearchRecords<Person>({
+  const isSearchEnabled = useIsFeatureEnabled('IS_SEARCH_ENABLED');
+
+  const { records: peopleFromFindMany } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
+    objectNameSingular: CoreObjectNameSingular.Person,
+    filter: commandMenuSearch
+      ? makeOrFilterVariables([
+          ...generateILikeFiltersForCompositeFields(commandMenuSearch, 'name', [
+            'firstName',
+            'lastName',
+          ]),
+          { email: { ilike: `%${commandMenuSearch}%` } },
+          { phone: { ilike: `%${commandMenuSearch}%` } },
+        ])
+      : undefined,
+    limit: 3,
+  });
+  const { records: peopleFromSearch } = useSearchRecords<Person>({
+    skip: !isCommandMenuOpened || !isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Person,
     limit: 3,
     searchInput: commandMenuSearch ?? undefined,
   });
+
+  const people = isSearchEnabled ? peopleFromSearch : peopleFromFindMany;
 
   const { records: companies } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened,

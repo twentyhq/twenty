@@ -16,6 +16,7 @@ import {
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { GraphqlQuerySearchResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-search-resolver.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -23,6 +24,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 export class GraphqlQueryRunnerService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @LogExecutionTime()
@@ -59,7 +61,10 @@ export class GraphqlQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<ObjectRecord>> {
     const graphqlQuerySearchResolverService =
-      new GraphqlQuerySearchResolverService(this.twentyORMGlobalManager);
+      new GraphqlQuerySearchResolverService(
+        this.twentyORMGlobalManager,
+        this.featureFlagService,
+      );
 
     return graphqlQuerySearchResolverService.search(args, options);
   }

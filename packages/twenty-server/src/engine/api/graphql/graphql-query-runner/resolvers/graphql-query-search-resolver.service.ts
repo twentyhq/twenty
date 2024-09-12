@@ -13,13 +13,20 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQuerySearchResolverService {
   private twentyORMGlobalManager: TwentyORMGlobalManager;
+  private featureFlagService: FeatureFlagService;
 
-  constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
+  constructor(
+    twentyORMGlobalManager: TwentyORMGlobalManager,
+    featureFlagService: FeatureFlagService,
+  ) {
     this.twentyORMGlobalManager = twentyORMGlobalManager;
+    this.featureFlagService = featureFlagService;
   }
 
   async search<ObjectRecord extends IRecord = IRecord>(
@@ -28,6 +35,24 @@ export class GraphqlQuerySearchResolverService {
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataItem, objectMetadataCollection, info } =
       options;
+
+    const isQueryRunnerTwentyORMEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        authContext.workspace.id,
+      );
+
+    const isSearchEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsSearchEnabled,
+      authContext.workspace.id,
+    );
+
+    if (!isQueryRunnerTwentyORMEnabled || !isSearchEnabled) {
+      throw new GraphqlQueryRunnerException(
+        'This endpoint is not available yet, please use findMany instead.',
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
 
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
