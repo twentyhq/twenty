@@ -7,7 +7,7 @@ config();
 export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
-  logging: ['error'],
+  logging: ['error', 'query'],
   schema: 'metadata',
   entities: ['dist/src/engine/metadata-modules/**/*.entity{.ts,.js}'],
   synchronize: false,

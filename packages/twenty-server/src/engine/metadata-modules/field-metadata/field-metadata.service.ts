@@ -89,6 +89,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
+    console.time('createOne');
     const queryRunner = this.metadataDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -100,6 +101,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataEntity,
         );
 
+      console.time('createOne query');
       // TODO: this looks like a big security hole here, we should not get workspaceId from the input
       const [objectMetadata] = await this.objectMetadataRepository.find({
         where: {
@@ -109,6 +111,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         relations: ['fields'],
         order: {},
       });
+
+      console.timeEnd('createOne query');
 
       if (!objectMetadata) {
         throw new FieldMetadataException(
@@ -158,6 +162,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         objectMetadata,
       );
 
+      console.time('createOne save');
       const createdFieldMetadata = await fieldMetadataRepository.save({
         ...fieldMetadataInput,
         isNullable: generateNullable(
@@ -178,7 +183,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         isCustom: true,
       });
 
+      console.timeEnd('createOne save');
+
       if (!fieldMetadataInput.isRemoteCreation) {
+        console.time('createOne migration create');
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`create-${createdFieldMetadata.name}`),
           fieldMetadataInput.workspaceId,
@@ -194,11 +202,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           ],
         );
 
+        console.timeEnd('createOne migration create');
+
+        console.time('createOne migration run');
         await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
           fieldMetadataInput.workspaceId,
         );
+        console.timeEnd('createOne migration run');
       }
 
+      console.time('createOne workspace viewField');
       // TODO: Move viewField creation to a cdc scheduler
       const dataSourceMetadata =
         await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -258,8 +271,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             );
           }
         }
+        console.timeEnd('createOne workspace viewField');
 
+        console.time('createOne internal commit');
         await workspaceQueryRunner.commitTransaction();
+        console.timeEnd('createOne internal commit');
       } catch (error) {
         await workspaceQueryRunner.rollbackTransaction();
         throw error;
@@ -267,7 +283,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         await workspaceQueryRunner.release();
       }
 
+      console.time('createOne commit');
       await queryRunner.commitTransaction();
+      console.timeEnd('createOne commit');
 
       return createdFieldMetadata;
     } catch (error) {
@@ -275,9 +293,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+      console.timeEnd('createOne increment');
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         fieldMetadataInput.workspaceId,
       );
+      console.timeEnd('createOne increment');
+      console.timeEnd('createOne');
     }
   }
 
