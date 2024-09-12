@@ -47,7 +47,7 @@ export class WorkspaceInvitationService {
       .getOne();
   }
 
-  private appTokenToWorkspaceInvitation(appToken: AppToken) {
+  appTokenToWorkspaceInvitation(appToken: AppToken) {
     if (appToken.type !== AppTokenType.InvitationToken) {
       throw new Error(`Token type must be "${AppTokenType.InvitationToken}"`);
     }
@@ -83,9 +83,7 @@ export class WorkspaceInvitationService {
       throw new Error(`${email} is already in the workspace`);
     }
 
-    return this.appTokenToWorkspaceInvitation(
-      await this.tokenService.generateInvitationToken(workspace.id, email),
-    );
+    return this.tokenService.generateInvitationToken(workspace.id, email);
   }
 
   async loadWorkspaceInvitations(workspace: Workspace) {

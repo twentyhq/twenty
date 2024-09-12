@@ -94,6 +94,7 @@ export class AuthService {
     email,
     password,
     workspaceInviteHash,
+    workspacePersonalInviteToken,
     firstName,
     lastName,
     picture,
@@ -104,6 +105,7 @@ export class AuthService {
     firstName?: string | null;
     lastName?: string | null;
     workspaceInviteHash?: string | null;
+    workspacePersonalInviteToken?: string | null;
     picture?: string | null;
     fromSSO: boolean;
   }) {
@@ -113,6 +115,7 @@ export class AuthService {
       firstName,
       lastName,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       picture,
       fromSSO,
     });

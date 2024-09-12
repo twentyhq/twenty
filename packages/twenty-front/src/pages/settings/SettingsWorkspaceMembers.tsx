@@ -228,16 +228,16 @@ export const SettingsWorkspaceMembers = () => {
             description="Send an invite email to your team"
           />
           <WorkspaceInviteTeam />
-          <Table>
-            <StyledTableHeaderRow>
-              <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
-                <TableHeader>Email</TableHeader>
-                <TableHeader align={'right'}>Expires in</TableHeader>
-                <TableHeader></TableHeader>
-              </TableRow>
-            </StyledTableHeaderRow>
-            {isNonEmptyArray(workspaceInvitations) &&
-              workspaceInvitations?.map((workspaceInvitation) => (
+          {isNonEmptyArray(workspaceInvitations) && (
+            <Table>
+              <StyledTableHeaderRow>
+                <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
+                  <TableHeader>Email</TableHeader>
+                  <TableHeader align={'right'}>Expires in</TableHeader>
+                  <TableHeader></TableHeader>
+                </TableRow>
+              </StyledTableHeaderRow>
+              {workspaceInvitations?.map((workspaceInvitation) => (
                 <StyledTable>
                   <TableRow
                     key={workspaceInvitation.id}
@@ -287,7 +287,8 @@ export const SettingsWorkspaceMembers = () => {
                   </TableRow>
                 </StyledTable>
               ))}
-          </Table>
+            </Table>
+          )}
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal

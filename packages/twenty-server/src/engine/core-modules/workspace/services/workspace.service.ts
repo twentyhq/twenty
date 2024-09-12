@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ModuleRef } from '@nestjs/core';
 
 import assert from 'assert';
 
@@ -26,6 +27,8 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
+  private userWorkspaceService: UserWorkspaceService;
+  private workspaceInvitationService: WorkspaceInvitationService;
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -34,14 +37,22 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
-    private readonly workspaceInvitationService: WorkspaceInvitationService,
+    private moduleRef: ModuleRef,
   ) {
     super(workspaceRepository);
+    this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
+      strict: false,
+    });
+    this.workspaceInvitationService = this.moduleRef.get(
+      WorkspaceInvitationService,
+      {
+        strict: false,
+      },
+    );
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -129,6 +140,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     emails: string[],
     workspace: Workspace,
     sender: User,
+    usePersonalInvitation = true,
   ): Promise<SendInviteLink> {
     if (!workspace?.inviteHash) {
       return {
@@ -138,26 +150,49 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       };
     }
 
-    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
-    const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
+    const invitationsPr = await Promise.allSettled(
+      emails.map(async (email) => {
+        if (usePersonalInvitation) {
+          const appToken =
+            await this.workspaceInvitationService.createWorkspaceInvitation(
+              email,
+              workspace,
+            );
 
-    const workspaceInvitationsPr = await Promise.allSettled(
-      emails.map((email) =>
-        this.workspaceInvitationService.createWorkspaceInvitation(
+          if (!appToken.context?.email) {
+            throw new Error('Invalid email');
+          }
+
+          return {
+            isPersonalInvitation: true as const,
+            appToken,
+            email: appToken.context.email,
+          };
+        }
+
+        return {
+          isPersonalInvitation: false as const,
           email,
-          workspace,
-        ),
-      ),
+        };
+      }),
     );
 
-    for (const workspaceInvitationPr of workspaceInvitationsPr) {
-      if (workspaceInvitationPr.status === 'fulfilled') {
+    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
+
+    for (const invitation of invitationsPr) {
+      if (invitation.status === 'fulfilled') {
+        const link = new URL(`${frontBaseURL}/invite/${workspace?.inviteHash}`);
+
+        if (invitation.value.isPersonalInvitation) {
+          link.searchParams.set('inviteToken', invitation.value.appToken.value);
+        }
         const emailData = {
-          link: inviteLink,
+          link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
           sender: { email: sender.email, firstName: sender.firstName },
           serverUrl: this.environmentService.get('SERVER_URL'),
         };
+
         const emailTemplate = SendInviteLinkEmail(emailData);
         const html = render(emailTemplate, {
           pretty: true,
@@ -171,7 +206,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           from: `${this.environmentService.get(
             'EMAIL_FROM_NAME',
           )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-          to: workspaceInvitationPr.value.email,
+          to: invitation.value.email,
           subject: 'Join your team on Twenty',
           text,
           html,
@@ -184,23 +219,27 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       value: false,
     });
 
-    const result = workspaceInvitationsPr.reduce<{
+    const result = invitationsPr.reduce<{
       errors: string[];
       result: ReturnType<
         typeof this.workspaceInvitationService.createWorkspaceInvitation
       >['status'] extends 'rejected'
         ? never
         : ReturnType<
-            typeof this.workspaceInvitationService.createWorkspaceInvitation
-          >['value'];
+            typeof this.workspaceInvitationService.appTokenToWorkspaceInvitation
+          >;
     }>(
-      (acc, workspaceInvitationPr) => {
-        if (workspaceInvitationPr.status === 'rejected') {
-          acc.errors.push(
-            workspaceInvitationPr.reason?.message ?? 'Unknown error',
-          );
+      (acc, invitation) => {
+        if (invitation.status === 'rejected') {
+          acc.errors.push(invitation.reason?.message ?? 'Unknown error');
         } else {
-          acc.result.push(workspaceInvitationPr.value);
+          acc.result.push(
+            invitation.value.isPersonalInvitation
+              ? this.workspaceInvitationService.appTokenToWorkspaceInvitation(
+                  invitation.value.appToken,
+                )
+              : { email: invitation.value.email },
+          );
         }
 
         return acc;

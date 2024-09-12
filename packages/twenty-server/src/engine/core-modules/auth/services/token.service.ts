@@ -193,6 +193,7 @@ export class TokenService {
       workspaceId,
       expiresAt,
       type: AppTokenType.InvitationToken,
+      value: crypto.randomBytes(32).toString('hex'),
       context: {
         email,
       },
