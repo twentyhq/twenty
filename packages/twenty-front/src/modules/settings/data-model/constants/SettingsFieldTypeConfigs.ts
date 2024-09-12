@@ -131,7 +131,7 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   },
   [FieldMetadataType.Phones]: {
     label: 'Phones',
-    Icon: IconPhone,
+    Icon: IllustrationIconPhone,
     exampleValue: {
       primaryPhoneNumber: '234-567-890',
       primaryPhoneCountryCode: '+1',
