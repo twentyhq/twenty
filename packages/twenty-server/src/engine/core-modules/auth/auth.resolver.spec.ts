@@ -6,7 +6,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { CaptchaGuard } from 'src/engine/integrations/captcha/captcha.guard';
+import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 
 import { AuthResolver } from './auth.resolver';
 

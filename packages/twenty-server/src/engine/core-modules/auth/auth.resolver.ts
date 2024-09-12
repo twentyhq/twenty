@@ -22,7 +22,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { CaptchaGuard } from 'src/engine/integrations/captcha/captcha.guard';
+import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';

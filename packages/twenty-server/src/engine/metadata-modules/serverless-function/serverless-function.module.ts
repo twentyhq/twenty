@@ -13,7 +13,7 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.module';
+import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverless-function/serverless-function.resolver';

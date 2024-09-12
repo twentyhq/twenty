@@ -6,8 +6,8 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
 @Injectable()
 export class FileService {

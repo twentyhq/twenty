@@ -13,7 +13,7 @@ export type WorkflowCodeSettingsType = WorkflowBaseSettingsType & {
   serverlessFunctionId: string;
 };
 
-export type WorkflowActionType = 'CODE_ACTION';
+export type WorkflowActionType = 'CODE';
 
 type CommonWorkflowAction = {
   id: string;
@@ -22,7 +22,7 @@ type CommonWorkflowAction = {
 };
 
 type WorkflowCodeAction = CommonWorkflowAction & {
-  type: 'CODE_ACTION';
+  type: 'CODE';
   settings: WorkflowCodeSettingsType;
 };
 
