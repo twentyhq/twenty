@@ -9,7 +9,8 @@ export const isCompositeFieldMetadataType = (
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.LINKS
   | FieldMetadataType.ACTOR
-  | FieldMetadataType.EMAILS => {
+  | FieldMetadataType.EMAILS
+  | FieldMetadataType.PHONES => {
   return [
     FieldMetadataType.LINK,
     FieldMetadataType.CURRENCY,
@@ -18,5 +19,6 @@ export const isCompositeFieldMetadataType = (
     FieldMetadataType.LINKS,
     FieldMetadataType.ACTOR,
     FieldMetadataType.EMAILS,
+    FieldMetadataType.PHONES,
   ].includes(type);
 };

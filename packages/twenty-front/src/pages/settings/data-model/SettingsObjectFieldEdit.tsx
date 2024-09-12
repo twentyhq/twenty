@@ -86,13 +86,13 @@ export const SettingsObjectFieldEdit = () => {
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(
-      settingsFieldFormSchema(
-        activeObjectMetadataItem?.fields
-          .filter((field) => field.id !== activeMetadataField?.id)
-          .map((field) => field.name),
-      ),
-    ),
+    resolver: zodResolver(settingsFieldFormSchema()),
+    values: {
+      icon: activeMetadataField?.icon ?? 'Icon123',
+      type: activeMetadataField?.type as SettingsSupportedFieldType,
+      label: activeMetadataField?.label ?? '',
+      description: activeMetadataField?.description,
+    },
   });
 
   useEffect(() => {
@@ -105,10 +105,10 @@ export const SettingsObjectFieldEdit = () => {
     }
   }, [activeMetadataField, activeObjectMetadataItem, navigate]);
 
-  if (!activeObjectMetadataItem || !activeMetadataField) return null;
-
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
+
+  if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,

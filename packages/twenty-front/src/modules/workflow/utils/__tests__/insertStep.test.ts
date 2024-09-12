@@ -27,7 +27,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 
@@ -65,7 +65,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 
@@ -97,7 +97,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
         {
@@ -110,7 +110,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
       ],
@@ -131,7 +131,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 
@@ -167,7 +167,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
         {
@@ -180,7 +180,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
       ],
@@ -201,7 +201,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 

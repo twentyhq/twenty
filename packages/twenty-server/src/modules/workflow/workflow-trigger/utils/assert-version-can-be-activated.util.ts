@@ -6,11 +6,11 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import {
   WorkflowTrigger,
   WorkflowTriggerType,
-} from 'src/modules/workflow/common/types/workflow-trigger.type';
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
-} from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export function assertVersionCanBeActivated(
   workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {

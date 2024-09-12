@@ -17,6 +17,7 @@ import {
   FieldMultiSelectMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
+  FieldPhonesMetadata,
   FieldRatingMetadata,
   FieldRawJsonMetadata,
   FieldRelationMetadata,
@@ -55,21 +56,23 @@ type AssertFieldMetadataFunction = <
                             ? FieldNumberMetadata
                             : E extends 'PHONE'
                               ? FieldPhoneMetadata
-                              : E extends 'RELATION'
-                                ? FieldRelationMetadata
-                                : E extends 'TEXT'
-                                  ? FieldTextMetadata
-                                  : E extends 'UUID'
-                                    ? FieldUuidMetadata
-                                    : E extends 'ADDRESS'
-                                      ? FieldAddressMetadata
-                                      : E extends 'RAW_JSON'
-                                        ? FieldRawJsonMetadata
-                                        : E extends 'RICH_TEXT'
-                                          ? FieldTextMetadata
-                                          : E extends 'ACTOR'
-                                            ? FieldActorMetadata
-                                            : never,
+                              : E extends 'PHONES'
+                                ? FieldPhonesMetadata
+                                : E extends 'RELATION'
+                                  ? FieldRelationMetadata
+                                  : E extends 'TEXT'
+                                    ? FieldTextMetadata
+                                    : E extends 'UUID'
+                                      ? FieldUuidMetadata
+                                      : E extends 'ADDRESS'
+                                        ? FieldAddressMetadata
+                                        : E extends 'RAW_JSON'
+                                          ? FieldRawJsonMetadata
+                                          : E extends 'RICH_TEXT'
+                                            ? FieldTextMetadata
+                                            : E extends 'ACTOR'
+                                              ? FieldActorMetadata
+                                              : never,
 >(
   fieldType: E,
   fieldTypeGuard: (
