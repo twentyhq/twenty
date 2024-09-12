@@ -21,6 +21,7 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 @Command({
@@ -76,35 +77,43 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
           );
         }
 
-        const fieldsWithEmailType = await this.fieldMetadataRepository.find({
-          where: {
-            workspaceId,
-            type: FieldMetadataType.EMAIL,
-          },
-          relations: ['object'],
-        });
+        const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
 
-        for (const fieldWithEmailType of fieldsWithEmailType) {
+        await workspaceQueryRunner.connect();
+
+        const customFieldsWithEmailType =
+          await this.fieldMetadataRepository.find({
+            where: {
+              workspaceId,
+              type: FieldMetadataType.EMAIL,
+              isCustom: true,
+            },
+          });
+
+        await this.migratePersonEmailFieldToEmailsField(
+          workspaceId,
+          workspaceQueryRunner,
+          dataSourceMetadata,
+        );
+
+        for (const customFieldWithEmailType of customFieldsWithEmailType) {
           const objectMetadata = await this.objectMetadataRepository.findOne({
-            where: { id: fieldWithEmailType.objectMetadataId },
+            where: { id: customFieldWithEmailType.objectMetadataId },
           });
 
           if (!objectMetadata) {
             throw new Error(
-              `Could not find objectMetadata for field ${fieldWithEmailType.name}`,
+              `Could not find objectMetadata for field ${customFieldWithEmailType.name}`,
             );
           }
 
           this.logger.log(
-            `Attempting to migrate field ${fieldWithEmailType.name} on ${objectMetadata.nameSingular}.`,
+            `Attempting to migrate custom field ${customFieldWithEmailType.name} on ${objectMetadata.nameSingular}.`,
           );
-          const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
 
-          await workspaceQueryRunner.connect();
-
-          const fieldName = fieldWithEmailType.name;
+          const fieldName = customFieldWithEmailType.name;
           const { id: _id, ...fieldWithEmailTypeWithoutId } =
-            fieldWithEmailType;
+            customFieldWithEmailType;
 
           const emailDefaultValue = fieldWithEmailTypeWithoutId.defaultValue;
 
@@ -130,7 +139,7 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
 
             // Migrate data from email to emails.primaryEmail
             await this.migrateDataWithinTable({
-              sourceColumnName: `${fieldWithEmailType.name}`,
+              sourceColumnName: `${customFieldWithEmailType.name}`,
               targetColumnName: `${tmpNewEmailsField.name}PrimaryEmail`,
               tableName,
               workspaceQueryRunner,
@@ -151,7 +160,7 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
             const viewFieldsWithDeprecatedField =
               await viewFieldRepository.find({
                 where: {
-                  fieldMetadataId: fieldWithEmailType.id,
+                  fieldMetadataId: customFieldWithEmailType.id,
                   isVisible: true,
                 },
               });
@@ -177,7 +186,7 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
 
             // Delete email field
             await this.fieldMetadataService.deleteOneField(
-              { id: fieldWithEmailType.id },
+              { id: customFieldWithEmailType.id },
               workspaceId,
             );
 
@@ -190,11 +199,11 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
             });
 
             this.logger.log(
-              `Migration of ${fieldWithEmailType.name} on ${objectMetadata.nameSingular} done!`,
+              `Migration of ${customFieldWithEmailType.name} on ${objectMetadata.nameSingular} done!`,
             );
           } catch (error) {
             this.logger.log(
-              `Failed to migrate field ${fieldWithEmailType.name} on ${objectMetadata.nameSingular}, rolling back.`,
+              `Failed to migrate field ${customFieldWithEmailType.name} on ${objectMetadata.nameSingular}, rolling back.`,
             );
 
             // Re-create initial field if it was deleted
@@ -203,8 +212,8 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
                 workspaceId,
                 {
                   where: {
-                    name: `${fieldWithEmailType.name}`,
-                    objectMetadataId: fieldWithEmailType.objectMetadataId,
+                    name: `${customFieldWithEmailType.name}`,
+                    objectMetadataId: customFieldWithEmailType.objectMetadataId,
                   },
                 },
               );
@@ -214,18 +223,18 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
                 workspaceId,
                 {
                   where: {
-                    name: `${fieldWithEmailType.name}Tmp`,
-                    objectMetadataId: fieldWithEmailType.objectMetadataId,
+                    name: `${customFieldWithEmailType.name}Tmp`,
+                    objectMetadataId: customFieldWithEmailType.objectMetadataId,
                   },
                 },
               );
 
             if (!initialField) {
               this.logger.log(
-                `Re-creating initial Email field ${fieldWithEmailType.name} but of type emails`, // Cannot create email fields anymore
+                `Re-creating initial Email field ${customFieldWithEmailType.name} but of type emails`, // Cannot create email fields anymore
               );
               const restoredField = await this.fieldMetadataService.createOne({
-                ...fieldWithEmailType,
+                ...customFieldWithEmailType,
                 defaultValue: defaultValueForEmailsField,
                 type: FieldMetadataType.EMAILS,
               });
@@ -236,7 +245,7 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
 
               if (tmpNewEmailsField) {
                 this.logger.log(
-                  `Restoring data in field ${fieldWithEmailType.name}`,
+                  `Restoring data in field ${customFieldWithEmailType.name}`,
                 );
                 await this.migrateDataWithinTable({
                   sourceColumnName: `${tmpNewEmailsField.name}PrimaryEmail`,
@@ -247,7 +256,7 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
                 });
               } else {
                 this.logger.log(
-                  `Failed to restore data in link field ${fieldWithEmailType.name}`,
+                  `Failed to restore data in link field ${customFieldWithEmailType.name}`,
                 );
               }
             }
@@ -272,6 +281,40 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
       }
 
       this.logger.log(chalk.green(`Command completed!`));
+    }
+  }
+
+  private async migratePersonEmailFieldToEmailsField(
+    workspaceId: string,
+    workspaceQueryRunner: any,
+    dataSourceMetadata: any,
+  ) {
+    this.logger.log(`Migrating person email field of type EMAIL to EMAILS`);
+
+    await this.migrateDataWithinTable({
+      sourceColumnName: 'email',
+      targetColumnName: 'emailsPrimaryEmail',
+      tableName: 'person',
+      workspaceQueryRunner,
+      dataSourceMetadata,
+    });
+
+    const personEmailFieldMetadata = await this.fieldMetadataRepository.findOne(
+      {
+        where: {
+          workspaceId,
+          standardId: PERSON_STANDARD_FIELD_IDS.email,
+        },
+      },
+    );
+
+    if (personEmailFieldMetadata) {
+      await this.fieldMetadataService.deleteOneField(
+        {
+          id: personEmailFieldMetadata.id,
+        },
+        workspaceId,
+      );
     }
   }
 

@@ -35,11 +35,11 @@ export class UpgradeTo0_30Command extends CommandRunner {
     passedParam: string[],
     options: UpdateTo0_30CommandOptions,
   ): Promise<void> {
-    await this.setCustomObjectIsSoftDeletableCommand.run(passedParam, options);
-    await this.migrateEmailFieldsToEmails.run(passedParam, options);
     await this.syncWorkspaceMetadataCommand.run(passedParam, {
       ...options,
       force: true,
     });
+    await this.setCustomObjectIsSoftDeletableCommand.run(passedParam, options);
+    await this.migrateEmailFieldsToEmails.run(passedParam, options);
   }
 }

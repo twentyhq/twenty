@@ -183,5 +183,5 @@ export class FieldMetadataDefaultValueEmails {
 
   @ValidateIf((_object, value) => value !== null)
   @IsObject()
-  additionalEmails: string[] | null;
+  additionalEmails: object | null;
 }
