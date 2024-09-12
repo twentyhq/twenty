@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
-import { PartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { PartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
 @Injectable()
 export class StandardObjectFactory {
@@ -54,7 +54,7 @@ export class StandardObjectFactory {
       isCustom: false,
       isRemote: false,
       isSystem: workspaceEntityMetadataArgs.isSystem ?? false,
-      isSoftDeletable: workspaceEntityMetadataArgs.softDelete ?? false,
+      isSoftDeletable: workspaceEntityMetadataArgs.softDelete ?? true,
     };
   }
 }
