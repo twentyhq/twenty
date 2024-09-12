@@ -15,5 +15,5 @@
     "src/**/*.tsx",
     "src/**/*.ts",
     "vite.config.ts"
-, "src/display/icon/components/IconIllustrationCalendarTime.tsx"  ]
+]
 }

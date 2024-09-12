@@ -8,5 +8,5 @@
     "**/*.test.ts",
     "**/*.test.tsx"
   ],
-  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/display/icon/components/IconIllustrationCalendarTime.tsx"]
+  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx"]
 }

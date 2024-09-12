@@ -1,5 +1,5 @@
 import { BLUR_DARK } from '@ui/theme/constants/BlurDark';
-import { ICON_ILLUSTRATION_DARK } from '@ui/theme/constants/IconIllustrationDark';
+import { ILLUSTRATION_ICON_DARK } from '@ui/theme/constants/IllustrationIconDark';
 import { SNACK_BAR_DARK, ThemeType } from '..';
 import { ACCENT_DARK } from './AccentDark';
 import { BACKGROUND_DARK } from './BackgroundDark';
@@ -23,6 +23,6 @@ export const THEME_DARK: ThemeType = {
     snackBar: SNACK_BAR_DARK,
     tag: TAG_DARK,
     code: CODE_DARK,
-    iconIllustration: ICON_ILLUSTRATION_DARK,
+    IllustrationIcon: ILLUSTRATION_ICON_DARK,
   },
 };

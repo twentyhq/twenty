@@ -1,0 +1,21 @@
+import { useTheme } from '@emotion/react';
+
+import IllustrationIconPhoneRaw from '@ui/display/icon/assets/illustration-phone.svg?react';
+import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
+
+type IllustrationIconPhoneProps = Pick<IconComponentProps, 'size'>;
+
+export const IllustrationIconPhone = (props: IllustrationIconPhoneProps) => {
+  const theme = useTheme();
+  const size = props.size ?? theme.icon.size.lg;
+  const { color, fill } = theme.IllustrationIcon;
+
+  return (
+    <IllustrationIconPhoneRaw
+      height={size}
+      width={size}
+      fill={fill}
+      color={color}
+    />
+  );
+};

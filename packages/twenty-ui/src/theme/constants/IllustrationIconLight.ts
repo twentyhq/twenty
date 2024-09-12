@@ -1,6 +1,6 @@
 import { COLOR } from './Colors';
 
-export const ICON_ILLUSTRATION_LIGHT = {
+export const ILLUSTRATION_ICON_LIGHT = {
   color: COLOR.blue40,
   fill: COLOR.blue20,
 };

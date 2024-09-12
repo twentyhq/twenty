@@ -1,5 +1,5 @@
 import { BLUR_LIGHT } from '@ui/theme/constants/BlurLight';
-import { ICON_ILLUSTRATION_LIGHT } from '@ui/theme/constants/IconIllustrationLight';
+import { ILLUSTRATION_ICON_LIGHT } from '@ui/theme/constants/IllustrationIconLight';
 import { SNACK_BAR_LIGHT } from '@ui/theme/constants/SnackBarLight';
 import { ACCENT_LIGHT } from './AccentLight';
 import { BACKGROUND_LIGHT } from './BackgroundLight';
@@ -23,6 +23,6 @@ export const THEME_LIGHT = {
     snackBar: SNACK_BAR_LIGHT,
     tag: TAG_LIGHT,
     code: CODE_LIGHT,
-    iconIllustration: ICON_ILLUSTRATION_LIGHT,
+    IllustrationIcon: ILLUSTRATION_ICON_LIGHT,
   },
 };
