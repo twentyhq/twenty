@@ -49,6 +49,7 @@ export interface FindDuplicatesResolverArgs<
 
 export interface SearchResolverArgs {
   searchInput?: string;
+  limit?: number;
 }
 
 export interface CreateOneResolverArgs<

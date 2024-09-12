@@ -16,6 +16,7 @@ import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeybo
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Person } from '@/people/types/Person';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -164,11 +165,11 @@ export const CommandMenu = () => {
     [closeCommandMenu],
   );
 
-  const { records: people } = useFindManyRecords<Person>({
+  const { records: people } = useSearchRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Person,
-    filter: commandMenuSearch ? { search: commandMenuSearch } : undefined,
     limit: 3,
+    searchInput: commandMenuSearch ?? undefined,
   });
 
   const { records: companies } = useFindManyRecords<Company>({
