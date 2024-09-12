@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import {
   WorkspaceMetadataCacheException,
   WorkspaceMetadataCacheExceptionCode,
@@ -45,7 +46,7 @@ export class WorkspaceMetadataCacheService {
     }
 
     const isAlreadyCaching =
-      await this.workspaceCacheStorageService.getObjectMetadataCollectionOngoingCachingLock(
+      await this.workspaceCacheStorageService.getObjectMetadataOngoingCachingLock(
         workspaceId,
         currentDatabaseVersion,
       );
@@ -68,25 +69,25 @@ export class WorkspaceMetadataCacheService {
       currentDatabaseVersion,
     );
 
-    const freshObjectMetadataCollection =
-      await this.objectMetadataRepository.find({
-        where: { workspaceId },
-        relations: [
-          'fields.object',
-          'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
-          'fields.fromRelationMetadata.toObjectMetadata',
-        ],
-      });
+    const objectMetadataItems = await this.objectMetadataRepository.find({
+      where: { workspaceId },
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+      ],
+    });
 
-    await this.workspaceCacheStorageService.setObjectMetadataCollection(
+    const freshObjectMetadataMap =
+      generateObjectMetadataMap(objectMetadataItems);
+
+    await this.workspaceCacheStorageService.setObjectMetadataMap(
       workspaceId,
       currentDatabaseVersion,
-      freshObjectMetadataCollection,
+      freshObjectMetadataMap,
     );
 
-    await this.workspaceCacheStorageService.removeObjectMetadataCollectionOngoingCachingLock(
+    await this.workspaceCacheStorageService.removeObjectMetadataOngoingCachingLock(
       workspaceId,
       currentDatabaseVersion,
     );

@@ -30,6 +30,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 import {
@@ -50,6 +51,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super(relationMetadataRepository);
   }
@@ -423,13 +425,34 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
             toFieldMetadataId: In(fieldMetadataIds),
           },
         ],
-        relations: [
-          'fromObjectMetadata',
-          'toObjectMetadata',
-          'fromFieldMetadata',
-          'toFieldMetadata',
-        ],
       });
+
+    if (relationMetadataCollection.length === 0) {
+      return [];
+    }
+
+    const workspaceId = relationMetadataCollection[0].workspaceId;
+
+    const metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (!metadataVersion) {
+      throw new NotFoundException(
+        `Metadata version not found for workspace ${workspaceId}`,
+      );
+    }
+
+    const objectMetadataMap =
+      await this.workspaceCacheStorageService.getObjectMetadataMap(
+        workspaceId,
+        metadataVersion,
+      );
+
+    if (!objectMetadataMap) {
+      throw new NotFoundException(
+        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
+      );
+    }
 
     const mappedResult = fieldMetadataIds.map((fieldMetadataId) => {
       const foundRelationMetadataItem = relationMetadataCollection.find(
@@ -447,7 +470,39 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     });
 
-    return mappedResult;
+    const enhancedResults = mappedResult.map((relationMetadataItem) => {
+      if (relationMetadataItem instanceof NotFoundException) {
+        return relationMetadataItem;
+      }
+
+      const fromObjectMetadata =
+        objectMetadataMap[relationMetadataItem.fromObjectMetadataId];
+
+      const toObjectMetadata =
+        objectMetadataMap[relationMetadataItem.toObjectMetadataId];
+
+      const fromFieldMetadata =
+        Object.values(fromObjectMetadata.fields).find(
+          (fieldMetadata) =>
+            fieldMetadata.id === relationMetadataItem.fromFieldMetadataId,
+        ) ?? null;
+
+      const toFieldMetadata =
+        Object.values(toObjectMetadata.fields).find(
+          (fieldMetadata) =>
+            fieldMetadata.id === relationMetadataItem.toFieldMetadataId,
+        ) ?? null;
+
+      return {
+        ...relationMetadataItem,
+        fromObjectMetadata,
+        toObjectMetadata,
+        fromFieldMetadata,
+        toFieldMetadata,
+      };
+    });
+
+    return enhancedResults as (RelationMetadataEntity | NotFoundException)[];
   }
 
   private async deleteRelationWorkspaceCustomMigration(

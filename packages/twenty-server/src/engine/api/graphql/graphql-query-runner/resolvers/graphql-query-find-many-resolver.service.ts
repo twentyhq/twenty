@@ -19,11 +19,11 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
+import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import {
   convertObjectMetadataToMap,
   getObjectMetadata,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
-import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+} from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQueryFindManyResolverService {

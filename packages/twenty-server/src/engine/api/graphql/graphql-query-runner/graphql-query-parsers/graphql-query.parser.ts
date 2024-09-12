@@ -17,7 +17,7 @@ import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+} from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata.util';
 
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;

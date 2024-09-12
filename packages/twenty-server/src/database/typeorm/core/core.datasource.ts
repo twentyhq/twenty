@@ -7,7 +7,7 @@ config();
 export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
-  logging: ['error', 'query'],
+  logging: ['error'],
   schema: 'core',
   entities: ['dist/src/engine/core-modules/**/*.entity{.ts,.js}'],
   synchronize: false,

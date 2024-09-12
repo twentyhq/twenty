@@ -72,6 +72,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly metadataDataSource: DataSource,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -97,20 +99,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         queryRunner.manager.getRepository<FieldMetadataEntity>(
           FieldMetadataEntity,
         );
-      const objectMetadata =
-        await this.objectMetadataService.findOneWithinWorkspace(
-          fieldMetadataInput.workspaceId,
-          {
-            where: {
-              id: fieldMetadataInput.objectMetadataId,
-            },
-          },
-        );
+
+      // TODO: this looks like a big security hole here, we should not get workspaceId from the input
+      const [objectMetadata] = await this.objectMetadataRepository.find({
+        where: {
+          id: fieldMetadataInput.objectMetadataId,
+          workspaceId: fieldMetadataInput.workspaceId,
+        },
+        relations: ['fields'],
+        order: {},
+      });
 
       if (!objectMetadata) {
         throw new FieldMetadataException(
           'Object metadata does not exist',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
 
@@ -154,21 +157,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput,
         objectMetadata,
       );
-
-      const fieldAlreadyExists = await fieldMetadataRepository.findOne({
-        where: {
-          name: fieldMetadataInput.name,
-          objectMetadataId: fieldMetadataInput.objectMetadataId,
-          workspaceId: fieldMetadataInput.workspaceId,
-        },
-      });
-
-      if (fieldAlreadyExists) {
-        throw new FieldMetadataException(
-          'Field already exists',
-          FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS,
-        );
-      }
 
       const createdFieldMetadata = await fieldMetadataRepository.save({
         ...fieldMetadataInput,

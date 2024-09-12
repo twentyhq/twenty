@@ -13,10 +13,8 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
-import {
-  convertObjectMetadataToMap,
-  getObjectMetadata,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { getObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata.util';
+import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQueryFindOneResolverService {
@@ -40,9 +38,10 @@ export class GraphqlQueryFindOneResolverService {
         authContext.workspace.id,
         objectMetadataItem.nameSingular,
       );
-    const objectMetadataMap = convertObjectMetadataToMap(
+    const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
+
     const objectMetadata = getObjectMetadata(
       objectMetadataMap,
       objectMetadataItem.nameSingular,

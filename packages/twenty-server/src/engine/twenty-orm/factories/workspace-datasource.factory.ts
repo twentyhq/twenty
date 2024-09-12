@@ -56,20 +56,20 @@ export class WorkspaceDatasourceFactory {
     const workspaceDataSource = await this.cacheManager.execute(
       `${workspaceId}-${desiredWorkspaceMetadataVersion}`,
       async () => {
-        const cachedObjectMetadataCollection =
-          await this.workspaceCacheStorageService.getObjectMetadataCollection(
+        const cachedObjectMetadataMap =
+          await this.workspaceCacheStorageService.getObjectMetadataMap(
             workspaceId,
             desiredWorkspaceMetadataVersion,
           );
 
-        if (!cachedObjectMetadataCollection) {
+        if (!cachedObjectMetadataMap) {
           await this.workspaceMetadataCacheService.recomputeMetadataCache(
             workspaceId,
             true,
           );
 
           throw new TwentyORMException(
-            `Object metadata collection not found for workspace ${workspaceId}`,
+            `Object metadata map not found for workspace ${workspaceId}`,
             TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
           );
         }
@@ -100,11 +100,12 @@ export class WorkspaceDatasourceFactory {
           );
         } else {
           const entitySchemas = await Promise.all(
-            cachedObjectMetadataCollection.map((objectMetadata) =>
+            Object.values(cachedObjectMetadataMap).map((objectMetadata) =>
               this.entitySchemaFactory.create(
                 workspaceId,
                 desiredWorkspaceMetadataVersion,
                 objectMetadata,
+                cachedObjectMetadataMap,
               ),
             ),
           );
@@ -121,7 +122,7 @@ export class WorkspaceDatasourceFactory {
         const workspaceDataSource = new WorkspaceDataSource(
           {
             workspaceId,
-            objectMetadataCollection: cachedObjectMetadataCollection,
+            objectMetadataMap: cachedObjectMetadataMap,
           },
           {
             url:

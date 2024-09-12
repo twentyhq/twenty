@@ -16,6 +16,7 @@ import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadat
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
@@ -32,7 +33,10 @@ import { UpdateFieldInput } from './dtos/update-field.input';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
+        NestjsQueryTypeOrmModule.forFeature(
+          [FieldMetadataEntity, ObjectMetadataEntity],
+          'metadata',
+        ),
         WorkspaceMigrationModule,
         WorkspaceStatusModule,
         WorkspaceMigrationRunnerModule,

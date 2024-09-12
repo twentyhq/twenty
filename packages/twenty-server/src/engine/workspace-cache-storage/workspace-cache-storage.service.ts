@@ -5,15 +5,15 @@ import { EntitySchemaOptions } from 'typeorm';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 enum WorkspaceCacheKeys {
   GraphQLTypeDefs = 'graphql:type-defs',
   GraphQLUsedScalarNames = 'graphql:used-scalar-names',
   GraphQLOperations = 'graphql:operations',
   ORMEntitySchemas = 'orm:entity-schemas',
-  MetadataObjectMetadataCollection = 'metadata:object-metadata-collection',
-  MetadataObjectMetadataCollectionOngoingCachingLock = 'metadata:object-metadata-collection-ongoing-caching-lock',
+  MetadataObjectMetadataMap = 'metadata:object-metadata-map',
+  MetadataObjectMetadataOngoingCachingLock = 'metadata:object-metadata-ongoing-caching-lock',
   MetadataVersion = 'metadata:workspace-metadata-version',
 }
 
@@ -65,46 +65,46 @@ export class WorkspaceCacheStorageService {
     metadataVersion: number,
   ) {
     return this.cacheStorageService.set<boolean>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataCollectionOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
       true,
     );
   }
 
-  removeObjectMetadataCollectionOngoingCachingLock(
+  removeObjectMetadataOngoingCachingLock(
     workspaceId: string,
     metadataVersion: number,
   ) {
     return this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataCollectionOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
     );
   }
 
-  getObjectMetadataCollectionOngoingCachingLock(
+  getObjectMetadataOngoingCachingLock(
     workspaceId: string,
     metadataVersion: number,
   ): Promise<boolean | undefined> {
     return this.cacheStorageService.get<boolean>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataCollectionOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
     );
   }
 
-  setObjectMetadataCollection(
+  setObjectMetadataMap(
     workspaceId: string,
     metadataVersion: number,
-    objectMetadataCollection: ObjectMetadataEntity[],
+    objectMetadataMap: ObjectMetadataMap,
   ) {
-    return this.cacheStorageService.set<ObjectMetadataEntity[]>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataCollection}:${workspaceId}:${metadataVersion}`,
-      objectMetadataCollection,
+    return this.cacheStorageService.set<ObjectMetadataMap>(
+      `${WorkspaceCacheKeys.MetadataObjectMetadataMap}:${workspaceId}:${metadataVersion}`,
+      objectMetadataMap,
     );
   }
 
-  getObjectMetadataCollection(
+  getObjectMetadataMap(
     workspaceId: string,
     metadataVersion: number,
-  ): Promise<ObjectMetadataEntity[] | undefined> {
-    return this.cacheStorageService.get<ObjectMetadataEntity[]>(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataCollection}:${workspaceId}:${metadataVersion}`,
+  ): Promise<ObjectMetadataMap | undefined> {
+    return this.cacheStorageService.get<ObjectMetadataMap>(
+      `${WorkspaceCacheKeys.MetadataObjectMetadataMap}:${workspaceId}:${metadataVersion}`,
     );
   }
 
@@ -150,7 +150,7 @@ export class WorkspaceCacheStorageService {
 
   async flush(workspaceId: string, metadataVersion: number): Promise<void> {
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataCollection}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataMap}:${workspaceId}:${metadataVersion}`,
     );
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}:${metadataVersion}`,
@@ -166,7 +166,7 @@ export class WorkspaceCacheStorageService {
     );
 
     await this.cacheStorageService.del(
-      `${WorkspaceCacheKeys.MetadataObjectMetadataCollectionOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
+      `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
     );
   }
 }
