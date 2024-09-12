@@ -30,7 +30,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   description: 'A note',
   icon: 'IconNotes',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
-  softDelete: true,
 })
 export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
