@@ -5,8 +5,6 @@ import { validate } from 'src/engine/core-modules/environment/environment-variab
 import { ConfigurableModuleClass } from 'src/engine/core-modules/environment/environment.module-definition';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
-console.log(process.env);
-
 @Global()
 @Module({
   imports: [

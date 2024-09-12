@@ -29,6 +29,9 @@ describe('calendarChannelsResolver (e2e)', () => {
       `,
     };
 
+    console.log('toto');
+    console.log(global);
+
     return request(global.app.getHttpServer())
       .post('/graphql')
       .set('Authorization', `Bearer ${global.accessToken}`)
@@ -53,7 +56,9 @@ describe('calendarChannelsResolver (e2e)', () => {
           expect(calendarchannels).toHaveProperty('syncStatus');
           expect(calendarchannels).toHaveProperty('syncStage');
           expect(calendarchannels).toHaveProperty('visibility');
-          expect(calendarchannels).toHaveProperty('isContactAutoCreationEnabled');
+          expect(calendarchannels).toHaveProperty(
+            'isContactAutoCreationEnabled',
+          );
           expect(calendarchannels).toHaveProperty('contactAutoCreationPolicy');
           expect(calendarchannels).toHaveProperty('isSyncEnabled');
           expect(calendarchannels).toHaveProperty('syncCursor');
