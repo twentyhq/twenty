@@ -96,10 +96,6 @@ export const SettingsObjectFieldEdit = () => {
   });
 
   useEffect(() => {
-    formConfig.reset({
-      type: activeMetadataField?.type as SettingsSupportedFieldType,
-    });
-
     if (!activeObjectMetadataItem || !activeMetadataField) {
       navigate(AppPath.NotFound);
     }
