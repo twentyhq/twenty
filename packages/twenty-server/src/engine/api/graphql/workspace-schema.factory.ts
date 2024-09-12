@@ -14,14 +14,12 @@ import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resol
 import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 @Injectable()
 export class WorkspaceSchemaFactory {
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
     private readonly workspaceGraphQLSchemaFactory: WorkspaceGraphQLSchemaFactory,
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
@@ -65,6 +63,9 @@ export class WorkspaceSchemaFactory {
       );
 
     if (!objectMetadataCollection) {
+      await this.workspaceMetadataCacheService.recomputeMetadataCache(
+        authContext.workspace.id,
+      );
       throw new GraphqlQueryRunnerException(
         'Object metadata collection not found',
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,

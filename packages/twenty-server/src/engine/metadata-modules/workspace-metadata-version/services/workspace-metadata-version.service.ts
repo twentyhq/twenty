@@ -4,36 +4,43 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 
 @Injectable()
-export class WorkspaceMetadataCacheService {
+export class WorkspaceMetadataVersionService {
   logger = new Logger(WorkspaceMetadataCacheService.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   async incrementMetadataVersion(workspaceId: string): Promise<void> {
-    const workspace = await this.getMetadataVersionFromDatabase(workspaceId);
-
-    await this.workspaceRepository.save(workspace);
-
-    this.workspaceCacheStorageService.invalidateWorkspaceCache(workspaceId);
-  }
-
-  async getMetadataVersionFromDatabase(
-    workspaceId: string,
-  ): Promise<number | undefined> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
 
-    return workspace?.metadataVersion;
+    const metadataVersion = workspace?.metadataVersion;
+
+    if (metadataVersion === undefined) {
+      throw new WorkspaceMetadataVersionException(
+        'Metadata version not found',
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
+      );
+    }
+
+    const newMetadataVersion = metadataVersion + 1;
+
+    await this.workspaceRepository.update(
+      { id: workspaceId },
+      { metadataVersion: newMetadataVersion },
+    );
+
+    this.workspaceMetadataCacheService.recomputeMetadataCache(workspaceId);
   }
 }

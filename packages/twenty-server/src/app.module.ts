@@ -20,9 +20,9 @@ import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphq
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
@@ -51,7 +51,7 @@ import { CoreEngineModule } from './engine/core-modules/core-engine.module';
     // Modules module, contains all business logic modules
     ModulesModule,
     // Needed for the user workspace middleware
-    WorkspaceMetadataVersionModule,
+    WorkspaceCacheStorageModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,

@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntitySchema, Repository } from 'typeorm';
+import { EntitySchema } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
@@ -25,8 +23,6 @@ export class WorkspaceDatasourceFactory {
     private readonly environmentService: EnvironmentService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
 
@@ -40,7 +36,9 @@ export class WorkspaceDatasourceFactory {
       );
 
     if (latestWorkspaceMetadataVersion === undefined) {
-      this.workspaceMetadataCacheService.recomputeMetadataCache(workspaceId);
+      await this.workspaceMetadataCacheService.recomputeMetadataCache(
+        workspaceId,
+      );
       throw new TwentyORMException(
         `Metadata version not found for workspace ${workspaceId}`,
         TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
@@ -67,6 +65,11 @@ export class WorkspaceDatasourceFactory {
           );
 
         if (!cachedObjectMetadataCollection) {
+          await this.workspaceMetadataCacheService.recomputeMetadataCache(
+            workspaceId,
+            true,
+          );
+
           throw new TwentyORMException(
             `Object metadata collection not found for workspace ${workspaceId}`,
             TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
@@ -100,7 +103,11 @@ export class WorkspaceDatasourceFactory {
         } else {
           const entitySchemas = await Promise.all(
             cachedObjectMetadataCollection.map((objectMetadata) =>
-              this.entitySchemaFactory.create(workspaceId, objectMetadata),
+              this.entitySchemaFactory.create(
+                workspaceId,
+                desiredWorkspaceMetadataVersion,
+                objectMetadata,
+              ),
             ),
           );
 

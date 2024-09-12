@@ -23,7 +23,10 @@ export class WorkspaceMetadataCacheService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  async recomputeMetadataCache(workspaceId: string): Promise<void> {
+  async recomputeMetadataCache(
+    workspaceId: string,
+    force = false,
+  ): Promise<void> {
     const currentCacheVersion =
       await this.getMetadataVersionFromCache(workspaceId);
 
@@ -37,7 +40,7 @@ export class WorkspaceMetadataCacheService {
       );
     }
 
-    if (currentCacheVersion === currentDatabaseVersion) {
+    if (!force && currentCacheVersion === currentDatabaseVersion) {
       return;
     }
 
@@ -55,10 +58,9 @@ export class WorkspaceMetadataCacheService {
       this.workspaceCacheStorageService.flush(workspaceId, currentCacheVersion);
     }
 
-    await this.workspaceCacheStorageService.setObjectMetadataCollectionOngoingCachingLock(
+    await this.workspaceCacheStorageService.addObjectMetadataCollectionOngoingCachingLock(
       workspaceId,
       currentDatabaseVersion,
-      true,
     );
 
     await this.workspaceCacheStorageService.setMetadataVersion(
@@ -84,10 +86,9 @@ export class WorkspaceMetadataCacheService {
       freshObjectMetadataCollection,
     );
 
-    await this.workspaceCacheStorageService.setObjectMetadataCollectionOngoingCachingLock(
+    await this.workspaceCacheStorageService.removeObjectMetadataCollectionOngoingCachingLock(
       workspaceId,
       currentDatabaseVersion,
-      false,
     );
   }
 

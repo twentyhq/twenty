@@ -60,14 +60,22 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  setObjectMetadataCollectionOngoingCachingLock(
+  addObjectMetadataCollectionOngoingCachingLock(
     workspaceId: string,
     metadataVersion: number,
-    isOngoing: boolean,
   ) {
     return this.cacheStorageService.set<boolean>(
       `${WorkspaceCacheKeys.MetadataObjectMetadataCollectionOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
-      isOngoing,
+      true,
+    );
+  }
+
+  removeObjectMetadataCollectionOngoingCachingLock(
+    workspaceId: string,
+    metadataVersion: number,
+  ) {
+    return this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataObjectMetadataCollectionOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
     );
   }
 
