@@ -3,10 +3,18 @@
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
-  "setupFilesAfterEnv": ["<rootDir>/utils/setup-tests.ts"],
+  "modulePathIgnorePatterns": ["<rootDir>/../dist"],
+  "globalSetup": "<rootDir>/utils/setup-test.ts",
+  "globalTeardown": "<rootDir>/utils/teardown-test.ts",
   "moduleNameMapper": {
     "^src/(.*)": "<rootDir>/../src/$1",
-    "^test/(.*)": "<rootDir>/$1"
+    "^test/(.*)": "<rootDir>/$1",
+    "twenty-emails": "<rootDir>/../../twenty-emails/src/index.ts",
+    "twenty-emails/(.*)": "<rootDir>/../../twenty-emails/src/$1",
+    "^./emails/(.*)": "<rootDir>/../../twenty-emails/src/emails/$1"
+  },
+  "fakeTimers": {
+    "enableGlobally": true
   },
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"

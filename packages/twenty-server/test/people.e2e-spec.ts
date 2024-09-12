@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('peopleResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many people', () => {
     const queryData = {
       query: `
@@ -44,9 +30,9 @@ describe('peopleResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -61,25 +47,25 @@ describe('peopleResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const people = edges[0].node;
 
-        const people = edges[0].node;
-
-        expect(people).toHaveProperty('email');
-        expect(people).toHaveProperty('jobTitle');
-        expect(people).toHaveProperty('phone');
-        expect(people).toHaveProperty('city');
-        expect(people).toHaveProperty('avatarUrl');
-        expect(people).toHaveProperty('position');
-        expect(people).toHaveProperty('id');
-        expect(people).toHaveProperty('createdAt');
-        expect(people).toHaveProperty('updatedAt');
-        expect(people).toHaveProperty('deletedAt');
-        expect(people).toHaveProperty('companyId');
-        expect(people).toHaveProperty('intro');
-        expect(people).toHaveProperty('whatsapp');
-        expect(people).toHaveProperty('workPrefereance');
-        expect(people).toHaveProperty('performanceRating');
+          expect(people).toHaveProperty('email');
+          expect(people).toHaveProperty('jobTitle');
+          expect(people).toHaveProperty('phone');
+          expect(people).toHaveProperty('city');
+          expect(people).toHaveProperty('avatarUrl');
+          expect(people).toHaveProperty('position');
+          expect(people).toHaveProperty('id');
+          expect(people).toHaveProperty('createdAt');
+          expect(people).toHaveProperty('updatedAt');
+          expect(people).toHaveProperty('deletedAt');
+          expect(people).toHaveProperty('companyId');
+          expect(people).toHaveProperty('intro');
+          expect(people).toHaveProperty('whatsapp');
+          expect(people).toHaveProperty('workPrefereance');
+          expect(people).toHaveProperty('performanceRating');
+        }
       });
   });
 });

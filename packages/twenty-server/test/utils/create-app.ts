@@ -3,8 +3,6 @@ import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 
 import { AppModule } from 'src/app.module';
 
-jest.useFakeTimers();
-
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
 }
@@ -24,7 +22,7 @@ export const createApp = async (
     moduleBuilderHook?: TestingModuleCreatePreHook;
     appInitHook?: TestingAppCreatePreHook;
   } = {},
-): Promise<[NestExpressApplication, TestingModule]> => {
+): Promise<NestExpressApplication> => {
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [AppModule],
   });
@@ -34,6 +32,7 @@ export const createApp = async (
   }
 
   const moduleFixture: TestingModule = await moduleBuilder.compile();
+
   const app = moduleFixture.createNestApplication<NestExpressApplication>();
 
   if (config.appInitHook) {
@@ -42,5 +41,5 @@ export const createApp = async (
 
   await app.init();
 
-  return [app, moduleFixture];
+  return app;
 };

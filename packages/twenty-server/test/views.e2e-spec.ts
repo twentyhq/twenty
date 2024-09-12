@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('viewsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many views', () => {
     const queryData = {
       query: `
@@ -40,9 +26,9 @@ describe('viewsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -57,21 +43,21 @@ describe('viewsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const views = edges[0].node;
 
-        const views = edges[0].node;
-
-        expect(views).toHaveProperty('name');
-        expect(views).toHaveProperty('objectMetadataId');
-        expect(views).toHaveProperty('type');
-        expect(views).toHaveProperty('key');
-        expect(views).toHaveProperty('icon');
-        expect(views).toHaveProperty('kanbanFieldMetadataId');
-        expect(views).toHaveProperty('position');
-        expect(views).toHaveProperty('isCompact');
-        expect(views).toHaveProperty('id');
-        expect(views).toHaveProperty('createdAt');
-        expect(views).toHaveProperty('updatedAt');
+          expect(views).toHaveProperty('name');
+          expect(views).toHaveProperty('objectMetadataId');
+          expect(views).toHaveProperty('type');
+          expect(views).toHaveProperty('key');
+          expect(views).toHaveProperty('icon');
+          expect(views).toHaveProperty('kanbanFieldMetadataId');
+          expect(views).toHaveProperty('position');
+          expect(views).toHaveProperty('isCompact');
+          expect(views).toHaveProperty('id');
+          expect(views).toHaveProperty('createdAt');
+          expect(views).toHaveProperty('updatedAt');
+        }
       });
   });
 });

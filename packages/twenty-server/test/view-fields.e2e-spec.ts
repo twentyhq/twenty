@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('viewFieldsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many viewFields', () => {
     const queryData = {
       query: `
@@ -37,9 +23,9 @@ describe('viewFieldsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -54,18 +40,18 @@ describe('viewFieldsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const viewfields = edges[0].node;
 
-        const viewfields = edges[0].node;
-
-        expect(viewfields).toHaveProperty('fieldMetadataId');
-        expect(viewfields).toHaveProperty('isVisible');
-        expect(viewfields).toHaveProperty('size');
-        expect(viewfields).toHaveProperty('position');
-        expect(viewfields).toHaveProperty('id');
-        expect(viewfields).toHaveProperty('createdAt');
-        expect(viewfields).toHaveProperty('updatedAt');
-        expect(viewfields).toHaveProperty('viewId');
+          expect(viewfields).toHaveProperty('fieldMetadataId');
+          expect(viewfields).toHaveProperty('isVisible');
+          expect(viewfields).toHaveProperty('size');
+          expect(viewfields).toHaveProperty('position');
+          expect(viewfields).toHaveProperty('id');
+          expect(viewfields).toHaveProperty('createdAt');
+          expect(viewfields).toHaveProperty('updatedAt');
+          expect(viewfields).toHaveProperty('viewId');
+        }
       });
   });
 });

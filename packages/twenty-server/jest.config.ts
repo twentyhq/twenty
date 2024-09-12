@@ -1,20 +1,13 @@
-import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const tsConfig = require('./tsconfig.json');
-
-const jestConfig: JestConfigWithTsJest = {
+module.exports = {
   // to enable logs, comment out the following line
   silent: true,
-  displayName: 'twenty-server',
   clearMocks: true,
-  preset: '../../jest.preset.js',
+  preset: 'ts-jest',
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   moduleFileExtensions: ['js', 'json', 'ts'],
-  transformIgnorePatterns: ['../../node_modules/'],
   moduleNameMapper: {
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths),
+    '^src/(.*)': '<rootDir>/src/$1',
   },
   rootDir: './',
   testRegex: '.*\\.spec\\.ts$',
@@ -24,8 +17,6 @@ const jestConfig: JestConfigWithTsJest = {
   fakeTimers: {
     enableGlobally: true,
   },
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
-  coverageDirectory: './coverage',
+  collectCoverageFrom: ['**/*.(t|j)s'],
+  coverageDirectory: '../coverage',
 };
-
-export default jestConfig;

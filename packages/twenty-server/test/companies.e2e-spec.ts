@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('companiesResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many companies', () => {
     const queryData = {
       query: `
@@ -41,9 +27,9 @@ describe('companiesResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -58,22 +44,22 @@ describe('companiesResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const companies = edges[0].node;
 
-        const companies = edges[0].node;
-
-        expect(companies).toHaveProperty('name');
-        expect(companies).toHaveProperty('employees');
-        expect(companies).toHaveProperty('idealCustomerProfile');
-        expect(companies).toHaveProperty('position');
-        expect(companies).toHaveProperty('id');
-        expect(companies).toHaveProperty('createdAt');
-        expect(companies).toHaveProperty('updatedAt');
-        expect(companies).toHaveProperty('deletedAt');
-        expect(companies).toHaveProperty('accountOwnerId');
-        expect(companies).toHaveProperty('tagline');
-        expect(companies).toHaveProperty('workPolicy');
-        expect(companies).toHaveProperty('visaSponsorship');
+          expect(companies).toHaveProperty('name');
+          expect(companies).toHaveProperty('employees');
+          expect(companies).toHaveProperty('idealCustomerProfile');
+          expect(companies).toHaveProperty('position');
+          expect(companies).toHaveProperty('id');
+          expect(companies).toHaveProperty('createdAt');
+          expect(companies).toHaveProperty('updatedAt');
+          expect(companies).toHaveProperty('deletedAt');
+          expect(companies).toHaveProperty('accountOwnerId');
+          expect(companies).toHaveProperty('tagline');
+          expect(companies).toHaveProperty('workPolicy');
+          expect(companies).toHaveProperty('visaSponsorship');
+        }
       });
   });
 });

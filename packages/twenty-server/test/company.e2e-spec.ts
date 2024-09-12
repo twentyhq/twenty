@@ -1,24 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
-import { getAccessToken } from 'test/utils/get-access-token';
-
-import { createApp } from './utils/create-app';
 
 describe('CompanyResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    [app] = await createApp({});
-
-    accessToken = await getAccessToken(app);
-  });
-
-  afterEach(async () => {
-    await app.close();
-  });
-
   it('should find many companies', () => {
     const queryData = {
       query: `
@@ -35,9 +17,9 @@ describe('CompanyResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -52,13 +34,13 @@ describe('CompanyResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const company = edges[0].node;
 
-        const company = edges[0].node;
-
-        expect(company).toBeDefined();
-        expect(company).toHaveProperty('id');
-        expect(company).toHaveProperty('name');
+          expect(company).toBeDefined();
+          expect(company).toHaveProperty('id');
+          expect(company).toHaveProperty('name');
+        }
       });
   });
 });

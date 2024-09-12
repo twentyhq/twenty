@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('commentsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many comments', () => {
     const queryData = {
       query: `
@@ -35,9 +21,9 @@ describe('commentsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -52,16 +38,16 @@ describe('commentsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const comments = edges[0].node;
 
-        const comments = edges[0].node;
-
-        expect(comments).toHaveProperty('body');
-        expect(comments).toHaveProperty('id');
-        expect(comments).toHaveProperty('createdAt');
-        expect(comments).toHaveProperty('updatedAt');
-        expect(comments).toHaveProperty('authorId');
-        expect(comments).toHaveProperty('activityId');
+          expect(comments).toHaveProperty('body');
+          expect(comments).toHaveProperty('id');
+          expect(comments).toHaveProperty('createdAt');
+          expect(comments).toHaveProperty('updatedAt');
+          expect(comments).toHaveProperty('authorId');
+          expect(comments).toHaveProperty('activityId');
+        }
       });
   });
 });

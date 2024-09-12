@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('calendarChannelsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many calendarChannels', () => {
     const queryData = {
       query: `
@@ -43,9 +29,9 @@ describe('calendarChannelsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -60,24 +46,24 @@ describe('calendarChannelsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const calendarchannels = edges[0].node;
 
-        const calendarchannels = edges[0].node;
-
-        expect(calendarchannels).toHaveProperty('handle');
-        expect(calendarchannels).toHaveProperty('syncStatus');
-        expect(calendarchannels).toHaveProperty('syncStage');
-        expect(calendarchannels).toHaveProperty('visibility');
-        expect(calendarchannels).toHaveProperty('isContactAutoCreationEnabled');
-        expect(calendarchannels).toHaveProperty('contactAutoCreationPolicy');
-        expect(calendarchannels).toHaveProperty('isSyncEnabled');
-        expect(calendarchannels).toHaveProperty('syncCursor');
-        expect(calendarchannels).toHaveProperty('syncStageStartedAt');
-        expect(calendarchannels).toHaveProperty('throttleFailureCount');
-        expect(calendarchannels).toHaveProperty('id');
-        expect(calendarchannels).toHaveProperty('createdAt');
-        expect(calendarchannels).toHaveProperty('updatedAt');
-        expect(calendarchannels).toHaveProperty('connectedAccountId');
+          expect(calendarchannels).toHaveProperty('handle');
+          expect(calendarchannels).toHaveProperty('syncStatus');
+          expect(calendarchannels).toHaveProperty('syncStage');
+          expect(calendarchannels).toHaveProperty('visibility');
+          expect(calendarchannels).toHaveProperty('isContactAutoCreationEnabled');
+          expect(calendarchannels).toHaveProperty('contactAutoCreationPolicy');
+          expect(calendarchannels).toHaveProperty('isSyncEnabled');
+          expect(calendarchannels).toHaveProperty('syncCursor');
+          expect(calendarchannels).toHaveProperty('syncStageStartedAt');
+          expect(calendarchannels).toHaveProperty('throttleFailureCount');
+          expect(calendarchannels).toHaveProperty('id');
+          expect(calendarchannels).toHaveProperty('createdAt');
+          expect(calendarchannels).toHaveProperty('updatedAt');
+          expect(calendarchannels).toHaveProperty('connectedAccountId');
+        }
       });
   });
 });

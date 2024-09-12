@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('webhooksResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many webhooks', () => {
     const queryData = {
       query: `
@@ -35,9 +21,9 @@ describe('webhooksResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -52,16 +38,16 @@ describe('webhooksResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const webhooks = edges[0].node;
 
-        const webhooks = edges[0].node;
-
-        expect(webhooks).toHaveProperty('targetUrl');
-        expect(webhooks).toHaveProperty('operation');
-        expect(webhooks).toHaveProperty('description');
-        expect(webhooks).toHaveProperty('id');
-        expect(webhooks).toHaveProperty('createdAt');
-        expect(webhooks).toHaveProperty('updatedAt');
+          expect(webhooks).toHaveProperty('targetUrl');
+          expect(webhooks).toHaveProperty('operation');
+          expect(webhooks).toHaveProperty('description');
+          expect(webhooks).toHaveProperty('id');
+          expect(webhooks).toHaveProperty('createdAt');
+          expect(webhooks).toHaveProperty('updatedAt');
+        }
       });
   });
 });

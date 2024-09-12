@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('taskTargetsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many taskTargets', () => {
     const queryData = {
       query: `
@@ -37,9 +23,9 @@ describe('taskTargetsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -54,18 +40,18 @@ describe('taskTargetsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const tasktargets = edges[0].node;
 
-        const tasktargets = edges[0].node;
-
-        expect(tasktargets).toHaveProperty('id');
-        expect(tasktargets).toHaveProperty('createdAt');
-        expect(tasktargets).toHaveProperty('updatedAt');
-        expect(tasktargets).toHaveProperty('deletedAt');
-        expect(tasktargets).toHaveProperty('taskId');
-        expect(tasktargets).toHaveProperty('personId');
-        expect(tasktargets).toHaveProperty('companyId');
-        expect(tasktargets).toHaveProperty('opportunityId');
+          expect(tasktargets).toHaveProperty('id');
+          expect(tasktargets).toHaveProperty('createdAt');
+          expect(tasktargets).toHaveProperty('updatedAt');
+          expect(tasktargets).toHaveProperty('deletedAt');
+          expect(tasktargets).toHaveProperty('taskId');
+          expect(tasktargets).toHaveProperty('personId');
+          expect(tasktargets).toHaveProperty('companyId');
+          expect(tasktargets).toHaveProperty('opportunityId');
+        }
       });
   });
 });

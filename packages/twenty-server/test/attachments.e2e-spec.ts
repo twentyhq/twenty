@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('attachmentsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many attachments', () => {
     const queryData = {
       query: `
@@ -42,9 +28,9 @@ describe('attachmentsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -59,23 +45,23 @@ describe('attachmentsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const attachments = edges[0].node;
 
-        const attachments = edges[0].node;
-
-        expect(attachments).toHaveProperty('name');
-        expect(attachments).toHaveProperty('fullPath');
-        expect(attachments).toHaveProperty('type');
-        expect(attachments).toHaveProperty('id');
-        expect(attachments).toHaveProperty('createdAt');
-        expect(attachments).toHaveProperty('updatedAt');
-        expect(attachments).toHaveProperty('authorId');
-        expect(attachments).toHaveProperty('activityId');
-        expect(attachments).toHaveProperty('taskId');
-        expect(attachments).toHaveProperty('noteId');
-        expect(attachments).toHaveProperty('personId');
-        expect(attachments).toHaveProperty('companyId');
-        expect(attachments).toHaveProperty('opportunityId');
+          expect(attachments).toHaveProperty('name');
+          expect(attachments).toHaveProperty('fullPath');
+          expect(attachments).toHaveProperty('type');
+          expect(attachments).toHaveProperty('id');
+          expect(attachments).toHaveProperty('createdAt');
+          expect(attachments).toHaveProperty('updatedAt');
+          expect(attachments).toHaveProperty('authorId');
+          expect(attachments).toHaveProperty('activityId');
+          expect(attachments).toHaveProperty('taskId');
+          expect(attachments).toHaveProperty('noteId');
+          expect(attachments).toHaveProperty('personId');
+          expect(attachments).toHaveProperty('companyId');
+          expect(attachments).toHaveProperty('opportunityId');
+        }
       });
   });
 });

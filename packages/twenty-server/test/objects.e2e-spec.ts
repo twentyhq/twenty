@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('objectsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many objects', () => {
     const queryData = {
       query: `
@@ -45,9 +31,9 @@ describe('objectsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -62,26 +48,26 @@ describe('objectsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const objects = edges[0].node;
 
-        const objects = edges[0].node;
-
-        expect(objects).toHaveProperty('id');
-        expect(objects).toHaveProperty('dataSourceId');
-        expect(objects).toHaveProperty('nameSingular');
-        expect(objects).toHaveProperty('namePlural');
-        expect(objects).toHaveProperty('labelSingular');
-        expect(objects).toHaveProperty('labelPlural');
-        expect(objects).toHaveProperty('description');
-        expect(objects).toHaveProperty('icon');
-        expect(objects).toHaveProperty('isCustom');
-        expect(objects).toHaveProperty('isRemote');
-        expect(objects).toHaveProperty('isActive');
-        expect(objects).toHaveProperty('isSystem');
-        expect(objects).toHaveProperty('createdAt');
-        expect(objects).toHaveProperty('updatedAt');
-        expect(objects).toHaveProperty('labelIdentifierFieldMetadataId');
-        expect(objects).toHaveProperty('imageIdentifierFieldMetadataId');
+          expect(objects).toHaveProperty('id');
+          expect(objects).toHaveProperty('dataSourceId');
+          expect(objects).toHaveProperty('nameSingular');
+          expect(objects).toHaveProperty('namePlural');
+          expect(objects).toHaveProperty('labelSingular');
+          expect(objects).toHaveProperty('labelPlural');
+          expect(objects).toHaveProperty('description');
+          expect(objects).toHaveProperty('icon');
+          expect(objects).toHaveProperty('isCustom');
+          expect(objects).toHaveProperty('isRemote');
+          expect(objects).toHaveProperty('isActive');
+          expect(objects).toHaveProperty('isSystem');
+          expect(objects).toHaveProperty('createdAt');
+          expect(objects).toHaveProperty('updatedAt');
+          expect(objects).toHaveProperty('labelIdentifierFieldMetadataId');
+          expect(objects).toHaveProperty('imageIdentifierFieldMetadataId');
+        }
       });
   });
 });

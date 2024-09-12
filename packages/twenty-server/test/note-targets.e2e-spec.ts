@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('noteTargetsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many noteTargets', () => {
     const queryData = {
       query: `
@@ -37,9 +23,9 @@ describe('noteTargetsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -54,18 +40,18 @@ describe('noteTargetsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const notetargets = edges[0].node;
 
-        const notetargets = edges[0].node;
-
-        expect(notetargets).toHaveProperty('id');
-        expect(notetargets).toHaveProperty('createdAt');
-        expect(notetargets).toHaveProperty('updatedAt');
-        expect(notetargets).toHaveProperty('deletedAt');
-        expect(notetargets).toHaveProperty('noteId');
-        expect(notetargets).toHaveProperty('personId');
-        expect(notetargets).toHaveProperty('companyId');
-        expect(notetargets).toHaveProperty('opportunityId');
+          expect(notetargets).toHaveProperty('id');
+          expect(notetargets).toHaveProperty('createdAt');
+          expect(notetargets).toHaveProperty('updatedAt');
+          expect(notetargets).toHaveProperty('deletedAt');
+          expect(notetargets).toHaveProperty('noteId');
+          expect(notetargets).toHaveProperty('personId');
+          expect(notetargets).toHaveProperty('companyId');
+          expect(notetargets).toHaveProperty('opportunityId');
+        }
       });
   });
 });

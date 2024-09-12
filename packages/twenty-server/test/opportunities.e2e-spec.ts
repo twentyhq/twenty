@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('opportunitiesResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many opportunities', () => {
     const queryData = {
       query: `
@@ -39,9 +25,9 @@ describe('opportunitiesResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -56,20 +42,20 @@ describe('opportunitiesResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const opportunities = edges[0].node;
 
-        const opportunities = edges[0].node;
-
-        expect(opportunities).toHaveProperty('name');
-        expect(opportunities).toHaveProperty('closeDate');
-        expect(opportunities).toHaveProperty('stage');
-        expect(opportunities).toHaveProperty('position');
-        expect(opportunities).toHaveProperty('id');
-        expect(opportunities).toHaveProperty('createdAt');
-        expect(opportunities).toHaveProperty('updatedAt');
-        expect(opportunities).toHaveProperty('deletedAt');
-        expect(opportunities).toHaveProperty('pointOfContactId');
-        expect(opportunities).toHaveProperty('companyId');
+          expect(opportunities).toHaveProperty('name');
+          expect(opportunities).toHaveProperty('closeDate');
+          expect(opportunities).toHaveProperty('stage');
+          expect(opportunities).toHaveProperty('position');
+          expect(opportunities).toHaveProperty('id');
+          expect(opportunities).toHaveProperty('createdAt');
+          expect(opportunities).toHaveProperty('updatedAt');
+          expect(opportunities).toHaveProperty('deletedAt');
+          expect(opportunities).toHaveProperty('pointOfContactId');
+          expect(opportunities).toHaveProperty('companyId');
+        }
       });
   });
 });

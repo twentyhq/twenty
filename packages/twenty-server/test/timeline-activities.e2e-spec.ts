@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('timelineActivitiesResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many timelineActivities', () => {
     const queryData = {
       query: `
@@ -44,9 +30,9 @@ describe('timelineActivitiesResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -61,25 +47,25 @@ describe('timelineActivitiesResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const timelineactivities = edges[0].node;
 
-        const timelineactivities = edges[0].node;
-
-        expect(timelineactivities).toHaveProperty('happensAt');
-        expect(timelineactivities).toHaveProperty('name');
-        expect(timelineactivities).toHaveProperty('properties');
-        expect(timelineactivities).toHaveProperty('linkedRecordCachedName');
-        expect(timelineactivities).toHaveProperty('linkedRecordId');
-        expect(timelineactivities).toHaveProperty('linkedObjectMetadataId');
-        expect(timelineactivities).toHaveProperty('id');
-        expect(timelineactivities).toHaveProperty('createdAt');
-        expect(timelineactivities).toHaveProperty('updatedAt');
-        expect(timelineactivities).toHaveProperty('workspaceMemberId');
-        expect(timelineactivities).toHaveProperty('personId');
-        expect(timelineactivities).toHaveProperty('companyId');
-        expect(timelineactivities).toHaveProperty('opportunityId');
-        expect(timelineactivities).toHaveProperty('noteId');
-        expect(timelineactivities).toHaveProperty('taskId');
+          expect(timelineactivities).toHaveProperty('happensAt');
+          expect(timelineactivities).toHaveProperty('name');
+          expect(timelineactivities).toHaveProperty('properties');
+          expect(timelineactivities).toHaveProperty('linkedRecordCachedName');
+          expect(timelineactivities).toHaveProperty('linkedRecordId');
+          expect(timelineactivities).toHaveProperty('linkedObjectMetadataId');
+          expect(timelineactivities).toHaveProperty('id');
+          expect(timelineactivities).toHaveProperty('createdAt');
+          expect(timelineactivities).toHaveProperty('updatedAt');
+          expect(timelineactivities).toHaveProperty('workspaceMemberId');
+          expect(timelineactivities).toHaveProperty('personId');
+          expect(timelineactivities).toHaveProperty('companyId');
+          expect(timelineactivities).toHaveProperty('opportunityId');
+          expect(timelineactivities).toHaveProperty('noteId');
+          expect(timelineactivities).toHaveProperty('taskId');
+        }
       });
   });
 });

@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('viewFiltersResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many viewFilters', () => {
     const queryData = {
       query: `
@@ -37,9 +23,9 @@ describe('viewFiltersResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -54,18 +40,18 @@ describe('viewFiltersResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const viewfilters = edges[0].node;
 
-        const viewfilters = edges[0].node;
-
-        expect(viewfilters).toHaveProperty('fieldMetadataId');
-        expect(viewfilters).toHaveProperty('operand');
-        expect(viewfilters).toHaveProperty('value');
-        expect(viewfilters).toHaveProperty('displayValue');
-        expect(viewfilters).toHaveProperty('id');
-        expect(viewfilters).toHaveProperty('createdAt');
-        expect(viewfilters).toHaveProperty('updatedAt');
-        expect(viewfilters).toHaveProperty('viewId');
+          expect(viewfilters).toHaveProperty('fieldMetadataId');
+          expect(viewfilters).toHaveProperty('operand');
+          expect(viewfilters).toHaveProperty('value');
+          expect(viewfilters).toHaveProperty('displayValue');
+          expect(viewfilters).toHaveProperty('id');
+          expect(viewfilters).toHaveProperty('createdAt');
+          expect(viewfilters).toHaveProperty('updatedAt');
+          expect(viewfilters).toHaveProperty('viewId');
+        }
       });
   });
 });

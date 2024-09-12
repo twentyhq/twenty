@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('auditLogsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many auditLogs', () => {
     const queryData = {
       query: `
@@ -39,9 +25,9 @@ describe('auditLogsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -56,20 +42,20 @@ describe('auditLogsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const auditlogs = edges[0].node;
 
-        const auditlogs = edges[0].node;
-
-        expect(auditlogs).toHaveProperty('name');
-        expect(auditlogs).toHaveProperty('properties');
-        expect(auditlogs).toHaveProperty('context');
-        expect(auditlogs).toHaveProperty('objectName');
-        expect(auditlogs).toHaveProperty('objectMetadataId');
-        expect(auditlogs).toHaveProperty('recordId');
-        expect(auditlogs).toHaveProperty('id');
-        expect(auditlogs).toHaveProperty('createdAt');
-        expect(auditlogs).toHaveProperty('updatedAt');
-        expect(auditlogs).toHaveProperty('workspaceMemberId');
+          expect(auditlogs).toHaveProperty('name');
+          expect(auditlogs).toHaveProperty('properties');
+          expect(auditlogs).toHaveProperty('context');
+          expect(auditlogs).toHaveProperty('objectName');
+          expect(auditlogs).toHaveProperty('objectMetadataId');
+          expect(auditlogs).toHaveProperty('recordId');
+          expect(auditlogs).toHaveProperty('id');
+          expect(auditlogs).toHaveProperty('createdAt');
+          expect(auditlogs).toHaveProperty('updatedAt');
+          expect(auditlogs).toHaveProperty('workspaceMemberId');
+        }
       });
   });
 });

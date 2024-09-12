@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('calendarEventsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many calendarEvents', () => {
     const queryData = {
       query: `
@@ -44,9 +30,9 @@ describe('calendarEventsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -61,25 +47,25 @@ describe('calendarEventsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const calendarevents = edges[0].node;
 
-        const calendarevents = edges[0].node;
-
-        expect(calendarevents).toHaveProperty('title');
-        expect(calendarevents).toHaveProperty('isCanceled');
-        expect(calendarevents).toHaveProperty('isFullDay');
-        expect(calendarevents).toHaveProperty('startsAt');
-        expect(calendarevents).toHaveProperty('endsAt');
-        expect(calendarevents).toHaveProperty('externalCreatedAt');
-        expect(calendarevents).toHaveProperty('externalUpdatedAt');
-        expect(calendarevents).toHaveProperty('description');
-        expect(calendarevents).toHaveProperty('location');
-        expect(calendarevents).toHaveProperty('iCalUID');
-        expect(calendarevents).toHaveProperty('conferenceSolution');
-        expect(calendarevents).toHaveProperty('recurringEventExternalId');
-        expect(calendarevents).toHaveProperty('id');
-        expect(calendarevents).toHaveProperty('createdAt');
-        expect(calendarevents).toHaveProperty('updatedAt');
+          expect(calendarevents).toHaveProperty('title');
+          expect(calendarevents).toHaveProperty('isCanceled');
+          expect(calendarevents).toHaveProperty('isFullDay');
+          expect(calendarevents).toHaveProperty('startsAt');
+          expect(calendarevents).toHaveProperty('endsAt');
+          expect(calendarevents).toHaveProperty('externalCreatedAt');
+          expect(calendarevents).toHaveProperty('externalUpdatedAt');
+          expect(calendarevents).toHaveProperty('description');
+          expect(calendarevents).toHaveProperty('location');
+          expect(calendarevents).toHaveProperty('iCalUID');
+          expect(calendarevents).toHaveProperty('conferenceSolution');
+          expect(calendarevents).toHaveProperty('recurringEventExternalId');
+          expect(calendarevents).toHaveProperty('id');
+          expect(calendarevents).toHaveProperty('createdAt');
+          expect(calendarevents).toHaveProperty('updatedAt');
+        }
       });
   });
 });

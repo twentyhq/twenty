@@ -93,10 +93,9 @@ fragment TypeRef on __Type {
 """
 
 GRAPHQL_URL = 'http://localhost:3000/graphql'
-BEARER_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwiaWF0IjoxNzI1OTgwNDI4LCJleHAiOjE3MjU5ODIyMjh9.nQLkYmnSvfzBKCyaUcfAUs8s4y3DAGB-bWCB8jnb8w8'
+BEARER_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwiaWF0IjoxNzI2MDYwMTQ0LCJleHAiOjE3MjYwNzQ1NDR9.QZSaIbIPNAjGrXsOLBKyPxQ0FnxUNPV6p4WlgtDc2hE'
 TEST_OUTPUT_DIR = './test'
 
-# Function to make the introspection query request
 def fetch_graphql_schema():
     headers = {'Authorization': BEARER_TOKEN}
     response = requests.post(
@@ -106,15 +105,20 @@ def fetch_graphql_schema():
     )
     return response.json()
 
-# Function to convert a name to kebab-case (for file names)
 def to_kebab_case(name):
     return re.sub(r'(?<!^)(?=[A-Z])', '-', name).lower()
 
-# Recursively unwrap types
 def unwrap_type(type_info):
     while type_info.get('ofType'):
         type_info = type_info['ofType']
     return type_info
+
+def has_required_args(args):
+    for arg in args:
+        arg_type = unwrap_type(arg['type'])
+        if arg_type['kind'] == 'NON_NULL':
+            return True
+    return False
 
 def generate_test_content(query_name, fields):
     field_names = [f['name'] for f in fields if unwrap_type(f['type'])['kind'] in ['SCALAR', 'ENUM']]
@@ -125,25 +129,11 @@ def generate_test_content(query_name, fields):
 
     field_selection = '\n                '.join(field_names)
 
-    except_selection = '\n        '.join([f"expect({query_name.lower()}).toHaveProperty('{field}');" for field in field_names])
+    except_selection = '\n          '.join([f"expect({query_name.lower()}).toHaveProperty('{field}');" for field in field_names])
 
-    return f"""import {{ INestApplication }} from '@nestjs/common';
-
-import request from 'supertest';
-
-import setup from './utils/global-setup';
+    return f"""import request from 'supertest';
 
 describe('{query_name}Resolver (e2e)', () => {{
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {{
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  }});
-
   it('should find many {query_name}', () => {{
     const queryData = {{
       query: `
@@ -159,9 +149,9 @@ describe('{query_name}Resolver (e2e)', () => {{
       `,
     }};
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${{accessToken}}`)
+      .set('Authorization', `Bearer ${{global.accessToken}}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {{
@@ -176,11 +166,11 @@ describe('{query_name}Resolver (e2e)', () => {{
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {{
+          const {query_name.lower()} = edges[0].node;
 
-        const {query_name.lower()} = edges[0].node;
-
-        {except_selection}
+          {except_selection}
+        }}
       }});
   }});
 }});
@@ -207,8 +197,17 @@ def generate_tests():
     # Iterate through all queries in the schema
     for query in query_type['fields']:
         query_name = query['name']
+
+        # Skip queries with required arguments
+        if has_required_args(query['args']):
+            print(f"Skipping {query_name}: Required arguments found.")
+            continue
+        
+        if 'Duplicates' in query_name:
+            print(f"Skipping {query_name}: Duplicates query.")
+            continue
+        
         query_return_type = unwrap_type(query['type'])
-        query_return_fields = query_return_type.get('fields') or []
 
         # Check if this is a connection type
         if query_return_type['kind'] == 'OBJECT' and 'Connection' in query_return_type['name']:

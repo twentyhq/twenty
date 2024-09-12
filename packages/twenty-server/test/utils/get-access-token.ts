@@ -2,6 +2,11 @@ import { INestApplication } from '@nestjs/common';
 
 import request from 'supertest';
 
+const auth = {
+  email: 'tim@apple.dev',
+  password: 'Applecar2025',
+};
+
 /**
  * Function to authenticate and get an access token for the given app
  */
@@ -15,7 +20,7 @@ export const getAccessToken = async (
       .send({
         query: `
           mutation Challenge {
-            challenge(email: "tim@apple.dev", password: "Applecar2025") {
+            challenge(email: "${auth.email}", password: "${auth.password}") {
               loginToken {
                 token
                 expiresAt

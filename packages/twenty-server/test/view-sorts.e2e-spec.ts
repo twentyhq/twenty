@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('viewSortsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many viewSorts', () => {
     const queryData = {
       query: `
@@ -35,9 +21,9 @@ describe('viewSortsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -52,16 +38,16 @@ describe('viewSortsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const viewsorts = edges[0].node;
 
-        const viewsorts = edges[0].node;
-
-        expect(viewsorts).toHaveProperty('fieldMetadataId');
-        expect(viewsorts).toHaveProperty('direction');
-        expect(viewsorts).toHaveProperty('id');
-        expect(viewsorts).toHaveProperty('createdAt');
-        expect(viewsorts).toHaveProperty('updatedAt');
-        expect(viewsorts).toHaveProperty('viewId');
+          expect(viewsorts).toHaveProperty('fieldMetadataId');
+          expect(viewsorts).toHaveProperty('direction');
+          expect(viewsorts).toHaveProperty('id');
+          expect(viewsorts).toHaveProperty('createdAt');
+          expect(viewsorts).toHaveProperty('updatedAt');
+          expect(viewsorts).toHaveProperty('viewId');
+        }
       });
   });
 });

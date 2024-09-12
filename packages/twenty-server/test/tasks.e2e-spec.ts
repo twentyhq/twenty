@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('tasksResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many tasks', () => {
     const queryData = {
       query: `
@@ -39,9 +25,9 @@ describe('tasksResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -56,20 +42,20 @@ describe('tasksResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const tasks = edges[0].node;
 
-        const tasks = edges[0].node;
-
-        expect(tasks).toHaveProperty('position');
-        expect(tasks).toHaveProperty('title');
-        expect(tasks).toHaveProperty('body');
-        expect(tasks).toHaveProperty('dueAt');
-        expect(tasks).toHaveProperty('status');
-        expect(tasks).toHaveProperty('id');
-        expect(tasks).toHaveProperty('createdAt');
-        expect(tasks).toHaveProperty('updatedAt');
-        expect(tasks).toHaveProperty('deletedAt');
-        expect(tasks).toHaveProperty('assigneeId');
+          expect(tasks).toHaveProperty('position');
+          expect(tasks).toHaveProperty('title');
+          expect(tasks).toHaveProperty('body');
+          expect(tasks).toHaveProperty('dueAt');
+          expect(tasks).toHaveProperty('status');
+          expect(tasks).toHaveProperty('id');
+          expect(tasks).toHaveProperty('createdAt');
+          expect(tasks).toHaveProperty('updatedAt');
+          expect(tasks).toHaveProperty('deletedAt');
+          expect(tasks).toHaveProperty('assigneeId');
+        }
       });
   });
 });

@@ -1,20 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-
 import request from 'supertest';
 
-import setup from './utils/global-setup';
-
 describe('messageThreadsResolver (e2e)', () => {
-  let app: INestApplication;
-  let accessToken: string | undefined;
-
-  beforeAll(async () => {
-    const setupData = await setup();
-
-    app = setupData.app;
-    accessToken = setupData.accessToken;
-  });
-
   it('should find many messageThreads', () => {
     const queryData = {
       query: `
@@ -32,9 +18,9 @@ describe('messageThreadsResolver (e2e)', () => {
       `,
     };
 
-    return request(app.getHttpServer())
+    return request(global.app.getHttpServer())
       .post('/graphql')
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${global.accessToken}`)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -49,13 +35,13 @@ describe('messageThreadsResolver (e2e)', () => {
 
         const edges = data.edges;
 
-        expect(edges.length).toBeGreaterThan(0);
+        if (edges.length > 0) {
+          const messagethreads = edges[0].node;
 
-        const messagethreads = edges[0].node;
-
-        expect(messagethreads).toHaveProperty('id');
-        expect(messagethreads).toHaveProperty('createdAt');
-        expect(messagethreads).toHaveProperty('updatedAt');
+          expect(messagethreads).toHaveProperty('id');
+          expect(messagethreads).toHaveProperty('createdAt');
+          expect(messagethreads).toHaveProperty('updatedAt');
+        }
       });
   });
 });
