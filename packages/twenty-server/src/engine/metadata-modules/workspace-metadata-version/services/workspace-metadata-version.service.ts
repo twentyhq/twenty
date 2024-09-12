@@ -9,6 +9,7 @@ import {
   WorkspaceMetadataVersionException,
   WorkspaceMetadataVersionExceptionCode,
 } from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class WorkspaceMetadataVersionService {
@@ -18,6 +19,7 @@ export class WorkspaceMetadataVersionService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async incrementMetadataVersion(workspaceId: string): Promise<void> {
@@ -41,6 +43,10 @@ export class WorkspaceMetadataVersionService {
       { metadataVersion: newMetadataVersion },
     );
 
-    this.workspaceMetadataCacheService.recomputeMetadataCache(workspaceId);
+    await this.workspaceMetadataCacheService.recomputeMetadataCache(
+      workspaceId,
+    );
+
+    await this.twentyORMGlobalManager.loadDataSourceForWorkspace(workspaceId);
   }
 }

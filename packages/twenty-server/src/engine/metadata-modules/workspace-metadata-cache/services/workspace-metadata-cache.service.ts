@@ -92,7 +92,7 @@ export class WorkspaceMetadataCacheService {
     );
   }
 
-  async getMetadataVersionFromDatabase(
+  private async getMetadataVersionFromDatabase(
     workspaceId: string,
   ): Promise<number | undefined> {
     const workspace = await this.workspaceRepository.findOne({
@@ -102,7 +102,7 @@ export class WorkspaceMetadataCacheService {
     return workspace?.metadataVersion;
   }
 
-  async getMetadataVersionFromCache(
+  private async getMetadataVersionFromCache(
     workspaceId: string,
   ): Promise<number | undefined> {
     return await this.workspaceCacheStorageService.getMetadataVersion(

@@ -31,9 +31,7 @@ export class WorkspaceDatasourceFactory {
     workspaceMetadataVersion: number | null,
   ): Promise<WorkspaceDataSource> {
     const latestWorkspaceMetadataVersion =
-      await this.workspaceMetadataCacheService.getMetadataVersionFromCache(
-        workspaceId,
-      );
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (latestWorkspaceMetadataVersion === undefined) {
       await this.workspaceMetadataCacheService.recomputeMetadataCache(
