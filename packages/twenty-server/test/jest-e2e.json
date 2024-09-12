@@ -1,4 +1,6 @@
 {
+  "silent": false,
+  "verbose": true,
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "testEnvironment": "node",

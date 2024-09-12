@@ -26,19 +26,11 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
-
 @Module({
   imports: [
-    // Nest.js devtools, use devtools.nestjs.com to debug
-    // DevtoolsModule.registerAsync({
-    //   useFactory: (environmentService: EnvironmentService) => ({
-    //     http: environmentService.get('DEBUG_MODE'),
-    //     port: environmentService.get('DEBUG_PORT'),
-    //   }),
-    //   inject: [EnvironmentService],
-    // }),
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
