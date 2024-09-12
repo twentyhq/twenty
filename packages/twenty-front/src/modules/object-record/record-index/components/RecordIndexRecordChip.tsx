@@ -26,7 +26,8 @@ export const RecordIdentifierChip = ({
     onIndexIdentifierClick(record.id);
   };
 
-  const { icon: LeftIcon, iconColor } = GetAvatarIcon(objectNameSingular);
+  const { Icon: LeftIcon, IconColor: LeftIconColor } =
+    GetAvatarIcon(objectNameSingular);
   return (
     <AvatarChip
       placeholderColorSeed={record.id}
@@ -36,7 +37,7 @@ export const RecordIdentifierChip = ({
       onClick={handleAvatarChipClick}
       variant={variant}
       LeftIcon={LeftIcon}
-      LeftIconColor={iconColor}
+      LeftIconColor={LeftIconColor}
     />
   );
 };

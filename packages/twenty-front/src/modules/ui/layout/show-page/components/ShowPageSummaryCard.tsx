@@ -17,8 +17,8 @@ type ShowPageSummaryCardProps = {
   date: string;
   id?: string;
   logoOrAvatar?: string;
-  Icon?: IconComponent;
-  IconColor?: string;
+  icon?: IconComponent;
+  iconColor?: string;
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
   loading: boolean;
@@ -101,8 +101,8 @@ export const ShowPageSummaryCard = ({
   date,
   id,
   logoOrAvatar,
-  Icon,
-  IconColor,
+  icon,
+  iconColor,
   onUploadPicture,
   title,
   loading,
@@ -137,8 +137,9 @@ export const ShowPageSummaryCard = ({
           size="xl"
           placeholderColorSeed={id}
           placeholder={avatarPlaceholder}
-          type={Icon ? 'squared' : avatarType}
-          Icon={Icon ? <Icon color={IconColor} size={24} /> : undefined}
+          type={icon ? 'icon' : avatarType}
+          Icon={icon ? icon : undefined}
+          iconColor={iconColor ? iconColor : undefined}
         />
         <StyledFileInput
           ref={inputFileRef}

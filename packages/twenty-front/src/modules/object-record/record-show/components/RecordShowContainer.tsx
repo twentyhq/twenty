@@ -154,7 +154,7 @@ export const RecordShowContainer = ({
       objectNameSingular !== CoreObjectNameSingular.Task &&
       fieldMetadataItem.name !== 'taskTargets',
   );
-  const { icon: Icon, iconColor } = GetAvatarIcon(objectNameSingular);
+  const { Icon, IconColor } = GetAvatarIcon(objectNameSingular);
   const isReadOnly = objectMetadataItem.isRemote;
   const isMobile = useIsMobile() || isInRightDrawer;
   const isPrefetchLoading = useIsPrefetchLoading();
@@ -164,8 +164,8 @@ export const RecordShowContainer = ({
       isMobile={isMobile}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
-      Icon={Icon}
-      IconColor={iconColor}
+      icon={Icon}
+      iconColor={IconColor}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordFromStore.createdAt ?? ''}
       loading={isPrefetchLoading || loading || recordLoading}

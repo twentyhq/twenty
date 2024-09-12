@@ -1,12 +1,13 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { ReactNode, useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
 import { Nullable, getImageAbsoluteURI, stringToHslColor } from '@ui/utilities';
 
@@ -17,13 +18,17 @@ const StyledAvatar = styled.div<{
   color: string;
   backgroundColor: string;
   backgroundTransparentLight: string;
+  type?: Nullable<AvatarType>;
 }>`
   align-items: center;
   flex-shrink: 0;
   overflow: hidden;
   user-select: none;
 
-  border-radius: ${({ rounded }) => (rounded ? '50%' : '2px')};
+  border-radius: ${({ rounded, type }) => {
+    if (rounded === true) return '50%';
+    return type === 'icon' ? '4px' : '2px';
+  }};
   display: flex;
   font-size: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].fontSize};
   height: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
@@ -51,7 +56,8 @@ export type AvatarProps = {
   size?: AvatarSize;
   placeholder: string | undefined;
   placeholderColorSeed?: string;
-  Icon?: ReactNode;
+  Icon?: IconComponent;
+  iconColor?: string;
   type?: Nullable<AvatarType>;
   color?: string;
   backgroundColor?: string;
@@ -65,6 +71,7 @@ export const Avatar = ({
   placeholder,
   placeholderColorSeed = placeholder,
   Icon,
+  iconColor,
   onClick,
   type = 'squared',
   color,
@@ -113,11 +120,12 @@ export const Avatar = ({
       color={fixedColor}
       clickable={!isUndefined(onClick)}
       rounded={type === 'rounded'}
+      type={type}
       onClick={onClick}
       backgroundTransparentLight={theme.background.transparent.light}
     >
       {Icon ? (
-        Icon
+        <Icon color={iconColor ? iconColor : 'currentColor'} size={24} />
       ) : showPlaceholder ? (
         placeholderChar
       ) : (
