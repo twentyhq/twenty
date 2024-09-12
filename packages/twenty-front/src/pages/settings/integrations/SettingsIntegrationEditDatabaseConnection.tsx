@@ -2,21 +2,26 @@ import { IconSettings } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationEditDatabaseConnectionContainer } from '@/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContainer';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsIntegrationEditDatabaseConnection = () => {
   return (
     <SubMenuTopBarContainer
       Icon={IconSettings}
-      title={
-        <Breadcrumb
-          links={[
-            // TODO
-            { children: 'Edit connection' },
-          ]}
-        />
-      }
+      title="Edit connection"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Integrations',
+          href: getSettingsPagePath(SettingsPath.Integrations),
+        },
+        { children: 'Edit connection' },
+      ]}
     >
       <SettingsPageContainer>
         <SettingsIntegrationEditDatabaseConnectionContainer />

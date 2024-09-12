@@ -1,7 +1,7 @@
-import { ReactNode, useState } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
@@ -41,7 +41,6 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
     isSubMenu
       ? css`
           padding-right: ${theme.spacing(8)};
-          padding-top: 41px;
         `
       : ''}
 

@@ -42,7 +42,7 @@ export const AppNavigationDrawer = ({
   const drawerProps: NavigationDrawerProps = isSettingsDrawer
     ? {
         isSubMenu: true,
-        title: 'Settings',
+        title: 'Exit Settings',
         children: <SettingsNavigationDrawerItems />,
         footer: <GithubVersionLink />,
       }

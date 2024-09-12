@@ -17,12 +17,13 @@ import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTo
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 
 const StyledInfo = styled.span`
@@ -65,6 +66,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       setApiKeyName(record.name);
     },
   });
+  const developerPath = getSettingsPagePath(SettingsPath.Developers);
 
   const deleteIntegration = async (redirect = true) => {
     await updateApiKey?.({
@@ -72,7 +74,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       updateOneRecordInput: { revokedAt: DateTime.now().toString() },
     });
     if (redirect) {
-      navigate('/settings/developers');
+      navigate(developerPath);
     }
   };
 
@@ -122,14 +124,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
       {apiKeyData?.name && (
         <SubMenuTopBarContainer
           Icon={IconCode}
-          title={
-            <Breadcrumb
-              links={[
-                { children: 'Developers', href: '/settings/developers' },
-                { children: `${apiKeyName} API Key` },
-              ]}
-            />
-          }
+          title={apiKeyData?.name}
+          links={[
+            {
+              children: 'Workspace',
+              href: getSettingsPagePath(SettingsPath.Workspace),
+            },
+            { children: 'Developers', href: developerPath },
+            { children: `${apiKeyName} API Key` },
+          ]}
         >
           <SettingsPageContainer>
             <Section>

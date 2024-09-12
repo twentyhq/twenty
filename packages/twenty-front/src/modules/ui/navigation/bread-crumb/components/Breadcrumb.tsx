@@ -1,25 +1,21 @@
 import styled from '@emotion/styled';
-import { CSSProperties, Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-type BreadcrumbProps = {
+export type BreadcrumbProps = {
   className?: string;
-  links: {
-    href?: string;
-    styles?: CSSProperties;
-    children?: string | ReactNode;
-  }[];
+  links: { children: string | ReactNode; href?: string }[];
 };
 
 const StyledWrapper = styled.nav`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: grid;
   font-size: ${({ theme }) => theme.font.size.md};
   // font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  gap: ${({ theme }) => theme.spacing(2)};
+  grid-auto-flow: column;
+  grid-column-gap: ${({ theme }) => theme.spacing(1)};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  white-space: nowrap;
   max-width: 100%;
   min-width: 0;
 `;
@@ -39,25 +35,26 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-// TODO: not sure that passing styles to the link is a good idea
+const StyledDivider = styled.span`
+  width: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
   return (
     <StyledWrapper className={className}>
-      {links.map((link, index) => {
+      {links?.map((link, index) => {
         const text = typeof link.children === 'string' ? link.children : '';
 
         return (
           <Fragment key={index}>
             {link.href ? (
-              <StyledLink style={link.styles} title={text} to={link.href}>
+              <StyledLink title={text} to={link.href}>
                 {link.children}
               </StyledLink>
             ) : (
-              <StyledText style={link.styles} title={text}>
-                {link.children}
-              </StyledText>
+              <StyledText title={text}>{link.children}</StyledText>
             )}
-            {index < links.length - 1 && '/'}
+            {index < links.length - 1 && <StyledDivider>/</StyledDivider>}
           </Fragment>
         );
       })}

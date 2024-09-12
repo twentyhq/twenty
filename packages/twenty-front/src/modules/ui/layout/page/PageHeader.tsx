@@ -16,7 +16,7 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-export const PAGE_BAR_MIN_HEIGHT = 40;
+export const PAGE_BAR_MIN_HEIGHT = 32;
 
 const StyledTopBarContainer = styled.div<{ width?: number }>`
   align-items: center;
@@ -27,7 +27,6 @@ const StyledTopBarContainer = styled.div<{ width?: number }>`
   font-size: ${({ theme }) => theme.font.size.lg};
   justify-content: space-between;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
-  padding: ${({ theme }) => theme.spacing(2)};
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
   z-index: 20;
@@ -79,7 +78,7 @@ const StyledTopBarButtonContainer = styled.div`
 `;
 
 type PageHeaderProps = {
-  title: ReactNode;
+  title: string | ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
   hasPaginationButtons?: boolean;
@@ -87,7 +86,7 @@ type PageHeaderProps = {
   hasNextRecord?: boolean;
   navigateToPreviousRecord?: () => void;
   navigateToNextRecord?: () => void;
-  Icon: IconComponent;
+  Icon?: IconComponent;
   children?: ReactNode;
   width?: number;
 };
