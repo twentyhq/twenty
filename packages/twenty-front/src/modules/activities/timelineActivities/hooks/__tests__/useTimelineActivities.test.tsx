@@ -2,14 +2,18 @@ import { renderHook } from '@testing-library/react';
 
 import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
 import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
+import { getJestHookWrapper } from '~/testing/jest/getJestHookWrapper';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),
 }));
 
+const Wrappers = getJestHookWrapper({
+  apolloMocks: [],
+});
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <Wrappers>{children}</Wrappers>
 );
 
 describe('useTimelineActivities', () => {
@@ -46,6 +50,7 @@ describe('useTimelineActivities', () => {
         updatedAt: '2024-03-22T08:28:44.830Z',
       },
     ];
+
     const mockTargetableObject = {
       id: '1',
       targetObjectNameSingular: 'Opportunity',
@@ -54,15 +59,28 @@ describe('useTimelineActivities', () => {
     const useFindManyRecordsMock = jest.requireMock(
       '@/object-record/hooks/useFindManyRecords',
     );
+
     useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
       records: mockedTimelineActivities,
     });
 
     const { result } = renderHook(
-      () => useTimelineActivities(mockTargetableObject),
+      () => {
+        return useTimelineActivities(mockTargetableObject);
+      },
       { wrapper: Wrapper },
     );
 
+    const wrongMockedTimelineActivities = [
+      {
+        ...mockedTimelineActivities[0],
+        name: 'wrong.updated.company',
+      },
+    ];
+
     expect(result.current.timelineActivities).toEqual(mockedTimelineActivities);
+    expect(result.current.timelineActivities).not.toEqual(
+      wrongMockedTimelineActivities,
+    );
   });
 });

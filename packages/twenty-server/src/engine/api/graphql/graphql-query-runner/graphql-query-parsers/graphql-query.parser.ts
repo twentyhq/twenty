@@ -1,6 +1,7 @@
 import {
   FindOptionsOrderValue,
   FindOptionsWhere,
+  IsNull,
   ObjectLiteral,
 } from 'typeorm';
 
@@ -32,20 +33,55 @@ export class GraphqlQueryParser {
 
   parseFilter(
     recordFilter: RecordFilter,
+    shouldAddDefaultSoftDeleteCondition = false,
   ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
     const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
       this.fieldMetadataMap,
     );
 
-    return graphqlQueryFilterParser.parse(recordFilter);
+    const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
+
+    if (
+      !shouldAddDefaultSoftDeleteCondition ||
+      !('deletedAt' in this.fieldMetadataMap)
+    ) {
+      return parsedFilter;
+    }
+
+    return this.addDefaultSoftDeleteCondition(parsedFilter);
   }
 
-  parseOrder(orderBy: RecordOrderBy): Record<string, FindOptionsOrderValue> {
+  private addDefaultSoftDeleteCondition(
+    filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
+  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
+    if (Array.isArray(filter)) {
+      return filter.map((condition) =>
+        this.addSoftDeleteToCondition(condition),
+      );
+    }
+
+    return this.addSoftDeleteToCondition(filter);
+  }
+
+  private addSoftDeleteToCondition(
+    condition: FindOptionsWhere<ObjectLiteral>,
+  ): FindOptionsWhere<ObjectLiteral> {
+    if (!('deletedAt' in condition)) {
+      return { ...condition, deletedAt: IsNull() };
+    }
+
+    return condition;
+  }
+
+  parseOrder(
+    orderBy: RecordOrderBy,
+    isForwardPagination = true,
+  ): Record<string, FindOptionsOrderValue> {
     const graphqlQueryOrderParser = new GraphqlQueryOrderParser(
       this.fieldMetadataMap,
     );
 
-    return graphqlQueryOrderParser.parse(orderBy);
+    return graphqlQueryOrderParser.parse(orderBy, isForwardPagination);
   }
 
   parseSelectedFields(

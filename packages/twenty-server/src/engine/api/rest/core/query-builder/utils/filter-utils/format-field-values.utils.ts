@@ -23,12 +23,16 @@ export const formatFieldValue = (
   if (comparator === 'is') {
     return value;
   }
-  if (fieldType === FieldMetadataType.NUMBER) {
-    return parseInt(value);
+  switch (fieldType) {
+    case FieldMetadataType.NUMERIC:
+      return parseInt(value);
+    case FieldMetadataType.NUMBER:
+    case FieldMetadataType.POSITION:
+      return parseFloat(value);
+    case FieldMetadataType.BOOLEAN:
+      return value.toLowerCase() === 'true';
   }
-  if (fieldType === FieldMetadataType.BOOLEAN) {
-    return value.toLowerCase() === 'true';
-  }
+
   if (
     (value[0] === '"' || value[0] === "'") &&
     (value.charAt(value.length - 1) === '"' ||

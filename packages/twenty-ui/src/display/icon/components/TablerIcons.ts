@@ -178,6 +178,7 @@ export {
   IconWand,
   IconWorld,
   IconX,
+  IconPlaylistAdd,
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';

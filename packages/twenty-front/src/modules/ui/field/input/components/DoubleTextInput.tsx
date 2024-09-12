@@ -172,6 +172,13 @@ export const DoubleTextInput = ({
     onPaste?.({ firstValue: splittedName[0], secondValue: splittedName[1] });
   };
 
+  const handleClickToPreventParentClickEvents = (
+    event: React.MouseEvent<HTMLInputElement>,
+  ) => {
+    event.stopPropagation();
+    event.preventDefault();
+  };
+
   return (
     <StyledContainer ref={containerRef}>
       <StyledTextInput
@@ -187,6 +194,7 @@ export const DoubleTextInput = ({
         onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
           handleOnPaste(event)
         }
+        onClick={handleClickToPreventParentClickEvents}
       />
       <StyledTextInput
         autoComplete="off"
@@ -197,6 +205,7 @@ export const DoubleTextInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(firstInternalValue, event.target.value);
         }}
+        onClick={handleClickToPreventParentClickEvents}
       />
     </StyledContainer>
   );

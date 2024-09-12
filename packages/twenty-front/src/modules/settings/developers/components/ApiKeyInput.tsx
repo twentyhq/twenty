@@ -32,7 +32,7 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
         Icon={IconCopy}
         title="Copy"
         onClick={() => {
-          enqueueSnackBar('Api Key copied to clipboard', {
+          enqueueSnackBar('API Key copied to clipboard', {
             variant: SnackBarVariant.Success,
             icon: <IconCopy size={theme.icon.size.md} />,
             duration: 2000,
