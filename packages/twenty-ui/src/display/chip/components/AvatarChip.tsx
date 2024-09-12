@@ -76,7 +76,7 @@ export const AvatarChip = ({
             <LeftIcon
               size={theme.icon.size.md}
               stroke={theme.icon.stroke.sm}
-              color={LeftIconColor ? LeftIconColor : 'currenColor'}
+              color={LeftIconColor || 'currentColor'}
             />
           )
         ) : (
