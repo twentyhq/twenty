@@ -19,6 +19,7 @@ export class EntitySchemaRelationFactory {
 
   async create(
     workspaceId: string,
+    metadataVersion: number,
     fieldMetadataCollection: FieldMetadataEntity[],
   ): Promise<EntitySchemaRelationMap> {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
@@ -40,6 +41,7 @@ export class EntitySchemaRelationFactory {
       const objectMetadataCollection =
         await this.workspaceCacheStorageService.getObjectMetadataCollection(
           workspaceId,
+          metadataVersion,
         );
 
       if (!objectMetadataCollection) {

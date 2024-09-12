@@ -17,6 +17,7 @@ export class EntitySchemaFactory {
 
   async create(
     workspaceId: string,
+    metadataVersion: number,
     objectMetadata: ObjectMetadataEntity,
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(
@@ -26,6 +27,7 @@ export class EntitySchemaFactory {
 
     const relations = await this.entitySchemaRelationFactory.create(
       workspaceId,
+      metadataVersion,
       objectMetadata.fields,
     );
 
