@@ -8,6 +8,7 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeTo0_24CommandModule } from 'src/database/commands/upgrade-version/0-24/0-24-upgrade-version.module';
+import { UpgradeTo0_30CommandModule } from 'src/database/commands/upgrade-version/0-30/0-30-upgrade-version.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -46,6 +47,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     DataSeedDemoWorkspaceModule,
     WorkspaceMetadataVersionModule,
     UpgradeTo0_24CommandModule,
+    UpgradeTo0_30CommandModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

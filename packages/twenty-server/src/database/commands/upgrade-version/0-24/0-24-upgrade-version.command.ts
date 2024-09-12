@@ -1,6 +1,5 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { SetCustomObjectIsSoftDeletableCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-custom-object-is-soft-deletable.command';
 import { SetMessageDirectionCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-message-direction.command';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -16,7 +15,6 @@ export class UpgradeTo0_24Command extends CommandRunner {
   constructor(
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly setMessagesDirectionCommand: SetMessageDirectionCommand,
-    private readonly setCustomObjectIsSoftDeletableCommand: SetCustomObjectIsSoftDeletableCommand,
   ) {
     super();
   }
@@ -40,6 +38,5 @@ export class UpgradeTo0_24Command extends CommandRunner {
       force: true,
     });
     await this.setMessagesDirectionCommand.run(passedParam, options);
-    await this.setCustomObjectIsSoftDeletableCommand.run(passedParam, options);
   }
 }
