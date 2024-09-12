@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ObjectRecordBaseEventWithNameAndWorkspaceId } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
+import { ObjectRecordBaseEventWithNameAndWorkspaceId } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';

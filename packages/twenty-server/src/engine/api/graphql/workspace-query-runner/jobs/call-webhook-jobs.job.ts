@@ -8,11 +8,11 @@ import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 

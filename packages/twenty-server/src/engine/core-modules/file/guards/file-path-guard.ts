@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {

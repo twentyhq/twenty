@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';

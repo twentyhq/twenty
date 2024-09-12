@@ -10,7 +10,7 @@ import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
 import {
   validateObjectAgainstInjections,

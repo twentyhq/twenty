@@ -50,13 +50,6 @@ export const generateWorkflowDiagram = ({
       },
     });
 
-    // Recursively generate flow for the next action if it exists
-    if (step.type !== 'CODE_ACTION') {
-      // processNode(action.nextAction, nodeId, xPos + 150, yPos + 100);
-
-      throw new Error('Other types as code actions are not supported yet.');
-    }
-
     return nodeId;
   };
 

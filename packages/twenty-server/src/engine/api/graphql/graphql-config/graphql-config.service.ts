@@ -20,9 +20,9 @@ import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
-import { useSentryTracing } from 'src/engine/integrations/exception-handler/hooks/use-sentry-tracing';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
