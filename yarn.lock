@@ -29402,7 +29402,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handlebars@npm:^4.7.7":
+"handlebars@npm:^4.7.7, handlebars@npm:^4.7.8":
   version: 4.7.8
   resolution: "handlebars@npm:4.7.8"
   dependencies:
@@ -47171,6 +47171,7 @@ __metadata:
     cache-manager-redis-yet: "npm:^4.1.2"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     graphql-middleware: "npm:^6.1.35"
+    handlebars: "npm:^4.7.8"
     jsdom: "npm:~22.1.0"
     jwt-decode: "npm:^4.0.0"
     langchain: "npm:^0.2.6"

@@ -4,6 +4,7 @@ import { ActorFieldDisplay } from '@/object-record/record-field/meta-types/displ
 import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
 import { EmailsFieldDisplay } from '@/object-record/record-field/meta-types/display/components/EmailsFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { PhonesFieldDisplay } from '@/object-record/record-field/meta-types/display/components/PhonesFieldDisplay';
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
 import { RichTextFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextFieldDisplay';
@@ -13,6 +14,7 @@ import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
@@ -104,5 +106,7 @@ export const FieldDisplay = () => {
     <ActorFieldDisplay />
   ) : isFieldEmails(fieldDefinition) ? (
     <EmailsFieldDisplay />
+  ) : isFieldPhones(fieldDefinition) ? (
+    <PhonesFieldDisplay />
   ) : null;
 };

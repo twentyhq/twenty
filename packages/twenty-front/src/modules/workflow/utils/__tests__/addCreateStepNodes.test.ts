@@ -14,7 +14,7 @@ describe('addCreateStepNodes', () => {
       {
         id: 'step1',
         name: 'Step 1',
-        type: 'CODE_ACTION',
+        type: 'CODE',
         valid: true,
         settings: {
           errorHandlingOptions: {
@@ -27,7 +27,7 @@ describe('addCreateStepNodes', () => {
       {
         id: 'step2',
         name: 'Step 2',
-        type: 'CODE_ACTION',
+        type: 'CODE',
         valid: true,
         settings: {
           errorHandlingOptions: {

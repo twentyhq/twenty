@@ -14,8 +14,8 @@ import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.aut
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EmailService } from 'src/engine/integrations/email/email.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import { TokenService } from './token.service';

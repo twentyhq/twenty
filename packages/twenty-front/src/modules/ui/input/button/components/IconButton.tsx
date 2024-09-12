@@ -1,6 +1,6 @@
-import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import React from 'react';
 import { IconComponent } from 'twenty-ui';
 
 export type IconButtonSize = 'medium' | 'small';
@@ -233,7 +233,7 @@ const StyledButton = styled.button<
 
   white-space: nowrap;
 
-  width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
 
   &:focus {
     outline: none;

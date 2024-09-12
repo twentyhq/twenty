@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class GoogleOAuth2ClientManagerService {

@@ -1,11 +1,9 @@
-import styled from '@emotion/styled';
-import { ReactNode } from 'react';
-
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { isDefined } from '~/utils/isDefined';
-
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import styled from '@emotion/styled';
+import { ReactNode } from 'react';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledSettingsPageContainer = styled.div<{ width?: number }>`
   display: flex;
@@ -24,17 +22,12 @@ const StyledSettingsPageContainer = styled.div<{ width?: number }>`
   }};
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-`;
-
 export const SettingsPageContainer = ({
   children,
 }: {
   children: ReactNode;
 }) => (
-  <StyledScrollWrapper contextProviderName="settingsPageContainer">
+  <ScrollWrapper contextProviderName="settingsPageContainer">
     <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
-  </StyledScrollWrapper>
+  </ScrollWrapper>
 );
