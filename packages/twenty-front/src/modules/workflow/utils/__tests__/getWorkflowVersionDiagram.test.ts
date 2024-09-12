@@ -7,7 +7,7 @@ describe('getWorkflowVersionDiagram', () => {
     expect(result).toEqual({ nodes: [], edges: [] });
   });
 
-  it('returns an empty diagram if the provided workflow version has no trigger', () => {
+  it('returns a diagram with an empty-trigger node if the provided workflow version has no trigger', () => {
     const result = getWorkflowVersionDiagram({
       __typename: 'WorkflowVersion',
       status: 'ACTIVE',
@@ -20,10 +20,20 @@ describe('getWorkflowVersionDiagram', () => {
       workflowId: '',
     });
 
-    expect(result).toEqual({ nodes: [], edges: [] });
+    expect(result).toEqual({
+      nodes: [
+        {
+          data: {},
+          id: 'trigger',
+          position: { x: 0, y: 0 },
+          type: 'empty-trigger',
+        },
+      ],
+      edges: [],
+    });
   });
 
-  it('returns an empty diagram if the provided workflow version has no steps', () => {
+  it('returns a diagram with an empty-trigger node if the provided workflow version has no steps', () => {
     const result = getWorkflowVersionDiagram({
       __typename: 'WorkflowVersion',
       status: 'ACTIVE',
@@ -39,7 +49,19 @@ describe('getWorkflowVersionDiagram', () => {
       workflowId: '',
     });
 
-    expect(result).toEqual({ nodes: [], edges: [] });
+    expect(result).toEqual({
+      nodes: [
+        {
+          data: {
+            label: 'Company is Created',
+            nodeType: 'trigger',
+          },
+          id: 'trigger',
+          position: { x: 0, y: 0 },
+        },
+      ],
+      edges: [],
+    });
   });
 
   it('returns the diagram for the last version', () => {

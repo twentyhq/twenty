@@ -1,6 +1,6 @@
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { WorkflowDiagramCanvas } from '@/workflow/components/WorkflowDiagramCanvas';
-import { WorkflowShowPageEffect } from '@/workflow/components/WorkflowShowPageEffect';
+import { WorkflowEffect } from '@/workflow/components/WorkflowEffect';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import styled from '@emotion/styled';
 import '@xyflow/react/dist/style.css';
@@ -36,7 +36,7 @@ export const Workflow = ({
 
   return (
     <>
-      <WorkflowShowPageEffect workflowId={workflowId} />
+      <WorkflowEffect workflowId={workflowId} />
 
       <StyledFlowContainer>
         {workflowDiagram === undefined ? null : (
