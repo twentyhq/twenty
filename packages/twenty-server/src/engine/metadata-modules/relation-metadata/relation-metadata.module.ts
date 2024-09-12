@@ -6,7 +6,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -47,7 +47,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           create: { many: { disabled: true } },
           update: { disabled: true },
           delete: { disabled: true },
-          guards: [JwtAuthGuard],
+          guards: [WorkspaceAuthGuard],
           interceptors: [RelationMetadataGraphqlApiExceptionInterceptor],
         },
       ],
