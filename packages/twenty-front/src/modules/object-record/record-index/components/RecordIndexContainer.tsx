@@ -31,6 +31,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { useState } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -57,6 +58,7 @@ export const RecordIndexContainer = ({
   recordIndexId,
   objectNamePlural,
 }: RecordIndexContainerProps) => {
+  const [currentViewId, setCurrentViewId] = useState<string | null>(null);
   const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
     recordIndexViewTypeState,
   );
