@@ -37,7 +37,7 @@ const getStepDefinitionOrThrow = ({
 
   if (!isDefined(currentVersion.steps)) {
     throw new Error(
-      'Expected the steps to be defined while trying to locate a specific step',
+      'Malformed workflow version: missing steps information; be sure to create at least one step before trying to edit one',
     );
   }
 
