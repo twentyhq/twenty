@@ -2,13 +2,13 @@ import { ComponentFamilyStateKeyV2 } from '@/ui/utilities/state/component-state/
 import { ComponentStateTypeV2 } from '@/ui/utilities/state/component-state/types/ComponentStateTypeV2';
 import { RecoilState, SerializableParam } from 'recoil';
 
-export type ComponentFamilyStateV2<
+export type ComponentFamilySelectorV2<
   StateType,
   FamilyKey extends SerializableParam,
 > = {
-  type: Extract<ComponentStateTypeV2, 'ComponentFamilyState'>;
+  type: Extract<ComponentStateTypeV2, 'ComponentFamilySelector'>;
   key: string;
-  atomFamily: (
+  selectorFamily: (
     componentFamilyStateKey: ComponentFamilyStateKeyV2<FamilyKey>,
   ) => RecoilState<StateType>;
 };

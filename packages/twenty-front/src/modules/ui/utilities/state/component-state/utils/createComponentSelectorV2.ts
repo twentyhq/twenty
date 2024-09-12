@@ -26,20 +26,22 @@ export const createComponentSelectorV2 = <ValueType>({
 
   if (isDefined(set)) {
     return {
+      type: 'ComponentSelector',
       key,
       selectorFamily: selectorFamily<ValueType, ComponentStateKeyV2>({
         key,
         get,
         set,
       }),
-    } as ComponentSelectorV2<ValueType>;
+    } satisfies ComponentSelectorV2<ValueType>;
   } else {
     return {
+      type: 'ComponentReadOnlySelector',
       key,
       selectorFamily: selectorFamily<ValueType, ComponentStateKeyV2>({
         key,
         get,
       }),
-    } as ComponentReadOnlySelectorV2<ValueType>;
+    } satisfies ComponentReadOnlySelectorV2<ValueType>;
   }
 };

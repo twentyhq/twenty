@@ -24,11 +24,12 @@ export const createComponentStateV2 = <ValueType>({
   }
 
   return {
+    type: 'ComponentState',
     key,
     atomFamily: atomFamily<ValueType, ComponentStateKeyV2>({
       key,
       default: defaultValue,
       effects: effects,
     }),
-  };
+  } satisfies ComponentStateV2<ValueType>;
 };

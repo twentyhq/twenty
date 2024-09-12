@@ -1,4 +1,5 @@
 import { ComponentFamilyStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKeyV2';
+import { ComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateV2';
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { AtomEffect, atomFamily, SerializableParam } from 'recoil';
@@ -26,11 +27,12 @@ export const createComponentFamilyStateV2 = <
   }
 
   return {
+    type: 'ComponentFamilyState',
     key,
     atomFamily: atomFamily<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>({
       key,
       default: defaultValue,
       effects,
     }),
-  };
+  } satisfies ComponentFamilyStateV2<ValueType, FamilyKey>;
 };
