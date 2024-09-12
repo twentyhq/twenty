@@ -13,4 +13,4 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
   exports: [WorkspaceMetadataCacheService],
   providers: [WorkspaceMetadataCacheService],
 })
-export class WorkspaceMetadataVersionModule {}
+export class WorkspaceMetadataCacheModule {}
