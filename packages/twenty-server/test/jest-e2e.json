@@ -11,7 +11,7 @@
   "moduleNameMapper": {
     "^src/(.*)": "<rootDir>/../src/$1",
     "^test/(.*)": "<rootDir>/$1",
-    "twenty-emails": "<rootDir>/../../twenty-emails/src/index.ts",
+    "twenty-emails": "<rootDir>/../../twenty-emails/src/index.js",
     "twenty-emails/(.*)": "<rootDir>/../../twenty-emails/src/$1",
     "^./emails/(.*)": "<rootDir>/../../twenty-emails/src/emails/$1"
   },

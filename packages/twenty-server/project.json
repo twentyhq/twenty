@@ -11,6 +11,13 @@
         "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
       }
     },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": ["NODE_ENV=test jest --config ./test/jest-e2e.json"]
+      }
+    },
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {
