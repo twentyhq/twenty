@@ -28,8 +28,10 @@ export const GetAvatarIcon = (objectNameSingular: string) => {
     }
   };
 
-  const Icon = getIconForObjectType(objectNameSingular);
-  const IconColor = getIconColorForObjectType(objectNameSingular);
+  const { Icon, IconColor } = {
+    Icon: getIconForObjectType(objectNameSingular),
+    IconColor: getIconColorForObjectType(objectNameSingular),
+  };
 
   return { Icon, IconColor };
 };
