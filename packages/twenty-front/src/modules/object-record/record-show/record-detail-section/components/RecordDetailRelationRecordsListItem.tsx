@@ -38,6 +38,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -90,7 +91,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const isToOneObject = relationType === 'TO_ONE_OBJECT';
+  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,

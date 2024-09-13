@@ -889,7 +889,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "660b4257-010e-4039-897a-e274f2559ed5",
                                         "name": "message"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "2180d888-98dc-428e-a157-c30ce7bf8ce4",
@@ -993,7 +993,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "785c0609-42b8-4b0e-b7c2-4d54b6ed651f",
                                         "name": "message"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "642b4d8c-f2f8-4590-abce-4b112d8689ba",
@@ -1584,7 +1584,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "18cea1c1-f521-4c41-b694-729756931795",
                                         "name": "calendarEvent"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "0f9d244b-e9c6-44af-88f4-9ce798d50bf8",
@@ -1755,7 +1755,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "b04775e2-53a3-4f62-a2ab-858f2a456fa7",
                                         "name": "calendarEvent"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "e02ea7b1-1d5a-481b-ab71-3c94ab3f9bf0",
@@ -2792,7 +2792,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "fbc9d8eb-c04f-4c86-81ff-d4ca9957d0d4",
                                         "name": "workspaceMember"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "d5ffcbba-0ab9-4f4d-a5e6-15f1e668b04c",
@@ -2875,7 +2875,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "9fc19fe9-2563-41ac-8c92-2062ff3a0c0c",
                                         "name": "workspaceMember"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "5b2015dd-3fac-4118-adf5-3cceede873eb",
@@ -2937,7 +2937,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "a56f365a-22c8-475d-816b-709f3a19c5fd",
                                         "name": "accountOwner"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "97b97e1e-aed0-4d59-997c-13ad9007e037",
@@ -3086,7 +3086,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "b31f4c53-a5ee-4939-9804-6964144540ca",
                                         "name": "author"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "fccbbaf8-c653-4e09-8d3e-5652b37d8209",
@@ -3148,7 +3148,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "96acdd2a-b7d1-452b-9e58-5c4265691444",
                                         "name": "workspaceMember"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "19b7520c-bc6e-490c-bfab-a3b020315cc4",
@@ -3253,7 +3253,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "bc788a8f-8eb2-47bf-a02c-42f7de197ca8",
                                         "name": "workspaceMember"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "7d3faf56-e4bb-45ec-9b75-612ca6e9ae5a",
@@ -3386,7 +3386,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "5bcc7e50-73ce-4146-b000-5a336f0e9c40",
                                         "name": "assignee"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "8cb075f2-e51c-4684-80f6-cf6af471e82a",
@@ -3448,7 +3448,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "4ec37c9c-be4c-4f52-a441-03a1dfd951db",
                                         "name": "assignee"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "d5315a70-980f-4c45-9a4f-74779a00fdd3",
@@ -3531,7 +3531,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "95bd59b8-8083-4c76-b770-ec40a744138c",
                                         "name": "accountOwner"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "1ecacc04-e834-421d-bf1b-c765e55a4318",
@@ -3593,7 +3593,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "0aaf9f83-9b43-4f15-a187-9c11761b367a",
                                         "name": "workspaceMember"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "a72edc8d-e5e3-4eae-9fd6-4cb0792b18aa",
@@ -3655,7 +3655,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "fd9fcac5-c853-4fe7-ab1e-18081e4d4517",
                                         "name": "author"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "017b3808-bc03-4817-8a67-b20770a6a126",
@@ -3738,7 +3738,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "0fedd2c5-1c9c-4e0a-8687-a8ce4dd88378",
                                         "name": "workspaceMember"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "d74023b4-87a8-44d0-84d8-9b2a85018e4b",
@@ -3821,7 +3821,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "85046974-8ab2-456d-a732-64da14715643",
                                         "name": "author"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "5b9f08b0-8960-40c4-b6bb-9d3552a24f8d",
@@ -4096,7 +4096,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "362195e4-4dfb-49e1-b25b-fe3ffe7b7f14",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "5bb99199-6a3c-4947-b16b-6a90c6097eac",
@@ -4182,7 +4182,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "0669197c-bc4e-4a44-9cd9-db449bfa380e",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "680351ba-8759-405d-8fda-90799bf75741",
@@ -4265,7 +4265,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "18ea34ae-f9bc-4240-b65f-46f0d688135f",
                                         "name": "pointOfContact"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "58a081ed-e5e7-44f8-bae6-99be66b6ac2f",
@@ -4348,7 +4348,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "4a9e3e27-70b0-4ed7-9edf-9126c1675b22",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "74f62324-bc36-4210-bb88-e0e6e0136c9f",
@@ -4410,7 +4410,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "f0748d0d-e6b4-44ea-b957-0c0d81af4627",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "450a3266-7706-4593-a458-5897c5f60fc5",
@@ -4561,7 +4561,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "a2ecf99f-9725-4b20-90df-28ad410f173b",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "178c5cfe-cc05-49ec-bedb-eff402da4e8f",
@@ -4644,7 +4644,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "8ac4df39-f1a0-4221-a605-bd4c229fbc12",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "700c5e52-3e7b-4471-9826-82270c03c37e",
@@ -4706,7 +4706,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "b192eb71-bcfb-46ab-ae88-83a73700ee34",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "0c8f43c1-d325-4a58-99a7-926b1db4e8fc",
@@ -4768,7 +4768,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "db61f1e6-17d5-4f1d-8c18-8cb5f1108831",
                                         "name": "person"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "e95da71a-7162-4282-8ff7-ea65fea36fe8",
@@ -5087,7 +5087,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "a6299818-986d-4358-9a7b-04e6f5e0fd8b",
                                         "name": "activity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "69539f96-cede-4f76-bd64-84b1182c3427",
@@ -5170,7 +5170,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "8bcf99e6-2368-4caa-9c5e-e70c46bc6ab7",
                                         "name": "activity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "938c0b4f-e398-4db6-8893-ad6b609556a9",
@@ -5253,7 +5253,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "ace0311d-6b58-4c34-9e78-3c18ff147408",
                                         "name": "activity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "eaf90876-fac7-448a-906c-7c2b6afcd346",
@@ -7203,7 +7203,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "d89d8a7f-6a14-4fc8-96ca-2966632a1ca4",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "ac6788b1-952c-4376-bafd-66ea5a031398",
@@ -7265,7 +7265,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "6213d5af-e8cd-4e5d-9a60-bab631884ae5",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "a0f5427c-2c97-4457-b87f-a4d145e06952",
@@ -7440,7 +7440,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "4fa60a42-bd0d-462c-b05d-d85f96b00458",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "632aaba8-f213-4353-95a5-c090168c3ad7",
@@ -7502,7 +7502,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "0224c08b-2c2e-474f-8360-dafad378cf62",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "1e93ed03-91a5-4ad4-bca7-c6a637551289",
@@ -7588,7 +7588,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "36f7236a-bfd2-404c-adb6-66b294ca5435",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "2be99c6b-02c8-4ca0-b155-dcf7539097b5",
@@ -7726,7 +7726,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "5a0243d0-051b-4f30-b0d2-da66b3b8eefe",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "1670824b-e097-4afc-8401-feab7f9af0d4",
@@ -7833,7 +7833,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "538e49cd-f04a-4889-9994-35cacc0754b7",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "2f030298-14c7-48a4-b351-2ec185bb1814",
@@ -7916,7 +7916,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "727ec83b-93b7-4e6b-be22-6f00637ec3f5",
                                         "name": "company"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "1ebadb76-46e6-4c57-b24f-441acecbd2d9",
@@ -8033,7 +8033,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "d288fd3a-8fb0-493d-bec3-31a2c4a7d366",
                                         "name": "connectedAccount"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "21bbef75-8acf-48bf-80aa-1d26d50aea22",
@@ -8221,7 +8221,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "ceaf8f8e-297a-418b-a652-01f3eeb5c562",
                                         "name": "connectedAccount"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "b6b75323-8790-4b3e-8798-e0af646bb9aa",
@@ -9692,7 +9692,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "bc0e2a25-4e13-4751-a79a-2d264582ef9a",
                                         "name": "note"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "7ec36219-a377-4aea-98be-7954590f8a32",
@@ -9754,7 +9754,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "87334d50-0c5d-4327-a8c5-3db6bc28c1ea",
                                         "name": "note"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "663e9842-8b92-451a-bf73-12a886ff8b05",
@@ -9816,7 +9816,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "f8a0a4ad-a6f5-4eb3-985d-a3134e5449ad",
                                         "name": "note"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "bb4120f5-5135-4881-97a8-d50e6df2f97e",
@@ -10108,7 +10108,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "e48eeafe-43d8-4abc-95c8-6e7a6a56a7c9",
                                         "name": "task"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "87c0082f-5411-4202-97cd-fc1d9112fa7a",
@@ -10275,7 +10275,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "0913c9cc-c3d4-4fd4-9fc7-b758daa08ba4",
                                         "name": "task"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "cc228da1-14c7-4c49-a84d-231ba6166f38",
@@ -10379,7 +10379,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "0f37463a-4a08-44b6-87b6-8175ffa6bff0",
                                         "name": "task"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "1cc7a6b5-66d2-40dc-aa08-4b1a252e3ae3",
@@ -11426,7 +11426,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "34479a8f-e7a4-4069-9f05-08d09113c8dc",
                                         "name": "messageChannel"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "40e51c6c-0268-47ca-bab9-4a899391e74b",
@@ -11799,7 +11799,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "2a725662-fe1a-44e8-af06-2ae21c9ae0c2",
                                         "name": "opportunity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "2f07395e-a114-465c-a3a2-9c6b990d3dca",
@@ -11861,7 +11861,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "987fd4f6-4c5f-48a4-82f3-fd769de80dc4",
                                         "name": "opportunity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "d8ae1b79-b532-412c-92cf-767a32e3cda2",
@@ -11965,7 +11965,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "ddc84553-0678-4697-a8c2-06ddbc136cab",
                                         "name": "opportunity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "2105fe76-e9fa-4610-992a-261d0f24722d",
@@ -12051,7 +12051,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "807cfd9f-4081-4027-b646-cf66d81aa8c6",
                                         "name": "opportunity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "457627a4-8e4f-4720-80b4-b8c47a49a1d7",
@@ -12304,7 +12304,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "b4868b15-ff98-4f36-9f59-1dbf63052bb7",
                                         "name": "opportunity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "c20ecc99-e48a-4311-b850-8fbf1a7b68ea",
@@ -12387,7 +12387,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "5b2ec790-e8b8-4bd0-bf1b-db4ebc2b473a",
                                         "name": "opportunity"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "c0946e53-4cdd-46b4-b30a-9fce040b9a7a",
@@ -12617,7 +12617,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "337d9389-06a9-4cb1-9f2a-76dbb37a7576",
                                         "name": "view"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "ae731975-39ee-4387-a80c-de94dff0b760",
@@ -12700,7 +12700,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "2c09d04d-007c-4652-9c90-c2cfa4696145",
                                         "name": "view"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "fcf27acc-a651-4ac2-9f99-aba306756209",
@@ -12804,7 +12804,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "0f9c4eb8-501d-4861-827a-5ef45a01eba9",
                                         "name": "view"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "7c42db51-2fcc-44b6-9a80-787b1967e69e",
@@ -12984,7 +12984,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "114f853e-2684-4e62-92c9-0213ace3c498",
                                         "name": "messageThread"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "c958fe88-7d66-4c1b-87c7-55ab724f42c5",
@@ -13067,7 +13067,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "fcbef4a3-f1d9-4714-b7ea-f44816821d6e",
                                         "name": "messageThread"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "1d8cbabc-edf5-40c9-8bd5-d1e47a93d246",
@@ -13493,7 +13493,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "id": "d3039865-07b4-4114-bd78-18aa0be2a93b",
                                         "name": "calendarChannel"
                                     }
-                                },,
+                                },
                                 "fromRelationMetadata": {
                                     "__typename": "relation",
                                     "id": "bf0f695a-08cd-4767-9a83-4fd09f617793",

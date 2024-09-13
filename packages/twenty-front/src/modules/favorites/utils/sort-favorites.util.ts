@@ -29,6 +29,7 @@ export const sortFavorites = (
             );
 
           return {
+            ...favorite,
             id: favorite.id,
             recordId: objectRecordIdentifier.id,
             position: favorite.position,
@@ -38,6 +39,7 @@ export const sortFavorites = (
             link: hasLinkToShowPage
               ? objectRecordIdentifier.linkToShowPage
               : '',
+            workspaceMemberId: favorite.workspaceMemberId,
           } as Favorite;
         }
       }

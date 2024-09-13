@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -9,6 +10,7 @@ import { Observable } from 'rxjs';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
+@Injectable()
 export class DemoEnvGuard implements CanActivate {
   constructor(private readonly environmentService: EnvironmentService) {}
 
