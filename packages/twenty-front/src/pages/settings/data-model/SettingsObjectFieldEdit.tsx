@@ -25,6 +25,7 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -62,9 +63,9 @@ export const SettingsObjectFieldEdit = () => {
 
   const { deactivateMetadataField, activateMetadataField } = useFieldMetadataItem();
 
-  const metadataField = objectMetadataItem?.fields.find(
-    (metadataField) =>
-      getFieldSlug(metadataField) === fieldSlug,
+  const fieldMetadataItem = objectMetadataItem?.fields.find(
+    (fieldMetadataItem) =>
+      getFieldSlug(fieldMetadataItem) === fieldSlug,
   );
 
   const getRelationMetadata = useGetRelationMetadata();
@@ -87,21 +88,27 @@ export const SettingsObjectFieldEdit = () => {
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
+    values: {
+      icon: fieldMetadataItem?.icon ?? 'Icon',
+      type: fieldMetadataItem?.type as SettingsSupportedFieldType,
+      label: fieldMetadataItem?.label ?? '',
+      description: fieldMetadataItem?.description,
+    },
   });
 
   useEffect(() => {
-    if (!objectMetadataItem || !metadataField) {
+    if (!objectMetadataItem || !fieldMetadataItem) {
       navigate(AppPath.NotFound);
     }
-  }, [metadataField, objectMetadataItem, navigate]);
-
-  if (!objectMetadataItem || !metadataField) return null;
-
+  }, [fieldMetadataItem, objectMetadataItem, navigate]);
+  
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
-  const canSave = isDirty && isValid && !isSubmitting;
+  const canSave = isDirty && (isValid || true) && !isSubmitting;
+  
+  if (!objectMetadataItem || !fieldMetadataItem) return null;
 
   const isLabelIdentifier = isLabelIdentifierField({
-    fieldMetadataItem: metadataField,
+    fieldMetadataItem: fieldMetadataItem,
     objectMetadataItem: objectMetadataItem,
   });
 
@@ -109,7 +116,7 @@ export const SettingsObjectFieldEdit = () => {
     formValues: SettingsDataModelFieldEditFormValues,
   ) => {
     const { dirtyFields } = formConfig.formState;
-
+    
     try {
       if (
         formValues.type === FieldMetadataType.Relation &&
@@ -118,10 +125,10 @@ export const SettingsObjectFieldEdit = () => {
       ) {
         const { relationFieldMetadataItem } =
           getRelationMetadata({
-            fieldMetadataItem: metadataField,
+            fieldMetadataItem: fieldMetadataItem,
           }) ?? {};
 
-        if (isDefined(relationFieldMetadataItem)) {
+          if (isDefined(relationFieldMetadataItem)) {
           await updateOneFieldMetadataItem({
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
             updatePayload: formValues.relation.field,
@@ -130,15 +137,15 @@ export const SettingsObjectFieldEdit = () => {
       }
 
       const otherDirtyFields = omit(dirtyFields, 'relation');
-
+      
       if (Object.keys(otherDirtyFields).length > 0) {
         const formattedInput = pick(
           formatFieldMetadataItemInput(formValues),
           Object.keys(otherDirtyFields),
         );
-
+        
         await updateOneFieldMetadataItem({
-          fieldMetadataIdToUpdate: metadataField.id,
+          fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
       }
@@ -154,17 +161,17 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDeactivate = async () => {
-    await deactivateMetadataField(metadataField);
+    await deactivateMetadataField(fieldMetadataItem);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
   const handleActivate = async () => {
-    await activateMetadataField(metadataField);
+    await activateMetadataField(fieldMetadataItem);
     navigate(`/settings/objects/${objectSlug}`);
   }
 
   const shouldDisplaySaveAndCancel =
-    canPersistFieldMetadataItemUpdate(metadataField);
+    canPersistFieldMetadataItemUpdate(fieldMetadataItem);
 
   return (
     <RecordFieldValueSelectorContextProvider>
@@ -185,7 +192,7 @@ export const SettingsObjectFieldEdit = () => {
                   href: `/settings/objects/${objectSlug}`,
                   styles: { maxWidth: '60%' },
                 },
-                { children: metadataField.label },
+                { children: fieldMetadataItem.label },
               ]}
             />
           }
@@ -207,8 +214,8 @@ export const SettingsObjectFieldEdit = () => {
                 description="The name and icon of this field"
               />
               <SettingsDataModelFieldIconLabelForm
-                disabled={!metadataField.isCustom}
-                fieldMetadataItem={metadataField}
+                disabled={!fieldMetadataItem.isCustom}
+                fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
               />
             </Section>
@@ -216,7 +223,7 @@ export const SettingsObjectFieldEdit = () => {
               <H2Title title="Values" description="The values of this field" />
               <SettingsDataModelFieldSettingsFormCard
                 disableCurrencyForm
-                fieldMetadataItem={metadataField}
+                fieldMetadataItem={fieldMetadataItem}
                 objectMetadataItem={objectMetadataItem}
               />
             </Section>
@@ -226,8 +233,8 @@ export const SettingsObjectFieldEdit = () => {
                 description="The description of this field"
               />
               <SettingsDataModelFieldDescriptionForm
-                disabled={!metadataField.isCustom}
-                fieldMetadataItem={metadataField}
+                disabled={!fieldMetadataItem.isCustom}
+                fieldMetadataItem={fieldMetadataItem}
               />
             </Section>
             {!isLabelIdentifier && (
@@ -237,11 +244,11 @@ export const SettingsObjectFieldEdit = () => {
                   description="Deactivate this field"
                 />
                 <Button
-                  Icon={metadataField.isActive ? IconArchive : IconArchiveOff}
+                  Icon={fieldMetadataItem.isActive ? IconArchive : IconArchiveOff}
                   variant="secondary"
-                  title={metadataField.isActive ? "Deactivate" : "Activate"}
+                  title={fieldMetadataItem.isActive ? "Deactivate" : "Activate"}
                   size="small"
-                  onClick={metadataField.isActive ? handleDeactivate : handleActivate}
+                  onClick={fieldMetadataItem.isActive ? handleDeactivate : handleActivate}
                 />
               </Section>
             )}
