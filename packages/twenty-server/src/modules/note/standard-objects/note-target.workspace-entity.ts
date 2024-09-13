@@ -23,7 +23,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
   labelPlural: 'Note Targets',
   description: 'A note target',
   icon: 'IconCheckbox',
-  softDelete: true,
 })
 @WorkspaceIsSystem()
 export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {

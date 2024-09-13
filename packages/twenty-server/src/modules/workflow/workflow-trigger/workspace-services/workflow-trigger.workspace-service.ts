@@ -8,24 +8,22 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import {
-  WorkflowTrigger,
-  WorkflowTriggerType,
-} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { DatabaseEventTriggerService } from 'src/modules/workflow/workflow-trigger/database-event-trigger/database-event-trigger.service';
-import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -158,9 +156,7 @@ export class WorkflowTriggerWorkspaceService {
 
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
-    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
-      trigger: WorkflowTrigger;
-    },
+    workflowVersion: WorkflowVersionWorkspaceEntity,
     workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     manager: EntityManager,
@@ -217,9 +213,7 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   private async setActiveVersionStatus(
-    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
-      trigger: WorkflowTrigger;
-    },
+    workflowVersion: WorkflowVersionWorkspaceEntity,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     manager: EntityManager,
   ) {
@@ -254,9 +248,7 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   private async setDeactivatedVersionStatus(
-    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
-      trigger: WorkflowTrigger;
-    },
+    workflowVersion: WorkflowVersionWorkspaceEntity,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     manager: EntityManager,
   ) {
@@ -307,11 +299,11 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   private async enableTrigger(
-    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
-      trigger: WorkflowTrigger;
-    },
+    workflowVersion: WorkflowVersionWorkspaceEntity,
     manager: EntityManager,
   ) {
+    assertWorkflowVersionTriggerIsDefined(workflowVersion);
+
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
         await this.databaseEventTriggerService.createEventListener(
@@ -326,11 +318,11 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   private async disableTrigger(
-    workflowVersion: Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
-      trigger: WorkflowTrigger;
-    },
+    workflowVersion: WorkflowVersionWorkspaceEntity,
     manager: EntityManager,
   ) {
+    assertWorkflowVersionTriggerIsDefined(workflowVersion);
+
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
         await this.databaseEventTriggerService.deleteEventListener(

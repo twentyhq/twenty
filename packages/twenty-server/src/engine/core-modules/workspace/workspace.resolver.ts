@@ -26,7 +26,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -39,7 +38,6 @@ import { WorkspaceService } from './services/workspace.service';
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
