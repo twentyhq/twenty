@@ -11,7 +11,8 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 
 export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
-  const { viewsOnCurrentObject } = useGetCurrentView(viewBarInstanceId);
+  const { viewsOnCurrentObject, currentViewId } =
+    useGetCurrentView(viewBarInstanceId);
 
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
@@ -41,19 +42,26 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
         set(viewPickerIsPersistingCallbackState, true);
         closeAndResetViewPicker();
         set(viewPickerIsDirtyCallbackState, false);
+
         const viewPickerReferenceViewId = getSnapshotValue(
           snapshot,
           viewPickerReferenceViewIdCallbackState,
         );
 
-        changeView(
-          viewsOnCurrentObject.filter(
-            (view) => view.id !== viewPickerReferenceViewId,
-          )[0].id,
-        );
+        const shouldChangeView = viewPickerReferenceViewId === currentViewId;
+
+        if (shouldChangeView) {
+          changeView(
+            viewsOnCurrentObject.filter(
+              (view) => view.id !== viewPickerReferenceViewId,
+            )[0].id,
+          );
+        }
+
         await deleteView(viewPickerReferenceViewId);
       },
     [
+      currentViewId,
       closeAndResetViewPicker,
       changeView,
       deleteView,
