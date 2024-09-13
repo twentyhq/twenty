@@ -6,10 +6,8 @@ import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fi
 
 import { TextArea } from '@/ui/input/components/TextArea';
 
-export const settingsDataModelFieldDescriptionFormSchema = (
-  existingLabels?: string[],
- )=> {
-  return fieldMetadataItemSchema(existingLabels || []).pick({
+export const settingsDataModelFieldDescriptionFormSchema = () => {
+  return fieldMetadataItemSchema([]).pick({
     description: true,
   });
 };
