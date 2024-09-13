@@ -45,17 +45,19 @@ const StyledRow = styled.div`
 
 const StyledColorSample = styled(ColorSample)`
   cursor: pointer;
-  margin-left: 9px;
-  margin-right: 14px;
+  margin: 0 12px;
 `;
 
 const StyledOptionInput = styled(TextInput)`
   flex: 1 0 auto;
-  margin-right: ${({ theme }) => theme.spacing(2)};
 
   & input {
     height: ${({ theme }) => theme.spacing(6)};
   }
+`;
+
+const StyledOptionsDropdownIcon = styled(LightIconButton)`
+  margin-left: 4px;
 `;
 
 export const SettingsDataModelFieldSelectFormOptionRow = ({
@@ -94,6 +96,18 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         size={theme.icon.size.md}
         stroke={theme.icon.stroke.sm}
         color={theme.font.color.extraLight}
+      />
+      <StyledOptionInput
+        value={option.value}
+        onChange={(input) =>
+          onChange({
+            ...option,
+            value: input,
+          })
+        }
+        RightIcon={isDefault ? IconCheck : undefined}
+        maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+        onInputEnter={() => {}}
       />
       <Dropdown
         dropdownId={dropdownIds.color}
@@ -140,7 +154,9 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         dropdownHotkeyScope={{
           scope: dropdownIds.actions,
         }}
-        clickableComponent={<LightIconButton Icon={IconDotsVertical} />}
+        clickableComponent={
+          <StyledOptionsDropdownIcon Icon={IconDotsVertical} />
+        }
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>
