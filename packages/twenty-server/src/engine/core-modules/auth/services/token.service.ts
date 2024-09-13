@@ -97,7 +97,7 @@ export class TokenService {
       );
     }
 
-    const tokenWorkspaceId = workspaceId ?? user.defaultWorkspace.id;
+    const tokenWorkspaceId = workspaceId ?? user.defaultWorkspaceId;
     let tokenWorkspaceMemberId: string | undefined;
 
     if (
@@ -128,7 +128,7 @@ export class TokenService {
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
-      workspaceId: workspaceId ? workspaceId : user.defaultWorkspace.id,
+      workspaceId: workspaceId ? workspaceId : user.defaultWorkspaceId,
       workspaceMemberId: tokenWorkspaceMemberId,
     };
 

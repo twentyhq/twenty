@@ -103,7 +103,7 @@ export class UserResolver {
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = await this.fileService.encodeFileToken({
         workspace_member_id: workspaceMember.id,
-        workspace_id: user.defaultWorkspace.id,
+        workspace_id: user.defaultWorkspaceId,
       });
 
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;

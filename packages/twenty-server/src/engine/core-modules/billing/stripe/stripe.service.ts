@@ -6,8 +6,8 @@ import { AvailableProduct } from 'src/engine/core-modules/billing/interfaces/ava
 
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class StripeService {
@@ -93,7 +93,7 @@ export class StripeService {
       mode: 'subscription',
       subscription_data: {
         metadata: {
-          workspaceId: user.defaultWorkspace.id,
+          workspaceId: user.defaultWorkspaceId,
         },
         trial_period_days: this.environmentService.get(
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
