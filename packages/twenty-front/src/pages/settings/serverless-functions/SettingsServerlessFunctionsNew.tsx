@@ -16,7 +16,6 @@ import { Key } from 'ts-key-enum';
 import { IconFunction } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from '~/utils/isDefined';
-import { DEFAULT_CODE } from '~/modules/settings/serverless-functions/constants/DefaultCode';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
@@ -32,7 +31,6 @@ export const SettingsServerlessFunctionsNew = () => {
     const newServerlessFunction = await createOneServerlessFunction({
       name: formValues.name,
       description: formValues.description,
-      code: DEFAULT_CODE,
     });
 
     if (!isDefined(newServerlessFunction?.data)) {

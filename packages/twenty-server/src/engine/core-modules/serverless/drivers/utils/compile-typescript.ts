@@ -8,6 +8,7 @@ export const compileTypescript = (typescriptCode: string): string => {
     esModuleInterop: true,
     resolveJsonModule: true,
     allowSyntheticDefaultImports: true,
+    outDir: './dist',
     types: ['node'],
   };
 

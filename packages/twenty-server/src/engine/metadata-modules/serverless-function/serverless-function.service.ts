@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { join } from 'path';
+
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
@@ -15,7 +16,6 @@ import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read
 import { SOURCE_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/source-file-name';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
-import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
   ServerlessFunctionEntity,
@@ -29,6 +29,8 @@ import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/server
 import { isDefined } from 'src/utils/is-defined';
 import { getLastLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
+import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -213,9 +215,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       name: serverlessFunctionInput.name,
       description: serverlessFunctionInput.description,
       syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
-      sourceCodeHash: serverlessFunctionCreateHash(
-        serverlessFunctionInput.code,
-      ),
     });
 
     const fileFolder = getServerlessFolder({
@@ -259,22 +258,12 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
   }
 
   async createOneServerlessFunction(
-    serverlessFunctionInput: CreateServerlessFunctionFromFileInput,
-    code: FileUpload | string,
+    serverlessFunctionInput: CreateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    let typescriptCode: string;
-
-    if (typeof code === 'string') {
-      typescriptCode = code;
-    } else {
-      typescriptCode = await readFileContent(code.createReadStream());
-    }
-
     const createdServerlessFunction = await super.createOne({
       ...serverlessFunctionInput,
       workspaceId,
-      sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
       layerVersion: LAST_LAYER_VERSION,
     });
 
@@ -283,12 +272,16 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       version: 'draft',
     });
 
-    await this.fileStorageService.write({
-      file: typescriptCode,
-      name: SOURCE_FILE_NAME,
-      mimeType: undefined,
-      folder: draftFileFolder,
-    });
+    const baseProjectFiles = await getBaseTypescriptProjectFiles();
+
+    for (const file of baseProjectFiles) {
+      await this.fileStorageService.write({
+        file: file.content,
+        name: file.name,
+        mimeType: undefined,
+        folder: join(draftFileFolder, file.path),
+      });
+    }
 
     await this.serverlessService.build(createdServerlessFunction, 'draft');
 
