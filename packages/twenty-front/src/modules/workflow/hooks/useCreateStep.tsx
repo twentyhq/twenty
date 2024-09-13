@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
 import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
 import {
@@ -31,7 +32,11 @@ export const useCreateStep = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const insertNodeAndSave = ({
+  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion({
+    workflowId: workflow.id,
+  });
+
+  const insertNodeAndSave = async ({
     parentNodeId,
     nodeToAdd,
   }: {
@@ -43,15 +48,30 @@ export const useCreateStep = ({
       throw new Error("Can't add a node when there is no current version.");
     }
 
-    return updateOneWorkflowVersion({
-      idToUpdate: currentVersion.id,
-      updateOneRecordInput: {
-        steps: insertStep({
-          steps: currentVersion.steps ?? [],
-          parentStepId: parentNodeId,
-          stepToAdd: nodeToAdd,
-        }),
-      },
+    const updatedSteps = insertStep({
+      steps: currentVersion.steps ?? [],
+      parentStepId: parentNodeId,
+      stepToAdd: nodeToAdd,
+    });
+
+    if (workflow.currentVersion.status === 'DRAFT') {
+      await updateOneWorkflowVersion({
+        idToUpdate: currentVersion.id,
+        updateOneRecordInput: {
+          steps: updatedSteps,
+        },
+      });
+
+      return;
+    }
+
+    await createNewWorkflowVersion({
+      name: workflow.currentVersion.name.startsWith('v')
+        ? `v${Number(workflow.currentVersion.name.slice(1)) + 1}`
+        : 'v1',
+      status: 'DRAFT',
+      trigger: workflow.currentVersion.trigger,
+      steps: updatedSteps,
     });
   };
 

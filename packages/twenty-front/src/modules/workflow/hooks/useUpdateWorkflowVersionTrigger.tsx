@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import {
   WorkflowTrigger,
   WorkflowVersion,
@@ -17,16 +18,33 @@ export const useUpdateWorkflowVersionTrigger = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
+  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion({
+    workflowId: workflow.id,
+  });
+
   const updateTrigger = async (updatedTrigger: WorkflowTrigger) => {
     if (!isDefined(workflow.currentVersion)) {
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    await updateOneWorkflowVersion({
-      idToUpdate: workflow.currentVersion.id,
-      updateOneRecordInput: {
-        trigger: updatedTrigger,
-      },
+    if (workflow.currentVersion.status === 'DRAFT') {
+      await updateOneWorkflowVersion({
+        idToUpdate: workflow.currentVersion.id,
+        updateOneRecordInput: {
+          trigger: updatedTrigger,
+        },
+      });
+
+      return;
+    }
+
+    await createNewWorkflowVersion({
+      name: workflow.currentVersion.name.startsWith('v')
+        ? `v${Number(workflow.currentVersion.name.slice(1)) + 1}`
+        : 'v1',
+      status: 'DRAFT',
+      trigger: updatedTrigger,
+      steps: workflow.currentVersion.steps,
     });
   };
 
