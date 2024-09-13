@@ -74,7 +74,7 @@ export class GraphqlQueryFindManyResolverService {
     );
     const where = graphqlQueryParser.parseFilter(
       args.filter ?? ({} as Filter),
-      true,
+      objectMetadataItem.isSoftDeletable ?? false,
     );
 
     const cursor = this.getCursor(args);
