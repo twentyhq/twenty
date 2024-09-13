@@ -55,6 +55,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };
