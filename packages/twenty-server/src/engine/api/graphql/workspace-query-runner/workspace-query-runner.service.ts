@@ -325,6 +325,13 @@ export class WorkspaceQueryRunnerService {
       )
     )?.records;
 
+    await this.workspaceQueryHookService.executePostQueryHooks(
+      authContext,
+      objectMetadataItem.nameSingular,
+      'createMany',
+      parsedResults,
+    );
+
     await this.triggerWebhooks<Record>(
       parsedResults,
       CallWebhookJobsJobOperation.create,
