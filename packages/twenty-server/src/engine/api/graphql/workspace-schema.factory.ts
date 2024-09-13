@@ -56,13 +56,13 @@ export class WorkspaceSchemaFactory {
       );
     }
 
-    const objectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
+    const objectMetadataMap =
+      await this.workspaceCacheStorageService.getObjectMetadataMap(
         authContext.workspace.id,
         currentCacheVersion,
       );
 
-    if (!objectMetadataCollection) {
+    if (!objectMetadataMap) {
       await this.workspaceMetadataCacheService.recomputeMetadataCache(
         authContext.workspace.id,
       );
@@ -71,6 +71,13 @@ export class WorkspaceSchemaFactory {
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
       );
     }
+
+    const objectMetadataCollection = Object.values(objectMetadataMap).map(
+      (objectMetadataItem) => ({
+        ...objectMetadataItem,
+        fields: Object.values(objectMetadataItem.fields),
+      }),
+    );
 
     // Get typeDefs from cache
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(

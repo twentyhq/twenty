@@ -10,7 +10,8 @@ import { GetMessagesService } from 'src/engine/core-modules/messaging/services/g
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {
@@ -38,7 +39,7 @@ class GetTimelineThreadsFromCompanyIdArgs {
   pageSize: number;
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @Resolver(() => TimelineThreadsWithTotal)
 export class TimelineMessagingResolver {
   constructor(

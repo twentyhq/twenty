@@ -16,13 +16,14 @@ import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/d
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -111,7 +112,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => TransientToken)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateTransientToken(
     @AuthUser() user: User,
   ): Promise<TransientToken | void> {
@@ -141,7 +142,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeApp)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: User,
@@ -155,7 +156,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateJWT(
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
@@ -177,7 +178,7 @@ export class AuthResolver {
     return { tokens: tokens };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   @Mutation(() => Verify)
   async impersonate(
     @Args() impersonateInput: ImpersonateInput,
@@ -186,7 +187,7 @@ export class AuthResolver {
     return await this.authService.impersonate(impersonateInput.userId, user);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard)
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
     @Args() args: ApiKeyTokenInput,

@@ -1,15 +1,15 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { RelationMetadataService } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DeleteOneRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/delete-relation.input';
+import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
+import { RelationMetadataService } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.service';
 import { relationMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/relation-metadata/utils/relation-metadata-graphql-api-exception-handler.util';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver()
 export class RelationMetadataResolver {
   constructor(

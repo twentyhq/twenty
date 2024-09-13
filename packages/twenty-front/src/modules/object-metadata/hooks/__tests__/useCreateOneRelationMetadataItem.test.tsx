@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
-import { RelationMetadataType } from '~/generated/graphql';
+import { RelationDefinitionType } from '~/generated/graphql';
 
 import {
   query,
@@ -42,7 +42,7 @@ describe('useCreateOneRelationMetadataItem', () => {
 
     await act(async () => {
       const res = await result.current.createOneRelationMetadataItem({
-        relationType: RelationMetadataType.OneToOne,
+        relationType: RelationDefinitionType.OneToOne,
         field: {
           label: 'label',
         },
