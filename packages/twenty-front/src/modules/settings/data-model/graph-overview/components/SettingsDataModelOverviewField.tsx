@@ -43,7 +43,12 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
       {Icon && <Icon size={theme.icon.size.md} />}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
-        type={field.toRelationMetadata ? 'source' : 'target'}
+        type={
+          field.relationDefinition?.direction ===
+          RelationDefinitionType.OneToMany
+            ? 'source'
+            : 'target'
+        }
         position={Position.Right}
         id={`${field.id}-right`}
         className={
@@ -54,7 +59,12 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
         }
       />
       <Handle
-        type={field.toRelationMetadata ? 'source' : 'target'}
+        type={
+          field.relationDefinition?.direction ===
+          RelationDefinitionType.OneToMany
+            ? 'source'
+            : 'target'
+        }
         position={Position.Left}
         id={`${field.id}-left`}
         className={
