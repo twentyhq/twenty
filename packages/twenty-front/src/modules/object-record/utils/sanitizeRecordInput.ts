@@ -42,6 +42,14 @@ export const sanitizeRecordInput = ({
             : undefined;
         }
 
+        if (
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.relationDefinition?.direction ===
+            RelationDefinitionType.OneToMany
+        ) {
+          return undefined;
+        }
+
         return [fieldName, fieldValue];
       })
       .filter(isDefined),
