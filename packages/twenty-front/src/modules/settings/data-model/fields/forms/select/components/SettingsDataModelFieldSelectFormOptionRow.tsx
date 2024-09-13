@@ -107,7 +107,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
         RightIcon={isDefault ? IconCheck : undefined}
         maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-        onInputEnter={() => {}}
       />
       <Dropdown
         dropdownId={dropdownIds.color}
