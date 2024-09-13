@@ -15,7 +15,7 @@ export const SettingsObjectOverview = () => {
           children: 'Workspace',
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'Data model', href: '/settings/objects' },
+        { children: 'Objects', href: '/settings/objects' },
         {
           children: 'Overview',
         },

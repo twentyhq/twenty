@@ -22,8 +22,6 @@ type SubMenuTopBarContainerProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  gap: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
 

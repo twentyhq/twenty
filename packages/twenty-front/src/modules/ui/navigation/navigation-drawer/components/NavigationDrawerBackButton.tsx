@@ -20,7 +20,6 @@ const StyledIconAndButtonContainer = styled.button`
   flex-direction: row;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
   padding: ${({ theme }) => theme.spacing(1.5, 1)};
   width: 100%;
   font-family: ${({ theme }) => theme.font.family};

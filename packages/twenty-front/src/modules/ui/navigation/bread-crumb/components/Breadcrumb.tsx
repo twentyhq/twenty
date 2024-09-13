@@ -12,10 +12,8 @@ const StyledWrapper = styled.nav`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: grid;
   font-size: ${({ theme }) => theme.font.size.md};
-  // font-weight: ${({ theme }) => theme.font.weight.semiBold};
   grid-auto-flow: column;
   grid-column-gap: ${({ theme }) => theme.spacing(1)};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
   max-width: 100%;
   min-width: 0;
 `;
@@ -42,7 +40,7 @@ const StyledDivider = styled.span`
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
   return (
     <StyledWrapper className={className}>
-      {links?.map((link, index) => {
+      {links.map((link, index) => {
         const text = typeof link.children === 'string' ? link.children : '';
 
         return (
