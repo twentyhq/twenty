@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
-
 import IllustrationIconMapRaw from '@ui/display/icon/assets/illustration-map.svg?react';
+import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IllustrationIconMapProps = Pick<IconComponentProps, 'size'>;
@@ -10,11 +10,13 @@ export const IllustrationIconMap = (props: IllustrationIconMapProps) => {
   const size = props.size ?? theme.icon.size.lg;
   const { color, fill } = theme.IllustrationIcon;
   return (
-    <IllustrationIconMapRaw
-      height={size}
-      width={size}
-      fill={fill}
-      color={color}
-    />
+    <IllustrationIconWrapper>
+      <IllustrationIconMapRaw
+        height={size}
+        width={size}
+        fill={fill}
+        color={color}
+      />
+    </IllustrationIconWrapper>
   );
 };

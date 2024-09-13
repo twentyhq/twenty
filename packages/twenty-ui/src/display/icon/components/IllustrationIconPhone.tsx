@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react';
+import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconPhoneRaw from '@ui/display/icon/assets/illustration-phone.svg?react';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
@@ -11,11 +12,13 @@ export const IllustrationIconPhone = (props: IllustrationIconPhoneProps) => {
   const { color, fill } = theme.IllustrationIcon;
 
   return (
-    <IllustrationIconPhoneRaw
-      height={size}
-      width={size}
-      fill={fill}
-      color={color}
-    />
+    <IllustrationIconWrapper>
+      <IllustrationIconPhoneRaw
+        height={size}
+        width={size}
+        fill={fill}
+        color={color}
+      />
+    </IllustrationIconWrapper>
   );
 };

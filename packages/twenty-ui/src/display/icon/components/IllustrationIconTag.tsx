@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react';
+import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconTagRaw from '@ui/display/icon/assets/illustration-tag.svg?react';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
@@ -10,11 +11,13 @@ export const IllustrationIconTag = (props: IllustrationIconTagProps) => {
   const size = props.size ?? theme.icon.size.lg;
   const { color, fill } = theme.IllustrationIcon;
   return (
-    <IllustrationIconTagRaw
-      height={size}
-      width={size}
-      fill={fill}
-      color={color}
-    />
+    <IllustrationIconWrapper>
+      <IllustrationIconTagRaw
+        height={size}
+        width={size}
+        fill={fill}
+        color={color}
+      />
+    </IllustrationIconWrapper>
   );
 };

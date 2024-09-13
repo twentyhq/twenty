@@ -35,6 +35,7 @@ export * from './icon/components/IllustrationIconText';
 export * from './icon/components/IllustrationIconToggle';
 export * from './icon/components/IllustrationIconUid';
 export * from './icon/components/IllustrationIconUser';
+export * from './icon/components/IllustrationIconWrapper';
 export * from './icon/components/llustrationIconLink';
 export * from './icon/components/TablerIcons';
 export * from './icon/hooks/useIcons';
