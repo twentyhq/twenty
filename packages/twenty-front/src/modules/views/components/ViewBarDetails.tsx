@@ -43,9 +43,10 @@ const StyledChipcontainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  min-height: 32px;
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  flex-wrap: wrap;
+  overflow-x: scroll;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  white-space: nowrap;
+  z-index: 1;
 `;
 
 const StyledCancelButton = styled.button`
