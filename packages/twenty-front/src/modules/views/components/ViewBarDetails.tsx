@@ -54,14 +54,8 @@ const StyledCancelButton = styled.button`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: auto;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  padding: ${(props) => {
-    const horiz = props.theme.spacing(2);
-    const vert = props.theme.spacing(1);
-    return `${vert} ${horiz} ${vert} ${horiz}`;
-  }};
-  user-select: none;
+  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+  z-index: 10;
 
   &:hover {
     background-color: ${({ theme }) => theme.background.tertiary};
