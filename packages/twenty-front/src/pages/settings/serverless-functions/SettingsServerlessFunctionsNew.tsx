@@ -10,13 +10,13 @@ import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconFunction } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from '~/utils/isDefined';
+import { DEFAULT_CODE } from '~/modules/settings/serverless-functions/constants/DefaultCode';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();

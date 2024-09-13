@@ -95,6 +95,13 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
   );
+
+  const file = {
+    path: 'src/index.ts',
+    language: 'typescript',
+    content: formValues.code,
+  };
+
   return (
     <Section>
       <H2Title
@@ -102,7 +109,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
         description="Write your function (in typescript) below"
       />
       <CodeEditor
-        value={formValues.code}
+        file={file}
         onChange={onChange('code')}
         setIsCodeValid={setIsCodeValid}
         header={Header}

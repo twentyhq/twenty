@@ -4,18 +4,8 @@ import { editor, MarkerSeverity } from 'monaco-editor';
 import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { isDefined } from '~/utils/isDefined';
-
-export const DEFAULT_CODE = `export const handler = async (
-  event: object,
-  context: object
-): Promise<object> => {
-  // Your code here
-  return {};
-}
-`;
 
 const StyledEditor = styled(Editor)`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -24,17 +14,25 @@ const StyledEditor = styled(Editor)`
     ${({ theme }) => theme.border.radius.sm};
 `;
 
+type File = {
+  path: string;
+  language: string;
+  content: string;
+};
+
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
+  file?: File;
   header: React.ReactNode;
   onChange?: (value: string) => void;
   setIsCodeValid?: (isCodeValid: boolean) => void;
 };
 
 export const CodeEditor = ({
-  value = DEFAULT_CODE,
+  file,
+  value,
+  language,
   onChange,
   setIsCodeValid,
-  language = 'typescript',
   height = 450,
   options = undefined,
   header,
@@ -50,7 +48,31 @@ export const CodeEditor = ({
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
 
-    if (language === 'typescript') {
+    if (!isDefined(file)) {
+      return;
+    }
+
+    const model = monaco.editor.createModel(
+      file.content,
+      file.language,
+      monaco.Uri.file(file.path),
+    );
+    editor.setModel(model);
+
+    if (file.language === 'typescript') {
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
+        moduleResolution:
+          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        baseUrl: 'file:///src',
+        paths: {
+          'src/*': ['file:///src/*'],
+        },
+        allowSyntheticDefaultImports: true,
+        esModuleInterop: true,
+        noEmit: true,
+        target: monaco.languages.typescript.ScriptTarget.ESNext,
+      });
       const environmentVariables = {};
 
       const environmentDefinition = `
@@ -78,6 +100,7 @@ export const CodeEditor = ({
         onlySpecifiedPackages: true,
         versions: availablePackages,
         debounceDuration: 0,
+        fileRootPath: 'file:///',
       });
     }
   };
@@ -92,27 +115,14 @@ export const CodeEditor = ({
     setIsCodeValid?.(true);
   };
 
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .monaco-editor .margin .line-numbers {
-        font-weight: bold;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
   return (
     isDefined(availablePackages) && (
-      <>
+      <div>
         {header}
         <StyledEditor
           height={height}
-          language={language}
           value={value}
+          language={language}
           onMount={handleEditorDidMount}
           onChange={(value?: string) => value && onChange?.(value)}
           onValidate={handleEditorValidation}
@@ -128,7 +138,7 @@ export const CodeEditor = ({
             },
           }}
         />
-      </>
+      </div>
     )
   );
 };

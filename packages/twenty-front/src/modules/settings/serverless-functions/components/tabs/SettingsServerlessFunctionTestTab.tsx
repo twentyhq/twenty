@@ -88,15 +88,15 @@ export const SettingsServerlessFunctionTestTab = ({
       <StyledInputsContainer>
         <CodeEditor
           value={settingsServerlessFunctionInput}
+          language={'json'}
           height={200}
           onChange={setSettingsServerlessFunctionInput}
-          language={'json'}
           header={InputHeader}
         />
         <CodeEditor
           value={result}
-          height={settingsServerlessFunctionCodeEditorOutputParams.height}
           language={settingsServerlessFunctionCodeEditorOutputParams.language}
+          height={settingsServerlessFunctionCodeEditorOutputParams.height}
           options={{ readOnly: true, domReadOnly: true }}
           header={OutputHeader}
         />

@@ -1,4 +1,3 @@
-import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { graphql, http, HttpResponse } from 'msw';
@@ -10,6 +9,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { sleep } from '~/utils/sleep';
+import { DEFAULT_CODE } from '~/modules/settings/serverless-functions/constants/DefaultCode';
 
 const SOURCE_CODE_FULL_PATH =
   'serverless-function/20202020-1c25-4d02-bf25-6aeccf7ea419/adb4bd21-7670-4c81-9f74-1fc196fe87ea/source.ts';
