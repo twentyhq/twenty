@@ -1,9 +1,8 @@
-import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
-import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
+import { CodeEditor, File } from '@/ui/input/code-editor/components/CodeEditor';
 import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -22,7 +21,7 @@ const StyledTabList = styled(TabList)`
 `;
 
 export const SettingsServerlessFunctionCodeEditorTab = ({
-  formValues,
+  files,
   handleExecute,
   handlePublish,
   handleReset,
@@ -31,7 +30,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   onChange,
   setIsCodeValid,
 }: {
-  formValues: ServerlessFunctionFormValues;
+  files: File[];
   handleExecute: () => void;
   handlePublish: () => void;
   handleReset: () => void;
@@ -75,19 +74,6 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     />
   );
 
-  const files = [
-    {
-      path: 'src/index.ts',
-      language: 'typescript',
-      content: formValues.code,
-    },
-    {
-      path: '.env',
-      language: 'plaintext',
-      content: 'VAR = value',
-    },
-  ];
-
   const HeaderTabList = (
     <StyledTabList
       tabListId={SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}
@@ -97,12 +83,6 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     />
   );
 
-  const Header = (
-    <CoreEditorHeader
-      leftNodes={[HeaderTabList]}
-      rightNodes={[ResetButton, PublishButton, TestButton]}
-    />
-  );
   const navigate = useNavigate();
   useHotkeyScopeOnMount(
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
@@ -116,21 +96,24 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
   );
 
-  const currentFile = files.find((file) => file.path === activeTabId);
-
   return (
     <Section>
       <H2Title
         title="Code your function"
         description="Write your function (in typescript) below"
       />
-      <CodeEditor
-        files={files}
-        currentFile={currentFile}
-        onChange={onChange('code')}
-        setIsCodeValid={setIsCodeValid}
-        header={Header}
+      <CoreEditorHeader
+        leftNodes={[HeaderTabList]}
+        rightNodes={[ResetButton, PublishButton, TestButton]}
       />
+      {activeTabId && (
+        <CodeEditor
+          files={files}
+          currentFilePath={activeTabId}
+          onChange={onChange('code')}
+          setIsCodeValid={setIsCodeValid}
+        />
+      )}
     </Section>
   );
 };

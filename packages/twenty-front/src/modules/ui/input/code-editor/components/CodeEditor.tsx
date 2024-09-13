@@ -15,32 +15,36 @@ const StyledEditor = styled(Editor)`
     ${({ theme }) => theme.border.radius.sm};
 `;
 
-type File = {
-  path: string;
+export type File = {
   language: string;
   content: string;
+  path: string;
 };
 
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
-  currentFile: File;
-  files?: File[];
-  header: React.ReactNode;
+  currentFilePath: string;
+  files: File[];
   onChange?: (value: string) => void;
   setIsCodeValid?: (isCodeValid: boolean) => void;
 };
 
 export const CodeEditor = ({
-  currentFile,
+  currentFilePath,
   files,
   onChange,
   setIsCodeValid,
   height = 450,
   options = undefined,
-  header,
 }: CodeEditorProps) => {
   const theme = useTheme();
 
   const { availablePackages } = useGetAvailablePackages();
+
+  const currentFile = files.find((file) => file.path === currentFilePath);
+
+  if (!isDefined(currentFile)) {
+    return;
+  }
 
   const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
@@ -49,7 +53,7 @@ export const CodeEditor = ({
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
 
-    if (isDefined(files)) {
+    if (files.length > 1) {
       files.forEach((file) => {
         const model = monaco.editor.getModel(monaco.Uri.file(file.path));
         if (!isDefined(model)) {
@@ -125,30 +129,25 @@ export const CodeEditor = ({
 
   return (
     isDefined(availablePackages) && (
-      <div>
-        {header}
-        {isDefined(currentFile) && (
-          <StyledEditor
-            height={height}
-            value={currentFile.content}
-            language={currentFile.language}
-            onMount={handleEditorDidMount}
-            onChange={(value?: string) => value && onChange?.(value)}
-            onValidate={handleEditorValidation}
-            options={{
-              ...options,
-              overviewRulerLanes: 0,
-              scrollbar: {
-                vertical: 'hidden',
-                horizontal: 'hidden',
-              },
-              minimap: {
-                enabled: false,
-              },
-            }}
-          />
-        )}
-      </div>
+      <StyledEditor
+        height={height}
+        value={currentFile.content}
+        language={currentFile.language}
+        onMount={handleEditorDidMount}
+        onChange={(value?: string) => value && onChange?.(value)}
+        onValidate={handleEditorValidation}
+        options={{
+          ...options,
+          overviewRulerLanes: 0,
+          scrollbar: {
+            vertical: 'hidden',
+            horizontal: 'hidden',
+          },
+          minimap: {
+            enabled: false,
+          },
+        }}
+      />
     )
   );
 };

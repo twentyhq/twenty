@@ -165,12 +165,25 @@ export const SettingsServerlessFunctionDetail = () => {
     { id: 'settings', title: 'Settings', Icon: IconSettings },
   ];
 
+  const files = [
+    {
+      path: 'src/index.ts',
+      language: 'typescript',
+      content: formValues.code,
+    },
+    {
+      path: '.env',
+      language: 'plaintext',
+      content: 'VAR = value',
+    },
+  ];
+
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'editor':
         return (
           <SettingsServerlessFunctionCodeEditorTab
-            formValues={formValues}
+            files={files}
             handleExecute={handleExecute}
             handlePublish={handlePublish}
             handleReset={handleReset}
