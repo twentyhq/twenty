@@ -1,6 +1,7 @@
 import { Button } from '@/ui/input/button/components/Button';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
+import { useDiscardDraftWorkflowVersion } from '@/workflow/hooks/useDiscardDraftWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import {
   IconPlayerPlay,
@@ -24,6 +25,7 @@ export const RecordShowPageHeaderWorkflow = ({
 
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
+  const { discardDraftWorkflowVersion } = useDiscardDraftWorkflowVersion();
 
   return (
     <>
@@ -41,7 +43,16 @@ export const RecordShowPageHeaderWorkflow = ({
           variant="secondary"
           Icon={IconTrash}
           disabled={isWaitingForWorkflowWithCurrentVersion}
-          onClick={() => {}}
+          onClick={() => {
+            assertWorkflowWithCurrentVersionIsDefined(
+              workflowWithCurrentVersion,
+            );
+
+            return discardDraftWorkflowVersion({
+              workflowId: workflowWithCurrentVersion.id,
+              workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+            });
+          }}
         />
       ) : null}
 
