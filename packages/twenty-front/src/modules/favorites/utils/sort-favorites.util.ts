@@ -19,8 +19,8 @@ export const sortFavorites = (
           const relationObject = favorite[relationField.name];
 
           const relationObjectNameSingular =
-            relationField.toRelationMetadata?.fromObjectMetadata.nameSingular ??
-            '';
+            relationField.relationDefinition?.targetObjectMetadata
+              .nameSingular ?? '';
 
           const objectRecordIdentifier =
             getObjectRecordIdentifierByNameSingular(

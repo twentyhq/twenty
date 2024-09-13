@@ -6,6 +6,7 @@ import { useIcons } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 type ObjectFieldRowProps = {
   field: FieldMetadataItem;
@@ -46,7 +47,8 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
         position={Position.Right}
         id={`${field.id}-right`}
         className={
-          field.fromRelationMetadata
+          field.relationDefinition?.direction ===
+          RelationDefinitionType.OneToMany
             ? 'right-handle source-handle'
             : 'right-handle target-handle'
         }
@@ -56,7 +58,8 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
         position={Position.Left}
         id={`${field.id}-left`}
         className={
-          field.fromRelationMetadata
+          field.relationDefinition?.direction ===
+          RelationDefinitionType.OneToMany
             ? 'left-handle source-handle'
             : 'left-handle target-handle'
         }

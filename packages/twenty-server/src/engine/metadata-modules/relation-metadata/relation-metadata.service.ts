@@ -6,6 +6,8 @@ import camelCase from 'lodash.camelcase';
 import { FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -413,26 +415,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   }
 
   async findManyRelationMetadataByFieldMetadataIds(
-    fieldMetadataIds: string[],
+    fieldMetadataItems: Array<
+      Pick<FieldMetadataInterface, 'id' | 'type' | 'objectMetadataId'>
+    >,
+    workspaceId: string,
   ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
-    const relationMetadataCollection =
-      await this.relationMetadataRepository.find({
-        where: [
-          {
-            fromFieldMetadataId: In(fieldMetadataIds),
-          },
-          {
-            toFieldMetadataId: In(fieldMetadataIds),
-          },
-        ],
-      });
-
-    if (relationMetadataCollection.length === 0) {
-      return [];
-    }
-
-    const workspaceId = relationMetadataCollection[0].workspaceId;
-
     const metadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
@@ -454,47 +441,39 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
-    const mappedResult = fieldMetadataIds.map((fieldMetadataId) => {
-      const foundRelationMetadataItem = relationMetadataCollection.find(
-        (relationMetadataItem) =>
-          relationMetadataItem.fromFieldMetadataId === fieldMetadataId ||
-          relationMetadataItem.toFieldMetadataId === fieldMetadataId,
-      );
+    const mappedResult = fieldMetadataItems.map((fieldMetadataItem) => {
+      const objectMetadata =
+        objectMetadataMap[fieldMetadataItem.objectMetadataId];
 
-      return (
-        foundRelationMetadataItem ??
-        // TODO: return a relation metadata not found exception
-        new NotFoundException(
-          `RelationMetadata with fieldMetadataId ${fieldMetadataId} not found`,
-        )
-      );
-    });
+      const fieldMetadata = objectMetadata.fields[fieldMetadataItem.id];
 
-    const enhancedResults = mappedResult.map((relationMetadataItem) => {
-      if (relationMetadataItem instanceof NotFoundException) {
-        return relationMetadataItem;
+      const relationMetadata =
+        fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
+
+      if (!relationMetadata) {
+        return new NotFoundException(
+          `From object metadata not found for relation ${fieldMetadata?.id}`,
+        );
       }
 
       const fromObjectMetadata =
-        objectMetadataMap[relationMetadataItem.fromObjectMetadataId];
+        objectMetadataMap[relationMetadata.fromObjectMetadataId];
 
       const toObjectMetadata =
-        objectMetadataMap[relationMetadataItem.toObjectMetadataId];
+        objectMetadataMap[relationMetadata.toObjectMetadataId];
 
       const fromFieldMetadata =
-        Object.values(fromObjectMetadata.fields).find(
-          (fieldMetadata) =>
-            fieldMetadata.id === relationMetadataItem.fromFieldMetadataId,
-        ) ?? null;
+        objectMetadataMap[fromObjectMetadata.id].fields[
+          relationMetadata.fromFieldMetadataId
+        ];
 
       const toFieldMetadata =
-        Object.values(toObjectMetadata.fields).find(
-          (fieldMetadata) =>
-            fieldMetadata.id === relationMetadataItem.toFieldMetadataId,
-        ) ?? null;
+        objectMetadataMap[toObjectMetadata.id].fields[
+          relationMetadata.toFieldMetadataId
+        ];
 
       return {
-        ...relationMetadataItem,
+        ...relationMetadata,
         fromObjectMetadata,
         toObjectMetadata,
         fromFieldMetadata,
@@ -502,7 +481,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       };
     });
 
-    return enhancedResults as (RelationMetadataEntity | NotFoundException)[];
+    return mappedResult as (RelationMetadataEntity | NotFoundException)[];
   }
 
   private async deleteRelationWorkspaceCustomMigration(

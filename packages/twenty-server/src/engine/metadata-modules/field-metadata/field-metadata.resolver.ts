@@ -103,6 +103,7 @@ export class FieldMetadataResolver {
 
   @ResolveField(() => RelationDefinitionDTO, { nullable: true })
   async relationDefinition(
+    @AuthWorkspace() workspace: Workspace,
     @Parent() fieldMetadata: FieldMetadataDTO,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDefinitionDTO | null | undefined> {
@@ -112,7 +113,10 @@ export class FieldMetadataResolver {
 
     try {
       const relationMetadataItem =
-        await context.loaders.relationMetadataLoader.load(fieldMetadata.id);
+        await context.loaders.relationMetadataLoader.load({
+          fieldMetadata,
+          workspaceId: workspace.id,
+        });
 
       return await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
         fieldMetadata,

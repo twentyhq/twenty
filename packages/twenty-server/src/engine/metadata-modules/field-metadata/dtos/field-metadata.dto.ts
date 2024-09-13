@@ -132,6 +132,8 @@ export class FieldMetadataDTO<
   @HideField()
   workspaceId: string;
 
+  objectMetadataId: string;
+
   @IsDateString()
   @Field()
   createdAt: Date;

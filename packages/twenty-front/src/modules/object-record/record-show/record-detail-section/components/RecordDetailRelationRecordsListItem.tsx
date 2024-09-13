@@ -1,7 +1,7 @@
-import { useCallback, useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useCallback, useContext } from 'react';
 import {
   IconChevronDown,
   IconComponent,
@@ -11,6 +11,7 @@ import {
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -95,6 +96,8 @@ export const RecordDetailRelationRecordsListItem = ({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const persistField = usePersistField();
 
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
@@ -111,7 +114,7 @@ export const RecordDetailRelationRecordsListItem = ({
   const availableRelationFieldMetadataItems = relationObjectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem) &&
+        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
         fieldMetadataItem.id !==
           relationObjectMetadataItem.labelIdentifierFieldMetadataId &&
         fieldMetadataItem.id !== relationFieldMetadataId,

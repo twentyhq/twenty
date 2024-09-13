@@ -19,6 +19,7 @@ export const generateObjectMetadataMap = (
 
     for (const fieldMetadata of objectMetadata.fields) {
       fieldsMap[fieldMetadata.name] = fieldMetadata;
+      fieldsMap[fieldMetadata.id] = fieldMetadata;
     }
 
     const processedObjectMetadata: ObjectMetadataMapItem = {

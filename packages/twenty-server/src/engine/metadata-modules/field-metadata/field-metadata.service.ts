@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
 import { DataSource, FindOneOptions, Repository } from 'typeorm';
-import { v4 as uuidV4 } from 'uuid';
+import { v4 as uuidV4, v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -102,7 +102,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
 
       console.time('createOne query');
-      // TODO: this looks like a big security hole here, we should not get workspaceId from the input
       const [objectMetadata] = await this.objectMetadataRepository.find({
         where: {
           id: fieldMetadataInput.objectMetadataId,
@@ -163,7 +162,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
 
       console.time('createOne save');
-      const createdFieldMetadata = await fieldMetadataRepository.save({
+      const createdFieldMetadata = await fieldMetadataRepository.create({
+        id: v4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         ...fieldMetadataInput,
         isNullable: generateNullable(
           fieldMetadataInput.type,
@@ -317,7 +319,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataEntity,
         );
 
-      const existingFieldMetadata = await fieldMetadataRepository.findOne({
+      const [existingFieldMetadata] = await fieldMetadataRepository.find({
         where: {
           id,
           workspaceId: fieldMetadataInput.workspaceId,
@@ -331,15 +333,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      const objectMetadata =
-        await this.objectMetadataService.findOneWithinWorkspace(
-          fieldMetadataInput.workspaceId,
-          {
-            where: {
-              id: existingFieldMetadata?.objectMetadataId,
-            },
-          },
-        );
+      const [objectMetadata] = await this.objectMetadataRepository.find({
+        where: {
+          id: existingFieldMetadata.objectMetadataId,
+          workspaceId: fieldMetadataInput.workspaceId,
+        },
+        relations: ['fields'],
+        order: {},
+      });
 
       if (!objectMetadata) {
         throw new FieldMetadataException(
@@ -484,7 +485,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataEntity,
         );
 
-      const fieldMetadata = await fieldMetadataRepository.findOne({
+      const [fieldMetadata] = await fieldMetadataRepository.find({
         where: {
           id: input.id,
           workspaceId: workspaceId,
@@ -498,12 +499,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      const objectMetadata =
-        await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-          where: {
-            id: fieldMetadata?.objectMetadataId,
-          },
-        });
+      const [objectMetadata] = await this.objectMetadataRepository.find({
+        where: {
+          id: fieldMetadata.objectMetadataId,
+        },
+        relations: ['fields'],
+        order: {},
+      });
 
       if (!objectMetadata) {
         throw new FieldMetadataException(
@@ -592,7 +594,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     id: string,
     options?: FindOneOptions<FieldMetadataEntity>,
   ) {
-    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+    const [fieldMetadata] = await this.fieldMetadataRepository.find({
       ...options,
       where: {
         ...options?.where,
@@ -614,13 +616,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     workspaceId: string,
     options: FindOneOptions<FieldMetadataEntity>,
   ) {
-    return this.fieldMetadataRepository.findOne({
+    const [fieldMetadata] = await this.fieldMetadataRepository.find({
       ...options,
       where: {
         ...options.where,
         workspaceId,
       },
     });
+
+    return fieldMetadata;
   }
 
   private buildUpdatableStandardFieldInput(
