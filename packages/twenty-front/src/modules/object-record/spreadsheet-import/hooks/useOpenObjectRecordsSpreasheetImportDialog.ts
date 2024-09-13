@@ -41,7 +41,7 @@ export const useOpenObjectRecordsSpreasheetImportDialog = (
           fieldMetadataItem.name !== 'createdAt' &&
           (fieldMetadataItem.type !== FieldMetadataType.Relation ||
             fieldMetadataItem.relationDefinition?.direction ===
-              RelationDefinitionType.OneToMany),
+              RelationDefinitionType.ManyToOne),
       )
       .sort((fieldMetadataItemA, fieldMetadataItemB) =>
         fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),

@@ -29,7 +29,6 @@ export const sortFavorites = (
             );
 
           return {
-            ...favorite,
             id: favorite.id,
             recordId: objectRecordIdentifier.id,
             position: favorite.position,
