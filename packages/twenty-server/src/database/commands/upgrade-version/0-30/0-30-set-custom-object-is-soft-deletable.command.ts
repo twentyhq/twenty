@@ -14,7 +14,7 @@ type SetCustomObjectIsSoftDeletableCommandOptions =
   ActiveWorkspacesCommandOptions;
 
 @Command({
-  name: 'upgrade-0.24:set-custom-object-is-soft-deletable',
+  name: 'upgrade-0.30:set-custom-object-is-soft-deletable',
   description: 'Set custom object is soft deletable',
 })
 export class SetCustomObjectIsSoftDeletableCommand extends ActiveWorkspacesCommandRunner {

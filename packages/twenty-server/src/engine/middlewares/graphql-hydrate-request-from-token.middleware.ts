@@ -6,8 +6,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 class GraphqlTokenValidationProxy {
   private tokenService: TokenService;
@@ -33,7 +33,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
 {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -73,7 +73,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
 
       data = await graphqlTokenValidationProxy.validateToken(req);
       const metadataVersion =
-        await this.workspaceMetadataVersionService.getMetadataVersion(
+        await this.workspaceStorageCacheService.getMetadataVersion(
           data.workspace.id,
         );
 

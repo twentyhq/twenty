@@ -1,18 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { Repository } from 'typeorm';
+
 import {
   deleteCoreSchema,
   seedCoreSchema,
 } from 'src/database/typeorm-seeds/core/demo';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 @Injectable()
 export class DataSeedDemoWorkspaceService {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly workspaceManagerService: WorkspaceManagerService,
+    @InjectRepository(Workspace, 'core')
+    protected readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   async seedDemo(): Promise<void> {
@@ -27,8 +33,14 @@ export class DataSeedDemoWorkspaceService {
         );
       }
       for (const workspaceId of demoWorkspaceIds) {
-        await deleteCoreSchema(rawDataSource, workspaceId);
-        await this.workspaceManagerService.delete(workspaceId);
+        const existingWorkspaces = await this.workspaceRepository.findBy({
+          id: workspaceId,
+        });
+
+        if (existingWorkspaces.length > 0) {
+          await this.workspaceManagerService.delete(workspaceId);
+          await deleteCoreSchema(rawDataSource, workspaceId);
+        }
 
         await seedCoreSchema(rawDataSource, workspaceId);
         await this.workspaceManagerService.initDemo(workspaceId);

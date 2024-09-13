@@ -16,7 +16,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
@@ -32,7 +32,7 @@ import { WorkspaceService } from './services/workspace.service';
         BillingModule,
         FileModule,
         FileUploadModule,
-        WorkspaceMetadataVersionModule,
+        WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
           [User, Workspace, UserWorkspace, FeatureFlagEntity],
           'core',

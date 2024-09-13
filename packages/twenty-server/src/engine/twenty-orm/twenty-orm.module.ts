@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -16,7 +16,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     DataSourceModule,
     WorkspaceCacheStorageModule,
-    WorkspaceMetadataVersionModule,
+    WorkspaceMetadataCacheModule,
   ],
   providers: [
     ...entitySchemaFactories,

@@ -54,7 +54,7 @@ export class StandardObjectFactory {
       isCustom: false,
       isRemote: false,
       isSystem: workspaceEntityMetadataArgs.isSystem ?? false,
-      isSoftDeletable: workspaceEntityMetadataArgs.softDelete ?? true,
+      isSoftDeletable: workspaceEntityMetadataArgs.softDelete,
     };
   }
 }

@@ -27,7 +27,8 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
@@ -623,15 +624,14 @@ export class WorkspaceRepository<
       throw new Error('Object metadata name is missing');
     }
 
-    const objectMetadata = this.internalContext.objectMetadataCollection.find(
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
+    const objectMetadata =
+      this.internalContext.objectMetadataMap[objectMetadataName];
 
     if (!objectMetadata) {
       throw new Error(
         `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
-          `with object metadata collection length: ${this.internalContext.objectMetadataCollection.length}`,
+          `with object metadata collection length: ${this.internalContext.objectMetadataMap.length}`,
       );
     }
 
@@ -639,10 +639,12 @@ export class WorkspaceRepository<
   }
 
   private async getCompositeFieldMetadataCollection(
-    objectMetadata: ObjectMetadataEntity,
+    objectMetadata: ObjectMetadataMapItem,
   ) {
-    const compositeFieldMetadataCollection = objectMetadata.fields.filter(
-      (fieldMetadata) => isCompositeFieldMetadataType(fieldMetadata.type),
+    const compositeFieldMetadataCollection = Object.values(
+      objectMetadata.fields,
+    ).filter((fieldMetadata) =>
+      isCompositeFieldMetadataType(fieldMetadata.type),
     );
 
     return compositeFieldMetadataCollection;
@@ -723,7 +725,7 @@ export class WorkspaceRepository<
 
   private async formatResult<T>(
     data: T,
-    objectMetadata?: ObjectMetadataEntity,
+    objectMetadata?: ObjectMetadataMapItem,
   ): Promise<T> {
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
@@ -767,7 +769,7 @@ export class WorkspaceRepository<
     );
 
     const relationMetadataMap = new Map(
-      objectMetadata.fields
+      Object.values(objectMetadata.fields)
         .filter(({ type }) => isRelationFieldMetadataType(type))
         .map((fieldMetadata) => [
           fieldMetadata.name,
@@ -778,7 +780,7 @@ export class WorkspaceRepository<
             relationType: computeRelationType(
               fieldMetadata,
               fieldMetadata.fromRelationMetadata ??
-                fieldMetadata.toRelationMetadata,
+                (fieldMetadata.toRelationMetadata as RelationMetadataEntity),
             ),
           },
         ]),
@@ -801,16 +803,14 @@ export class WorkspaceRepository<
 
       if (relationMetadata) {
         const toObjectMetadata =
-          this.internalContext.objectMetadataCollection.find(
-            (objectMetadata) =>
-              objectMetadata.id === relationMetadata.toObjectMetadataId,
-          );
+          this.internalContext.objectMetadataMap[
+            relationMetadata.toObjectMetadataId
+          ];
 
         const fromObjectMetadata =
-          this.internalContext.objectMetadataCollection.find(
-            (objectMetadata) =>
-              objectMetadata.id === relationMetadata.fromObjectMetadataId,
-          );
+          this.internalContext.objectMetadataMap[
+            relationMetadata.fromObjectMetadataId
+          ];
 
         if (!toObjectMetadata) {
           throw new Error(
