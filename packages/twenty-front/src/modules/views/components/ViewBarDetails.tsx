@@ -29,11 +29,13 @@ const StyledBar = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
-  min-height: 32px;
+  align-items: center;
   justify-content: space-between;
+  position: relative;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  padding: ${({ theme }) => theme.spacing(1)};
   z-index: 4;
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  min-height: 32px;
 `;
 
 const StyledChipcontainer = styled.div`
@@ -68,8 +70,10 @@ const StyledCancelButton = styled.button`
 `;
 
 const StyledFilterContainer = styled.div`
-  align-items: center;
   display: flex;
+  align-items: center;
+  flex: 1;
+  overflow-x: hidden;
 `;
 
 const StyledSeperatorContainer = styled.div`
