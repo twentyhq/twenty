@@ -9,6 +9,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
@@ -40,7 +41,10 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
-  const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
+  const { addToCommandMenu, setToInitialCommandMenu, filterCommandMenu } =
+    useCommandMenu();
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
@@ -144,7 +148,13 @@ export const PageChangeEffect = () => {
   }, [isMatchingLocation, setHotkeyScope]);
 
   useEffect(() => {
-    setToInitialCommandMenu();
+    const mappedActiveItems: { [key: string]: boolean } =
+      objectMetadataItems.reduce(
+        (acc, item) => ({ ...acc, [item.nameSingular]: item.isActive }),
+        {},
+      );
+
+    setToInitialCommandMenu(mappedActiveItems);
 
     addToCommandMenu([
       {
@@ -159,7 +169,13 @@ export const PageChangeEffect = () => {
           }),
       },
     ]);
-  }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);
+  }, [
+    addToCommandMenu,
+    setToInitialCommandMenu,
+    openCreateActivity,
+    objectMetadataItems,
+    filterCommandMenu,
+  ]);
 
   useEffect(() => {
     setTimeout(() => {

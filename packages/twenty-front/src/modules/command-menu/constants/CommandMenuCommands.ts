@@ -6,6 +6,7 @@ import {
   IconUser,
 } from 'twenty-ui';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Command, CommandType } from '../types/Command';
 
 export const COMMAND_MENU_COMMANDS: Command[] = [
@@ -17,6 +18,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'P',
     Icon: IconUser,
+    nameSingular: CoreObjectNameSingular.Person,
   },
   {
     id: 'go-to-companies',
@@ -26,6 +28,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'C',
     Icon: IconBuildingSkyscraper,
+    nameSingular: CoreObjectNameSingular.Company,
   },
   {
     id: 'go-to-activities',
@@ -35,6 +38,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'O',
     Icon: IconTargetArrow,
+    nameSingular: CoreObjectNameSingular.Opportunity,
   },
   {
     id: 'go-to-settings',
@@ -53,5 +57,6 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'T',
     Icon: IconCheckbox,
+    nameSingular: CoreObjectNameSingular.Task,
   },
 ];

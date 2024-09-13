@@ -1,6 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -70,8 +70,23 @@ export const useCommandMenu = () => {
     [setCommands],
   );
 
-  const setToInitialCommandMenu = () => {
-    setCommands(COMMAND_MENU_COMMANDS);
+  const filterCommandMenu = useCallback(
+    (callback: (_: Command) => boolean = () => true) => {
+      setCommands((prev) => prev.filter(callback));
+    },
+    [setCommands],
+  );
+
+  const setToInitialCommandMenu = (isActiveMap?: {
+    [key: string]: boolean;
+  }) => {
+    const filteredCommands = COMMAND_MENU_COMMANDS.filter(
+      (command) =>
+        !isActiveMap ||
+        !command.nameSingular ||
+        (isActiveMap[command.nameSingular] ?? true),
+    );
+    setCommands(filteredCommands);
   };
 
   const onItemClick = useCallback(
@@ -97,5 +112,6 @@ export const useCommandMenu = () => {
     addToCommandMenu,
     onItemClick,
     setToInitialCommandMenu,
+    filterCommandMenu,
   };
 };

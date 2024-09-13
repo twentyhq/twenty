@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCheckbox, IconNotes } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -20,6 +20,7 @@ import {
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CommandMenu } from '../CommandMenu';
 
 const companiesMock = getCompaniesMock();
@@ -35,6 +36,8 @@ const meta: Meta<typeof CommandMenu> = {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
+      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
       const { addToCommandMenu, setToInitialCommandMenu, openCommandMenu } =
         useCommandMenu();
 
@@ -42,7 +45,12 @@ const meta: Meta<typeof CommandMenu> = {
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
 
       useEffect(() => {
-        setToInitialCommandMenu();
+        const mappedActiveItems: { [key: string]: boolean } =
+          objectMetadataItems.reduce(
+            (acc, item) => ({ ...acc, [item.nameSingular]: item.isActive }),
+            {},
+          );
+        setToInitialCommandMenu(mappedActiveItems);
         addToCommandMenu([
           {
             id: 'create-task',
