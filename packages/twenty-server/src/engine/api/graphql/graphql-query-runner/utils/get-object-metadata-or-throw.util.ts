@@ -4,7 +4,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
-export const getObjectMetadata = (
+export const getObjectMetadataOrThrow = (
   objectMetadataMap: Record<string, any>,
   objectName: string,
 ): ObjectMetadataMapItem => {
