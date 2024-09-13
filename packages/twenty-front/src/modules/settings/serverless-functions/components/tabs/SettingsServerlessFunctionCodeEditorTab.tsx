@@ -13,6 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { H2Title, IconGitCommit, IconPlayerPlay, IconRestore } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { useRecoilValue } from 'recoil';
 
 const StyledTabList = styled(TabList)`
   border-bottom: none;
@@ -37,6 +40,10 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   onChange: (key: string) => (value: string) => void;
   setIsCodeValid: (isCodeValid: boolean) => void;
 }) => {
+  const { activeTabIdState } = useTabList(
+    SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  );
+  const activeTabId = useRecoilValue(activeTabIdState);
   const TestButton = (
     <Button
       title="Test"
@@ -68,12 +75,25 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     />
   );
 
-  const TAB_LIST_COMPONENT_ID = 'serverless-function-editor';
+  const files = [
+    {
+      path: 'src/index.ts',
+      language: 'typescript',
+      content: formValues.code,
+    },
+    {
+      path: '.env',
+      language: 'plaintext',
+      content: 'VAR = value',
+    },
+  ];
 
   const HeaderTabList = (
     <StyledTabList
-      tabListId={TAB_LIST_COMPONENT_ID}
-      tabs={[{ id: 'index.ts', title: 'index.ts' }]}
+      tabListId={SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}
+      tabs={files.map((file) => {
+        return { id: file.path, title: file.path.split('/').reverse()?.[0] };
+      })}
     />
   );
 
@@ -96,11 +116,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
   );
 
-  const file = {
-    path: 'src/index.ts',
-    language: 'typescript',
-    content: formValues.code,
-  };
+  const currentFile = files.find((file) => file.path === activeTabId);
 
   return (
     <Section>
@@ -109,7 +125,8 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
         description="Write your function (in typescript) below"
       />
       <CodeEditor
-        file={file}
+        files={files}
+        currentFile={currentFile}
         onChange={onChange('code')}
         setIsCodeValid={setIsCodeValid}
         header={Header}

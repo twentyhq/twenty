@@ -1,4 +1,5 @@
 import Editor, { Monaco, EditorProps } from '@monaco-editor/react';
+import dotenv from 'dotenv';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { editor, MarkerSeverity } from 'monaco-editor';
 import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
@@ -21,16 +22,16 @@ type File = {
 };
 
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
-  file?: File;
+  currentFile: File;
+  files?: File[];
   header: React.ReactNode;
   onChange?: (value: string) => void;
   setIsCodeValid?: (isCodeValid: boolean) => void;
 };
 
 export const CodeEditor = ({
-  file,
-  value,
-  language,
+  currentFile,
+  files,
   onChange,
   setIsCodeValid,
   height = 450,
@@ -48,18 +49,18 @@ export const CodeEditor = ({
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
 
-    if (!isDefined(file)) {
-      return;
-    }
+    if (isDefined(files)) {
+      files.forEach((file) => {
+        const model = monaco.editor.getModel(monaco.Uri.file(file.path));
+        if (!isDefined(model)) {
+          monaco.editor.createModel(
+            file.content,
+            file.language,
+            monaco.Uri.file(file.path),
+          );
+        }
+      });
 
-    const model = monaco.editor.createModel(
-      file.content,
-      file.language,
-      monaco.Uri.file(file.path),
-    );
-    editor.setModel(model);
-
-    if (file.language === 'typescript') {
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
         moduleResolution:
@@ -73,26 +74,34 @@ export const CodeEditor = ({
         noEmit: true,
         target: monaco.languages.typescript.ScriptTarget.ESNext,
       });
-      const environmentVariables = {};
 
-      const environmentDefinition = `
-      declare namespace NodeJS {
-        interface ProcessEnv {
-          ${Object.keys(environmentVariables)
-            .map((key) => `${key}: string;`)
-            .join('\n')}
-        }
-      }
-
-      declare const process: {
-        env: NodeJS.ProcessEnv;
-      };
-    `;
-
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(
-        environmentDefinition,
-        'ts:process-env.d.ts',
+      const environmentVariablesFile = files.find(
+        (file) => file.path === '.env',
       );
+      if (isDefined(environmentVariablesFile)) {
+        const environmentVariables = dotenv.parse(
+          environmentVariablesFile.content,
+        );
+
+        const environmentDefinition = `
+        declare namespace NodeJS {
+          interface ProcessEnv {
+            ${Object.keys(environmentVariables)
+              .map((key) => `${key}: string;`)
+              .join('\n')}
+          }
+        }
+
+        declare const process: {
+          env: NodeJS.ProcessEnv;
+        };
+      `;
+
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(
+          environmentDefinition,
+          'ts:process-env.d.ts',
+        );
+      }
 
       await AutoTypings.create(editor, {
         monaco,
@@ -100,7 +109,6 @@ export const CodeEditor = ({
         onlySpecifiedPackages: true,
         versions: availablePackages,
         debounceDuration: 0,
-        fileRootPath: 'file:///',
       });
     }
   };
@@ -119,25 +127,27 @@ export const CodeEditor = ({
     isDefined(availablePackages) && (
       <div>
         {header}
-        <StyledEditor
-          height={height}
-          value={value}
-          language={language}
-          onMount={handleEditorDidMount}
-          onChange={(value?: string) => value && onChange?.(value)}
-          onValidate={handleEditorValidation}
-          options={{
-            ...options,
-            overviewRulerLanes: 0,
-            scrollbar: {
-              vertical: 'hidden',
-              horizontal: 'hidden',
-            },
-            minimap: {
-              enabled: false,
-            },
-          }}
-        />
+        {isDefined(currentFile) && (
+          <StyledEditor
+            height={height}
+            value={currentFile.content}
+            language={currentFile.language}
+            onMount={handleEditorDidMount}
+            onChange={(value?: string) => value && onChange?.(value)}
+            onValidate={handleEditorValidation}
+            options={{
+              ...options,
+              overviewRulerLanes: 0,
+              scrollbar: {
+                vertical: 'hidden',
+                horizontal: 'hidden',
+              },
+              minimap: {
+                enabled: false,
+              },
+            }}
+          />
+        )}
       </div>
     )
   );
