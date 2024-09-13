@@ -14,7 +14,7 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { isDefined } from '~/utils/isDefined';
 
-export const ViewPickerCreateOrEditContentEffect = () => {
+export const ViewPickerContentEffect = () => {
   const setViewPickerSelectedIcon = useSetRecoilComponentStateV2(
     viewPickerSelectedIconComponentState,
   );

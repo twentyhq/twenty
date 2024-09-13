@@ -6,8 +6,9 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
 
@@ -18,7 +19,7 @@ type ViewBarFilterEffectProps = {
 export const ViewBarFilterEffect = ({
   filterDropdownId,
 }: ViewBarFilterEffectProps) => {
-  const { upsertCombinedViewFilter } = useCombinedViewFilters();
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 

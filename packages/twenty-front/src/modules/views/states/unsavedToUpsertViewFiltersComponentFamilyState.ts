@@ -3,7 +3,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { ViewFilter } from '../types/ViewFilter';
 
 export const unsavedToUpsertViewFiltersComponentFamilyState =
-  createComponentFamilyStateV2<ViewFilter[], { viewId: string }>({
+  createComponentFamilyStateV2<ViewFilter[], { viewId?: string }>({
     key: 'unsavedToUpsertViewFiltersComponentFamilyState',
     defaultValue: [],
     componentInstanceContext: ViewComponentInstanceContext,

@@ -5,7 +5,7 @@ import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useS
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
+import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
 
@@ -16,7 +16,7 @@ type ViewBarSortEffectProps = {
 export const ViewBarSortEffect = ({
   sortDropdownId,
 }: ViewBarSortEffectProps) => {
-  const { upsertCombinedViewSort } = useCombinedViewSorts();
+  const { upsertCombinedViewSort } = useUpsertCombinedViewSorts();
 
   // TDOO: verify this instance id works
   const availableSortDefinitions = useRecoilComponentValueV2(

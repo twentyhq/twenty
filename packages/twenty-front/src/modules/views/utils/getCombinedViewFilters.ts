@@ -1,6 +1,6 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
 
-export const combinedViewFilters = (
+export const getCombinedViewFilters = (
   viewFilters: ViewFilter[],
   toUpsertViewFilters: ViewFilter[],
   toDeleteViewFilterIds: string[],

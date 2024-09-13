@@ -21,7 +21,10 @@ export const createComponentFamilyStateV2 = <
   effects,
   defaultValue,
   componentInstanceContext,
-}: CreateComponentFamilyStateArgs<ValueType>) => {
+}: CreateComponentFamilyStateArgs<ValueType>): ComponentFamilyStateV2<
+  ValueType,
+  FamilyKey
+> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }

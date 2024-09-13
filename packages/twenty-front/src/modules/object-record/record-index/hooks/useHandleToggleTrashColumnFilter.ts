@@ -5,7 +5,7 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
 
@@ -25,7 +25,7 @@ export const useHandleToggleTrashColumnFilter = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { upsertCombinedViewFilter } = useCombinedViewFilters(viewBarId);
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
 
   const handleToggleTrashColumnFilter = useCallback(() => {
     const trashFieldMetadata = objectMetadataItem.fields.find(

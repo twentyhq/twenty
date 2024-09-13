@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { IconChevronLeft, IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
+import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -15,33 +15,21 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewType } from '@/views/types/ViewType';
-import { ViewPickerCreateOrEditButton } from '@/views/view-picker/components/ViewPickerCreateOrEditButton';
+import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
+import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
+import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
+import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
 import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
 import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
+import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-
-const StyledIconAndNameContainer = styled.div`
-  align-items: center;
-  display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledSelectContainer = styled.div`
-  display: flex;
-  width: calc(100% - ${({ theme }) => theme.spacing(2)});
-  margin: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.light};
-  user-select: none;
-`;
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -51,13 +39,8 @@ const StyledNoKanbanFieldAvailableContainer = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-const StyledSaveButtonContainer = styled.div`
-  display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: calc(100% - ${({ theme }) => theme.spacing(2)});
-`;
-export const ViewPickerCreateOrEditContent = () => {
-  const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
+export const ViewPickerContentCreateMode = () => {
+  const { setViewPickerMode } = useViewPickerMode();
 
   const [viewPickerInputName, setViewPickerInputName] =
     useRecoilComponentStateV2(viewPickerInputNameComponentState);
@@ -81,7 +64,7 @@ export const ViewPickerCreateOrEditContent = () => {
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const { handleCreate, handleUpdate } = useViewPickerPersistView();
+  const { createViewFromCurrentState } = useCreateViewFromCurrentState();
 
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
@@ -91,18 +74,15 @@ export const ViewPickerCreateOrEditContent = () => {
       if (viewPickerIsPersisting) {
         return;
       }
-      if (viewPickerMode === 'create') {
-        if (
-          viewPickerType === ViewType.Kanban &&
-          availableFieldsForKanban.length === 0
-        ) {
-          return;
-        }
-        await handleCreate();
+
+      if (
+        viewPickerType === ViewType.Kanban &&
+        availableFieldsForKanban.length === 0
+      ) {
+        return;
       }
-      if (viewPickerMode === 'edit') {
-        await handleUpdate();
-      }
+
+      await createViewFromCurrentState();
     },
     ViewsHotkeyScope.ListDropdown,
   );
@@ -113,23 +93,17 @@ export const ViewPickerCreateOrEditContent = () => {
   };
 
   const handleClose = async () => {
-    if (viewPickerMode === 'edit') {
-      await handleUpdate();
-    }
     setViewPickerMode('list');
   };
 
   return (
     <>
-      <DropdownMenuHeader
-        StartIcon={viewPickerMode === 'create' ? IconX : IconChevronLeft}
-        onClick={handleClose}
-      >
-        {viewPickerMode === 'create' ? 'Create view' : 'Edit view'}
+      <DropdownMenuHeader StartIcon={IconX} onClick={handleClose}>
+        Create view
       </DropdownMenuHeader>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <StyledIconAndNameContainer>
+        <ViewPickerIconAndNameContainer>
           <IconPicker
             onChange={onIconChange}
             selectedIconKey={viewPickerSelectedIcon}
@@ -144,33 +118,31 @@ export const ViewPickerCreateOrEditContent = () => {
             }}
             autoFocus
           />
-        </StyledIconAndNameContainer>
-        {viewPickerMode === 'create' && (
-          <StyledSelectContainer>
-            <Select
-              disableBlur
-              label="View type"
-              fullWidth
-              value={viewPickerType}
-              onChange={(value) => {
-                setViewPickerIsDirty(true);
-                setViewPickerType(value);
-              }}
-              options={[
-                { value: ViewType.Table, label: 'Table', Icon: IconTable },
-                {
-                  value: ViewType.Kanban,
-                  label: 'Kanban',
-                  Icon: IconLayoutKanban,
-                },
-              ]}
-              dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
-            />
-          </StyledSelectContainer>
-        )}
-        {viewPickerType === ViewType.Kanban && viewPickerMode === 'create' && (
+        </ViewPickerIconAndNameContainer>
+        <ViewPickerSelectContainer>
+          <Select
+            disableBlur
+            label="View type"
+            fullWidth
+            value={viewPickerType}
+            onChange={(value) => {
+              setViewPickerIsDirty(true);
+              setViewPickerType(value);
+            }}
+            options={[
+              { value: ViewType.Table, label: 'Table', Icon: IconTable },
+              {
+                value: ViewType.Kanban,
+                label: 'Kanban',
+                Icon: IconLayoutKanban,
+              },
+            ]}
+            dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
+          />
+        </ViewPickerSelectContainer>
+        {viewPickerType === ViewType.Kanban && (
           <>
-            <StyledSelectContainer>
+            <ViewPickerSelectContainer>
               <Select
                 disableBlur
                 label="Stages"
@@ -190,7 +162,7 @@ export const ViewPickerCreateOrEditContent = () => {
                 }
                 dropdownId={VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID}
               />
-            </StyledSelectContainer>
+            </ViewPickerSelectContainer>
             {availableFieldsForKanban.length === 0 && (
               <StyledNoKanbanFieldAvailableContainer>
                 Set up a Select field on Companies to create a Kanban
@@ -201,9 +173,9 @@ export const ViewPickerCreateOrEditContent = () => {
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <StyledSaveButtonContainer>
-          <ViewPickerCreateOrEditButton />
-        </StyledSaveButtonContainer>
+        <ViewPickerSaveButtonContainer>
+          <ViewPickerCreateButton />
+        </ViewPickerSaveButtonContainer>
       </DropdownMenuItemsContainer>
     </>
   );

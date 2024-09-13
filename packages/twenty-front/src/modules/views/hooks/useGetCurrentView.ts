@@ -3,19 +3,20 @@ import { useEffect } from 'react';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isCurrentViewKeyIndexComponentState } from '@/views/states/isCurrentViewIndexComponentState';
-import { unsavedToDeleteViewFilterIdsComponentState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentState';
-import { unsavedToDeleteViewSortIdsComponentState } from '@/views/states/unsavedToDeleteViewSortIdsFamilyState';
-import { unsavedToUpsertViewFiltersComponentState } from '@/views/states/unsavedToUpsertViewFiltersComponentState';
-import { unsavedToUpsertViewSortsComponentState } from '@/views/states/unsavedToUpsertViewSortsComponentState';
+import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
+import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewSortIdsComponentFamilyState';
+import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
+import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { View } from '@/views/types/View';
-import { combinedViewFilters } from '@/views/utils/combinedViewFilters';
-import { combinedViewSorts } from '@/views/utils/combinedViewSorts';
+import { getCombinedViewFilters } from '@/views/utils/getCombinedViewFilters';
+import { getCombinedViewSorts } from '@/views/utils/getCombinedViewSorts';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { isDefined } from '~/utils/isDefined';
 
@@ -52,6 +53,8 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
 
   const currentView = currentViewId ? currentViewFromCurrentViewId : indexView;
 
+  const viewId = currentViewId ?? indexView?.id;
+
   useEffect(() => {
     setIsCurrentViewKeyIndex(currentView?.key === 'INDEX');
   }, [currentView, setIsCurrentViewKeyIndex]);
@@ -61,23 +64,27 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
     views,
   );
 
-  const unsavedToUpsertViewFilters = useRecoilComponentValueV2(
-    unsavedToUpsertViewFiltersComponentState,
+  const unsavedToUpsertViewFilters = useRecoilComponentFamilyValueV2(
+    unsavedToUpsertViewFiltersComponentFamilyState,
+    { viewId },
     instanceId,
   );
 
-  const unsavedToUpsertViewSorts = useRecoilComponentValueV2(
-    unsavedToUpsertViewSortsComponentState,
+  const unsavedToUpsertViewSorts = useRecoilComponentFamilyValueV2(
+    unsavedToUpsertViewSortsComponentFamilyState,
+    { viewId },
     instanceId,
   );
 
-  const unsavedToDeleteViewFilterIds = useRecoilComponentValueV2(
-    unsavedToDeleteViewFilterIdsComponentState,
+  const unsavedToDeleteViewFilterIds = useRecoilComponentFamilyValueV2(
+    unsavedToDeleteViewFilterIdsComponentFamilyState,
+    { viewId },
     instanceId,
   );
 
-  const unsavedToDeleteViewSortIds = useRecoilComponentValueV2(
-    unsavedToDeleteViewSortIdsComponentState,
+  const unsavedToDeleteViewSortIds = useRecoilComponentFamilyValueV2(
+    unsavedToDeleteViewSortIdsComponentFamilyState,
+    { viewId },
     instanceId,
   );
 
@@ -92,12 +99,12 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
 
   const currentViewWithCombinedFiltersAndSorts = {
     ...currentView,
-    viewFilters: combinedViewFilters(
+    viewFilters: getCombinedViewFilters(
       currentView.viewFilters,
       unsavedToUpsertViewFilters,
       unsavedToDeleteViewFilterIds,
     ),
-    viewSorts: combinedViewSorts(
+    viewSorts: getCombinedViewSorts(
       currentView.viewSorts,
       unsavedToUpsertViewSorts,
       unsavedToDeleteViewSortIds,
@@ -109,5 +116,6 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
     currentViewWithSavedFiltersAndSorts: currentView,
     currentViewWithCombinedFiltersAndSorts,
     viewsOnCurrentObject: viewsOnCurrentObject ?? [],
+    currentViewId,
   };
 };

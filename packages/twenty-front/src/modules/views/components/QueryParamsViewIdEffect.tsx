@@ -4,7 +4,6 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
@@ -39,8 +38,8 @@ export const QueryParamsViewIdEffect = () => {
     lastVisitedObjectMetadataItemId,
   );
 
-  // TODO: scope view bar per view id if possible
-  const { resetCurrentView } = useResetCurrentView();
+  // // TODO: scope view bar per view id if possible
+  // const { resetCurrentView } = useResetCurrentView();
 
   // useEffect(() => {
   //   if (isDefined(currentViewId)) {

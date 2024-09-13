@@ -11,8 +11,9 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useHandleViews } from '@/views/hooks/useHandleViews';
+import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
@@ -24,8 +25,6 @@ const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 `;
 
 export const ViewPickerListContent = () => {
-  const { selectView } = useHandleViews();
-
   const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
     useGetCurrentView();
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
@@ -35,17 +34,18 @@ export const ViewPickerListContent = () => {
   const { setViewPickerMode } = useViewPickerMode();
 
   const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
-  const { updateView } = useHandleViews();
+  const { updateView } = useUpdateView();
+  const { changeView } = useChangeView();
 
   const handleViewSelect = (viewId: string) => {
-    selectView(viewId);
+    changeView(viewId);
     closeDropdown();
   };
 
   const handleAddViewButtonClick = () => {
     if (isDefined(currentViewWithCombinedFiltersAndSorts?.id)) {
       setViewPickerReferenceViewId(currentViewWithCombinedFiltersAndSorts.id);
-      setViewPickerMode('create');
+      setViewPickerMode('create-empty');
     }
   };
 

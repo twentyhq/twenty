@@ -19,7 +19,6 @@ import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDro
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
-import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
 
@@ -48,54 +47,52 @@ export const ViewBar = ({
   }
 
   return (
-    <ViewComponentInstanceContext.Provider value={{ instanceId: viewBarId }}>
-      <ViewEventContext.Provider value={{ onCurrentViewChange }}>
-        <ViewBarEffect viewBarId={viewBarId} />
-        <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
-        <ViewBarSortEffect sortDropdownId={sortDropdownId} />
-        <QueryParamsFiltersEffect />
-        <QueryParamsViewIdEffect />
+    <ViewEventContext.Provider value={{ onCurrentViewChange }}>
+      <ViewBarEffect viewBarId={viewBarId} />
+      <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
+      <ViewBarSortEffect sortDropdownId={sortDropdownId} />
+      <QueryParamsFiltersEffect />
+      <QueryParamsViewIdEffect />
 
-        <ViewBarPageTitle viewBarId={viewBarId} />
-        <TopBar
-          className={className}
-          leftComponent={
-            loading ? <ViewBarSkeletonLoader /> : <ViewPickerDropdown />
-          }
-          displayBottomBorder={false}
-          rightComponent={
-            <>
-              <ObjectFilterDropdownButton
-                filterDropdownId={filterDropdownId}
-                hotkeyScope={{
-                  scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
-                }}
-              />
-              <ObjectSortDropdownButton
-                sortDropdownId={sortDropdownId}
-                hotkeyScope={{
-                  scope: FiltersHotkeyScope.ObjectSortDropdownButton,
-                }}
-              />
-              {optionsDropdownButton}
-            </>
-          }
-          bottomComponent={
-            <ViewBarDetails
+      <ViewBarPageTitle viewBarId={viewBarId} />
+      <TopBar
+        className={className}
+        leftComponent={
+          loading ? <ViewBarSkeletonLoader /> : <ViewPickerDropdown />
+        }
+        displayBottomBorder={false}
+        rightComponent={
+          <>
+            <ObjectFilterDropdownButton
               filterDropdownId={filterDropdownId}
-              hasFilterButton
-              viewBarId={viewBarId}
-              rightComponent={
-                <UpdateViewButtonGroup
-                  hotkeyScope={{
-                    scope: ViewsHotkeyScope.UpdateViewButtonDropdown,
-                  }}
-                />
-              }
+              hotkeyScope={{
+                scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+              }}
             />
-          }
-        />
-      </ViewEventContext.Provider>
-    </ViewComponentInstanceContext.Provider>
+            <ObjectSortDropdownButton
+              sortDropdownId={sortDropdownId}
+              hotkeyScope={{
+                scope: FiltersHotkeyScope.ObjectSortDropdownButton,
+              }}
+            />
+            {optionsDropdownButton}
+          </>
+        }
+        bottomComponent={
+          <ViewBarDetails
+            filterDropdownId={filterDropdownId}
+            hasFilterButton
+            viewBarId={viewBarId}
+            rightComponent={
+              <UpdateViewButtonGroup
+                hotkeyScope={{
+                  scope: ViewsHotkeyScope.UpdateViewButtonDropdown,
+                }}
+              />
+            }
+          />
+        }
+      />
+    </ViewEventContext.Provider>
   );
 };

@@ -6,7 +6,7 @@ import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/u
 import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
 
 export const canPersistViewComponentFamilySelector =
-  createComponentFamilySelectorV2<boolean, { viewId: string }>({
+  createComponentFamilySelectorV2<boolean, { viewId?: string }>({
     key: 'canPersistViewComponentFamilySelector',
     get:
       ({ familyKey, instanceId }) =>

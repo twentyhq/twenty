@@ -26,12 +26,12 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { ViewBar } from '@/views/components/ViewBar';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { useState } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -58,7 +58,6 @@ export const RecordIndexContainer = ({
   recordIndexId,
   objectNamePlural,
 }: RecordIndexContainerProps) => {
-  const [currentViewId, setCurrentViewId] = useState<string | null>(null);
   const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
     recordIndexViewTypeState,
   );
@@ -129,90 +128,100 @@ export const RecordIndexContainer = ({
   return (
     <StyledContainer>
       <InformationBannerWrapper />
-      <RecordFieldValueSelectorContextProvider>
-        <SpreadsheetImportProvider>
-          <StyledContainerWithPadding>
-            <ViewBar
-              viewBarId={recordIndexId}
-              optionsDropdownButton={
-                <RecordIndexOptionsDropdown
-                  recordIndexId={recordIndexId}
-                  objectNameSingular={objectNameSingular}
-                  viewType={recordIndexViewType ?? ViewType.Table}
-                />
-              }
-              onCurrentViewChange={(view) => {
-                if (!view) {
-                  return;
+      <ViewComponentInstanceContext.Provider
+        value={{ instanceId: recordIndexId }}
+      >
+        <RecordFieldValueSelectorContextProvider>
+          <SpreadsheetImportProvider>
+            <StyledContainerWithPadding>
+              <ViewBar
+                viewBarId={recordIndexId}
+                optionsDropdownButton={
+                  <RecordIndexOptionsDropdown
+                    recordIndexId={recordIndexId}
+                    objectNameSingular={objectNameSingular}
+                    viewType={recordIndexViewType ?? ViewType.Table}
+                  />
                 }
+                onCurrentViewChange={(view) => {
+                  if (!view) {
+                    return;
+                  }
 
-                onViewFieldsChange(view.viewFields);
-                setTableFilters(
-                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
-                );
-                setRecordIndexFilters(
-                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
-                );
-                setTableSorts(
-                  mapViewSortsToSorts(view.viewSorts, sortDefinitions),
-                );
-                setRecordIndexSorts(
-                  mapViewSortsToSorts(view.viewSorts, sortDefinitions),
-                );
-                setRecordIndexViewType(view.type);
-                setRecordIndexViewKanbanFieldMetadataIdState(
-                  view.kanbanFieldMetadataId,
-                );
-                setRecordIndexIsCompactModeActive(view.isCompact);
-              }}
-            />
-            <RecordIndexViewBarEffect
-              objectNamePlural={objectNamePlural}
-              viewBarId={recordIndexId}
-            />
-          </StyledContainerWithPadding>
-        </SpreadsheetImportProvider>
-        <RecordIndexEventContext.Provider
-          value={{
-            onIndexIdentifierClick: handleIndexIdentifierClick,
-            onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          }}
-        >
-          {recordIndexViewType === ViewType.Table && (
-            <>
-              <RecordIndexTableContainer
-                recordTableId={recordIndexId}
+                  onViewFieldsChange(view.viewFields);
+                  setTableFilters(
+                    mapViewFiltersToFilters(
+                      view.viewFilters,
+                      filterDefinitions,
+                    ),
+                  );
+                  setRecordIndexFilters(
+                    mapViewFiltersToFilters(
+                      view.viewFilters,
+                      filterDefinitions,
+                    ),
+                  );
+                  setTableSorts(
+                    mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+                  );
+                  setRecordIndexSorts(
+                    mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+                  );
+                  setRecordIndexViewType(view.type);
+                  setRecordIndexViewKanbanFieldMetadataIdState(
+                    view.kanbanFieldMetadataId,
+                  );
+                  setRecordIndexIsCompactModeActive(view.isCompact);
+                }}
+              />
+              <RecordIndexViewBarEffect
+                objectNamePlural={objectNamePlural}
                 viewBarId={recordIndexId}
-                objectNameSingular={objectNameSingular}
-                createRecord={createRecord}
-              />
-              <RecordIndexTableContainerEffect
-                objectNameSingular={objectNameSingular}
-                recordTableId={recordIndexId}
-                viewBarId={recordIndexId}
-              />
-            </>
-          )}
-          {recordIndexViewType === ViewType.Kanban && (
-            <StyledContainerWithPadding fullHeight>
-              <RecordIndexBoardContainer
-                recordBoardId={recordIndexId}
-                viewBarId={recordIndexId}
-                objectNameSingular={objectNameSingular}
-                createRecord={createRecord}
-              />
-              <RecordIndexBoardDataLoader
-                objectNameSingular={objectNameSingular}
-                recordBoardId={recordIndexId}
-              />
-              <RecordIndexBoardDataLoaderEffect
-                objectNameSingular={objectNameSingular}
-                recordBoardId={recordIndexId}
               />
             </StyledContainerWithPadding>
-          )}
-        </RecordIndexEventContext.Provider>
-      </RecordFieldValueSelectorContextProvider>
+          </SpreadsheetImportProvider>
+          <RecordIndexEventContext.Provider
+            value={{
+              onIndexIdentifierClick: handleIndexIdentifierClick,
+              onIndexRecordsLoaded: handleIndexRecordsLoaded,
+            }}
+          >
+            {recordIndexViewType === ViewType.Table && (
+              <>
+                <RecordIndexTableContainer
+                  recordTableId={recordIndexId}
+                  viewBarId={recordIndexId}
+                  objectNameSingular={objectNameSingular}
+                  createRecord={createRecord}
+                />
+                <RecordIndexTableContainerEffect
+                  objectNameSingular={objectNameSingular}
+                  recordTableId={recordIndexId}
+                  viewBarId={recordIndexId}
+                />
+              </>
+            )}
+            {recordIndexViewType === ViewType.Kanban && (
+              <StyledContainerWithPadding fullHeight>
+                <RecordIndexBoardContainer
+                  recordBoardId={recordIndexId}
+                  viewBarId={recordIndexId}
+                  objectNameSingular={objectNameSingular}
+                  createRecord={createRecord}
+                />
+                <RecordIndexBoardDataLoader
+                  objectNameSingular={objectNameSingular}
+                  recordBoardId={recordIndexId}
+                />
+                <RecordIndexBoardDataLoaderEffect
+                  objectNameSingular={objectNameSingular}
+                  recordBoardId={recordIndexId}
+                />
+              </StyledContainerWithPadding>
+            )}
+          </RecordIndexEventContext.Provider>
+        </RecordFieldValueSelectorContextProvider>
+      </ViewComponentInstanceContext.Provider>
     </StyledContainer>
   );
 };

@@ -1,14 +1,15 @@
 import { Button } from '@/ui/input/button/components/Button';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
+import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 
-export const ViewPickerCreateOrEditButton = () => {
+export const ViewPickerCreateButton = () => {
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
 
@@ -23,13 +24,18 @@ export const ViewPickerCreateOrEditButton = () => {
     viewPickerKanbanFieldMetadataIdComponentState,
   );
 
-  const { handleCreate, handleDelete } = useViewPickerPersistView();
+  const { createViewFromCurrentState } = useCreateViewFromCurrentState();
+  const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
+
+  const handleCreateButtonClick = () => {
+    createViewFromCurrentState();
+  };
 
   if (viewPickerMode === 'edit') {
     return (
       <Button
         title="Delete"
-        onClick={handleDelete}
+        onClick={deleteViewFromCurrentState}
         accent="danger"
         fullWidth
         size="small"
@@ -64,7 +70,7 @@ export const ViewPickerCreateOrEditButton = () => {
     return (
       <Button
         title="Create"
-        onClick={handleCreate}
+        onClick={handleCreateButtonClick}
         accent="blue"
         fullWidth
         size="small"

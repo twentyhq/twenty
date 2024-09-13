@@ -1,6 +1,6 @@
 import { ViewSort } from '@/views/types/ViewSort';
 
-export const combinedViewSorts = (
+export const getCombinedViewSorts = (
   viewSort: ViewSort[],
   toUpsertViewSorts: ViewSort[],
   toDeleteViewSortIds: string[],

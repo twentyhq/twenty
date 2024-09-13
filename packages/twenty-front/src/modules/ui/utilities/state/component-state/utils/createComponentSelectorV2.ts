@@ -19,7 +19,7 @@ export const createComponentSelectorV2 = <ValueType>({
   get: SelectorGetter<ValueType, ComponentStateKeyV2>;
   set?: SelectorSetter<ValueType, ComponentStateKeyV2>;
   instanceContext: ComponentInstanceStateContext<any> | null;
-}) => {
+}): ComponentSelectorV2<ValueType> | ComponentReadOnlySelectorV2<ValueType> => {
   if (isDefined(instanceContext)) {
     globalComponentInstanceContextMap.set(key, instanceContext);
   }

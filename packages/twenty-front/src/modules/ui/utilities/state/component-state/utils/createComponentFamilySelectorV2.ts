@@ -22,7 +22,9 @@ export const createComponentFamilySelectorV2 = <
   get: SelectorGetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
   set?: SelectorSetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}) => {
+}):
+  | ComponentFamilySelectorV2<ValueType, FamilyKey>
+  | ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }

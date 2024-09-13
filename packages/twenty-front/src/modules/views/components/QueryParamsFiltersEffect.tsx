@@ -1,19 +1,23 @@
 import { useEffect } from 'react';
 
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
-import { unsavedToUpsertViewFiltersComponentState } from '@/views/states/unsavedToUpsertViewFiltersComponentState';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
+import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
+import { isDefined } from 'twenty-ui';
 
 export const QueryParamsFiltersEffect = () => {
-  const { hasFiltersQueryParams, getFiltersFromQueryParams } =
+  const { hasFiltersQueryParams, getFiltersFromQueryParams, viewIdQueryParam } =
     useViewFromQueryParams();
 
-  const setUnsavedViewFilter = useSetRecoilComponentStateV2(
-    unsavedToUpsertViewFiltersComponentState,
+  const setUnsavedViewFilter = useSetRecoilComponentFamilyStateV2(
+    unsavedToUpsertViewFiltersComponentFamilyState,
+    { viewId: viewIdQueryParam },
   );
 
-  const { resetCurrentView } = useResetCurrentView();
+  const { resetUnsavedViewStates } = useResetUnsavedViewStates();
+  const { currentViewId } = useGetCurrentView();
 
   useEffect(() => {
     if (!hasFiltersQueryParams) {
@@ -27,13 +31,16 @@ export const QueryParamsFiltersEffect = () => {
     });
 
     return () => {
-      resetCurrentView();
+      if (isDefined(currentViewId)) {
+        resetUnsavedViewStates(currentViewId);
+      }
     };
   }, [
     getFiltersFromQueryParams,
     hasFiltersQueryParams,
-    resetCurrentView,
+    resetUnsavedViewStates,
     setUnsavedViewFilter,
+    currentViewId,
   ]);
 
   return <></>;

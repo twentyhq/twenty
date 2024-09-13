@@ -5,7 +5,7 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
 import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewSortIdsComponentFamilyState';
@@ -60,7 +60,8 @@ export const useSaveCurrentViewFiltersAndSorts = (
     deleteViewFilterRecords,
   } = usePersistViewFilterRecords();
 
-  const { resetCurrentView } = useResetCurrentView(viewBarComponentId);
+  const { resetUnsavedViewStates } =
+    useResetUnsavedViewStates(viewBarComponentId);
 
   const saveViewSorts = useRecoilCallback(
     ({ snapshot }) =>
@@ -157,7 +158,7 @@ export const useSaveCurrentViewFiltersAndSorts = (
 
   const saveCurrentViewFilterAndSorts = useRecoilCallback(
     ({ snapshot }) =>
-      async (viewId?: string) => {
+      async (viewIdFromProps?: string) => {
         const currentViewId = snapshot
           .getLoadable(currentViewIdCallbackState)
           .getValue();
@@ -166,13 +167,16 @@ export const useSaveCurrentViewFiltersAndSorts = (
           return;
         }
 
-        await saveViewFilters(viewId ?? currentViewId);
-        await saveViewSorts(viewId ?? currentViewId);
-        resetCurrentView();
+        const viewId = viewIdFromProps ?? currentViewId;
+
+        await saveViewFilters(viewId);
+        await saveViewSorts(viewId);
+
+        resetUnsavedViewStates(viewId);
       },
     [
       currentViewIdCallbackState,
-      resetCurrentView,
+      resetUnsavedViewStates,
       saveViewFilters,
       saveViewSorts,
     ],

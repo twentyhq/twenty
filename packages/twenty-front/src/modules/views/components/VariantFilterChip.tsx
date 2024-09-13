@@ -2,19 +2,19 @@ import { useIcons } from 'twenty-ui';
 
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 
 type VariantFilterChipProps = {
   viewFilter: Filter;
 };
 
 export const VariantFilterChip = ({ viewFilter }: VariantFilterChipProps) => {
-  const { removeCombinedViewFilter } = useCombinedViewFilters();
+  const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
 
   const { getIcon } = useIcons();
 
   const handleRemoveClick = () => {
-    removeCombinedViewFilter(viewFilter.id);
+    deleteCombinedViewFilter(viewFilter.id);
   };
 
   return (

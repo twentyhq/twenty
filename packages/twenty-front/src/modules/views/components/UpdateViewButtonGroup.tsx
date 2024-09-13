@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useCallback } from 'react';
 import { IconChevronDown, IconPlus } from 'twenty-ui';
 
 import { Button } from '@/ui/input/button/components/Button';
@@ -9,7 +8,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
@@ -17,7 +16,7 @@ import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryP
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
-import { canPersistViewComponentSelector } from '@/views/states/selectors/canPersistViewComponentSelector';
+import { canPersistViewComponentFamilySelector } from '@/views/states/selectors/canPersistViewComponentFamilySelector';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
@@ -40,10 +39,12 @@ export const UpdateViewButtonGroup = ({
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const canPersistView = useRecoilComponentSelectorValueV2(
-    canPersistViewComponentSelector,
-  );
   const currentViewId = useRecoilComponentValueV2(currentViewIdComponentState);
+
+  const canPersistView = useRecoilComponentFamilyValueV2(
+    canPersistViewComponentFamilySelector,
+    { viewId: currentViewId },
+  );
 
   const { closeDropdown: closeUpdateViewButtonDropdown } = useDropdown(
     UPDATE_VIEW_BUTTON_DROPDOWN_ID,
@@ -57,24 +58,27 @@ export const UpdateViewButtonGroup = ({
     viewPickerReferenceViewIdComponentState,
   );
 
-  const handleViewCreate = useCallback(() => {
+  const openViewPickerInCreateMode = () => {
     if (!currentViewId) {
       return;
     }
+
     openViewPickerDropdown();
     setViewPickerReferenceViewId(currentViewId);
-    setViewPickerMode('create');
+    setViewPickerMode('create-from-current');
 
     closeUpdateViewButtonDropdown();
-  }, [
-    closeUpdateViewButtonDropdown,
-    currentViewId,
-    openViewPickerDropdown,
-    setViewPickerMode,
-    setViewPickerReferenceViewId,
-  ]);
+  };
 
-  const handleViewUpdate = async () => {
+  const handleCreateViewClick = () => {
+    openViewPickerInCreateMode();
+  };
+
+  const handleSaveAsNewViewClick = () => {
+    openViewPickerInCreateMode();
+  };
+
+  const handleUpdateViewClick = async () => {
     await saveCurrentViewFilterAndSorts();
   };
 
@@ -90,7 +94,7 @@ export const UpdateViewButtonGroup = ({
     <StyledContainer>
       {currentViewWithCombinedFiltersAndSorts?.key !== 'INDEX' ? (
         <ButtonGroup size="small" accent="blue">
-          <Button title="Update view" onClick={handleViewUpdate} />
+          <Button title="Update view" onClick={handleUpdateViewClick} />
           <Dropdown
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
             dropdownHotkeyScope={hotkeyScope}
@@ -106,7 +110,7 @@ export const UpdateViewButtonGroup = ({
               <>
                 <DropdownMenuItemsContainer>
                   <MenuItem
-                    onClick={handleViewCreate}
+                    onClick={handleCreateViewClick}
                     LeftIcon={IconPlus}
                     text="Create view"
                   />
@@ -118,7 +122,7 @@ export const UpdateViewButtonGroup = ({
       ) : (
         <Button
           title="Save as new view"
-          onClick={handleViewCreate}
+          onClick={handleSaveAsNewViewClick}
           accent="blue"
           size="small"
           variant="secondary"
