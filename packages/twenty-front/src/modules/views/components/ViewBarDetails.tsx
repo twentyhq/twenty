@@ -32,7 +32,6 @@ const StyledBar = styled.div`
   align-items: center;
   justify-content: space-between;
   position: relative;
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   padding: ${({ theme }) => theme.spacing(1)};
   z-index: 4;
   min-height: 32px;
