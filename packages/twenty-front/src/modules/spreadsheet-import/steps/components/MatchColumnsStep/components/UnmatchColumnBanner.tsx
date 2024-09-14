@@ -1,21 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown, IconInfoCircle } from 'twenty-ui';
-const StyledBanner = styled.div`
-  align-items: center;
+import { ANIMATION, Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui';
+
+const StyledBanner = styled(Banner)`
   background: ${({ theme }) => theme.accent.secondary};
-  border-radius: 8px;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2.5)};
-  width: 100%;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  line-height: 150%;
-  box-sizing: border-box;
+  border-radius: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledText = styled.div`
@@ -32,7 +21,7 @@ const StyledTransitionedIconChevronDown = styled(IconChevronDown)<{
   color: ${({ theme }) => theme.color.blue};
   transform: ${({ isExpanded }) =>
     isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  transition: transform 0.4s ease;
+  transition: transform ${ANIMATION.duration.normal}s ease;
 `;
 
 export const UnmatchColumnBanner = ({
