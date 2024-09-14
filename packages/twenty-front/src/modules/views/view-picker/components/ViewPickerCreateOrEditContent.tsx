@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconChevronLeft, IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
@@ -50,6 +51,9 @@ const StyledSaveButtonContainer = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 export const ViewPickerCreateOrEditContent = () => {
+  const [takeControlOfCustomIcon, toggleTakeControlOfCustomIcon] =
+    useState(false);
+
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const {
     viewPickerInputNameState,
@@ -104,6 +108,7 @@ export const ViewPickerCreateOrEditContent = () => {
   );
 
   const onIconChange = ({ iconKey }: { iconKey: string }) => {
+    toggleTakeControlOfCustomIcon(true);
     setViewPickerIsDirty(true);
     setViewPickerSelectedIcon(iconKey);
   };
@@ -128,9 +133,12 @@ export const ViewPickerCreateOrEditContent = () => {
         <StyledIconAndNameContainer>
           <IconPicker
             onChange={onIconChange}
-            selectedIconKey={viewPickerSelectedIcon}
+            selectedIconKey={
+              takeControlOfCustomIcon ? viewPickerSelectedIcon : viewPickerType
+            }
             disableBlur
             onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
+            takeControlOfCustomIcon={takeControlOfCustomIcon}
           />
           <DropdownMenuInput
             value={viewPickerInputName}
@@ -151,6 +159,7 @@ export const ViewPickerCreateOrEditContent = () => {
               onChange={(value) => {
                 setViewPickerIsDirty(true);
                 setViewPickerType(value);
+                toggleTakeControlOfCustomIcon(false);
               }}
               options={[
                 { value: ViewType.Table, label: 'Table', Icon: IconTable },
