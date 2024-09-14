@@ -68,7 +68,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.emails,
     type: FieldMetadataType.EMAILS,
     label: 'Emails',
-    description: 'Contact’s Emails',
+    description: 'Emails de contato',
     icon: 'IconMail',
   })
   emails: EmailsMetadata;

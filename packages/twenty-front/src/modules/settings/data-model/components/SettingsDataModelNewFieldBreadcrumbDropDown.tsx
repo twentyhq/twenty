@@ -64,7 +64,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = ({
 
   return (
     <StyledContainer>
-      New Field <StyledSpan>-</StyledSpan>
+      Novo Campo <StyledSpan>-</StyledSpan>
       <Dropdown
         dropdownPlacement="bottom-start"
         dropdownId={dropdownId}

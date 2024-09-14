@@ -29,7 +29,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.task,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Task',
+    label: 'Tarefa',
     description: 'Tarefa do alvo',
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,

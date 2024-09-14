@@ -5,7 +5,7 @@ import { emailTheme } from 'src/common-style';
 export const BaseHead = () => {
   return (
     <Head>
-      <title>CRM - Digito Service Email</title>
+      <title>Email CRM - Digito Service</title>
       <Font
         fontFamily={emailTheme.font.family}
         fallbackFontFamily="sans-serif"

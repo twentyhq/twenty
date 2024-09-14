@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { IconBrandGithub } from 'twenty-ui';
+import { IconTag } from 'twenty-ui';
 
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 
@@ -11,7 +11,7 @@ export const GithubVersionLink = () => {
 
   return (
     <ActionLink href={GITHUB_LINK} target="_blank" rel="noreferrer">
-      <IconBrandGithub size={theme.icon.size.md} />
+      <IconTag size={theme.icon.size.md} />
       {packageJson.version}
     </ActionLink>
   );
