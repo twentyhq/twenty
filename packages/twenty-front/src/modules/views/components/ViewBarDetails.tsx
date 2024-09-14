@@ -42,7 +42,7 @@ const StyledChipcontainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  overflow-y: scroll;
+  overflow: scroll;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(0.5)};
