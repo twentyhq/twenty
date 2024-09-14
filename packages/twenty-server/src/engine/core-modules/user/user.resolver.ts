@@ -97,8 +97,14 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+  async workspaceMember(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<WorkspaceMember | null> {
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = await this.fileService.encodeFileToken({

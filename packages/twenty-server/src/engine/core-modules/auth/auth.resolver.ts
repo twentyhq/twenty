@@ -115,8 +115,12 @@ export class AuthResolver {
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateTransientToken(
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<TransientToken | void> {
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
 
     if (!workspaceMember) {
       return;
