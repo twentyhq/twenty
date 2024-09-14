@@ -5,6 +5,7 @@ import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui';
 const StyledBanner = styled(Banner)`
   background: ${({ theme }) => theme.accent.secondary};
   border-radius: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2.5)};
 `;
 
 const StyledText = styled.div`
