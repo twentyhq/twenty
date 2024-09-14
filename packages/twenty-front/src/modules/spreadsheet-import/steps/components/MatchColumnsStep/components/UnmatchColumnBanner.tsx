@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ANIMATION, Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui';
+import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui';
 
 const StyledBanner = styled(Banner)`
   background: ${({ theme }) => theme.accent.secondary};
@@ -21,7 +21,9 @@ const StyledTransitionedIconChevronDown = styled(IconChevronDown)<{
   color: ${({ theme }) => theme.color.blue};
   transform: ${({ isExpanded }) =>
     isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  transition: transform ${ANIMATION.duration.normal}s ease;
+  transition: ${({ theme }) =>
+    `transform ${theme.animation.duration.normal}s ease`};
+  cursor: pointer;
 `;
 
 export const UnmatchColumnBanner = ({

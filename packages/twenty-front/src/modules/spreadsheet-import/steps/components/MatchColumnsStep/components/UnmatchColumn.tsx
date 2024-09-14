@@ -1,12 +1,11 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import ExpandableContainer from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/ExpandableContainer';
 import { SubMatchingSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelect';
 import { UnmatchColumnBanner } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumnBanner';
 import { Column } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Fields } from '@/spreadsheet-import/types';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { isDefined } from 'twenty-ui';
+import { ExpandableContainer, isDefined } from 'twenty-ui';
 
 const getExpandableContainerTitle = <T extends string>(
   fields: Fields<T>,
@@ -48,7 +47,6 @@ export const UnmatchColumn = <T extends string>({
 }: UnmatchColumnProps<T>) => {
   const { fields } = useSpreadsheetImportInternal<T>();
   const [isExpanded, setIsExpanded] = useState(false);
-
   const column = columns[columnIndex];
   const isSelect = 'matchedOptions' in column;
 
@@ -61,7 +59,6 @@ export const UnmatchColumn = <T extends string>({
         buttonOnClick={() => setIsExpanded(!isExpanded)}
         isExpanded={isExpanded}
       />
-
       <ExpandableContainer isExpanded={isExpanded}>
         <StyledContentWrapper>
           {column.matchedOptions.map((option) => (

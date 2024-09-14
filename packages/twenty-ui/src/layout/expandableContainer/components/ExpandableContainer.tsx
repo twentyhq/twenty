@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
+import { isDefined } from '@ui/utilities';
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { ANIMATION, isDefined } from 'twenty-ui';
 
 const StyledTransitionContainer = styled.div<{
   isExpanded: boolean;
@@ -9,8 +9,9 @@ const StyledTransitionContainer = styled.div<{
   max-height: ${({ isExpanded, height }) => (isExpanded ? `${height}px` : '0')};
   overflow: hidden;
   position: relative;
-  transition: max-height ${ANIMATION.duration.normal}s
-    ${({ isExpanded }) => (isExpanded ? 'ease-in' : 'ease-out')};
+  transition: max-height
+    ${({ theme, isExpanded }) =>
+      `${theme.animation.duration.normal}s ${isExpanded ? 'ease-in' : 'ease-out'}`};
 `;
 
 type ExpandableContainerProps = {
