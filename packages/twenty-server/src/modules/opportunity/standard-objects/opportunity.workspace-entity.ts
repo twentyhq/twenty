@@ -39,7 +39,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   description: 'Uma oportunidade',
   icon: 'IconTargetArrow',
   labelIdentifierStandardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
-  softDelete: true,
 })
 @WorkspaceIsNotAuditLogged()
 export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {

@@ -1,6 +1,6 @@
 import { Resolver, Query } from '@nestjs/graphql';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 import { ClientConfig } from './client-config.entity';
 

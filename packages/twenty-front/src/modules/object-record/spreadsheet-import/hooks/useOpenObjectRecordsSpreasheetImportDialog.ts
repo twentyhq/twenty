@@ -6,7 +6,10 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 export const useOpenObjectRecordsSpreasheetImportDialog = (
   objectNameSingular: string,
@@ -37,7 +40,8 @@ export const useOpenObjectRecordsSpreasheetImportDialog = (
           (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
           fieldMetadataItem.name !== 'createdAt' &&
           (fieldMetadataItem.type !== FieldMetadataType.Relation ||
-            fieldMetadataItem.toRelationMetadata),
+            fieldMetadataItem.relationDefinition?.direction ===
+              RelationDefinitionType.ManyToOne),
       )
       .sort((fieldMetadataItemA, fieldMetadataItemB) =>
         fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),

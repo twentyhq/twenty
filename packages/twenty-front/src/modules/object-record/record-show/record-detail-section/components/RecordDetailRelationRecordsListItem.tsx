@@ -1,7 +1,7 @@
-import { useCallback, useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useCallback, useContext } from 'react';
 import {
   IconChevronDown,
   IconComponent,
@@ -11,6 +11,7 @@ import {
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -37,6 +38,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -89,11 +91,13 @@ export const RecordDetailRelationRecordsListItem = ({
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const isToOneObject = relationType === 'TO_ONE_OBJECT';
+  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const persistField = usePersistField();
 
@@ -111,7 +115,7 @@ export const RecordDetailRelationRecordsListItem = ({
   const availableRelationFieldMetadataItems = relationObjectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem) &&
+        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
         fieldMetadataItem.id !==
           relationObjectMetadataItem.labelIdentifierFieldMetadataId &&
         fieldMetadataItem.id !== relationFieldMetadataId,

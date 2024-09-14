@@ -9,6 +9,7 @@ import {
 } from '@/object-record/record-index/options/hooks/useTableData';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -43,7 +44,7 @@ export const generateCsv: GenerateExport = ({
   const columnsToExport = columns.filter(
     (col) =>
       !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === 'TO_ONE_OBJECT',
+      col.metadata.relationType === RelationDefinitionType.ManyToOne,
   );
 
   const objectIdColumn: ColumnDefinition<FieldMetadata> = {

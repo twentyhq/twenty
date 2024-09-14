@@ -38,8 +38,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -58,8 +56,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:10:31.391Z",
                     "updatedAt": "2024-08-05T17:10:31.391Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -78,22 +74,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "3e039f55-e535-406a-8a80-185123910b7a",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "dc7898b0-d2b7-4910-bedc-a6fe8eb4c41e"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -138,8 +118,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:39:01.956Z",
                     "updatedAt": "2024-08-05T16:39:01.956Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -158,8 +136,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "primaryLinkUrl": "''",
                         "secondaryLinks": null,
@@ -182,8 +158,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "lastName": "''",
                         "firstName": "''"
@@ -205,8 +179,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -225,8 +197,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -245,22 +215,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "20d67b64-4e67-44a1-81c7-116c0c8c6368",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "2128a43e-af47-44bf-b7e9-5d00ddd27a99",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarEventParticipant",
-                            "namePlural": "calendarEventParticipants",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "a7eb211d-4481-4269-99d7-cf2183b45598"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -305,22 +259,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9a3a145b-6d06-4892-84d4-af523f40c58d",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "648268ca-94bf-418e-853c-56d0f51472b3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activityTarget",
-                            "namePlural": "activityTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "940d1664-b17c-4f66-820b-abfec70adaa5"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -365,22 +303,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "182b32c3-9ee9-4a65-937b-d9035ab65300",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "77d124cc-049a-44f9-ab59-56e3dd55bb69",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "taskTarget",
-                            "namePlural": "taskTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "fc1a31f8-6e1c-4ce1-b6ff-80d1cd605e58"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -425,8 +347,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "name": "''",
                         "source": "'MANUAL'"
@@ -448,8 +368,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -468,8 +386,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -488,8 +404,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "primaryLinkUrl": "''",
                         "secondaryLinks": null,
@@ -512,8 +426,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:39:01.997Z",
                     "updatedAt": "2024-08-05T16:39:01.997Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": [
                         {
@@ -563,22 +475,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "0562d399-7053-4d7f-a415-cabfc889bd16",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "48dba12f-4429-4ee2-9b3a-6df97c45141d"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -623,22 +519,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "ba3d762d-8fbf-45e5-a958-136a269a396d",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "94ef21ab-5eca-4c80-b378-2a207dcca2e4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "timelineActivity",
-                            "namePlural": "timelineActivities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "69e1ecef-09d7-4b53-826e-f440ae72d2b7"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -683,22 +563,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "4b90ec4b-3199-4cea-9e8b-01498967bd9f",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "df6ee118-1cb0-4b2e-8668-3693d4d87ae2"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -743,8 +607,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -763,8 +625,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -783,22 +643,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "66551942-e576-4eb7-96c4-f78182f44491",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d19be8c8-2cf4-4c29-80ae-0d1841dc11c1",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "favorite",
-                            "namePlural": "favorites",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "b7caceaa-d49a-43c8-8b9b-10dc4298ade5"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -843,8 +687,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -863,8 +705,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -883,22 +723,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "f26f3e6e-35bf-474a-9679-fbfbb009d67d",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b889efa2-e58a-471c-b258-3c5ef2fa09e9",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageParticipant",
-                            "namePlural": "messageParticipants",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "3779c76a-30a8-45bc-a56a-6bfc084a9b29"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -943,8 +767,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -963,8 +785,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:39:01.936Z",
                     "updatedAt": "2024-08-05T16:39:01.936Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -983,22 +803,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9d20f0c0-e37b-48ca-bc45-da16461aa547",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "bd4e44a0-4b0d-4392-b0c9-d6c8684e3d44",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "noteTarget",
-                            "namePlural": "noteTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "2f2fc7fb-51c5-4084-8d97-13b43b49c68a"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1043,22 +847,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:10:31.391Z",
                     "updatedAt": "2024-08-05T17:10:31.391Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "27f9741d-f967-4b75-affa-240f0f5f8d77",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "56dffccc-daf8-4c49-8919-f19787f07846",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "myCustomObject",
-                            "namePlural": "myCustomObjects",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "23006c79-19fe-4148-9ee4-6db039ebc6fb"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1103,8 +891,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:39:01.977Z",
                     "updatedAt": "2024-08-05T16:39:01.977Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": [
                         {
@@ -1166,8 +952,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "name": "''",
                         "source": "'MANUAL'"
@@ -1189,8 +973,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -1209,8 +991,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -1229,22 +1009,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "bc6b24e6-9fcd-43fd-a2ba-c12f5d022132",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "94ef21ab-5eca-4c80-b378-2a207dcca2e4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "timelineActivity",
-                            "namePlural": "timelineActivities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "99599532-c0e9-4d62-b4a6-89866e0374be"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1289,8 +1053,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -1309,22 +1071,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "a39ebd92-e37e-46d7-b545-aed1945476f2",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d19be8c8-2cf4-4c29-80ae-0d1841dc11c1",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "favorite",
-                            "namePlural": "favorites",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "b4b7114a-8536-438a-8d13-917eae164506"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1369,8 +1115,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -1389,22 +1133,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "ac29383b-d63e-4c0e-b28a-1abc03ab2b5a",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "e985e32a-532f-4259-828f-cac80c5fc3b8"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1449,22 +1177,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "72daf099-f592-4521-8a4e-febd67309f47",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "bd4e44a0-4b0d-4392-b0c9-d6c8684e3d44",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "noteTarget",
-                            "namePlural": "noteTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "b8d93efe-14da-47a2-bb24-96ae2d037b59"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1509,8 +1221,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -1529,8 +1239,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -1570,8 +1278,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -1590,22 +1296,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "01efe0bd-eda8-494a-b7ea-b4813dcf0b5a",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "c62f3148-1b8d-4fa3-ac29-8a20585bcee9",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageThread",
-                            "namePlural": "messageThreads",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "11a2bd26-4856-4ab2-916d-86a07beaccd3"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1650,22 +1340,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "099ebe85-572a-4f77-b077-475f97c0d54c",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b889efa2-e58a-471c-b258-3c5ef2fa09e9",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageParticipant",
-                            "namePlural": "messageParticipants",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "2efee208-73da-4ca1-ba73-19763d507611"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1710,8 +1384,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'INCOMING'",
                     "options": [
                         {
@@ -1745,8 +1417,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -1765,8 +1435,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -1785,8 +1453,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -1805,8 +1471,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -1825,22 +1489,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "3d3b5a91-f7b7-4c50-98d2-093be343711c",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d0f0efa4-9f44-4812-96f9-d91ee933a5e8",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageChannelMessageAssociation",
-                            "namePlural": "messageChannelMessageAssociations",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "6e2131e3-b688-4b61-99bf-f0b50f100a5f"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -1885,8 +1533,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -1905,8 +1551,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -1925,8 +1569,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -1966,8 +1608,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -1986,8 +1626,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -2006,8 +1644,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -2026,8 +1662,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -2046,8 +1680,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -2066,8 +1698,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -2107,8 +1737,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -2127,8 +1755,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:39:01.913Z",
                     "updatedAt": "2024-08-05T16:39:01.913Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": false,
                     "options": null,
                     "relationDefinition": null
@@ -2147,8 +1773,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "name": "''",
                         "source": "'MANUAL'"
@@ -2170,8 +1794,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "primaryLinkUrl": "''",
                         "secondaryLinks": null,
@@ -2194,8 +1816,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:39:01.865Z",
                     "updatedAt": "2024-08-05T16:39:01.865Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "primaryLinkUrl": "''",
                         "secondaryLinks": null,
@@ -2218,22 +1838,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "0896a728-e2cf-4032-9af2-a471645e9697",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "de44f939-76d9-4c1a-96aa-7c5a646f2045"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2278,22 +1882,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "c542c9e0-b4b6-4073-aae6-66299868e9fb",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "94ef21ab-5eca-4c80-b378-2a207dcca2e4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "timelineActivity",
-                            "namePlural": "timelineActivities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "979ea933-d8a1-4db6-8c29-5c747a690326"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2338,8 +1926,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -2358,8 +1944,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "amountMicros": null,
                         "currencyCode": "''"
@@ -2381,8 +1965,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -2401,22 +1983,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "d420db15-3060-4760-afd0-8485c76e53b4",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "bd4e44a0-4b0d-4392-b0c9-d6c8684e3d44",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "noteTarget",
-                            "namePlural": "noteTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "cb654210-43c9-4ff7-95ee-8250c1d80e8d"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2461,22 +2027,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "f80bfd64-c33d-4488-bc49-1635e092ea3f",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "77d124cc-049a-44f9-ab59-56e3dd55bb69",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "taskTarget",
-                            "namePlural": "taskTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "1e4e3b2b-113f-4af3-aed8-94b03785a626"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2521,8 +2071,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "primaryLinkUrl": "''",
                         "secondaryLinks": null,
@@ -2545,8 +2093,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:39:01.888Z",
                     "updatedAt": "2024-08-05T16:39:01.888Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": [
                         {
@@ -2587,8 +2133,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "addressLat": null,
                         "addressLng": null,
@@ -2616,8 +2160,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -2636,8 +2178,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -2656,22 +2196,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "be6051cd-703c-4539-89ed-e643784bad26",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "6496b8e0-2d8f-493e-8973-fcba2aa84b59"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2716,8 +2240,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "primaryLinkUrl": "''",
                         "secondaryLinks": null,
@@ -2740,22 +2262,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "0562d399-7053-4d7f-a415-cabfc889bd16",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "6672a066-7a7f-44ae-bb5c-ae3a5e82d835"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2800,8 +2306,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T17:09:37.502Z",
                     "updatedAt": "2024-08-05T17:09:37.502Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -2820,8 +2324,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -2840,22 +2342,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "2ed70c2c-b17a-4ed1-9f35-b570139440fa",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "648268ca-94bf-418e-853c-56d0f51472b3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activityTarget",
-                            "namePlural": "activityTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "10150d34-2f00-4642-8a9d-6b0b6ab72562"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2900,22 +2386,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "67d4ff08-f5e6-4382-8996-67fdc2d02125",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "28b61c8a-8437-4770-9b12-f3d0e591bee8"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -2960,22 +2430,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "31819eaa-5847-4207-b4a3-0ecffefd9332",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d19be8c8-2cf4-4c29-80ae-0d1841dc11c1",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "favorite",
-                            "namePlural": "favorites",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "69b1d954-1ed3-4bf9-b9e1-b886a00953b4"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -3020,8 +2474,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3040,8 +2492,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:39:01.834Z",
                     "updatedAt": "2024-08-05T16:39:01.834Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -3060,8 +2510,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": false,
                     "options": null,
                     "relationDefinition": null
@@ -3101,8 +2549,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": true,
                     "options": null,
                     "relationDefinition": null
@@ -3121,22 +2567,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "57d32129-b126-417e-98a8-7f1217b29dea",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "90df20e5-c655-474f-bb98-b423652e36df",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "view",
-                            "namePlural": "views",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "6ea01d0e-340e-40e4-a029-89a7cbc07291"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -3181,8 +2611,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3201,8 +2629,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -3221,8 +2647,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3241,8 +2665,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -3261,8 +2683,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": 0,
                     "options": null,
                     "relationDefinition": null
@@ -3281,8 +2701,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": 0,
                     "options": null,
                     "relationDefinition": null
@@ -3301,8 +2719,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -3342,8 +2758,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -3362,8 +2776,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -3382,8 +2794,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -3402,8 +2812,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -3422,8 +2830,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -3442,8 +2848,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -3483,8 +2887,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3503,8 +2905,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.167Z",
                     "updatedAt": "2024-08-05T17:09:54.167Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3523,8 +2923,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3543,22 +2941,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "b0f40da3-1fda-4803-be21-14a2755bc834",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "f537669a-4524-4dfc-91d3-79438e2a481e"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -3603,8 +2985,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3623,22 +3003,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.168Z",
                     "updatedAt": "2024-08-05T17:09:54.168Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "143c2257-721f-46eb-8114-987a70979146",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "56dffccc-daf8-4c49-8919-f19787f07846",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "myCustomObject",
-                            "namePlural": "myCustomObjects",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "c475ebbc-f86b-4956-9d67-d0bb62062408"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -3683,8 +3047,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -3703,8 +3065,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -3723,22 +3083,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "c1110f68-bbc9-4dbf-aae4-c6e5e2569240",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "a1a7bb38-6f6c-4bdb-803f-804cdd97cb77"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -3783,8 +3127,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3803,22 +3145,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "a39ebd92-e37e-46d7-b545-aed1945476f2",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f62992f2-80ef-477c-ae60-fc7a862b0f4a",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "note",
-                            "namePlural": "notes",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "ff8e5043-6168-4c65-984d-ef4d28eb76ce"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -3863,8 +3189,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3883,22 +3207,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "32b10a0d-0ca4-4027-be9e-ab8d8be608d1",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "99f8caa6-263c-4690-8dc0-eb7645304cf5",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "task",
-                            "namePlural": "tasks",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "80fe7004-903e-4bdd-985d-9ef7e6acd793"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -3943,8 +3251,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -3963,8 +3269,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": 0,
                     "options": null,
                     "relationDefinition": null
@@ -3983,8 +3287,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -4003,22 +3305,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "31819eaa-5847-4207-b4a3-0ecffefd9332",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "ae74690d-94d5-4860-928f-4ed8ea36be1d"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4063,22 +3349,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "66551942-e576-4eb7-96c4-f78182f44491",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "4cd944c2-a252-42c2-93d3-c71d71b4587d"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4144,8 +3414,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4164,8 +3432,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4184,22 +3450,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "6be1cb67-30fe-41b3-8695-09cf6cbef18a",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "c62f3148-1b8d-4fa3-ac29-8a20585bcee9",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageThread",
-                            "namePlural": "messageThreads",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "bfa74ef1-b2d8-4720-a9bd-3084ceb005f3"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4244,8 +3494,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -4264,8 +3512,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -4284,22 +3530,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "3d3b5a91-f7b7-4c50-98d2-093be343711c",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f5a97cba-781d-4665-9dea-0eda6d687a99",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "message",
-                            "namePlural": "messages",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "cb6eb250-d255-4446-88f3-bc6b7dd20800"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4344,8 +3574,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4364,8 +3592,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -4384,8 +3610,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -4404,22 +3628,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "e420b731-e1e1-425a-ac7a-488d37d1958b",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "219d7acf-5934-44dc-8789-62ade666cb43",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageChannel",
-                            "namePlural": "messageChannels",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "2682d5c3-f05e-4c5c-87eb-bb1a6c0c37bb"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4464,8 +3672,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -4505,22 +3711,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "6d4e8025-7ee9-4079-ae80-b18de7b5ff4e",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "5e889b07-de1e-47f0-aeb9-301a684bd6a4"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4565,22 +3755,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "00b07eda-840c-4a91-a8f7-365c008a2ea1",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "3af96291-b873-402f-bd90-f4731984c8dd",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "comment",
-                            "namePlural": "comments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "88c3a2b9-b59a-413a-b2d3-44b151185929"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4625,8 +3799,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4645,8 +3817,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -4665,8 +3835,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -4685,8 +3853,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -4705,8 +3871,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4725,22 +3889,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "16017cba-688e-4483-a258-9cef3999cbbf",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "648268ca-94bf-418e-853c-56d0f51472b3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activityTarget",
-                            "namePlural": "activityTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "aa1c7e04-31c1-4b62-8451-6b32926cab47"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4785,22 +3933,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "cf9ac76a-9f22-4252-a00a-63cc45fcabc4",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "a147a0df-eb28-4259-a304-0460f92adf30"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -4845,8 +3977,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -4865,8 +3995,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4885,8 +4013,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'Note'",
                     "options": null,
                     "relationDefinition": null
@@ -4905,8 +4031,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4925,8 +4049,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -4945,22 +4067,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "23518310-2443-4907-8ac6-b77bf340d99d",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "394c0644-d8bd-44a8-82c9-6e2a4c9aa19c"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5005,8 +4111,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -5046,8 +4150,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -5066,22 +4168,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "6be1cb67-30fe-41b3-8695-09cf6cbef18a",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d0f0efa4-9f44-4812-96f9-d91ee933a5e8",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageChannelMessageAssociation",
-                            "namePlural": "messageChannelMessageAssociations",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "930b7926-639c-43c1-85ba-4c185a9ad5d3"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5126,8 +4212,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -5146,8 +4230,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -5166,22 +4248,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "01efe0bd-eda8-494a-b7ea-b4813dcf0b5a",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f5a97cba-781d-4665-9dea-0eda6d687a99",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "message",
-                            "namePlural": "messages",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "2e91d365-c35a-446e-b019-bdf7e51d7d79"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5247,8 +4313,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -5267,8 +4331,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -5287,8 +4349,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -5307,8 +4367,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.176Z",
                     "updatedAt": "2024-08-05T17:09:54.176Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -5327,22 +4385,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.177Z",
                     "updatedAt": "2024-08-05T17:09:54.177Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "4f4d3969-913b-478c-a41d-9daffc9b2255",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "56dffccc-daf8-4c49-8919-f19787f07846",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "myCustomObject",
-                            "namePlural": "myCustomObjects",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "87631266-4a85-4c49-82d1-90d1805c3de6"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5387,8 +4429,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -5407,8 +4447,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -5427,22 +4465,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "72daf099-f592-4521-8a4e-febd67309f47",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f62992f2-80ef-477c-ae60-fc7a862b0f4a",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "note",
-                            "namePlural": "notes",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "d6d5a326-5a21-46a6-96b5-c70549f8f937"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5487,8 +4509,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -5507,22 +4527,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "a0fa9159-85ab-47c5-bdac-46f7acbb78a7",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "8ee18f64-937c-489b-893c-80bc44f9c105"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5567,22 +4571,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "d420db15-3060-4760-afd0-8485c76e53b4",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "63261a95-39ac-4826-bc8b-7fc0fd21a8ad"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5627,8 +4615,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -5647,22 +4633,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9d20f0c0-e37b-48ca-bc45-da16461aa547",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "1c1c7ffc-3a45-4069-996a-bdfa8f46b037"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5728,22 +4698,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "e594dda4-55fc-46ba-8108-5f672a5b1301",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "77d124cc-049a-44f9-ab59-56e3dd55bb69",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "taskTarget",
-                            "namePlural": "taskTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "705e4379-9ba2-4853-b267-c86dad461dd7"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5788,22 +4742,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "a0fa9159-85ab-47c5-bdac-46f7acbb78a7",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "bd4e44a0-4b0d-4392-b0c9-d6c8684e3d44",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "noteTarget",
-                            "namePlural": "noteTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "459cd941-1db8-4e61-af0e-35812736cfd1"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5848,8 +4786,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -5868,22 +4804,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "c1110f68-bbc9-4dbf-aae4-c6e5e2569240",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d19be8c8-2cf4-4c29-80ae-0d1841dc11c1",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "favorite",
-                            "namePlural": "favorites",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "3464f1ce-34d3-4bf1-ac74-072bf750cc5c"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5928,22 +4848,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "0ee1046a-3f9f-477e-8811-5d29021eca38",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "31bbc876-619d-4444-b954-9b6c66343314"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -5988,8 +4892,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -6008,8 +4910,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'NEW'",
                     "options": [
                         {
@@ -6064,8 +4964,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "name": "''",
                         "source": "'MANUAL'"
@@ -6087,8 +4985,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -6107,8 +5003,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -6127,22 +5021,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "d2a53784-3664-49ab-983e-5ad5bf15dbd0",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "648268ca-94bf-418e-853c-56d0f51472b3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activityTarget",
-                            "namePlural": "activityTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "997b0618-d3f7-4e5c-8c8e-2ba1bad10549"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6187,22 +5065,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "61e4edee-13d4-4edd-9101-b9dc5ea5506a",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "94ef21ab-5eca-4c80-b378-2a207dcca2e4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "timelineActivity",
-                            "namePlural": "timelineActivities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "2c3baa6b-7ffe-470e-bd9d-0532e2bce3ac"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6247,8 +5109,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -6267,8 +5127,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -6287,22 +5145,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "67d4ff08-f5e6-4382-8996-67fdc2d02125",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "cbd94612-00a2-4efd-8869-93f945e93076"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6347,22 +5189,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "3e039f55-e535-406a-8a80-185123910b7a",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "e1ecbeb4-76cb-4f9a-8829-ac0665854c69"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6407,8 +5233,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -6427,8 +5251,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "amountMicros": null,
                         "currencyCode": "''"
@@ -6450,8 +5272,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -6491,22 +5311,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "94c22c13-b00a-4f60-b2d2-f34b9efe6aa2",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "dd7ee456-52bf-4335-bee9-7ba18a1e9a09"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6551,22 +5355,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "f26f3e6e-35bf-474a-9679-fbfbb009d67d",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "4227c9a5-6dd3-4de0-9248-e62572afc92b"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6611,22 +5399,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "099ebe85-572a-4f77-b077-475f97c0d54c",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f5a97cba-781d-4665-9dea-0eda6d687a99",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "message",
-                            "namePlural": "messages",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "5291bbf6-1c32-47fe-8164-ebd6dca187ad"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6671,8 +5443,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -6691,8 +5461,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -6711,8 +5479,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -6731,8 +5497,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -6751,8 +5515,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -6771,8 +5533,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'from'",
                     "options": [
                         {
@@ -6820,8 +5580,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -6840,8 +5598,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -6860,8 +5616,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -6901,22 +5655,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "ac29383b-d63e-4c0e-b28a-1abc03ab2b5a",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f62992f2-80ef-477c-ae60-fc7a862b0f4a",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "note",
-                            "namePlural": "notes",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "38a2a378-bac0-4c4d-bf05-7f9ff995b860"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -6961,8 +5699,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -6981,8 +5717,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -7001,22 +5735,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "4b90ec4b-3199-4cea-9e8b-01498967bd9f",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "1b21ef27-ba22-46ab-967e-f2d9f780bf8b"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7061,8 +5779,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -7081,8 +5797,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7101,22 +5815,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "aeca7339-1ff5-45cb-b9f4-d8bd9ec572d9",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "99f8caa6-263c-4690-8dc0-eb7645304cf5",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "task",
-                            "namePlural": "tasks",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "7e719850-091f-4876-87b0-4eb5fd9847af"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7161,8 +5859,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7181,8 +5877,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -7201,8 +5895,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -7221,22 +5913,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "c86299f2-7210-4c89-a2ab-29e17f21edc8",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "1b2d1e2c-290d-4a0e-adf9-192e5fac103c"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7281,22 +5957,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "0ee1046a-3f9f-477e-8811-5d29021eca38",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "b32af3b6-330f-405b-b9ce-6156797f836a"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7341,8 +6001,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7361,22 +6019,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.173Z",
                     "updatedAt": "2024-08-05T17:09:54.173Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "bd914a9e-b1f8-43c6-af60-3afe46518988",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "56dffccc-daf8-4c49-8919-f19787f07846",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "myCustomObject",
-                            "namePlural": "myCustomObjects",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "a4580aee-6fb4-4b5d-87c0-daf24745ca13"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7421,8 +6063,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -7441,8 +6081,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -7461,8 +6099,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7481,22 +6117,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "be6051cd-703c-4539-89ed-e643784bad26",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "3a2bd134-5b31-4bde-a64f-d5244a8e6271"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7541,8 +6161,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7561,8 +6179,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.172Z",
                     "updatedAt": "2024-08-05T17:09:54.172Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7581,22 +6197,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "23518310-2443-4907-8ac6-b77bf340d99d",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "cf6f8138-3445-4a36-b137-41ebb8f2e3dc",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activity",
-                            "namePlural": "activities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "d9f1711b-a8b1-48ee-9f81-503bbf945b87"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7641,8 +6241,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7682,8 +6280,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'TODO'",
                     "options": [
                         {
@@ -7724,22 +6320,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "5527b9f6-55ec-4efd-b244-03e91b01e91b",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "fefca31b-ba53-4860-b04e-5b9944587693"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7784,8 +6364,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7804,8 +6382,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -7824,8 +6400,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7844,8 +6418,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -7864,8 +6436,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7884,8 +6454,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -7904,22 +6472,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "aeca7339-1ff5-45cb-b9f4-d8bd9ec572d9",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "0f978508-2e4a-4bc6-bbaf-87ad6acbe08a"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -7964,22 +6516,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "85f92b6a-bc71-4da4-ba4e-7b0685a05fde",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "77d124cc-049a-44f9-ab59-56e3dd55bb69",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "taskTarget",
-                            "namePlural": "taskTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "31d8d648-5118-4b59-8c1e-876e83bf85f3"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8024,8 +6560,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -8044,22 +6578,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "32b10a0d-0ca4-4027-be9e-ab8d8be608d1",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d19be8c8-2cf4-4c29-80ae-0d1841dc11c1",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "favorite",
-                            "namePlural": "favorites",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "e7201f19-bfa7-42e1-9550-7c848a842ecc"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8104,8 +6622,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -8124,22 +6640,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9f7f6a7c-072e-4818-8077-d0d0c9601cb0",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "94ef21ab-5eca-4c80-b378-2a207dcca2e4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "timelineActivity",
-                            "namePlural": "timelineActivities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "6ea41d58-7eae-4434-bb2f-9a1b2c30dba3"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8184,8 +6684,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "name": "''",
                         "source": "'MANUAL'"
@@ -8228,8 +6726,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -8248,22 +6744,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "bc6b24e6-9fcd-43fd-a2ba-c12f5d022132",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f62992f2-80ef-477c-ae60-fc7a862b0f4a",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "note",
-                            "namePlural": "notes",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "383d3f90-d691-4487-a13d-e80c50fb756e"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8308,8 +6788,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -8328,8 +6806,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -8348,8 +6824,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8368,8 +6842,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.152Z",
                     "updatedAt": "2024-08-05T17:09:54.152Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8388,8 +6860,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8408,22 +6878,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "170c6f88-63b3-41ff-9e5d-044968a062a4",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "4ae17923-dd16-45c7-9df3-8cee92584a52"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8468,8 +6922,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8488,8 +6940,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -8508,22 +6958,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "ba3d762d-8fbf-45e5-a958-136a269a396d",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "c08e6ba8-b7ef-4fa7-b199-c8e93045f8ee"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8568,22 +7002,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9f7f6a7c-072e-4818-8077-d0d0c9601cb0",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "99f8caa6-263c-4690-8dc0-eb7645304cf5",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "task",
-                            "namePlural": "tasks",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "49cf9eb7-53bc-4347-93f5-daec9c219cfa"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8628,22 +7046,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "c542c9e0-b4b6-4073-aae6-66299868e9fb",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "c06142b8-52a9-4b0b-93f6-99e2b5b67ab8"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8688,8 +7090,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8708,8 +7108,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8728,8 +7126,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -8748,8 +7144,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8768,8 +7162,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8788,22 +7180,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.153Z",
                     "updatedAt": "2024-08-05T17:09:54.153Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "e143276e-7f4a-46e8-bf0f-61111f36d4fd",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "56dffccc-daf8-4c49-8919-f19787f07846",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "myCustomObject",
-                            "namePlural": "myCustomObjects",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "e7cd7adb-152e-4d19-b2ba-d1b66bc40e79"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8848,8 +7224,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8868,8 +7242,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -8888,22 +7260,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "61e4edee-13d4-4edd-9101-b9dc5ea5506a",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "713c39d7-63e2-4b0e-bd5c-d240b840255e"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -8948,8 +7304,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -8989,8 +7343,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9009,8 +7361,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -9029,8 +7379,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9049,8 +7397,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9069,22 +7415,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "1a74fdd8-63d4-407f-9d25-7e2e6c4d271c",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "219d7acf-5934-44dc-8789-62ade666cb43",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageChannel",
-                            "namePlural": "messageChannels",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "252a6670-31ea-4b7a-a75f-09c44f4822be"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -9129,8 +7459,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9149,22 +7477,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "69dde225-0e12-4df6-ab55-d870d6dec717",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "3f89df71-38d5-46f4-818f-076a5ee77e48",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarChannel",
-                            "namePlural": "calendarChannels",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "f7f4925d-e186-4fe6-80f5-1ddd1ae5bf22"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -9209,8 +7521,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -9229,8 +7539,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9249,8 +7557,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9269,22 +7575,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9a65de46-ef09-429f-b7ba-31cb8a8c7038",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "4d977e6a-4d0e-4bca-b743-9bc3df1744d6"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -9329,8 +7619,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9349,8 +7637,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -9369,8 +7655,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9410,8 +7694,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -9430,8 +7712,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -9450,22 +7730,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "bd7a6047-3eb5-413e-9315-bb28533c4aed",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "666caea5-3c1e-4847-9fd9-2d8c1d08eabb",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "viewFilter",
-                            "namePlural": "viewFilters",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "c56cc7db-9e19-470e-9d6d-2b7180fb0fb7"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -9510,8 +7774,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -9530,8 +7792,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'table'",
                     "options": null,
                     "relationDefinition": null
@@ -9550,8 +7810,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": false,
                     "options": null,
                     "relationDefinition": null
@@ -9570,8 +7828,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9590,22 +7846,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "57d32129-b126-417e-98a8-7f1217b29dea",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ee025446-440d-49ae-8d0e-ad30b6309840",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "viewField",
-                            "namePlural": "viewFields",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "6725c7ad-a704-436a-be67-a4612bc48e37"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -9650,8 +7890,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9670,8 +7908,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9690,8 +7926,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -9710,8 +7944,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'INDEX'",
                     "options": [
                         {
@@ -9738,8 +7970,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9758,22 +7988,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "53abf7c2-810d-478b-bb2d-689f31322d67",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1b5e63b9-9fc3-485d-86ff-de70ff17a665",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "viewSort",
-                            "namePlural": "viewSorts",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "673fb6fb-5123-4336-9b4b-e4b268c1cffe"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -9839,8 +8053,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9859,8 +8071,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9879,8 +8089,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -9899,8 +8107,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -9919,8 +8125,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9939,8 +8143,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -9959,22 +8161,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "182b32c3-9ee9-4a65-937b-d9035ab65300",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "4c9ba269-244f-4768-a52d-9b1ffbe3339f"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10019,8 +8205,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -10039,22 +8223,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.181Z",
                     "updatedAt": "2024-08-05T17:09:54.181Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "3f2b2bab-8411-41b7-a87b-06dd0007eab4",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "56dffccc-daf8-4c49-8919-f19787f07846",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "myCustomObject",
-                            "namePlural": "myCustomObjects",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "90dd4b06-8b21-4411-9f38-b95968a1d4e1"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10099,22 +8267,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "e594dda4-55fc-46ba-8108-5f672a5b1301",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "40cdd413-5239-4887-b5e6-eb32eb1d95e3"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10159,22 +8311,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "85f92b6a-bc71-4da4-ba4e-7b0685a05fde",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "99f8caa6-263c-4690-8dc0-eb7645304cf5",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "task",
-                            "namePlural": "tasks",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "f1ed6bba-53bc-4f9c-ac40-504a9ff5bade"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10219,8 +8355,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.180Z",
                     "updatedAt": "2024-08-05T17:09:54.180Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -10239,22 +8373,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "f80bfd64-c33d-4488-bc49-1635e092ea3f",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "cb47633a-1b44-41b9-8bce-16e28616c2ad"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10320,8 +8438,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'Contains'",
                     "options": null,
                     "relationDefinition": null
@@ -10340,8 +8456,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -10360,22 +8474,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "bd7a6047-3eb5-413e-9315-bb28533c4aed",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "90df20e5-c655-474f-bb98-b423652e36df",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "view",
-                            "namePlural": "views",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "0d2e0bfe-fe67-4df4-af4f-49722ba4bf96"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10420,8 +8518,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -10440,8 +8536,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -10460,8 +8554,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -10480,8 +8572,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -10500,8 +8590,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -10520,8 +8608,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -10561,22 +8647,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "16017cba-688e-4483-a258-9cef3999cbbf",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "cf6f8138-3445-4a36-b137-41ebb8f2e3dc",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activity",
-                            "namePlural": "activities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "41f8fd90-2de9-402f-8b37-fb023d318de2"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10621,8 +8691,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -10641,8 +8709,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -10661,22 +8727,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "d2a53784-3664-49ab-983e-5ad5bf15dbd0",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b95b3f38-9fc2-4d7e-a823-7791cf13d089",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "opportunity",
-                            "namePlural": "opportunities",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "71341870-4e4d-4399-ab74-8f277047664e"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10721,8 +8771,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -10741,8 +8789,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.160Z",
                     "updatedAt": "2024-08-05T17:09:54.160Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -10761,8 +8807,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -10781,8 +8825,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -10801,8 +8843,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -10821,22 +8861,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "2ed70c2c-b17a-4ed1-9f35-b570139440fa",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "4d74b886-b359-4c4c-a2c0-692edc8a3273"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10881,22 +8905,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9a3a145b-6d06-4892-84d4-af523f40c58d",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "9b018bba-687b-4850-9e0e-c192d3b5977d"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -10941,22 +8949,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.161Z",
                     "updatedAt": "2024-08-05T17:09:54.161Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "1271db29-f60e-4cf2-83cb-b31f62211850",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "56dffccc-daf8-4c49-8919-f19787f07846",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "myCustomObject",
-                            "namePlural": "myCustomObjects",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "7e079b54-1abf-486d-850e-5a5d32fed77b"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11001,8 +8993,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -11042,22 +9032,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "876e63a4-ce57-4852-b1b7-5659021ea34c",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "3f89df71-38d5-46f4-818f-076a5ee77e48",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarChannel",
-                            "namePlural": "calendarChannels",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "0751ede9-2493-4079-b976-14b98a4eb971"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11102,8 +9076,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -11122,22 +9094,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "09476064-1403-4948-84c2-d87a02a022ca",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "37d40c3f-e106-4348-af22-201659bbd8a6",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarEvent",
-                            "namePlural": "calendarEvents",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "46421d40-86ab-4f44-aee4-862320bf7534"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11182,8 +9138,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -11202,8 +9156,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -11222,8 +9174,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -11242,8 +9192,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -11262,8 +9210,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -11303,22 +9249,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.168Z",
                     "updatedAt": "2024-08-05T17:09:54.168Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "143c2257-721f-46eb-8114-987a70979146",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d19be8c8-2cf4-4c29-80ae-0d1841dc11c1",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "favorite",
-                            "namePlural": "favorites",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "87c2dd65-2c54-4184-9a19-0bdce7781a3f"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11363,22 +9293,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.161Z",
                     "updatedAt": "2024-08-05T17:09:54.161Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "1271db29-f60e-4cf2-83cb-b31f62211850",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "648268ca-94bf-418e-853c-56d0f51472b3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activityTarget",
-                            "namePlural": "activityTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "d20eb128-2dd6-49e2-ac71-9d8991bc22fb"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11423,22 +9337,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.181Z",
                     "updatedAt": "2024-08-05T17:09:54.181Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "3f2b2bab-8411-41b7-a87b-06dd0007eab4",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "77d124cc-049a-44f9-ab59-56e3dd55bb69",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "taskTarget",
-                            "namePlural": "taskTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "7c6ab6b0-9978-456b-bb7c-c7c1dc454e3d"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11483,8 +9381,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T17:09:54.141Z",
                     "updatedAt": "2024-08-05T17:09:54.141Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "name": "''",
                         "source": "'MANUAL'"
@@ -11506,8 +9402,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.141Z",
                     "updatedAt": "2024-08-05T17:09:54.141Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -11526,8 +9420,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T17:09:54.141Z",
                     "updatedAt": "2024-08-05T17:09:54.141Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -11546,22 +9438,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.177Z",
                     "updatedAt": "2024-08-05T17:09:54.177Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "4f4d3969-913b-478c-a41d-9daffc9b2255",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "bd4e44a0-4b0d-4392-b0c9-d6c8684e3d44",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "noteTarget",
-                            "namePlural": "noteTargets",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "e884eac3-4cbd-40af-970e-a34b409c0acd"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11606,8 +9482,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T17:09:54.141Z",
                     "updatedAt": "2024-08-05T17:09:54.141Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'Untitled'",
                     "options": null,
                     "relationDefinition": null
@@ -11626,8 +9500,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T17:10:03.185Z",
                     "updatedAt": "2024-08-05T17:10:03.185Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -11646,22 +9518,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.173Z",
                     "updatedAt": "2024-08-05T17:09:54.173Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "bd914a9e-b1f8-43c6-af60-3afe46518988",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "2e1b103b-a75b-4ebc-8219-4b59027bd3fd"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11706,8 +9562,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T17:09:54.141Z",
                     "updatedAt": "2024-08-05T17:09:54.141Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -11726,22 +9580,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:09:54.153Z",
                     "updatedAt": "2024-08-05T17:09:54.153Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "e143276e-7f4a-46e8-bf0f-61111f36d4fd",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "94ef21ab-5eca-4c80-b378-2a207dcca2e4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "timelineActivity",
-                            "namePlural": "timelineActivities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "e7e04af7-a0a2-4999-9265-e9bafcd0197c"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11786,8 +9624,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T17:09:54.141Z",
                     "updatedAt": "2024-08-05T17:09:54.141Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -11806,22 +9642,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T17:10:31.391Z",
                     "updatedAt": "2024-08-05T17:10:31.391Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "27f9741d-f967-4b75-affa-240f0f5f8d77",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "f7002609-5760-4ae6-ba29-a8b9066b95de"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -11887,8 +9707,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -11907,8 +9725,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -11927,8 +9743,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -11947,8 +9761,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": true,
                     "options": null,
                     "relationDefinition": null
@@ -11967,8 +9779,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": 0,
                     "options": null,
                     "relationDefinition": null
@@ -11987,8 +9797,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": true,
                     "options": null,
                     "relationDefinition": null
@@ -12007,8 +9815,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -12027,22 +9833,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "876e63a4-ce57-4852-b1b7-5659021ea34c",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "5b55de69-76d8-4170-94d3-ff85ee7640ca",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarChannelEventAssociation",
-                            "namePlural": "calendarChannelEventAssociations",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "94180d42-50ed-48a0-a62b-e00f1a6f4753"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -12087,8 +9877,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'SHARE_EVERYTHING'",
                     "options": [
                         {
@@ -12122,22 +9910,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "69dde225-0e12-4df6-ab55-d870d6dec717",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "90e63030-f26d-46c8-b27a-13686b717538",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "connectedAccount",
-                            "namePlural": "connectedAccounts",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "793ca9eb-06ac-433a-b0c3-d62139cbd71c"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -12182,8 +9954,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -12202,8 +9972,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'AS_PARTICIPANT_AND_ORGANIZER'",
                     "options": [
                         {
@@ -12251,8 +10019,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -12271,8 +10037,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -12291,8 +10055,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING'",
                     "options": [
                         {
@@ -12354,8 +10116,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": [
                         {
@@ -12431,8 +10191,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -12451,8 +10209,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -12471,8 +10227,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -12491,8 +10245,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -12511,8 +10263,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -12531,8 +10281,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -12551,22 +10299,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "4917f689-5cc2-4716-b4ab-6906aef009b3",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "12d19915-891e-4a4e-8c42-49a12639264f"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -12611,22 +10343,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "00b07eda-840c-4a91-a8f7-365c008a2ea1",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "cf6f8138-3445-4a36-b137-41ebb8f2e3dc",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activity",
-                            "namePlural": "activities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "9045116d-0fed-433c-80a4-f4296db72ae5"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -12692,8 +10408,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -12712,8 +10426,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": false,
                     "options": null,
                     "relationDefinition": null
@@ -12732,8 +10444,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -12752,8 +10462,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -12772,8 +10480,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -12792,8 +10498,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -12812,8 +10516,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": false,
                     "options": null,
                     "relationDefinition": null
@@ -12832,8 +10534,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -12852,22 +10552,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "09476064-1403-4948-84c2-d87a02a022ca",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "5b55de69-76d8-4170-94d3-ff85ee7640ca",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarChannelEventAssociation",
-                            "namePlural": "calendarChannelEventAssociations",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "2baeedd7-34a0-4d07-ab4c-5e6995213ec5"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -12912,8 +10596,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -12932,8 +10614,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -12952,8 +10632,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "primaryLinkUrl": "''",
                         "secondaryLinks": null,
@@ -12976,8 +10654,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -12996,8 +10672,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -13016,8 +10690,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -13036,22 +10708,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "28688620-c3df-463d-a655-ad6435f6215b",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "2128a43e-af47-44bf-b7e9-5d00ddd27a99",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarEventParticipant",
-                            "namePlural": "calendarEventParticipants",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "9ae2ccf9-1390-4861-a771-324ab4310f33"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -13096,8 +10752,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -13116,8 +10770,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -13157,8 +10809,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": 0,
                     "options": null,
                     "relationDefinition": null
@@ -13177,8 +10827,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'email'",
                     "options": [
                         {
@@ -13212,8 +10860,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -13232,8 +10878,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -13252,8 +10896,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": [
                         {
@@ -13308,8 +10950,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -13328,8 +10968,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": true,
                     "options": null,
                     "relationDefinition": null
@@ -13348,8 +10986,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -13368,8 +11004,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'SHARE_EVERYTHING'",
                     "options": [
                         {
@@ -13410,8 +11044,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -13430,8 +11062,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -13450,8 +11080,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -13470,22 +11098,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "1a74fdd8-63d4-407f-9d25-7e2e6c4d271c",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "90e63030-f26d-46c8-b27a-13686b717538",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "connectedAccount",
-                            "namePlural": "connectedAccounts",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "55a55985-3e1d-4db6-b0ac-3585d72b69ed"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -13530,22 +11142,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "e420b731-e1e1-425a-ac7a-488d37d1958b",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d0f0efa4-9f44-4812-96f9-d91ee933a5e8",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageChannelMessageAssociation",
-                            "namePlural": "messageChannelMessageAssociations",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "f2561dd5-c695-4635-816c-27175470b285"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -13590,8 +11186,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'FULL_MESSAGE_LIST_FETCH_PENDING'",
                     "options": [
                         {
@@ -13653,8 +11247,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -13673,8 +11265,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": true,
                     "options": null,
                     "relationDefinition": null
@@ -13693,8 +11283,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": true,
                     "options": null,
                     "relationDefinition": null
@@ -13713,8 +11301,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'SENT'",
                     "options": [
                         {
@@ -13755,8 +11341,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": true,
                     "options": null,
                     "relationDefinition": null
@@ -13796,8 +11380,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -13816,8 +11398,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -13836,8 +11416,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -13856,8 +11434,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -13876,22 +11452,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "67aaa999-8332-43ba-8830-76bf48d53cf2",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "6623a9d7-e137-4709-a592-02ae76e5bfd7"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -13936,8 +11496,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'NEEDS_ACTION'",
                     "options": [
                         {
@@ -13985,8 +11543,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -14005,8 +11561,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -14025,8 +11579,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": false,
                     "options": null,
                     "relationDefinition": null
@@ -14045,8 +11597,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -14065,22 +11615,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "28688620-c3df-463d-a655-ad6435f6215b",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "37d40c3f-e106-4348-af22-201659bbd8a6",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarEvent",
-                            "namePlural": "calendarEvents",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "c9a2189f-abb1-4166-9d1d-f870f0e32b3e"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14125,22 +11659,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "20d67b64-4e67-44a1-81c7-116c0c8c6368",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "ff2881da-89f6-4f15-8f0a-e3f355ea3b94",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "person",
-                            "namePlural": "people",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "d44bf743-b557-47d4-9341-04114fd05d52"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14185,8 +11703,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -14226,8 +11742,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -14246,22 +11760,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "4917f689-5cc2-4716-b4ab-6906aef009b3",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "3af96291-b873-402f-bd90-f4731984c8dd",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "comment",
-                            "namePlural": "comments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "1a7fec45-dd33-43a0-9302-5b0b9052d2f0"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14306,22 +11804,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "6d4e8025-7ee9-4079-ae80-b18de7b5ff4e",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "cf6f8138-3445-4a36-b137-41ebb8f2e3dc",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activity",
-                            "namePlural": "activities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "beac3449-af10-43a2-9abb-276a798df3de"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14366,22 +11848,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "94c22c13-b00a-4f60-b2d2-f34b9efe6aa2",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "b889efa2-e58a-471c-b258-3c5ef2fa09e9",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "messageParticipant",
-                            "namePlural": "messageParticipants",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "a7036ff9-a86d-4290-9f2a-cc360c86fe1e"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14426,22 +11892,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "0896a728-e2cf-4032-9af2-a471645e9697",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "f1231579-8e7d-4b84-9a60-41844902f2c4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "company",
-                            "namePlural": "companies",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "3ece1b4d-c052-4b32-bd2a-ba0f8c8b6f3e"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14486,22 +11936,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "025cb05b-3bdb-4418-8a07-8b7a8c22dbc1",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "189129d8-8037-4edf-9c91-63001ab52370",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "auditLog",
-                            "namePlural": "auditLogs",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "0e09a491-d3bd-4a23-9c50-cda32acbc7ef"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14546,8 +11980,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -14566,22 +11998,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "c86299f2-7210-4c89-a2ab-29e17f21edc8",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "9a53b4e1-bce2-4160-8ce3-028e14b2abb7",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "attachment",
-                            "namePlural": "attachments",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "3d2bbb4e-e908-4bc5-97d7-a152dd7652bf"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14626,22 +12042,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "d9eb657a-f97b-4cec-af79-0e113d47279b",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "033ae6fd-c59e-475e-ba93-bbc1b2b185a5",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "blocklist",
-                            "namePlural": "blocklists",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "597169c3-ad77-4a48-8a2a-94b7cc155e25"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14686,8 +12086,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'SYSTEM'",
                     "options": [
                         {
@@ -14735,8 +12133,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -14755,8 +12151,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'en'",
                     "options": null,
                     "relationDefinition": null
@@ -14775,22 +12169,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "67aaa999-8332-43ba-8830-76bf48d53cf2",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "2128a43e-af47-44bf-b7e9-5d00ddd27a99",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "calendarEventParticipant",
-                            "namePlural": "calendarEventParticipants",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "b2982cd8-c796-4718-b74b-298b46d19841"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14835,8 +12213,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -14855,22 +12231,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "9a65de46-ef09-429f-b7ba-31cb8a8c7038",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "90e63030-f26d-46c8-b27a-13686b717538",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "connectedAccount",
-                            "namePlural": "connectedAccounts",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "8c36e0eb-108e-4797-97a1-b9b5ea096180"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14915,8 +12275,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'system'",
                     "options": null,
                     "relationDefinition": null
@@ -14935,22 +12293,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "5527b9f6-55ec-4efd-b244-03e91b01e91b",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "99f8caa6-263c-4690-8dc0-eb7645304cf5",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "task",
-                            "namePlural": "tasks",
-                            "isSystem": false,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "53347f0d-658a-45b0-91b5-2088adbeaaf0"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -14995,8 +12337,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": {
                         "lastName": "''",
                         "firstName": "''"
@@ -15018,8 +12358,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -15038,22 +12376,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "cf9ac76a-9f22-4252-a00a-63cc45fcabc4",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "cf6f8138-3445-4a36-b137-41ebb8f2e3dc",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "activity",
-                            "namePlural": "activities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "ea9aa19c-22d8-4b72-83ff-78d9653c27c4"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -15098,8 +12420,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -15118,22 +12438,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "b0f40da3-1fda-4803-be21-14a2755bc834",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "d19be8c8-2cf4-4c29-80ae-0d1841dc11c1",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "favorite",
-                            "namePlural": "favorites",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "407a2cbc-6c15-41dd-942c-5322d273bec3"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -15178,8 +12482,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'SYSTEM'",
                     "options": [
                         {
@@ -15220,8 +12522,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'Light'",
                     "options": null,
                     "relationDefinition": null
@@ -15240,22 +12540,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "170c6f88-63b3-41ff-9e5d-044968a062a4",
-                        "relationType": "ONE_TO_MANY",
-                        "toObjectMetadata": {
-                            "__typename": "object",
-                            "id": "94ef21ab-5eca-4c80-b378-2a207dcca2e4",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "timelineActivity",
-                            "namePlural": "timelineActivities",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "toFieldMetadataId": "dba195e2-63d6-42ca-94aa-42c87b4306ea"
-                    },
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -15321,8 +12605,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "'asc'",
                     "options": null,
                     "relationDefinition": null
@@ -15341,22 +12623,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "53abf7c2-810d-478b-bb2d-689f31322d67",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "90df20e5-c655-474f-bb98-b423652e36df",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "view",
-                            "namePlural": "views",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "4abadd14-56cd-48e4-8013-7b46de4ffe22"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -15401,8 +12667,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -15421,8 +12685,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -15441,8 +12703,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -15461,8 +12721,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -15481,8 +12739,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -15522,8 +12778,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -15542,8 +12796,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -15562,8 +12814,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -15582,8 +12832,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -15602,8 +12850,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -15622,8 +12868,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null
@@ -15642,8 +12886,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -15662,22 +12904,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "025cb05b-3bdb-4418-8a07-8b7a8c22dbc1",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "45b45740-d6cd-476c-af07-f6ed323953b6"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -15722,8 +12948,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -15742,8 +12966,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -15762,8 +12984,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -15803,8 +13023,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -15823,8 +13041,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": null
@@ -15843,22 +13059,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": true,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": {
-                        "__typename": "relation",
-                        "id": "d9eb657a-f97b-4cec-af79-0e113d47279b",
-                        "relationType": "ONE_TO_MANY",
-                        "fromObjectMetadata": {
-                            "__typename": "object",
-                            "id": "1e9ad365-ccb9-4dec-b42f-13b6e86477e3",
-                            "dataSourceId": "9af88cea-baa2-4c00-bc22-c55cfbcd7e3c",
-                            "nameSingular": "workspaceMember",
-                            "namePlural": "workspaceMembers",
-                            "isSystem": true,
-                            "isRemote": false
-                        },
-                        "fromFieldMetadataId": "89b50259-5ed6-4504-9c89-3f4457dc43a6"
-                    },
                     "defaultValue": null,
                     "options": null,
                     "relationDefinition": {
@@ -15903,8 +13103,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "''",
                     "options": null,
                     "relationDefinition": null
@@ -15923,8 +13121,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "now",
                     "options": null,
                     "relationDefinition": null
@@ -15943,8 +13139,6 @@ export const getObjectMetadataItemsMock = () => {
                     "isNullable": false,
                     "createdAt": "2024-08-05T16:38:57.285Z",
                     "updatedAt": "2024-08-05T16:38:57.285Z",
-                    "fromRelationMetadata": null,
-                    "toRelationMetadata": null,
                     "defaultValue": "uuid",
                     "options": null,
                     "relationDefinition": null

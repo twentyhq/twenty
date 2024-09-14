@@ -23,7 +23,6 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
   labelPlural: 'Alvos da Tarefa',
   description: 'Um alvo da tarefa',
   icon: 'IconCheckbox',
-  softDelete: true,
 })
 @WorkspaceIsSystem()
 export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {

@@ -23,7 +23,10 @@ const getStepDefinitionOrThrow = ({
 
   if (stepId === TRIGGER_STEP_ID) {
     if (!isDefined(currentVersion.trigger)) {
-      throw new Error('Expected to find the definition of the trigger');
+      return {
+        type: 'trigger',
+        definition: undefined,
+      } as const;
     }
 
     return {
@@ -33,7 +36,9 @@ const getStepDefinitionOrThrow = ({
   }
 
   if (!isDefined(currentVersion.steps)) {
-    throw new Error('Expected to find an array of steps');
+    throw new Error(
+      'Malformed workflow version: missing steps information; be sure to create at least one step before trying to edit one',
+    );
   }
 
   const selectedNodePosition = findStepPositionOrThrow({
@@ -74,7 +79,7 @@ export const RightDrawerWorkflowEditStepContent = ({
     return (
       <WorkflowEditTriggerForm
         trigger={stepDefinition.definition}
-        onUpdateTrigger={updateTrigger}
+        onTriggerUpdate={updateTrigger}
       />
     );
   }
@@ -82,7 +87,7 @@ export const RightDrawerWorkflowEditStepContent = ({
   return (
     <WorkflowEditActionForm
       action={stepDefinition.definition}
-      onUpdateAction={updateStep}
+      onActionUpdate={updateStep}
     />
   );
 };

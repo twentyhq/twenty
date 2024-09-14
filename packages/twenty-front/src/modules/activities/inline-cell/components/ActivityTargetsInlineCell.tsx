@@ -35,10 +35,8 @@ export const ActivityTargetsInlineCell = ({
   readonly,
   activityObjectNameSingular,
 }: ActivityTargetsInlineCellProps) => {
-  const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
-    activity,
-    activityObjectNameSingular,
-  );
+  const { activityTargetObjectRecords } =
+    useActivityTargetObjectRecords(activity);
 
   const { closeInlineCell } = useInlineCell();
 

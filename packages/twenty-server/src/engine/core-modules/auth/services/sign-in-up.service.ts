@@ -25,7 +25,7 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignInUpServiceInput = {

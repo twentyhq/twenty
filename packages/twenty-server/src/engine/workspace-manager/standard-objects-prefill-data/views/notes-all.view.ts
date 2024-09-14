@@ -30,7 +30,7 @@ export const notesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
-            NOTE_STANDARD_FIELD_IDS.body
+            NOTE_STANDARD_FIELD_IDS.noteTargets
           ],
         position: 1,
         isVisible: true,
@@ -39,7 +39,7 @@ export const notesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
-            NOTE_STANDARD_FIELD_IDS.createdBy
+            NOTE_STANDARD_FIELD_IDS.body
           ],
         position: 2,
         isVisible: true,
@@ -48,9 +48,18 @@ export const notesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+            NOTE_STANDARD_FIELD_IDS.createdBy
           ],
         position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+          ],
+        position: 4,
         isVisible: true,
         size: 150,
       },

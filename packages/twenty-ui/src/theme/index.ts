@@ -19,6 +19,8 @@ export * from './constants/FontLight';
 export * from './constants/GrayScale';
 export * from './constants/HoverBackground';
 export * from './constants/Icon';
+export * from './constants/IllustrationIconDark';
+export * from './constants/IllustrationIconLight';
 export * from './constants/MainColorNames';
 export * from './constants/MainColors';
 export * from './constants/MobileViewport';

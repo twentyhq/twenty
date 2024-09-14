@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
-import { DataSource } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 
 import {
   Record as IRecord,
@@ -45,13 +45,13 @@ import {
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -122,10 +122,7 @@ export class WorkspaceQueryRunnerService {
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
     if (isQueryRunnerTwentyORMEnabled) {
-      return this.graphqlQueryRunnerService.findManyWithTwentyOrm(
-        computedArgs,
-        options,
-      );
+      return this.graphqlQueryRunnerService.findMany(computedArgs, options);
     }
 
     const query = await this.workspaceQueryBuilderFactory.findMany(
@@ -169,6 +166,12 @@ export class WorkspaceQueryRunnerService {
     }
     const { authContext, objectMetadataItem } = options;
 
+    const isQueryRunnerTwentyORMEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        authContext.workspace.id,
+      );
+
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
@@ -182,6 +185,10 @@ export class WorkspaceQueryRunnerService {
       options,
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
+
+    if (isQueryRunnerTwentyORMEnabled) {
+      return this.graphqlQueryRunnerService.findOne(computedArgs, options);
+    }
 
     const query = await this.workspaceQueryBuilderFactory.findOne(
       computedArgs,
@@ -317,6 +324,13 @@ export class WorkspaceQueryRunnerService {
         authContext.workspace.id,
       )
     )?.records;
+
+    await this.workspaceQueryHookService.executePostQueryHooks(
+      authContext,
+      objectMetadataItem.nameSingular,
+      'createMany',
+      parsedResults,
+    );
 
     await this.triggerWebhooks<Record>(
       parsedResults,
@@ -498,7 +512,7 @@ export class WorkspaceQueryRunnerService {
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
     const existingRecords = await repository.find({
-      where: { id: { in: args.filter?.id?.in } },
+      where: { id: In(args.filter?.id?.in) },
     });
     const mappedRecords = new Map(
       existingRecords.map((record) => [record.id, record]),
@@ -618,6 +632,19 @@ export class WorkspaceQueryRunnerService {
       });
     }
 
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        objectMetadataItem.nameSingular,
+      );
+
+    const existingRecords = await repository.find({
+      where: { id: In(args.filter?.id?.in) },
+    });
+    const mappedRecords = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
+
     const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
@@ -637,17 +664,21 @@ export class WorkspaceQueryRunnerService {
 
     this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.deleted`,
-      parsedResults.map(
-        (record) =>
-          ({
-            userId: authContext.user?.id,
-            recordId: record.id,
-            objectMetadata: objectMetadataItem,
-            properties: {
-              before: this.removeNestedProperties(record),
-            },
-          }) satisfies ObjectRecordDeleteEvent<any>,
-      ),
+      parsedResults.map((record) => {
+        const existingRecord = mappedRecords.get(record.id);
+
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: this.removeNestedProperties({
+              ...existingRecord,
+              ...record,
+            }),
+          },
+        } satisfies ObjectRecordDeleteEvent<any>;
+      }),
       authContext.workspace.id,
     );
 

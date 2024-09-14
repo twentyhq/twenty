@@ -23,7 +23,7 @@ export class ViewService {
     fieldId: string;
     viewsIds: string[];
     positions?: {
-      [key: string]: number;
+      [viewId: string]: number;
     }[];
     size?: number;
   }) {

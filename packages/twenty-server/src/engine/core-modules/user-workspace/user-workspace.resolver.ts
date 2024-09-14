@@ -4,15 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInviteHashValidInput } from 'src/engine/core-modules/auth/dto/workspace-invite-hash.input';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => UserWorkspace)
 export class UserWorkspaceResolver {
   constructor(
