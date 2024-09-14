@@ -2,7 +2,7 @@
 
 ## Twenty's Pledge
 
-The contributors and maintainers of this project pledge to ensure a harassment-free experience for everyone in the community. This commitment applies to individuals of all backgrounds, including age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity, experience, education, socio-economic status, nationality, appearance, race, religion. It also applies to individuals of all sexual identities and orientations.
+The contributors and maintainers of this project pledge to ensure a harassment-free experience for everyone in the community.
 
 The focus of both contributors and maintainers is on acting and interacting in ways that promote an open, welcoming, friendly, diverse, inclusive, and healthy community.
 

@@ -1,9 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
 import { RemoteServerIdInput } from 'src/engine/metadata-modules/remote-server/dtos/remote-server-id.input';
 import { RemoteServerTypeInput } from 'src/engine/metadata-modules/remote-server/dtos/remote-server-type.input';
@@ -13,7 +13,7 @@ import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remo
 import { RemoteServerService } from 'src/engine/metadata-modules/remote-server/remote-server.service';
 import { remoteServerGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/utils/remote-server-graphql-api-exception-handler.util';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver()
 export class RemoteServerResolver {
   constructor(

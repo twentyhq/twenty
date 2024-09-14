@@ -5,16 +5,16 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
-import { ServerlessExecuteResult } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
-import { ServerlessService } from 'src/engine/integrations/serverless/serverless.service';
-import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
+import { SOURCE_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/source-file-name';
+import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
+import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
@@ -27,8 +27,8 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { getLastLayerDependencies } from 'src/engine/integrations/serverless/drivers/utils/get-last-layer-dependencies';
-import { LAST_LAYER_VERSION } from 'src/engine/integrations/serverless/drivers/layers/last-layer-version';
+import { getLastLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
+import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
