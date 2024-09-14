@@ -26,25 +26,26 @@ export type ViewBarDetailsProps = {
 
 const StyledBar = styled.div`
   align-items: center;
+  align-items: center;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-content: space-between;
-  position: relative;
-  padding: ${({ theme }) => theme.spacing(1)};
-  z-index: 4;
   min-height: 32px;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  z-index: 4;
 `;
 
 const StyledChipcontainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  overflow-y: scroll;
   gap: ${({ theme }) => theme.spacing(1)};
-  overflow-x: scroll;
   padding-top: ${({ theme }) => theme.spacing(1)};
-  white-space: nowrap;
+  padding-bottom: ${({ theme }) => theme.spacing(0.5)};
   z-index: 1;
 `;
 
@@ -54,9 +55,8 @@ const StyledCancelButton = styled.button`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
-  z-index: 10;
-
+  user-select: none;
+  margin-right: ${({ theme }) => theme.spacing(2)};
   &:hover {
     background-color: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.spacing(1)};
