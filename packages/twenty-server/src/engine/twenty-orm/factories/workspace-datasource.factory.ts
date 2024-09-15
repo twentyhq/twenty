@@ -146,7 +146,18 @@ export class WorkspaceDatasourceFactory {
 
         return workspaceDataSource;
       },
-      (dataSource) => dataSource.destroy(),
+      async (dataSource) => {
+        try {
+          await dataSource.destroy();
+        } catch (error) {
+          // Ignore error if pool has already been destroyed which is a common race condition case
+          if (error.message === 'Called end on pool more than once') {
+            return;
+          }
+
+          throw error;
+        }
+      },
     );
 
     if (!workspaceDataSource) {
