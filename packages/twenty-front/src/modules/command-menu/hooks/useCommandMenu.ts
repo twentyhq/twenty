@@ -11,6 +11,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { COMMAND_MENU_COMMANDS } from '@/command-menu/constants/CommandMenuCommands';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ALL_ICONS } from '@ui/display/icon/providers/internal/AllIcons';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
@@ -89,7 +90,9 @@ export const useCommandMenu = () => {
             type: CommandType.Navigate,
             firstHotKey: 'G',
             secondHotKey: item.labelPlural[0],
-            Icon: COMMAND_MENU_COMMANDS[item.namePlural]?.Icon,
+            Icon: ALL_ICONS[
+              (item?.icon as keyof typeof ALL_ICONS) ?? 'IconArrowUpRight'
+            ],
           }) as Command,
       ),
       COMMAND_MENU_COMMANDS.settings,
