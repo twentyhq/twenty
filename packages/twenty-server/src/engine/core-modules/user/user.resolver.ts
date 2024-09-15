@@ -103,7 +103,7 @@ export class UserResolver {
   ): Promise<WorkspaceMember | null> {
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
-      workspace,
+      workspace ?? user.defaultWorkspace,
     );
 
     if (workspaceMember && workspaceMember.avatarUrl) {

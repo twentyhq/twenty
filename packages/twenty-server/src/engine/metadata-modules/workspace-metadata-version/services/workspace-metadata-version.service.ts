@@ -48,7 +48,5 @@ export class WorkspaceMetadataVersionService {
     await this.workspaceMetadataCacheService.recomputeMetadataCache(
       workspaceId,
     );
-
-    await this.twentyORMGlobalManager.loadDataSourceForWorkspace(workspaceId);
   }
 }

@@ -149,6 +149,7 @@
           "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
           "nx ts-node-no-deps -- ./scripts/setup-db.ts",
           "nx database:migrate",
+          "nx command-no-deps -- cache:flush",
           "nx command-no-deps -- workspace:seed:dev"
         ],
         "parallel": false
