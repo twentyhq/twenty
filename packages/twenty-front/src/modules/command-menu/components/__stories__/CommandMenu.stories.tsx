@@ -45,12 +45,12 @@ const meta: Meta<typeof CommandMenu> = {
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
 
       useEffect(() => {
-        const mappedActiveItems: { [key: string]: boolean } =
-          objectMetadataItems.reduce(
-            (acc, item) => ({ ...acc, [item.nameSingular]: item.isActive }),
-            {},
-          );
-        setToInitialCommandMenu(mappedActiveItems);
+        const nonSystemActiveObjects = objectMetadataItems.filter(
+          (object) => !object.isSystem && object.isActive,
+        );
+
+        setToInitialCommandMenu(nonSystemActiveObjects);
+
         addToCommandMenu([
           {
             id: 'create-task',
@@ -70,7 +70,12 @@ const meta: Meta<typeof CommandMenu> = {
           },
         ]);
         openCommandMenu();
-      }, [addToCommandMenu, setToInitialCommandMenu, openCommandMenu]);
+      }, [
+        addToCommandMenu,
+        setToInitialCommandMenu,
+        openCommandMenu,
+        objectMetadataItems,
+      ]);
 
       return <Story />;
     },

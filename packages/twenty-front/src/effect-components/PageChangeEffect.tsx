@@ -148,13 +148,11 @@ export const PageChangeEffect = () => {
   }, [isMatchingLocation, setHotkeyScope]);
 
   useEffect(() => {
-    const mappedActiveItems: { [key: string]: boolean } =
-      objectMetadataItems.reduce(
-        (acc, item) => ({ ...acc, [item.nameSingular]: item.isActive }),
-        {},
-      );
+    const nonSystemActiveObjects = objectMetadataItems.filter(
+      (object) => !object.isSystem && object.isActive,
+    );
 
-    setToInitialCommandMenu(mappedActiveItems);
+    setToInitialCommandMenu(nonSystemActiveObjects);
 
     addToCommandMenu([
       {

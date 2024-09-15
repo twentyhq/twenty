@@ -14,5 +14,4 @@ export type Command = {
   firstHotKey?: string;
   secondHotKey?: string;
   onCommandClick?: () => void;
-  nameSingular?: string;
 };

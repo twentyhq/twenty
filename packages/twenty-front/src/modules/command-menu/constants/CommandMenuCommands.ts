@@ -6,11 +6,10 @@ import {
   IconUser,
 } from 'twenty-ui';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Command, CommandType } from '../types/Command';
 
-export const COMMAND_MENU_COMMANDS: Command[] = [
-  {
+export const COMMAND_MENU_COMMANDS: { [key: string]: Command } = {
+  people: {
     id: 'go-to-people',
     to: '/objects/people',
     label: 'Go to People',
@@ -18,9 +17,8 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'P',
     Icon: IconUser,
-    nameSingular: CoreObjectNameSingular.Person,
   },
-  {
+  companies: {
     id: 'go-to-companies',
     to: '/objects/companies',
     label: 'Go to Companies',
@@ -28,9 +26,8 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'C',
     Icon: IconBuildingSkyscraper,
-    nameSingular: CoreObjectNameSingular.Company,
   },
-  {
+  opportunities: {
     id: 'go-to-activities',
     to: '/objects/opportunities',
     label: 'Go to Opportunities',
@@ -38,9 +35,8 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'O',
     Icon: IconTargetArrow,
-    nameSingular: CoreObjectNameSingular.Opportunity,
   },
-  {
+  settings: {
     id: 'go-to-settings',
     to: '/settings/profile',
     label: 'Go to Settings',
@@ -49,7 +45,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     secondHotKey: 'S',
     Icon: IconSettings,
   },
-  {
+  tasks: {
     id: 'go-to-tasks',
     to: '/objects/tasks',
     label: 'Go to Tasks',
@@ -57,6 +53,5 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     firstHotKey: 'G',
     secondHotKey: 'T',
     Icon: IconCheckbox,
-    nameSingular: CoreObjectNameSingular.Task,
   },
-];
+};
