@@ -428,9 +428,13 @@ export class WorkspaceRepository<
 
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
-    const formattedResult = await this.formatResult(result);
+    const formattedResult = await this.formatResult(result.raw);
 
-    return formattedResult;
+    return {
+      raw: result.raw,
+      generatedMaps: formattedResult,
+      identifiers: result.identifiers,
+    };
   }
 
   /**

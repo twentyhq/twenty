@@ -43,12 +43,12 @@ import {
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -283,6 +283,12 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
 
+    const isQueryRunnerTwentyORMEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+        authContext.workspace.id,
+      );
+
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     if (args.upsert) {
@@ -308,6 +314,13 @@ export class WorkspaceQueryRunnerService {
       options,
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
+
+    if (isQueryRunnerTwentyORMEnabled) {
+      return (await this.graphqlQueryRunnerService.createMany(
+        computedArgs,
+        options,
+      )) as Record[];
+    }
 
     const query = await this.workspaceQueryBuilderFactory.createMany(
       computedArgs,
