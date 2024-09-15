@@ -72,13 +72,6 @@ export const useCommandMenu = () => {
     [setCommands],
   );
 
-  const filterCommandMenu = useCallback(
-    (callback: (_: Command) => boolean = () => true) => {
-      setCommands((prev) => prev.filter(callback));
-    },
-    [setCommands],
-  );
-
   const setToInitialCommandMenu = (menuItems: ObjectMetadataItem[]) => {
     const formattedItems = [
       ...menuItems.map(
@@ -123,6 +116,5 @@ export const useCommandMenu = () => {
     addToCommandMenu,
     onItemClick,
     setToInitialCommandMenu,
-    filterCommandMenu,
   };
 };

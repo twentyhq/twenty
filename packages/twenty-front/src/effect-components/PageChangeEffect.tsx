@@ -41,8 +41,7 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
-  const { addToCommandMenu, setToInitialCommandMenu, filterCommandMenu } =
-    useCommandMenu();
+  const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -172,7 +171,6 @@ export const PageChangeEffect = () => {
     setToInitialCommandMenu,
     openCreateActivity,
     objectMetadataItems,
-    filterCommandMenu,
   ]);
 
   useEffect(() => {
