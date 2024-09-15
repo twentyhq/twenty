@@ -55,9 +55,12 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
     );
 
     for (const workspaceId of workspaceIds) {
+      let dataSourceMetadata;
+      let workspaceQueryRunner;
+
       this.logger.log(`Running command for workspace ${workspaceId}`);
       try {
-        const dataSourceMetadata =
+        dataSourceMetadata =
           await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
             workspaceId,
           );
@@ -77,10 +80,19 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
           );
         }
 
-        const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
+        workspaceQueryRunner = workspaceDataSource.createQueryRunner();
 
         await workspaceQueryRunner.connect();
+      } catch (error) {
+        this.logger.log(
+          chalk.red(
+            `Could not connect to workspace data source for workspace ${workspaceId}`,
+          ),
+        );
+        continue;
+      }
 
+      try {
         const customFieldsWithEmailType =
           await this.fieldMetadataRepository.find({
             where: {
@@ -267,17 +279,19 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
                 workspaceId,
               );
             }
-          } finally {
-            await workspaceQueryRunner.release();
           }
         }
       } catch (error) {
+        await workspaceQueryRunner.release();
+
         this.logger.log(
           chalk.red(
             `Running command on workspace ${workspaceId} failed with error: ${error}`,
           ),
         );
         continue;
+      } finally {
+        await workspaceQueryRunner.release();
       }
 
       this.logger.log(chalk.green(`Command completed!`));
