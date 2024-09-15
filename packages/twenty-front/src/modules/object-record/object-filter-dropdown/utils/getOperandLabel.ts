@@ -22,6 +22,14 @@ export const getOperandLabel = (
       return 'Is empty';
     case ViewFilterOperand.IsNotEmpty:
       return 'Is not empty';
+    case ViewFilterOperand.IsRelative:
+      return 'Is relative';
+    case ViewFilterOperand.IsInPast:
+      return 'Is in past';
+    case ViewFilterOperand.IsInFuture:
+      return 'Is in future';
+    case ViewFilterOperand.IsToday:
+      return 'Is today';
     default:
       return '';
   }

@@ -8,4 +8,8 @@ export enum ViewFilterOperand {
   DoesNotContain = 'doesNotContain',
   IsEmpty = 'isEmpty',
   IsNotEmpty = 'isNotEmpty',
+  IsRelative = 'isRelative',
+  IsInPast = 'isInPast',
+  IsInFuture = 'isInFuture',
+  IsToday = 'isToday',
 }

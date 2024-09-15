@@ -25,6 +25,7 @@ import {
   convertLessThanRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
+import { endOfDay, startOfDay } from 'date-fns';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
@@ -366,9 +367,20 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.definition.type,
             );
             break;
+          case ViewFilterOperand.Is: {
+            const date = new Date(rawUIFilter.value);
+
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                lt: endOfDay(date).toISOString(),
+                gte: startOfDay(date).toISOString(),
+              } as DateFilter,
+            });
+            break;
+          }
           default:
             throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`, //
             );
         }
         break;
