@@ -1,0 +1,20 @@
+name: CI Server Bis
+on:
+  pull_request: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server-test:
+    runs-on: ci-8-cores
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      
