@@ -1,6 +1,6 @@
 name: CI Server Bis
 on:
-  pull_request: true
+  push: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
