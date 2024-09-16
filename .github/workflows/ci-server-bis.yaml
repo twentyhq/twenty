@@ -1,13 +1,9 @@
 name: CI Server Bis
 on:
   push: true
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  server-test:
-    runs-on: ci-8-cores
+  server-bis-test:
+    runs-on: ubuntu-latest
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
