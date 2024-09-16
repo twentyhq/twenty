@@ -125,6 +125,7 @@ export class MessageChannelSyncStatusService {
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
       syncStatus: MessageChannelSyncStatus.ONGOING,
+      syncStageStartedAt: new Date().toISOString(),
     });
   }
 
@@ -142,9 +143,10 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStatus: MessageChannelSyncStatus.ACTIVE,
+      syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+      throttleFailureCount: 0,
+      syncStageStartedAt: null,
     });
-
-    await this.schedulePartialMessageListFetch(messageChannelIds);
   }
 
   public async markAsMessagesImportOngoing(messageChannelIds: string[]) {
