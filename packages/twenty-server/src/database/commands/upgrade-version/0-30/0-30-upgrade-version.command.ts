@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { MigrateEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-30/0-30-migrate-email-fields-to-emails.command';
-import { SetCustomObjectIsSoftDeletableCommand } from 'src/database/commands/upgrade-version/0-30/0-30-set-custom-object-is-soft-deletable.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -23,7 +22,6 @@ export class UpgradeTo0_30Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly migrateEmailFieldsToEmails: MigrateEmailFieldsToEmailsCommand,
-    private readonly setCustomObjectIsSoftDeletableCommand: SetCustomObjectIsSoftDeletableCommand,
   ) {
     super(workspaceRepository);
   }
@@ -39,11 +37,6 @@ export class UpgradeTo0_30Command extends ActiveWorkspacesCommandRunner {
         ...options,
         force: true,
       },
-      workspaceIds,
-    );
-    await this.setCustomObjectIsSoftDeletableCommand.executeActiveWorkspacesCommand(
-      passedParam,
-      options,
       workspaceIds,
     );
     await this.migrateEmailFieldsToEmails.executeActiveWorkspacesCommand(
