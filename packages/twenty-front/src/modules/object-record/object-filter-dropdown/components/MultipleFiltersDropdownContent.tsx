@@ -6,6 +6,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
+import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
+import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
+import { ObjectFilterDropdownTextSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateInput } from './ObjectFilterDropdownDateInput';
 import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSelect';
@@ -13,8 +16,6 @@ import { ObjectFilterDropdownNumberInput } from './ObjectFilterDropdownNumberInp
 import { ObjectFilterDropdownOperandButton } from './ObjectFilterDropdownOperandButton';
 import { ObjectFilterDropdownOperandSelect } from './ObjectFilterDropdownOperandSelect';
 import { ObjectFilterDropdownOptionSelect } from './ObjectFilterDropdownOptionSelect';
-import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
-import { ObjectFilterDropdownTextSearchInput } from './ObjectFilterDropdownTextSearchInput';
 
 type MultipleFiltersDropdownContentProps = {
   filterDropdownId?: string;
@@ -86,6 +87,12 @@ export const MultipleFiltersDropdownContent = ({
                 <ObjectFilterDropdownSearchInput />
                 <DropdownMenuSeparator />
                 <ObjectFilterDropdownRecordSelect />
+              </>
+            )}
+            {filterDefinitionUsedInDropdown.type === 'SOURCE' && (
+              <>
+                <DropdownMenuSeparator />
+                <ObjectFilterDropdownSourceSelect />
               </>
             )}
             {filterDefinitionUsedInDropdown.type === 'SELECT' && (

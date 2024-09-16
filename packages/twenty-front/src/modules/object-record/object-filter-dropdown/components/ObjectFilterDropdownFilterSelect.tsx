@@ -6,8 +6,11 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
+import { ObjectFilterSelectSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectSubMenu';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -42,6 +45,9 @@ export const StyledInput = styled.input`
 
 export const ObjectFilterDropdownFilterSelect = () => {
   const [searchText, setSearchText] = useState('');
+  const [currentSubMenu, setCurrentSubMenu] = useState<FilterType | null>(null);
+  const [currentParentFilterDefinition, setCurrentParentFilterDefinition] =
+    useState<FilterDefinition | null>(null);
 
   const { availableFilterDefinitionsState } = useFilterDropdown();
 
@@ -79,35 +85,50 @@ export const ObjectFilterDropdownFilterSelect = () => {
 
   return (
     <>
-      <StyledInput
-        value={searchText}
-        autoFocus
-        placeholder="Search fields"
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setSearchText(event.target.value)
-        }
-      />
-      <SelectableList
-        hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
-        selectableItemIdArray={selectableListItemIds}
-        selectableListId={OBJECT_FILTER_DROPDOWN_ID}
-        onEnter={handleEnter}
-      >
-        <DropdownMenuItemsContainer>
-          {sortedAvailableFilterDefinitions.map(
-            (availableFilterDefinition, index) => (
-              <SelectableItem
-                itemId={availableFilterDefinition.fieldMetadataId}
-              >
-                <ObjectFilterDropdownFilterSelectMenuItem
-                  key={`select-filter-${index}`}
-                  filterDefinition={availableFilterDefinition}
-                />
-              </SelectableItem>
-            ),
-          )}
-        </DropdownMenuItemsContainer>
-      </SelectableList>
+      {!currentSubMenu ? (
+        <>
+          <StyledInput
+            value={searchText}
+            autoFocus
+            placeholder="Search fields"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchText(event.target.value)
+            }
+          />
+          <SelectableList
+            hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
+            selectableItemIdArray={selectableListItemIds}
+            selectableListId={OBJECT_FILTER_DROPDOWN_ID}
+            onEnter={handleEnter}
+          >
+            <DropdownMenuItemsContainer>
+              {sortedAvailableFilterDefinitions.map(
+                (availableFilterDefinition, index) => (
+                  <SelectableItem
+                    key={`selectable-item-${availableFilterDefinition.fieldMetadataId}`}
+                    itemId={availableFilterDefinition.fieldMetadataId}
+                  >
+                    <ObjectFilterDropdownFilterSelectMenuItem
+                      key={`select-filter-${index}`}
+                      filterDefinition={availableFilterDefinition}
+                      setCurrentSubMenu={setCurrentSubMenu}
+                      setCurrentParentFilterDefinition={
+                        setCurrentParentFilterDefinition
+                      }
+                    />
+                  </SelectableItem>
+                ),
+              )}
+            </DropdownMenuItemsContainer>
+          </SelectableList>
+        </>
+      ) : (
+        <ObjectFilterSelectSubMenu
+          currentSubMenu={currentSubMenu}
+          parent={currentParentFilterDefinition}
+          setCurrentSubMenu={setCurrentSubMenu}
+        />
+      )}
     </>
   );
 };
