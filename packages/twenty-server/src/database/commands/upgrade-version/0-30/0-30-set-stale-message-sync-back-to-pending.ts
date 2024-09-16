@@ -15,8 +15,8 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 @Command({
-  name: 'upgrade-0.30:migrate-email-fields-to-emails',
-  description: 'Migrating fields of deprecated type EMAIL to type EMAILS',
+  name: 'upgrade-0.30:set-stale-message-sync-back-to-pending',
+  description: 'Set stale message sync back to pending',
 })
 export class SetStaleMessageSyncBackToPendingCommand extends ActiveWorkspacesCommandRunner {
   constructor(
@@ -33,7 +33,7 @@ export class SetStaleMessageSyncBackToPendingCommand extends ActiveWorkspacesCom
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
-      'Running command to migrate email type fields to emails type',
+      'Running command to set stale message sync back to pending',
     );
 
     for (const workspaceId of workspaceIds) {
@@ -47,8 +47,8 @@ export class SetStaleMessageSyncBackToPendingCommand extends ActiveWorkspacesCom
 
         const messageChannelRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-            'messageChannel',
             workspaceId,
+            'messageChannel',
           );
 
         dataSource.transaction(async (entityManager) => {
@@ -66,7 +66,6 @@ export class SetStaleMessageSyncBackToPendingCommand extends ActiveWorkspacesCom
           await messageChannelRepository.update(
             {
               syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-
               syncStageStartedAt: IsNull(),
             },
             {
