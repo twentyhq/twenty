@@ -1,5 +1,3 @@
-import { InsertResult } from 'typeorm';
-
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -24,10 +22,8 @@ export class GraphqlQueryCreateManyResolverService {
         objectMetadataItem.nameSingular,
       );
 
-    const insertResult: InsertResult = !args.upsert
-      ? await repository.insert(args.data)
-      : await repository.upsert(args.data, ['id']);
+    const objectRecords = await repository.save(args.data);
 
-    return insertResult.generatedMaps as ObjectRecord[];
+    return objectRecords as ObjectRecord[];
   }
 }
