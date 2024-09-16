@@ -30,8 +30,10 @@ const StyledIconAndButtonContainer = styled.button`
 `;
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
+  height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
 `;
 

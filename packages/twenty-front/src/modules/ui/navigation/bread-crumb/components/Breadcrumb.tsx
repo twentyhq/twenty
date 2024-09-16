@@ -16,6 +16,7 @@ const StyledWrapper = styled.nav`
   grid-column-gap: ${({ theme }) => theme.spacing(1)};
   max-width: 100%;
   min-width: 0;
+  height: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledLink = styled(Link)`
