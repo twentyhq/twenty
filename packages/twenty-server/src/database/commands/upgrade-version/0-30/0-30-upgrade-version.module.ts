@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FixEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-30/0-30-fix-email-field-migration.command';
 import { MigrateEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-30/0-30-migrate-email-fields-to-emails.command';
 import { SetStaleMessageSyncBackToPendingCommand } from 'src/database/commands/upgrade-version/0-30/0-30-set-stale-message-sync-back-to-pending';
 import { UpgradeTo0_30Command } from 'src/database/commands/upgrade-version/0-30/0-30-upgrade-version.command';
@@ -32,6 +33,7 @@ import { ViewModule } from 'src/modules/view/view.module';
     UpgradeTo0_30Command,
     MigrateEmailFieldsToEmailsCommand,
     SetStaleMessageSyncBackToPendingCommand,
+    FixEmailFieldsToEmailsCommand,
   ],
 })
 export class UpgradeTo0_30CommandModule {}
