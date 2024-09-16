@@ -12,6 +12,8 @@ import { isDefined } from '~/utils/isDefined';
 
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativePickerHeader';
+import { RelativeDateDirection } from '@/ui/input/components/internal/date/types/RelativeDateDirection';
+import { RelativeDateUnit } from '@/ui/input/components/internal/date/types/RelativeDateUnit';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -22,7 +24,7 @@ export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;
@@ -182,6 +184,10 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__month {
     margin-top: 0;
+
+    pointer-events: ${({ calendarDisabled }) =>
+      calendarDisabled ? 'none' : 'auto'};
+    opacity: ${({ calendarDisabled }) => (calendarDisabled ? '0.5' : '1')};
   }
 
   & .react-datepicker__day {
@@ -434,9 +440,11 @@ export const InternalDatePicker = ({
   const endOfDayInLocalTimezone = endOfDayDateTimeInLocalTimezone.toJSDate();
 
   const dateToUse = isDateTimeInput ? endOfDayInLocalTimezone : dateWithoutTime;
-
   return (
-    <StyledContainer onKeyDown={handleKeyDown}>
+    <StyledContainer
+      onKeyDown={handleKeyDown}
+      calendarDisabled={isRelativeToNow}
+    >
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}
@@ -458,12 +466,9 @@ export const InternalDatePicker = ({
           }) =>
             isRelativeToNow ? (
               <RelativeDatePickerHeader
-                direction=""
-                value=""
-                unit=""
-                onDirectionChange={() => {}}
-                onValueChange={() => {}}
-                onUnitChange={() => {}}
+                direction={RelativeDateDirection.Past}
+                value={1}
+                unit={RelativeDateUnit.Day}
                 onChange={() => {}}
               />
             ) : (

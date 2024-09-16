@@ -1,6 +1,10 @@
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { RelativeDateUnit } from '../types/RelativeDateUnit';
 
+import { RELATIVE_DATE_DIRECTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionOptions';
+import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
+import { RelativeDateDirection } from '@/ui/input/components/internal/date/types/RelativeDateDirection';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -12,50 +16,63 @@ const StyledContainer = styled.div`
 `;
 
 type RelativeDatePickerHeaderProps = {
-  direction: string;
-  value: string;
-  unit: string;
-  onDirectionChange: (value: string) => void;
-  onValueChange: (value: string) => void;
-  onUnitChange: (value: string) => void;
-  onChange: (value: { direction: string; value: string; unit: string }) => void;
+  direction?: RelativeDateDirection;
+  value?: number;
+  unit?: RelativeDateUnit;
+  onChange: (value: {
+    direction?: RelativeDateDirection;
+    value?: number;
+    unit?: RelativeDateUnit;
+  }) => void;
 };
 
 export const RelativeDatePickerHeader = ({
   direction,
   value,
   unit,
-  onDirectionChange,
-  onValueChange,
-  onUnitChange,
+  onChange,
 }: RelativeDatePickerHeaderProps) => {
   return (
     <StyledContainer>
       <Select
         dropdownId="direction-select"
         value={direction}
-        onChange={onDirectionChange}
-        options={[
-          { value: 'Past', label: 'Past' },
-          { value: 'Next', label: 'Next' },
-          { value: 'This', label: 'This' },
-        ]}
+        onChange={(newDirection) =>
+          onChange({
+            direction: newDirection,
+            value: value,
+            unit: unit,
+          })
+        }
+        options={RELATIVE_DATE_DIRECTIONS}
       />
       <TextInput
-        value={value}
-        onChange={(value) => onValueChange(value?.toString() ?? '')}
+        value={value?.toString() ?? ''}
+        onChange={(newValue) => {
+          const newNumericValue = newValue.replace(/[^0-9]/g, '');
+          const value = newNumericValue
+            ? parseInt(newNumericValue, 10)
+            : undefined;
+
+          onChange({
+            direction,
+            value,
+            unit,
+          });
+        }}
         placeholder="Number"
       />
       <Select
         dropdownId="unit-select"
         value={unit}
-        onChange={onUnitChange}
-        options={[
-          { value: 'Day', label: 'Day' },
-          { value: 'Week', label: 'Week' },
-          { value: 'Month', label: 'Month' },
-          { value: 'Year', label: 'Year' },
-        ]}
+        onChange={(newUnit) =>
+          onChange({
+            direction: direction,
+            value: value,
+            unit: newUnit,
+          })
+        }
+        options={RELATIVE_DATE_UNITS}
       />
     </StyledContainer>
   );
