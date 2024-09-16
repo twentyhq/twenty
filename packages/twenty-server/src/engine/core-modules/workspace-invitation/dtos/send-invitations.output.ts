@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 
 @ObjectType()
-export class SendInviteLink {
+export class SendInvitationsOutput {
   @Field(() => Boolean, {
     description: 'Boolean that confirms query was dispatched',
   })

@@ -26,11 +26,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import {
-  useDeleteWorkspaceInvitationMutation,
-  useGetWorkspaceInvitationsQuery,
-  useResendWorkspaceInvitationMutation,
-} from '~/generated/graphql';
+import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -40,6 +36,9 @@ import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { Status } from '../../modules/ui/display/status/components/Status';
 import { formatDistanceToNow } from 'date-fns';
+import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
+import { isDefined } from '~/utils/isDefined';
+import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -71,10 +70,8 @@ export const SettingsWorkspaceMembers = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const [deleteWorkspaceInvitationMutation] =
-    useDeleteWorkspaceInvitationMutation();
-  const [resendWorkspaceInvitationMutation] =
-    useResendWorkspaceInvitationMutation();
+  const { resendInvitation } = useResendWorkspaceInvitation();
+  const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -98,47 +95,24 @@ export const SettingsWorkspaceMembers = () => {
     },
   });
 
-  const handleRemoveWorkspaceInvitation = (appTokenId: string) => {
-    deleteWorkspaceInvitationMutation({
-      variables: {
-        appTokenId,
-      },
-      onError: () => {
-        enqueueSnackBar('Error deleting invitation', {
-          variant: SnackBarVariant.Error,
-          duration: 2000,
-        });
-      },
-      onCompleted: () => {
-        setWorkspaceInvitations(
-          workspaceInvitations.filter(
-            (workspaceInvitation) => workspaceInvitation.id !== appTokenId,
-          ),
-        );
-      },
-    });
+  const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
+    const result = await deleteWorkspaceInvitation({ appTokenId });
+    if (isDefined(result.errors)) {
+      enqueueSnackBar('Error deleting invitation', {
+        variant: SnackBarVariant.Error,
+        duration: 2000,
+      });
+    }
   };
 
-  const handleResendWorkspaceInvitation = (appTokenId: string) => {
-    resendWorkspaceInvitationMutation({
-      variables: {
-        appTokenId,
-      },
-      onError: () => {
-        enqueueSnackBar('Error resending invitation', {
-          variant: SnackBarVariant.Error,
-          duration: 2000,
-        });
-      },
-      onCompleted: (data) => {
-        setWorkspaceInvitations([
-          ...data.resendWorkspaceInvitation.result,
-          ...workspaceInvitations.filter(
-            (workspaceInvitation) => workspaceInvitation.id !== appTokenId,
-          ),
-        ]);
-      },
-    });
+  const handleResendWorkspaceInvitation = async (appTokenId: string) => {
+    const result = await resendInvitation({ appTokenId });
+    if (isDefined(result.errors)) {
+      enqueueSnackBar('Error resending invitation', {
+        variant: SnackBarVariant.Error,
+        duration: 2000,
+      });
+    }
   };
 
   const getExpiresAtText = (expiresAt: string) => {
@@ -176,8 +150,8 @@ export const SettingsWorkspaceMembers = () => {
               </TableRow>
             </StyledTableHeaderRow>
             {workspaceMembers?.map((workspaceMember) => (
-              <StyledTable>
-                <TableRow key={workspaceMember.id}>
+              <StyledTable key={workspaceMember.id}>
+                <TableRow>
                   <TableCell>
                     <StyledText
                       PrefixComponent={
@@ -238,11 +212,8 @@ export const SettingsWorkspaceMembers = () => {
                 </TableRow>
               </StyledTableHeaderRow>
               {workspaceInvitations?.map((workspaceInvitation) => (
-                <StyledTable>
-                  <TableRow
-                    key={workspaceInvitation.id}
-                    gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}
-                  >
+                <StyledTable key={workspaceInvitation.id}>
+                  <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
                     <TableCell>
                       <StyledText
                         PrefixComponent={

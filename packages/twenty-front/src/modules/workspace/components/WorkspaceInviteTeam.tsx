@@ -11,7 +11,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
-import { useInviteUser } from '../../workspace-invitation/hooks/useInviteUser';
+import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
@@ -70,7 +70,7 @@ type FormInput = {
 
 export const WorkspaceInviteTeam = () => {
   const { enqueueSnackBar } = useSnackBar();
-  const { sendInvitation } = useInviteUser();
+  const { sendInvitation } = useCreateWorkspaceInvitation();
 
   const { reset, handleSubmit, control, formState } = useForm<FormInput>({
     mode: 'onSubmit',
@@ -83,26 +83,23 @@ export const WorkspaceInviteTeam = () => {
   const submit = handleSubmit(async ({ emails }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
     const { data } = await sendInvitation({ emails: emailsList });
-    if (isDefined(data)) {
-      if (data.sendInviteLink.result.length > 0) {
-        enqueueSnackBar(
-          `${data.sendInviteLink.result.length} invitations sent`,
-          {
-            variant: SnackBarVariant.Success,
-            duration: 2000,
-          },
-        );
-      }
-      if (!data.sendInviteLink.success) {
-        data.sendInviteLink.errors.forEach((error) => {
-          enqueueSnackBar(error, {
-            variant: SnackBarVariant.Error,
-            duration: 5000,
-          });
-        });
-      }
-    } else {
+    if (isDefined(data) && data.sendInvitations.result.length > 0) {
+      enqueueSnackBar(
+        `${data.sendInvitations.result.length} invitations sent`,
+        {
+          variant: SnackBarVariant.Success,
+          duration: 2000,
+        },
+      );
       return;
+    }
+    if (isDefined(data) && !data.sendInvitations.success) {
+      data.sendInvitations.errors.forEach((error) => {
+        enqueueSnackBar(error, {
+          variant: SnackBarVariant.Error,
+          duration: 5000,
+        });
+      });
     }
   });
 

@@ -2,15 +2,18 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
+import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+import { SendInvitationsInput } from './dtos/send-invitations.input';
+
+@UseGuards(WorkspaceAuthGuard)
 @Resolver()
 export class WorkspaceInvitationResolver {
   constructor(
@@ -18,7 +21,6 @@ export class WorkspaceInvitationResolver {
   ) {}
 
   @Mutation(() => String)
-  @UseGuards(JwtAuthGuard)
   async deleteWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -29,8 +31,8 @@ export class WorkspaceInvitationResolver {
     );
   }
 
-  @Mutation(() => SendInviteLink)
-  @UseGuards(JwtAuthGuard)
+  @Mutation(() => SendInvitationsOutput)
+  @UseGuards(UserAuthGuard)
   async resendWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() workspace: Workspace,
@@ -44,8 +46,21 @@ export class WorkspaceInvitationResolver {
   }
 
   @Query(() => [WorkspaceInvitation])
-  @UseGuards(JwtAuthGuard)
   async findWorkspaceInvitations(@AuthWorkspace() workspace: Workspace) {
     return this.workspaceInvitationService.loadWorkspaceInvitations(workspace);
+  }
+
+  @Mutation(() => SendInvitationsOutput)
+  @UseGuards(UserAuthGuard)
+  async sendInvitations(
+    @Args() sendInviteLinkInput: SendInvitationsInput,
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<SendInvitationsOutput> {
+    return await this.workspaceInvitationService.sendInvitations(
+      sendInviteLinkInput.emails,
+      workspace,
+      user,
+    );
   }
 }

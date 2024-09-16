@@ -1,12 +1,9 @@
 import { createState } from 'twenty-ui';
+import { WorkspaceInvitation } from '@/workspace-member/types/WorkspaceMember';
 
-type WorkspaceInvitation = {
-  id: string;
-  email: string;
-  expiresAt: string;
-};
-
-export const workspaceInvitationsState = createState<WorkspaceInvitation[]>({
+export const workspaceInvitationsState = createState<
+  Omit<WorkspaceInvitation, '__typename'>[]
+>({
   key: 'workspaceInvitationsState',
   defaultValue: [],
 });

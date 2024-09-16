@@ -19,8 +19,6 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
-import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -137,19 +135,5 @@ export class WorkspaceResolver {
     }
 
     return workspace.logo ?? '';
-  }
-
-  @Mutation(() => SendInviteLink)
-  @UseGuards(UserAuthGuard)
-  async sendInviteLink(
-    @Args() sendInviteLinkInput: SendInviteLinkInput,
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<SendInviteLink> {
-    return await this.workspaceService.sendInviteLink(
-      sendInviteLinkInput.emails,
-      workspace,
-      user,
-    );
   }
 }

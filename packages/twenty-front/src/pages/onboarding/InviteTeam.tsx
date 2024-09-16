@@ -29,7 +29,7 @@ import { AnimatedTranslation } from '@/ui/utilities/animation/components/Animate
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useInviteUser } from '../../modules/workspace-invitation/hooks/useInviteUser';
+import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`
   display: flex;
@@ -63,7 +63,7 @@ type FormInput = z.infer<typeof validationSchema>;
 export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
-  const { sendInvitation } = useInviteUser();
+  const { sendInvitation } = useCreateWorkspaceInvitation();
 
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);

@@ -37,7 +37,7 @@ export class UserWorkspaceResolver {
       return;
     }
 
-    await this.workspaceInvitationService.useWorkspaceInvitation(
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       workspace.id,
       user.email,
     );
