@@ -53,4 +53,8 @@ export class TwentyORMGlobalManager {
   async loadDataSourceForWorkspace(workspaceId: string) {
     await this.workspaceDataSourceFactory.create(workspaceId, null);
   }
+
+  async destroyDataSourceForWorkspace(workspaceId: string) {
+    await this.workspaceDataSourceFactory.destroy(workspaceId, null);
+  }
 }

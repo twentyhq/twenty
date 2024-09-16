@@ -3,8 +3,8 @@ import { ThemeColor } from 'twenty-ui';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { WithNarrowedStringLiteralProperty } from '~/types/WithNarrowedStringLiteralProperty';
 
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 
 export type FieldUuidMetadata = {
@@ -110,34 +110,16 @@ export type FieldPositionMetadata = {
   fieldName: string;
 };
 
-export type FieldDefinitionRelationType =
-  | 'FROM_MANY_OBJECTS'
-  | 'FROM_ONE_OBJECT'
-  | 'TO_MANY_OBJECTS'
-  | 'TO_ONE_OBJECT';
-
 export type FieldRelationMetadata = {
   fieldName: string;
   objectMetadataNameSingular?: string;
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
-  relationType?: FieldDefinitionRelationType;
+  relationType?: RelationDefinitionType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
 };
-
-export type FieldRelationOneMetadata = WithNarrowedStringLiteralProperty<
-  FieldRelationMetadata,
-  'relationType',
-  'TO_ONE_OBJECT'
->;
-
-export type FieldRelationManyMetadata = WithNarrowedStringLiteralProperty<
-  FieldRelationMetadata,
-  'relationType',
-  'FROM_MANY_OBJECTS'
->;
 
 export type FieldSelectMetadata = {
   objectMetadataNameSingular?: string;

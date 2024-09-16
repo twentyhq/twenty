@@ -17,12 +17,12 @@ import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
-import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
+import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
@@ -69,13 +69,18 @@ export class GraphQLConfigService
         let workspace: Workspace | undefined;
 
         try {
-          if (!this.tokenService.isTokenPresent(context.req)) {
+          const { user, workspace, apiKey, workspaceMemberId } = context.req;
+
+          if (!workspace) {
             return new GraphQLSchema({});
           }
 
-          const data = await this.tokenService.validateToken(context.req);
-
-          return await this.createSchema(context, data);
+          return await this.createSchema(context, {
+            user,
+            workspace,
+            apiKey,
+            workspaceMemberId,
+          });
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {

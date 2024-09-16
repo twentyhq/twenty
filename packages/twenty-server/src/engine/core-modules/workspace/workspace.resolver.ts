@@ -25,7 +25,8 @@ import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/upd
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -33,7 +34,7 @@ import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
   constructor(
@@ -54,7 +55,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
@@ -139,6 +140,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => SendInviteLink)
+  @UseGuards(UserAuthGuard)
   async sendInviteLink(
     @Args() sendInviteLinkInput: SendInviteLinkInput,
     @AuthUser() user: User,

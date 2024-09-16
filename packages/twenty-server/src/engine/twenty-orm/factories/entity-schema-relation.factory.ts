@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchemaRelationOptions } from 'typeorm';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataMap,
+  ObjectMetadataMap,
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { determineRelationDetails } from 'src/engine/twenty-orm/utils/determine-relation-details.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -13,16 +15,15 @@ type EntitySchemaRelationMap = {
 
 @Injectable()
 export class EntitySchemaRelationFactory {
-  constructor(
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-  ) {}
+  constructor() {}
 
   async create(
-    workspaceId: string,
-    metadataVersion: number,
-    fieldMetadataCollection: FieldMetadataEntity[],
+    fieldMetadataMap: FieldMetadataMap,
+    objectMetadataMap: ObjectMetadataMap,
   ): Promise<EntitySchemaRelationMap> {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
+
+    const fieldMetadataCollection = Object.values(fieldMetadataMap);
 
     for (const fieldMetadata of fieldMetadataCollection) {
       if (!isRelationFieldMetadataType(fieldMetadata.type)) {
@@ -38,20 +39,10 @@ export class EntitySchemaRelationFactory {
         );
       }
 
-      const objectMetadataCollection =
-        await this.workspaceCacheStorageService.getObjectMetadataCollection(
-          workspaceId,
-          metadataVersion,
-        );
-
-      if (!objectMetadataCollection) {
-        throw new Error('Object metadata collection not found');
-      }
-
       const relationDetails = await determineRelationDetails(
         fieldMetadata,
         relationMetadata,
-        objectMetadataCollection,
+        objectMetadataMap,
       );
 
       entitySchemaRelationMap[fieldMetadata.name] = {

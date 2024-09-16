@@ -1,13 +1,13 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver()
 export class WorkspaceInvitationResolver {
   constructor(
@@ -15,7 +15,6 @@ export class WorkspaceInvitationResolver {
   ) {}
 
   @Mutation(() => String)
-  @UseGuards(JwtAuthGuard)
   async deleteWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -27,7 +26,6 @@ export class WorkspaceInvitationResolver {
   }
 
   @Query(() => [WorkspaceInvitation])
-  @UseGuards(JwtAuthGuard)
   async findWorkspaceInvitations(@AuthWorkspace() workspace: Workspace) {
     return this.workspaceInvitationService.loadWorkspaceInvitations(workspace);
   }

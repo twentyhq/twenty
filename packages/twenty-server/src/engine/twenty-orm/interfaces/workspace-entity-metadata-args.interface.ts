@@ -64,5 +64,5 @@ export interface WorkspaceEntityMetadataArgs {
   /**
    * Enable soft delete.
    */
-  readonly softDelete?: boolean;
+  readonly softDelete: boolean;
 }

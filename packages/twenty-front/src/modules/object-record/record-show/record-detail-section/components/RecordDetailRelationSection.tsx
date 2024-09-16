@@ -32,6 +32,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
@@ -67,8 +68,8 @@ export const RecordDetailRelationSection = ({
   >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
-  const isToOneObject = relationType === 'TO_ONE_OBJECT';
-  const isFromManyObjects = relationType === 'FROM_MANY_OBJECTS';
+  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
+  const isToManyObjects = RelationDefinitionType.OneToMany;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
@@ -160,7 +161,7 @@ export const RecordDetailRelationSection = ({
       <RecordDetailSectionHeader
         title={fieldDefinition.label}
         link={
-          isFromManyObjects
+          isToManyObjects
             ? {
                 to: filterLinkHref,
                 label: `All (${relationRecords.length})`,

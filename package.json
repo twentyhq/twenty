@@ -8,8 +8,6 @@
     "@aws-sdk/credential-providers": "^3.363.0",
     "@blocknote/mantine": "^0.15.3",
     "@blocknote/react": "^0.15.3",
-    "@chakra-ui/accordion": "^2.3.0",
-    "@chakra-ui/system": "^2.6.0",
     "@codesandbox/sandpack-react": "^2.13.5",
     "@dagrejs/dagre": "^1.1.2",
     "@docusaurus/core": "^3.1.0",

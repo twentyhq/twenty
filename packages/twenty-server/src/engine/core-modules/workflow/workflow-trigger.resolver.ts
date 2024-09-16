@@ -7,11 +7,12 @@ import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-r
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
 @Resolver()
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseFilters(WorkflowTriggerGraphqlApiExceptionFilter)
 export class WorkflowTriggerResolver {
   constructor(
