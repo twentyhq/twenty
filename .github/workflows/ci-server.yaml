@@ -18,10 +18,7 @@ concurrency:
 
 jobs:
   server-test:
-    runs-on: ubuntu-latest
-    resources:
-      limits:
-        memory: 16GB
+    runs-on: ubuntu-latest-8-cores
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
@@ -34,7 +31,7 @@ jobs:
           - 5432:5432
     strategy:
       matrix:
-        task: [test, test:integration]
+        task: [test, "test:integration"]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
