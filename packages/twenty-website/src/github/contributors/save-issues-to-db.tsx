@@ -25,7 +25,14 @@ export async function saveIssuesToDB(
           isEmployee: assignableUsers.has(issue.author.login) ? '1' : '0',
         },
       ],
-      { onConflictKey: 'id' },
+      {
+        onConflictKey: 'id',
+        onConflictUpdateObject: {
+          avatarUrl: issue.author.avatarUrl,
+          url: issue.author.url,
+          isEmployee: assignableUsers.has(issue.author.login) ? '1' : '0',
+        },
+      },
     );
 
     await insertMany(
@@ -44,7 +51,14 @@ export async function saveIssuesToDB(
       ],
       {
         onConflictKey: 'id',
-        onConflictUpdateObject: { updatedAt: issue.updatedAt },
+        onConflictUpdateObject: {
+          title: issue.title,
+          body: issue.body,
+          url: issue.url,
+          updatedAt: issue.updatedAt,
+          closedAt: issue.closedAt,
+          authorId: issue.author.login,
+        },
       },
     );
 
@@ -59,7 +73,14 @@ export async function saveIssuesToDB(
             description: label.description,
           },
         ],
-        { onConflictKey: 'id' },
+        {
+          onConflictKey: 'id',
+          onConflictUpdateObject: {
+            name: label.name,
+            color: label.color,
+            description: label.description,
+          },
+        },
       );
       await insertMany(issueLabelModel, [
         {

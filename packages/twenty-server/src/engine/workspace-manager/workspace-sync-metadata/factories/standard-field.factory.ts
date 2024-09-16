@@ -150,14 +150,6 @@ export class StandardFieldFactory {
       return [];
     }
 
-    if (
-      workspaceFieldMetadataArgs.name === 'deletedAt' &&
-      workspaceEntityMetadataArgs &&
-      !workspaceEntityMetadataArgs.softDelete
-    ) {
-      return [];
-    }
-
     return [
       {
         type: workspaceFieldMetadataArgs.type,

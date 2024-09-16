@@ -29,7 +29,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { View } from '@/views/types/View';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { RelationMetadataType } from '~/generated-metadata/graphql';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -224,8 +224,8 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={
-            relationType === RelationMetadataType.ManyToOne ||
-            relationType === RelationMetadataType.OneToOne
+            relationType === RelationDefinitionType.ManyToOne ||
+            relationType === RelationDefinitionType.OneToOne
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
           }

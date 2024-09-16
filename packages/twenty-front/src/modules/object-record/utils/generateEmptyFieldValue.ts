@@ -1,10 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 export const generateEmptyFieldValue = (
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'fromRelationMetadata'>,
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>,
 ) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.Email:
@@ -62,10 +63,8 @@ export const generateEmptyFieldValue = (
     }
     case FieldMetadataType.Relation: {
       if (
-        !isNonEmptyString(
-          fieldMetadataItem.fromRelationMetadata?.toObjectMetadata
-            ?.nameSingular,
-        )
+        fieldMetadataItem.relationDefinition?.direction ===
+        RelationDefinitionType.ManyToOne
       ) {
         return null;
       }

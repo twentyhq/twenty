@@ -38,7 +38,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
 
   if (error instanceof GraphqlQueryRunnerException) {
     switch (error.code) {
-      case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
+      case GraphqlQueryRunnerExceptionCode.INVALID_ARGS_FIRST:
+      case GraphqlQueryRunnerExceptionCode.INVALID_ARGS_LAST:
       case GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND:
       case GraphqlQueryRunnerExceptionCode.MAX_DEPTH_REACHED:
       case GraphqlQueryRunnerExceptionCode.INVALID_CURSOR:
