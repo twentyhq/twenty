@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
 
-const MESSAGING_ONGOING_STALE_CRON_PATTERN = '*/1 * * * *';
+const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
 @Command({
   name: 'cron:messaging:ongoing-stale',
