@@ -27,6 +27,7 @@ describe('messageChannelsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 connectedAccountId
               }
             }
@@ -53,30 +54,27 @@ describe('messageChannelsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const messagechannels = edges[0].node;
+          const messageChannels = edges[0].node;
 
-          expect(messagechannels).toHaveProperty('visibility');
-          expect(messagechannels).toHaveProperty('handle');
-          expect(messagechannels).toHaveProperty('type');
-          expect(messagechannels).toHaveProperty(
-            'isContactAutoCreationEnabled',
-          );
-          expect(messagechannels).toHaveProperty('contactAutoCreationPolicy');
-          expect(messagechannels).toHaveProperty(
-            'excludeNonProfessionalEmails',
-          );
-          expect(messagechannels).toHaveProperty('excludeGroupEmails');
-          expect(messagechannels).toHaveProperty('isSyncEnabled');
-          expect(messagechannels).toHaveProperty('syncCursor');
-          expect(messagechannels).toHaveProperty('syncedAt');
-          expect(messagechannels).toHaveProperty('syncStatus');
-          expect(messagechannels).toHaveProperty('syncStage');
-          expect(messagechannels).toHaveProperty('syncStageStartedAt');
-          expect(messagechannels).toHaveProperty('throttleFailureCount');
-          expect(messagechannels).toHaveProperty('id');
-          expect(messagechannels).toHaveProperty('createdAt');
-          expect(messagechannels).toHaveProperty('updatedAt');
-          expect(messagechannels).toHaveProperty('connectedAccountId');
+          expect(messageChannels).toHaveProperty('visibility');
+          expect(messageChannels).toHaveProperty('handle');
+          expect(messageChannels).toHaveProperty('type');
+          expect(messageChannels).toHaveProperty('isContactAutoCreationEnabled');
+          expect(messageChannels).toHaveProperty('contactAutoCreationPolicy');
+          expect(messageChannels).toHaveProperty('excludeNonProfessionalEmails');
+          expect(messageChannels).toHaveProperty('excludeGroupEmails');
+          expect(messageChannels).toHaveProperty('isSyncEnabled');
+          expect(messageChannels).toHaveProperty('syncCursor');
+          expect(messageChannels).toHaveProperty('syncedAt');
+          expect(messageChannels).toHaveProperty('syncStatus');
+          expect(messageChannels).toHaveProperty('syncStage');
+          expect(messageChannels).toHaveProperty('syncStageStartedAt');
+          expect(messageChannels).toHaveProperty('throttleFailureCount');
+          expect(messageChannels).toHaveProperty('id');
+          expect(messageChannels).toHaveProperty('createdAt');
+          expect(messageChannels).toHaveProperty('updatedAt');
+          expect(messageChannels).toHaveProperty('deletedAt');
+          expect(messageChannels).toHaveProperty('connectedAccountId');
         }
       });
   });

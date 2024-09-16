@@ -16,6 +16,7 @@ describe('notesResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
               }
             }
           }
@@ -49,6 +50,7 @@ describe('notesResolver (e2e)', () => {
           expect(notes).toHaveProperty('id');
           expect(notes).toHaveProperty('createdAt');
           expect(notes).toHaveProperty('updatedAt');
+          expect(notes).toHaveProperty('deletedAt');
         }
       });
   });

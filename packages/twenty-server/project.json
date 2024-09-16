@@ -13,9 +13,10 @@
     },
     "test:integration": {
       "executor": "nx:run-commands",
+      "dependsOn": ["database:reset"],
       "options": {
         "cwd": "packages/twenty-server",
-        "commands": ["./scripts/run-integration.sh"]
+        "commands": ["NODE_ENV=test && nx jest --config ./jest-e2e.config.ts"]
       }
     },
     "build:packageJson": {
@@ -150,6 +151,16 @@
         "commands": [
           "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
+        ],
+        "parallel": false
+      }
+    },
+    "generate:integration-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "nx ts-node-no-deps -- ./scripts/generate-integration-tests/index.ts"
         ],
         "parallel": false
       }

@@ -14,6 +14,7 @@ describe('commentsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 authorId
                 activityId
               }
@@ -47,6 +48,7 @@ describe('commentsResolver (e2e)', () => {
           expect(comments).toHaveProperty('id');
           expect(comments).toHaveProperty('createdAt');
           expect(comments).toHaveProperty('updatedAt');
+          expect(comments).toHaveProperty('deletedAt');
           expect(comments).toHaveProperty('authorId');
           expect(comments).toHaveProperty('activityId');
         }

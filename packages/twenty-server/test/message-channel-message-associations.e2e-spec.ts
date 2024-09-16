@@ -10,12 +10,13 @@ describe('messageChannelMessageAssociationsResolver (e2e)', () => {
           messageChannelMessageAssociations {
             edges {
               node {
+                createdAt
                 messageExternalId
                 messageThreadExternalId
                 direction
                 id
-                createdAt
                 updatedAt
+                deletedAt
                 messageChannelId
                 messageId
               }
@@ -43,22 +44,17 @@ describe('messageChannelMessageAssociationsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const messagechannelmessageassociations = edges[0].node;
+          const messageChannelMessageAssociations = edges[0].node;
 
-          expect(messagechannelmessageassociations).toHaveProperty(
-            'messageExternalId',
-          );
-          expect(messagechannelmessageassociations).toHaveProperty(
-            'messageThreadExternalId',
-          );
-          expect(messagechannelmessageassociations).toHaveProperty('direction');
-          expect(messagechannelmessageassociations).toHaveProperty('id');
-          expect(messagechannelmessageassociations).toHaveProperty('createdAt');
-          expect(messagechannelmessageassociations).toHaveProperty('updatedAt');
-          expect(messagechannelmessageassociations).toHaveProperty(
-            'messageChannelId',
-          );
-          expect(messagechannelmessageassociations).toHaveProperty('messageId');
+          expect(messageChannelMessageAssociations).toHaveProperty('createdAt');
+          expect(messageChannelMessageAssociations).toHaveProperty('messageExternalId');
+          expect(messageChannelMessageAssociations).toHaveProperty('messageThreadExternalId');
+          expect(messageChannelMessageAssociations).toHaveProperty('direction');
+          expect(messageChannelMessageAssociations).toHaveProperty('id');
+          expect(messageChannelMessageAssociations).toHaveProperty('updatedAt');
+          expect(messageChannelMessageAssociations).toHaveProperty('deletedAt');
+          expect(messageChannelMessageAssociations).toHaveProperty('messageChannelId');
+          expect(messageChannelMessageAssociations).toHaveProperty('messageId');
         }
       });
   });

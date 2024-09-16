@@ -16,6 +16,7 @@ describe('webhooksResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
               }
             }
           }
@@ -49,6 +50,7 @@ describe('webhooksResolver (e2e)', () => {
           expect(webhooks).toHaveProperty('id');
           expect(webhooks).toHaveProperty('createdAt');
           expect(webhooks).toHaveProperty('updatedAt');
+          expect(webhooks).toHaveProperty('deletedAt');
         }
       });
   });

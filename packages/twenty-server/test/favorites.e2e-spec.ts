@@ -14,6 +14,7 @@ describe('favoritesResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 workspaceMemberId
                 personId
                 companyId
@@ -52,6 +53,7 @@ describe('favoritesResolver (e2e)', () => {
           expect(favorites).toHaveProperty('id');
           expect(favorites).toHaveProperty('createdAt');
           expect(favorites).toHaveProperty('updatedAt');
+          expect(favorites).toHaveProperty('deletedAt');
           expect(favorites).toHaveProperty('workspaceMemberId');
           expect(favorites).toHaveProperty('personId');
           expect(favorites).toHaveProperty('companyId');

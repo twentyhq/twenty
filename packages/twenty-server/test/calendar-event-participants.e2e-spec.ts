@@ -17,6 +17,7 @@ describe('calendarEventParticipantsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 calendarEventId
                 personId
                 workspaceMemberId
@@ -45,18 +46,19 @@ describe('calendarEventParticipantsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const calendareventparticipants = edges[0].node;
+          const calendarEventParticipants = edges[0].node;
 
-          expect(calendareventparticipants).toHaveProperty('handle');
-          expect(calendareventparticipants).toHaveProperty('displayName');
-          expect(calendareventparticipants).toHaveProperty('isOrganizer');
-          expect(calendareventparticipants).toHaveProperty('responseStatus');
-          expect(calendareventparticipants).toHaveProperty('id');
-          expect(calendareventparticipants).toHaveProperty('createdAt');
-          expect(calendareventparticipants).toHaveProperty('updatedAt');
-          expect(calendareventparticipants).toHaveProperty('calendarEventId');
-          expect(calendareventparticipants).toHaveProperty('personId');
-          expect(calendareventparticipants).toHaveProperty('workspaceMemberId');
+          expect(calendarEventParticipants).toHaveProperty('handle');
+          expect(calendarEventParticipants).toHaveProperty('displayName');
+          expect(calendarEventParticipants).toHaveProperty('isOrganizer');
+          expect(calendarEventParticipants).toHaveProperty('responseStatus');
+          expect(calendarEventParticipants).toHaveProperty('id');
+          expect(calendarEventParticipants).toHaveProperty('createdAt');
+          expect(calendarEventParticipants).toHaveProperty('updatedAt');
+          expect(calendarEventParticipants).toHaveProperty('deletedAt');
+          expect(calendarEventParticipants).toHaveProperty('calendarEventId');
+          expect(calendarEventParticipants).toHaveProperty('personId');
+          expect(calendarEventParticipants).toHaveProperty('workspaceMemberId');
         }
       });
   });

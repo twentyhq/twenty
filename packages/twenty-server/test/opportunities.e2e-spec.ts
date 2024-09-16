@@ -17,6 +17,7 @@ describe('opportunitiesResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 pointOfContactId
                 companyId
               }
@@ -53,6 +54,7 @@ describe('opportunitiesResolver (e2e)', () => {
           expect(opportunities).toHaveProperty('id');
           expect(opportunities).toHaveProperty('createdAt');
           expect(opportunities).toHaveProperty('updatedAt');
+          expect(opportunities).toHaveProperty('deletedAt');
           expect(opportunities).toHaveProperty('pointOfContactId');
           expect(opportunities).toHaveProperty('companyId');
         }

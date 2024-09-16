@@ -18,6 +18,7 @@ describe('tasksResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 assigneeId
               }
             }
@@ -54,6 +55,7 @@ describe('tasksResolver (e2e)', () => {
           expect(tasks).toHaveProperty('id');
           expect(tasks).toHaveProperty('createdAt');
           expect(tasks).toHaveProperty('updatedAt');
+          expect(tasks).toHaveProperty('deletedAt');
           expect(tasks).toHaveProperty('assigneeId');
         }
       });

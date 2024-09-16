@@ -23,6 +23,7 @@ describe('calendarChannelsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 connectedAccountId
               }
             }
@@ -49,24 +50,23 @@ describe('calendarChannelsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const calendarchannels = edges[0].node;
+          const calendarChannels = edges[0].node;
 
-          expect(calendarchannels).toHaveProperty('handle');
-          expect(calendarchannels).toHaveProperty('syncStatus');
-          expect(calendarchannels).toHaveProperty('syncStage');
-          expect(calendarchannels).toHaveProperty('visibility');
-          expect(calendarchannels).toHaveProperty(
-            'isContactAutoCreationEnabled',
-          );
-          expect(calendarchannels).toHaveProperty('contactAutoCreationPolicy');
-          expect(calendarchannels).toHaveProperty('isSyncEnabled');
-          expect(calendarchannels).toHaveProperty('syncCursor');
-          expect(calendarchannels).toHaveProperty('syncStageStartedAt');
-          expect(calendarchannels).toHaveProperty('throttleFailureCount');
-          expect(calendarchannels).toHaveProperty('id');
-          expect(calendarchannels).toHaveProperty('createdAt');
-          expect(calendarchannels).toHaveProperty('updatedAt');
-          expect(calendarchannels).toHaveProperty('connectedAccountId');
+          expect(calendarChannels).toHaveProperty('handle');
+          expect(calendarChannels).toHaveProperty('syncStatus');
+          expect(calendarChannels).toHaveProperty('syncStage');
+          expect(calendarChannels).toHaveProperty('visibility');
+          expect(calendarChannels).toHaveProperty('isContactAutoCreationEnabled');
+          expect(calendarChannels).toHaveProperty('contactAutoCreationPolicy');
+          expect(calendarChannels).toHaveProperty('isSyncEnabled');
+          expect(calendarChannels).toHaveProperty('syncCursor');
+          expect(calendarChannels).toHaveProperty('syncStageStartedAt');
+          expect(calendarChannels).toHaveProperty('throttleFailureCount');
+          expect(calendarChannels).toHaveProperty('id');
+          expect(calendarChannels).toHaveProperty('createdAt');
+          expect(calendarChannels).toHaveProperty('updatedAt');
+          expect(calendarChannels).toHaveProperty('deletedAt');
+          expect(calendarChannels).toHaveProperty('connectedAccountId');
         }
       });
   });

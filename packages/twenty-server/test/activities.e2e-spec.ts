@@ -19,6 +19,7 @@ describe('activitiesResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 authorId
                 assigneeId
               }
@@ -57,6 +58,7 @@ describe('activitiesResolver (e2e)', () => {
           expect(activities).toHaveProperty('id');
           expect(activities).toHaveProperty('createdAt');
           expect(activities).toHaveProperty('updatedAt');
+          expect(activities).toHaveProperty('deletedAt');
           expect(activities).toHaveProperty('authorId');
           expect(activities).toHaveProperty('assigneeId');
         }

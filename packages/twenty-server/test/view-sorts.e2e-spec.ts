@@ -15,6 +15,7 @@ describe('viewSortsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 viewId
               }
             }
@@ -41,14 +42,15 @@ describe('viewSortsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const viewsorts = edges[0].node;
+          const viewSorts = edges[0].node;
 
-          expect(viewsorts).toHaveProperty('fieldMetadataId');
-          expect(viewsorts).toHaveProperty('direction');
-          expect(viewsorts).toHaveProperty('id');
-          expect(viewsorts).toHaveProperty('createdAt');
-          expect(viewsorts).toHaveProperty('updatedAt');
-          expect(viewsorts).toHaveProperty('viewId');
+          expect(viewSorts).toHaveProperty('fieldMetadataId');
+          expect(viewSorts).toHaveProperty('direction');
+          expect(viewSorts).toHaveProperty('id');
+          expect(viewSorts).toHaveProperty('createdAt');
+          expect(viewSorts).toHaveProperty('updatedAt');
+          expect(viewSorts).toHaveProperty('deletedAt');
+          expect(viewSorts).toHaveProperty('viewId');
         }
       });
   });

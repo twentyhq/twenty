@@ -10,12 +10,13 @@ describe('messageParticipantsResolver (e2e)', () => {
           messageParticipants {
             edges {
               node {
-                displayName
                 role
                 handle
+                displayName
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 messageId
                 personId
                 workspaceMemberId
@@ -44,17 +45,18 @@ describe('messageParticipantsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const messageparticipants = edges[0].node;
+          const messageParticipants = edges[0].node;
 
-          expect(messageparticipants).toHaveProperty('displayName');
-          expect(messageparticipants).toHaveProperty('role');
-          expect(messageparticipants).toHaveProperty('handle');
-          expect(messageparticipants).toHaveProperty('id');
-          expect(messageparticipants).toHaveProperty('createdAt');
-          expect(messageparticipants).toHaveProperty('updatedAt');
-          expect(messageparticipants).toHaveProperty('messageId');
-          expect(messageparticipants).toHaveProperty('personId');
-          expect(messageparticipants).toHaveProperty('workspaceMemberId');
+          expect(messageParticipants).toHaveProperty('role');
+          expect(messageParticipants).toHaveProperty('handle');
+          expect(messageParticipants).toHaveProperty('displayName');
+          expect(messageParticipants).toHaveProperty('id');
+          expect(messageParticipants).toHaveProperty('createdAt');
+          expect(messageParticipants).toHaveProperty('updatedAt');
+          expect(messageParticipants).toHaveProperty('deletedAt');
+          expect(messageParticipants).toHaveProperty('messageId');
+          expect(messageParticipants).toHaveProperty('personId');
+          expect(messageParticipants).toHaveProperty('workspaceMemberId');
         }
       });
   });

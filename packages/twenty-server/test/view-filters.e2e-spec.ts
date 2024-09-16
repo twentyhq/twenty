@@ -17,6 +17,7 @@ describe('viewFiltersResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 viewId
               }
             }
@@ -43,16 +44,17 @@ describe('viewFiltersResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const viewfilters = edges[0].node;
+          const viewFilters = edges[0].node;
 
-          expect(viewfilters).toHaveProperty('fieldMetadataId');
-          expect(viewfilters).toHaveProperty('operand');
-          expect(viewfilters).toHaveProperty('value');
-          expect(viewfilters).toHaveProperty('displayValue');
-          expect(viewfilters).toHaveProperty('id');
-          expect(viewfilters).toHaveProperty('createdAt');
-          expect(viewfilters).toHaveProperty('updatedAt');
-          expect(viewfilters).toHaveProperty('viewId');
+          expect(viewFilters).toHaveProperty('fieldMetadataId');
+          expect(viewFilters).toHaveProperty('operand');
+          expect(viewFilters).toHaveProperty('value');
+          expect(viewFilters).toHaveProperty('displayValue');
+          expect(viewFilters).toHaveProperty('id');
+          expect(viewFilters).toHaveProperty('createdAt');
+          expect(viewFilters).toHaveProperty('updatedAt');
+          expect(viewFilters).toHaveProperty('deletedAt');
+          expect(viewFilters).toHaveProperty('viewId');
         }
       });
   });

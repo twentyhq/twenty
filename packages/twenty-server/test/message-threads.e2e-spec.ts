@@ -13,6 +13,7 @@ describe('messageThreadsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
               }
             }
           }
@@ -38,11 +39,12 @@ describe('messageThreadsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const messagethreads = edges[0].node;
+          const messageThreads = edges[0].node;
 
-          expect(messagethreads).toHaveProperty('id');
-          expect(messagethreads).toHaveProperty('createdAt');
-          expect(messagethreads).toHaveProperty('updatedAt');
+          expect(messageThreads).toHaveProperty('id');
+          expect(messageThreads).toHaveProperty('createdAt');
+          expect(messageThreads).toHaveProperty('updatedAt');
+          expect(messageThreads).toHaveProperty('deletedAt');
         }
       });
   });

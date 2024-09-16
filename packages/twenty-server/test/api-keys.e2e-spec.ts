@@ -16,6 +16,7 @@ describe('apiKeysResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
               }
             }
           }
@@ -41,14 +42,15 @@ describe('apiKeysResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const apikeys = edges[0].node;
+          const apiKeys = edges[0].node;
 
-          expect(apikeys).toHaveProperty('name');
-          expect(apikeys).toHaveProperty('expiresAt');
-          expect(apikeys).toHaveProperty('revokedAt');
-          expect(apikeys).toHaveProperty('id');
-          expect(apikeys).toHaveProperty('createdAt');
-          expect(apikeys).toHaveProperty('updatedAt');
+          expect(apiKeys).toHaveProperty('name');
+          expect(apiKeys).toHaveProperty('expiresAt');
+          expect(apiKeys).toHaveProperty('revokedAt');
+          expect(apiKeys).toHaveProperty('id');
+          expect(apiKeys).toHaveProperty('createdAt');
+          expect(apiKeys).toHaveProperty('updatedAt');
+          expect(apiKeys).toHaveProperty('deletedAt');
         }
       });
   });

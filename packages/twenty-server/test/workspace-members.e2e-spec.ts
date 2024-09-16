@@ -21,6 +21,7 @@ describe('workspaceMembersResolver (e2e)', () => {
                 userId
                 createdAt
                 updatedAt
+                deletedAt
               }
             }
           }
@@ -46,19 +47,20 @@ describe('workspaceMembersResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const workspacemembers = edges[0].node;
+          const workspaceMembers = edges[0].node;
 
-          expect(workspacemembers).toHaveProperty('id');
-          expect(workspacemembers).toHaveProperty('colorScheme');
-          expect(workspacemembers).toHaveProperty('avatarUrl');
-          expect(workspacemembers).toHaveProperty('locale');
-          expect(workspacemembers).toHaveProperty('timeZone');
-          expect(workspacemembers).toHaveProperty('dateFormat');
-          expect(workspacemembers).toHaveProperty('timeFormat');
-          expect(workspacemembers).toHaveProperty('userEmail');
-          expect(workspacemembers).toHaveProperty('userId');
-          expect(workspacemembers).toHaveProperty('createdAt');
-          expect(workspacemembers).toHaveProperty('updatedAt');
+          expect(workspaceMembers).toHaveProperty('id');
+          expect(workspaceMembers).toHaveProperty('colorScheme');
+          expect(workspaceMembers).toHaveProperty('avatarUrl');
+          expect(workspaceMembers).toHaveProperty('locale');
+          expect(workspaceMembers).toHaveProperty('timeZone');
+          expect(workspaceMembers).toHaveProperty('dateFormat');
+          expect(workspaceMembers).toHaveProperty('timeFormat');
+          expect(workspaceMembers).toHaveProperty('userEmail');
+          expect(workspaceMembers).toHaveProperty('userId');
+          expect(workspaceMembers).toHaveProperty('createdAt');
+          expect(workspaceMembers).toHaveProperty('updatedAt');
+          expect(workspaceMembers).toHaveProperty('deletedAt');
         }
       });
   });

@@ -13,6 +13,7 @@ describe('activityTargetsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 activityId
                 personId
                 companyId
@@ -42,15 +43,16 @@ describe('activityTargetsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const activitytargets = edges[0].node;
+          const activityTargets = edges[0].node;
 
-          expect(activitytargets).toHaveProperty('id');
-          expect(activitytargets).toHaveProperty('createdAt');
-          expect(activitytargets).toHaveProperty('updatedAt');
-          expect(activitytargets).toHaveProperty('activityId');
-          expect(activitytargets).toHaveProperty('personId');
-          expect(activitytargets).toHaveProperty('companyId');
-          expect(activitytargets).toHaveProperty('opportunityId');
+          expect(activityTargets).toHaveProperty('id');
+          expect(activityTargets).toHaveProperty('createdAt');
+          expect(activityTargets).toHaveProperty('updatedAt');
+          expect(activityTargets).toHaveProperty('deletedAt');
+          expect(activityTargets).toHaveProperty('activityId');
+          expect(activityTargets).toHaveProperty('personId');
+          expect(activityTargets).toHaveProperty('companyId');
+          expect(activityTargets).toHaveProperty('opportunityId');
         }
       });
   });

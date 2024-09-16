@@ -14,6 +14,7 @@ describe('calendarChannelEventAssociationsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 calendarChannelId
                 calendarEventId
               }
@@ -41,20 +42,15 @@ describe('calendarChannelEventAssociationsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const calendarchanneleventassociations = edges[0].node;
+          const calendarChannelEventAssociations = edges[0].node;
 
-          expect(calendarchanneleventassociations).toHaveProperty(
-            'eventExternalId',
-          );
-          expect(calendarchanneleventassociations).toHaveProperty('id');
-          expect(calendarchanneleventassociations).toHaveProperty('createdAt');
-          expect(calendarchanneleventassociations).toHaveProperty('updatedAt');
-          expect(calendarchanneleventassociations).toHaveProperty(
-            'calendarChannelId',
-          );
-          expect(calendarchanneleventassociations).toHaveProperty(
-            'calendarEventId',
-          );
+          expect(calendarChannelEventAssociations).toHaveProperty('eventExternalId');
+          expect(calendarChannelEventAssociations).toHaveProperty('id');
+          expect(calendarChannelEventAssociations).toHaveProperty('createdAt');
+          expect(calendarChannelEventAssociations).toHaveProperty('updatedAt');
+          expect(calendarChannelEventAssociations).toHaveProperty('deletedAt');
+          expect(calendarChannelEventAssociations).toHaveProperty('calendarChannelId');
+          expect(calendarChannelEventAssociations).toHaveProperty('calendarEventId');
         }
       });
   });

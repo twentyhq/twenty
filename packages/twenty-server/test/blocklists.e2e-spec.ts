@@ -14,6 +14,7 @@ describe('blocklistsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 workspaceMemberId
               }
             }
@@ -46,6 +47,7 @@ describe('blocklistsResolver (e2e)', () => {
           expect(blocklists).toHaveProperty('id');
           expect(blocklists).toHaveProperty('createdAt');
           expect(blocklists).toHaveProperty('updatedAt');
+          expect(blocklists).toHaveProperty('deletedAt');
           expect(blocklists).toHaveProperty('workspaceMemberId');
         }
       });

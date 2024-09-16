@@ -13,6 +13,7 @@ describe('noteTargetsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 noteId
                 personId
                 companyId
@@ -42,15 +43,16 @@ describe('noteTargetsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const notetargets = edges[0].node;
+          const noteTargets = edges[0].node;
 
-          expect(notetargets).toHaveProperty('id');
-          expect(notetargets).toHaveProperty('createdAt');
-          expect(notetargets).toHaveProperty('updatedAt');
-          expect(notetargets).toHaveProperty('noteId');
-          expect(notetargets).toHaveProperty('personId');
-          expect(notetargets).toHaveProperty('companyId');
-          expect(notetargets).toHaveProperty('opportunityId');
+          expect(noteTargets).toHaveProperty('id');
+          expect(noteTargets).toHaveProperty('createdAt');
+          expect(noteTargets).toHaveProperty('updatedAt');
+          expect(noteTargets).toHaveProperty('deletedAt');
+          expect(noteTargets).toHaveProperty('noteId');
+          expect(noteTargets).toHaveProperty('personId');
+          expect(noteTargets).toHaveProperty('companyId');
+          expect(noteTargets).toHaveProperty('opportunityId');
         }
       });
   });

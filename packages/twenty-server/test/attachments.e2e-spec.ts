@@ -16,6 +16,7 @@ describe('attachmentsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 authorId
                 activityId
                 taskId
@@ -56,6 +57,7 @@ describe('attachmentsResolver (e2e)', () => {
           expect(attachments).toHaveProperty('id');
           expect(attachments).toHaveProperty('createdAt');
           expect(attachments).toHaveProperty('updatedAt');
+          expect(attachments).toHaveProperty('deletedAt');
           expect(attachments).toHaveProperty('authorId');
           expect(attachments).toHaveProperty('activityId');
           expect(attachments).toHaveProperty('taskId');

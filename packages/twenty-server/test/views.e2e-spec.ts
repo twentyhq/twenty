@@ -10,17 +10,18 @@ describe('viewsResolver (e2e)', () => {
           views {
             edges {
               node {
+                position
                 name
                 objectMetadataId
                 type
                 key
                 icon
                 kanbanFieldMetadataId
-                position
                 isCompact
                 id
                 createdAt
                 updatedAt
+                deletedAt
               }
             }
           }
@@ -48,17 +49,18 @@ describe('viewsResolver (e2e)', () => {
         if (edges.length > 0) {
           const views = edges[0].node;
 
+          expect(views).toHaveProperty('position');
           expect(views).toHaveProperty('name');
           expect(views).toHaveProperty('objectMetadataId');
           expect(views).toHaveProperty('type');
           expect(views).toHaveProperty('key');
           expect(views).toHaveProperty('icon');
           expect(views).toHaveProperty('kanbanFieldMetadataId');
-          expect(views).toHaveProperty('position');
           expect(views).toHaveProperty('isCompact');
           expect(views).toHaveProperty('id');
           expect(views).toHaveProperty('createdAt');
           expect(views).toHaveProperty('updatedAt');
+          expect(views).toHaveProperty('deletedAt');
         }
       });
   });

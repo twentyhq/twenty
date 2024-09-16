@@ -20,6 +20,7 @@ describe('connectedAccountsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 accountOwnerId
               }
             }
@@ -46,19 +47,20 @@ describe('connectedAccountsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const connectedaccounts = edges[0].node;
+          const connectedAccounts = edges[0].node;
 
-          expect(connectedaccounts).toHaveProperty('handle');
-          expect(connectedaccounts).toHaveProperty('provider');
-          expect(connectedaccounts).toHaveProperty('accessToken');
-          expect(connectedaccounts).toHaveProperty('refreshToken');
-          expect(connectedaccounts).toHaveProperty('lastSyncHistoryId');
-          expect(connectedaccounts).toHaveProperty('authFailedAt');
-          expect(connectedaccounts).toHaveProperty('handleAliases');
-          expect(connectedaccounts).toHaveProperty('id');
-          expect(connectedaccounts).toHaveProperty('createdAt');
-          expect(connectedaccounts).toHaveProperty('updatedAt');
-          expect(connectedaccounts).toHaveProperty('accountOwnerId');
+          expect(connectedAccounts).toHaveProperty('handle');
+          expect(connectedAccounts).toHaveProperty('provider');
+          expect(connectedAccounts).toHaveProperty('accessToken');
+          expect(connectedAccounts).toHaveProperty('refreshToken');
+          expect(connectedAccounts).toHaveProperty('lastSyncHistoryId');
+          expect(connectedAccounts).toHaveProperty('authFailedAt');
+          expect(connectedAccounts).toHaveProperty('handleAliases');
+          expect(connectedAccounts).toHaveProperty('id');
+          expect(connectedAccounts).toHaveProperty('createdAt');
+          expect(connectedAccounts).toHaveProperty('updatedAt');
+          expect(connectedAccounts).toHaveProperty('deletedAt');
+          expect(connectedAccounts).toHaveProperty('accountOwnerId');
         }
       });
   });

@@ -19,6 +19,7 @@ describe('timelineActivitiesResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 workspaceMemberId
                 personId
                 companyId
@@ -50,23 +51,24 @@ describe('timelineActivitiesResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const timelineactivities = edges[0].node;
+          const timelineActivities = edges[0].node;
 
-          expect(timelineactivities).toHaveProperty('happensAt');
-          expect(timelineactivities).toHaveProperty('name');
-          expect(timelineactivities).toHaveProperty('properties');
-          expect(timelineactivities).toHaveProperty('linkedRecordCachedName');
-          expect(timelineactivities).toHaveProperty('linkedRecordId');
-          expect(timelineactivities).toHaveProperty('linkedObjectMetadataId');
-          expect(timelineactivities).toHaveProperty('id');
-          expect(timelineactivities).toHaveProperty('createdAt');
-          expect(timelineactivities).toHaveProperty('updatedAt');
-          expect(timelineactivities).toHaveProperty('workspaceMemberId');
-          expect(timelineactivities).toHaveProperty('personId');
-          expect(timelineactivities).toHaveProperty('companyId');
-          expect(timelineactivities).toHaveProperty('opportunityId');
-          expect(timelineactivities).toHaveProperty('noteId');
-          expect(timelineactivities).toHaveProperty('taskId');
+          expect(timelineActivities).toHaveProperty('happensAt');
+          expect(timelineActivities).toHaveProperty('name');
+          expect(timelineActivities).toHaveProperty('properties');
+          expect(timelineActivities).toHaveProperty('linkedRecordCachedName');
+          expect(timelineActivities).toHaveProperty('linkedRecordId');
+          expect(timelineActivities).toHaveProperty('linkedObjectMetadataId');
+          expect(timelineActivities).toHaveProperty('id');
+          expect(timelineActivities).toHaveProperty('createdAt');
+          expect(timelineActivities).toHaveProperty('updatedAt');
+          expect(timelineActivities).toHaveProperty('deletedAt');
+          expect(timelineActivities).toHaveProperty('workspaceMemberId');
+          expect(timelineActivities).toHaveProperty('personId');
+          expect(timelineActivities).toHaveProperty('companyId');
+          expect(timelineActivities).toHaveProperty('opportunityId');
+          expect(timelineActivities).toHaveProperty('noteId');
+          expect(timelineActivities).toHaveProperty('taskId');
         }
       });
   });

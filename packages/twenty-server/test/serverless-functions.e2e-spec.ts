@@ -44,17 +44,17 @@ describe('serverlessFunctionsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const serverlessfunctions = edges[0].node;
+          const serverlessFunctions = edges[0].node;
 
-          expect(serverlessfunctions).toHaveProperty('id');
-          expect(serverlessfunctions).toHaveProperty('name');
-          expect(serverlessfunctions).toHaveProperty('description');
-          expect(serverlessfunctions).toHaveProperty('sourceCodeHash');
-          expect(serverlessfunctions).toHaveProperty('runtime');
-          expect(serverlessfunctions).toHaveProperty('latestVersion');
-          expect(serverlessfunctions).toHaveProperty('syncStatus');
-          expect(serverlessfunctions).toHaveProperty('createdAt');
-          expect(serverlessfunctions).toHaveProperty('updatedAt');
+          expect(serverlessFunctions).toHaveProperty('id');
+          expect(serverlessFunctions).toHaveProperty('name');
+          expect(serverlessFunctions).toHaveProperty('description');
+          expect(serverlessFunctions).toHaveProperty('sourceCodeHash');
+          expect(serverlessFunctions).toHaveProperty('runtime');
+          expect(serverlessFunctions).toHaveProperty('latestVersion');
+          expect(serverlessFunctions).toHaveProperty('syncStatus');
+          expect(serverlessFunctions).toHaveProperty('createdAt');
+          expect(serverlessFunctions).toHaveProperty('updatedAt');
         }
       });
   });

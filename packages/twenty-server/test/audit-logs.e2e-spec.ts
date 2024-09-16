@@ -19,6 +19,7 @@ describe('auditLogsResolver (e2e)', () => {
                 id
                 createdAt
                 updatedAt
+                deletedAt
                 workspaceMemberId
               }
             }
@@ -45,18 +46,19 @@ describe('auditLogsResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const auditlogs = edges[0].node;
+          const auditLogs = edges[0].node;
 
-          expect(auditlogs).toHaveProperty('name');
-          expect(auditlogs).toHaveProperty('properties');
-          expect(auditlogs).toHaveProperty('context');
-          expect(auditlogs).toHaveProperty('objectName');
-          expect(auditlogs).toHaveProperty('objectMetadataId');
-          expect(auditlogs).toHaveProperty('recordId');
-          expect(auditlogs).toHaveProperty('id');
-          expect(auditlogs).toHaveProperty('createdAt');
-          expect(auditlogs).toHaveProperty('updatedAt');
-          expect(auditlogs).toHaveProperty('workspaceMemberId');
+          expect(auditLogs).toHaveProperty('name');
+          expect(auditLogs).toHaveProperty('properties');
+          expect(auditLogs).toHaveProperty('context');
+          expect(auditLogs).toHaveProperty('objectName');
+          expect(auditLogs).toHaveProperty('objectMetadataId');
+          expect(auditLogs).toHaveProperty('recordId');
+          expect(auditLogs).toHaveProperty('id');
+          expect(auditLogs).toHaveProperty('createdAt');
+          expect(auditLogs).toHaveProperty('updatedAt');
+          expect(auditLogs).toHaveProperty('deletedAt');
+          expect(auditLogs).toHaveProperty('workspaceMemberId');
         }
       });
   });
