@@ -25,9 +25,6 @@ jobs:
           POSTGRES_USER: postgres
         ports:
           - 5432:5432
-    strategy:
-      matrix:
-        task: [test, test:integration]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
