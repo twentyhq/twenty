@@ -1,17 +1,18 @@
 import request from 'supertest';
 
-const graphqlClient = request(`http://localhost:${APP_PORT}`);
+const client = request(`http://localhost:${APP_PORT}`);
 
-describe('CompanyResolver (e2e)', () => {
-  it('should find many companies', () => {
+describe('messageThreadsResolver (e2e)', () => {
+  it('should find many messageThreads', () => {
     const queryData = {
       query: `
-        query Companies {
-          companies {
+        query messageThreads {
+          messageThreads {
             edges {
               node {
                 id
-                name
+                createdAt
+                updatedAt
               }
             }
           }
@@ -19,7 +20,7 @@ describe('CompanyResolver (e2e)', () => {
       `,
     };
 
-    return graphqlClient
+    return client
       .post('/graphql')
       .set('Authorization', `Bearer ${ACCESS_TOKEN}`)
       .send(queryData)
@@ -29,7 +30,7 @@ describe('CompanyResolver (e2e)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.companies;
+        const data = res.body.data.messageThreads;
 
         expect(data).toBeDefined();
         expect(Array.isArray(data.edges)).toBe(true);
@@ -37,11 +38,11 @@ describe('CompanyResolver (e2e)', () => {
         const edges = data.edges;
 
         if (edges.length > 0) {
-          const company = edges[0].node;
+          const messagethreads = edges[0].node;
 
-          expect(company).toBeDefined();
-          expect(company).toHaveProperty('id');
-          expect(company).toHaveProperty('name');
+          expect(messagethreads).toHaveProperty('id');
+          expect(messagethreads).toHaveProperty('createdAt');
+          expect(messagethreads).toHaveProperty('updatedAt');
         }
       });
   });
