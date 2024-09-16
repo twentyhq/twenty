@@ -21,7 +21,6 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 import { FieldMetadataService } from './field-metadata.service';
@@ -38,7 +37,6 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           'metadata',
         ),
         WorkspaceMigrationModule,
-        WorkspaceStatusModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
         ObjectMetadataModule,

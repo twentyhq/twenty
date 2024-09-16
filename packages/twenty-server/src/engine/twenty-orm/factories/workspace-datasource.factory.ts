@@ -30,28 +30,11 @@ export class WorkspaceDatasourceFactory {
     workspaceId: string,
     workspaceMetadataVersion: number | null,
   ): Promise<WorkspaceDataSource> {
-    const latestWorkspaceMetadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (latestWorkspaceMetadataVersion === undefined) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache(
-        workspaceId,
-      );
-      throw new TwentyORMException(
-        `Metadata version not found for workspace ${workspaceId}`,
-        TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
-      );
-    }
-
     const desiredWorkspaceMetadataVersion =
-      workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
-
-    if (latestWorkspaceMetadataVersion !== desiredWorkspaceMetadataVersion) {
-      throw new TwentyORMException(
-        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${latestWorkspaceMetadataVersion}. Desired version: ${desiredWorkspaceMetadataVersion}`,
-        TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
+      await this.computeDesiredWorkspaceMetadataVersion(
+        workspaceId,
+        workspaceMetadataVersion,
       );
-    }
 
     const workspaceDataSource = await this.cacheManager.execute(
       `${workspaceId}-${desiredWorkspaceMetadataVersion}`,
@@ -146,7 +129,18 @@ export class WorkspaceDatasourceFactory {
 
         return workspaceDataSource;
       },
-      (dataSource) => dataSource.destroy(),
+      async (dataSource) => {
+        try {
+          await dataSource.destroy();
+        } catch (error) {
+          // Ignore error if pool has already been destroyed which is a common race condition case
+          if (error.message === 'Called end on pool more than once') {
+            return;
+          }
+
+          throw error;
+        }
+      },
     );
 
     if (!workspaceDataSource) {
@@ -154,5 +148,47 @@ export class WorkspaceDatasourceFactory {
     }
 
     return workspaceDataSource;
+  }
+
+  private async computeDesiredWorkspaceMetadataVersion(
+    workspaceId: string,
+    workspaceMetadataVersion: number | null,
+  ): Promise<number> {
+    const latestWorkspaceMetadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (latestWorkspaceMetadataVersion === undefined) {
+      await this.workspaceMetadataCacheService.recomputeMetadataCache(
+        workspaceId,
+      );
+      throw new TwentyORMException(
+        `Metadata version not found for workspace ${workspaceId}`,
+        TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+      );
+    }
+
+    const desiredWorkspaceMetadataVersion =
+      workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
+
+    if (latestWorkspaceMetadataVersion !== desiredWorkspaceMetadataVersion) {
+      throw new TwentyORMException(
+        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${latestWorkspaceMetadataVersion}. Desired version: ${desiredWorkspaceMetadataVersion}`,
+        TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
+      );
+    }
+
+    return desiredWorkspaceMetadataVersion;
+  }
+
+  public async destroy(
+    workspaceId: string,
+    metadataVersion: number | null,
+  ): Promise<void> {
+    const desiredWorkspaceMetadataVersion =
+      this.computeDesiredWorkspaceMetadataVersion(workspaceId, metadataVersion);
+
+    await this.cacheManager.clearKey(
+      `${workspaceId}-${desiredWorkspaceMetadataVersion}`,
+    );
   }
 }
