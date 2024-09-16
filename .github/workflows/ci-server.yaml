@@ -18,10 +18,7 @@ concurrency:
 
 jobs:
   server-test:
-    runs-on: ubuntu-latest
-    resources:
-      limits:
-        memory: 16GB
+    runs-on: ubuntu-latest-8core
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
