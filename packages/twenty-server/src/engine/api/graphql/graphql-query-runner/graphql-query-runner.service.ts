@@ -59,9 +59,9 @@ export class GraphqlQueryRunnerService {
     args: CreateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord[] | undefined> {
-    const graphqlQueryFindManyResolverService =
+    const graphqlQueryCreateManyResolverService =
       new GraphqlQueryCreateManyResolverService(this.twentyORMGlobalManager);
 
-    return graphqlQueryFindManyResolverService.createMany(args, options);
+    return graphqlQueryCreateManyResolverService.createMany(args, options);
   }
 }

@@ -36,7 +36,6 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { parseResult } from 'src/engine/api/graphql/workspace-query-runner/utils/parse-result.util';
-import { withSoftDeleted } from 'src/engine/api/graphql/workspace-query-runner/utils/with-soft-deleted.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import {
   WorkspaceQueryRunnerException,
@@ -99,13 +98,6 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
     const { authContext, objectMetadataItem } = options;
-    const start = performance.now();
-
-    const isQueryRunnerTwentyORMEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
-        authContext.workspace.id,
-      );
 
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
@@ -121,34 +113,7 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
-    if (isQueryRunnerTwentyORMEnabled) {
-      return this.graphqlQueryRunnerService.findMany(computedArgs, options);
-    }
-
-    const query = await this.workspaceQueryBuilderFactory.findMany(
-      computedArgs,
-      {
-        ...options,
-        withSoftDeleted: withSoftDeleted(args.filter),
-      },
-    );
-
-    const result = await this.execute(query, authContext.workspace.id);
-
-    const end = performance.now();
-
-    this.logger.log(
-      `query time: ${end - start} ms on query ${
-        options.objectMetadataItem.nameSingular
-      }`,
-    );
-
-    return this.parseResult<IConnection<Record>>(
-      result,
-      objectMetadataItem,
-      '',
-      authContext.workspace.id,
-    );
+    return this.graphqlQueryRunnerService.findMany(computedArgs, options);
   }
 
   async findOne<
@@ -166,12 +131,6 @@ export class WorkspaceQueryRunnerService {
     }
     const { authContext, objectMetadataItem } = options;
 
-    const isQueryRunnerTwentyORMEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
-        authContext.workspace.id,
-      );
-
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
@@ -186,27 +145,7 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
 
-    if (isQueryRunnerTwentyORMEnabled) {
-      return this.graphqlQueryRunnerService.findOne(computedArgs, options);
-    }
-
-    const query = await this.workspaceQueryBuilderFactory.findOne(
-      computedArgs,
-      {
-        ...options,
-        withSoftDeleted: withSoftDeleted(args.filter),
-      },
-    );
-
-    const result = await this.execute(query, authContext.workspace.id);
-    const parsedResult = await this.parseResult<IConnection<Record>>(
-      result,
-      objectMetadataItem,
-      '',
-      authContext.workspace.id,
-    );
-
-    return parsedResult?.edges?.[0]?.node;
+    return this.graphqlQueryRunnerService.findOne(computedArgs, options);
   }
 
   async findDuplicates<TRecord extends IRecord = IRecord>(

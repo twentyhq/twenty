@@ -428,7 +428,7 @@ export class WorkspaceRepository<
 
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
-    const formattedResult = await this.formatResult(result.raw);
+    const formattedResult = await this.formatResult(result.generatedMaps);
 
     return {
       raw: result.raw,
@@ -474,11 +474,19 @@ export class WorkspaceRepository<
 
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
 
-    return manager.upsert(
+    const result = await manager.upsert(
       this.target,
       formattedEntityOrEntities,
       conflictPathsOrOptions,
     );
+
+    const formattedResult = await this.formatResult(result.generatedMaps);
+
+    return {
+      raw: result.raw,
+      generatedMaps: formattedResult,
+      identifiers: result.identifiers,
+    };
   }
 
   /**
