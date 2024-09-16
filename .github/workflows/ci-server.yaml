@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   server-test:
-    runs-on: ubuntu-20.04-16core
+    runs-on: ci-8-cores
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
