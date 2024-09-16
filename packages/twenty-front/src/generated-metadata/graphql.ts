@@ -376,7 +376,8 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
-  Uuid = 'UUID'
+  Uuid = 'UUID',
+  Array = 'ARRAY'
 }
 
 export enum FileFolder {

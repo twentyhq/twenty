@@ -12,7 +12,6 @@ interface WorkspaceEntityOptions {
   icon?: string;
   labelIdentifierStandardId?: string;
   imageIdentifierStandardId?: string;
-  softDelete?: boolean;
 }
 
 export function WorkspaceEntity(
@@ -48,7 +47,6 @@ export function WorkspaceEntity(
       isAuditLogged,
       isSystem,
       gate,
-      softDelete: options.softDelete ?? true,
     });
   };
 }

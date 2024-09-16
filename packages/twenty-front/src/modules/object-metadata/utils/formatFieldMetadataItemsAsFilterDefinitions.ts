@@ -98,6 +98,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'RATING';
     case FieldMetadataType.Actor:
       return 'ACTOR';
+    case FieldMetadataType.Array:
+      return 'ARRAY';
     default:
       return 'TEXT';
   }
