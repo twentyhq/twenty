@@ -26,6 +26,7 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { endOfDay, startOfDay } from 'date-fns';
+import { format } from 'date-fns-tz';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
@@ -367,17 +368,57 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.definition.type,
             );
             break;
-          case ViewFilterOperand.Is: {
+          case ViewFilterOperand.IsRelative: {
             const date = new Date(rawUIFilter.value);
+            const DATE_FORMAT_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+            const now = new Date();
+            const start = format(
+              startOfDay(Math.min(+date, +now)),
+              DATE_FORMAT_WITHOUT_TZ,
+            );
+            const end = format(
+              endOfDay(Math.max(+date, +now)),
+              DATE_FORMAT_WITHOUT_TZ,
+            );
 
+            // Does not work
             objectRecordFilters.push({
               [correspondingField.name]: {
-                lt: endOfDay(date).toISOString(),
-                gte: startOfDay(date).toISOString(),
+                gte: start,
+                lte: end,
               } as DateFilter,
             });
             break;
           }
+          case ViewFilterOperand.Is: {
+            const DATE_FORMAT_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+            const date = new Date(rawUIFilter.value);
+            const start = format(startOfDay(date), DATE_FORMAT_WITHOUT_TZ);
+            const end = format(endOfDay(date), DATE_FORMAT_WITHOUT_TZ);
+
+            // Does not work
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                gte: start,
+                lte: end,
+              } as DateFilter,
+            });
+            break;
+          }
+          case ViewFilterOperand.IsInPast:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                lt: new Date().toISOString(),
+              } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsInFuture:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                gt: new Date().toISOString(),
+              } as DateFilter,
+            });
+            break;
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`, //
