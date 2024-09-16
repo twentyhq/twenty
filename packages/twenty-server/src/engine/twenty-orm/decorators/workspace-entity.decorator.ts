@@ -48,7 +48,7 @@ export function WorkspaceEntity(
       isAuditLogged,
       isSystem,
       gate,
-      softDelete: options.softDelete,
+      softDelete: options.softDelete ?? true,
     });
   };
 }

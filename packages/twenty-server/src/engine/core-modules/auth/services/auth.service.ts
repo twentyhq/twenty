@@ -32,12 +32,12 @@ import { UserExists } from 'src/engine/core-modules/auth/dto/user-exists.entity'
 import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 import { TokenService } from './token.service';
 
@@ -150,7 +150,10 @@ export class AuthService {
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      user.defaultWorkspace,
+    );
 
     if (workspaceMember) {
       user.workspaceMember = workspaceMember as WorkspaceMember;

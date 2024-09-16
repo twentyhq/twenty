@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import {
   WorkspaceMetadataVersionException,
@@ -22,6 +23,7 @@ export class WorkspaceMetadataVersionService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
+  @LogExecutionTime()
   async incrementMetadataVersion(workspaceId: string): Promise<void> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
