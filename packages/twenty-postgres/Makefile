@@ -10,3 +10,5 @@ provision-on-macos-intel:
 provision-on-linux:
 	sh ./linux/provision-postgres-linux.sh
 
+provision-on-devcontainer:
+	psql -f ./init.sql

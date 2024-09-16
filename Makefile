@@ -24,3 +24,6 @@ postgres-on-macos-intel:
 
 postgres-on-linux:
 	make -C packages/twenty-postgres provision-on-linux
+
+postgres-on-devcontainer:
+	make -C packages/twenty-postgres provision-on-devcontainer
