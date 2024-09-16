@@ -31,11 +31,12 @@ const StyledTopBarContainer = styled.div<{ width?: number }>`
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
   width: ${({ width }) => width + 'px' || '100%'};
+  z-index: 20;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 93%;
-    padding-top: ${({ theme }) => theme.spacing(3)};
-    padding-left: ${({ theme }) => theme.spacing(3)};
+    width: 100%;
+    box-sizing: border-box;
+    padding: ${({ theme }) => theme.spacing(3)};
   }
 `;
 
