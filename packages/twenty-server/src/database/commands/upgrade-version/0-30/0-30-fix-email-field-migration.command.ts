@@ -14,9 +14,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewService } from 'src/modules/view/services/view.service';
 @Command({
   name: 'upgrade-0.30:fix-email-field-migration',
@@ -30,8 +28,6 @@ export class FixEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly viewService: ViewService,
@@ -48,7 +44,6 @@ export class FixEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner
 
     for (const workspaceId of workspaceIds) {
       let dataSourceMetadata;
-      let workspaceQueryRunner;
 
       this.logger.log(`Running command for workspace ${workspaceId}`);
       try {
@@ -71,10 +66,6 @@ export class FixEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner
             `Could not connect to dataSource for workspace ${workspaceId}`,
           );
         }
-
-        workspaceQueryRunner = workspaceDataSource.createQueryRunner();
-
-        await workspaceQueryRunner.connect();
       } catch (error) {
         this.logger.log(
           chalk.red(
@@ -120,14 +111,7 @@ export class FixEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner
         }
 
         const personObjectMetadaIdForWorkspace =
-          await this.objectMetadataRepository
-            .findOne({
-              where: {
-                standardId: STANDARD_OBJECT_IDS.person,
-                workspaceId: workspaceId,
-              },
-            })
-            .then((objectMetadata) => objectMetadata?.id);
+          migratedEmailFieldMetadata.objectMetadataId;
 
         if (!isDefined(personObjectMetadaIdForWorkspace)) {
           this.logger.log(
@@ -159,8 +143,6 @@ export class FixEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner
         });
         this.logger.log(chalk.green(`Added emails to view ${workspaceId}.`));
       } catch (error) {
-        await workspaceQueryRunner.release();
-
         this.logger.log(
           chalk.red(
             `Running command on workspace ${workspaceId} failed with error: ${error}`,
@@ -171,7 +153,6 @@ export class FixEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRunner
         this.logger.log(
           chalk.green(`Finished running command for workspace ${workspaceId}.`),
         );
-        await workspaceQueryRunner.release();
       }
 
       this.logger.log(chalk.green(`Command completed!`));
