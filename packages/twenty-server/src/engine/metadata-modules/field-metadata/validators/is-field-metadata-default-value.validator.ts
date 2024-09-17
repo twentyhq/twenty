@@ -14,7 +14,7 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
-import { LoggerService } from 'src/engine/integrations/logger/logger.service';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 
 @Injectable()
 @ValidatorConstraint({ name: 'isFieldMetadataDefaultValue', async: true })

@@ -12,7 +12,7 @@ import {
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 export class PostgresCredentialsService {
   constructor(

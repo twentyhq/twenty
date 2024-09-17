@@ -8,7 +8,7 @@ export const ACTIONS: Array<{
 }> = [
   {
     label: 'Serverless Function',
-    type: 'CODE_ACTION',
+    type: 'CODE',
     icon: IconSettingsAutomation,
   },
 ];

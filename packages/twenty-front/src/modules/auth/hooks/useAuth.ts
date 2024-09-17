@@ -254,6 +254,7 @@ export const useAuth = () => {
 
         await client.clearStore();
         sessionStorage.clear();
+        localStorage.clear();
       },
     [client, goToRecoilSnapshot],
   );

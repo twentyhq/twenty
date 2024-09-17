@@ -23,7 +23,7 @@ export class ViewService {
     fieldId: string;
     viewsIds: string[];
     positions?: {
-      [key: string]: number;
+      [viewId: string]: number;
     }[];
     size?: number;
   }) {
@@ -97,5 +97,27 @@ export class ViewService {
         `Field ${fieldId} successfully removed from view ${viewId} for workspace ${workspaceId}`,
       );
     }
+  }
+
+  async getViewsIdsForObjectMetadataId({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }) {
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'view',
+      );
+
+    return viewRepository
+      .find({
+        where: {
+          objectMetadataId: objectMetadataId,
+        },
+      })
+      .then((views) => views.map((view) => view.id));
   }
 }

@@ -28,6 +28,7 @@ export class CreateContactService {
   private formatContacts(
     contactsToCreate: ContactToCreate[],
     lastPersonPosition: number,
+    shouldUseEmailsField: boolean,
   ): DeepPartial<PersonWorkspaceEntity>[] {
     return contactsToCreate.map((contact) => {
       const id = v4();
@@ -46,7 +47,9 @@ export class CreateContactService {
 
       return {
         id,
-        email: handle,
+        ...(shouldUseEmailsField
+          ? { emails: { primaryEmail: handle, additionalEmails: null } }
+          : { email: handle }),
         name: {
           firstName,
           lastName,
@@ -64,6 +67,7 @@ export class CreateContactService {
 
   public async createPeople(
     contactsToCreate: ContactToCreate[],
+    shouldUseEmailsField: boolean,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
@@ -83,6 +87,7 @@ export class CreateContactService {
     const formattedContacts = this.formatContacts(
       contactsToCreate,
       lastPersonPosition,
+      shouldUseEmailsField,
     );
 
     return personRepository.save(
