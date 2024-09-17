@@ -10,11 +10,12 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
@@ -65,14 +66,18 @@ export const SettingsDevelopersApiKeysNew = () => {
   return (
     <SubMenuTopBarContainer
       Icon={IconCode}
-      title={
-        <Breadcrumb
-          links={[
-            { children: 'Developers', href: '/settings/developers' },
-            { children: 'New API Key' },
-          ]}
-        />
-      }
+      title="New key"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Developers',
+          href: getSettingsPagePath(SettingsPath.Developers),
+        },
+        { children: 'New Key' },
+      ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}

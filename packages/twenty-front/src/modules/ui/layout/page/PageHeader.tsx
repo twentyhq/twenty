@@ -89,7 +89,7 @@ type PageHeaderProps = {
   hasNextRecord?: boolean;
   navigateToPreviousRecord?: () => void;
   navigateToNextRecord?: () => void;
-  Icon: IconComponent;
+  Icon?: IconComponent;
   children?: ReactNode;
   width?: number;
 };
