@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { RecordTableEmptyState } from '@/object-record/record-table/components/RecordTableEmptyState';
+import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -31,7 +31,6 @@ export const Default: Story = {
     objectNameSingular: 'person',
     objectLabel: 'person',
     isRemote: false,
-    createRecord: () => {},
   },
 };
 
@@ -40,6 +39,5 @@ export const Remote: Story = {
     objectNameSingular: 'person',
     objectLabel: 'remote person',
     isRemote: true,
-    createRecord: () => {},
   },
 };
