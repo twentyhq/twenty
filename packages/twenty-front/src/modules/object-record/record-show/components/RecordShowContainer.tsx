@@ -7,6 +7,7 @@ import { Task } from '@/activities/types/Task';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -55,6 +56,8 @@ export const RecordShowContainer = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
@@ -119,7 +122,7 @@ export const RecordShowContainer = ({
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem) &&
+        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
         fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>

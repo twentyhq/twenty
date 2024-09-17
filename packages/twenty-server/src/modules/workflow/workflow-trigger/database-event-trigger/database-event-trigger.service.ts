@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
-import { WorkflowDatabaseEventTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { WorkflowDatabaseEventTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Injectable()
 export class DatabaseEventTriggerService {

@@ -16,9 +16,10 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
+import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -31,8 +32,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
@@ -43,7 +43,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
   return hmac.update(email).digest('hex');
 };
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(
@@ -97,13 +97,19 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+  async workspaceMember(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<WorkspaceMember | null> {
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace ?? user.defaultWorkspace,
+    );
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = await this.fileService.encodeFileToken({
         workspace_member_id: workspaceMember.id,
-        workspace_id: user.defaultWorkspace.id,
+        workspace_id: user.defaultWorkspaceId,
       });
 
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;

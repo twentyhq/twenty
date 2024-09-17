@@ -8,11 +8,13 @@ import {
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
+  CreateManyResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   SearchResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { GraphqlQuerySearchResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-search-resolver.service';
@@ -67,5 +69,16 @@ export class GraphqlQueryRunnerService {
       );
 
     return graphqlQuerySearchResolverService.search(args, options);
+  }
+
+  @LogExecutionTime()
+  async createMany<ObjectRecord extends IRecord = IRecord>(
+    args: CreateManyResolverArgs<Partial<ObjectRecord>>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord[] | undefined> {
+    const graphqlQueryCreateManyResolverService =
+      new GraphqlQueryCreateManyResolverService(this.twentyORMGlobalManager);
+
+    return graphqlQueryCreateManyResolverService.createMany(args, options);
   }
 }

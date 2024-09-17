@@ -10,6 +10,7 @@ import { isFieldPhones } from '@/object-record/record-field/types/guards/isField
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
+import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
@@ -33,6 +34,7 @@ export const getFieldButtonIcon = (
         'workspaceMember') ||
     isFieldLinks(fieldDefinition) ||
     isFieldEmails(fieldDefinition) ||
+    isFieldArray(fieldDefinition) ||
     isFieldPhones(fieldDefinition)
   ) {
     return IconPencil;

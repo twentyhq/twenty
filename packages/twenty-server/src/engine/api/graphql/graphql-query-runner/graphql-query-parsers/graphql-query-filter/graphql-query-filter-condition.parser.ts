@@ -2,7 +2,7 @@ import { FindOptionsWhere, ObjectLiteral } from 'typeorm';
 
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
-import { FieldMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
