@@ -179,7 +179,7 @@ export const RecordDetailRelationSection = ({
               onClose={handleCloseRelationPickerDropdown}
               clickableComponent={
                 <LightIconButton
-                  className={isMobile ? '' : 'displayOnHover'}
+                  className="displayOnHover"
                   Icon={isToOneObject ? IconPencil : IconPlus}
                   accent="tertiary"
                 />
