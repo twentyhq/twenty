@@ -42,7 +42,7 @@ export const RecordTableEmptyStateSoftDelete = () => {
       subTitle={'No deleted records matching the filter criteria were found.'}
       title={`No Deleted ${objectLabel} found`}
       Icon={IconFilterOff}
-      animatedPlaceholderType=""
+      animatedPlaceholderType="noRecord"
       onClick={handleButtonClick}
     />
   );

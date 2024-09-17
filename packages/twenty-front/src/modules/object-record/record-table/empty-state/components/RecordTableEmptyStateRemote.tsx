@@ -17,7 +17,7 @@ export const RecordTableEmptyStateRemote = () => {
       subTitle={'If this is unexpected, please verify your settings.'}
       title={'No Data Available for Remote Table'}
       Icon={IconSettings}
-      animatedPlaceholderType=""
+      animatedPlaceholderType="noRecord"
       onClick={handleButtonClick}
     />
   );
