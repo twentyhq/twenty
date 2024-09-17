@@ -17,9 +17,9 @@ export const RecordTableEmptyStateNoRecordAtAll = () => {
 
   const objectLabel = useObjectLabel(objectMetadataItem);
 
-  const buttonTitle = `Add your first ${objectLabel}`;
+  const buttonTitle = `Add a ${objectLabel}`;
 
-  const title = `No ${objectLabel} found`;
+  const title = `Add your first ${objectLabel}`;
 
   const subTitle = `Use our API or add your first ${objectLabel} manually`;
 

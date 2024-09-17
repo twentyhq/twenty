@@ -1,4 +1,4 @@
-import { useObjectIsRemote } from '@/object-metadata/hooks/useObjectIsremote';
+import { useObjectIsRemote } from '@/object-metadata/hooks/useObjectIsRemote';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordAtAll';

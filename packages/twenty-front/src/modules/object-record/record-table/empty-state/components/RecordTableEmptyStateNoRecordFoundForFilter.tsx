@@ -29,7 +29,7 @@ export const RecordTableEmptyStateNoRecordFoundForFilter = () => {
       subTitle={subTitle}
       title={title}
       Icon={IconPlus}
-      animatedPlaceholderType="noRecord"
+      animatedPlaceholderType="noMatchRecord"
       onClick={handleButtonClick}
     />
   );
