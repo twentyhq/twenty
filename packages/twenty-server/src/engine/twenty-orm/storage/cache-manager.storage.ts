@@ -23,6 +23,7 @@ export class CacheManager<T> {
       }
     }
 
+    console.log('Cache miss for key:', cacheKey);
     const value = await factory();
 
     if (!value) {
