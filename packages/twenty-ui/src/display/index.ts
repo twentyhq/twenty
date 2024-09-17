@@ -18,6 +18,7 @@ export * from './icon/components/IconMicrosoft';
 export * from './icon/components/IconRelationManyToOne';
 export * from './icon/components/IconTwentyStar';
 export * from './icon/components/IconTwentyStarFilled';
+export * from './icon/components/IllustrationIconArray';
 export * from './icon/components/IllustrationIconCalendarEvent';
 export * from './icon/components/IllustrationIconCalendarTime';
 export * from './icon/components/IllustrationIconCurrency';

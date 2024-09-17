@@ -11,7 +11,6 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
@@ -77,7 +76,6 @@ export const SettingsDataModelFieldTypeSelect = ({
 }: SettingsDataModelFieldTypeSelectProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
-  const theme = useTheme();
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig>(
     SETTINGS_FIELD_TYPE_CONFIGS,
   ).filter(
@@ -121,7 +119,7 @@ export const SettingsDataModelFieldTypeSelect = ({
           ? (fieldMetadataItem.type as SettingsSupportedFieldType)
           : FieldMetadataType.Text
       }
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { onChange } }) => (
         <StyledTypeSelectContainer className={className}>
           <Section>
             <StyledSearchInput
@@ -144,20 +142,6 @@ export const SettingsDataModelFieldTypeSelect = ({
                   .filter(([, config]) => config.category === category)
                   .map(([key, config]) => (
                     <StyledCardContainer>
-                      {/* <StyledButton
-                        key={key}
-                        onClick={() => {
-                          onChange(key as SettingsSupportedFieldType);
-                          resetDefaultValueField(
-                            key as SettingsSupportedFieldType,
-                          );
-                          onFieldTypeSelect();
-                        }}
-                        title={config.label}
-                        Icon={config.Icon}
-                        size="small"
-                        isActive={value === key}
-                      /> */}
                       <SettingsCard
                         key={key}
                         onClick={() => {
@@ -171,7 +155,6 @@ export const SettingsDataModelFieldTypeSelect = ({
                         title={config.label}
                         padding="small"
                       />
-                      {/* <StyledRightChevron size={theme.icon.size.md} /> */}
                     </StyledCardContainer>
                   ))}
               </StyledContainer>
