@@ -33,7 +33,6 @@ export class GraphqlQueryParser {
 
   parseFilter(
     recordFilter: RecordFilter,
-    shouldAddDefaultSoftDeleteCondition = false,
   ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
     const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
       this.fieldMetadataMap,
@@ -41,10 +40,7 @@ export class GraphqlQueryParser {
 
     const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
 
-    if (
-      !shouldAddDefaultSoftDeleteCondition ||
-      !('deletedAt' in this.fieldMetadataMap)
-    ) {
+    if (!('deletedAt' in this.fieldMetadataMap)) {
       return parsedFilter;
     }
 

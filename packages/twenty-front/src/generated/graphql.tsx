@@ -260,6 +260,7 @@ export type FieldConnection = {
 export enum FieldMetadataType {
   Actor = 'ACTOR',
   Address = 'ADDRESS',
+  Array = 'ARRAY',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   Date = 'DATE',
