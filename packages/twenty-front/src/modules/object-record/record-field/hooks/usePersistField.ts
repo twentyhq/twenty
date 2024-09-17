@@ -26,6 +26,8 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
+import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
+import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -124,6 +126,9 @@ export const usePersistField = () => {
           isFieldRawJson(fieldDefinition) &&
           isFieldRawJsonValue(valueToPersist);
 
+        const fieldIsArray =
+          isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
+
         const isValuePersistable =
           fieldIsRelationToOneObject ||
           fieldIsText ||
@@ -143,7 +148,8 @@ export const usePersistField = () => {
           fieldIsSelect ||
           fieldIsMultiSelect ||
           fieldIsAddress ||
-          fieldIsRawJson;
+          fieldIsRawJson ||
+          fieldIsArray;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;

@@ -4,8 +4,9 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { FixEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-30/0-30-fix-email-field-migration.command';
 import { MigrateEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-30/0-30-migrate-email-fields-to-emails.command';
-import { SetCustomObjectIsSoftDeletableCommand } from 'src/database/commands/upgrade-version/0-30/0-30-set-custom-object-is-soft-deletable.command';
+import { SetStaleMessageSyncBackToPendingCommand } from 'src/database/commands/upgrade-version/0-30/0-30-set-stale-message-sync-back-to-pending';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -23,7 +24,8 @@ export class UpgradeTo0_30Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly migrateEmailFieldsToEmails: MigrateEmailFieldsToEmailsCommand,
-    private readonly setCustomObjectIsSoftDeletableCommand: SetCustomObjectIsSoftDeletableCommand,
+    private readonly setStaleMessageSyncBackToPendingCommand: SetStaleMessageSyncBackToPendingCommand,
+    private readonly fixEmailFieldsToEmailsCommand: FixEmailFieldsToEmailsCommand,
   ) {
     super(workspaceRepository);
   }
@@ -41,12 +43,17 @@ export class UpgradeTo0_30Command extends ActiveWorkspacesCommandRunner {
       },
       workspaceIds,
     );
-    await this.setCustomObjectIsSoftDeletableCommand.executeActiveWorkspacesCommand(
+    await this.migrateEmailFieldsToEmails.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
     );
-    await this.migrateEmailFieldsToEmails.executeActiveWorkspacesCommand(
+    await this.setStaleMessageSyncBackToPendingCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+    await this.fixEmailFieldsToEmailsCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
