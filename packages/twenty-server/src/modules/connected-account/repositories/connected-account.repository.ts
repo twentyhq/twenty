@@ -11,21 +11,6 @@ export class ConnectedAccountRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getAll(
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<ConnectedAccountWorkspaceEntity[]> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."connectedAccount" WHERE "provider" = 'google'`,
-      [],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
   public async getByIds(
     connectedAccountIds: string[],
     workspaceId: string,
