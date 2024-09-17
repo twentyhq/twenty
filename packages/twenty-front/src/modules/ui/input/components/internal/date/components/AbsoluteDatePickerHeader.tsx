@@ -42,7 +42,7 @@ const years = Array.from(
   (_, i) => new Date().getFullYear() + 5 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
-type DatePickerHeaderProps = {
+type AbsoluteDatePickerHeaderProps = {
   date: Date;
   onChange?: (date: Date | null) => void;
   onChangeMonth: (month: number) => void;
@@ -55,7 +55,7 @@ type DatePickerHeaderProps = {
   timeZone: string;
 };
 
-export const DatePickerHeader = ({
+export const AbsoluteDatePickerHeader = ({
   date,
   onChange,
   onChangeMonth,
@@ -66,7 +66,7 @@ export const DatePickerHeader = ({
   nextMonthButtonDisabled,
   isDateTimeInput,
   timeZone,
-}: DatePickerHeaderProps) => {
+}: AbsoluteDatePickerHeaderProps) => {
   const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
     day: date.getDate(),
     month: date.getMonth() + 1,

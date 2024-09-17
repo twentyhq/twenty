@@ -10,7 +10,8 @@ import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/compone
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { isDefined } from '~/utils/isDefined';
 
-import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
+import { RelativeDateFilterValue } from '@/object-record/object-filter-dropdown/types/DateFilterValue';
+import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativePickerHeader';
 import { RelativeDateDirection } from '@/ui/input/components/internal/date/types/RelativeDateDirection';
 import { RelativeDateUnit } from '@/ui/input/components/internal/date/types/RelativeDateUnit';
@@ -274,6 +275,9 @@ type InternalDatePickerProps = {
   date: Date | null;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
+  onRelativeDateChange?: (
+    dateFilterValue: RelativeDateFilterValue | null,
+  ) => void;
   clearable?: boolean;
   isDateTimeInput?: boolean;
   onEnter?: (date: Date | null) => void;
@@ -293,6 +297,7 @@ export const InternalDatePicker = ({
   keyboardEventsDisabled,
   onClear,
   isRelativeToNow,
+  onRelativeDateChange,
 }: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
 
@@ -467,12 +472,12 @@ export const InternalDatePicker = ({
             isRelativeToNow ? (
               <RelativeDatePickerHeader
                 direction={RelativeDateDirection.Past}
-                value={1}
+                amount={1}
                 unit={RelativeDateUnit.Day}
-                onChange={() => {}}
+                onChange={onRelativeDateChange}
               />
             ) : (
-              <DatePickerHeader
+              <AbsoluteDatePickerHeader
                 date={internalDate}
                 onChange={onChange}
                 onChangeMonth={handleChangeMonth}

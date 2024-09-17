@@ -2,6 +2,7 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { RelativeDateUnit } from '../types/RelativeDateUnit';
 
+import { RelativeDateFilterValue } from '@/object-record/object-filter-dropdown/types/DateFilterValue';
 import { RELATIVE_DATE_DIRECTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionOptions';
 import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
 import { RelativeDateDirection } from '@/ui/input/components/internal/date/types/RelativeDateDirection';
@@ -16,19 +17,15 @@ const StyledContainer = styled.div`
 `;
 
 type RelativeDatePickerHeaderProps = {
-  direction?: RelativeDateDirection;
-  value?: number;
-  unit?: RelativeDateUnit;
-  onChange: (value: {
-    direction?: RelativeDateDirection;
-    value?: number;
-    unit?: RelativeDateUnit;
-  }) => void;
+  direction: RelativeDateDirection;
+  amount: number;
+  unit: RelativeDateUnit;
+  onChange?: (value: RelativeDateFilterValue) => void;
 };
 
 export const RelativeDatePickerHeader = ({
   direction,
-  value,
+  amount,
   unit,
   onChange,
 }: RelativeDatePickerHeaderProps) => {
@@ -38,25 +35,26 @@ export const RelativeDatePickerHeader = ({
         dropdownId="direction-select"
         value={direction}
         onChange={(newDirection) =>
-          onChange({
+          onChange?.({
+            type: 'relative',
             direction: newDirection,
-            value: value,
+            amount: amount,
             unit: unit,
           })
         }
         options={RELATIVE_DATE_DIRECTIONS}
       />
       <TextInput
-        value={value?.toString() ?? ''}
+        value={amount?.toString() ?? ''}
         onChange={(newValue) => {
           const newNumericValue = newValue.replace(/[^0-9]/g, '');
-          const value = newNumericValue
-            ? parseInt(newNumericValue, 10)
-            : undefined;
+          if (!newNumericValue) return;
+          const amount = parseInt(newNumericValue, 10);
 
-          onChange({
+          onChange?.({
+            type: 'relative',
             direction,
-            value,
+            amount,
             unit,
           });
         }}
@@ -66,9 +64,10 @@ export const RelativeDatePickerHeader = ({
         dropdownId="unit-select"
         value={unit}
         onChange={(newUnit) =>
-          onChange({
+          onChange?.({
+            type: 'relative',
             direction: direction,
-            value: value,
+            amount: amount,
             unit: newUnit,
           })
         }
