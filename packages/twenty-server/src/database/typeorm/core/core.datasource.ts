@@ -2,9 +2,9 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
-config();
+config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
 
-const isTestEnv = process.env.NODE_ENV === 'test';
+const isJest = process.argv.some((arg) => arg.includes('jest'));
 
 export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
@@ -12,13 +12,13 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   logging: ['error'],
   schema: 'core',
   entities: [
-    `${isTestEnv ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
+    `${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
   ],
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   migrations: [
-    `${isTestEnv ? '' : 'dist/'}src/database/typeorm/core/migrations/*{.ts,.js}`,
+    `${isJest ? '' : 'dist/'}src/database/typeorm/core/migrations/*{.ts,.js}`,
   ],
   ssl:
     process.env.PG_SSL_ALLOW_SELF_SIGNED === 'true'

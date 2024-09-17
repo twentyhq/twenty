@@ -163,10 +163,10 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test && nx ts-node-no-deps -- ./scripts/truncate-db.ts",
-          "NODE_ENV=test && nx ts-node-no-deps -- ./scripts/setup-db.ts",
-          "NODE_ENV=test && nx database:migrate",
-          "NODE_ENV=test && nx command-no-deps -- workspace:seed:dev"
+          "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
+          "nx ts-node-no-deps -- ./scripts/setup-db.ts",
+          "nx database:migrate",
+          "nx command-no-deps -- workspace:seed:dev"
         ],
         "parallel": false
       }
