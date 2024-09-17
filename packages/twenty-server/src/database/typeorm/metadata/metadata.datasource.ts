@@ -30,6 +30,9 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
     query_timeout: 10000,
   },
 };
+
+console.log('typeORMMetadataModuleOptions', typeORMMetadataModuleOptions);
+
 export const connectionSource = new DataSource(
   typeORMMetadataModuleOptions as DataSourceOptions,
 );

@@ -96,7 +96,7 @@ module.exports = {
     {
       files: ['scripts/**/*.ts'],
       parserOptions: {
-        project: ['./tsconfig.scripts.json'],
+        project: ['packages/twenty-server/tsconfig.scripts.json'],
       },
     },
   ],
