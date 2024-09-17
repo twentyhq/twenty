@@ -11,41 +11,6 @@ export class ConnectedAccountRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getByIds(
-    connectedAccountIds: string[],
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<ConnectedAccountWorkspaceEntity[]> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."connectedAccount" WHERE "id" = ANY($1)`,
-      [connectedAccountIds],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
-  public async getAllByWorkspaceMemberId(
-    workspaceMemberId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const connectedAccounts =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."connectedAccount" WHERE "accountOwnerId" = $1`,
-        [workspaceMemberId],
-        workspaceId,
-        transactionManager,
-      );
-
-    return connectedAccounts;
-  }
-
   public async getAllByHandleAndWorkspaceMemberId(
     handle: string,
     workspaceMemberId: string,
