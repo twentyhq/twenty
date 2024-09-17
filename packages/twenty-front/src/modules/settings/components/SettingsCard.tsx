@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronRight, IconComponent, Pill } from 'twenty-ui';
@@ -6,14 +5,16 @@ import { IconChevronRight, IconComponent, Pill } from 'twenty-ui';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
-type SettingsNavigationCardProps = {
-  children: ReactNode;
+type SettingsCardPadding = 'medium' | 'small';
+type SettingsCardProps = {
+  description?: string;
   disabled?: boolean;
   soon?: boolean;
   Icon: IconComponent;
   onClick?: () => void;
   title: string;
   className?: string;
+  padding?: SettingsCardPadding;
 };
 
 const StyledCard = styled(Card)<{
@@ -24,13 +25,26 @@ const StyledCard = styled(Card)<{
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
   cursor: ${({ disabled, onClick }) =>
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
+  width: 100%;
+  & :hover {
+    background-color: ${({ theme }) => theme.background.tertiary};
+  }
 `;
 
-const StyledCardContent = styled(CardContent)`
+const StyledCardContent = styled(CardContent)<{
+  padding: SettingsCardPadding;
+}>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(4, 3)};
+  padding: ${({ theme, padding }) => {
+    switch (padding) {
+      case 'medium':
+        return theme.spacing(4, 3);
+      case 'small':
+        return theme.spacing(2, 2);
+    }
+  }};
 `;
 
 const StyledHeader = styled.div`
@@ -57,15 +71,16 @@ const StyledDescription = styled.div`
   padding-left: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const SettingsNavigationCard = ({
-  children,
+export const SettingsCard = ({
+  description,
   soon,
   disabled = soon,
   Icon,
   onClick,
   title,
   className,
-}: SettingsNavigationCardProps) => {
+  padding = 'medium',
+}: SettingsCardProps) => {
   const theme = useTheme();
 
   return (
@@ -74,7 +89,7 @@ export const SettingsNavigationCard = ({
       onClick={disabled ? undefined : onClick}
       className={className}
     >
-      <StyledCardContent>
+      <StyledCardContent padding={padding}>
         <StyledHeader>
           <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
           <StyledTitle disabled={disabled}>
@@ -83,7 +98,7 @@ export const SettingsNavigationCard = ({
           </StyledTitle>
           <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>
-        <StyledDescription>{children}</StyledDescription>
+        {description && <StyledDescription>{description}</StyledDescription>}
       </StyledCardContent>
     </StyledCard>
   );

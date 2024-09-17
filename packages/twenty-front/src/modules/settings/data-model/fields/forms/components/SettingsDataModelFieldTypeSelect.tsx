@@ -1,8 +1,5 @@
-import styled from '@emotion/styled';
-import { Controller, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
 import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
 import {
@@ -13,12 +10,14 @@ import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/field
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
-import { H2Title, IconChevronRight, IconSearch } from 'twenty-ui';
+import { Controller, useFormContext } from 'react-hook-form';
+import { H2Title, IconSearch } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
@@ -51,13 +50,6 @@ const StyledTypeSelectContainer = styled.div`
   width: 100%;
 `;
 
-const StyledButton = styled(Button)<{ isActive: boolean }>`
-  background: ${({ theme, isActive }) =>
-    isActive ? theme.background.quaternary : theme.background.secondary};
-  height: 40px;
-  width: 100%;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-`;
 const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -66,20 +58,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledCardContainer = styled.div`
   display: flex;
 
   position: relative;
   width: calc(50% - ${({ theme }) => theme.spacing(1)});
 `;
 
-const StyledRightChevron = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.secondary};
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
-  top: 50%;
-  transform: translateY(-50%);
-`;
 const StyledSearchInput = styled(TextInput)`
   width: 100%;
 `;
@@ -158,8 +143,8 @@ export const SettingsDataModelFieldTypeSelect = ({
                 {fieldTypeConfigs
                   .filter(([, config]) => config.category === category)
                   .map(([key, config]) => (
-                    <StyledButtonContainer>
-                      <StyledButton
+                    <StyledCardContainer>
+                      {/* <StyledButton
                         key={key}
                         onClick={() => {
                           onChange(key as SettingsSupportedFieldType);
@@ -172,9 +157,22 @@ export const SettingsDataModelFieldTypeSelect = ({
                         Icon={config.Icon}
                         size="small"
                         isActive={value === key}
+                      /> */}
+                      <SettingsCard
+                        key={key}
+                        onClick={() => {
+                          onChange(key as SettingsSupportedFieldType);
+                          resetDefaultValueField(
+                            key as SettingsSupportedFieldType,
+                          );
+                          onFieldTypeSelect();
+                        }}
+                        Icon={config.Icon}
+                        title={config.label}
+                        padding="small"
                       />
-                      <StyledRightChevron size={theme.icon.size.md} />
-                    </StyledButtonContainer>
+                      {/* <StyledRightChevron size={theme.icon.size.md} /> */}
+                    </StyledCardContainer>
                   ))}
               </StyledContainer>
             </Section>
