@@ -6,6 +6,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
+import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -36,6 +37,7 @@ export class WorkspaceResolverFactory {
     private readonly createOneResolverFactory: CreateOneResolverFactory,
     private readonly updateOneResolverFactory: UpdateOneResolverFactory,
     private readonly deleteOneResolverFactory: DeleteOneResolverFactory,
+    private readonly destroyOneResolverFactory: DestroyOneResolverFactory,
     private readonly updateManyResolverFactory: UpdateManyResolverFactory,
     private readonly deleteManyResolverFactory: DeleteManyResolverFactory,
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
@@ -58,6 +60,7 @@ export class WorkspaceResolverFactory {
       ['createOne', this.createOneResolverFactory],
       ['updateOne', this.updateOneResolverFactory],
       ['deleteOne', this.deleteOneResolverFactory],
+      ['destroyOne', this.destroyOneResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
       ['deleteMany', this.deleteManyResolverFactory],
       ['restoreMany', this.restoreManyResolverFactory],
