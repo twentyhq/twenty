@@ -20,6 +20,8 @@ services:
       PGUSER: postgres
       PGPASSWORD: postgres
       PGDATABASE: postgres
+      # browse the twenty-front at http://localhost:3001/ outside the container
+      VITE_HOST: 0.0.0.0 
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)

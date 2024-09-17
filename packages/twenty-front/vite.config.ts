@@ -62,7 +62,7 @@ export default defineConfig(({ command, mode }) => {
 
     server: {
       port: 3001,
-      host: 'localhost',
+      host: process.env.VITE_HOST || 'localhost',
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),
