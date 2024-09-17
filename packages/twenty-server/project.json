@@ -123,14 +123,6 @@
         "command": "jest"
       }
     },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "./scripts/run-integration.sh"
-      }
-    },
     "database:migrate": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
