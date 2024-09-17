@@ -65,8 +65,8 @@ import {
 } from './interfaces/pg-graphql.interface';
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
-  computePgGraphQLError,
   PgGraphQLConfig,
+  computePgGraphQLError,
 } from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
@@ -99,6 +99,9 @@ export class WorkspaceQueryRunnerService {
   ): Promise<IConnection<Record> | undefined> {
     const { authContext, objectMetadataItem } = options;
 
+    console.log(
+      `running findMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
@@ -130,6 +133,10 @@ export class WorkspaceQueryRunnerService {
       );
     }
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running findOne for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
 
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
@@ -167,6 +174,10 @@ export class WorkspaceQueryRunnerService {
     }
 
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running findDuplicates for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
 
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
@@ -221,6 +232,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running createMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
 
     const isQueryRunnerTwentyORMEnabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -313,6 +328,9 @@ export class WorkspaceQueryRunnerService {
     args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
+    console.log(
+      `running upsertMany for ${options.objectMetadataItem.nameSingular} on workspace ${options.authContext.workspace.id}`,
+    );
     const ids = args.data
       .map((item) => item.id)
       .filter((id) => id !== undefined);
@@ -379,6 +397,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running updateOne for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
@@ -454,6 +477,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running updateMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
@@ -549,6 +577,10 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
 
+    console.log(
+      `running deleteMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const maximumRecordAffected = this.environmentService.get(
@@ -638,6 +670,10 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
 
+    console.log(
+      `running destroyMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const maximumRecordAffected = this.environmentService.get(
@@ -693,6 +729,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running restoreMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
@@ -765,6 +805,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running deleteOne for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
