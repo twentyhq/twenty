@@ -51,9 +51,11 @@ export class GraphqlQueryFindOneResolverService {
       objectMetadataMap,
     );
 
+    const selectedFields = graphqlFields(info);
+
     const { select, relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
-      graphqlFields(info),
+      selectedFields,
     );
     const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
