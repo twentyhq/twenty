@@ -20,21 +20,13 @@ type EntitySchemaColumnMap = {
 
 @Injectable()
 export class EntitySchemaColumnFactory {
-  create(
-    fieldMetadataMap: FieldMetadataMap,
-    softDelete: boolean,
-  ): EntitySchemaColumnMap {
+  create(fieldMetadataMap: FieldMetadataMap): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
     const fieldMetadataCollection = Object.values(fieldMetadataMap);
 
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;
-
-      // Skip deletedAt column if soft delete is not enabled
-      if (!softDelete && key === 'deletedAt') {
-        continue;
-      }
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         const relationMetadata =

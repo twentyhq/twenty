@@ -34,7 +34,9 @@ const StyledTopBarContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width + 'px' || '100%'};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${({ theme }) => theme.spacing(3)};
+    width: 100%;
+    box-sizing: border-box;
+    padding: ${({ theme }) => theme.spacing(3)};
   }
 `;
 

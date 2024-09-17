@@ -70,10 +70,7 @@ export class GraphqlQueryFindManyResolverService {
       args.orderBy ?? [],
       isForwardPagination,
     );
-    const where = graphqlQueryParser.parseFilter(
-      args.filter ?? ({} as Filter),
-      objectMetadataItem.isSoftDeletable ?? false,
-    );
+    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     const cursor = this.getCursor(args);
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
