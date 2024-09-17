@@ -2,16 +2,7 @@ name: CI Server
 on:
   push:
     branches:
-      - main
-    paths:
-      - 'package.json'
-      - 'packages/twenty-server/**'
-      - 'packages/twenty-emails/**'
-  pull_request:
-    paths:
-      - 'package.json'
-      - 'packages/twenty-server/**'
-      - 'packages/twenty-emails/**'
+      - feat/e2e-test
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
