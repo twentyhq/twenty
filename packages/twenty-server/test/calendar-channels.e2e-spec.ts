@@ -56,7 +56,9 @@ describe('calendarChannelsResolver (e2e)', () => {
           expect(calendarChannels).toHaveProperty('syncStatus');
           expect(calendarChannels).toHaveProperty('syncStage');
           expect(calendarChannels).toHaveProperty('visibility');
-          expect(calendarChannels).toHaveProperty('isContactAutoCreationEnabled');
+          expect(calendarChannels).toHaveProperty(
+            'isContactAutoCreationEnabled',
+          );
           expect(calendarChannels).toHaveProperty('contactAutoCreationPolicy');
           expect(calendarChannels).toHaveProperty('isSyncEnabled');
           expect(calendarChannels).toHaveProperty('syncCursor');
