@@ -13,10 +13,12 @@
     },
     "test:integration": {
       "executor": "nx:run-commands",
-      "dependsOn": ["database:reset"],
       "options": {
         "cwd": "packages/twenty-server",
-        "commands": ["NODE_ENV=test && nx jest --config ./jest-e2e.config.ts"]
+        "commands": [
+          "NODE_ENV=test nx database:reset",
+          "NODE_ENV=test nx jest --config ./jest-e2e.config.ts"
+        ]
       }
     },
     "build:packageJson": {
