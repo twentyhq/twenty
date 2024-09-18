@@ -20,6 +20,8 @@ export interface WorkspaceFieldOptions<
   options?: FieldMetadataOptions<T>;
   settings?: FieldMetadataSettings<T>;
   isActive?: boolean;
+  generatedType?: 'STORED' | 'VIRTUAL';
+  asExpression?: string;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(
@@ -75,6 +77,8 @@ export function WorkspaceField<T extends FieldMetadataType>(
       gate,
       isDeprecated,
       isActive: options.isActive,
+      asExpression: options.asExpression,
+      generatedType: options.generatedType,
     });
   };
 }

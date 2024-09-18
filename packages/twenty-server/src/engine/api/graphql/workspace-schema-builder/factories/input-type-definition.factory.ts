@@ -110,6 +110,10 @@ export class InputTypeDefinitionFactory {
         continue;
       }
 
+      if (fieldMetadata.type === FieldMetadataType.TS_VECTOR) {
+        continue;
+      }
+
       const target = isCompositeFieldMetadataType(fieldMetadata.type)
         ? fieldMetadata.type.toString()
         : fieldMetadata.id;

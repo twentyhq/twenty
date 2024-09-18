@@ -3,23 +3,19 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-import { computeColumnName, computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { BasicFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
-    WorkspaceMigrationColumnActionType,
-    WorkspaceMigrationColumnAlter,
-    WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnAlter,
+  WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
-    WorkspaceMigrationException,
-    WorkspaceMigrationExceptionCode,
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
@@ -32,27 +28,13 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
     fieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate[] {
-    let columnNames: string[] = [];
-    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        const compositeType = compositeTypeDefinitions.get(fieldMetadata.type) as CompositeType;
-        for (const property of compositeType.properties) {
-            if (property.type === FieldMetadataType.RELATION) {
-              throw new WorkspaceMigrationException(
-                `Relation type not supported for composite columns`,
-                WorkspaceMigrationExceptionCode.INVALID_COMPOSITE_TYPE,
-              );
-            }
-      
-            columnNames.push(computeCompositeColumnName(fieldMetadata, property));
-    }
-    const columnName = computeColumnName(fieldMetadata);
     const defaultValue = fieldMetadata.defaultValue ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
 
     return [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName,
+        columnName: computeColumnName(fieldMetadata),
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
         isNullable: fieldMetadata.isNullable ?? true,
         defaultValue: serializedDefaultValue,
@@ -63,10 +45,11 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
   }
 
   protected handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
-    alteredFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
+    currentFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter[] {
+    // TO DO implement
     const currentColumnName = computeColumnName(currentFieldMetadata);
     const alteredColumnName = computeColumnName(alteredFieldMetadata);
     const defaultValue =

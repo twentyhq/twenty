@@ -83,4 +83,14 @@ export interface WorkspaceFieldMetadataArgs {
    * Is active field.
    */
   readonly isActive?: boolean;
+
+  /**
+   * Is active field.
+   */
+  readonly generatedType?: 'STORED' | 'VIRTUAL';
+
+  /**
+   * Is active field.
+   */
+  readonly asExpression?: string;
 }

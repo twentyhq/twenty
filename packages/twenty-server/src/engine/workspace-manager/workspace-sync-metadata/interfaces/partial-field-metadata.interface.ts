@@ -16,6 +16,8 @@ export type PartialFieldMetadata = Omit<
   workspaceId: string;
   objectMetadataId?: string;
   isActive?: boolean;
+  asExpression?: string;
+  generatedType?: 'STORED' | 'VIRTUAL';
 };
 
 export type PartialComputedFieldMetadata = {

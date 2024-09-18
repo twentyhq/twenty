@@ -165,6 +165,8 @@ export class StandardFieldFactory {
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
+        asExpression: workspaceFieldMetadataArgs.asExpression,
+        generatedType: workspaceFieldMetadataArgs.generatedType,
       },
     ];
   }

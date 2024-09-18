@@ -12,9 +12,9 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
-import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQuerySearchResolverService {
@@ -60,7 +60,7 @@ export class GraphqlQuerySearchResolverService {
         objectMetadataItem.nameSingular,
       );
 
-    const objectMetadataMap = convertObjectMetadataToMap(
+    const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
 
@@ -94,10 +94,10 @@ export class GraphqlQuerySearchResolverService {
     const resultsWithTsVector = await repository
       .createQueryBuilder()
       .select(columnsToSelect) // TODO do not stop relations
-      .where('search_vector @@ to_tsquery(:searchTerms)', {
+      .where('"searchVector" @@ to_tsquery(:searchTerms)', {
         searchTerms,
       })
-      .orderBy('ts_rank(search_vector, to_tsquery(:searchTerms))', 'DESC')
+      .orderBy('ts_rank("searchVector", to_tsquery(:searchTerms))', 'DESC')
       .setParameter('searchTerms', searchTerms)
       .limit(limit)
       .execute();
@@ -135,18 +135,5 @@ export class GraphqlQuerySearchResolverService {
       .filter(([_, value]) => value === true)
       .map(([key, _]) => `"${key}"`)
       .join(', ');
-  }
-
-  private getPaginationInfo(
-    // CCed from find many resolver
-    objectRecords: any[],
-    limit: number,
-  ) {
-    const hasMoreRecords = objectRecords.length > limit;
-
-    return {
-      hasNextPage: hasMoreRecords,
-      hasPreviousPage: false, // TODO
-    };
   }
 }

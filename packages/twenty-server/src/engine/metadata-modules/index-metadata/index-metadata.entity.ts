@@ -13,6 +13,10 @@ import {
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+export enum IndexTypes {
+  GIN = 'GIN',
+}
+
 @Entity('indexMetadata')
 export class IndexMetadataEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -48,4 +52,11 @@ export class IndexMetadataEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @Column({
+    type: 'enum',
+    enum: IndexTypes,
+    nullable: true,
+  })
+  indexType?: IndexTypes;
 }

@@ -324,6 +324,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
+  searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
 };
 
 export const TASK_STANDARD_FIELD_IDS = {

@@ -22,6 +22,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/fields-for-search.util';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -279,4 +280,25 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  // @Index(indexType)
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: 'Search vector',
+    description: 'Search vector',
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields([
+      { name: 'name', type: FieldMetadataType.FULL_NAME },
+      { name: 'emails', type: FieldMetadataType.EMAILS },
+      { name: 'jobTitle', type: FieldMetadataType.TEXT },
+      { name: 'phone', type: FieldMetadataType.TEXT }, // To change after phone migration
+    ]),
+  }) // Ignore asExpression in syncmetadata
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  searchVector: any;
 }
+
+// In fieldMetadataSettings {fieldIds:}

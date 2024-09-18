@@ -26,7 +26,7 @@ export class SearchQueryFactory {
     const argsString = this.argsStringFactory.create(
       args,
       options.fieldMetadataCollection,
-      !options.withSoftDeleted && !!options.objectMetadataItem.isSoftDeletable,
+      !options.withSoftDeleted,
     );
 
     return `

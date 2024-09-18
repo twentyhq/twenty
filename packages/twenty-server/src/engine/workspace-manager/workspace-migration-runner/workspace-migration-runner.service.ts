@@ -368,6 +368,14 @@ export class WorkspaceMigrationRunnerService {
 
     const enumName = `${tableName}_${migrationColumn.columnName}_enum`;
 
+    if (migrationColumn.columnType === 'tsvector') {
+      await queryRunner.query(
+        `ALTER TABLE ${schemaName}."${tableName}" ADD "${migrationColumn.columnName}" tsvector GENERATED ALWAYS AS (${migrationColumn.asExpression}) ${migrationColumn.generatedType}`,
+      );
+
+      return;
+    }
+
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,
       new TableColumn({
