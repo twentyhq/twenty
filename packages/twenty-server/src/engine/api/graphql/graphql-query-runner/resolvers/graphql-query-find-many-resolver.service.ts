@@ -75,9 +75,11 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataMap,
     );
 
+    const selectedFields = graphqlFields(info);
+
     const { select, relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
-      graphqlFields(info),
+      selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
     const order = graphqlQueryParser.parseOrder(
@@ -98,7 +100,10 @@ export class GraphqlQueryFindManyResolverService {
       select,
       take: limit + 1,
     };
-    const totalCount = await repository.count({ where });
+
+    const totalCount = isDefined(selectedFields.totalCount)
+      ? await repository.count({ where })
+      : 0;
 
     if (cursor) {
       applyRangeFilter(where, cursor, isForwardPagination);

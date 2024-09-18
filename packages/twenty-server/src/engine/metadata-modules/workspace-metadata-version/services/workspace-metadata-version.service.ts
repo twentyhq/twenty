@@ -45,8 +45,8 @@ export class WorkspaceMetadataVersionService {
       { metadataVersion: newMetadataVersion },
     );
 
-    await this.workspaceMetadataCacheService.recomputeMetadataCache(
+    await this.workspaceMetadataCacheService.recomputeMetadataCache({
       workspaceId,
-    );
+    });
   }
 }

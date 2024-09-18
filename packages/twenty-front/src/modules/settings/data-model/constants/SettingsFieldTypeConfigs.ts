@@ -1,6 +1,6 @@
 import {
-  IconBracketsContain,
   IconComponent,
+  IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,
   IllustrationIconCurrency,
@@ -186,7 +186,7 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   },
   [FieldMetadataType.Array]: {
     label: 'Array',
-    Icon: IconBracketsContain,
+    Icon: IllustrationIconArray,
     category: 'Basic',
     exampleValue: ['value1', 'value2'],
   },

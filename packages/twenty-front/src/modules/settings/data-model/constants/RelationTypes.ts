@@ -1,9 +1,8 @@
 import {
   IconComponent,
-  IconRelationManyToMany,
-  IconRelationManyToOne,
-  IconRelationOneToMany,
-  IconRelationOneToOne,
+  IllustrationIconManyToMany,
+  IllustrationIconOneToMany,
+  IllustrationIconOneToOne,
 } from 'twenty-ui';
 
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -22,24 +21,24 @@ export const RELATION_TYPES: Record<
 > = {
   [RelationDefinitionType.OneToMany]: {
     label: 'Has many',
-    Icon: IconRelationOneToMany,
+    Icon: IllustrationIconOneToMany,
     imageSrc: OneToManySvg,
   },
   [RelationDefinitionType.OneToOne]: {
     label: 'Has one',
-    Icon: IconRelationOneToOne,
+    Icon: IllustrationIconOneToOne,
     imageSrc: OneToOneSvg,
   },
   [RelationDefinitionType.ManyToOne]: {
     label: 'Belongs to one',
-    Icon: IconRelationManyToOne,
+    Icon: IllustrationIconOneToMany,
     imageSrc: OneToManySvg,
     isImageFlipped: true,
   },
   // Not supported yet
   [RelationDefinitionType.ManyToMany]: {
     label: 'Belongs to many',
-    Icon: IconRelationManyToMany,
+    Icon: IllustrationIconManyToMany,
     imageSrc: OneToManySvg,
     isImageFlipped: true,
   },
