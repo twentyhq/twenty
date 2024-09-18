@@ -3,7 +3,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useApolloClient } from '@apollo/client';
 
-export const useDiscardDraftWorkflowVersion = () => {
+export const useDeleteOneWorkflowVersion = () => {
   const apolloClient = useApolloClient();
 
   const { findOneRecordQuery: findOneWorkflowRecordQuery } =
@@ -15,7 +15,7 @@ export const useDiscardDraftWorkflowVersion = () => {
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
 
-  const discardDraftWorkflowVersion = async ({
+  const deleteOneWorkflowVersion = async ({
     workflowId,
     workflowVersionId,
   }: {
@@ -33,5 +33,5 @@ export const useDiscardDraftWorkflowVersion = () => {
     });
   };
 
-  return { discardDraftWorkflowVersion };
+  return { deleteOneWorkflowVersion };
 };
