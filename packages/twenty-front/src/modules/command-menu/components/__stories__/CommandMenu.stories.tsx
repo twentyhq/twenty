@@ -38,7 +38,7 @@ const meta: Meta<typeof CommandMenu> = {
       );
       const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-      const { addToCommandMenu, setToInitialCommandMenu, openCommandMenu } =
+      const { addToCommandMenu, setObjectsInCommandMenu, openCommandMenu } =
         useCommandMenu();
 
       setCurrentWorkspace(mockDefaultWorkspace);
@@ -49,7 +49,7 @@ const meta: Meta<typeof CommandMenu> = {
           (object) => !object.isSystem && object.isActive,
         );
 
-        setToInitialCommandMenu(nonSystemActiveObjects);
+        setObjectsInCommandMenu(nonSystemActiveObjects);
 
         addToCommandMenu([
           {
@@ -72,7 +72,7 @@ const meta: Meta<typeof CommandMenu> = {
         openCommandMenu();
       }, [
         addToCommandMenu,
-        setToInitialCommandMenu,
+        setObjectsInCommandMenu,
         openCommandMenu,
         objectMetadataItems,
       ]);

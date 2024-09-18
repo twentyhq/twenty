@@ -9,6 +9,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
+import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -41,7 +42,7 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
-  const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
+  const { addToCommandMenu, setObjectsInCommandMenu } = useCommandMenu();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -146,12 +147,15 @@ export const PageChangeEffect = () => {
     }
   }, [isMatchingLocation, setHotkeyScope]);
 
-  useEffect(() => {
-    const nonSystemActiveObjects = objectMetadataItems.filter(
-      (object) => !object.isSystem && object.isActive,
-    );
+  const { nonSystemActiveObjectMetadataItems } =
+    useNonSystemActiveObjectMetadataItems();
 
-    setToInitialCommandMenu(nonSystemActiveObjects);
+  useEffect(() => {
+    console.log(
+      'nonSystemActiveObjectMetadataItems',
+      nonSystemActiveObjectMetadataItems,
+    );
+    setObjectsInCommandMenu(nonSystemActiveObjectMetadataItems);
 
     addToCommandMenu([
       {
@@ -167,8 +171,9 @@ export const PageChangeEffect = () => {
       },
     ]);
   }, [
+    nonSystemActiveObjectMetadataItems,
     addToCommandMenu,
-    setToInitialCommandMenu,
+    setObjectsInCommandMenu,
     openCreateActivity,
     objectMetadataItems,
   ]);

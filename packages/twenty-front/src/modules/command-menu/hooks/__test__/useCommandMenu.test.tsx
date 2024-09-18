@@ -107,17 +107,17 @@ describe('useCommandMenu', () => {
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should setToInitialCommandMenu command menu', () => {
+  it('should setObjectsInCommandMenu command menu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.setToInitialCommandMenu([]);
+      result.current.commandMenu.setObjectsInCommandMenu([]);
     });
 
     expect(result.current.commandMenuCommands.length).toBe(0);
 
     act(() => {
-      result.current.commandMenu.setToInitialCommandMenu([
+      result.current.commandMenu.setObjectsInCommandMenu([
         {
           id: 'b88745ce-9021-4316-a018-8884e02d05ca',
           nameSingular: 'task',

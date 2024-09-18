@@ -72,7 +72,7 @@ export const useCommandMenu = () => {
     [setCommands],
   );
 
-  const setToInitialCommandMenu = (menuItems: ObjectMetadataItem[]) => {
+  const setObjectsInCommandMenu = (menuItems: ObjectMetadataItem[]) => {
     const formattedItems = [
       ...menuItems.map(
         (item) =>
@@ -115,6 +115,6 @@ export const useCommandMenu = () => {
     toggleCommandMenu,
     addToCommandMenu,
     onItemClick,
-    setToInitialCommandMenu,
+    setObjectsInCommandMenu,
   };
 };
