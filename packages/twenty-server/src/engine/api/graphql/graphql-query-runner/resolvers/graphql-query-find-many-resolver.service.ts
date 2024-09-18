@@ -1,6 +1,11 @@
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
-import { FindManyOptions, ObjectLiteral } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOptionsRelations,
+  In,
+  ObjectLiteral,
+} from 'typeorm';
 
 import {
   Record as IRecord,
@@ -21,8 +26,17 @@ import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/g
 import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import {
+  getRelationMetadata,
+  getRelationObjectMetadata,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
+import {
+  generateObjectMetadataMap,
+  ObjectMetadataMap,
+  ObjectMetadataMapItem,
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
 export class GraphqlQueryFindManyResolverService {
   private twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -81,7 +95,6 @@ export class GraphqlQueryFindManyResolverService {
       where,
       order,
       select,
-      relations,
       take: limit + 1,
     };
     const totalCount = await repository.count({ where });
@@ -90,7 +103,10 @@ export class GraphqlQueryFindManyResolverService {
       applyRangeFilter(where, cursor, isForwardPagination);
     }
 
-    const objectRecords = await repository.find(findOptions);
+    const objectRecords = (await repository.find(
+      findOptions,
+    )) as ObjectRecord[];
+
     const { hasNextPage, hasPreviousPage } = this.getPaginationInfo(
       objectRecords,
       limit,
@@ -101,11 +117,22 @@ export class GraphqlQueryFindManyResolverService {
       objectRecords.pop();
     }
 
+    if (relations) {
+      await this.processNestedRelations(
+        objectMetadataMap,
+        objectMetadata,
+        objectRecords,
+        relations,
+        limit,
+        authContext,
+      );
+    }
+
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
     return typeORMObjectRecordsParser.createConnection(
-      objectRecords as ObjectRecord[],
+      objectRecords,
       objectMetadataItem.nameSingular,
       limit,
       totalCount,
@@ -113,6 +140,97 @@ export class GraphqlQueryFindManyResolverService {
       hasNextPage,
       hasPreviousPage,
     );
+  }
+
+  private async processNestedRelations<
+    T extends ObjectLiteral,
+    ObjectRecord extends IRecord = IRecord,
+  >(
+    objectMetadataMap: ObjectMetadataMap,
+    parentObjectMetadataItem: ObjectMetadataMapItem,
+    parentObjectRecords: ObjectRecord[],
+    relations: Record<string, FindOptionsRelations<T>>,
+    limit: number,
+    authContext: any,
+  ) {
+    for (const [relationName, nestedRelations] of Object.entries(relations)) {
+      const parentObjectName = parentObjectMetadataItem.nameSingular;
+      const relationFieldMetadata =
+        parentObjectMetadataItem.fields[relationName];
+      const relationMetadata = getRelationMetadata(relationFieldMetadata);
+
+      const relationDirection = deduceRelationDirection(
+        relationFieldMetadata,
+        relationMetadata,
+      );
+
+      const referenceObjectMetadata = getRelationObjectMetadata(
+        relationFieldMetadata,
+        objectMetadataMap,
+      );
+
+      const referenceObjectMetadataName = referenceObjectMetadata.nameSingular;
+
+      const relationRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          authContext.workspace.id,
+          referenceObjectMetadataName,
+        );
+
+      let relationFindOptions: FindManyOptions = {};
+
+      if (relationDirection === 'to') {
+        const relationIds = parentObjectRecords.map(
+          (item) => item[`${relationName}Id`],
+        );
+
+        relationFindOptions = {
+          where: {
+            id: In(relationIds),
+          },
+          take: limit,
+        };
+      } else {
+        const ids = parentObjectRecords.map((item) => item.id);
+
+        relationFindOptions = {
+          where: {
+            [`${parentObjectName}Id`]: In(ids),
+          },
+          take: limit,
+        };
+      }
+
+      const relationResults =
+        await relationRepository.find(relationFindOptions);
+
+      parentObjectRecords.forEach((item) => {
+        if (relationDirection === 'to') {
+          (item as any)[relationName] = relationResults.filter(
+            (rel) => rel.id === item[`${relationName}Id`],
+          )[0];
+        } else {
+          (item as any)[relationName] = relationResults.filter(
+            (rel) => rel[`${parentObjectName}Id`] === item.id,
+          );
+        }
+      });
+
+      // Recursively process deeper nested relations
+      if (Object.keys(nestedRelations).length > 0) {
+        await this.processNestedRelations(
+          objectMetadataMap,
+          objectMetadataMap[relationName],
+          relationResults as ObjectRecord[],
+          nestedRelations as Record<
+            string,
+            FindOptionsRelations<ObjectLiteral>
+          >,
+          limit,
+          authContext,
+        );
+      }
+    }
   }
 
   private validateArgsOrThrow(args: FindManyResolverArgs<any, any>) {
