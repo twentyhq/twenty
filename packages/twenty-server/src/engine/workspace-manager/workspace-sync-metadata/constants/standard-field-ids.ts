@@ -462,4 +462,5 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
   timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
+  searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
 };
