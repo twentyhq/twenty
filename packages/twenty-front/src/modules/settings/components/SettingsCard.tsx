@@ -5,7 +5,6 @@ import { IconChevronRight, IconComponent, Pill } from 'twenty-ui';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
-type SettingsCardPadding = 'medium' | 'small';
 type SettingsCardProps = {
   description?: string;
   disabled?: boolean;
@@ -14,7 +13,7 @@ type SettingsCardProps = {
   onClick?: () => void;
   title: string;
   className?: string;
-  padding?: SettingsCardPadding;
+  iconContainer?: boolean;
 };
 
 const StyledCard = styled(Card)<{
@@ -27,30 +26,21 @@ const StyledCard = styled(Card)<{
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
   width: 100%;
   & :hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
+    background-color: ${({ theme }) => theme.background.quaternary};
   }
 `;
 
-const StyledCardContent = styled(CardContent)<{
-  padding: SettingsCardPadding;
-}>`
+const StyledCardContent = styled(CardContent)<object>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme, padding }) => {
-    switch (padding) {
-      case 'medium':
-        return theme.spacing(4, 3);
-      case 'small':
-        return theme.spacing(2, 2);
-    }
-  }};
+  padding: ${({ theme }) => theme.spacing(2, 2)};
 `;
 
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitle = styled.div<{ disabled?: boolean }>`
@@ -71,6 +61,14 @@ const StyledDescription = styled.div`
   padding-left: ${({ theme }) => theme.spacing(8)};
 `;
 
+const StyledIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+`;
+
 export const SettingsCard = ({
   description,
   soon,
@@ -79,7 +77,7 @@ export const SettingsCard = ({
   onClick,
   title,
   className,
-  padding = 'medium',
+  iconContainer = true,
 }: SettingsCardProps) => {
   const theme = useTheme();
 
@@ -88,10 +86,17 @@ export const SettingsCard = ({
       disabled={disabled}
       onClick={disabled ? undefined : onClick}
       className={className}
+      rounded={true}
     >
-      <StyledCardContent padding={padding}>
+      <StyledCardContent>
         <StyledHeader>
-          <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
+          {iconContainer ? (
+            <StyledIconContainer>
+              <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
+            </StyledIconContainer>
+          ) : (
+            <Icon size={theme.icon.size.xl} stroke={theme.icon.stroke.sm} />
+          )}
           <StyledTitle disabled={disabled}>
             {title}
             {soon && <Pill label="Soon" />}

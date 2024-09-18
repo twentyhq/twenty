@@ -153,7 +153,7 @@ export const SettingsDataModelFieldTypeSelect = ({
                         }}
                         Icon={config.Icon}
                         title={config.label}
-                        padding="small"
+                        iconContainer={false}
                       />
                     </StyledCardContainer>
                   ))}
