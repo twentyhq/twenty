@@ -14,7 +14,6 @@ import {
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
   DestroyManyResolverArgs,
-  FindDuplicatesResolverArgs,
   ResolverArgsType,
   RestoreManyResolverArgs,
   UpdateManyResolverArgs,

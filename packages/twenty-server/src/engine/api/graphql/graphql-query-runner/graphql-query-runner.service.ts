@@ -10,6 +10,7 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import {
   CreateManyResolverArgs,
   CreateOneResolverArgs,
+  DestroyOneResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   ResolverArgsType,
