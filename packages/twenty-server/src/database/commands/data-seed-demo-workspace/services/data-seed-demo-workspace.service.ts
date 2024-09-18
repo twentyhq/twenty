@@ -8,6 +8,9 @@ import {
   seedCoreSchema,
 } from 'src/database/typeorm-seeds/core/demo';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
@@ -19,6 +22,8 @@ export class DataSeedDemoWorkspaceService {
     private readonly workspaceManagerService: WorkspaceManagerService,
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
+    private readonly workspaceSchemaCache: CacheStorageService,
   ) {}
 
   async seedDemo(): Promise<void> {
@@ -32,6 +37,9 @@ export class DataSeedDemoWorkspaceService {
           'Could not get DEMO_WORKSPACE_IDS. Please specify in .env',
         );
       }
+
+      await this.workspaceSchemaCache.flush();
+
       for (const workspaceId of demoWorkspaceIds) {
         const existingWorkspaces = await this.workspaceRepository.findBy({
           id: workspaceId,
