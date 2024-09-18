@@ -25,6 +25,7 @@ export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
   PHONE = 'PHONE',
+  PHONES = 'PHONES',
   EMAIL = 'EMAIL',
   EMAILS = 'EMAILS',
   DATE_TIME = 'DATE_TIME',
@@ -45,6 +46,7 @@ export enum FieldMetadataType {
   RAW_JSON = 'RAW_JSON',
   RICH_TEXT = 'RICH_TEXT',
   ACTOR = 'ACTOR',
+  ARRAY = 'ARRAY',
 }
 
 @Entity('fieldMetadata')

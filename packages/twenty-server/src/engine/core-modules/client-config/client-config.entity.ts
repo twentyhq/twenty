@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
+import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 
 @ObjectType()
 class AuthProviders {

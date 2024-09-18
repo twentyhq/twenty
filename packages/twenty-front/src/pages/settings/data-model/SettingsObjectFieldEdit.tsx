@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
@@ -22,29 +21,25 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
-import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
+import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
+import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
-import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 >;
-
-const StyledSettingsObjectFieldTypeSelect = styled(
-  SettingsDataModelFieldTypeSelect,
-)`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
 
 const canPersistFieldMetadataItemUpdate = (
   fieldMetadataItem: FieldMetadataItem,
@@ -93,6 +88,12 @@ export const SettingsObjectFieldEdit = () => {
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
+    values: {
+      icon: activeMetadataField?.icon ?? 'Icon123',
+      type: activeMetadataField?.type as SettingsSupportedFieldType,
+      label: activeMetadataField?.label ?? '',
+      description: activeMetadataField?.description,
+    },
   });
 
   useEffect(() => {
@@ -101,10 +102,10 @@ export const SettingsObjectFieldEdit = () => {
     }
   }, [activeMetadataField, activeObjectMetadataItem, navigate]);
 
-  if (!activeObjectMetadataItem || !activeMetadataField) return null;
-
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
+
+  if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -173,23 +174,24 @@ export const SettingsObjectFieldEdit = () => {
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
           Icon={IconHierarchy2}
-          title={
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: '/settings/objects',
-                  styles: { minWidth: 'max-content' },
-                },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                  styles: { maxWidth: '60%' },
-                },
-                { children: activeMetadataField.label },
-              ]}
-            />
-          }
+          title={activeMetadataField?.label}
+          links={[
+            {
+              children: 'Workspace',
+              href: getSettingsPagePath(SettingsPath.Workspace),
+            },
+            {
+              children: 'Objects',
+              href: '/settings/objects',
+            },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            {
+              children: activeMetadataField.label,
+            },
+          ]}
           actionButton={
             shouldDisplaySaveAndCancel && (
               <SaveAndCancelButtons
@@ -204,32 +206,31 @@ export const SettingsObjectFieldEdit = () => {
           <SettingsPageContainer>
             <Section>
               <H2Title
-                title="Name and description"
-                description="The name and description of this field"
+                title="Icon and Name"
+                description="The name and icon of this field"
               />
-              <SettingsDataModelFieldAboutForm
+              <SettingsDataModelFieldIconLabelForm
                 disabled={!activeMetadataField.isCustom}
                 fieldMetadataItem={activeMetadataField}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
               />
             </Section>
             <Section>
-              <H2Title
-                title="Type and values"
-                description="The field's type and values."
-              />
-              <StyledSettingsObjectFieldTypeSelect
-                disabled
-                fieldMetadataItem={activeMetadataField}
-                excludedFieldTypes={[
-                  FieldMetadataType.Link,
-                  FieldMetadataType.Email,
-                ]}
-              />
+              <H2Title title="Values" description="The values of this field" />
               <SettingsDataModelFieldSettingsFormCard
                 disableCurrencyForm
                 fieldMetadataItem={activeMetadataField}
                 objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Description"
+                description="The description of this field"
+              />
+              <SettingsDataModelFieldDescriptionForm
+                disabled={!activeMetadataField.isCustom}
+                fieldMetadataItem={activeMetadataField}
               />
             </Section>
             {!isLabelIdentifier && (

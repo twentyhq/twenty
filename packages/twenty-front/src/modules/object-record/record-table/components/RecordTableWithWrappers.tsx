@@ -37,12 +37,10 @@ type RecordTableWithWrappersProps = {
   recordTableId: string;
   viewBarId: string;
   updateRecordMutation: (params: any) => void;
-  createRecord: () => Promise<void>;
 };
 
 export const RecordTableWithWrappers = ({
   updateRecordMutation,
-  createRecord,
   objectNameSingular,
   recordTableId,
   viewBarId,
@@ -80,7 +78,6 @@ export const RecordTableWithWrappers = ({
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={handleColumnsChange}
-                  createRecord={createRecord}
                 />
                 <DragSelect
                   dragSelectable={tableBodyRef}
