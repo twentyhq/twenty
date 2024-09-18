@@ -39,8 +39,14 @@ export class MicrosoftAuthController {
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
   ) {
-    const { firstName, lastName, email, picture, workspaceInviteHash } =
-      req.user;
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    } = req.user;
 
     const user = await this.authService.signInUp({
       email,
@@ -48,6 +54,7 @@ export class MicrosoftAuthController {
       lastName,
       picture,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       fromSSO: true,
     });
 

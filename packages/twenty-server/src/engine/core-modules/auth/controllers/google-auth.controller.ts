@@ -34,8 +34,14 @@ export class GoogleAuthController {
   @Get('redirect')
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
-    const { firstName, lastName, email, picture, workspaceInviteHash } =
-      req.user;
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    } = req.user;
 
     const user = await this.authService.signInUp({
       email,
@@ -43,6 +49,7 @@ export class GoogleAuthController {
       lastName,
       picture,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       fromSSO: true,
     });
 

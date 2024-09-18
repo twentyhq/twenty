@@ -298,7 +298,6 @@ export const useAuth = () => {
     [setIsVerifyPendingState, signUp, handleVerify],
   );
 
-  // TODO: how to test that?
   const buildRedirectUrl = (
     path: string,
     params: {
