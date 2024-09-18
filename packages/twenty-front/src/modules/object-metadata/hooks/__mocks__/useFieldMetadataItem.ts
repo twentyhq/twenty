@@ -17,6 +17,7 @@ const baseFields = `
   isNullable
   createdAt
   updatedAt
+  settings
 `;
 
 export const queries = {
