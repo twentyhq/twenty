@@ -6,24 +6,37 @@ export const computeSyncStatus = (
   messageChannelSyncStatus: MessageChannelSyncStatus,
   calendarChannelSyncStatus: CalendarChannelSyncStatus,
 ) => {
-  switch (true) {
-    case messageChannelSyncStatus === MessageChannelSyncStatus.FAILED_UNKNOWN ||
-      messageChannelSyncStatus ===
-        MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS ||
-      calendarChannelSyncStatus === CalendarChannelSyncStatus.FAILED_UNKNOWN ||
-      calendarChannelSyncStatus ===
-        CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS:
-      return SyncStatus.FAILED;
-    case messageChannelSyncStatus === MessageChannelSyncStatus.ONGOING ||
-      calendarChannelSyncStatus === CalendarChannelSyncStatus.ONGOING:
-      return SyncStatus.IMPORTING;
-    case messageChannelSyncStatus === MessageChannelSyncStatus.NOT_SYNCED &&
-      calendarChannelSyncStatus === CalendarChannelSyncStatus.NOT_SYNCED:
-      return SyncStatus.NOT_SYNCED;
-    case messageChannelSyncStatus === MessageChannelSyncStatus.ACTIVE &&
-      calendarChannelSyncStatus === CalendarChannelSyncStatus.ACTIVE:
-      return SyncStatus.SYNCED;
-    default:
-      return SyncStatus.NOT_SYNCED;
+  if (
+    messageChannelSyncStatus === MessageChannelSyncStatus.FAILED_UNKNOWN ||
+    messageChannelSyncStatus ===
+      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS ||
+    calendarChannelSyncStatus === CalendarChannelSyncStatus.FAILED_UNKNOWN ||
+    calendarChannelSyncStatus ===
+      CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
+  ) {
+    return SyncStatus.FAILED;
   }
+
+  if (
+    messageChannelSyncStatus === MessageChannelSyncStatus.ONGOING ||
+    calendarChannelSyncStatus === CalendarChannelSyncStatus.ONGOING
+  ) {
+    return SyncStatus.IMPORTING;
+  }
+
+  if (
+    messageChannelSyncStatus === MessageChannelSyncStatus.NOT_SYNCED ||
+    calendarChannelSyncStatus === CalendarChannelSyncStatus.NOT_SYNCED
+  ) {
+    return SyncStatus.NOT_SYNCED;
+  }
+
+  if (
+    messageChannelSyncStatus === MessageChannelSyncStatus.ACTIVE &&
+    calendarChannelSyncStatus === CalendarChannelSyncStatus.ACTIVE
+  ) {
+    return SyncStatus.SYNCED;
+  }
+
+  return SyncStatus.NOT_SYNCED;
 };
