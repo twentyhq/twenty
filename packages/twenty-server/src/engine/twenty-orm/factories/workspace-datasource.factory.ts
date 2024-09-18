@@ -29,12 +29,26 @@ export class WorkspaceDatasourceFactory {
   public async create(
     workspaceId: string,
     workspaceMetadataVersion: number | null,
+    ignoreMetadataCachingLock = false,
   ): Promise<WorkspaceDataSource> {
-    const desiredWorkspaceMetadataVersion =
-      await this.computeDesiredWorkspaceMetadataVersion(
+    const latestWorkspaceMetadataVersion =
+      await this.getLatestWorkspaceMetadataVersionFromCacheOrFail(
         workspaceId,
-        workspaceMetadataVersion,
+        ignoreMetadataCachingLock,
       );
+
+    const desiredWorkspaceMetadataVersion =
+      workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
+
+    if (
+      workspaceMetadataVersion &&
+      latestWorkspaceMetadataVersion !== workspaceMetadataVersion
+    ) {
+      throw new TwentyORMException(
+        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${latestWorkspaceMetadataVersion}. Desired version: ${desiredWorkspaceMetadataVersion}`,
+        TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
+      );
+    }
 
     const workspaceDataSource = await this.cacheManager.execute(
       `${workspaceId}-${desiredWorkspaceMetadataVersion}`,
@@ -48,7 +62,7 @@ export class WorkspaceDatasourceFactory {
         if (!cachedObjectMetadataMap) {
           await this.workspaceMetadataCacheService.recomputeMetadataCache(
             workspaceId,
-            true,
+            ignoreMetadataCachingLock,
           );
 
           throw new TwentyORMException(
@@ -150,42 +164,60 @@ export class WorkspaceDatasourceFactory {
     return workspaceDataSource;
   }
 
-  private async computeDesiredWorkspaceMetadataVersion(
+  private async getLatestWorkspaceMetadataVersionFromCacheOrFail(
     workspaceId: string,
-    workspaceMetadataVersion: number | null,
+    ignoreMetadataCachingLock = false,
   ): Promise<number> {
-    const latestWorkspaceMetadataVersion =
+    let latestWorkspaceMetadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (latestWorkspaceMetadataVersion === undefined) {
       await this.workspaceMetadataCacheService.recomputeMetadataCache(
         workspaceId,
       );
+
+      if (!ignoreMetadataCachingLock) {
+        throw new TwentyORMException(
+          `Metadata version not found for workspace ${workspaceId}`,
+          TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+        );
+      } else {
+        latestWorkspaceMetadataVersion =
+          await this.workspaceCacheStorageService.getMetadataVersion(
+            workspaceId,
+          );
+      }
+    }
+
+    if (!latestWorkspaceMetadataVersion) {
       throw new TwentyORMException(
-        `Metadata version not found for workspace ${workspaceId}`,
+        `Metadata version not found after recompute for workspace ${workspaceId}`,
         TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 
+    return latestWorkspaceMetadataVersion;
+  }
+
+  public async destroy(
+    workspaceId: string,
+    workspaceMetadataVersion: number | null,
+  ): Promise<void> {
+    const latestWorkspaceMetadataVersion =
+      await this.getLatestWorkspaceMetadataVersionFromCacheOrFail(workspaceId);
+
     const desiredWorkspaceMetadataVersion =
       workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
 
-    if (latestWorkspaceMetadataVersion !== desiredWorkspaceMetadataVersion) {
+    if (
+      workspaceMetadataVersion &&
+      latestWorkspaceMetadataVersion !== workspaceMetadataVersion
+    ) {
       throw new TwentyORMException(
         `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${latestWorkspaceMetadataVersion}. Desired version: ${desiredWorkspaceMetadataVersion}`,
         TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
       );
     }
-
-    return desiredWorkspaceMetadataVersion;
-  }
-
-  public async destroy(
-    workspaceId: string,
-    metadataVersion: number | null,
-  ): Promise<void> {
-    const desiredWorkspaceMetadataVersion =
-      this.computeDesiredWorkspaceMetadataVersion(workspaceId, metadataVersion);
 
     await this.cacheManager.clearKey(
       `${workspaceId}-${desiredWorkspaceMetadataVersion}`,

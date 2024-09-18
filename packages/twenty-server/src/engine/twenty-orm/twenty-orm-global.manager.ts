@@ -15,16 +15,19 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
+    ignoreMetadataCachingLock?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
+    ignoreMetadataCachingLock?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntityOrobjectMetadataName: Type<T> | string,
+    ignoreMetadataCachingLock = false,
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
@@ -39,6 +42,7 @@ export class TwentyORMGlobalManager {
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
+      ignoreMetadataCachingLock,
     );
 
     const repository = workspaceDataSource.getRepository<T>(objectMetadataName);
