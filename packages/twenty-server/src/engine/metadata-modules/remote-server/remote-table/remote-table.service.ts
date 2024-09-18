@@ -36,7 +36,7 @@ import {
   mapUdtNameToFieldType,
 } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,

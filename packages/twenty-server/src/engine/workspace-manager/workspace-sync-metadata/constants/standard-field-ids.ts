@@ -305,6 +305,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
 export const PERSON_STANDARD_FIELD_IDS = {
   name: '20202020-3875-44d5-8c33-a6239011cab8',
   email: '20202020-a740-42bb-8849-8980fb3f12e1',
+  emails: '20202020-3c51-43fa-8b6e-af39e29368ab',
   linkedinLink: '20202020-f1af-48f7-893b-2007a73dd508',
   xLink: '20202020-8fc2-487c-b84a-55a99b145cfd',
   jobTitle: '20202020-b0d0-415a-bef9-640a26dacd9b',

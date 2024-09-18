@@ -23,7 +23,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
 
 const createRemoteServerInputPostgresSchema =
@@ -133,21 +132,22 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
   return (
     <SubMenuTopBarContainer
       Icon={IconSettings}
-      title={
-        <Breadcrumb
-          links={[
-            {
-              children: 'Integrations',
-              href: settingsIntegrationsPagePath,
-            },
-            {
-              children: integration.text,
-              href: `${settingsIntegrationsPagePath}/${databaseKey}`,
-            },
-            { children: 'New' },
-          ]}
-        />
-      }
+      title="New"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Integrations',
+          href: settingsIntegrationsPagePath,
+        },
+        {
+          children: integration.text,
+          href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+        },
+        { children: 'New' },
+      ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}

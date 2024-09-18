@@ -24,7 +24,7 @@ export const PhoneDisplay = ({ value }: PhoneDisplayProps) => {
   }
 
   const URI = parsedPhoneNumber.getURI();
-  const formattedNational = parsedPhoneNumber?.formatNational();
+  const formatedPhoneNumber = parsedPhoneNumber.formatInternational();
 
   return (
     <ContactLink
@@ -33,7 +33,7 @@ export const PhoneDisplay = ({ value }: PhoneDisplayProps) => {
         event.stopPropagation();
       }}
     >
-      {formattedNational || value}
+      {formatedPhoneNumber || value}
     </ContactLink>
   );
 };

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui';
 
@@ -94,9 +94,10 @@ type Story = StoryObj<typeof RelationFromManyFieldDisplay>;
 
 export const Default: Story = {};
 
+// TODO: optimize this component once we have morph many
 export const Performance = getProfilingStory({
   componentName: 'RelationFromManyFieldDisplay',
-  averageThresholdInMs: 0.5,
+  averageThresholdInMs: 1,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

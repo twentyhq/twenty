@@ -25,13 +25,15 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -86,6 +88,12 @@ export const SettingsObjectFieldEdit = () => {
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
+    values: {
+      icon: activeMetadataField?.icon ?? 'Icon123',
+      type: activeMetadataField?.type as SettingsSupportedFieldType,
+      label: activeMetadataField?.label ?? '',
+      description: activeMetadataField?.description,
+    },
   });
 
   useEffect(() => {
@@ -94,10 +102,10 @@ export const SettingsObjectFieldEdit = () => {
     }
   }, [activeMetadataField, activeObjectMetadataItem, navigate]);
 
-  if (!activeObjectMetadataItem || !activeMetadataField) return null;
-
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
+
+  if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -166,23 +174,24 @@ export const SettingsObjectFieldEdit = () => {
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
           Icon={IconHierarchy2}
-          title={
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: '/settings/objects',
-                  styles: { minWidth: 'max-content' },
-                },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                  styles: { maxWidth: '60%' },
-                },
-                { children: activeMetadataField.label },
-              ]}
-            />
-          }
+          title={activeMetadataField?.label}
+          links={[
+            {
+              children: 'Workspace',
+              href: getSettingsPagePath(SettingsPath.Workspace),
+            },
+            {
+              children: 'Objects',
+              href: '/settings/objects',
+            },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            {
+              children: activeMetadataField.label,
+            },
+          ]}
           actionButton={
             shouldDisplaySaveAndCancel && (
               <SaveAndCancelButtons

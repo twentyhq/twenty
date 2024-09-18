@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import graphqlFields from 'graphql-fields';
-import { FindManyOptions, ObjectLiteral } from 'typeorm';
-
 import {
   Record as IRecord,
   RecordFilter,
@@ -10,18 +7,17 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
-import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
-import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
-import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+  CreateManyResolverArgs,
+  DestroyOneResolverArgs,
+  FindManyResolverArgs,
+  FindOneResolverArgs,
+} from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+
+import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
+import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-one-resolver.service';
+import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
+import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -32,7 +28,21 @@ export class GraphqlQueryRunnerService {
   ) {}
 
   @LogExecutionTime()
-  async findManyWithTwentyOrm<
+  async findOne<
+    ObjectRecord extends IRecord = IRecord,
+    Filter extends RecordFilter = RecordFilter,
+  >(
+    args: FindOneResolverArgs<Filter>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord | undefined> {
+    const graphqlQueryFindOneResolverService =
+      new GraphqlQueryFindOneResolverService(this.twentyORMGlobalManager);
+
+    return graphqlQueryFindOneResolverService.findOne(args, options);
+  }
+
+  @LogExecutionTime()
+  async findMany<
     ObjectRecord extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
     OrderBy extends RecordOrderBy = RecordOrderBy,
@@ -40,94 +50,31 @@ export class GraphqlQueryRunnerService {
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<ObjectRecord>> {
-    const { authContext, objectMetadataItem, info, objectMetadataCollection } =
-      options;
+    const graphqlQueryFindManyResolverService =
+      new GraphqlQueryFindManyResolverService(this.twentyORMGlobalManager);
 
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        authContext.workspace.id,
-        objectMetadataItem.nameSingular,
-      );
+    return graphqlQueryFindManyResolverService.findMany(args, options);
+  }
 
-    const selectedFields = graphqlFields(info);
+  @LogExecutionTime()
+  async createMany<ObjectRecord extends IRecord = IRecord>(
+    args: CreateManyResolverArgs<Partial<ObjectRecord>>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord[] | undefined> {
+    const graphqlQueryCreateManyResolverService =
+      new GraphqlQueryCreateManyResolverService(this.twentyORMGlobalManager);
 
-    const objectMetadataMap = convertObjectMetadataToMap(
-      objectMetadataCollection,
-    );
+    return graphqlQueryCreateManyResolverService.createMany(args, options);
+  }
 
-    const objectMetadata = objectMetadataMap[objectMetadataItem.nameSingular];
+  @LogExecutionTime()
+  async destroyOne<ObjectRecord extends IRecord = IRecord>(
+    args: DestroyOneResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord> {
+    const graphqlQueryDestroyOneResolverService =
+      new GraphqlQueryDestroyOneResolverService(this.twentyORMGlobalManager);
 
-    if (!objectMetadata) {
-      throw new GraphqlQueryRunnerException(
-        `Object metadata not found for ${objectMetadataItem.nameSingular}`,
-        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
-    const fieldMetadataMap = objectMetadata.fields;
-
-    const graphqlQueryParser = new GraphqlQueryParser(
-      fieldMetadataMap,
-      objectMetadataMap,
-    );
-
-    const { select, relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
-      selectedFields,
-    );
-
-    const order = args.orderBy
-      ? graphqlQueryParser.parseOrder(args.orderBy)
-      : undefined;
-
-    const where = args.filter
-      ? graphqlQueryParser.parseFilter(args.filter)
-      : {};
-
-    let cursor: Record<string, any> | undefined;
-
-    if (args.after) {
-      cursor = decodeCursor(args.after);
-    } else if (args.before) {
-      cursor = decodeCursor(args.before);
-    }
-
-    if (args.first && args.last) {
-      throw new GraphqlQueryRunnerException(
-        'Cannot provide both first and last',
-        GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT,
-      );
-    }
-
-    const take = args.first ?? args.last ?? QUERY_MAX_RECORDS;
-
-    const findOptions: FindManyOptions<ObjectLiteral> = {
-      where,
-      order,
-      select,
-      relations,
-      take,
-    };
-
-    const totalCount = await repository.count({
-      where,
-    });
-
-    if (cursor) {
-      applyRangeFilter(where, order, cursor);
-    }
-
-    const objectRecords = await repository.find(findOptions);
-
-    const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
-
-    return typeORMObjectRecordsParser.createConnection(
-      (objectRecords as ObjectRecord[]) ?? [],
-      take,
-      totalCount,
-      order,
-      objectMetadataItem.nameSingular,
-    );
+    return graphqlQueryDestroyOneResolverService.destroyOne(args, options);
   }
 }
