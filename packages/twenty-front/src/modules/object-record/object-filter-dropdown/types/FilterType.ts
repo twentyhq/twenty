@@ -16,4 +16,5 @@ export type FilterType =
   | 'SELECT'
   | 'RATING'
   | 'MULTI_SELECT'
-  | 'ACTOR';
+  | 'ACTOR'
+  | 'ARRAY';

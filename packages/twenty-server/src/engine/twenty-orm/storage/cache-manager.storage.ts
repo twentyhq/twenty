@@ -13,6 +13,8 @@ export class CacheManager<T> {
     const [workspaceId] = cacheKey.split('-');
 
     if (this.cache.has(cacheKey)) {
+      console.log('Cache hit for key:', cacheKey);
+
       return this.cache.get(cacheKey)!;
     }
 
@@ -23,6 +25,7 @@ export class CacheManager<T> {
       }
     }
 
+    console.log('Cache miss for key:', cacheKey);
     const value = await factory();
 
     if (!value) {
@@ -32,6 +35,16 @@ export class CacheManager<T> {
     this.cache.set(cacheKey, value);
 
     return value;
+  }
+
+  async clearKey(
+    cacheKey: CacheKey,
+    onDelete?: (value: T) => Promise<void> | void,
+  ): Promise<void> {
+    if (this.cache.has(cacheKey)) {
+      await onDelete?.(this.cache.get(cacheKey)!);
+      this.cache.delete(cacheKey);
+    }
   }
 
   async clear(onDelete?: (value: T) => Promise<void> | void): Promise<void> {

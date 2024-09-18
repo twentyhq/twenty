@@ -94,6 +94,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 `;
 
 const previewableTypes = [
+  FieldMetadataType.Array,
   FieldMetadataType.Address,
   FieldMetadataType.Boolean,
   FieldMetadataType.Currency,

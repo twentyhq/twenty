@@ -1,21 +1,18 @@
-import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 
 import { Request } from 'express';
 
-import { OptionalJwtAuthGuard } from 'src/engine/guards/optional-jwt.auth.guard';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
-import { AnalyticsService } from './analytics.service';
 import { Analytics } from './analytics.entity';
+import { AnalyticsService } from './analytics.service';
 
 import { CreateAnalyticsInput } from './dtos/create-analytics.input';
 
-@UseGuards(OptionalJwtAuthGuard)
 @Resolver(() => Analytics)
 export class AnalyticsResolver {
   constructor(

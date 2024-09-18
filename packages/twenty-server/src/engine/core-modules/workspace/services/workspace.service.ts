@@ -9,6 +9,8 @@ import { SendInviteLinkEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -19,8 +21,6 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -48,7 +48,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     const existingWorkspace = await this.workspaceRepository.findOneBy({
-      id: user.defaultWorkspace.id,
+      id: user.defaultWorkspaceId,
     });
 
     if (!existingWorkspace) {
@@ -69,21 +69,21 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       throw new Error('Worspace is not pending creation');
     }
 
-    await this.workspaceRepository.update(user.defaultWorkspace.id, {
+    await this.workspaceRepository.update(user.defaultWorkspaceId, {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
-    await this.workspaceManagerService.init(user.defaultWorkspace.id);
+    await this.workspaceManagerService.init(user.defaultWorkspaceId);
     await this.userWorkspaceService.createWorkspaceMember(
-      user.defaultWorkspace.id,
+      user.defaultWorkspaceId,
       user,
     );
-    await this.workspaceRepository.update(user.defaultWorkspace.id, {
+    await this.workspaceRepository.update(user.defaultWorkspaceId, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
-    return user.defaultWorkspace;
+    return existingWorkspace;
   }
 
   async softDeleteWorkspace(id: string) {

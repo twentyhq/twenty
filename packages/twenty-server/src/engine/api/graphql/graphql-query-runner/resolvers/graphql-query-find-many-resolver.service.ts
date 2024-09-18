@@ -19,11 +19,9 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
-import {
-  convertObjectMetadataToMap,
-  getObjectMetadata,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
+import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQueryFindManyResolverService {
@@ -51,10 +49,10 @@ export class GraphqlQueryFindManyResolverService {
         authContext.workspace.id,
         objectMetadataItem.nameSingular,
       );
-    const objectMetadataMap = convertObjectMetadataToMap(
+    const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
-    const objectMetadata = getObjectMetadata(
+    const objectMetadata = getObjectMetadataOrThrow(
       objectMetadataMap,
       objectMetadataItem.nameSingular,
     );
@@ -72,10 +70,7 @@ export class GraphqlQueryFindManyResolverService {
       args.orderBy ?? [],
       isForwardPagination,
     );
-    const where = graphqlQueryParser.parseFilter(
-      args.filter ?? ({} as Filter),
-      true,
-    );
+    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     const cursor = this.getCursor(args);
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;

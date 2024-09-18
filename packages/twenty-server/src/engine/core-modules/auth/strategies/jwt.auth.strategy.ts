@@ -11,9 +11,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
@@ -90,7 +90,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (payload.workspaceId) {
       user = await this.userRepository.findOne({
         where: { id: payload.sub },
-        relations: ['defaultWorkspace'],
       });
       if (!user) {
         throw new AuthException(
