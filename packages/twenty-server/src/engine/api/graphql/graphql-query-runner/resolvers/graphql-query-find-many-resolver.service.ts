@@ -1,11 +1,6 @@
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
-import {
-  FindManyOptions,
-  FindOptionsRelations,
-  In,
-  ObjectLiteral,
-} from 'typeorm';
+import { FindManyOptions, ObjectLiteral } from 'typeorm';
 
 import {
   Record as IRecord,
@@ -22,21 +17,16 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import {
-  getRelationMetadata,
-  getRelationObjectMetadata,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
-import {
   generateObjectMetadataMap,
-  ObjectMetadataMap,
   ObjectMetadataMapItem,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
 export class GraphqlQueryFindManyResolverService {
   private twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -123,8 +113,12 @@ export class GraphqlQueryFindManyResolverService {
       objectRecords.pop();
     }
 
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper(
+      this.twentyORMGlobalManager,
+    );
+
     if (relations) {
-      await this.processNestedRelations(
+      await processNestedRelationsHelper.processNestedRelations(
         objectMetadataMap,
         objectMetadata,
         objectRecords,
@@ -146,166 +140,6 @@ export class GraphqlQueryFindManyResolverService {
       hasNextPage,
       hasPreviousPage,
     );
-  }
-
-  private async processFromRelation<ObjectRecord extends IRecord = IRecord>(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
-    parentObjectRecords: ObjectRecord[],
-    relationName: string,
-    nestedRelations: any,
-    limit: number,
-    authContext: any,
-  ) {
-    const relationFieldMetadata = parentObjectMetadataItem.fields[relationName];
-    const relationMetadata = getRelationMetadata(relationFieldMetadata);
-
-    const inverseRelationName =
-      objectMetadataMap[relationMetadata.toObjectMetadataId]?.fields[
-        relationMetadata.toFieldMetadataId
-      ]?.name;
-
-    const referenceObjectMetadata = getRelationObjectMetadata(
-      relationFieldMetadata,
-      objectMetadataMap,
-    );
-
-    const referenceObjectMetadataName = referenceObjectMetadata.nameSingular;
-
-    const relationRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        authContext.workspace.id,
-        referenceObjectMetadataName,
-      );
-
-    const relationIds = parentObjectRecords.map((item) => item.id);
-
-    const uniqueRelationIds = [...new Set(relationIds)];
-
-    const relationFindOptions: FindManyOptions = {
-      where: {
-        [`${inverseRelationName}Id`]: In(uniqueRelationIds),
-      },
-      take: limit,
-    };
-
-    const relationResults = await relationRepository.find(relationFindOptions);
-
-    parentObjectRecords.forEach((item) => {
-      (item as any)[relationName] = relationResults.filter(
-        (rel) => rel[`${inverseRelationName}Id`] === item.id,
-      );
-    });
-
-    if (Object.keys(nestedRelations).length > 0) {
-      await this.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMap[relationName],
-        relationResults as ObjectRecord[],
-        nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
-        limit,
-        authContext,
-      );
-    }
-  }
-
-  private async processToRelation<ObjectRecord extends IRecord = IRecord>(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
-    parentObjectRecords: ObjectRecord[],
-    relationName: string,
-    nestedRelations: any,
-    limit: number,
-    authContext: any,
-  ) {
-    const relationFieldMetadata = parentObjectMetadataItem.fields[relationName];
-
-    const referenceObjectMetadata = getRelationObjectMetadata(
-      relationFieldMetadata,
-      objectMetadataMap,
-    );
-
-    const referenceObjectMetadataName = referenceObjectMetadata.nameSingular;
-
-    const relationRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        authContext.workspace.id,
-        referenceObjectMetadataName,
-      );
-
-    const relationIds = parentObjectRecords.map(
-      (item) => item[`${relationName}Id`],
-    );
-
-    const uniqueRelationIds = [...new Set(relationIds)];
-
-    const relationFindOptions: FindManyOptions = {
-      where: {
-        id: In(uniqueRelationIds),
-      },
-      take: limit,
-    };
-
-    const relationResults = await relationRepository.find(relationFindOptions);
-
-    parentObjectRecords.forEach((item) => {
-      (item as any)[relationName] = relationResults.filter(
-        (rel) => rel.id === item[`${relationName}Id`],
-      )[0];
-    });
-
-    if (Object.keys(nestedRelations).length > 0) {
-      await this.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMap[relationName],
-        relationResults as ObjectRecord[],
-        nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
-        limit,
-        authContext,
-      );
-    }
-  }
-
-  private async processNestedRelations<ObjectRecord extends IRecord = IRecord>(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
-    parentObjectRecords: ObjectRecord[],
-    relations: Record<string, FindOptionsRelations<ObjectLiteral>>,
-    limit: number,
-    authContext: any,
-  ) {
-    for (const [relationName, nestedRelations] of Object.entries(relations)) {
-      const relationFieldMetadata =
-        parentObjectMetadataItem.fields[relationName];
-      const relationMetadata = getRelationMetadata(relationFieldMetadata);
-
-      const relationDirection = deduceRelationDirection(
-        relationFieldMetadata,
-        relationMetadata,
-      );
-
-      if (relationDirection === 'to') {
-        await this.processToRelation(
-          objectMetadataMap,
-          parentObjectMetadataItem,
-          parentObjectRecords,
-          relationName,
-          nestedRelations,
-          limit,
-          authContext,
-        );
-      } else {
-        await this.processFromRelation(
-          objectMetadataMap,
-          parentObjectMetadataItem,
-          parentObjectRecords,
-          relationName,
-          nestedRelations,
-          limit,
-          authContext,
-        );
-      }
-    }
   }
 
   private validateArgsOrThrow(args: FindManyResolverArgs<any, any>) {
