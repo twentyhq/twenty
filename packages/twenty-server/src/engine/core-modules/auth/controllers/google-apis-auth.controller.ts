@@ -17,10 +17,10 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)
