@@ -53,18 +53,6 @@ registerEnumType(CalendarChannelVisibility, {
   name: 'CalendarChannelVisibility',
 });
 
-registerEnumType(CalendarChannelSyncStatus, {
-  name: 'CalendarChannelSyncStatus',
-});
-
-registerEnumType(CalendarChannelSyncStage, {
-  name: 'CalendarChannelSyncStage',
-});
-
-registerEnumType(CalendarChannelContactAutoCreationPolicy, {
-  name: 'CalendarChannelContactAutoCreationPolicy',
-});
-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
   namePlural: 'calendarChannels',

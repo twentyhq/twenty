@@ -1,6 +1,6 @@
 import { CalendarChannelSyncStatus } from '@/accounts/types/CalendarChannel';
 import { MessageChannelSyncStatus } from '@/accounts/types/MessageChannel';
-import { SyncStatus } from '@/settings/accounts/enums/syncStatus.enum';
+import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 
 export const computeSyncStatus = (
   messageChannelSyncStatus: MessageChannelSyncStatus,
