@@ -169,6 +169,7 @@ export {
   IconTestPipe,
   IconTextSize,
   IconTimelineEvent,
+  IconTool,
   IconTrash,
   IconUnlink,
   IconUpload,

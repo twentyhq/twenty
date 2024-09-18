@@ -40,6 +40,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   ${({ isSubMenu, theme }) =>
     isSubMenu
       ? css`
+          padding-left: ${theme.spacing(0)};
           padding-right: ${theme.spacing(8)};
         `
       : ''}

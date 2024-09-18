@@ -1,5 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import {
+  ANIMATION,
   IconApps,
   IconAt,
   IconCalendarEvent,
@@ -13,8 +14,10 @@ import {
   IconMail,
   IconRocket,
   IconSettings,
+  IconTool,
   IconUserCircle,
   IconUsers,
+  MAIN_COLORS,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -29,9 +32,41 @@ import {
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+import { AnimatePresence, motion } from 'framer-motion';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
+
+const StyledNavigationDrawerSection = styled(NavigationDrawerSection)<{
+  withLeftMargin?: boolean;
+}>`
+  margin-left: ${({ withLeftMargin, theme }) =>
+    withLeftMargin && theme.spacing(5)};
+`;
+
+const StyledIconContainer = styled.div`
+  border-right: 1px solid ${MAIN_COLORS.yellow};
+  display: flex;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  width: 16px;
+`;
+
+const StyledDeveloperSection = styled.div`
+  display: flex;
+  width: 100%;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIconTool = styled(IconTool)`
+  margin-right: 3px;
+`;
+
+const StyledAdvancedSection = styled(motion.div)`
+  display: flex;
+  width: 100%;
+`;
 
 type SettingsNavigationItem = {
   label: string;
@@ -39,6 +74,17 @@ type SettingsNavigationItem = {
   Icon: IconComponent;
   matchSubPages?: boolean;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
+};
+
+const advancedSectionAnimationConfig = {
+  initial: {
+    opacity: 0,
+    height: 0,
+  },
+  animate: {
+    opacity: 1,
+    height: 'auto',
+  },
 };
 
 export const SettingsNavigationDrawerItems = () => {
@@ -52,6 +98,8 @@ export const SettingsNavigationDrawerItems = () => {
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
+
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
@@ -88,7 +136,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <>
-      <NavigationDrawerSection>
+      <StyledNavigationDrawerSection withLeftMargin>
         <NavigationDrawerSectionTitle label="User" />
         <SettingsNavigationDrawerItem
           label="Profile"
@@ -121,8 +169,8 @@ export const SettingsNavigationDrawerItems = () => {
             />
           ))}
         </NavigationDrawerItemGroup>
-      </NavigationDrawerSection>
-      <NavigationDrawerSection>
+      </StyledNavigationDrawerSection>
+      <StyledNavigationDrawerSection withLeftMargin>
         <NavigationDrawerSectionTitle label="Workspace" />
         <SettingsNavigationDrawerItem
           label="General"
@@ -148,18 +196,6 @@ export const SettingsNavigationDrawerItems = () => {
           matchSubPages
         />
         <SettingsNavigationDrawerItem
-          label="Developers"
-          path={SettingsPath.Developers}
-          Icon={IconCode}
-        />
-        {isFunctionSettingsEnabled && (
-          <SettingsNavigationDrawerItem
-            label="Functions"
-            path={SettingsPath.ServerlessFunctions}
-            Icon={IconFunction}
-          />
-        )}
-        <SettingsNavigationDrawerItem
           label="Integrations"
           path={SettingsPath.Integrations}
           Icon={IconApps}
@@ -171,8 +207,41 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
-      </NavigationDrawerSection>
-      <NavigationDrawerSection>
+      </StyledNavigationDrawerSection>
+      <AnimatePresence>
+        {isAdvancedModeEnabled && (
+          <StyledAdvancedSection
+            initial={advancedSectionAnimationConfig.initial}
+            animate={advancedSectionAnimationConfig.animate}
+            exit={advancedSectionAnimationConfig.initial}
+            transition={{
+              duration: ANIMATION.duration.normal,
+            }}
+          >
+            <StyledDeveloperSection>
+              <StyledIconContainer>
+                <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+              </StyledIconContainer>
+              <StyledNavigationDrawerSection>
+                <NavigationDrawerSectionTitle label="Developers" />
+                <SettingsNavigationDrawerItem
+                  label="API & Webhooks"
+                  path={SettingsPath.Developers}
+                  Icon={IconCode}
+                />
+                {isFunctionSettingsEnabled && (
+                  <SettingsNavigationDrawerItem
+                    label="Functions"
+                    path={SettingsPath.ServerlessFunctions}
+                    Icon={IconFunction}
+                  />
+                )}
+              </StyledNavigationDrawerSection>
+            </StyledDeveloperSection>
+          </StyledAdvancedSection>
+        )}
+      </AnimatePresence>
+      <StyledNavigationDrawerSection withLeftMargin>
         <NavigationDrawerSectionTitle label="Other" />
         <SettingsNavigationDrawerItem
           label="Releases"
@@ -184,7 +253,7 @@ export const SettingsNavigationDrawerItems = () => {
           onClick={signOut}
           Icon={IconDoorEnter}
         />
-      </NavigationDrawerSection>
+      </StyledNavigationDrawerSection>
     </>
   );
 };
