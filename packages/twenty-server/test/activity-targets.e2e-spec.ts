@@ -31,6 +31,7 @@ describe('activityTargetsResolver (e2e)', () => {
       .send(queryData)
       .expect(200)
       .expect((res) => {
+        console.log(res.body);
         expect(res.body.data).toBeDefined();
         expect(res.body.errors).toBeUndefined();
       })
