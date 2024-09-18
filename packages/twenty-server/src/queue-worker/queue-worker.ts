@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
-import { LoggerService } from 'src/engine/integrations/logger/logger.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
 

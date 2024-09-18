@@ -16,7 +16,7 @@ import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metada
 @ObjectType('object')
 @Authorize({
   authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
+    workspaceId: { eq: context?.req?.workspace?.id },
   }),
 })
 @QueryOptions({

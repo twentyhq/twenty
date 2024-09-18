@@ -7,8 +7,8 @@ import {
   DEACTIVATED_AND_DRAFT_STATUSES,
   DEACTIVATED_STATUSES,
   DRAFT_STATUSES,
-} from 'src/modules/workflow/workflow-status/workflow-status.constants';
-import { WorkflowStatusCombination } from 'src/modules/workflow/workflow-status/workflow-status.enums';
+} from 'src/modules/workflow/workflow-status/constants/workflow-status.constants';
+import { WorkflowStatusCombination } from 'src/modules/workflow/workflow-status/enums/workflow-status.enum';
 
 export const getStatusCombinationFromArray = (
   statuses: WorkflowStatus[],

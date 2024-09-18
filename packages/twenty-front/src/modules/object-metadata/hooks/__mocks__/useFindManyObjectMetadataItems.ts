@@ -39,29 +39,27 @@ export const query = gql`
                 isNullable
                 createdAt
                 updatedAt
-                fromRelationMetadata {
-                  id
-                  relationType
-                  toObjectMetadata {
+                relationDefinition {
+                  relationId
+                  direction
+                  sourceObjectMetadata {
                     id
-                    dataSourceId
                     nameSingular
                     namePlural
-                    isSystem
                   }
-                  toFieldMetadataId
-                }
-                toRelationMetadata {
-                  id
-                  relationType
-                  fromObjectMetadata {
+                  sourceFieldMetadata {
                     id
-                    dataSourceId
+                    name
+                  }
+                  targetObjectMetadata {
+                    id
                     nameSingular
                     namePlural
-                    isSystem
                   }
-                  fromFieldMetadataId
+                  targetFieldMetadata {
+                    id
+                    name
+                  }
                 }
                 defaultValue
                 options

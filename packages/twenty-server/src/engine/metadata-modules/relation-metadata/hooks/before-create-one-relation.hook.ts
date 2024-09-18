@@ -15,7 +15,7 @@ export class BeforeCreateOneRelation<T extends CreateRelationInput>
     instance: CreateOneInputType<T>,
     context: any,
   ): Promise<CreateOneInputType<T>> {
-    const workspaceId = context?.req?.user?.workspace?.id;
+    const workspaceId = context?.req?.workspace?.id;
 
     if (!workspaceId) {
       throw new UnauthorizedException();

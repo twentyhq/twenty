@@ -13,7 +13,7 @@ describe('replaceStep', () => {
         },
         serverlessFunctionId: 'first',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     } satisfies WorkflowStep;
     const workflowVersionInitial = {
@@ -59,7 +59,7 @@ describe('replaceStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
     const workflowVersionInitial = {
@@ -79,7 +79,7 @@ describe('replaceStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
         stepToBeReplaced,
@@ -93,7 +93,7 @@ describe('replaceStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
       ],

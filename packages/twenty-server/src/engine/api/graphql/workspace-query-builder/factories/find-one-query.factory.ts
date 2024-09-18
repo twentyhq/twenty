@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -29,7 +29,7 @@ export class FindOneQueryFactory {
     const argsString = this.argsStringFactory.create(
       args,
       options.fieldMetadataCollection,
-      !options.withSoftDeleted && !!options.objectMetadataItem.isSoftDeletable,
+      !options.withSoftDeleted,
     );
 
     return `

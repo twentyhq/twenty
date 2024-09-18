@@ -7,7 +7,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @ArgsType()
 class GetTimelineCalendarEventsFromPersonIdArgs {
@@ -35,7 +35,7 @@ class GetTimelineCalendarEventsFromCompanyIdArgs {
   pageSize: number;
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => TimelineCalendarEventsWithTotal)
 export class TimelineCalendarEventResolver {
   constructor(
