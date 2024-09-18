@@ -65,6 +65,7 @@ export class GraphqlQueryFindOneResolverService {
       where,
       select,
     })) as ObjectRecord;
+
     const limit = QUERY_MAX_RECORDS;
 
     if (!objectRecord) {
