@@ -1,19 +1,19 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight, IconComponent, Pill } from 'twenty-ui';
+import { IconChevronRight, Pill } from 'twenty-ui';
 
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { ReactNode } from 'react';
 
 type SettingsCardProps = {
   description?: string;
   disabled?: boolean;
   soon?: boolean;
-  Icon: IconComponent;
+  Icon: ReactNode;
   onClick?: () => void;
   title: string;
   className?: string;
-  iconContainer?: boolean;
 };
 
 const StyledCard = styled(Card)<{
@@ -78,7 +78,6 @@ export const SettingsCard = ({
   onClick,
   title,
   className,
-  iconContainer = true,
 }: SettingsCardProps) => {
   const theme = useTheme();
 
@@ -91,13 +90,7 @@ export const SettingsCard = ({
     >
       <StyledCardContent>
         <StyledHeader>
-          {iconContainer ? (
-            <StyledIconContainer>
-              <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
-            </StyledIconContainer>
-          ) : (
-            <Icon size={theme.icon.size.xl} stroke={theme.icon.stroke.sm} />
-          )}
+          <StyledIconContainer>{Icon}</StyledIconContainer>
           <StyledTitle disabled={disabled}>
             {title}
             {soon && <Pill label="Soon" />}

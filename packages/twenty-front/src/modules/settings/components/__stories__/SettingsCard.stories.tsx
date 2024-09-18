@@ -1,6 +1,7 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, IllustrationIconCalendarEvent } from 'twenty-ui';
+import React from 'react';
+import { ComponentDecorator, IconMailCog } from 'twenty-ui';
 
 const meta: Meta<typeof SettingsCard> = {
   title: 'Modules/Settings/SettingsCard',
@@ -13,7 +14,7 @@ type Story = StoryObj<typeof SettingsCard>;
 export const Default: Story = {
   args: {
     onClick: () => {},
-    Icon: IllustrationIconCalendarEvent,
+    Icon: React.createElement(IconMailCog),
     title: 'Settings Card',
   },
   argTypes: {

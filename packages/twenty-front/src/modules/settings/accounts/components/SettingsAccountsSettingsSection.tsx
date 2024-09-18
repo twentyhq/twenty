@@ -6,6 +6,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { useTheme } from '@emotion/react';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -14,6 +15,7 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
+  const theme = useTheme();
   return (
     <Section>
       <H2Title
@@ -23,7 +25,12 @@ export const SettingsAccountsSettingsSection = () => {
       <StyledCardsContainer>
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.AccountsEmails)}>
           <SettingsCard
-            Icon={IconMailCog}
+            Icon={
+              <IconMailCog
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
             title="Emails"
             description="Set email visibility, manage your blocklist and more."
           />
@@ -32,7 +39,12 @@ export const SettingsAccountsSettingsSection = () => {
           to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
         >
           <SettingsCard
-            Icon={IconCalendarEvent}
+            Icon={
+              <IconCalendarEvent
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
             title="Calendar"
             description="Configure and customize your calendar preferences."
           />

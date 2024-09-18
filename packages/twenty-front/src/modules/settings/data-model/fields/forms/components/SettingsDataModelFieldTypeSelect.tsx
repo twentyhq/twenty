@@ -11,6 +11,7 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
@@ -74,6 +75,7 @@ export const SettingsDataModelFieldTypeSelect = ({
   fieldMetadataItem,
   onFieldTypeSelect,
 }: SettingsDataModelFieldTypeSelectProps) => {
+  const theme = useTheme();
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig>(
@@ -151,9 +153,13 @@ export const SettingsDataModelFieldTypeSelect = ({
                           );
                           onFieldTypeSelect();
                         }}
-                        Icon={config.Icon}
+                        Icon={
+                          <config.Icon
+                            size={theme.icon.size.xl}
+                            stroke={theme.icon.stroke.sm}
+                          />
+                        }
                         title={config.label}
-                        iconContainer={false}
                       />
                     </StyledCardContainer>
                   ))}
