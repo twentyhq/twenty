@@ -1,7 +1,6 @@
 import {
   FindOptionsOrderValue,
   FindOptionsWhere,
-  IsNull,
   ObjectLiteral,
 } from 'typeorm';
 
@@ -40,33 +39,7 @@ export class GraphqlQueryParser {
 
     const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
 
-    // if (!('deletedAt' in this.fieldMetadataMap)) {
     return parsedFilter;
-    // }
-
-    // return this.addDefaultSoftDeleteCondition(parsedFilter);
-  }
-
-  private addDefaultSoftDeleteCondition(
-    filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
-    if (Array.isArray(filter)) {
-      return filter.map((condition) =>
-        this.addSoftDeleteToCondition(condition),
-      );
-    }
-
-    return this.addSoftDeleteToCondition(filter);
-  }
-
-  private addSoftDeleteToCondition(
-    condition: FindOptionsWhere<ObjectLiteral>,
-  ): FindOptionsWhere<ObjectLiteral> {
-    if (!('deletedAt' in condition)) {
-      return { ...condition, deletedAt: IsNull() };
-    }
-
-    return condition;
   }
 
   parseOrder(
