@@ -59,7 +59,7 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 const StyledDescription = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(8)};
+  padding-left: ${({ theme }) => theme.spacing(7)};
 `;
 
 const StyledIconContainer = styled.div`
