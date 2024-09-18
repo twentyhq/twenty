@@ -63,7 +63,7 @@ export class ProcessNestedRelationsHelper {
       where: {
         [`${inverseRelationName}Id`]: In(uniqueRelationIds),
       },
-      take: limit * limit,
+      take: limit * parentObjectRecords.length,
     };
 
     const relationResults = await relationRepository.find(relationFindOptions);
