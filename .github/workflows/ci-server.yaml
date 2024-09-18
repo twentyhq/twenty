@@ -47,6 +47,7 @@ jobs:
         shell: bash
         run: npx nx affected --nxBail --configuration=ci -t=${{ matrix.task }} --parallel=3 >> action_logs.txt 2>&1
       - name: Upload Logs
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: action-logs
