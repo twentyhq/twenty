@@ -5,7 +5,12 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconArchiveOff, IconHierarchy2 } from 'twenty-ui';
+import {
+  H2Title,
+  IconArchive,
+  IconArchiveOff,
+  IconHierarchy2,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -26,13 +31,14 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -55,17 +61,15 @@ export const SettingsObjectFieldEdit = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
-  const { findObjectMetadataItemBySlug } =
-    useFilteredObjectMetadataItems();
+  const { findObjectMetadataItemBySlug } = useFilteredObjectMetadataItems();
 
-  const objectMetadataItem =
-    findObjectMetadataItemBySlug(objectSlug);
+  const objectMetadataItem = findObjectMetadataItemBySlug(objectSlug);
 
-  const { deactivateMetadataField, activateMetadataField } = useFieldMetadataItem();
+  const { deactivateMetadataField, activateMetadataField } =
+    useFieldMetadataItem();
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
-    (fieldMetadataItem) =>
-      getFieldSlug(fieldMetadataItem) === fieldSlug,
+    (fieldMetadataItem) => getFieldSlug(fieldMetadataItem) === fieldSlug,
   );
 
   const getRelationMetadata = useGetRelationMetadata();
@@ -101,11 +105,13 @@ export const SettingsObjectFieldEdit = () => {
       navigate(AppPath.NotFound);
     }
   }, [fieldMetadataItem, objectMetadataItem, navigate]);
-  
+
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && (isValid || true) && !isSubmitting;
-  
-  if (!objectMetadataItem || !fieldMetadataItem) return null;
+
+  if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
+    return null;
+  }
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: fieldMetadataItem,
@@ -116,7 +122,7 @@ export const SettingsObjectFieldEdit = () => {
     formValues: SettingsDataModelFieldEditFormValues,
   ) => {
     const { dirtyFields } = formConfig.formState;
-    
+
     try {
       if (
         formValues.type === FieldMetadataType.Relation &&
@@ -128,7 +134,7 @@ export const SettingsObjectFieldEdit = () => {
             fieldMetadataItem: fieldMetadataItem,
           }) ?? {};
 
-          if (isDefined(relationFieldMetadataItem)) {
+        if (isDefined(relationFieldMetadataItem)) {
           await updateOneFieldMetadataItem({
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
             updatePayload: formValues.relation.field,
@@ -137,13 +143,13 @@ export const SettingsObjectFieldEdit = () => {
       }
 
       const otherDirtyFields = omit(dirtyFields, 'relation');
-      
+
       if (Object.keys(otherDirtyFields).length > 0) {
         const formattedInput = pick(
           formatFieldMetadataItemInput(formValues),
           Object.keys(otherDirtyFields),
         );
-        
+
         await updateOneFieldMetadataItem({
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
@@ -168,7 +174,7 @@ export const SettingsObjectFieldEdit = () => {
   const handleActivate = async () => {
     await activateMetadataField(fieldMetadataItem);
     navigate(`/settings/objects/${objectSlug}`);
-  }
+  };
 
   const shouldDisplaySaveAndCancel =
     canPersistFieldMetadataItemUpdate(fieldMetadataItem);
@@ -179,23 +185,24 @@ export const SettingsObjectFieldEdit = () => {
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
           Icon={IconHierarchy2}
-          title={
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: '/settings/objects',
-                  styles: { minWidth: 'max-content' },
-                },
-                {
-                  children: objectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                  styles: { maxWidth: '60%' },
-                },
-                { children: fieldMetadataItem.label },
-              ]}
-            />
-          }
+          title={fieldMetadataItem?.label}
+          links={[
+            {
+              children: 'Workspace',
+              href: getSettingsPagePath(SettingsPath.Workspace),
+            },
+            {
+              children: 'Objects',
+              href: '/settings/objects',
+            },
+            {
+              children: objectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            {
+              children: fieldMetadataItem.label,
+            },
+          ]}
           actionButton={
             shouldDisplaySaveAndCancel && (
               <SaveAndCancelButtons
@@ -244,11 +251,17 @@ export const SettingsObjectFieldEdit = () => {
                   description="Deactivate this field"
                 />
                 <Button
-                  Icon={fieldMetadataItem.isActive ? IconArchive : IconArchiveOff}
+                  Icon={
+                    fieldMetadataItem.isActive ? IconArchive : IconArchiveOff
+                  }
                   variant="secondary"
-                  title={fieldMetadataItem.isActive ? "Deactivate" : "Activate"}
+                  title={fieldMetadataItem.isActive ? 'Deactivate' : 'Activate'}
                   size="small"
-                  onClick={fieldMetadataItem.isActive ? handleDeactivate : handleActivate}
+                  onClick={
+                    fieldMetadataItem.isActive
+                      ? handleDeactivate
+                      : handleActivate
+                  }
                 />
               </Section>
             )}

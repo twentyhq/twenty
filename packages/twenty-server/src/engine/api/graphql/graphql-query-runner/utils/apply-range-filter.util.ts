@@ -1,28 +1,15 @@
-import {
-  FindOptionsOrderValue,
-  FindOptionsWhere,
-  LessThan,
-  MoreThan,
-  ObjectLiteral,
-} from 'typeorm';
+import { FindOptionsWhere, LessThan, MoreThan, ObjectLiteral } from 'typeorm';
 
 export const applyRangeFilter = (
   where: FindOptionsWhere<ObjectLiteral>,
-  order: Record<string, FindOptionsOrderValue> | undefined,
   cursor: Record<string, any>,
+  isForwardPagination = true,
 ): FindOptionsWhere<ObjectLiteral> => {
-  if (!order) return where;
-
-  const orderEntries = Object.entries(order);
-
-  orderEntries.forEach(([column, order], index) => {
-    if (typeof order !== 'object' || !('direction' in order)) {
+  Object.entries(cursor ?? {}).forEach(([key, value]) => {
+    if (key === 'id') {
       return;
     }
-    where[column] =
-      order.direction === 'ASC'
-        ? MoreThan(cursor[index])
-        : LessThan(cursor[index]);
+    where[key] = isForwardPagination ? MoreThan(value) : LessThan(value);
   });
 
   return where;

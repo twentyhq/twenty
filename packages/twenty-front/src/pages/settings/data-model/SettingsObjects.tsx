@@ -145,6 +145,15 @@ export const SettingsObjects = () => {
           />
         </UndecoratedLink>
       }
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Objects',
+        },
+      ]}
     >
       <SettingsPageContainer>
         <>

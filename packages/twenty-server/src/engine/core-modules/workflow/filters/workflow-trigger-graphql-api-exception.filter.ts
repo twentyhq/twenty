@@ -7,7 +7,7 @@ import {
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
-} from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 @Catch(WorkflowTriggerException)
 export class WorkflowTriggerGraphqlApiExceptionFilter

@@ -4,14 +4,12 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexBoardDataLoader } from '@/object-record/record-index/components/RecordIndexBoardDataLoader';
 import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
-import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
@@ -21,7 +19,7 @@ import { recordIndexSortsState } from '@/object-record/record-index/states/recor
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
-import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
@@ -31,6 +29,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -46,20 +45,15 @@ const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
   padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
 
-type RecordIndexContainerProps = {
-  recordIndexId: string;
-  objectNamePlural: string;
-  createRecord: () => Promise<void>;
-};
-
-export const RecordIndexContainer = ({
-  createRecord,
-  recordIndexId,
-  objectNamePlural,
-}: RecordIndexContainerProps) => {
+export const RecordIndexContainer = () => {
   const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
     recordIndexViewTypeState,
   );
+
+  const { objectNamePlural, recordIndexId } = useContext(
+    RecordIndexRootPropsContext,
+  );
+
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
@@ -110,20 +104,6 @@ export const RecordIndexContainer = ({
     [columnDefinitions, setTableColumns],
   );
 
-  const { handleIndexIdentifierClick } = useHandleIndexIdentifierClick({
-    objectMetadataItem,
-    recordIndexId,
-  });
-
-  const handleIndexRecordsLoaded = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        // TODO: find a better way to reset this state ?
-        set(lastShowPageRecordIdState, null);
-      },
-    [],
-  );
-
   return (
     <StyledContainer>
       <InformationBannerWrapper />
@@ -170,46 +150,37 @@ export const RecordIndexContainer = ({
             />
           </StyledContainerWithPadding>
         </SpreadsheetImportProvider>
-        <RecordIndexEventContext.Provider
-          value={{
-            onIndexIdentifierClick: handleIndexIdentifierClick,
-            onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          }}
-        >
-          {recordIndexViewType === ViewType.Table && (
-            <>
-              <RecordIndexTableContainer
-                recordTableId={recordIndexId}
-                viewBarId={recordIndexId}
-                objectNameSingular={objectNameSingular}
-                createRecord={createRecord}
-              />
-              <RecordIndexTableContainerEffect
-                objectNameSingular={objectNameSingular}
-                recordTableId={recordIndexId}
-                viewBarId={recordIndexId}
-              />
-            </>
-          )}
-          {recordIndexViewType === ViewType.Kanban && (
-            <StyledContainerWithPadding fullHeight>
-              <RecordIndexBoardContainer
-                recordBoardId={recordIndexId}
-                viewBarId={recordIndexId}
-                objectNameSingular={objectNameSingular}
-                createRecord={createRecord}
-              />
-              <RecordIndexBoardDataLoader
-                objectNameSingular={objectNameSingular}
-                recordBoardId={recordIndexId}
-              />
-              <RecordIndexBoardDataLoaderEffect
-                objectNameSingular={objectNameSingular}
-                recordBoardId={recordIndexId}
-              />
-            </StyledContainerWithPadding>
-          )}
-        </RecordIndexEventContext.Provider>
+
+        {recordIndexViewType === ViewType.Table && (
+          <>
+            <RecordIndexTableContainer
+              recordTableId={recordIndexId}
+              viewBarId={recordIndexId}
+            />
+            <RecordIndexTableContainerEffect
+              objectNameSingular={objectNameSingular}
+              recordTableId={recordIndexId}
+              viewBarId={recordIndexId}
+            />
+          </>
+        )}
+        {recordIndexViewType === ViewType.Kanban && (
+          <StyledContainerWithPadding fullHeight>
+            <RecordIndexBoardContainer
+              recordBoardId={recordIndexId}
+              viewBarId={recordIndexId}
+              objectNameSingular={objectNameSingular}
+            />
+            <RecordIndexBoardDataLoader
+              objectNameSingular={objectNameSingular}
+              recordBoardId={recordIndexId}
+            />
+            <RecordIndexBoardDataLoaderEffect
+              objectNameSingular={objectNameSingular}
+              recordBoardId={recordIndexId}
+            />
+          </StyledContainerWithPadding>
+        )}
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );
