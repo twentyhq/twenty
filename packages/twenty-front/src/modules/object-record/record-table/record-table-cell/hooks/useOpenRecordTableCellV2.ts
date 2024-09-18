@@ -20,7 +20,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from '~/utils/isDefined';
 
-import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useContext } from 'react';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
@@ -41,7 +41,7 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
-  const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
+  const { onIndexIdentifierClick } = useContext(RecordIndexRootPropsContext);
   const moveEditModeToTableCellPosition =
     useMoveEditModeToTableCellPosition(tableScopeId);
 

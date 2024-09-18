@@ -1,5 +1,5 @@
 diff --git a/dist/cjs/index.js b/dist/cjs/index.js
-index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd38790b508 100644
+index 1684394..32602b3 100644
 --- a/dist/cjs/index.js
 +++ b/dist/cjs/index.js
 @@ -3,10 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
@@ -26,7 +26,7 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
          const app = this.httpAdapterHost.httpAdapter.getInstance();
          preStartHook?.(app);
          // nest's logger doesnt have the info method
-@@ -42,6 +46,40 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+@@ -42,6 +46,46 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
          }
          const yoga = (0, graphql_yoga_1.createYoga)({
              ...options,
@@ -60,6 +60,12 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
 +                    schemas,
 +                });
 +
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
++
 +                this.schemaCache.set(cacheKey, mergedSchemas)
 +                
 +                return mergedSchemas;
@@ -67,7 +73,7 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use nest logger
-@@ -54,11 +91,45 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+@@ -54,11 +98,51 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
          this.yoga = yoga;
          app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
      }
@@ -107,6 +113,12 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
 +                    schemas,
 +                });
 +
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
++
 +                this.schemaCache.set(cacheKey, mergedSchemas)
 +                
 +                return mergedSchemas;
@@ -115,15 +127,19 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
              // disable logging by default
              // however, if `true` use fastify logger
 diff --git a/dist/esm/index.js b/dist/esm/index.js
-index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b39f580570 100644
+index 7068c51..b8cbf9e 100644
 --- a/dist/esm/index.js
 +++ b/dist/esm/index.js
-@@ -2,8 +2,12 @@ import { __decorate } from "tslib";
- import { printSchema } from 'graphql';
- import { createYoga, filter, pipe } from 'graphql-yoga';
- import { Injectable, Logger } from '@nestjs/common';
+@@ -1,9 +1,13 @@
+-import { __decorate } from "tslib";
+-import { printSchema } from 'graphql';
+-import { createYoga, filter, pipe } from 'graphql-yoga';
 +import { mergeSchemas } from '@graphql-tools/schema';
+ import { Injectable, Logger } from '@nestjs/common';
  import { AbstractGraphQLDriver, GqlSubscriptionService, } from '@nestjs/graphql';
++import { printSchema } from 'graphql';
++import { createYoga, filter, pipe } from 'graphql-yoga';
++import { __decorate } from "tslib";
  export class AbstractYogaDriver extends AbstractGraphQLDriver {
 +    
 +    schemaCache = new Map();
@@ -140,7 +156,7 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
          const app = this.httpAdapterHost.httpAdapter.getInstance();
          preStartHook?.(app);
          // nest's logger doesnt have the info method
-@@ -39,6 +43,40 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+@@ -39,6 +43,46 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
          }
          const yoga = createYoga({
              ...options,
@@ -171,8 +187,14 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
 +                }
 +
 +                const mergedSchemas = mergeSchemas({
-+                schemas,
++                    schemas,
 +                });
++
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
 +
 +                this.schemaCache.set(cacheKey, mergedSchemas)
 +
@@ -181,7 +203,7 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use nest logger
-@@ -51,11 +88,45 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+@@ -51,11 +95,51 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
          this.yoga = yoga;
          app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
      }
@@ -221,6 +243,12 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
 +                schemas,
 +                });
 +
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
++
 +                this.schemaCache.set(cacheKey, mergedSchemas)
 +
 +                return mergedSchemas;
@@ -229,7 +257,7 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
              // disable logging by default
              // however, if `true` use fastify logger
 diff --git a/dist/typings/index.d.cts b/dist/typings/index.d.cts
-index 2c6a9656193392680121487c7147db459d6b69ab..2f2b59f0e311f0526a7cfdad97372229301aabd7 100644
+index 2c6a965..2f2b59f 100644
 --- a/dist/typings/index.d.cts
 +++ b/dist/typings/index.d.cts
 @@ -1,7 +1,8 @@
@@ -268,7 +296,7 @@ index 2c6a9656193392680121487c7147db459d6b69ab..2f2b59f0e311f0526a7cfdad97372229
      }): void;
      subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
 diff --git a/dist/typings/index.d.ts b/dist/typings/index.d.ts
-index 2c6a9656193392680121487c7147db459d6b69ab..fd86daccf3e5a93ff44b568c9793c16d761f4f53 100644
+index 2c6a965..fd86dac 100644
 --- a/dist/typings/index.d.ts
 +++ b/dist/typings/index.d.ts
 @@ -1,7 +1,8 @@
@@ -306,7 +334,7 @@ index 2c6a9656193392680121487c7147db459d6b69ab..fd86daccf3e5a93ff44b568c9793c16d
      }): void;
      subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
 diff --git a/src/index.ts b/src/index.ts
-index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac941edabb 100644
+index ce142f6..10e17d2 100644
 --- a/src/index.ts
 +++ b/src/index.ts
 @@ -1,9 +1,10 @@
@@ -422,7 +450,7 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
        graphqlEndpoint: options.path,
        // disable logging by default
        // however, if `true` use nest logger
-@@ -105,8 +149,8 @@ export abstract class AbstractYogaDriver<
+@@ -105,8 +150,8 @@ export abstract class AbstractYogaDriver<
          options.logging == null
            ? false
            : options.logging
@@ -433,7 +461,7 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
      });
  
      this.yoga = yoga as YogaDriverServerInstance<Platform>;
-@@ -115,7 +159,7 @@ export abstract class AbstractYogaDriver<
+@@ -115,7 +160,7 @@ export abstract class AbstractYogaDriver<
    }
  
    protected registerFastify(
@@ -442,7 +470,7 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
      { preStartHook }: { preStartHook?: (app: FastifyInstance) => void } = {},
    ) {
      const app: FastifyInstance = this.httpAdapterHost.httpAdapter.getInstance();
-@@ -124,6 +168,40 @@ export abstract class AbstractYogaDriver<
+@@ -124,6 +169,40 @@ export abstract class AbstractYogaDriver<
  
      const yoga = createYoga<YogaDriverServerContext<'fastify'>>({
        ...options,
@@ -483,7 +511,7 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
        graphqlEndpoint: options.path,
        // disable logging by default
        // however, if `true` use fastify logger
-@@ -191,8 +268,8 @@ export class YogaDriver<
+@@ -191,8 +270,8 @@ export class YogaDriver<
        const config: SubscriptionConfig =
          options.subscriptions === true
            ? {

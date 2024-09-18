@@ -19,6 +19,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -123,7 +125,17 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconUsers} title="Members">
+    <SubMenuTopBarContainer
+      Icon={IconUsers}
+      title="Members"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Members' },
+      ]}
+    >
       <SettingsPageContainer>
         {currentWorkspace?.inviteHash && (
           <Section>

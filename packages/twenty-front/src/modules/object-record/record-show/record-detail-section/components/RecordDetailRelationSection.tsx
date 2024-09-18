@@ -30,6 +30,7 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -54,6 +55,7 @@ export const RecordDetailRelationSection = ({
   } = fieldDefinition.metadata as FieldRelationMetadata;
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
+  const isMobile = useIsMobile();
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
@@ -168,7 +170,7 @@ export const RecordDetailRelationSection = ({
               }
             : undefined
         }
-        hideRightAdornmentOnMouseLeave={!isDropdownOpen}
+        hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         rightAdornment={
           <DropdownScope dropdownScopeId={dropdownId}>
             <StyledAddDropdown
