@@ -34,7 +34,6 @@ import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/works
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -150,14 +149,6 @@ export class AuthService {
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      user.defaultWorkspace,
-    );
-
-    if (workspaceMember) {
-      user.workspaceMember = workspaceMember as WorkspaceMember;
-    }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);

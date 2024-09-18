@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { Any } from 'typeorm';
 
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
@@ -125,6 +125,7 @@ export class MessageChannelSyncStatusService {
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
       syncStatus: MessageChannelSyncStatus.ONGOING,
+      syncStageStartedAt: new Date().toISOString(),
     });
   }
 
@@ -142,9 +143,10 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStatus: MessageChannelSyncStatus.ACTIVE,
+      syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+      throttleFailureCount: 0,
+      syncStageStartedAt: null,
     });
-
-    await this.schedulePartialMessageListFetch(messageChannelIds);
   }
 
   public async markAsMessagesImportOngoing(messageChannelIds: string[]) {

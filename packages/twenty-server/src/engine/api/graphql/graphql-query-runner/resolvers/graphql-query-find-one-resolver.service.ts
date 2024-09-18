@@ -55,10 +55,7 @@ export class GraphqlQueryFindOneResolverService {
       objectMetadataItem,
       graphqlFields(info),
     );
-    const where = graphqlQueryParser.parseFilter(
-      args.filter ?? ({} as Filter),
-      objectMetadataItem.isSoftDeletable ?? false,
-    );
+    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     const objectRecord = await repository.findOne({ where, select, relations });
 

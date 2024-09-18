@@ -2,6 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useRecordIndexPageKanbanAddButton } from '@/object-record/record-index/hooks/useRecordIndexPageKanbanAddButton';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
@@ -14,7 +15,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconPlus, isDefined } from 'twenty-ui';
 
@@ -26,19 +27,15 @@ const StyledDropDownMenu = styled(DropdownMenu)`
   width: 200px;
 `;
 
-type RecordIndexPageKanbanAddButtonProps = {
-  recordIndexId: string;
-  objectNamePlural: string;
-};
-
-export const RecordIndexPageKanbanAddButton = ({
-  recordIndexId,
-  objectNamePlural,
-}: RecordIndexPageKanbanAddButtonProps) => {
+export const RecordIndexPageKanbanAddButton = () => {
   const dropdownId = `record-index-page-add-button-dropdown`;
   const [isSelectingCompany, setIsSelectingCompany] = useState(false);
   const [selectedColumnDefinition, setSelectedColumnDefinition] =
     useState<RecordBoardColumnDefinition>();
+
+  const { recordIndexId, objectNamePlural } = useContext(
+    RecordIndexRootPropsContext,
+  );
 
   const { columnIdsState } = useRecordBoardStates(recordIndexId);
   const columnIds = useRecoilValue(columnIdsState);

@@ -1,11 +1,12 @@
-import { Module, Global, Inject, OnModuleDestroy } from '@nestjs/common';
-import { CacheModule, CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { CACHE_MANAGER, Cache, CacheModule } from '@nestjs/cache-manager';
+import { Global, Inject, Module, OnModuleDestroy } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/cache-storage.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { cacheStorageModuleFactory } from 'src/engine/core-modules/cache-storage/cache-storage.module-factory';
+import { FlushCacheCommand } from 'src/engine/core-modules/cache-storage/commands/flush-cache.command';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Global()
 @Module({
@@ -25,8 +26,9 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
       },
       inject: [CACHE_MANAGER],
     })),
+    FlushCacheCommand,
   ],
-  exports: [...Object.values(CacheStorageNamespace)],
+  exports: [...Object.values(CacheStorageNamespace), FlushCacheCommand],
 })
 export class CacheStorageModule implements OnModuleDestroy {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
