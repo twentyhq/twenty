@@ -27,10 +27,9 @@ export const useFilteredObjectMetadataItems = () => {
     ({ isActive, isSystem }) => !isActive && !isSystem,
   );
 
-  const findObjectMetadataItemBySlug = (slug: string) => 
+  const findObjectMetadataItemBySlug = (slug: string) =>
     objectMetadataItems.find(
-      (objectMetadataItem) => 
-        getObjectSlug(objectMetadataItem) === slug
+      (objectMetadataItem) => getObjectSlug(objectMetadataItem) === slug,
     );
 
   const findActiveObjectMetadataItemBySlug = (slug: string) =>

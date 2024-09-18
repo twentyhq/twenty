@@ -62,18 +62,18 @@ describe('useFilteredObjectMetadataItems', () => {
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
-  
-        return useFilteredObjectMetadataItems();  
+
+        return useFilteredObjectMetadataItems();
       },
       {
         wrapper: Wrapper,
       },
     );
-  
+
     act(() => {
-      const res = result.current.findObjectMetadataItemBySlug('people'); 
+      const res = result.current.findObjectMetadataItemBySlug('people');
       expect(res).toBeDefined();
-      expect(res?.namePlural).toBe('people');  
+      expect(res?.namePlural).toBe('people');
     });
   });
 
