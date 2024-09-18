@@ -66,6 +66,7 @@ export const EventCardMessage = ({
     objectNameSingular: CoreObjectNameSingular.Message,
     objectRecordId: messageId,
     recordGqlFields: {
+      id: true,
       text: true,
       subject: true,
       direction: true,
@@ -78,6 +79,8 @@ export const EventCardMessage = ({
       upsertRecords([data]);
     },
   });
+
+  console.log('message', messageId);
 
   const { openEmailThread } = useEmailThread();
 
