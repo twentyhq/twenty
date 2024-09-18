@@ -35,11 +35,15 @@ export class GraphqlQueryFindOneResolverService {
   ): Promise<ObjectRecord | undefined> {
     const { authContext, objectMetadataItem, info, objectMetadataCollection } =
       options;
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
-        objectMetadataItem.nameSingular,
       );
+
+    const repository = await dataSource.getRepository<ObjectRecord>(
+      objectMetadataItem.nameSingular,
+    );
+
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
@@ -89,6 +93,7 @@ export class GraphqlQueryFindOneResolverService {
         relations,
         limit,
         authContext,
+        dataSource,
       );
     }
 

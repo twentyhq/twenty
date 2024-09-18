@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { IconSend } from 'twenty-ui';
 import { z } from 'zod';
@@ -11,13 +11,13 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
-import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { isDefined } from '~/utils/isDefined';
+import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
-  padding-bottom: 12px;
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledLinkContainer = styled.div`

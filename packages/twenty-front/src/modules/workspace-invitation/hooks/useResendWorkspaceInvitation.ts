@@ -1,15 +1,15 @@
+import { useSetRecoilState } from 'recoil';
 import {
-  useResendWorkspaceInvitationMutation,
   ResendWorkspaceInvitationMutationVariables,
+  useResendWorkspaceInvitationMutation,
 } from '~/generated/graphql';
-import { useRecoilState } from 'recoil';
 import { workspaceInvitationsState } from '../states/workspaceInvitationsStates';
 
 export const useResendWorkspaceInvitation = () => {
   const [resendWorkspaceInvitationMutation] =
     useResendWorkspaceInvitationMutation();
 
-  const [, setWorkspaceInvitations] = useRecoilState(workspaceInvitationsState);
+  const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
 
   const resendInvitation = async ({
     appTokenId,

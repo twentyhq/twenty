@@ -1,27 +1,28 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ModuleRef } from '@nestjs/core';
 
-import { Repository, IsNull } from 'typeorm';
-import { SendInviteLinkEmail } from 'twenty-emails';
 import { render } from '@react-email/render';
+import { SendInviteLinkEmail } from 'twenty-emails';
+import { IsNull, Repository } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
+@Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceInvitationService {
   private tokenService: TokenService;
@@ -32,18 +33,7 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
-    private moduleRef: ModuleRef,
   ) {}
-
-  onModuleInit() {
-    this.tokenService = this.moduleRef.get(TokenService, { strict: false });
-    this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
-      strict: false,
-    });
-    this.onboardingService = this.moduleRef.get(OnboardingService, {
-      strict: false,
-    });
-  }
 
   private async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository

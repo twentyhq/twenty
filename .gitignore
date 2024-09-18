@@ -29,4 +29,3 @@ storybook-static
 .nyc_output
 test-results/
 
-graphql.config.yml

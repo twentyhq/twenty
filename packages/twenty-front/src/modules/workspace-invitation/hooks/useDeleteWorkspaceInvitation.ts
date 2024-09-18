@@ -1,15 +1,15 @@
+import { useSetRecoilState } from 'recoil';
 import {
   DeleteWorkspaceInvitationMutationVariables,
   useDeleteWorkspaceInvitationMutation,
 } from '~/generated/graphql';
-import { useRecoilState } from 'recoil';
 import { workspaceInvitationsState } from '../states/workspaceInvitationsStates';
 
 export const useDeleteWorkspaceInvitation = () => {
   const [deleteWorkspaceInvitationMutation] =
     useDeleteWorkspaceInvitationMutation();
 
-  const [, setWorkspaceInvitations] = useRecoilState(workspaceInvitationsState);
+  const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
 
   const deleteWorkspaceInvitation = async ({
     appTokenId,
