@@ -37,7 +37,8 @@ export const RecordShowPageHeaderWorkflow = ({
         onClick={() => {}}
       />
 
-      {workflowWithCurrentVersion?.currentVersion?.status === 'DRAFT' ? (
+      {workflowWithCurrentVersion?.currentVersion?.status === 'DRAFT' &&
+      workflowWithCurrentVersion.versions?.length > 1 ? (
         <Button
           title="Discard Draft"
           variant="secondary"
