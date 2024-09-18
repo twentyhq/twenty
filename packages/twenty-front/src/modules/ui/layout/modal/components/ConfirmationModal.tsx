@@ -85,10 +85,12 @@ export const ConfirmationModal = ({
     250,
   );
 
-  const handleConfirmClick = async () => {
-    await onConfirmClick();
+  const handleConfirmClick = () => {
+    onConfirmClick();
+
     setIsOpen(false);
   };
+
   const handleEnter = () => {
     if (isValidValue) {
       handleConfirmClick();
