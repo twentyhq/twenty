@@ -80,8 +80,6 @@ export const EventCardMessage = ({
     },
   });
 
-  console.log('message', messageId);
-
   const { openEmailThread } = useEmailThread();
 
   if (isDefined(error)) {
