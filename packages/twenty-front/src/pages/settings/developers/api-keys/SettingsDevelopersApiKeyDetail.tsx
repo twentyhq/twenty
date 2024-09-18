@@ -19,6 +19,8 @@ import { computeNewExpirationDate } from '@/settings/developers/utils/compute-ne
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -41,9 +43,11 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SettingsDevelopersApiKeyDetail = () => {
+  const { enqueueSnackBar } = useSnackBar();
   const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
     useState(false);
   const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
@@ -69,12 +73,22 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const developerPath = getSettingsPagePath(SettingsPath.Developers);
 
   const deleteIntegration = async (redirect = true) => {
-    await updateApiKey?.({
-      idToUpdate: apiKeyId,
-      updateOneRecordInput: { revokedAt: DateTime.now().toString() },
-    });
-    if (redirect) {
-      navigate(developerPath);
+    setIsLoading(true);
+
+    try {
+      await updateApiKey?.({
+        idToUpdate: apiKeyId,
+        updateOneRecordInput: { revokedAt: DateTime.now().toString() },
+      });
+      if (redirect) {
+        navigate(developerPath);
+      }
+    } catch (err) {
+      enqueueSnackBar(`Error deleting api key: ${err}`, {
+        variant: SnackBarVariant.Error,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,20 +116,28 @@ export const SettingsDevelopersApiKeyDetail = () => {
       token: tokenData.data?.generateApiKeyToken.token,
     };
   };
-
   const regenerateApiKey = async () => {
-    if (isNonEmptyString(apiKeyData?.name)) {
-      const newExpiresAt = computeNewExpirationDate(
-        apiKeyData?.expiresAt,
-        apiKeyData?.createdAt,
-      );
-      const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
-      await deleteIntegration(false);
+    setIsLoading(true);
+    try {
+      if (isNonEmptyString(apiKeyData?.name)) {
+        const newExpiresAt = computeNewExpirationDate(
+          apiKeyData?.expiresAt,
+          apiKeyData?.createdAt,
+        );
+        const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
+        await deleteIntegration(false);
 
-      if (isNonEmptyString(apiKey?.token)) {
-        setApiKeyToken(apiKey.token);
-        navigate(`/settings/developers/api-keys/${apiKey.id}`);
+        if (isNonEmptyString(apiKey?.token)) {
+          setApiKeyToken(apiKey.token);
+          navigate(`/settings/developers/api-keys/${apiKey.id}`);
+        }
       }
+    } catch (err) {
+      enqueueSnackBar(`Error regenerating api key: ${err}`, {
+        variant: SnackBarVariant.Error,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -225,6 +247,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
         onConfirmClick={deleteIntegration}
         deleteButtonText="Delete"
+        loading={isLoading}
       />
       <ConfirmationModal
         confirmationPlaceholder="yes"
@@ -241,6 +264,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
         onConfirmClick={regenerateApiKey}
         deleteButtonText="Regenerate key"
+        loading={isLoading}
       />
     </>
   );
