@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import styled from '@emotion/styled';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
@@ -41,6 +41,11 @@ const StyledTextAreaContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   background: ${({ theme }) => theme.background.primary};
+  @media (max-width: 768px) {
+    position: absolute;
+    left: -40px;
+    top: 10px;
+  }
 `;
 
 const StyledLightIconButtonContainer = styled.div`

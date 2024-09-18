@@ -22,6 +22,9 @@ const StyledHeader = styled.div`
   justify-content: left;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+  position: static;
+  top: 0px;
+  overflow-y: auto;
 `;
 
 const StyledAmount = styled.div`
@@ -158,6 +161,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledRightContainer>
         </StyledHeaderContainer>
       </StyledHeader>
+
       {isBoardColumnMenuOpen && columnDefinition.actions.length > 0 && (
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
