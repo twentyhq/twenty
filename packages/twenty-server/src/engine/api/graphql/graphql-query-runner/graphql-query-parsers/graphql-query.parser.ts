@@ -40,11 +40,11 @@ export class GraphqlQueryParser {
 
     const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
 
-    if (!('deletedAt' in this.fieldMetadataMap)) {
-      return parsedFilter;
-    }
+    // if (!('deletedAt' in this.fieldMetadataMap)) {
+    return parsedFilter;
+    // }
 
-    return this.addDefaultSoftDeleteCondition(parsedFilter);
+    // return this.addDefaultSoftDeleteCondition(parsedFilter);
   }
 
   private addDefaultSoftDeleteCondition(
