@@ -18,6 +18,9 @@ export const useDateFieldDisplay = () => {
   );
 
   return {
+    // TODO: we have to use this because we removed the assertion that would have otherwise narrowed the type because
+    // it impacts performance. We should find a way to assert the type in a way that doesn't impact performance.
+    // Maybe a level above ?
     fieldDefinition: fieldDefinition as FieldDefinition<FieldDateMetadata>,
     fieldValue,
     hotkeyScope,
