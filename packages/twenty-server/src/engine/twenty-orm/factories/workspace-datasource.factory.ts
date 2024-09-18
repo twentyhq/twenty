@@ -4,6 +4,7 @@ import { EntitySchema } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
@@ -33,14 +34,27 @@ export class WorkspaceDatasourceFactory {
   public async create(
     workspaceId: string,
     workspaceMetadataVersion: number | null,
+    failOnMetadataCacheMiss = true,
   ): Promise<WorkspaceDataSource> {
-    const desiredWorkspaceMetadataVersion =
-      await this.computeDesiredWorkspaceMetadataVersion(
-        workspaceId,
-        workspaceMetadataVersion,
-      );
+    const {
+      metadataVersion: cachedWorkspaceMetadataVersion,
+      objectMetadataMap: cachedObjectMetadataMap,
+    } = await this.getWorkspaceMetadataFromCache(
+      workspaceId,
+      failOnMetadataCacheMiss,
+    );
 
-    const cacheKey = `${workspaceId}-${desiredWorkspaceMetadataVersion}`;
+    if (
+      workspaceMetadataVersion !== null &&
+      cachedWorkspaceMetadataVersion !== workspaceMetadataVersion
+    ) {
+      throw new TwentyORMException(
+        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${cachedWorkspaceMetadataVersion}. Desired version: ${workspaceMetadataVersion}`,
+        TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
+      );
+    }
+
+    const cacheKey = `${workspaceId}-${cachedWorkspaceMetadataVersion}`;
 
     if (cacheKey in this.cachedDatasourcePromise) {
       return this.cachedDatasourcePromise[cacheKey];
@@ -52,25 +66,8 @@ export class WorkspaceDatasourceFactory {
           cacheKey as '`${string}-${string}`',
           async () => {
             this.logger.log(
-              `Creating workspace data source for workspace ${workspaceId} and metadata version ${desiredWorkspaceMetadataVersion}`,
+              `Creating workspace data source for workspace ${workspaceId} and metadata version ${cachedWorkspaceMetadataVersion}`,
             );
-            const cachedObjectMetadataMap =
-              await this.workspaceCacheStorageService.getObjectMetadataMap(
-                workspaceId,
-                desiredWorkspaceMetadataVersion,
-              );
-
-            if (!cachedObjectMetadataMap) {
-              await this.workspaceMetadataCacheService.recomputeMetadataCache(
-                workspaceId,
-                true,
-              );
-
-              throw new TwentyORMException(
-                `Object metadata map not found for workspace ${workspaceId}`,
-                TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
-              );
-            }
 
             const dataSourceMetadata =
               await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
@@ -87,7 +84,7 @@ export class WorkspaceDatasourceFactory {
             const cachedEntitySchemaOptions =
               await this.workspaceCacheStorageService.getORMEntitySchema(
                 workspaceId,
-                desiredWorkspaceMetadataVersion,
+                cachedWorkspaceMetadataVersion,
               );
 
             let cachedEntitySchemas: EntitySchema[];
@@ -101,7 +98,7 @@ export class WorkspaceDatasourceFactory {
                 Object.values(cachedObjectMetadataMap).map((objectMetadata) =>
                   this.entitySchemaFactory.create(
                     workspaceId,
-                    desiredWorkspaceMetadataVersion,
+                    cachedWorkspaceMetadataVersion,
                     objectMetadata,
                     cachedObjectMetadataMap,
                   ),
@@ -110,7 +107,7 @@ export class WorkspaceDatasourceFactory {
 
               await this.workspaceCacheStorageService.setORMEntitySchema(
                 workspaceId,
-                desiredWorkspaceMetadataVersion,
+                cachedWorkspaceMetadataVersion,
                 entitySchemas.map((entitySchema) => entitySchema.options),
               );
 
@@ -175,45 +172,67 @@ export class WorkspaceDatasourceFactory {
     return creationPromise;
   }
 
-  private async computeDesiredWorkspaceMetadataVersion(
+  public async destroy(workspaceId: string): Promise<void> {
+    const cachedWorkspaceMetadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    await this.cacheManager.clearKey(
+      `${workspaceId}-${cachedWorkspaceMetadataVersion}`,
+    );
+  }
+
+  private async getWorkspaceMetadataFromCache(
     workspaceId: string,
-    workspaceMetadataVersion: number | null,
-  ): Promise<number> {
-    const latestWorkspaceMetadataVersion =
+    failOnMetadataCacheMiss = true,
+  ): Promise<{
+    metadataVersion: number;
+    objectMetadataMap: ObjectMetadataMap;
+  }> {
+    let latestWorkspaceMetadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (latestWorkspaceMetadataVersion === undefined) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache(
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
         workspaceId,
-      );
+        ignoreLock: !failOnMetadataCacheMiss,
+      });
+
+      if (failOnMetadataCacheMiss) {
+        throw new TwentyORMException(
+          `Metadata version not found for workspace ${workspaceId}`,
+          TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+        );
+      } else {
+        latestWorkspaceMetadataVersion =
+          await this.workspaceCacheStorageService.getMetadataVersion(
+            workspaceId,
+          );
+      }
+    }
+
+    if (!latestWorkspaceMetadataVersion) {
       throw new TwentyORMException(
-        `Metadata version not found for workspace ${workspaceId}`,
+        `Metadata version not found after recompute for workspace ${workspaceId}`,
         TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 
-    const desiredWorkspaceMetadataVersion =
-      workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
+    const objectMetadataMap =
+      await this.workspaceCacheStorageService.getObjectMetadataMap(
+        workspaceId,
+        latestWorkspaceMetadataVersion,
+      );
 
-    if (latestWorkspaceMetadataVersion !== desiredWorkspaceMetadataVersion) {
+    if (!objectMetadataMap) {
       throw new TwentyORMException(
-        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${latestWorkspaceMetadataVersion}. Desired version: ${desiredWorkspaceMetadataVersion}`,
-        TwentyORMExceptionCode.METADATA_VERSION_MISMATCH,
+        `Object metadata map not found for workspace ${workspaceId}`,
+        TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
       );
     }
 
-    return desiredWorkspaceMetadataVersion;
-  }
-
-  public async destroy(
-    workspaceId: string,
-    metadataVersion: number | null,
-  ): Promise<void> {
-    const desiredWorkspaceMetadataVersion =
-      this.computeDesiredWorkspaceMetadataVersion(workspaceId, metadataVersion);
-
-    await this.cacheManager.clearKey(
-      `${workspaceId}-${desiredWorkspaceMetadataVersion}`,
-    );
+    return {
+      metadataVersion: latestWorkspaceMetadataVersion,
+      objectMetadataMap,
+    };
   }
 }
