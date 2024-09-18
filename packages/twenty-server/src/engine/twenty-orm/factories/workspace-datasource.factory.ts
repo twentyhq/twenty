@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
@@ -16,6 +16,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
+  private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
   private cacheManager = new CacheManager<WorkspaceDataSource>();
 
   constructor(
@@ -39,6 +40,9 @@ export class WorkspaceDatasourceFactory {
     const workspaceDataSource = await this.cacheManager.execute(
       `${workspaceId}-${desiredWorkspaceMetadataVersion}`,
       async () => {
+        this.logger.log(
+          `Creating workspace data source for workspace ${workspaceId} and metadata version ${desiredWorkspaceMetadataVersion}`,
+        );
         const cachedObjectMetadataMap =
           await this.workspaceCacheStorageService.getObjectMetadataMap(
             workspaceId,
