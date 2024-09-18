@@ -1,7 +1,7 @@
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { SyncStatus } from '@/settings/accounts/enums/syncStatus.enum';
-import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus.util';
+import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { Status } from '@/ui/display/status/components/Status';
 import styled from '@emotion/styled';
 
