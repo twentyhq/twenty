@@ -58,6 +58,22 @@ registerEnumType(MessageChannelVisibility, {
   name: 'MessageChannelVisibility',
 });
 
+registerEnumType(MessageChannelSyncStatus, {
+  name: 'MessageChannelSyncStatus',
+});
+
+registerEnumType(MessageChannelSyncStage, {
+  name: 'MessageChannelSyncStage',
+});
+
+registerEnumType(MessageChannelType, {
+  name: 'MessageChannelType',
+});
+
+registerEnumType(MessageChannelContactAutoCreationPolicy, {
+  name: 'MessageChannelContactAutoCreationPolicy',
+});
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannel,
   namePlural: 'messageChannels',
