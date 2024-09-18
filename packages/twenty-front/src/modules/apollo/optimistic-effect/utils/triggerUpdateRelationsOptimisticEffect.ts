@@ -1,6 +1,5 @@
 import { ApolloCache } from '@apollo/client';
 
-import { getRelationDefinition } from '@/apollo/optimistic-effect/utils/getRelationDefinition';
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
@@ -45,16 +44,23 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         return;
       }
 
-      const relationDefinition = getRelationDefinition({
-        fieldMetadataItemOnSourceRecord,
-        objectMetadataItems,
-      });
+      const relationDefinition =
+        fieldMetadataItemOnSourceRecord.relationDefinition;
+
       if (!relationDefinition) {
         return;
       }
 
-      const { targetObjectMetadataItem, fieldMetadataItemOnTargetRecord } =
-        relationDefinition;
+      const { targetObjectMetadata, targetFieldMetadata } = relationDefinition;
+
+      const fullTargetObjectMetadataItem = objectMetadataItems.find(
+        ({ nameSingular }) =>
+          nameSingular === targetObjectMetadata.nameSingular,
+      );
+
+      if (!fullTargetObjectMetadataItem) {
+        return;
+      }
 
       const currentFieldValueOnSourceRecord:
         | RecordGqlConnection
@@ -80,7 +86,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       //   it's an object record connection (we can still check it though as a safeguard)
       const currentFieldValueOnSourceRecordIsARecordConnection =
         isObjectRecordConnection(
-          targetObjectMetadataItem.nameSingular,
+          targetObjectMetadata.nameSingular,
           currentFieldValueOnSourceRecord,
         );
 
@@ -93,7 +99,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
 
       const updatedFieldValueOnSourceRecordIsARecordConnection =
         isObjectRecordConnection(
-          targetObjectMetadataItem.nameSingular,
+          targetObjectMetadata.nameSingular,
           updatedFieldValueOnSourceRecord,
         );
 
@@ -112,13 +118,13 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         //   Instead of hardcoding it here
         const shouldCascadeDeleteTargetRecords =
           CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
-            targetObjectMetadataItem.nameSingular as CoreObjectNameSingular,
+            targetObjectMetadata.nameSingular as CoreObjectNameSingular,
           );
 
         if (shouldCascadeDeleteTargetRecords) {
           triggerDeleteRecordsOptimisticEffect({
             cache,
-            objectMetadataItem: targetObjectMetadataItem,
+            objectMetadataItem: fullTargetObjectMetadataItem,
             recordsToDelete: targetRecordsToDetachFrom,
             objectMetadataItems,
           });
@@ -128,8 +134,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
               cache,
               sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
               sourceRecordId: currentSourceRecord.id,
-              fieldNameOnTargetRecord: fieldMetadataItemOnTargetRecord.name,
-              targetObjectNameSingular: targetObjectMetadataItem.nameSingular,
+              fieldNameOnTargetRecord: targetFieldMetadata.name,
+              targetObjectNameSingular: targetObjectMetadata.nameSingular,
               targetRecordId: targetRecordToDetachFrom.id,
             });
           });
@@ -145,8 +151,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
             cache,
             sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
             sourceRecordId: updatedSourceRecord.id,
-            fieldNameOnTargetRecord: fieldMetadataItemOnTargetRecord.name,
-            targetObjectNameSingular: targetObjectMetadataItem.nameSingular,
+            fieldNameOnTargetRecord: targetFieldMetadata.name,
+            targetObjectNameSingular: targetObjectMetadata.nameSingular,
             targetRecordId: targetRecordToAttachTo.id,
           }),
         );

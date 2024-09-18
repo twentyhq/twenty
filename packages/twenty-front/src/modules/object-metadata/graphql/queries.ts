@@ -39,32 +39,6 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                 isNullable
                 createdAt
                 updatedAt
-                fromRelationMetadata {
-                  id
-                  relationType
-                  toObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                    isSystem
-                    isRemote
-                  }
-                  toFieldMetadataId
-                }
-                toRelationMetadata {
-                  id
-                  relationType
-                  fromObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                    isSystem
-                    isRemote
-                  }
-                  fromFieldMetadataId
-                }
                 defaultValue
                 options
                 relationDefinition {

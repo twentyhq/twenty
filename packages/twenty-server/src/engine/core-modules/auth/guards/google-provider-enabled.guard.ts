@@ -7,7 +7,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { GoogleStrategy } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class GoogleProviderEnabledGuard implements CanActivate {

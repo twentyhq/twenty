@@ -4,8 +4,8 @@ import {
   ReadResolverOpts,
 } from '@ptc-org/nestjs-query-graphql';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { Workspace } from './workspace.entity';
 
@@ -36,6 +36,6 @@ export const workspaceAutoResolverOpts: AutoResolverOpts<
       many: { disabled: true },
     },
     delete: { many: { disabled: true }, one: { disabled: true } },
-    guards: [JwtAuthGuard],
+    guards: [WorkspaceAuthGuard],
   },
 ];

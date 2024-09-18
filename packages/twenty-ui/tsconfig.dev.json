@@ -15,5 +15,5 @@
     "src/**/*.tsx",
     "src/**/*.ts",
     "vite.config.ts"
-  ]
+]
 }
