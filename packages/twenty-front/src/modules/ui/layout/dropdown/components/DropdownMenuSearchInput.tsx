@@ -1,7 +1,7 @@
-import { forwardRef, InputHTMLAttributes } from 'react';
+import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
 import styled from '@emotion/styled';
+import { forwardRef, InputHTMLAttributes } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
-import { useFocus } from '../../../input/hooks/useFocus';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -37,7 +37,8 @@ export const DropdownMenuSearchInput = forwardRef<
   HTMLInputElement,
   InputHTMLAttributes<HTMLInputElement>
 >(({ value, onChange, placeholder = 'Search', type }) => {
-  const {inputRef} = useFocus()
+  const { inputRef } = useInputFocusWithoutScrollOnMount();
+
   return (
     <StyledDropdownMenuSearchInputContainer>
       <StyledInput
