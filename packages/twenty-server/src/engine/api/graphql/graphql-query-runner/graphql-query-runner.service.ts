@@ -17,6 +17,7 @@ import {
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
+import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-one-resolver.service';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
@@ -276,5 +277,16 @@ export class GraphqlQueryRunnerService {
         { retryLimit: 3 },
       );
     });
+  }
+
+  @LogExecutionTime()
+  async destroyOne<ObjectRecord extends IRecord = IRecord>(
+    args: DestroyOneResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord> {
+    const graphqlQueryDestroyOneResolverService =
+      new GraphqlQueryDestroyOneResolverService(this.twentyORMGlobalManager);
+
+    return graphqlQueryDestroyOneResolverService.destroyOne(args, options);
   }
 }
