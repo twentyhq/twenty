@@ -147,6 +147,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
+        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
