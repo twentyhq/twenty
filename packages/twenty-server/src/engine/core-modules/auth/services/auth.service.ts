@@ -38,7 +38,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-import { TokenService } from './token.service';
+import { TokenService } from '../token/services/token.service';
 
 @Injectable()
 export class AuthService {

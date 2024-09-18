@@ -14,8 +14,8 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
 import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/microsoft-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
