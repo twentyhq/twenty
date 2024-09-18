@@ -11,7 +11,7 @@ import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 type GraphQLErrorHandlerHookOptions = {
   /**

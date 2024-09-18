@@ -9,6 +9,7 @@ const StyledPanel = styled.div`
   overflow-x: auto;
   overflow-y: hidden;
   width: 100%;
+  padding-bottom: ${({ theme }) => theme.spacing(10)};
 `;
 
 type PagePanelProps = {

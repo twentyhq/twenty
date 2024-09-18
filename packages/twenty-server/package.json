@@ -29,6 +29,7 @@
     "cache-manager-redis-yet": "^4.1.2",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
     "graphql-middleware": "^6.1.35",
+    "handlebars": "^4.7.8",
     "jsdom": "~22.1.0",
     "jwt-decode": "^4.0.0",
     "langchain": "^0.2.6",

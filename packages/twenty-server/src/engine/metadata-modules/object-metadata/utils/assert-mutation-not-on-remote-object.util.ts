@@ -6,7 +6,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 export const assertMutationNotOnRemoteObject = (
-  objectMetadataItem: ObjectMetadataInterface,
+  objectMetadataItem: Pick<ObjectMetadataInterface, 'isRemote'>,
 ) => {
   if (objectMetadataItem.isRemote) {
     throw new ObjectMetadataException(

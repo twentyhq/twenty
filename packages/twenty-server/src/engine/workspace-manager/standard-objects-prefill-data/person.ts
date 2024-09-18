@@ -12,7 +12,7 @@ export const personPrefillData = async (
       'nameFirstName',
       'nameLastName',
       'city',
-      'email',
+      'emailsPrimaryEmail',
       'avatarUrl',
       'position',
       'createdBySource',
@@ -25,7 +25,7 @@ export const personPrefillData = async (
         nameFirstName: 'Brian',
         nameLastName: 'Chesky',
         city: 'San Francisco',
-        email: 'chesky@airbnb.com',
+        emailsPrimaryEmail: 'chesky@airbnb.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-3.png',
         position: 1,
@@ -37,7 +37,7 @@ export const personPrefillData = async (
         nameFirstName: 'Alexandre',
         nameLastName: 'Prot',
         city: 'Paris',
-        email: 'prot@qonto.com',
+        emailsPrimaryEmail: 'prot@qonto.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-89.png',
         position: 2,
@@ -49,7 +49,7 @@ export const personPrefillData = async (
         nameFirstName: 'Patrick',
         nameLastName: 'Collison',
         city: 'San Francisco',
-        email: 'collison@stripe.com',
+        emailsPrimaryEmail: 'collison@stripe.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-47.png',
         position: 3,
@@ -61,7 +61,7 @@ export const personPrefillData = async (
         nameFirstName: 'Dylan',
         nameLastName: 'Field',
         city: 'San Francisco',
-        email: 'field@figma.com',
+        emailsPrimaryEmail: 'field@figma.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-40.png',
         position: 4,
@@ -73,7 +73,7 @@ export const personPrefillData = async (
         nameFirstName: 'Ivan',
         nameLastName: 'Zhao',
         city: 'San Francisco',
-        email: 'zhao@notion.com',
+        emailsPrimaryEmail: 'zhao@notion.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-68.png',
         position: 5,

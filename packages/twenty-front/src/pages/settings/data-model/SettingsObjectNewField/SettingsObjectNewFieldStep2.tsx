@@ -15,7 +15,6 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useApolloClient } from '@apollo/client';
@@ -37,6 +36,7 @@ export type SettingsDataModelNewFieldFormValues = z.infer<
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
+  padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const SettingsObjectNewFieldStep2 = () => {
@@ -163,6 +163,7 @@ export const SettingsObjectNewFieldStep2 = () => {
       FieldMetadataType.RichText,
       FieldMetadataType.Actor,
       FieldMetadataType.Email,
+      FieldMetadataType.Phone,
     ] as const
   ).filter(isDefined);
 
@@ -173,30 +174,24 @@ export const SettingsObjectNewFieldStep2 = () => {
       >
         <SubMenuTopBarContainer
           Icon={IconHierarchy2}
-          title={
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: '/settings/objects',
-                  styles: { minWidth: 'max-content' },
-                },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                  styles: { maxWidth: '50%' },
-                },
-                {
-                  children: (
-                    <SettingsDataModelNewFieldBreadcrumbDropDown
-                      isConfigureStep={isConfigureStep}
-                      onBreadcrumbClick={setIsConfigureStep}
-                    />
-                  ),
-                },
-              ]}
-            />
-          }
+          links={[
+            {
+              children: 'Objects',
+              href: '/settings/objects',
+            },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            {
+              children: (
+                <SettingsDataModelNewFieldBreadcrumbDropDown
+                  isConfigureStep={isConfigureStep}
+                  onBreadcrumbClick={setIsConfigureStep}
+                />
+              ),
+            },
+          ]}
           actionButton={
             !activeObjectMetadataItem.isRemote && isConfigureStep ? (
               <SaveAndCancelButtons

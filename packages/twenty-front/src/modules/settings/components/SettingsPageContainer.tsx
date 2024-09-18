@@ -10,7 +10,7 @@ const StyledSettingsPageContainer = styled.div<{ width?: number }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   overflow: auto;
-  padding: ${({ theme }) => theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(6, 8, 8)};
   width: ${({ width }) => {
     if (isDefined(width)) {
       return width + 'px';

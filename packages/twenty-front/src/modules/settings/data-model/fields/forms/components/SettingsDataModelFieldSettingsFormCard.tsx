@@ -80,6 +80,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 `;
 
 const previewableTypes = [
+  FieldMetadataType.Array,
   FieldMetadataType.Address,
   FieldMetadataType.Boolean,
   FieldMetadataType.Currency,
@@ -92,6 +93,7 @@ const previewableTypes = [
   FieldMetadataType.MultiSelect,
   FieldMetadataType.Number,
   FieldMetadataType.Phone,
+  FieldMetadataType.Phones,
   FieldMetadataType.Rating,
   FieldMetadataType.RawJson,
   FieldMetadataType.Relation,

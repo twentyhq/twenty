@@ -80,7 +80,8 @@ describe('GraphqlQueryFilterOperatorParser', () => {
     it('should parse is operator with non-NULL value correctly', () => {
       const result = parser.parseOperator({ is: 'NOT_NULL' }, false);
 
-      expect(result).toBe('NOT_NULL');
+      expect(result).toBeInstanceOf(FindOperator);
+      expect(result).toEqual(Not(IsNull()));
     });
 
     it('should parse like operator correctly', () => {

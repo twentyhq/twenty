@@ -1,5 +1,5 @@
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowStatusCombination } from 'src/modules/workflow/workflow-status/workflow-status.enums';
+import { WorkflowStatusCombination } from 'src/modules/workflow/workflow-status/enums/workflow-status.enum';
 
 export const getStatusCombinationFromUpdate = (
   previousCombination: WorkflowStatusCombination,
