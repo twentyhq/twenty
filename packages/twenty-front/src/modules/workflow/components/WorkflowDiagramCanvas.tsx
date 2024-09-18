@@ -32,6 +32,40 @@ const StyledStatusTagContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const getWorkflowDefinitionPositionRanges = ({
+  nodes,
+}: {
+  nodes: Array<WorkflowDiagramNode>;
+}) => {
+  let minX = 0,
+    maxX = 0,
+    minY = 0,
+    maxY = 0;
+
+  for (const node of nodes) {
+    if (node.position.x < minX) {
+      minX = node.position.x;
+    }
+    if (node.position.x > maxX) {
+      maxX = node.position.x;
+    }
+
+    if (node.position.y < minY) {
+      minY = node.position.y;
+    }
+    if (node.position.y < maxY) {
+      maxY = node.position.y;
+    }
+  }
+
+  return {
+    minX,
+    maxX,
+    minY,
+    maxY,
+  };
+};
+
 export const WorkflowDiagramCanvas = ({
   diagram,
   workflowWithCurrentVersion,
@@ -43,6 +77,8 @@ export const WorkflowDiagramCanvas = ({
     () => getOrganizedDiagram(diagram),
     [diagram],
   );
+
+  const nodesPositionRanges = getWorkflowDefinitionPositionRanges({ nodes });
 
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
@@ -89,6 +125,11 @@ export const WorkflowDiagramCanvas = ({
           'empty-trigger': WorkflowDiagramEmptyTrigger,
         }}
         fitView
+        defaultViewport={{
+          x: (nodesPositionRanges.minX + nodesPositionRanges.maxX) / 2,
+          y: (nodesPositionRanges.minY + nodesPositionRanges.maxY) / 2,
+          zoom: 1,
+        }}
         nodes={nodes.map((node) => ({ ...node, draggable: false }))}
         edges={edges}
         onNodesChange={handleNodesChange}
