@@ -19,7 +19,8 @@
           "NODE_ENV=test nx database:reset",
           "NODE_ENV=test nx jest --config ./jest-e2e.config.ts"
         ]
-      }
+      },
+      "parallel": false
     },
     "build:packageJson": {
       "executor": "@nx/js:tsc",
