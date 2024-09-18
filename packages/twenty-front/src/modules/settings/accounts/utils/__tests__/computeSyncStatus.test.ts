@@ -67,21 +67,21 @@ describe('computeSyncStatus', () => {
     ).toEqual(SyncStatus.IMPORTING);
   });
 
-  test('should return NOT_SYNCED when message channel sync status is NOT_SYNCED', () => {
+  test('should return SYNCED when one channel is ACTIVE and the other is NOT_SYNCED', () => {
     expect(
       computeSyncStatus(
         MessageChannelSyncStatus.NOT_SYNCED,
         CalendarChannelSyncStatus.ACTIVE,
       ),
-    ).toEqual(SyncStatus.NOT_SYNCED);
+    ).toEqual(SyncStatus.SYNCED);
   });
 
-  test('should return NOT_SYNCED when calendar channel sync status is NOT_SYNCED', () => {
+  test('should return SYNCED when one channel is ACTIVE and the other is NOT_SYNCED', () => {
     expect(
       computeSyncStatus(
         MessageChannelSyncStatus.ACTIVE,
         CalendarChannelSyncStatus.NOT_SYNCED,
       ),
-    ).toEqual(SyncStatus.NOT_SYNCED);
+    ).toEqual(SyncStatus.SYNCED);
   });
 });

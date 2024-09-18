@@ -25,14 +25,14 @@ export const computeSyncStatus = (
   }
 
   if (
-    messageChannelSyncStatus === MessageChannelSyncStatus.NOT_SYNCED ||
+    messageChannelSyncStatus === MessageChannelSyncStatus.NOT_SYNCED &&
     calendarChannelSyncStatus === CalendarChannelSyncStatus.NOT_SYNCED
   ) {
     return SyncStatus.NOT_SYNCED;
   }
 
   if (
-    messageChannelSyncStatus === MessageChannelSyncStatus.ACTIVE &&
+    messageChannelSyncStatus === MessageChannelSyncStatus.ACTIVE ||
     calendarChannelSyncStatus === CalendarChannelSyncStatus.ACTIVE
   ) {
     return SyncStatus.SYNCED;
