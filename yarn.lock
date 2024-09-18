@@ -6291,16 +6291,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+"@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 2.1.0
-  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::version=2.1.0&hash=96a960&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=ba139d&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/core": ^10.0.0
     "@nestjs/graphql": ^12.0.0
     graphql: ^15.0.0 || ^16.0.0
     graphql-yoga: ^4.0.4
-  checksum: 10c0/d7a9f1ff65642cf64e942ef1caf2596b0b2866118bd95200fc2112902e71d4aeb00fe436d5d253f2415f51cf79c48417f3859fae8ed4beaf2ac7e52d49eef3a1
+  checksum: 10c0/9ab6b702399658c120a2250d1b69df1c9094deadea0df8da2c610114ce1089a4e373586f8e967179025a567d8343731aaf971d3278e32778bdd5a840db7e45bd
   languageName: node
   linkType: hard
 
@@ -46879,7 +46879,7 @@ __metadata:
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
-    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch"
+    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@langchain/mistralai": "npm:^0.0.24"
     "@langchain/openai": "npm:^0.1.3"
     "@monaco-editor/react": "npm:^4.6.0"
