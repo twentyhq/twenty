@@ -48,11 +48,14 @@ export class GraphqlQueryFindManyResolverService {
 
     this.validateArgsOrThrow(args);
 
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
-        objectMetadataItem.nameSingular,
       );
+
+    const repository = dataSource.getRepository(
+      objectMetadataItem.nameSingular,
+    );
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
@@ -125,6 +128,7 @@ export class GraphqlQueryFindManyResolverService {
         relations,
         limit,
         authContext,
+        dataSource,
       );
     }
 
