@@ -355,6 +355,7 @@ export type FieldConnection = {
 export enum FieldMetadataType {
   Actor = 'ACTOR',
   Address = 'ADDRESS',
+  Array = 'ARRAY',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   Date = 'DATE',
@@ -376,8 +377,8 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
-  Uuid = 'UUID',
-  Array = 'ARRAY'
+  TsVector = 'TS_VECTOR',
+  Uuid = 'UUID'
 }
 
 export enum FileFolder {

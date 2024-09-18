@@ -18,26 +18,17 @@ type FieldTypeAndNameMetadata = {
 export const getTsVectorColumnExpressionFromFields = (
   fieldsUsedForSearch: FieldTypeAndNameMetadata[],
 ): string => {
-  let columnNames: string[] = [];
-
-  for (const fieldMetadata of fieldsUsedForSearch) {
-    columnNames = columnNames.concat(getColumnNamesFromField(fieldMetadata));
-  }
-
-  const coalesceExpressions = columnNames.map(
-    (columnName) => `coalesce("${columnName}", '')`,
+  const columnExpressions = fieldsUsedForSearch.flatMap(
+    getColumnExpressionsFromField,
   );
-
-  const concatenatedExpression = coalesceExpressions.join(" || ' ' || ");
+  const concatenatedExpression = columnExpressions.join(" || ' ' || ");
 
   return `to_tsvector('simple', ${concatenatedExpression})`;
 };
 
-const getColumnNamesFromField = (
+const getColumnExpressionsFromField = (
   fieldMetadataTypeAndName: FieldTypeAndNameMetadata,
 ): string[] => {
-  const columnNames: string[] = [];
-
   if (isCompositeFieldMetadataType(fieldMetadataTypeAndName.type)) {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadataTypeAndName.type,
@@ -50,18 +41,41 @@ const getColumnNamesFromField = (
       );
     }
 
-    for (const property of compositeType.properties) {
-      if (property.type !== FieldMetadataType.TEXT) {
-        continue;
-      }
+    return compositeType.properties
+      .filter((property) => property.type === FieldMetadataType.TEXT)
+      .map((property) => {
+        const columnName = computeCompositeColumnName(
+          fieldMetadataTypeAndName,
+          property,
+        );
 
-      columnNames.push(
-        computeCompositeColumnName(fieldMetadataTypeAndName, property),
-      );
-    }
+        return getColumnExpression(columnName, fieldMetadataTypeAndName.type);
+      });
   } else {
-    columnNames.push(computeColumnName(fieldMetadataTypeAndName.name));
-  }
+    const columnName = computeColumnName(fieldMetadataTypeAndName.name);
 
-  return columnNames;
+    return [getColumnExpression(columnName, fieldMetadataTypeAndName.type)];
+  }
+};
+
+const getColumnExpression = (
+  columnName: string,
+  fieldType: FieldMetadataType,
+): string => {
+  const quotedColumnName = `"${columnName}"`;
+
+  if (fieldType === FieldMetadataType.EMAILS) {
+    return `
+      COALESCE(
+        replace(
+          ${quotedColumnName},
+          '@',
+          ' '
+        ),
+        ''
+      )
+    `;
+  } else {
+    return `COALESCE(${quotedColumnName}, '')`;
+  }
 };
