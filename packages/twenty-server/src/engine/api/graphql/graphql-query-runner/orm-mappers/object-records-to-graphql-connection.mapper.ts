@@ -177,6 +177,11 @@ export class ObjectRecordsToGraphqlConnectionMapper {
   private formatFieldValue(value: any, fieldType: FieldMetadataType) {
     switch (fieldType) {
       case FieldMetadataType.RAW_JSON:
+        // FIXME: temporary hack that must be handled at a higher scope
+        if (typeof value === 'string') {
+          return value;
+        }
+
         return value ? JSON.stringify(value) : value;
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME:
