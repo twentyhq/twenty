@@ -2,7 +2,16 @@ name: CI Server
 on:
   push:
     branches:
-      - feat/e2e-test
+      - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-server/**'
+      - 'packages/twenty-emails/**'
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-server/**'
+      - 'packages/twenty-emails/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -44,14 +53,10 @@ jobs:
           tag: scope:backend
           tasks: lint,typecheck
       - name: Server / Run ${{ matrix.task }} Task
-        shell: bash
-        run: npx nx affected --nxBail --configuration=ci -t=${{ matrix.task }} --parallel=3 >> action_logs.txt 2>&1
-      - name: Upload Logs
-        if: always()
-        uses: actions/upload-artifact@v3
+        uses: ./.github/workflows/actions/nx-affected
         with:
-          name: action-logs
-          path: action_logs.txt
+          tag: scope:backend
+          tasks: ${{ matrix.task }}
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Server / Write .env
