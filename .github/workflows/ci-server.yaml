@@ -44,10 +44,13 @@ jobs:
           tag: scope:backend
           tasks: lint,typecheck
       - name: Server / Run ${{ matrix.task }} Task
-        uses: ./.github/workflows/actions/nx-affected
+        shell: bash
+        run: npx nx affected --nxBail --configuration=ci -t=${{ matrix.task }} --parallel=3 >> action_logs.txt 2>&1
+      - name: Upload Logs
+        uses: actions/upload-artifact@v3
         with:
-          tag: scope:backend
-          tasks: ${{ matrix.task }}
+          name: action-logs
+          path: action_logs.txt
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Server / Write .env
