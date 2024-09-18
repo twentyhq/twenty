@@ -16,10 +16,13 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
 }: {
   account: ConnectedAccount;
 }) => {
-  const mCSyncStatus = account.messageChannels[0]?.syncStatus;
-  const cCSyncStatus = account.calendarChannels[0]?.syncStatus;
+  const messageChannelSyncStatus = account.messageChannels[0]?.syncStatus;
+  const calendarChannelSyncStatus = account.calendarChannels[0]?.syncStatus;
 
-  const status = computeSyncStatus(mCSyncStatus, cCSyncStatus);
+  const status = computeSyncStatus(
+    messageChannelSyncStatus,
+    calendarChannelSyncStatus,
+  );
 
   return (
     <StyledRowRightContainer>
