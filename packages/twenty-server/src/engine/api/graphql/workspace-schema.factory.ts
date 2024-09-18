@@ -47,9 +47,9 @@ export class WorkspaceSchemaFactory {
       );
 
     if (currentCacheVersion === undefined) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache(
-        authContext.workspace.id,
-      );
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+        workspaceId: authContext.workspace.id,
+      });
       throw new GraphqlQueryRunnerException(
         'Metadata cache version not found',
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
@@ -63,9 +63,9 @@ export class WorkspaceSchemaFactory {
       );
 
     if (!objectMetadataMap) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache(
-        authContext.workspace.id,
-      );
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+        workspaceId: authContext.workspace.id,
+      });
       throw new GraphqlQueryRunnerException(
         'Object metadata collection not found',
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
