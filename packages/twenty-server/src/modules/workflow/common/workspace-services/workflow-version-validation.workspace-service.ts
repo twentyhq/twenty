@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { IsNull } from 'typeorm';
+
 import {
   CreateOneResolverArgs,
   DeleteOneResolverArgs,
@@ -11,12 +13,12 @@ import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
-import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
 export class WorkflowVersionValidationWorkspaceService {
@@ -48,6 +50,8 @@ export class WorkflowVersionValidationWorkspaceService {
         where: {
           workflowId: payload.data.workflowId,
           status: WorkflowVersionStatus.DRAFT,
+          // FIXME: soft-deleted rows selection will have to be improved globally
+          deletedAt: IsNull(),
         },
       });
 
