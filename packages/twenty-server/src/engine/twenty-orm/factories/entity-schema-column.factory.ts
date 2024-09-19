@@ -79,6 +79,7 @@ export class EntitySchemaColumnFactory {
         nullable: fieldMetadata.isNullable,
         createDate: key === 'createdAt',
         updateDate: key === 'updatedAt',
+        deleteDate: key === 'deletedAt',
         array: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
         default: defaultValue,
       };

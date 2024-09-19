@@ -20,6 +20,7 @@ const StyledSettingsPageContainer = styled.div<{ width?: number }>`
     }
     return OBJECT_SETTINGS_WIDTH + 'px';
   }};
+  padding-bottom: ${({ theme }) => theme.spacing(20)};
 `;
 
 export const SettingsPageContainer = ({

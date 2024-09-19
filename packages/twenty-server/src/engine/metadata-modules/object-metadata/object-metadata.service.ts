@@ -10,7 +10,6 @@ import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
@@ -374,18 +373,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     });
 
-    const isViewWorkspaceFavoriteEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsWorkspaceFavoriteEnabled,
-        objectMetadataInput.workspaceId,
-      );
-
-    if (isViewWorkspaceFavoriteEnabled) {
-      await this.createViewWorkspaceFavorite(
-        objectMetadataInput.workspaceId,
-        view[0].id,
-      );
-    }
+    await this.createViewWorkspaceFavorite(
+      objectMetadataInput.workspaceId,
+      view[0].id,
+    );
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       objectMetadataInput.workspaceId,
