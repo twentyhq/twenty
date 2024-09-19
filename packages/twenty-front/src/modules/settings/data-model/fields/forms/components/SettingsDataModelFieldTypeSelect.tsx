@@ -1,8 +1,5 @@
-import styled from '@emotion/styled';
-import { Controller, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
 import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
 import {
@@ -14,14 +11,15 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsDataModelHotkeyScope } from '@/settings/data-model/types/SettingsDataModelHotKeyScope';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useCallback, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
-import { H2Title, IconChevronRight, IconSearch } from 'twenty-ui';
+import { H2Title, IconSearch } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
@@ -55,17 +53,6 @@ const StyledTypeSelectContainer = styled.div`
   width: 100%;
 `;
 
-const StyledButton = styled(Button)<{ isActive: boolean; isFocused: boolean }>`
-  background: ${({ theme, isActive, isFocused }) =>
-    isActive
-      ? theme.background.quaternary
-      : isFocused
-        ? theme.background.tertiary
-        : theme.background.secondary};
-  height: 40px;
-  width: 100%;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-`;
 const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -74,20 +61,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledCardContainer = styled.div`
   display: flex;
 
   position: relative;
   width: calc(50% - ${({ theme }) => theme.spacing(1)});
 `;
 
-const StyledRightChevron = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.secondary};
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
-  top: 50%;
-  transform: translateY(-50%);
-`;
 const StyledSearchInput = styled(TextInput)`
   width: 100%;
 `;
@@ -98,10 +78,9 @@ export const SettingsDataModelFieldTypeSelect = ({
   fieldMetadataItem,
   onFieldTypeSelect,
 }: SettingsDataModelFieldTypeSelectProps) => {
-  const { control, setValue, getValues } =
+  const { control, getValues, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
-  const theme = useTheme();
 
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig>(
     SETTINGS_FIELD_TYPE_CONFIGS,
@@ -210,7 +189,12 @@ export const SettingsDataModelFieldTypeSelect = ({
     <Controller
       name="type"
       control={control}
-      render={({ field: { value } }) => (
+      defaultValue={
+        fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
+          ? (fieldMetadataItem.type as SettingsSupportedFieldType)
+          : FieldMetadataType.Text
+      }
+      render={({ field: { onChange } }) => (
         <StyledTypeSelectContainer className={className}>
           <Section>
             <StyledSearchInput
@@ -233,31 +217,27 @@ export const SettingsDataModelFieldTypeSelect = ({
               <StyledContainer>
                 {fieldTypeConfigs
                   .filter(([, config]) => config.category === category)
-                  .map(([key, config]) => {
-                    const flatIndex = getFlattenedConfigs().findIndex(
-                      ([k]) => k === key,
-                    );
-                    const isActive = value === key;
-
-                    return (
-                      <StyledButtonContainer key={key}>
-                        <StyledButton
-                          isActive={isActive}
-                          isFocused={focusedIndex === flatIndex}
-                          title={config.label}
-                          Icon={config.Icon}
-                          onClick={() => {
-                            handleSelectFieldType(
-                              key as SettingsSupportedFieldType,
-                            );
-                            setFocusedIndex(flatIndex);
-                          }}
-                          size="small"
-                        />
-                        <StyledRightChevron size={theme.icon.size.md} />
-                      </StyledButtonContainer>
-                    );
-                  })}
+                  .map(([key, config]) => (
+                    <StyledCardContainer>
+                      <SettingsCard
+                        key={key}
+                        onClick={() => {
+                          onChange(key as SettingsSupportedFieldType);
+                          resetDefaultValueField(
+                            key as SettingsSupportedFieldType,
+                          );
+                          onFieldTypeSelect();
+                        }}
+                        Icon={
+                          <config.Icon
+                            size={theme.icon.size.xl}
+                            stroke={theme.icon.stroke.sm}
+                          />
+                        }
+                        title={config.label}
+                      />
+                    </StyledCardContainer>
+                  ))}
               </StyledContainer>
             </Section>
           ))}
