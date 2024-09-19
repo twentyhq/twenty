@@ -126,7 +126,9 @@ export class ProcessNestedRelationsHelper {
     const relationResults = await relationRepository.find(relationFindOptions);
 
     parentObjectRecords.forEach((item) => {
-      (item as any)[`${relationName}Id`] = null;
+      if (relationResults.length === 0) {
+        (item as any)[`${relationName}Id`] = null;
+      }
       (item as any)[relationName] = relationResults.filter(
         (rel) => rel.id === item[`${relationName}Id`],
       )[0];
