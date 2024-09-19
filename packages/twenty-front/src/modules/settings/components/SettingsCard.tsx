@@ -14,11 +14,15 @@ type SettingsCardProps = {
   onClick?: () => void;
   title: string;
   className?: string;
+  isActive?: boolean;
+  isFocused?: boolean;
 };
 
 const StyledCard = styled(Card)<{
   disabled?: boolean;
   onClick?: () => void;
+  isActive?: boolean;
+  isFocused?: boolean;
 }>`
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
@@ -30,7 +34,16 @@ const StyledCard = styled(Card)<{
   }
 `;
 
-const StyledCardContent = styled(CardContent)<object>`
+const StyledCardContent = styled(CardContent)<{
+  isActive?: boolean;
+  isFocused?: boolean;
+}>`
+  background: ${({ theme, isActive, isFocused }) =>
+    isActive
+      ? theme.background.quinary
+      : isFocused
+        ? theme.background.quaternary
+        : theme.background.secondary};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -78,6 +91,8 @@ export const SettingsCard = ({
   onClick,
   title,
   className,
+  isActive,
+  isFocused,
 }: SettingsCardProps) => {
   const theme = useTheme();
 
@@ -88,7 +103,7 @@ export const SettingsCard = ({
       className={className}
       rounded={true}
     >
-      <StyledCardContent>
+      <StyledCardContent isActive={isActive} isFocused={isFocused}>
         <StyledHeader>
           <StyledIconContainer>{Icon}</StyledIconContainer>
           <StyledTitle disabled={disabled}>

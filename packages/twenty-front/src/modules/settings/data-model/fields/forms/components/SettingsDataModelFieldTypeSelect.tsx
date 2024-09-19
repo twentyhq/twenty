@@ -191,12 +191,7 @@ export const SettingsDataModelFieldTypeSelect = ({
     <Controller
       name="type"
       control={control}
-      defaultValue={
-        fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
-          ? (fieldMetadataItem.type as SettingsSupportedFieldType)
-          : FieldMetadataType.Text
-      }
-      render={({ field: { onChange } }) => (
+      render={({ field: { value } }) => (
         <StyledTypeSelectContainer className={className}>
           <Section>
             <StyledSearchInput
@@ -219,27 +214,35 @@ export const SettingsDataModelFieldTypeSelect = ({
               <StyledContainer>
                 {fieldTypeConfigs
                   .filter(([, config]) => config.category === category)
-                  .map(([key, config]) => (
-                    <StyledCardContainer>
-                      <SettingsCard
-                        key={key}
-                        onClick={() => {
-                          onChange(key as SettingsSupportedFieldType);
-                          resetDefaultValueField(
-                            key as SettingsSupportedFieldType,
-                          );
-                          onFieldTypeSelect();
-                        }}
-                        Icon={
-                          <config.Icon
-                            size={theme.icon.size.xl}
-                            stroke={theme.icon.stroke.sm}
-                          />
-                        }
-                        title={config.label}
-                      />
-                    </StyledCardContainer>
-                  ))}
+                  .map(([key, config]) => {
+                    const flatIndex = getFlattenedConfigs().findIndex(
+                      ([k]) => k === key,
+                    );
+                    const isActive = value === key;
+                    const isFocused = focusedIndex === flatIndex;
+                    return (
+                      <StyledCardContainer key={key}>
+                        <SettingsCard
+                          onClick={() => {
+                            handleSelectFieldType(
+                              key as SettingsSupportedFieldType,
+                            );
+                            setFocusedIndex(flatIndex);
+                            onFieldTypeSelect();
+                          }}
+                          Icon={
+                            <config.Icon
+                              size={theme.icon.size.xl}
+                              stroke={theme.icon.stroke.sm}
+                            />
+                          }
+                          title={config.label}
+                          isActive={isActive}
+                          isFocused={isFocused}
+                        />
+                      </StyledCardContainer>
+                    );
+                  })}
               </StyledContainer>
             </Section>
           ))}
