@@ -171,6 +171,7 @@ export const RecordDetailRelationSection = ({
             : undefined
         }
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
+        areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
           <DropdownScope dropdownScopeId={dropdownId}>
             <StyledAddDropdown
