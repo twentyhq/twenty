@@ -28,4 +28,4 @@ storybook-static
 .eslintcache
 .nyc_output
 test-results/
-
+dump.rdb

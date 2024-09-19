@@ -11,14 +11,13 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
-  name: 'upgrade-0.31:backfill-workspace-favorites-migration',
-  description: 'Create a workspace favorite for all workspace views',
+  name: 'upgrade-0.31:clean-views-with-deleted-object-metadata',
+  description: 'Clean views with deleted object metadata',
 })
-export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRunner {
+export class CleanViewsWithDeletedObjectMetadataCommand extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -40,21 +39,11 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
       this.logger.log(`Running command for workspace ${workspaceId}`);
 
       try {
-        const allWorkspaceIndexViews = await this.getIndexViews(workspaceId);
+        this.logger.log(chalk.green(`Cleaning views of ${workspaceId}.`));
 
-        const activeWorkspaceIndexViews =
-          await this.filterViewsWithoutObjectMetadata(
-            workspaceId,
-            allWorkspaceIndexViews,
-          );
-
-        await this.createViewWorkspaceFavorites(
+        await this.cleanViewsWithDeletedObjectMetadata(
           workspaceId,
-          activeWorkspaceIndexViews.map((view) => view.id),
-        );
-
-        this.logger.log(
-          chalk.green(`Backfilled workspace favorites to ${workspaceId}.`),
+          _options.dryRun ?? false,
         );
 
         await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
@@ -77,9 +66,10 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
     }
   }
 
-  private async getIndexViews(
+  private async cleanViewsWithDeletedObjectMetadata(
     workspaceId: string,
-  ): Promise<ViewWorkspaceEntity[]> {
+    dryRun: boolean,
+  ): Promise<void> {
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         workspaceId,
@@ -87,64 +77,39 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
         false,
       );
 
-    return viewRepository.find({
-      where: {
-        key: 'INDEX',
-      },
-    });
-  }
+    const allViews = await viewRepository.find();
 
-  private async filterViewsWithoutObjectMetadata(
-    workspaceId: string,
-    views: ViewWorkspaceEntity[],
-  ): Promise<ViewWorkspaceEntity[]> {
-    const viewObjectMetadataIds = views.map((view) => view.objectMetadataId);
+    const viewObjectMetadataIds = allViews.map((view) => view.objectMetadataId);
 
     const objectMetadataEntities = await this.objectMetadataRepository.find({
       where: {
-        workspaceId,
         id: In(viewObjectMetadataIds),
       },
     });
 
-    const objectMetadataIds = new Set(
+    const validObjectMetadataIds = new Set(
       objectMetadataEntities.map((entity) => entity.id),
     );
 
-    return views.filter((view) => objectMetadataIds.has(view.objectMetadataId));
-  }
+    const viewIdsToDelete = allViews
+      .filter((view) => !validObjectMetadataIds.has(view.objectMetadataId))
+      .map((view) => view.id);
 
-  private async createViewWorkspaceFavorites(
-    workspaceId: string,
-    viewIds: string[],
-  ) {
-    const favoriteRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
-        workspaceId,
-        'favorite',
+    if (dryRun) {
+      this.logger.log(
+        chalk.green(
+          `Found ${viewIdsToDelete.length} views to clean in workspace ${workspaceId}.`,
+        ),
       );
+    }
 
-    let nextFavoritePosition = await favoriteRepository.count();
+    if (viewIdsToDelete.length > 0 && !dryRun) {
+      await viewRepository.delete(viewIdsToDelete);
+      this.logger.log(chalk.green(`Cleaning ${viewIdsToDelete.length} views.`));
+    }
 
-    for (const viewId of viewIds) {
-      const existingFavorites = await favoriteRepository.find({
-        where: {
-          viewId,
-        },
-      });
-
-      if (existingFavorites.length) {
-        continue;
-      }
-
-      await favoriteRepository.insert(
-        favoriteRepository.create({
-          viewId,
-          position: nextFavoritePosition,
-        }),
-      );
-
-      nextFavoritePosition++;
+    if (viewIdsToDelete.length === 0) {
+      this.logger.log(chalk.green(`No views to clean.`));
     }
   }
 }
