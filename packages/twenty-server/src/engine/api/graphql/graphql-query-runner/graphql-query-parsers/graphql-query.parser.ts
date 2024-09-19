@@ -54,7 +54,9 @@ export class GraphqlQueryParser {
     filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
   ): boolean {
     if (Array.isArray(filter)) {
-      return filter.some(this.checkForDeletedAtFilter);
+      return filter.some((subFilter) =>
+        this.checkForDeletedAtFilter(subFilter),
+      );
     }
 
     for (const [key, value] of Object.entries(filter)) {
