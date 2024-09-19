@@ -43,6 +43,9 @@ export class IndexFieldMetadataEntity {
   @JoinColumn()
   fieldMetadata: Relation<FieldMetadataEntity>;
 
+  @Column({ nullable: true })
+  compositeColumn?: string;
+
   @Column({ nullable: false })
   order: number;
 

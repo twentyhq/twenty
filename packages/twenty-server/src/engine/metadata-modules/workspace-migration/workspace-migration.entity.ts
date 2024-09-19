@@ -36,6 +36,7 @@ export interface WorkspaceMigrationIndexAction {
   action: WorkspaceMigrationIndexActionType;
   name: string;
   columns: string[];
+  isUnique: boolean;
 }
 
 export interface WorkspaceMigrationColumnCreate

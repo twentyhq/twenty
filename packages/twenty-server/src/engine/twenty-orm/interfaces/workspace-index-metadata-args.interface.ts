@@ -18,6 +18,11 @@ export interface WorkspaceIndexMetadataArgs {
   columns: string[];
 
   /**
+   * Is index unique.
+   */
+  isUnique: boolean;
+
+  /**
    * Field gate.
    */
   readonly gate?: Gate;

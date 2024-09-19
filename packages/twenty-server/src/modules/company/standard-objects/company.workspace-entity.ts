@@ -41,6 +41,12 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   icon: 'IconBuildingSkyscraper',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
+/*
+TODO: Uncomment this in a followup PR, after testing
+@WorkspaceIndex(['domainNamePrimaryLinkUrl', 'deletedAt'], {
+  isUnique: true,
+})
+*/
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.name,

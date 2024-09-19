@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationIndexActionType,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 @Injectable()
 export class WorkspaceMigrationIndexFactory {
@@ -80,6 +81,7 @@ export class WorkspaceMigrationIndexFactory {
       const indexes = indexMetadataCollection.map((indexMetadata) => ({
         name: indexMetadata.name,
         action: WorkspaceMigrationIndexActionType.CREATE,
+        isUnique: indexMetadata.isUnique,
         columns: indexMetadata.indexFieldMetadatas
           .sort((a, b) => a.order - b.order)
           .map((indexFieldMetadata) => {
@@ -92,7 +94,17 @@ export class WorkspaceMigrationIndexFactory {
               );
             }
 
-            return fieldMetadata.name;
+            if(!isCompositeFieldMetadataType(fieldMetadata.type)) {
+              return fieldMetadata.name;
+            }
+
+            if(!indexFieldMetadata.compositeColumn) {
+              throw new Error(
+                `No composite column for index field metadata with id ${indexFieldMetadata.id} in object metadata with id ${objectMetadata.id}`,
+              );
+            }
+
+            return indexFieldMetadata.compositeColumn;
           }),
       }));
 
@@ -133,6 +145,7 @@ export class WorkspaceMigrationIndexFactory {
         name: indexMetadata.name,
         action: WorkspaceMigrationIndexActionType.DROP,
         columns: [],
+        isUnique: indexMetadata.isUnique,
       }));
 
       workspaceMigrations.push({

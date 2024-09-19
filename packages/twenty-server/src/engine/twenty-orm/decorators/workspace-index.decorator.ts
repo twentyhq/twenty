@@ -3,46 +3,32 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export function WorkspaceIndex(): PropertyDecorator;
-export function WorkspaceIndex(columns: string[]): ClassDecorator;
-export function WorkspaceIndex(
-  columns?: string[],
-): PropertyDecorator | ClassDecorator {
-  return (target: any, propertyKey: string | symbol) => {
-    if (propertyKey === undefined && columns === undefined) {
-      throw new Error('Class level WorkspaceIndex should be used with columns');
-    }
+export type WorkspaceIndexOptions = {
+  isUnique: boolean;
+};
 
+
+export function WorkspaceIndex(columns: string[], options: WorkspaceIndexOptions): ClassDecorator {
+  if (!Array.isArray(columns) || columns.length === 0) {
+    throw new Error('Class level WorkspaceIndex should be used with columns');
+  }
+
+  return (target: any) => {
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       target,
-      propertyKey.toString(),
     );
-
-    // TODO: handle composite field metadata types
-
-    if (Array.isArray(columns) && columns.length > 0) {
-      metadataArgsStorage.addIndexes({
-        name: `IDX_${generateDeterministicIndexName([
-          convertClassNameToObjectMetadataName(target.name),
-          ...columns,
-        ])}`,
-        columns,
-        target: target,
-        gate,
-      });
-
-      return;
-    }
-
+    
     metadataArgsStorage.addIndexes({
       name: `IDX_${generateDeterministicIndexName([
-        convertClassNameToObjectMetadataName(target.constructor.name),
-        ...[propertyKey.toString(), 'deletedAt'],
+        convertClassNameToObjectMetadataName(target.name),
+        ...columns,
       ])}`,
-      columns: [propertyKey.toString(), 'deletedAt'],
-      target: target.constructor,
+      columns,
+      target: target,
       gate,
+      isUnique:options?.isUnique ?? false,
     });
+
   };
 }

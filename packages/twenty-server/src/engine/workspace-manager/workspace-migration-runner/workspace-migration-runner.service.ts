@@ -199,6 +199,7 @@ export class WorkspaceMigrationRunnerService {
             new TableIndex({
               name: index.name,
               columnNames: index.columns,
+              isUnique: index.isUnique,
             }),
           );
           break;

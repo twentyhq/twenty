@@ -43,6 +43,9 @@ export class IndexMetadataEntity {
   )
   indexFieldMetadatas: Relation<IndexFieldMetadataEntity[]>;
 
+  @Column({ nullable: false, default: false})
+  isUnique: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
