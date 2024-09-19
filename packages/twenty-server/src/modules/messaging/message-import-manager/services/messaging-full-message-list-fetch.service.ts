@@ -71,9 +71,9 @@ export class MessagingFullMessageListFetchService {
 
       const messageExternalIdsToDelete =
         existingMessageChannelMessageAssociationsExternalIds.filter(
-          (messageExternalId) =>
-            messageExternalId &&
-            !messageExternalIds.includes(messageExternalId),
+          (existingMessageCMAExternalId) =>
+            existingMessageCMAExternalId &&
+            !messageExternalIds.includes(existingMessageCMAExternalId),
         );
 
       if (messageExternalIdsToDelete.length) {
