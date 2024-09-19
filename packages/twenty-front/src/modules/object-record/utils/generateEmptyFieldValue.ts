@@ -83,6 +83,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.MultiSelect: {
       return null;
     }
+    case FieldMetadataType.Array: {
+      return null;
+    }
     case FieldMetadataType.RawJson: {
       return null;
     }

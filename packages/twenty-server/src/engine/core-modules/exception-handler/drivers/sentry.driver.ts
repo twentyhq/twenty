@@ -1,13 +1,14 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
-import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
+import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 
 import {
   ExceptionHandlerDriverInterface,
   ExceptionHandlerSentryDriverFactoryOptions,
 } from 'src/engine/core-modules/exception-handler/interfaces';
+import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
@@ -18,11 +19,17 @@ export class ExceptionHandlerSentryDriver
       release: options.release,
       dsn: options.dsn,
       integrations: [
-        new Sentry.Integrations.Http({ tracing: true }),
-        new Sentry.Integrations.Express({ app: options.serverInstance }),
-        new Sentry.Integrations.GraphQL(),
-        new Sentry.Integrations.Postgres(),
-        new ProfilingIntegration(),
+        // TODO: Redis integration doesn't seem to work - investigate why
+        Sentry.redisIntegration({
+          cachePrefixes: Object.values(WorkspaceCacheKeys).map(
+            (key) => `engine:${key}:`,
+          ),
+        }),
+        Sentry.httpIntegration(),
+        Sentry.expressIntegration(),
+        Sentry.graphqlIntegration(),
+        Sentry.postgresIntegration(),
+        nodeProfilingIntegration(),
       ],
       tracesSampleRate: 0.1,
       profilesSampleRate: 0.3,

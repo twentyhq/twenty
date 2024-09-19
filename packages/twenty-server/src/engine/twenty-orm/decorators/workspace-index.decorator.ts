@@ -38,9 +38,9 @@ export function WorkspaceIndex(
     metadataArgsStorage.addIndexes({
       name: `IDX_${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.constructor.name),
-        propertyKey.toString(),
+        ...[propertyKey.toString(), 'deletedAt'],
       ])}`,
-      columns: [propertyKey.toString()],
+      columns: [propertyKey.toString(), 'deletedAt'],
       target: target.constructor,
       gate,
     });

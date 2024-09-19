@@ -11,6 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -59,6 +60,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: OnboardingService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceInvitationService,
           useValue: {},
         },
       ],

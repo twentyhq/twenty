@@ -22,5 +22,10 @@ export class SignUpInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
+  workspacePersonalInviteToken?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   captchaToken?: string;
 }

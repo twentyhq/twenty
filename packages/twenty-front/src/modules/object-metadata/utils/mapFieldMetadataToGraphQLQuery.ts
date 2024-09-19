@@ -38,6 +38,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataType.Position,
     FieldMetadataType.RawJson,
     FieldMetadataType.RichText,
+    FieldMetadataType.Array,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {

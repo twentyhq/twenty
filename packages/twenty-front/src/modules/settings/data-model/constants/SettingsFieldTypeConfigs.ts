@@ -1,5 +1,6 @@
 import {
   IconComponent,
+  IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,
   IllustrationIconCurrency,
@@ -182,6 +183,12 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',
+  },
+  [FieldMetadataType.Array]: {
+    label: 'Array',
+    Icon: IllustrationIconArray,
+    category: 'Basic',
+    exampleValue: ['value1', 'value2'],
   },
 } as const satisfies Record<
   SettingsSupportedFieldType,
