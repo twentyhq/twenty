@@ -63,13 +63,13 @@ export class GraphqlQueryFindOneResolverService {
       objectMetadataItem,
       selectedFields,
     );
-    const { parsedFilters: where, withDeleted } =
-      graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
+    // const { parsedFilters: where, withDeleted } =
+    //   graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     const objectRecord = (await repository.findOne({
-      where,
+      // where,
       select,
-      withDeleted,
+      // withDeleted,
     })) as ObjectRecord;
 
     const limit = QUERY_MAX_RECORDS;

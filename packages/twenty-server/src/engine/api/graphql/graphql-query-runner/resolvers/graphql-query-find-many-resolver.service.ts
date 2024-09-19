@@ -1,10 +1,8 @@
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
-import { FindManyOptions, ObjectLiteral } from 'typeorm';
 
 import {
   Record as IRecord,
-  OrderByDirection,
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
@@ -28,6 +26,7 @@ import {
   generateObjectMetadataMap,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export class GraphqlQueryFindManyResolverService {
   private twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -57,9 +56,15 @@ export class GraphqlQueryFindManyResolverService {
     const repository = dataSource.getRepository(
       objectMetadataItem.nameSingular,
     );
+
+    const queryBuilder = repository.createQueryBuilder(
+      objectMetadataItem.nameSingular,
+    );
+
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
+
     const objectMetadata = getObjectMetadataOrThrow(
       objectMetadataMap,
       objectMetadataItem.nameSingular,
@@ -76,25 +81,25 @@ export class GraphqlQueryFindManyResolverService {
       selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
-    const order = graphqlQueryParser.parseOrder(
-      [...(args.orderBy ?? []), { id: OrderByDirection.AscNullsFirst }],
-      isForwardPagination,
-    );
-    const { parsedFilters: whereForCount, withDeleted } =
-      graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
+
+    // const order = graphqlQueryParser.parseOrder(
+    //   [...(args.orderBy ?? []), { id: OrderByDirection.AscNullsFirst }],
+    //   isForwardPagination,
+    // );
+    // const { parsedFilters: whereForCount, withDeleted } =
+    //   graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
-    this.addOrderByColumnsToSelect(order, select);
-    this.addForeingKeyColumnsToSelect(relations, select, objectMetadata);
+    // this.addOrderByColumnsToSelect(order, select);
+    // this.addForeingKeyColumnsToSelect(relations, select, objectMetadata);
 
-    const totalCount = isDefined(selectedFields.totalCount)
-      ? await repository.count({ where: whereForCount, withDeleted })
-      : 0;
+    // const totalCount = isDefined(selectedFields.totalCount)
+    //   ? await repository.count({ where: whereForCount, withDeleted })
+    //   : 0;
+    const totalCount = 0;
 
     const cursor = this.getCursor(args);
-
-    let where = whereForCount;
 
     if (cursor) {
       const cursorArgFilter = computeCursorArgFilter(
@@ -107,23 +112,30 @@ export class GraphqlQueryFindManyResolverService {
         or: cursorArgFilter,
       } as unknown as Filter;
 
-      const { parsedFilters: whereForQuery } =
-        graphqlQueryParser.parseFilter(combinedArgFilter);
-
-      where = whereForQuery;
+      // const { parsedFilters: whereForQuery } =
+      //   graphqlQueryParser.parseFilter(combinedArgFilter);
     }
 
-    const findOptions: FindManyOptions<ObjectLiteral> = {
-      where,
-      order,
-      select,
-      take: limit + 1,
-      withDeleted,
-    };
+    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+      queryBuilder,
+      objectMetadataItem.nameSingular,
+      args.filter ?? ({} as Filter),
+    );
 
-    const objectRecords = (await repository.find(
-      findOptions,
-    )) as ObjectRecord[];
+    const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
+      withFilterQueryBuilder,
+      args.filter ?? ({} as Filter),
+    );
+
+    const nonFormattedObjectRecords = await withDeletedQueryBuilder
+      .take(limit + 1)
+      .getMany();
+
+    const objectRecords = formatResult(
+      nonFormattedObjectRecords,
+      objectMetadata,
+      objectMetadataMap,
+    );
 
     const { hasNextPage, hasPreviousPage } = this.getPaginationInfo(
       objectRecords,
@@ -159,7 +171,7 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataItem.nameSingular,
       limit,
       totalCount,
-      order,
+      {},
       hasNextPage,
       hasPreviousPage,
     );

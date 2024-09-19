@@ -2,6 +2,7 @@ import {
   FindOptionsOrderValue,
   FindOptionsWhere,
   ObjectLiteral,
+  SelectQueryBuilder,
 } from 'typeorm';
 
 import {
@@ -10,7 +11,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { GraphqlQueryFilterConditionParser as GraphqlQueryFilterParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser as GraphqlQueryOrderParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import {
@@ -21,6 +22,7 @@ import {
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
   private objectMetadataMap: ObjectMetadataMap;
+  private filterConditionParser: GraphqlQueryFilterConditionParser;
 
   constructor(
     fieldMetadataMap: FieldMetadataMap,
@@ -28,26 +30,32 @@ export class GraphqlQueryParser {
   ) {
     this.objectMetadataMap = objectMetadataMap;
     this.fieldMetadataMap = fieldMetadataMap;
-  }
-
-  parseFilter(recordFilter: RecordFilter): {
-    parsedFilters:
-      | FindOptionsWhere<ObjectLiteral>
-      | FindOptionsWhere<ObjectLiteral>[];
-    withDeleted: boolean;
-  } {
-    const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
+    this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMap,
     );
+  }
 
-    const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
+  applyFilterToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    objectNameSingular: string,
+    recordFilter: RecordFilter,
+  ): SelectQueryBuilder<any> {
+    return this.filterConditionParser.parse(
+      queryBuilder,
+      objectNameSingular,
+      recordFilter,
+    );
+  }
 
-    const hasDeletedAtFilter = this.checkForDeletedAtFilter(parsedFilter);
+  applyDeletedAtToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    recordFilter: RecordFilter,
+  ): SelectQueryBuilder<any> {
+    if (this.checkForDeletedAtFilter(recordFilter)) {
+      queryBuilder.withDeleted();
+    }
 
-    return {
-      parsedFilters: parsedFilter,
-      withDeleted: hasDeletedAtFilter,
-    };
+    return queryBuilder;
   }
 
   private checkForDeletedAtFilter(
