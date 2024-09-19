@@ -4,7 +4,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
@@ -77,7 +77,7 @@ export const TextArea = ({
       minRows={computedMinRows}
       value={value}
       onChange={(event) =>
-        onChange?.(convertToEmptyStringForWhitespaces(event.target.value))
+        onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value))
       }
       onFocus={handleFocus}
       onBlur={handleBlur}

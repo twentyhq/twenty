@@ -4,7 +4,7 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
-import { convertToUndefinedForWhitespaces } from '~/utils/string/convertToUndefinedForWhitespaces';
+import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type TextFieldInputProps = {
@@ -50,7 +50,7 @@ export const TextFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    setDraftValue(convertToUndefinedForWhitespaces(newText));
+    setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newText));
   };
 
   return (

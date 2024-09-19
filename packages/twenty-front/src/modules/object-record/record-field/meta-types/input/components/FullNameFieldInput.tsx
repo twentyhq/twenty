@@ -3,6 +3,7 @@ import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleT
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
+import { isDoubleTextFieldEmpty } from '@/object-record/record-field/meta-types/input/utils/isDoubleTextFieldEmpty';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
 const FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS =
@@ -29,12 +30,6 @@ export const FullNameFieldInput = ({
   const { hotkeyScope, draftValue, setDraftValue, persistFullNameField } =
     useFullNameField();
 
-  const isTrimmedFieldDoubleTextEmpty = (newDoubleText: FieldDoubleText) => {
-    const { firstValue, secondValue } = newDoubleText;
-    const totalLength = firstValue.trim().length + secondValue.trim().length;
-    return totalLength ? false : true;
-  };
-
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
     return {
       firstName: newDoubleText.firstValue.trim(),
@@ -45,7 +40,7 @@ export const FullNameFieldInput = ({
   const getRequiredDraftValueFromDoubleText = (
     newDoubleText: FieldDoubleText,
   ) => {
-    return isTrimmedFieldDoubleTextEmpty(newDoubleText)
+    return isDoubleTextFieldEmpty(newDoubleText)
       ? undefined
       : convertToFullName(newDoubleText);
   };

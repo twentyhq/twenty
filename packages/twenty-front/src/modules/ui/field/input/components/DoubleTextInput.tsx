@@ -14,7 +14,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { isDefined } from '~/utils/isDefined';
 
 import { splitFullName } from '~/utils/format/spiltFullName';
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
 
 const StyledContainer = styled.div`
@@ -195,7 +195,7 @@ export const DoubleTextInput = ({
         value={firstInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(
-            convertToEmptyStringForWhitespaces(event.target.value),
+            turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
             secondInternalValue,
           );
         }}
@@ -213,7 +213,7 @@ export const DoubleTextInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(
             firstInternalValue,
-            convertToEmptyStringForWhitespaces(event.target.value),
+            turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
           );
         }}
         onClick={handleClickToPreventParentClickEvents}

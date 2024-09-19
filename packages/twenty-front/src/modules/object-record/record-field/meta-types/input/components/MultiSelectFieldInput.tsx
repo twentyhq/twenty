@@ -16,7 +16,7 @@ import { MenuItemMultiSelectTag } from '@/ui/navigation/menu-item/components/Men
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;
@@ -112,7 +112,7 @@ export const MultiSelectFieldInput = ({
             value={searchFilter}
             onChange={(event) =>
               setSearchFilter(
-                convertToEmptyStringForWhitespaces(event.currentTarget.value),
+                turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
               )
             }
             autoFocus

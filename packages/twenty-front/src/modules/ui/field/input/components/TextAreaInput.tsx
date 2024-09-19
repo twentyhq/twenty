@@ -6,7 +6,7 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { isDefined } from '~/utils/isDefined';
-import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export type TextAreaInputProps = {
   disabled?: boolean;
@@ -69,7 +69,9 @@ export const TextAreaInput = ({
 }: TextAreaInputProps) => {
   const [internalText, setInternalText] = useState(value);
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const targetValue = convertToEmptyStringForWhitespaces(event.target.value);
+    const targetValue = turnIntoEmptyStringIfWhitespacesOnly(
+      event.target.value,
+    );
     setInternalText(targetValue);
     onChange?.(targetValue);
   };
