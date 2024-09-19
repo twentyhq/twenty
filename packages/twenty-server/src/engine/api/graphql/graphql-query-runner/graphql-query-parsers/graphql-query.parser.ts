@@ -1,7 +1,6 @@
 import {
   FindOptionsOrderValue,
   FindOptionsWhere,
-  IsNull,
   ObjectLiteral,
 } from 'typeorm';
 
@@ -31,42 +30,48 @@ export class GraphqlQueryParser {
     this.fieldMetadataMap = fieldMetadataMap;
   }
 
-  parseFilter(
-    recordFilter: RecordFilter,
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
+  parseFilter(recordFilter: RecordFilter): {
+    parsedFilters:
+      | FindOptionsWhere<ObjectLiteral>
+      | FindOptionsWhere<ObjectLiteral>[];
+    withDeleted: boolean;
+  } {
     const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
       this.fieldMetadataMap,
     );
 
     const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
 
-    if (!('deletedAt' in this.fieldMetadataMap)) {
-      return parsedFilter;
-    }
+    const hasDeletedAtFilter = this.checkForDeletedAtFilter(parsedFilter);
 
-    return this.addDefaultSoftDeleteCondition(parsedFilter);
+    return {
+      parsedFilters: parsedFilter,
+      withDeleted: hasDeletedAtFilter,
+    };
   }
 
-  private addDefaultSoftDeleteCondition(
+  private checkForDeletedAtFilter(
     filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
+  ): boolean {
     if (Array.isArray(filter)) {
-      return filter.map((condition) =>
-        this.addSoftDeleteToCondition(condition),
-      );
+      return filter.some(this.checkForDeletedAtFilter);
     }
 
-    return this.addSoftDeleteToCondition(filter);
-  }
+    for (const [key, value] of Object.entries(filter)) {
+      if (key === 'deletedAt') {
+        return true;
+      }
 
-  private addSoftDeleteToCondition(
-    condition: FindOptionsWhere<ObjectLiteral>,
-  ): FindOptionsWhere<ObjectLiteral> {
-    if (!('deletedAt' in condition)) {
-      return { ...condition, deletedAt: IsNull() };
+      if (typeof value === 'object' && value !== null) {
+        if (
+          this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
+        ) {
+          return true;
+        }
+      }
     }
 
-    return condition;
+    return false;
   }
 
   parseOrder(

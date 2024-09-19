@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
@@ -17,6 +18,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     DataSourceModule,
     WorkspaceSyncMetadataModule,
     WorkspaceHealthModule,
+    FeatureFlagModule,
   ],
   exports: [WorkspaceManagerService],
   providers: [WorkspaceManagerService],

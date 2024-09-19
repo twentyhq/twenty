@@ -13,19 +13,19 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
     FeatureFlagModule,
     StripeModule,
-    UserWorkspaceModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,
         BillingSubscriptionItem,
         Workspace,
+        UserWorkspace,
         FeatureFlagEntity,
       ],
       'core',

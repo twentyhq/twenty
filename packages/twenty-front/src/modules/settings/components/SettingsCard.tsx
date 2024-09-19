@@ -1,16 +1,16 @@
-import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight, IconComponent, Pill } from 'twenty-ui';
+import { IconChevronRight, Pill } from 'twenty-ui';
 
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { ReactNode } from 'react';
 
-type SettingsNavigationCardProps = {
-  children: ReactNode;
+type SettingsCardProps = {
+  description?: string;
   disabled?: boolean;
   soon?: boolean;
-  Icon: IconComponent;
+  Icon: ReactNode;
   onClick?: () => void;
   title: string;
   className?: string;
@@ -24,19 +24,23 @@ const StyledCard = styled(Card)<{
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
   cursor: ${({ disabled, onClick }) =>
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
+  width: 100%;
+  & :hover {
+    background-color: ${({ theme }) => theme.background.quaternary};
+  }
 `;
 
-const StyledCardContent = styled(CardContent)`
+const StyledCardContent = styled(CardContent)<object>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(4, 3)};
+  padding: ${({ theme }) => theme.spacing(2, 2)};
 `;
 
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitle = styled.div<{ disabled?: boolean }>`
@@ -54,18 +58,27 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 `;
 
 const StyledDescription = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(8)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(7)};
 `;
 
-export const SettingsNavigationCard = ({
-  children,
+const StyledIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+`;
+
+export const SettingsCard = ({
+  description,
   soon,
   disabled = soon,
   Icon,
   onClick,
   title,
   className,
-}: SettingsNavigationCardProps) => {
+}: SettingsCardProps) => {
   const theme = useTheme();
 
   return (
@@ -73,17 +86,18 @@ export const SettingsNavigationCard = ({
       disabled={disabled}
       onClick={disabled ? undefined : onClick}
       className={className}
+      rounded={true}
     >
       <StyledCardContent>
         <StyledHeader>
-          <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
+          <StyledIconContainer>{Icon}</StyledIconContainer>
           <StyledTitle disabled={disabled}>
             {title}
             {soon && <Pill label="Soon" />}
           </StyledTitle>
           <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>
-        <StyledDescription>{children}</StyledDescription>
+        {description && <StyledDescription>{description}</StyledDescription>}
       </StyledCardContent>
     </StyledCard>
   );
