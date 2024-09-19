@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { FocusEventHandler } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import styled from '@emotion/styled';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
