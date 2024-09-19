@@ -34,7 +34,8 @@ const StyledStatusTagContainer = styled.div`
 `;
 
 const fitViewOptions: FitViewOptions = {
-  maxZoom: 1.7,
+  minZoom: 1.3,
+  maxZoom: 1.3,
 };
 
 export const WorkflowDiagramCanvas = ({
