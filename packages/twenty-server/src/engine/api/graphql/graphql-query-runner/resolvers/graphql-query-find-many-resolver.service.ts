@@ -19,12 +19,12 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
-import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
+import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import {
-  generateObjectMetadataMap,
   ObjectMetadataMapItem,
+  generateObjectMetadataMap,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -79,14 +79,38 @@ export class GraphqlQueryFindManyResolverService {
       args.orderBy ?? [],
       isForwardPagination,
     );
-    const { parsedFilters: where, withDeleted } =
+    const { parsedFilters: whereForCount, withDeleted } =
       graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
-    const cursor = this.getCursor(args);
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
     this.addOrderByColumnsToSelect(order, select);
     this.addForeingKeyColumnsToSelect(relations, select, objectMetadata);
+
+    const totalCount = isDefined(selectedFields.totalCount)
+      ? await repository.count({ where: whereForCount, withDeleted })
+      : 0;
+
+    const cursor = this.getCursor(args);
+
+    let where = whereForCount;
+
+    if (cursor) {
+      const cursorArgFilter = computeCursorArgFilter(
+        cursor,
+        isForwardPagination,
+      );
+
+      const combinedArgFilter = {
+        ...args.filter,
+        or: cursorArgFilter,
+      } as unknown as Filter;
+
+      const { parsedFilters: whereForQuery } =
+        graphqlQueryParser.parseFilter(combinedArgFilter);
+
+      where = whereForQuery;
+    }
 
     const findOptions: FindManyOptions<ObjectLiteral> = {
       where,
@@ -95,14 +119,6 @@ export class GraphqlQueryFindManyResolverService {
       take: limit + 1,
       withDeleted,
     };
-
-    const totalCount = isDefined(selectedFields.totalCount)
-      ? await repository.count({ where, withDeleted })
-      : 0;
-
-    if (cursor) {
-      applyRangeFilter(where, cursor, isForwardPagination);
-    }
 
     const objectRecords = (await repository.find(
       findOptions,
