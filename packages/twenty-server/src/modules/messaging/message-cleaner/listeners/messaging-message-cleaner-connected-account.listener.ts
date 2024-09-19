@@ -20,7 +20,7 @@ export class MessagingMessageCleanerConnectedAccountListener {
   ) {}
 
   @OnEvent('connectedAccount.destroyed')
-  async handleDeletedEvent(
+  async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>
     >,

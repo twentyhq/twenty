@@ -305,7 +305,7 @@ export class GraphqlQueryRunnerService {
     const computedArgs = (await this.queryRunnerArgsFactory.create(
       hookedArgs,
       options,
-      ResolverArgsType.CreateMany,
+      ResolverArgsType.DestroyOne,
     )) as DestroyOneResolverArgs;
 
     const result = (await graphqlQueryDestroyOneResolverService.destroyOne(
