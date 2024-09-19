@@ -28,8 +28,9 @@ const StyledCardDetailsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   height: calc(100% - 45px);
   justify-content: start;
-  padding: ${({ theme }) => theme.spacing(2)};
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
+  padding: ${({ theme }) => theme.spacing(4)};
+  width: calc(100% - ${({ theme }) => theme.spacing(8)});
+  box-sizing: border-box;
 `;
 
 const StyledNoteTitle = styled.div`
@@ -41,7 +42,6 @@ const StyledCardContent = styled.div`
   align-self: stretch;
   color: ${({ theme }) => theme.font.color.secondary};
   line-break: anywhere;
-  margin-top: ${({ theme }) => theme.spacing(2)};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: pre-line;
