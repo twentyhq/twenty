@@ -6,9 +6,13 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
+
+    if (!Sentry.isInitialized()) {
+      return descriptor;
+    }
+    
     const originalMethod = descriptor.value;
 
-    
     descriptor.value = async function (...args: any[]) {
       try {
         Sentry.captureCheckIn({
