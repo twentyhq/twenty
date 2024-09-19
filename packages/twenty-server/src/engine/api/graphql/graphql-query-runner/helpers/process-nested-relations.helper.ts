@@ -77,7 +77,7 @@ export class ProcessNestedRelationsHelper {
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations(
         objectMetadataMap,
-        objectMetadataMap[relationName],
+        objectMetadataMap[referenceObjectMetadataName],
         relationResults as ObjectRecord[],
         nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
         limit,
@@ -134,7 +134,7 @@ export class ProcessNestedRelationsHelper {
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations(
         objectMetadataMap,
-        objectMetadataMap[relationName],
+        objectMetadataMap[referenceObjectMetadataName],
         relationResults as ObjectRecord[],
         nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
         limit,
