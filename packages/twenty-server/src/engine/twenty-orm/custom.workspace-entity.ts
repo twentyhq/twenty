@@ -21,9 +21,7 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-@WorkspaceCustomEntity({
-  softDelete: true,
-})
+@WorkspaceCustomEntity()
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,

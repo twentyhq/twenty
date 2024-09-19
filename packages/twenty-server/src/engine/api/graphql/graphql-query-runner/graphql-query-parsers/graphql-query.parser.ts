@@ -1,7 +1,6 @@
 import {
   FindOptionsOrderValue,
   FindOptionsWhere,
-  IsNull,
   ObjectLiteral,
 } from 'typeorm';
 
@@ -17,7 +16,7 @@ import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
@@ -33,7 +32,6 @@ export class GraphqlQueryParser {
 
   parseFilter(
     recordFilter: RecordFilter,
-    shouldAddDefaultSoftDeleteCondition = false,
   ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
     const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
       this.fieldMetadataMap,
@@ -41,36 +39,7 @@ export class GraphqlQueryParser {
 
     const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
 
-    if (
-      !shouldAddDefaultSoftDeleteCondition ||
-      !('deletedAt' in this.fieldMetadataMap)
-    ) {
-      return parsedFilter;
-    }
-
-    return this.addDefaultSoftDeleteCondition(parsedFilter);
-  }
-
-  private addDefaultSoftDeleteCondition(
-    filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
-    if (Array.isArray(filter)) {
-      return filter.map((condition) =>
-        this.addSoftDeleteToCondition(condition),
-      );
-    }
-
-    return this.addSoftDeleteToCondition(filter);
-  }
-
-  private addSoftDeleteToCondition(
-    condition: FindOptionsWhere<ObjectLiteral>,
-  ): FindOptionsWhere<ObjectLiteral> {
-    if (!('deletedAt' in condition)) {
-      return { ...condition, deletedAt: IsNull() };
-    }
-
-    return condition;
+    return parsedFilter;
   }
 
   parseOrder(

@@ -21,6 +21,7 @@ export enum AppTokenType {
   CodeChallenge = 'CODE_CHALLENGE',
   AuthorizationCode = 'AUTHORIZATION_CODE',
   PasswordResetToken = 'PASSWORD_RESET_TOKEN',
+  InvitationToken = 'INVITATION_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
@@ -37,8 +38,8 @@ export class AppToken {
   @JoinColumn({ name: 'userId' })
   user: Relation<User>;
 
-  @Column()
-  userId: string;
+  @Column({ nullable: true })
+  userId: string | null;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.appTokens, {
     onDelete: 'CASCADE',
@@ -73,4 +74,7 @@ export class AppToken {
   @Field()
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  context: { email: string } | null;
 }

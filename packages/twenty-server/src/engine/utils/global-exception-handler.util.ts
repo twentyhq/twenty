@@ -2,7 +2,7 @@ import { HttpException } from '@nestjs/common';
 
 import { GraphQLError } from 'graphql';
 
-import { ExceptionHandlerUser } from 'src/engine/integrations/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 
 import {
   AuthenticationError,
@@ -15,7 +15,7 @@ import {
   TimeoutError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
   400: ValidationError,

@@ -1,67 +1,16 @@
+import { WorkflowDiagramBaseStepNode } from '@/workflow/components/WorkflowDiagramBaseStepNode';
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Handle, Position } from '@xyflow/react';
+import { IconCode, IconPlaylistAdd } from 'twenty-ui';
 
-const StyledStepNodeContainer = styled.div`
+const StyledStepNodeLabelIconContainer = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.spacing(1)};
   display: flex;
-  flex-direction: column;
-
-  padding-bottom: 12px;
-  padding-top: 6px;
-`;
-
-const StyledStepNodeType = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm}
-    ${({ theme }) => theme.border.radius.sm} 0 0;
-
-  color: ${({ theme }) => theme.color.gray50};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  top: 0;
-  transform: translateY(-100%);
-
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
-    background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.font.color.inverted};
-  }
-`;
-
-const StyledStepNodeInnerContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-
-  position: relative;
-  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
-
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
-    background-color: ${({ theme }) => theme.color.blue10};
-    border-color: ${({ theme }) => theme.color.blue};
-  }
-`;
-
-const StyledStepNodeLabel = styled.div`
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledSourceHandle = styled(Handle)`
-  background-color: ${({ theme }) => theme.color.gray50};
-`;
-
-export const StyledTargetHandle = styled(Handle)`
-  visibility: hidden;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const WorkflowDiagramStepNode = ({
@@ -69,19 +18,37 @@ export const WorkflowDiagramStepNode = ({
 }: {
   data: WorkflowDiagramStepNodeData;
 }) => {
+  const theme = useTheme();
+
+  const renderStepIcon = () => {
+    switch (data.nodeType) {
+      case 'trigger': {
+        return (
+          <StyledStepNodeLabelIconContainer>
+            <IconPlaylistAdd
+              size={theme.icon.size.sm}
+              color={theme.font.color.tertiary}
+            />
+          </StyledStepNodeLabelIconContainer>
+        );
+      }
+      case 'action': {
+        return (
+          <StyledStepNodeLabelIconContainer>
+            <IconCode size={theme.icon.size.sm} color={theme.color.orange} />
+          </StyledStepNodeLabelIconContainer>
+        );
+      }
+    }
+
+    return null;
+  };
+
   return (
-    <StyledStepNodeContainer>
-      {data.nodeType !== 'trigger' ? (
-        <StyledTargetHandle type="target" position={Position.Top} />
-      ) : null}
-
-      <StyledStepNodeInnerContainer>
-        <StyledStepNodeType>{data.nodeType}</StyledStepNodeType>
-
-        <StyledStepNodeLabel>{data.label}</StyledStepNodeLabel>
-      </StyledStepNodeInnerContainer>
-
-      <StyledSourceHandle type="source" position={Position.Bottom} />
-    </StyledStepNodeContainer>
+    <WorkflowDiagramBaseStepNode
+      nodeType={data.nodeType}
+      label={data.label}
+      Icon={renderStepIcon()}
+    />
   );
 };

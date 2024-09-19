@@ -8,7 +8,8 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
@@ -27,6 +28,10 @@ describe('SignInUpService', () => {
         },
         {
           provide: getRepositoryToken(User, 'core'),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(AppToken, 'core'),
           useValue: {},
         },
         {

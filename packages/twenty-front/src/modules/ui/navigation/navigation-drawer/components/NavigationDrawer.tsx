@@ -1,7 +1,7 @@
-import { ReactNode, useState } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
@@ -32,7 +32,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3.5)};
+  gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
@@ -41,7 +41,6 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
     isSubMenu
       ? css`
           padding-right: ${theme.spacing(8)};
-          padding-top: 41px;
         `
       : ''}
 

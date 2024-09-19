@@ -30,7 +30,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   description: 'A note',
   icon: 'IconNotes',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
-  softDelete: true,
 })
 export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -78,15 +77,14 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
-    label: 'Targets',
+    label: 'Relations',
     description: 'Note targets',
-    icon: 'IconCheckbox',
+    icon: 'IconArrowUpRight',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
   noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({

@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -51,6 +53,26 @@ export enum MessageChannelContactAutoCreationPolicy {
   SENT = 'SENT',
   NONE = 'NONE',
 }
+
+registerEnumType(MessageChannelVisibility, {
+  name: 'MessageChannelVisibility',
+});
+
+registerEnumType(MessageChannelSyncStatus, {
+  name: 'MessageChannelSyncStatus',
+});
+
+registerEnumType(MessageChannelSyncStage, {
+  name: 'MessageChannelSyncStage',
+});
+
+registerEnumType(MessageChannelType, {
+  name: 'MessageChannelType',
+});
+
+registerEnumType(MessageChannelContactAutoCreationPolicy, {
+  name: 'MessageChannelContactAutoCreationPolicy',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannel,

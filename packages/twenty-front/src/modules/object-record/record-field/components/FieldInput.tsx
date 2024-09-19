@@ -24,7 +24,9 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
+import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
+import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -187,6 +189,8 @@ export const FieldInput = ({
         />
       ) : isFieldRichText(fieldDefinition) ? (
         <RichTextFieldInput />
+      ) : isFieldArray(fieldDefinition) ? (
+        <ArrayFieldInput onCancel={onCancel} />
       ) : (
         <></>
       )}

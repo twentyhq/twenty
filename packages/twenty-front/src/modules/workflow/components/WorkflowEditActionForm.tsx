@@ -45,10 +45,10 @@ const StyledTriggerSettings = styled.div`
 
 export const WorkflowEditActionForm = ({
   action,
-  onUpdateAction,
+  onActionUpdate,
 }: {
   action: WorkflowAction;
-  onUpdateAction: (trigger: WorkflowAction) => void;
+  onActionUpdate: (trigger: WorkflowAction) => void;
 }) => {
   const theme = useTheme();
 
@@ -88,7 +88,7 @@ export const WorkflowEditActionForm = ({
           value={action.settings.serverlessFunctionId}
           options={availableFunctions}
           onChange={(updatedFunction) => {
-            onUpdateAction({
+            onActionUpdate({
               ...action,
               settings: {
                 ...action.settings,
