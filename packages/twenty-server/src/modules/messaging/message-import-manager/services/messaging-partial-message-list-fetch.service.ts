@@ -77,7 +77,7 @@ export class MessagingPartialMessageListFetchService {
       }
 
       await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageExternalIds,
       );
 

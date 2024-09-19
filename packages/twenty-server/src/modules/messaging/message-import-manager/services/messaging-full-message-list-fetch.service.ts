@@ -84,7 +84,7 @@ export class MessagingFullMessageListFetchService {
 
       if (messageExternalIdsToImport.length) {
         await this.cacheStorage.setAdd(
-          `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+          `messages-to-import:${workspaceId}:${messageChannel.id}`,
           messageExternalIdsToImport,
         );
       }
