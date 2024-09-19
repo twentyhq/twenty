@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
-import { RecordTableEmptyState } from '@/object-record/record-table/components/RecordTableEmptyState';
+import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
@@ -25,7 +24,6 @@ type RecordTableProps = {
   recordTableId: string;
   objectNameSingular: string;
   onColumnsChange: (columns: any) => void;
-  createRecord: () => void;
 };
 
 export const RecordTable = ({
@@ -33,7 +31,6 @@ export const RecordTable = ({
   recordTableId,
   objectNameSingular,
   onColumnsChange,
-  createRecord,
 }: RecordTableProps) => {
   const { scopeId } = useRecordTableStates(recordTableId);
 
@@ -51,12 +48,10 @@ export const RecordTable = ({
 
   const pendingRecordId = useRecoilValue(pendingRecordIdState);
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    { objectNameSingular },
-  );
-
-  const objectLabel = foundObjectMetadataItem?.labelSingular;
-  const isRemote = foundObjectMetadataItem?.isRemote ?? false;
+  const recordTableIsEmpty =
+    !isRecordTableInitialLoading &&
+    tableRowIds.length === 0 &&
+    isNull(pendingRecordId);
 
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
@@ -73,18 +68,11 @@ export const RecordTable = ({
         viewBarId={viewBarId}
       >
         <RecordTableBodyEffect />
-        {!isRecordTableInitialLoading &&
-        tableRowIds.length === 0 &&
-        isNull(pendingRecordId) ? (
-          <RecordTableEmptyState
-            objectNameSingular={objectNameSingular}
-            objectLabel={objectLabel}
-            createRecord={createRecord}
-            isRemote={isRemote}
-          />
+        {recordTableIsEmpty ? (
+          <RecordTableEmptyState />
         ) : (
           <StyledTable className="entity-table-cell">
-            <RecordTableHeader createRecord={createRecord} />
+            <RecordTableHeader />
             <RecordTableBody />
           </StyledTable>
         )}

@@ -17,11 +17,15 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import {
+  generateObjectMetadataMap,
+  ObjectMetadataMapItem,
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQueryFindManyResolverService {
@@ -44,11 +48,14 @@ export class GraphqlQueryFindManyResolverService {
 
     this.validateArgsOrThrow(args);
 
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
-        objectMetadataItem.nameSingular,
       );
+
+    const repository = dataSource.getRepository(
+      objectMetadataItem.nameSingular,
+    );
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
@@ -61,36 +68,46 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataMap,
     );
 
+    const selectedFields = graphqlFields(info);
+
     const { select, relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
-      graphqlFields(info),
+      selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
     const order = graphqlQueryParser.parseOrder(
       args.orderBy ?? [],
       isForwardPagination,
     );
-    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
+    const { parsedFilters: where, withDeleted } =
+      graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     const cursor = this.getCursor(args);
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
     this.addOrderByColumnsToSelect(order, select);
+    this.addForeingKeyColumnsToSelect(relations, select, objectMetadata);
 
     const findOptions: FindManyOptions<ObjectLiteral> = {
       where,
       order,
       select,
-      relations,
       take: limit + 1,
+      withDeleted,
     };
-    const totalCount = await repository.count({ where });
+
+    const totalCount = isDefined(selectedFields.totalCount)
+      ? await repository.count({ where, withDeleted })
+      : 0;
 
     if (cursor) {
       applyRangeFilter(where, cursor, isForwardPagination);
     }
 
-    const objectRecords = await repository.find(findOptions);
+    const objectRecords = (await repository.find(
+      findOptions,
+    )) as ObjectRecord[];
+
     const { hasNextPage, hasPreviousPage } = this.getPaginationInfo(
       objectRecords,
       limit,
@@ -101,11 +118,27 @@ export class GraphqlQueryFindManyResolverService {
       objectRecords.pop();
     }
 
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper(
+      this.twentyORMGlobalManager,
+    );
+
+    if (relations) {
+      await processNestedRelationsHelper.processNestedRelations(
+        objectMetadataMap,
+        objectMetadata,
+        objectRecords,
+        relations,
+        limit,
+        authContext,
+        dataSource,
+      );
+    }
+
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
     return typeORMObjectRecordsParser.createConnection(
-      objectRecords as ObjectRecord[],
+      objectRecords,
       objectMetadataItem.nameSingular,
       limit,
       totalCount,
@@ -170,6 +203,18 @@ export class GraphqlQueryFindManyResolverService {
     for (const column of Object.keys(order || {})) {
       if (!select[column]) {
         select[column] = true;
+      }
+    }
+  }
+
+  private addForeingKeyColumnsToSelect(
+    relations: Record<string, any>,
+    select: Record<string, boolean>,
+    objectMetadata: ObjectMetadataMapItem,
+  ) {
+    for (const column of Object.keys(relations || {})) {
+      if (!select[`${column}Id`] && objectMetadata.fields[`${column}Id`]) {
+        select[`${column}Id`] = true;
       }
     }
   }

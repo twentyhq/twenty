@@ -13,8 +13,12 @@ import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
-import { useAddUserToWorkspaceMutation } from '~/generated/graphql';
+import {
+  useAddUserToWorkspaceMutation,
+  useAddUserToWorkspaceByInviteTokenMutation,
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { useSearchParams } from 'react-router-dom';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -24,26 +28,40 @@ const StyledContentContainer = styled.div`
 export const Invite = () => {
   const { workspace: workspaceFromInviteHash, workspaceInviteHash } =
     useWorkspaceFromInviteHash();
+
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [addUserToWorkspace] = useAddUserToWorkspaceMutation();
+  const [addUserToWorkspaceByInviteToken] =
+    useAddUserToWorkspaceByInviteTokenMutation();
   const { switchWorkspace } = useWorkspaceSwitching();
+  const [searchParams] = useSearchParams();
+  const workspaceInviteToken = searchParams.get('inviteToken');
 
   const title = useMemo(() => {
     return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
   }, [workspaceFromInviteHash?.displayName]);
 
   const handleUserJoinWorkspace = async () => {
-    if (
-      !(isDefined(workspaceInviteHash) && isDefined(workspaceFromInviteHash))
+    if (isDefined(workspaceInviteToken) && isDefined(workspaceFromInviteHash)) {
+      await addUserToWorkspaceByInviteToken({
+        variables: {
+          inviteToken: workspaceInviteToken,
+        },
+      });
+    } else if (
+      isDefined(workspaceInviteHash) &&
+      isDefined(workspaceFromInviteHash)
     ) {
+      await addUserToWorkspace({
+        variables: {
+          inviteHash: workspaceInviteHash,
+        },
+      });
+    } else {
       return;
     }
-    await addUserToWorkspace({
-      variables: {
-        inviteHash: workspaceInviteHash,
-      },
-    });
+
     await switchWorkspace(workspaceFromInviteHash.id);
   };
 

@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
