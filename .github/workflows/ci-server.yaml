@@ -111,3 +111,4 @@ jobs:
         with:
           tag: scope:backend
           tasks: "test:integration"
+          extra: ">> action_logs.txt 2>&1"
