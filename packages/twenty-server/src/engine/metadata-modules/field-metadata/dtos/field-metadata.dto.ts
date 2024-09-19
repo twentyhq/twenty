@@ -12,6 +12,7 @@ import {
   QueryOptions,
   Relation,
 } from '@ptc-org/nestjs-query-graphql';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
@@ -30,11 +31,13 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
+import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
 registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',
@@ -120,6 +123,9 @@ export class FieldMetadataDTO<
   @Field(() => GraphQLJSON, { nullable: true })
   defaultValue?: FieldMetadataDefaultValue<T>;
 
+  @Transform(({ value }) =>
+    transformEnumValue(value as FieldMetadataDefaultOption[]),
+  )
   @Validate(IsFieldMetadataOptions)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
