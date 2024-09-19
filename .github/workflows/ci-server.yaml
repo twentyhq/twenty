@@ -68,8 +68,11 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
-      - name: Server / Run Tests
-        run: npx nx test twenty-server
+      - name:  Server / Run Tests
+        uses: ./.github/workflows/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: test
 
   server-integration-test:
     runs-on: ubuntu-latest
@@ -83,5 +86,8 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
-      - name: Server / Run Integration Tests
-        run: npx nx test:integration twenty-server
+      - name:  Server / Run Integration Tests
+        uses: ./.github/workflows/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: "test:integration"
