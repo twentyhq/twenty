@@ -3,13 +3,12 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import * as Sentry from '@sentry/node';
-import '@sentry/tracing';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import { graphqlUploadExpress } from 'graphql-upload';
 
-import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
 
 import { AppModule } from './app.module';
 
@@ -36,8 +35,7 @@ const bootstrap = async () => {
   app.useLogger(logger);
 
   if (Sentry.isInitialized()) {
-    app.use(Sentry.Handlers.requestHandler());
-    app.use(Sentry.Handlers.tracingHandler());
+    Sentry.setupExpressErrorHandler(app);
   }
 
   app.useGlobalFilters(new ApplyCorsToExceptions());
