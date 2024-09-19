@@ -10,6 +10,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -25,6 +26,7 @@ export class MessagingFullMessageListFetchService {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
   ) {}
 
   public async processMessageListFetch(
@@ -80,6 +82,10 @@ export class MessagingFullMessageListFetchService {
           messageChannelId: messageChannel.id,
           messageExternalId: In(messageExternalIdsToDelete),
         });
+
+        await this.messagingMessageCleanerService.cleanWorkspaceThreads(
+          workspaceId,
+        );
       }
 
       if (messageExternalIdsToImport.length) {
