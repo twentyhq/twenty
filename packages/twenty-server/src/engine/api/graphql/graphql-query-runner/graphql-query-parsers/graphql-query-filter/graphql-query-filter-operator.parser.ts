@@ -28,7 +28,15 @@ export class GraphqlQueryFilterOperatorParser {
       lt: (value: any) => LessThan(value),
       lte: (value: any) => LessThanOrEqual(value),
       in: (value: any) => In(value),
-      is: (value: any) => (value === 'NULL' ? IsNull() : value),
+      is: (value: any) => {
+        if (value === 'NULL') {
+          return IsNull();
+        } else if (value === 'NOT_NULL') {
+          return Not(IsNull());
+        } else {
+          return value;
+        }
+      },
       like: (value: string) => Like(`%${value}%`),
       ilike: (value: string) => ILike(`%${value}%`),
       startsWith: (value: string) => ILike(`${value}%`),

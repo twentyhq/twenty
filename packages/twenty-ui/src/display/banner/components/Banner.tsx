@@ -22,12 +22,18 @@ const StyledBanner = styled.div<{ variant?: BannerVariant }>`
 
 export type BannerVariant = 'danger' | 'default';
 
+type BannerProps = {
+  variant?: BannerVariant;
+  className?: string;
+  children: React.ReactNode;
+} & React.HTMLAttributes<HTMLDivElement>;
+
 export const Banner = ({
   variant = 'default',
+  className,
   children,
-}: {
-  variant?: BannerVariant;
-  children: React.ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>) => (
-  <StyledBanner variant={variant}>{children}</StyledBanner>
+}: BannerProps) => (
+  <StyledBanner variant={variant} className={className}>
+    {children}
+  </StyledBanner>
 );

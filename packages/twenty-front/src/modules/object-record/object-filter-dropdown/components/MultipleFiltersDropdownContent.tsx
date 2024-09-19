@@ -67,6 +67,8 @@ export const MultipleFiltersDropdownContent = ({
               'LINKS',
               'ADDRESS',
               'ACTOR',
+              'ARRAY',
+              'PHONES',
             ].includes(filterDefinitionUsedInDropdown.type) && (
               <ObjectFilterDropdownTextSearchInput />
             )}

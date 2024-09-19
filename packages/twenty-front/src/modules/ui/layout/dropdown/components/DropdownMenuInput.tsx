@@ -1,6 +1,7 @@
-import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
+import 'react-phone-number-input/style.css';
 import { RGBA, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
@@ -43,7 +44,9 @@ const StyledRightContainer = styled.div`
   transform: translateY(-50%);
 `;
 
-type DropdownMenuInputProps = InputHTMLAttributes<HTMLInputElement> & {
+type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
+
+export type DropdownMenuInputProps = HTMLInputProps & {
   hotkeyScope?: string;
   onClickOutside?: () => void;
   onEnter?: () => void;
@@ -51,6 +54,12 @@ type DropdownMenuInputProps = InputHTMLAttributes<HTMLInputElement> & {
   onShiftTab?: () => void;
   onTab?: () => void;
   rightComponent?: ReactNode;
+  renderInput?: (props: {
+    value: HTMLInputProps['value'];
+    onChange: HTMLInputProps['onChange'];
+    autoFocus: HTMLInputProps['autoFocus'];
+    placeholder: HTMLInputProps['placeholder'];
+  }) => React.ReactNode;
 };
 
 export const DropdownMenuInput = forwardRef<
@@ -71,6 +80,7 @@ export const DropdownMenuInput = forwardRef<
       onShiftTab,
       onTab,
       rightComponent,
+      renderInput,
     },
     ref,
   ) => {
@@ -90,14 +100,23 @@ export const DropdownMenuInput = forwardRef<
 
     return (
       <StyledInputContainer className={className}>
-        <StyledInput
-          autoFocus={autoFocus}
-          value={value}
-          placeholder={placeholder}
-          onChange={onChange}
-          ref={combinedRef}
-          withRightComponent={!!rightComponent}
-        />
+        {renderInput ? (
+          renderInput({
+            value,
+            onChange,
+            autoFocus,
+            placeholder,
+          })
+        ) : (
+          <StyledInput
+            autoFocus={autoFocus}
+            value={value}
+            placeholder={placeholder}
+            onChange={onChange}
+            ref={combinedRef}
+            withRightComponent={!!rightComponent}
+          />
+        )}
         {!!rightComponent && (
           <StyledRightContainer>{rightComponent}</StyledRightContainer>
         )}

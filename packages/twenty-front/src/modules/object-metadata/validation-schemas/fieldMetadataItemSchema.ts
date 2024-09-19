@@ -6,7 +6,6 @@ import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metada
 import {
   FieldMetadataType,
   RelationDefinitionType,
-  RelationMetadataType,
 } from '~/generated-metadata/graphql';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
@@ -16,24 +15,6 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     createdAt: z.string().datetime(),
     defaultValue: z.any().optional(),
     description: z.string().trim().nullable().optional(),
-    fromRelationMetadata: z
-      .object({
-        __typename: z.literal('relation').optional(),
-        id: z.string().uuid(),
-        relationType: z.nativeEnum(RelationMetadataType),
-        toFieldMetadataId: z.string().uuid(),
-        toObjectMetadata: z.object({
-          __typename: z.literal('object').optional(),
-          dataSourceId: z.string().uuid(),
-          id: z.string().uuid(),
-          isRemote: z.boolean(),
-          isSystem: z.boolean(),
-          namePlural: z.string().trim().min(1),
-          nameSingular: z.string().trim().min(1),
-        }),
-      })
-      .nullable()
-      .optional(),
     icon: z.string().startsWith('Icon').trim().nullable(),
     id: z.string().uuid(),
     isActive: z.boolean(),
@@ -78,24 +59,6 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
         targetObjectMetadata: z.object({
           __typename: z.literal('object').optional(),
           id: z.string().uuid(),
-          namePlural: z.string().trim().min(1),
-          nameSingular: z.string().trim().min(1),
-        }),
-      })
-      .nullable()
-      .optional(),
-    toRelationMetadata: z
-      .object({
-        __typename: z.literal('relation').optional(),
-        id: z.string().uuid(),
-        relationType: z.nativeEnum(RelationMetadataType),
-        fromFieldMetadataId: z.string().uuid(),
-        fromObjectMetadata: z.object({
-          __typename: z.literal('object').optional(),
-          id: z.string().uuid(),
-          dataSourceId: z.string().uuid(),
-          isRemote: z.boolean(),
-          isSystem: z.boolean(),
           namePlural: z.string().trim().min(1),
           nameSingular: z.string().trim().min(1),
         }),

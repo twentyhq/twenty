@@ -9,7 +9,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { settings } from 'src/engine/constants/settings';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getCropSize } from 'src/utils/image';
 
 @Injectable()

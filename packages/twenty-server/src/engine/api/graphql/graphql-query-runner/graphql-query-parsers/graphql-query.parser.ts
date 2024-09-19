@@ -16,7 +16,7 @@ import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
@@ -37,15 +37,20 @@ export class GraphqlQueryParser {
       this.fieldMetadataMap,
     );
 
-    return graphqlQueryFilterParser.parse(recordFilter);
+    const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
+
+    return parsedFilter;
   }
 
-  parseOrder(orderBy: RecordOrderBy): Record<string, FindOptionsOrderValue> {
+  parseOrder(
+    orderBy: RecordOrderBy,
+    isForwardPagination = true,
+  ): Record<string, FindOptionsOrderValue> {
     const graphqlQueryOrderParser = new GraphqlQueryOrderParser(
       this.fieldMetadataMap,
     );
 
-    return graphqlQueryOrderParser.parse(orderBy);
+    return graphqlQueryOrderParser.parse(orderBy, isForwardPagination);
   }
 
   parseSelectedFields(

@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 
 import request from 'supertest';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { createApp } from './utils/create-app';
 
@@ -15,7 +15,7 @@ describe('CompanyResolver (e2e)', () => {
   beforeEach(async () => {
     [app] = await createApp({
       moduleBuilderHook: (moduleBuilder) =>
-        moduleBuilder.overrideGuard(JwtAuthGuard).useValue(authGuardMock),
+        moduleBuilder.overrideGuard(WorkspaceAuthGuard).useValue(authGuardMock),
     });
   });
 

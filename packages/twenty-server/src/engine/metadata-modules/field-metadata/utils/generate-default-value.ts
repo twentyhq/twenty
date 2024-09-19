@@ -47,6 +47,12 @@ export function generateDefaultValue(
         primaryLinkUrl: "''",
         secondaryLinks: null,
       };
+    case FieldMetadataType.PHONES:
+      return {
+        primaryPhoneNumber: "''",
+        primaryPhoneCountryCode: "''",
+        additionalPhones: null,
+      };
     default:
       return null;
   }

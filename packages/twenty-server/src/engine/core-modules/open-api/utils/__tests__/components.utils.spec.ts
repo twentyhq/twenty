@@ -33,6 +33,20 @@ describe('computeSchemaComponents', () => {
           fieldPhone: {
             type: 'string',
           },
+          fieldPhones: {
+            properties: {
+              additionalPhones: {
+                type: 'object',
+              },
+              primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneNumber: {
+                type: 'string',
+              },
+            },
+            type: 'object',
+          },
           fieldEmail: {
             type: 'string',
             format: 'email',
@@ -55,6 +69,12 @@ describe('computeSchemaComponents', () => {
           fieldDate: {
             type: 'string',
             format: 'date',
+          },
+          fieldArray: {
+            items: {
+              type: 'string',
+            },
+            type: 'array',
           },
           fieldBoolean: {
             type: 'boolean',
@@ -195,6 +215,20 @@ describe('computeSchemaComponents', () => {
           fieldPhone: {
             type: 'string',
           },
+          fieldPhones: {
+            properties: {
+              additionalPhones: {
+                type: 'object',
+              },
+              primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneNumber: {
+                type: 'string',
+              },
+            },
+            type: 'object',
+          },
           fieldEmail: {
             type: 'string',
             format: 'email',
@@ -217,6 +251,12 @@ describe('computeSchemaComponents', () => {
           fieldDate: {
             type: 'string',
             format: 'date',
+          },
+          fieldArray: {
+            items: {
+              type: 'string',
+            },
+            type: 'array',
           },
           fieldBoolean: {
             type: 'boolean',
@@ -356,6 +396,20 @@ describe('computeSchemaComponents', () => {
           fieldPhone: {
             type: 'string',
           },
+          fieldPhones: {
+            properties: {
+              additionalPhones: {
+                type: 'object',
+              },
+              primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneNumber: {
+                type: 'string',
+              },
+            },
+            type: 'object',
+          },
           fieldEmail: {
             type: 'string',
             format: 'email',
@@ -378,6 +432,12 @@ describe('computeSchemaComponents', () => {
           fieldDate: {
             type: 'string',
             format: 'date',
+          },
+          fieldArray: {
+            items: {
+              type: 'string',
+            },
+            type: 'array',
           },
           fieldBoolean: {
             type: 'boolean',

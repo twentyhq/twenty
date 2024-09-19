@@ -60,10 +60,10 @@ export class WorkspaceMigrationService {
     workspaceId: string,
     migration: WorkspaceMigrationEntity,
   ) {
-    await this.workspaceMigrationRepository.save({
-      id: migration.id,
-      appliedAt: new Date(),
-    });
+    await this.workspaceMigrationRepository.update(
+      { id: migration.id, workspaceId },
+      { appliedAt: new Date() },
+    );
   }
 
   /**

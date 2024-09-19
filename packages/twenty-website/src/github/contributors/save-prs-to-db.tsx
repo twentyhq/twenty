@@ -26,7 +26,14 @@ export async function savePRsToDB(
           isEmployee: assignableUsers.has(pr.author.login) ? '1' : '0',
         },
       ],
-      { onConflictKey: 'id' },
+      {
+        onConflictKey: 'id',
+        onConflictUpdateObject: {
+          avatarUrl: pr.author.avatarUrl,
+          url: pr.author.url,
+          isEmployee: assignableUsers.has(pr.author.login) ? '1' : '0',
+        },
+      },
     );
 
     await insertMany(
@@ -46,7 +53,15 @@ export async function savePRsToDB(
       ],
       {
         onConflictKey: 'id',
-        onConflictUpdateObject: { title: pr.title, updatedAt: pr.updatedAt },
+        onConflictUpdateObject: {
+          title: pr.title,
+          body: pr.body,
+          url: pr.url,
+          updatedAt: pr.updatedAt,
+          closedAt: pr.closedAt,
+          mergedAt: pr.mergedAt,
+          authorId: pr.author.login,
+        },
       },
     );
 
@@ -61,7 +76,14 @@ export async function savePRsToDB(
             description: label.description,
           },
         ],
-        { onConflictKey: 'id' },
+        {
+          onConflictKey: 'id',
+          onConflictUpdateObject: {
+            name: label.name,
+            color: label.color,
+            description: label.description,
+          },
+        },
       );
       await insertMany(pullRequestLabelModel, [
         {

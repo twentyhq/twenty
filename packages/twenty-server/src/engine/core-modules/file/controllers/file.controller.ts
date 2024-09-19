@@ -5,7 +5,7 @@ import { Response } from 'express';
 import {
   FileStorageException,
   FileStorageExceptionCode,
-} from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import {
   checkFilePath,

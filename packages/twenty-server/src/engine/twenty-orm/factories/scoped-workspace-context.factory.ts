@@ -11,11 +11,11 @@ export class ScopedWorkspaceContextFactory {
 
   public create(): {
     workspaceId: string | null;
-    workspaceMetadataVersion: string | null;
+    workspaceMetadataVersion: number | null;
   } {
     const workspaceId: string | undefined =
       this.request?.['req']?.['workspaceId'];
-    const workspaceMetadataVersion: string | undefined =
+    const workspaceMetadataVersion: number | undefined =
       this.request?.['req']?.['workspaceMetadataVersion'];
 
     return {

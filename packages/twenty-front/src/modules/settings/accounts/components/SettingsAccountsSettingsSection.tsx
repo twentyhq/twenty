@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui';
 
-import { SettingsNavigationCard } from '@/settings/components/SettingsNavigationCard';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { useTheme } from '@emotion/react';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -14,6 +15,7 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
+  const theme = useTheme();
   return (
     <Section>
       <H2Title
@@ -22,16 +24,30 @@ export const SettingsAccountsSettingsSection = () => {
       />
       <StyledCardsContainer>
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.AccountsEmails)}>
-          <SettingsNavigationCard Icon={IconMailCog} title="Emails">
-            Set email visibility, manage your blocklist and more.
-          </SettingsNavigationCard>
+          <SettingsCard
+            Icon={
+              <IconMailCog
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
+            title="Emails"
+            description="Set email visibility, manage your blocklist and more."
+          />
         </UndecoratedLink>
         <UndecoratedLink
           to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
         >
-          <SettingsNavigationCard Icon={IconCalendarEvent} title="Calendar">
-            Configure and customize your calendar preferences.
-          </SettingsNavigationCard>
+          <SettingsCard
+            Icon={
+              <IconCalendarEvent
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
+            title="Calendar"
+            description="Configure and customize your calendar preferences."
+          />
         </UndecoratedLink>
       </StyledCardsContainer>
     </Section>

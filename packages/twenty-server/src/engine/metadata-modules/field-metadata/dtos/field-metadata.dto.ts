@@ -44,7 +44,7 @@ registerEnumType(FieldMetadataType, {
 @ObjectType('field')
 @Authorize({
   authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
+    workspaceId: { eq: context?.req?.workspace?.id },
   }),
 })
 @QueryOptions({
@@ -131,6 +131,8 @@ export class FieldMetadataDTO<
 
   @HideField()
   workspaceId: string;
+
+  objectMetadataId: string;
 
   @IsDateString()
   @Field()

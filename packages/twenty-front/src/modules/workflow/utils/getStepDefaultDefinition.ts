@@ -7,11 +7,11 @@ export const getStepDefaultDefinition = (
   const newStepId = v4();
 
   switch (type) {
-    case 'CODE_ACTION': {
+    case 'CODE': {
       return {
         id: newStepId,
         name: 'Code',
-        type: 'CODE_ACTION',
+        type: 'CODE',
         valid: false,
         settings: {
           serverlessFunctionId: '',

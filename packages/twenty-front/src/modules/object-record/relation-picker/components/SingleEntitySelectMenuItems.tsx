@@ -92,8 +92,9 @@ export const SingleEntitySelectMenuItems = ({
       isDefined(entity) && isNonEmptyString(entity.name),
   );
 
-  const { isSelectedItemIdSelector, handleResetSelectedPosition } =
-    useSelectableList(SINGLE_ENTITY_SELECT_BASE_LIST);
+  const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
+    SINGLE_ENTITY_SELECT_BASE_LIST,
+  );
 
   const isSelectedAddNewButton = useRecoilValue(
     isSelectedItemIdSelector('add-new'),
@@ -110,11 +111,11 @@ export const SingleEntitySelectMenuItems = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      handleResetSelectedPosition();
+      resetSelectedItem();
       onCancel?.();
     },
     hotkeyScope,
-    [onCancel, handleResetSelectedPosition],
+    [onCancel, resetSelectedItem],
   );
 
   const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
@@ -134,7 +135,7 @@ export const SingleEntitySelectMenuItems = ({
             );
             onEntitySelected(entitiesInDropdown[entityIndex]);
           }
-          handleResetSelectedPosition();
+          resetSelectedItem();
         }}
       >
         <DropdownMenuItemsContainer hasMaxHeight>

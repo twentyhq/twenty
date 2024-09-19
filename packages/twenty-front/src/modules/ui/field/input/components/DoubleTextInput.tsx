@@ -177,6 +177,13 @@ export const DoubleTextInput = ({
     });
   };
 
+  const handleClickToPreventParentClickEvents = (
+    event: React.MouseEvent<HTMLInputElement>,
+  ) => {
+    event.stopPropagation();
+    event.preventDefault();
+  };
+
   return (
     <StyledContainer ref={containerRef}>
       <StyledTextInput
@@ -195,6 +202,7 @@ export const DoubleTextInput = ({
         onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
           handleOnPaste(event)
         }
+        onClick={handleClickToPreventParentClickEvents}
       />
       <StyledTextInput
         autoComplete="off"
@@ -208,6 +216,7 @@ export const DoubleTextInput = ({
             convertToEmptyStringForWhitespaces(event.target.value),
           );
         }}
+        onClick={handleClickToPreventParentClickEvents}
       />
     </StyledContainer>
   );

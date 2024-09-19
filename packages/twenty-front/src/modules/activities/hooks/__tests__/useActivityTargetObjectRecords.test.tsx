@@ -7,7 +7,6 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
@@ -128,10 +127,8 @@ describe('useActivityTargetObjectRecords', () => {
           objectMetadataItemsState,
         );
 
-        const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
-          task,
-          CoreObjectNameSingular.Task,
-        );
+        const { activityTargetObjectRecords } =
+          useActivityTargetObjectRecords(task);
 
         return {
           activityTargetObjectRecords,
