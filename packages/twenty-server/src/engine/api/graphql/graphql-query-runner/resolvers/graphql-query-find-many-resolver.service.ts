@@ -4,6 +4,7 @@ import { FindManyOptions, ObjectLiteral } from 'typeorm';
 
 import {
   Record as IRecord,
+  OrderByDirection,
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
@@ -76,7 +77,7 @@ export class GraphqlQueryFindManyResolverService {
     );
     const isForwardPagination = !isDefined(args.before);
     const order = graphqlQueryParser.parseOrder(
-      args.orderBy ?? [],
+      [...(args.orderBy ?? []), { id: OrderByDirection.AscNullsFirst }],
       isForwardPagination,
     );
     const { parsedFilters: whereForCount, withDeleted } =
