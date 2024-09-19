@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconCode } from 'twenty-ui';
+import { H2Title, IconCode, isDefined } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -45,7 +45,22 @@ export const SettingsDevelopersWebhooksNew = () => {
   };
 
   const canSave =
-    !!formValues.targetUrl && isTargetUrlValid && createOneWebhook;
+    !!formValues.targetUrl && isTargetUrlValid && isDefined(createOneWebhook);
+
+  // TODO: refactor use useScopedHotkeys
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && canSave) {
+      handleSave();
+    }
+  };
+
+  const handleChange = (value: string) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      targetUrl: value,
+    }));
+    handleValidate(value);
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -82,18 +97,8 @@ export const SettingsDevelopersWebhooksNew = () => {
             placeholder="URL"
             value={formValues.targetUrl}
             error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSave();
-              }
-            }}
-            onChange={(value) => {
-              setFormValues((prevState) => ({
-                ...prevState,
-                targetUrl: value,
-              }));
-              handleValidate(value);
-            }}
+            onKeyDown={handleKeyDown}
+            onChange={handleChange}
             fullWidth
           />
         </Section>
