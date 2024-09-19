@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -26,14 +26,10 @@ export const SentryInitEffect = () => {
         release: sentryConfig?.release ?? undefined,
         dsn: sentryConfig?.dsn,
         integrations: [
-          new Sentry.BrowserTracing({
-            tracePropagationTargets: [
-              'localhost:3001',
-              REACT_APP_SERVER_BASE_URL,
-            ],
-          }),
-          new Sentry.Replay(),
+          Sentry.browserTracingIntegration({}),
+          Sentry.replayIntegration(),
         ],
+        tracePropagationTargets: ['localhost:3001', REACT_APP_SERVER_BASE_URL],
         tracesSampleRate: 1.0,
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
