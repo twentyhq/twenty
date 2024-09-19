@@ -97,7 +97,7 @@ export class GraphqlQueryFindManyResolverService {
     };
 
     const totalCount = isDefined(selectedFields.totalCount)
-      ? await repository.count({ where })
+      ? await repository.count({ where, withDeleted })
       : 0;
 
     if (cursor) {
