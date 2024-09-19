@@ -61,6 +61,7 @@ export type WorkflowVersion = {
   name: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
   workflowId: string;
   trigger: WorkflowTrigger | null;
   steps: Array<WorkflowStep> | null;
@@ -75,6 +76,10 @@ export type Workflow = {
   versions: Array<WorkflowVersion>;
   lastPublishedVersionId: string;
   statuses: Array<WorkflowStatus> | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  position: number;
 };
 
 export type WorkflowWithCurrentVersion = Workflow & {
