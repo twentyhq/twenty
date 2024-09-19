@@ -3,6 +3,7 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
+import { getSubMenuHeaderTitle } from '@/object-record/object-filter-dropdown/utils/getSubMenuHeaderTitle';
 import { getSubMenuOptions } from '@/object-record/object-filter-dropdown/utils/getSubMenuOptions';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -22,19 +23,6 @@ export const SubMenu = ({
   parent,
 }: SubMenuProps) => {
   const [searchText, setSearchText] = useState('');
-
-  const getHeaderTitle = (subMenu: FilterType | null) => {
-    switch (subMenu) {
-      case 'ADDRESS':
-        return 'Address';
-      case 'FULL_NAME':
-        return 'Full Name';
-      case 'LINKS':
-        return 'Links';
-      default:
-        return;
-    }
-  };
 
   const { getIcon } = useIcons();
 
@@ -64,7 +52,7 @@ export const SubMenu = ({
           setCurrentSubMenu(null);
         }}
       >
-        {getHeaderTitle(currentSubMenu)}
+        {getSubMenuHeaderTitle(currentSubMenu)}
       </DropdownMenuHeader>
       <StyledInput
         value={searchText}
@@ -82,7 +70,7 @@ export const SubMenu = ({
             handleSelectFilter(parent);
           }}
           LeftIcon={IconApps}
-          text={`Any ${getHeaderTitle(currentSubMenu)} field`}
+          text={`Any ${getSubMenuHeaderTitle(currentSubMenu)} field`}
         />
         {getSubMenuOptions(currentSubMenu)
           .sort((a, b) => a.localeCompare(b))
