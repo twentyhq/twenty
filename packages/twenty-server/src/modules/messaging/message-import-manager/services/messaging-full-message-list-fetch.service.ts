@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any, In } from 'typeorm';
+import { In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -53,7 +53,6 @@ export class MessagingFullMessageListFetchService {
         await messageChannelMessageAssociationRepository.find({
           where: {
             messageChannelId: messageChannel.id,
-            messageExternalId: Any(messageExternalIds),
           },
         });
 
