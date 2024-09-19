@@ -6,7 +6,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -14,6 +14,7 @@ import { RelationMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metad
 import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 import { RelationMetadataEntity } from './relation-metadata.entity';
@@ -34,6 +35,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
         FieldMetadataModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMigrationModule,
+        WorkspaceCacheStorageModule,
         WorkspaceMetadataVersionModule,
       ],
       services: [RelationMetadataService],
@@ -47,7 +49,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           create: { many: { disabled: true } },
           update: { disabled: true },
           delete: { disabled: true },
-          guards: [JwtAuthGuard],
+          guards: [WorkspaceAuthGuard],
           interceptors: [RelationMetadataGraphqlApiExceptionInterceptor],
         },
       ],

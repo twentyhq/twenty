@@ -105,6 +105,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      case 'DATE':
       case 'DATE_TIME':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan:
@@ -713,6 +714,43 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      case 'PHONES': {
+        const phonesFilters = generateILikeFiltersForCompositeFields(
+          rawUIFilter.value,
+          correspondingField.name,
+          ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
+        );
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: phonesFilters,
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: phonesFilters.map((filter) => {
+                return {
+                  not: filter,
+                };
+              }),
+            });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition.type,
+            );
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      }
       default:
         throw new Error('Unknown filter type');
     }

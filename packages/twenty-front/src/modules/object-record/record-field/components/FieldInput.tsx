@@ -6,6 +6,7 @@ import { EmailsFieldInput } from '@/object-record/record-field/meta-types/input/
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { LinksFieldInput } from '@/object-record/record-field/meta-types/input/components/LinksFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput';
+import { PhonesFieldInput } from '@/object-record/record-field/meta-types/input/components/PhonesFieldInput';
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
 import { RelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
@@ -16,13 +17,16 @@ import { isFieldEmails } from '@/object-record/record-field/types/guards/isField
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
+import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
+import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -89,6 +93,8 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
+      ) : isFieldPhones(fieldDefinition) ? (
+        <PhonesFieldInput onCancel={onCancel} />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}
@@ -183,6 +189,8 @@ export const FieldInput = ({
         />
       ) : isFieldRichText(fieldDefinition) ? (
         <RichTextFieldInput />
+      ) : isFieldArray(fieldDefinition) ? (
+        <ArrayFieldInput onCancel={onCancel} />
       ) : (
         <></>
       )}

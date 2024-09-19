@@ -174,7 +174,11 @@ export const CommandMenu = () => {
             'firstName',
             'lastName',
           ]),
-          { email: { ilike: `%${commandMenuSearch}%` } },
+          ...generateILikeFiltersForCompositeFields(
+            commandMenuSearch,
+            'emails',
+            ['primaryEmail'],
+          ),
           { phone: { ilike: `%${commandMenuSearch}%` } },
         ])
       : undefined,

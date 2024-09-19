@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 
 import { VerifyAuthController } from './verify-auth.controller';
 

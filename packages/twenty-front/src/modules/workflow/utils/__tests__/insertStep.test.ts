@@ -3,8 +3,9 @@ import { insertStep } from '../insertStep';
 
 describe('insertStep', () => {
   it('returns a deep copy of the provided steps array instead of mutating it', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -15,7 +16,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-1',
       name: '',
@@ -26,7 +27,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 
@@ -40,8 +41,9 @@ describe('insertStep', () => {
   });
 
   it('adds the step when the steps array is empty', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -52,7 +54,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-1',
       name: '',
@@ -63,7 +65,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 
@@ -78,8 +80,9 @@ describe('insertStep', () => {
   });
 
   it('adds the step at the end of a non-empty steps array', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -94,7 +97,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
         {
@@ -107,7 +110,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
       ],
@@ -117,7 +120,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-3',
       name: '',
@@ -128,7 +131,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 
@@ -147,8 +150,9 @@ describe('insertStep', () => {
   });
 
   it('adds the step in the middle of a non-empty steps array', () => {
-    const workflowVersionInitial: WorkflowVersion = {
+    const workflowVersionInitial = {
       __typename: 'WorkflowVersion',
+      status: 'ACTIVE',
       createdAt: '',
       id: '1',
       name: '',
@@ -163,7 +167,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
         {
@@ -176,7 +180,7 @@ describe('insertStep', () => {
             },
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           },
-          type: 'CODE_ACTION',
+          type: 'CODE',
           valid: true,
         },
       ],
@@ -186,7 +190,7 @@ describe('insertStep', () => {
       },
       updatedAt: '',
       workflowId: '',
-    };
+    } satisfies WorkflowVersion;
     const stepToAdd: WorkflowStep = {
       id: 'step-3',
       name: '',
@@ -197,7 +201,7 @@ describe('insertStep', () => {
         },
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
       },
-      type: 'CODE_ACTION',
+      type: 'CODE',
       valid: true,
     };
 

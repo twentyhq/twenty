@@ -17,12 +17,15 @@ import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTo
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 
 const StyledInfo = styled.span`
@@ -40,9 +43,11 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SettingsDevelopersApiKeyDetail = () => {
+  const { enqueueSnackBar } = useSnackBar();
   const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
     useState(false);
   const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
@@ -65,14 +70,25 @@ export const SettingsDevelopersApiKeyDetail = () => {
       setApiKeyName(record.name);
     },
   });
+  const developerPath = getSettingsPagePath(SettingsPath.Developers);
 
   const deleteIntegration = async (redirect = true) => {
-    await updateApiKey?.({
-      idToUpdate: apiKeyId,
-      updateOneRecordInput: { revokedAt: DateTime.now().toString() },
-    });
-    if (redirect) {
-      navigate('/settings/developers');
+    setIsLoading(true);
+
+    try {
+      await updateApiKey?.({
+        idToUpdate: apiKeyId,
+        updateOneRecordInput: { revokedAt: DateTime.now().toString() },
+      });
+      if (redirect) {
+        navigate(developerPath);
+      }
+    } catch (err) {
+      enqueueSnackBar(`Error deleting api key: ${err}`, {
+        variant: SnackBarVariant.Error,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -100,20 +116,28 @@ export const SettingsDevelopersApiKeyDetail = () => {
       token: tokenData.data?.generateApiKeyToken.token,
     };
   };
-
   const regenerateApiKey = async () => {
-    if (isNonEmptyString(apiKeyData?.name)) {
-      const newExpiresAt = computeNewExpirationDate(
-        apiKeyData?.expiresAt,
-        apiKeyData?.createdAt,
-      );
-      const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
-      await deleteIntegration(false);
+    setIsLoading(true);
+    try {
+      if (isNonEmptyString(apiKeyData?.name)) {
+        const newExpiresAt = computeNewExpirationDate(
+          apiKeyData?.expiresAt,
+          apiKeyData?.createdAt,
+        );
+        const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
+        await deleteIntegration(false);
 
-      if (isNonEmptyString(apiKey?.token)) {
-        setApiKeyToken(apiKey.token);
-        navigate(`/settings/developers/api-keys/${apiKey.id}`);
+        if (isNonEmptyString(apiKey?.token)) {
+          setApiKeyToken(apiKey.token);
+          navigate(`/settings/developers/api-keys/${apiKey.id}`);
+        }
       }
+    } catch (err) {
+      enqueueSnackBar(`Error regenerating api key: ${err}`, {
+        variant: SnackBarVariant.Error,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,14 +146,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
       {apiKeyData?.name && (
         <SubMenuTopBarContainer
           Icon={IconCode}
-          title={
-            <Breadcrumb
-              links={[
-                { children: 'Developers', href: '/settings/developers' },
-                { children: `${apiKeyName} API Key` },
-              ]}
-            />
-          }
+          title={apiKeyData?.name}
+          links={[
+            {
+              children: 'Workspace',
+              href: getSettingsPagePath(SettingsPath.Workspace),
+            },
+            { children: 'Developers', href: developerPath },
+            { children: `${apiKeyName} API Key` },
+          ]}
         >
           <SettingsPageContainer>
             <Section>
@@ -179,7 +204,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
             <Section>
               <H2Title
                 title="Expiration"
-                description="When the key will be diasbled"
+                description="When the key will be disabled"
               />
               <TextInput
                 placeholder="E.g. backoffice integration"
@@ -222,6 +247,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
         onConfirmClick={deleteIntegration}
         deleteButtonText="Delete"
+        loading={isLoading}
       />
       <ConfirmationModal
         confirmationPlaceholder="yes"
@@ -238,6 +264,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
         onConfirmClick={regenerateApiKey}
         deleteButtonText="Regenerate key"
+        loading={isLoading}
       />
     </>
   );

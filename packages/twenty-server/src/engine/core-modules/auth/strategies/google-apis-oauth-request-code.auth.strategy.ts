@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { GoogleAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-common.auth.strategy';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 export type GoogleAPIScopeConfig = {
   isCalendarEnabled?: boolean;

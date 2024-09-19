@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -22,7 +23,10 @@ import {
   computeManyResultPath,
   computeSingleResultPath,
 } from 'src/engine/core-modules/open-api/utils/path.utils';
-import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
+import {
+  getRequestBody,
+  getUpdateRequestBody,
+} from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import {
   getCreateOneResponse201,
   getDeleteResponse200,
@@ -30,7 +34,6 @@ import {
   getFindOneResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
@@ -165,7 +168,7 @@ export class OpenApiService {
           summary: `Find One ${item.nameSingular}`,
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           responses: {
-            '200': getFindOneResponse200(item, true),
+            '200': getFindOneResponse200(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -187,7 +190,7 @@ export class OpenApiService {
             summary: `Update One ${item.nameSingular}`,
             operationId: `updateOne${capitalize(item.nameSingular)}`,
             parameters: [{ $ref: '#/components/parameters/idPath' }],
-            requestBody: getRequestBody(capitalize(item.nameSingular)),
+            requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
             responses: {
               '200': getUpdateOneResponse200(item, true),
               '400': { $ref: '#/components/responses/400' },

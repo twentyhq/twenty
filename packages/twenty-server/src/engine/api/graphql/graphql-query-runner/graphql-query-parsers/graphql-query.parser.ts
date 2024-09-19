@@ -16,7 +16,7 @@ import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
@@ -30,22 +30,59 @@ export class GraphqlQueryParser {
     this.fieldMetadataMap = fieldMetadataMap;
   }
 
-  parseFilter(
-    recordFilter: RecordFilter,
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
+  parseFilter(recordFilter: RecordFilter): {
+    parsedFilters:
+      | FindOptionsWhere<ObjectLiteral>
+      | FindOptionsWhere<ObjectLiteral>[];
+    withDeleted: boolean;
+  } {
     const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
       this.fieldMetadataMap,
     );
 
-    return graphqlQueryFilterParser.parse(recordFilter);
+    const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
+
+    const hasDeletedAtFilter = this.checkForDeletedAtFilter(parsedFilter);
+
+    return {
+      parsedFilters: parsedFilter,
+      withDeleted: hasDeletedAtFilter,
+    };
   }
 
-  parseOrder(orderBy: RecordOrderBy): Record<string, FindOptionsOrderValue> {
+  private checkForDeletedAtFilter(
+    filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
+  ): boolean {
+    if (Array.isArray(filter)) {
+      return filter.some(this.checkForDeletedAtFilter);
+    }
+
+    for (const [key, value] of Object.entries(filter)) {
+      if (key === 'deletedAt') {
+        return true;
+      }
+
+      if (typeof value === 'object' && value !== null) {
+        if (
+          this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  parseOrder(
+    orderBy: RecordOrderBy,
+    isForwardPagination = true,
+  ): Record<string, FindOptionsOrderValue> {
     const graphqlQueryOrderParser = new GraphqlQueryOrderParser(
       this.fieldMetadataMap,
     );
 
-    return graphqlQueryOrderParser.parse(orderBy);
+    return graphqlQueryOrderParser.parse(orderBy, isForwardPagination);
   }
 
   parseSelectedFields(
