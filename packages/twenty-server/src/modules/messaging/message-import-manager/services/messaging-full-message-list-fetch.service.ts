@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { Any, In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -61,17 +61,31 @@ export class MessagingFullMessageListFetchService {
             messageChannelMessageAssociation.messageExternalId,
         );
 
-      const messageIdsToImport = messageExternalIds.filter(
+      const messageExternalIdsToImport = messageExternalIds.filter(
         (messageExternalId) =>
           !existingMessageChannelMessageAssociationsExternalIds.includes(
             messageExternalId,
           ),
       );
 
-      if (messageIdsToImport.length) {
+      const messageExternalIdsToDelete =
+        existingMessageChannelMessageAssociationsExternalIds.filter(
+          (messageExternalId) =>
+            messageExternalId &&
+            !messageExternalIds.includes(messageExternalId),
+        );
+
+      if (messageExternalIdsToDelete.length) {
+        await messageChannelMessageAssociationRepository.delete({
+          messageChannelId: messageChannel.id,
+          messageExternalId: In(messageExternalIdsToDelete),
+        });
+      }
+
+      if (messageExternalIdsToImport.length) {
         await this.cacheStorage.setAdd(
           `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-          messageIdsToImport,
+          messageExternalIdsToImport,
         );
       }
 
