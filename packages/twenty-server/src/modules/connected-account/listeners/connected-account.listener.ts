@@ -15,8 +15,8 @@ export class ConnectedAccountListener {
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
-  @OnEvent('connectedAccount.deleted')
-  async handleDeletedEvent(
+  @OnEvent('connectedAccount.destroyed')
+  async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>
     >,
