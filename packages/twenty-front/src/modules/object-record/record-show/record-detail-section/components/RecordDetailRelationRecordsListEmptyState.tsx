@@ -1,35 +1,37 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
+//TODO : File no longer needed, after solving (issue: #7152 :- Improve relation empty states on record page)
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+// import { useTheme } from '@emotion/react';
+// import styled from '@emotion/styled';
+// import { useIcons } from 'twenty-ui';
 
-type RecordDetailRelationRecordsListEmptyStateProps = {
-  relationObjectMetadataItem: ObjectMetadataItem;
-};
+// import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-const StyledRelationRecordsListEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  text-transform: capitalize;
-`;
+// type RecordDetailRelationRecordsListEmptyStateProps = {
+//   relationObjectMetadataItem: ObjectMetadataItem;
+// };
 
-export const RecordDetailRelationRecordsListEmptyState = ({
-  relationObjectMetadataItem,
-}: RecordDetailRelationRecordsListEmptyStateProps) => {
-  const theme = useTheme();
+// const StyledRelationRecordsListEmptyState = styled.div`
+//   color: ${({ theme }) => theme.font.color.light};
+//   align-items: center;
+//   justify-content: center;
+//   gap: ${({ theme }) => theme.spacing(2)};
+//   display: flex;
+//   height: ${({ theme }) => theme.spacing(10)};
+//   text-transform: capitalize;
+// `;
 
-  const { getIcon } = useIcons();
-  const Icon = getIcon(relationObjectMetadataItem.icon);
+// export const RecordDetailRelationRecordsListEmptyState = ({
+//   relationObjectMetadataItem,
+// }: RecordDetailRelationRecordsListEmptyStateProps) => {
+//   const theme = useTheme();
 
-  return (
-    <StyledRelationRecordsListEmptyState>
-      <Icon size={theme.icon.size.sm} />
-      <div>No {relationObjectMetadataItem.labelSingular}</div>
-    </StyledRelationRecordsListEmptyState>
-  );
-};
+//   const { getIcon } = useIcons();
+//   const Icon = getIcon(relationObjectMetadataItem.icon);
+
+//   return (
+//     <StyledRelationRecordsListEmptyState>
+//       <Icon size={theme.icon.size.sm} />
+//       <div>No {relationObjectMetadataItem.labelSingular}</div>
+//     </StyledRelationRecordsListEmptyState>
+//   );
+// };

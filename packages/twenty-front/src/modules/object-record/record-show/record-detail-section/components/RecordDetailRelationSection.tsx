@@ -13,7 +13,6 @@ import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/re
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
-import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
 import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
@@ -141,12 +140,10 @@ export const RecordDetailRelationSection = ({
       );
     }
 
-    return relationRecords.length ? (
-      <RecordDetailRelationRecordsList relationRecords={relationRecords} />
-    ) : (
-      <RecordDetailRelationRecordsListEmptyState
-        relationObjectMetadataItem={relationObjectMetadataItem}
-      />
+    return (
+      relationRecords.length > 0 && (
+        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+      )
     );
   };
 
@@ -166,7 +163,10 @@ export const RecordDetailRelationSection = ({
           isToManyObjects
             ? {
                 to: filterLinkHref,
-                label: `All (${relationRecords.length})`,
+                label:
+                  relationRecords.length > 0
+                    ? `All (${relationRecords.length})`
+                    : '',
               }
             : undefined
         }
