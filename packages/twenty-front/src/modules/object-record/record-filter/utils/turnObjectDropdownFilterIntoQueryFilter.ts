@@ -13,7 +13,6 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
@@ -25,26 +24,16 @@ import {
   convertLessThanRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
 import {
   getAddressSubField,
   getFullNameSubField,
   getLinkSubField,
 } from '@/object-record/record-filter/utils/getCorrespondingSubfieldFromLabel';
-import { Filter } from '../../object-filter-dropdown/types/Filter';
-
-export type ObjectDropdownFilterDefinition = FilterDefinition & {
-  type: FilterType;
-  label?: string;
-};
-
-export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
-  definition: ObjectDropdownFilterDefinition;
-};
 
 export const turnObjectDropdownFilterIntoQueryFilter = (
-  rawUIFilters: ObjectDropdownFilter[],
+  rawUIFilters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
 ): RecordGqlOperationFilter | undefined => {
   const objectRecordFilters: RecordGqlOperationFilter[] = [];
@@ -741,7 +730,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:

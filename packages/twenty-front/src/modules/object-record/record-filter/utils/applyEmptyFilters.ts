@@ -11,12 +11,12 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import {
   getAddressSubField,
   getFullNameSubField,
   getLinkSubField,
 } from '@/object-record/record-filter/utils/getCorrespondingSubfieldFromLabel';
-import { ObjectDropdownFilterDefinition } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
@@ -25,7 +25,7 @@ export const applyEmptyFilters = (
   operand: ViewFilterOperand,
   correspondingField: Pick<Field, 'id' | 'name'>,
   objectRecordFilters: RecordGqlOperationFilter[],
-  definition: ObjectDropdownFilterDefinition,
+  definition: FilterDefinition,
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
