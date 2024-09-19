@@ -13,6 +13,7 @@ import { SettingsDataModelHotkeyScope } from '@/settings/data-model/types/Settin
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useCallback, useState } from 'react';
@@ -78,6 +79,7 @@ export const SettingsDataModelFieldTypeSelect = ({
   fieldMetadataItem,
   onFieldTypeSelect,
 }: SettingsDataModelFieldTypeSelectProps) => {
+  const theme = useTheme();
   const { control, getValues, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
