@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { IconCheckbox, IconComponent, IconNotes } from 'twenty-ui';
 
-export const GetAvatarIcon = (objectNameSingular: string) => {
+export const useGetStandardObjectIcon = (objectNameSingular: string) => {
   const theme = useTheme();
 
   const getIconForObjectType = (
@@ -20,9 +20,9 @@ export const GetAvatarIcon = (objectNameSingular: string) => {
   const getIconColorForObjectType = (objectType: string): string => {
     switch (objectType) {
       case 'note':
-        return theme.color.yellowIcon;
+        return theme.color.yellow;
       case 'task':
-        return theme.color.blueIcon;
+        return theme.color.blue;
       default:
         return 'currentColor';
     }

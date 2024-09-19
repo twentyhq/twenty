@@ -125,7 +125,10 @@ export const Avatar = ({
       backgroundTransparentLight={theme.background.transparent.light}
     >
       {Icon ? (
-        <Icon color={iconColor ? iconColor : 'currentColor'} size={24} />
+        <Icon
+          color={iconColor ? iconColor : 'currentColor'}
+          size={theme.icon.size.xl}
+        />
       ) : showPlaceholder ? (
         placeholderChar
       ) : (

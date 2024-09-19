@@ -1,4 +1,4 @@
-import { GetAvatarIcon } from '@/object-metadata/utils/getAvatarIcon';
+import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -27,7 +27,7 @@ export const RecordIdentifierChip = ({
   };
 
   const { Icon: LeftIcon, IconColor: LeftIconColor } =
-    GetAvatarIcon(objectNameSingular);
+    useGetStandardObjectIcon(objectNameSingular);
   return (
     <AvatarChip
       placeholderColorSeed={record.id}
