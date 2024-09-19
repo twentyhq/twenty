@@ -1,4 +1,5 @@
 import {
+  FindOperator,
   FindOptionsOrderValue,
   FindOptionsWhere,
   ObjectLiteral,
@@ -30,16 +31,61 @@ export class GraphqlQueryParser {
     this.fieldMetadataMap = fieldMetadataMap;
   }
 
-  parseFilter(
-    recordFilter: RecordFilter,
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
+  parseFilter(recordFilter: RecordFilter): {
+    parsedFilters:
+      | FindOptionsWhere<ObjectLiteral>
+      | FindOptionsWhere<ObjectLiteral>[];
+    withDeleted: boolean;
+  } {
     const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
       this.fieldMetadataMap,
     );
 
     const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
 
-    return parsedFilter;
+    const hasDeletedAtFilter = this.checkForDeletedAtFilter(parsedFilter);
+
+    return {
+      parsedFilters: parsedFilter,
+      withDeleted: hasDeletedAtFilter,
+    };
+  }
+
+  private checkForDeletedAtFilter(
+    filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
+  ): boolean {
+    if (Array.isArray(filter)) {
+      return filter.some(this.checkForDeletedAtFilter);
+    }
+
+    for (const [key, value] of Object.entries(filter)) {
+      if (key === 'deletedAt') {
+        if (value instanceof FindOperator) {
+          if (value.type === 'isNull') {
+            return true;
+          }
+          if (
+            value.type === 'not' &&
+            value.value instanceof FindOperator &&
+            value.value.type === 'isNull'
+          ) {
+            return true;
+          }
+        }
+
+        return true;
+      }
+
+      if (typeof value === 'object' && value !== null) {
+        if (
+          this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   parseOrder(
