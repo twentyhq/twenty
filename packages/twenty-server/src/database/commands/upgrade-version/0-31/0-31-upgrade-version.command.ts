@@ -43,16 +43,12 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
     );
     await this.cleanViewsWithDeletedObjectMetadataCommand.executeActiveWorkspacesCommand(
       passedParam,
-      {
-        ...options,
-      },
+      options,
       workspaceIds,
     );
     await this.backfillWorkspaceFavoritesCommand.executeActiveWorkspacesCommand(
       passedParam,
-      {
-        ...options,
-      },
+      options,
       workspaceIds,
     );
   }

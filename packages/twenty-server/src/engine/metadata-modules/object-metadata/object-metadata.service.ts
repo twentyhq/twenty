@@ -155,7 +155,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       },
     });
 
-    if (views.length >= 0) {
+    if (views.length > 0) {
       await viewRepository.delete(views.map((view) => view.id));
     }
 

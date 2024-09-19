@@ -2,13 +2,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -21,6 +22,8 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository);
@@ -37,11 +40,17 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
       this.logger.log(`Running command for workspace ${workspaceId}`);
 
       try {
-        const workspaceIndexViews = await this.getIndexViews(workspaceId);
+        const allWorkspaceIndexViews = await this.getIndexViews(workspaceId);
+
+        const activeWorkspaceIndexViews =
+          await this.filterViewsWithoutObjectMetadata(
+            workspaceId,
+            allWorkspaceIndexViews,
+          );
 
         await this.createViewWorkspaceFavorites(
           workspaceId,
-          workspaceIndexViews.map((view) => view.id),
+          activeWorkspaceIndexViews.map((view) => view.id),
         );
 
         this.logger.log(
@@ -83,6 +92,26 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
         key: 'INDEX',
       },
     });
+  }
+
+  private async filterViewsWithoutObjectMetadata(
+    workspaceId: string,
+    views: ViewWorkspaceEntity[],
+  ): Promise<ViewWorkspaceEntity[]> {
+    const viewObjectMetadataIds = views.map((view) => view.objectMetadataId);
+
+    const objectMetadataEntities = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+        id: In(viewObjectMetadataIds),
+      },
+    });
+
+    const objectMetadataIds = new Set(
+      objectMetadataEntities.map((entity) => entity.id),
+    );
+
+    return views.filter((view) => objectMetadataIds.has(view.objectMetadataId));
   }
 
   private async createViewWorkspaceFavorites(
