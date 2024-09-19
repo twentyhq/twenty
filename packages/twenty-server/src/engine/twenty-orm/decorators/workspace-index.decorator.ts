@@ -7,8 +7,10 @@ export type WorkspaceIndexOptions = {
   isUnique: boolean;
 };
 
-
-export function WorkspaceIndex(columns: string[], options: WorkspaceIndexOptions): ClassDecorator {
+export function WorkspaceIndex(
+  columns: string[],
+  options: WorkspaceIndexOptions,
+): ClassDecorator {
   if (!Array.isArray(columns) || columns.length === 0) {
     throw new Error('Class level WorkspaceIndex should be used with columns');
   }
@@ -18,7 +20,7 @@ export function WorkspaceIndex(columns: string[], options: WorkspaceIndexOptions
       'workspace:gate-metadata-args',
       target,
     );
-    
+
     metadataArgsStorage.addIndexes({
       name: `IDX_${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.name),
@@ -27,8 +29,7 @@ export function WorkspaceIndex(columns: string[], options: WorkspaceIndexOptions
       columns,
       target: target,
       gate,
-      isUnique:options?.isUnique ?? false,
+      isUnique: options?.isUnique ?? false,
     });
-
   };
 }

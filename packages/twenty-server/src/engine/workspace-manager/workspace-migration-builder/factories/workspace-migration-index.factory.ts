@@ -94,11 +94,11 @@ export class WorkspaceMigrationIndexFactory {
               );
             }
 
-            if(!isCompositeFieldMetadataType(fieldMetadata.type)) {
+            if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
               return fieldMetadata.name;
             }
 
-            if(!indexFieldMetadata.compositeColumn) {
+            if (!indexFieldMetadata.compositeColumn) {
               throw new Error(
                 `No composite column for index field metadata with id ${indexFieldMetadata.id} in object metadata with id ${objectMetadata.id}`,
               );

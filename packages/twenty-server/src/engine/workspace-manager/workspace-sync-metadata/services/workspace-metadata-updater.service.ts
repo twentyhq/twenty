@@ -5,7 +5,7 @@ import {
   EntityTarget,
   FindOptionsWhere,
   In,
-  ObjectLiteral
+  ObjectLiteral,
 } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 as uuidV4 } from 'uuid';
@@ -246,32 +246,37 @@ export class WorkspaceMetadataUpdaterService {
       const convertIndexFieldMetadataForSaving = (
         column: string,
         order: number,
-      ): DeepPartial<IndexFieldMetadataEntity> => { // Ensure correct type
+      ): DeepPartial<IndexFieldMetadataEntity> => {
+        // Ensure correct type
         const fieldMetadata = originalObjectMetadataCollection
           .find((object) => object.id === indexMetadata.objectMetadataId)
           ?.fields.find((field) => {
-            if(field.name === column) {
+            if (field.name === column) {
               return true;
             }
-            
-            if(!isCompositeFieldMetadataType(field.type)) {
+
+            if (!isCompositeFieldMetadataType(field.type)) {
               return;
             }
-            
+
             const compositeType = compositeTypeDefinitions.get(
               field.type as CompositeFieldMetadataType,
             );
-        
+
             if (!compositeType) {
               throw new Error(
                 `Composite type definition not found for type: ${field.type}`,
               );
             }
 
-            const columnNames = compositeType.properties.reduce((acc, column) => {
-              acc.push(`${field.name}${capitalize(column.name)}`);
-              return acc;
-            }, [] as string[]);
+            const columnNames = compositeType.properties.reduce(
+              (acc, column) => {
+                acc.push(`${field.name}${capitalize(column.name)}`);
+
+                return acc;
+              },
+              [] as string[],
+            );
 
             if (columnNames.includes(column)) {
               return true;
@@ -286,7 +291,9 @@ export class WorkspaceMetadataUpdaterService {
 
         return {
           fieldMetadataId: fieldMetadata.id,
-          compositeColumn: isCompositeFieldMetadataType(fieldMetadata.type) ? column : undefined,
+          compositeColumn: isCompositeFieldMetadataType(fieldMetadata.type)
+            ? column
+            : undefined,
           order,
         };
       };
