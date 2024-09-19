@@ -11,7 +11,7 @@ import { pascalCase } from 'src/utils/pascal-case';
 
 type ComputeColumnNameOptions = { isForeignKey?: boolean };
 
-type FieldTypeAndNameMetadata = {
+export type FieldTypeAndNameMetadata = {
   name: string;
   type: FieldMetadataType;
 };

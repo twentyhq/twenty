@@ -24,20 +24,16 @@ export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
 export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsVectorFieldMetadataType> {
   protected readonly logger = new Logger(TsVectorColumnActionFactory.name);
 
-  protected handleCreateAction(
+  handleCreateAction(
     fieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
-    options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate[] {
-    const defaultValue = fieldMetadata.defaultValue ?? options?.defaultValue;
-    const serializedDefaultValue = serializeDefaultValue(defaultValue);
-
     return [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
         columnName: computeColumnName(fieldMetadata),
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
         isNullable: fieldMetadata.isNullable ?? true,
-        defaultValue: serializedDefaultValue,
+        defaultValue: undefined,
         generatedType: fieldMetadata.generatedType,
         asExpression: fieldMetadata.asExpression,
       },
