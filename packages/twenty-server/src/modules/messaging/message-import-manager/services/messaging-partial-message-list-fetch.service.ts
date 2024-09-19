@@ -92,14 +92,16 @@ export class MessagingPartialMessageListFetchService {
           'messageChannelMessageAssociation',
         );
 
-      await messageChannelMessageAssociationRepository.delete({
-        messageChannelId: messageChannel.id,
-        messageExternalId: In(messageExternalIdsToDelete),
-      });
+      if (messageExternalIdsToDelete.length) {
+        await messageChannelMessageAssociationRepository.delete({
+          messageChannelId: messageChannel.id,
+          messageExternalId: In(messageExternalIdsToDelete),
+        });
 
-      await this.messagingMessageCleanerService.cleanWorkspaceThreads(
-        workspaceId,
-      );
+        await this.messagingMessageCleanerService.cleanWorkspaceThreads(
+          workspaceId,
+        );
+      }
 
       this.logger.log(
         `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
