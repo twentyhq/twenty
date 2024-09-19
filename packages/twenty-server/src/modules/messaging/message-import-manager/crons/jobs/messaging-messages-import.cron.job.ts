@@ -23,7 +23,6 @@ import {
   MessagingMessagesImportJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 
-
 export const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
 
 @Processor(MessageQueue.cronQueue)
@@ -38,7 +37,10 @@ export class MessagingMessagesImportCronJob {
   ) {}
 
   @Process(MessagingMessagesImportCronJob.name)
-  @SentryCronMonitor(MessagingMessagesImportCronJob.name, MESSAGING_MESSAGES_IMPORT_CRON_PATTERN)
+  @SentryCronMonitor(
+    MessagingMessagesImportCronJob.name,
+    MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
     console.time('MessagingMessagesImportCronJob time');
 

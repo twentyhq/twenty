@@ -16,9 +16,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
-
-export const  MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
-'2/10 * * * *'; //Every 10 minutes, starting at 2 minutes past the hour
+export const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
+  '2/10 * * * *'; //Every 10 minutes, starting at 2 minutes past the hour
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageChannelSyncStatusMonitoringCronJob {
@@ -33,7 +32,10 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  @SentryCronMonitor(MessagingMessageChannelSyncStatusMonitoringCronJob.name, MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN)
+  @SentryCronMonitor(
+    MessagingMessageChannelSyncStatusMonitoringCronJob.name,
+    MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN,
+  )
   @Process(MessagingMessageChannelSyncStatusMonitoringCronJob.name)
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');

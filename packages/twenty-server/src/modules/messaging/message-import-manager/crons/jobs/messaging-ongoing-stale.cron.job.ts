@@ -31,7 +31,10 @@ export class MessagingOngoingStaleCronJob {
   ) {}
 
   @Process(MessagingOngoingStaleCronJob.name)
-  @SentryCronMonitor(MessagingOngoingStaleCronJob.name, MESSAGING_ONGOING_STALE_CRON_PATTERN)
+  @SentryCronMonitor(
+    MessagingOngoingStaleCronJob.name,
+    MESSAGING_ONGOING_STALE_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {

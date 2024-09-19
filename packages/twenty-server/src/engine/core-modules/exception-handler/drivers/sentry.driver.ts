@@ -21,10 +21,12 @@ export class ExceptionHandlerSentryDriver
       integrations: [
         // TODO: Redis integration doesn't seem to work - investigate why
         Sentry.redisIntegration({
-          cachePrefixes: Object.values(WorkspaceCacheKeys).map(key => `engine:${key}:`),
+          cachePrefixes: Object.values(WorkspaceCacheKeys).map(
+            (key) => `engine:${key}:`,
+          ),
         }),
         Sentry.httpIntegration(),
-        Sentry.expressIntegration(), 
+        Sentry.expressIntegration(),
         Sentry.graphqlIntegration(),
         Sentry.postgresIntegration(),
         nodeProfilingIntegration(),

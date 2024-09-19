@@ -20,7 +20,6 @@ import {
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
-
 export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
 
 @Processor({
@@ -37,7 +36,10 @@ export class CalendarEventListFetchCronJob {
   ) {}
 
   @Process(CalendarEventListFetchCronJob.name)
-  @SentryCronMonitor(CalendarEventListFetchCronJob.name, CALENDAR_EVENTS_IMPORT_CRON_PATTERN)
+  @SentryCronMonitor(
+    CalendarEventListFetchCronJob.name,
+    CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
     console.time('CalendarEventListFetchCronJob time');
 
