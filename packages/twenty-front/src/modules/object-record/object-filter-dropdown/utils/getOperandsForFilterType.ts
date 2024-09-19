@@ -1,9 +1,8 @@
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { FilterFieldType } from '../types/FilterableFieldType';
-
 export const getOperandsForFilterType = (
-  filterType: FilterFieldType | null | undefined,
+  filterType: FilterableFieldType | null | undefined,
 ): ViewFilterOperand[] => {
   const emptyOperands = [
     ViewFilterOperand.IsEmpty,

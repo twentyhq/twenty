@@ -42,9 +42,11 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
+//TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
->;
+> &
+  any;
 
 const canPersistFieldMetadataItemUpdate = (
   fieldMetadataItem: FieldMetadataItem,

@@ -34,9 +34,11 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
+// TODO: fix this type
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
->;
+> &
+  any;
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -226,7 +228,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               <SettingsDataModelFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
                 fieldMetadataItem={{
-                  type: fieldType,
+                  type: fieldType as FieldMetadataType,
                 }}
                 onFieldTypeSelect={() => setIsConfigureStep(true)}
               />
