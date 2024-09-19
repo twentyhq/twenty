@@ -15,7 +15,7 @@ export type TestingAppCreatePreHook = (
 ) => Promise<void>;
 
 /**
- * Sets basic e2e testing module of app
+ * Sets basic integration testing module of app
  */
 export const createApp = async (
   config: {

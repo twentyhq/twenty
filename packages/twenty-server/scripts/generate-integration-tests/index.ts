@@ -123,7 +123,7 @@ const writeTestFile = (
 ): string => {
   if (!content) return 'skipped';
 
-  const fileName = `${toKebabCase(queryName)}.e2e-spec.ts`;
+  const fileName = `${toKebabCase(queryName)}.integration-spec.ts`;
   const filePath = path.join(TEST_OUTPUT_DIR, fileName);
 
   if (fs.existsSync(filePath) && !force) {
