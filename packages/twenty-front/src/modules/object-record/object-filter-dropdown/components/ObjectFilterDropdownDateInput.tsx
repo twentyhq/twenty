@@ -2,12 +2,18 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { DateFilterValue } from '@/object-record/object-filter-dropdown/types/DateFilterValue';
+import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
+import { computeVariableDateViewFilterValue } from '@/views/utils/view-filter-value/computeVariableDateViewFilterValue';
+import {
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
+} from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
+import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveVariableViewFilterValue';
 import { useState } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getDateFromDateFilterValue } from '../utils/getDateFromDateFilterValue';
 
 export const ObjectFilterDropdownDateInput = () => {
   const {
@@ -26,24 +32,21 @@ export const ObjectFilterDropdownDateInput = () => {
   );
 
   const selectedFilter = useRecoilValue(selectedFilterState);
-  const dateFilterValue = selectedFilter?.value
-    ? JSON.parse(selectedFilter.value)
-    : null;
-  const initialInternalDate = dateFilterValue
-    ? getDateFromDateFilterValue(dateFilterValue)
-    : new Date();
+  const initialFilterValue = resolveFilterValue(selectedFilter);
   const [internalDate, setInternalDate] = useState<Date | null>(
-    initialInternalDate,
+    initialFilterValue instanceof Date ? initialFilterValue : new Date(),
   );
+
+  const [relativeDate, setRelativeDate] = useState<{
+    direction: VariableDateViewFilterValueDirection;
+    amount: number;
+    unit: VariableDateViewFilterValueUnit;
+  } | null>(null);
 
   const isDateTimeInput =
     filterDefinitionUsedInDropdown?.type === FieldMetadataType.DateTime;
 
-  const handleChange = (dateFilterValue: DateFilterValue | null) => {
-    const newDate = dateFilterValue
-      ? getDateFromDateFilterValue(dateFilterValue)
-      : null;
-
+  const handleAbsoluteDateChange = (newDate: Date | null) => {
     setInternalDate(newDate);
 
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
@@ -51,7 +54,8 @@ export const ObjectFilterDropdownDateInput = () => {
     selectFilter?.({
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-      value: JSON.stringify(dateFilterValue),
+      value: newDate?.toISOString() ?? '',
+      valueType: ViewFilterValueType.STATIC,
       operand: selectedOperandInDropdown,
       displayValue: newDate
         ? isDateTimeInput
@@ -63,6 +67,39 @@ export const ObjectFilterDropdownDateInput = () => {
 
     setIsObjectFilterDropdownUnfolded(false);
   };
+
+  const handleRelativeDateChange = (
+    relativeDate: {
+      direction: VariableDateViewFilterValueDirection;
+      amount: number;
+      unit: VariableDateViewFilterValueUnit;
+    } | null,
+  ) => {
+    setRelativeDate(relativeDate);
+
+    if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
+
+    const value = relativeDate
+      ? computeVariableDateViewFilterValue(
+          relativeDate.direction,
+          relativeDate.amount,
+          relativeDate.unit,
+        )
+      : '';
+
+    selectFilter?.({
+      id: selectedFilter?.id ? selectedFilter.id : v4(),
+      fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+      value,
+      valueType: ViewFilterValueType.VARIABLE,
+      operand: selectedOperandInDropdown,
+      displayValue: getRelativeDateDisplayValue(relativeDate),
+      definition: filterDefinitionUsedInDropdown,
+    });
+
+    setIsObjectFilterDropdownUnfolded(false);
+  };
+
   const isRelativeOperand =
     selectedOperandInDropdown === ViewFilterOperand.IsRelative;
 
@@ -70,19 +107,10 @@ export const ObjectFilterDropdownDateInput = () => {
     <InternalDatePicker
       isRelativeToNow={isRelativeOperand}
       date={internalDate}
-      onChange={(date) => {
-        const dateFilterValue: DateFilterValue | null = date
-          ? { type: 'absolute', isoString: date.toISOString() }
-          : null;
-        handleChange(dateFilterValue);
-      }}
-      onRelativeDateChange={handleChange}
-      onMouseSelect={(date) => {
-        const dateFilterValue: DateFilterValue | null = date
-          ? { type: 'absolute', isoString: date.toISOString() }
-          : null;
-        handleChange(dateFilterValue);
-      }}
+      relativeDate={relativeDate}
+      onChange={handleAbsoluteDateChange}
+      onRelativeDateChange={handleRelativeDateChange}
+      onMouseSelect={handleAbsoluteDateChange}
       isDateTimeInput={isDateTimeInput}
     />
   );

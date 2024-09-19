@@ -1,11 +1,12 @@
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { RelativeDateUnit } from '../types/RelativeDateUnit';
 
-import { RelativeDateFilterValue } from '@/object-record/object-filter-dropdown/types/DateFilterValue';
 import { RELATIVE_DATE_DIRECTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionOptions';
 import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
-import { RelativeDateDirection } from '@/ui/input/components/internal/date/types/RelativeDateDirection';
+import {
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
+} from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -17,10 +18,14 @@ const StyledContainer = styled.div`
 `;
 
 type RelativeDatePickerHeaderProps = {
-  direction: RelativeDateDirection;
+  direction: VariableDateViewFilterValueDirection;
   amount: number;
-  unit: RelativeDateUnit;
-  onChange?: (value: RelativeDateFilterValue) => void;
+  unit: VariableDateViewFilterValueUnit;
+  onChange?: (value: {
+    direction: VariableDateViewFilterValueDirection;
+    amount: number;
+    unit: VariableDateViewFilterValueUnit;
+  }) => void;
 };
 
 export const RelativeDatePickerHeader = ({
@@ -36,7 +41,6 @@ export const RelativeDatePickerHeader = ({
         value={direction}
         onChange={(newDirection) =>
           onChange?.({
-            type: 'relative',
             direction: newDirection,
             amount: amount,
             unit: unit,
@@ -49,12 +53,11 @@ export const RelativeDatePickerHeader = ({
         onChange={(newValue) => {
           const newNumericValue = newValue.replace(/[^0-9]/g, '');
           if (!newNumericValue) return;
-          const amount = parseInt(newNumericValue, 10);
+          const newAmount = parseInt(newNumericValue, 10);
 
           onChange?.({
-            type: 'relative',
             direction,
-            amount,
+            amount: newAmount,
             unit,
           });
         }}
@@ -65,13 +68,15 @@ export const RelativeDatePickerHeader = ({
         value={unit}
         onChange={(newUnit) =>
           onChange?.({
-            type: 'relative',
-            direction: direction,
-            amount: amount,
+            direction,
+            amount,
             unit: newUnit,
           })
         }
-        options={RELATIVE_DATE_UNITS}
+        options={RELATIVE_DATE_UNITS.map((unit) => ({
+          ...unit,
+          label: `${unit.label}${amount > 1 ? 's' : ''}`,
+        }))}
       />
     </StyledContainer>
   );

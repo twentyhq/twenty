@@ -1,9 +1,11 @@
-import { RelativeDateUnit } from '../types/RelativeDateUnit';
+import { VariableDateViewFilterValueUnit } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 
-export const RELATIVE_DATE_UNITS: { value: RelativeDateUnit; label: string }[] =
-  [
-    { value: RelativeDateUnit.Day, label: 'Day' },
-    { value: RelativeDateUnit.Week, label: 'Week' },
-    { value: RelativeDateUnit.Month, label: 'Month' },
-    { value: RelativeDateUnit.Year, label: 'Year' },
-  ];
+export const RELATIVE_DATE_UNITS: {
+  value: VariableDateViewFilterValueUnit;
+  label: string;
+}[] = [
+  { value: 'DAY', label: 'Day' },
+  { value: 'WEEK', label: 'Week' },
+  { value: 'MONTH', label: 'Month' },
+  { value: 'YEAR', label: 'Year' },
+];

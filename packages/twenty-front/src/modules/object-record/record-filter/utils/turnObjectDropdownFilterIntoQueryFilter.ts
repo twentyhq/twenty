@@ -16,7 +16,7 @@ import {
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { Field } from '~/generated/graphql';
+import { Field, FieldMetadataType } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
@@ -25,8 +25,7 @@ import {
   convertLessThanRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
-import { DateFilterValue } from '@/object-record/object-filter-dropdown/types/DateFilterValue';
-import { getDateFromDateFilterValue } from '@/object-record/object-filter-dropdown/utils/getDateFromDateFilterValue';
+import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveVariableViewFilterValue';
 import { endOfDay, startOfDay } from 'date-fns';
 import { format } from 'date-fns-tz';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
@@ -346,19 +345,16 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         break;
       case 'DATE':
       case 'DATE_TIME': {
-        let dateFilterValue: DateFilterValue = {
-          type: 'absolute',
-          isoString: '2023-07-14T09:32:47.123',
-        };
-        try {
-          dateFilterValue = JSON.parse(rawUIFilter.value);
-        } catch (e) {
-          console.log('???', e);
-        }
+        // new Date() causes a re-render loop?
 
-        const date = getDateFromDateFilterValue(dateFilterValue);
+        const resolvedFilterValue =
+          resolveFilterValue<FieldMetadataType.Date>(rawUIFilter);
+
         const DATE_FORMAT_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-        const dateISOString = format(date, DATE_FORMAT_WITHOUT_TZ);
+        const dateISOString =
+          resolvedFilterValue instanceof Date
+            ? format(resolvedFilterValue, DATE_FORMAT_WITHOUT_TZ)
+            : '2023-01-01T00:00:00.000';
 
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan: {
@@ -388,25 +384,38 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             break;
           }
           case ViewFilterOperand.IsRelative: {
-            const start = format(
-              startOfDay(Math.min(+date, +new Date())),
-              DATE_FORMAT_WITHOUT_TZ,
-            );
-            const end = format(
-              endOfDay(Math.max(+date, +new Date())),
-              DATE_FORMAT_WITHOUT_TZ,
-            );
+            /*             const dateRange = z
+              .object({ start: z.date(), end: z.date() })
+              .safeParse(resolvedFilterValue).data;
+
+            const defaultDateRange = resolveDateViewFilterValue({
+              value: 'PAST_1_DAY',
+              valueType: ViewFilterValueType.VARIABLE,
+            }) as { start: Date; end: Date };
+
+            const { start, end } = dateRange ?? defaultDateRange;
 
             // Does not work
             objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: start,
-                lte: end,
+                gte: start.toISOString(),
+                lte: end.toISOString(),
+              } as DateFilter,
+            });
+            break; */
+
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                lte: dateISOString,
               } as DateFilter,
             });
             break;
           }
           case ViewFilterOperand.Is: {
+            const isValid = resolvedFilterValue instanceof Date;
+            const defaultDate = new Date();
+            const date = isValid ? resolvedFilterValue : defaultDate;
+
             const start = format(startOfDay(date), DATE_FORMAT_WITHOUT_TZ);
             const end = format(endOfDay(date), DATE_FORMAT_WITHOUT_TZ);
 

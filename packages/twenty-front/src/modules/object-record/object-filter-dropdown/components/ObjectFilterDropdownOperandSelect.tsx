@@ -66,6 +66,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         displayValue: selectedFilter.displayValue,
         operand: newOperand,
         value: selectedFilter.value,
+        valueType: selectedFilter.valueType,
         definition: filterDefinitionUsedInDropdown,
       });
     }

@@ -10,12 +10,13 @@ import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/compone
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { isDefined } from '~/utils/isDefined';
 
-import { RelativeDateFilterValue } from '@/object-record/object-filter-dropdown/types/DateFilterValue';
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativePickerHeader';
-import { RelativeDateDirection } from '@/ui/input/components/internal/date/types/RelativeDateDirection';
-import { RelativeDateUnit } from '@/ui/input/components/internal/date/types/RelativeDateUnit';
 import { UserContext } from '@/users/contexts/UserContext';
+import {
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
+} from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -273,10 +274,19 @@ const StyledButton = styled(MenuItemLeftContent)`
 type InternalDatePickerProps = {
   isRelativeToNow?: boolean;
   date: Date | null;
+  relativeDate?: {
+    direction: VariableDateViewFilterValueDirection;
+    amount: number;
+    unit: VariableDateViewFilterValueUnit;
+  } | null;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
   onRelativeDateChange?: (
-    dateFilterValue: RelativeDateFilterValue | null,
+    relativeDate: {
+      direction: VariableDateViewFilterValueDirection;
+      amount: number;
+      unit: VariableDateViewFilterValueUnit;
+    } | null,
   ) => void;
   clearable?: boolean;
   isDateTimeInput?: boolean;
@@ -298,6 +308,7 @@ export const InternalDatePicker = ({
   onClear,
   isRelativeToNow,
   onRelativeDateChange,
+  relativeDate,
 }: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
 
@@ -445,6 +456,7 @@ export const InternalDatePicker = ({
   const endOfDayInLocalTimezone = endOfDayDateTimeInLocalTimezone.toJSDate();
 
   const dateToUse = isDateTimeInput ? endOfDayInLocalTimezone : dateWithoutTime;
+
   return (
     <StyledContainer
       onKeyDown={handleKeyDown}
@@ -471,9 +483,9 @@ export const InternalDatePicker = ({
           }) =>
             isRelativeToNow ? (
               <RelativeDatePickerHeader
-                direction={RelativeDateDirection.Past}
-                amount={1}
-                unit={RelativeDateUnit.Day}
+                direction={relativeDate?.direction ?? 'PAST'}
+                amount={relativeDate?.amount ?? 1}
+                unit={relativeDate?.unit ?? 'DAY'}
                 onChange={onRelativeDateChange}
               />
             ) : (
