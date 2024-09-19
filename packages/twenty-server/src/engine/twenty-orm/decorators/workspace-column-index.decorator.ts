@@ -29,6 +29,7 @@ export function WorkspaceColumnIndex(
       target: target.constructor,
       gate,
       isUnique: options?.isUnique ?? false,
+      where: options?.where ?? null,
     });
   };
 }

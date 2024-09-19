@@ -146,6 +146,7 @@ export class WorkspaceMigrationIndexFactory {
         action: WorkspaceMigrationIndexActionType.DROP,
         columns: [],
         isUnique: indexMetadata.isUnique,
+        where: indexMetadata.where,
       }));
 
       workspaceMigrations.push({

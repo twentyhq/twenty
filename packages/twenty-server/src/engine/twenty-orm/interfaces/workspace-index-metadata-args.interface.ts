@@ -23,6 +23,11 @@ export interface WorkspaceIndexMetadataArgs {
   isUnique: boolean;
 
   /**
+   * Index where clause.
+   */
+  where: string | null;
+
+  /**
    * Field gate.
    */
   readonly gate?: Gate;

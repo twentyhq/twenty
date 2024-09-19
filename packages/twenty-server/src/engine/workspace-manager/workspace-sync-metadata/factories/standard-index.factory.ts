@@ -72,6 +72,7 @@ export class StandardIndexFactory {
           name: workspaceIndexMetadataArgs.name,
           columns: workspaceIndexMetadataArgs.columns,
           isUnique: workspaceIndexMetadataArgs.isUnique,
+          where: workspaceIndexMetadataArgs.where,
         };
 
         return indexMetadata;

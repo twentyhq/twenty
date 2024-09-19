@@ -5,6 +5,7 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 export type WorkspaceIndexOptions = {
   isUnique: boolean;
+  where: string;
 };
 
 export function WorkspaceIndex(
@@ -30,6 +31,7 @@ export function WorkspaceIndex(
       target: target,
       gate,
       isUnique: options?.isUnique ?? false,
+      where: options?.where ?? null,
     });
   };
 }

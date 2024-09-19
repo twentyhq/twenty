@@ -20,7 +20,7 @@ export const useHandleFindManyRecordsError = ({
         error,
     );
     enqueueSnackBar(
-      `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
+      `${error.message}`,
       {
         variant: SnackBarVariant.Error,
       },

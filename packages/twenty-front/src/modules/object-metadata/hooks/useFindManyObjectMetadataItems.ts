@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { useMemo } from 'react';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -42,7 +42,7 @@ export const useFindManyObjectMetadataItems = ({
     onError: (error) => {
       logError('useFindManyObjectMetadataItems error : ' + error);
       enqueueSnackBar(
-        `Error during useFindManyObjectMetadataItems, ${error.message}`,
+        `${error.message}`,
         {
           variant: SnackBarVariant.Error,
         },

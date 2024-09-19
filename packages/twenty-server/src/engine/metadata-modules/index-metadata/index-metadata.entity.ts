@@ -46,6 +46,9 @@ export class IndexMetadataEntity {
   @Column({ nullable: false, default: false })
   isUnique: boolean;
 
+  @Column({ type: 'text', nullable: true })
+  where: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
