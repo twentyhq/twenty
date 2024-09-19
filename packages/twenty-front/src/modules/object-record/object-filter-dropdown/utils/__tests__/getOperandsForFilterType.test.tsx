@@ -1,4 +1,4 @@
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
+import { FilterFieldType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getOperandsForFilterType } from '../getOperandsForFilterType';
@@ -40,7 +40,7 @@ describe('getOperandsForFilterType', () => {
 
   testCases.forEach(([filterType, expectedOperands]) => {
     it(`should return correct operands for FilterType.${filterType}`, () => {
-      const result = getOperandsForFilterType(filterType as FilterType);
+      const result = getOperandsForFilterType(filterType as FilterFieldType);
       expect(result).toEqual(expectedOperands);
     });
   });

@@ -1,9 +1,9 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { FilterType } from '../types/FilterType';
+import { FilterFieldType } from '../types/FilterableFieldType';
 
 export const getOperandsForFilterType = (
-  filterType: FilterType | null | undefined,
+  filterType: FilterFieldType | null | undefined,
 ): ViewFilterOperand[] => {
   const emptyOperands = [
     ViewFilterOperand.IsEmpty,

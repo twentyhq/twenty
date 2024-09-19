@@ -5,12 +5,12 @@ import { useRecoilValue } from 'recoil';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { SubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectSubMenu';
+import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
+import { CompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/types/CompositeFilterableFieldType';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -48,16 +48,23 @@ export const StyledInput = styled.input`
 `;
 
 export const ObjectFilterDropdownFilterSelect = () => {
-  const [searchText, setSearchText] = useState('');
-  const [currentSubMenu, setCurrentSubMenu] = useState<FilterType | null>(null);
-  const [currentParentFilterDefinition, setCurrentParentFilterDefinition] =
+  const [subMenuFieldType, setSubMenuFieldType] =
+    useState<CompositeFilterableFieldType | null>(null);
+
+  const [firstLevelFilterDefinition, setFirstLevelFilterDefinition] =
     useState<FilterDefinition | null>(null);
+
   const {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
     availableFilterDefinitionsState,
+    objectFilterDropdownSearchInputState,
   } = useFilterDropdown();
+
+  const objectFilterDropdownSearchInput = useRecoilValue(
+    objectFilterDropdownSearchInputState,
+  );
 
   const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,
@@ -66,7 +73,9 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
     .sort((a, b) => a.label.localeCompare(b.label))
     .filter((item) =>
-      item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
+      item.label
+        .toLocaleLowerCase()
+        .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()),
     );
 
   const selectableListItemIds = sortedAvailableFilterDefinitions.map(
@@ -111,16 +120,23 @@ export const ObjectFilterDropdownFilterSelect = () => {
     setObjectFilterDropdownSearchInput('');
   };
 
+  const handleSubMenuBack = () => {
+    setSubMenuFieldType(null);
+    setFirstLevelFilterDefinition(null);
+  };
+
+  const shouldShowFirstLevelMenu = !isDefined(subMenuFieldType);
+
   return (
     <>
-      {!currentSubMenu ? (
+      {shouldShowFirstLevelMenu ? (
         <>
           <StyledInput
-            value={searchText}
+            value={objectFilterDropdownSearchInput}
             autoFocus
             placeholder="Search fields"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchText(event.target.value)
+              setObjectFilterDropdownSearchInput(event.target.value)
             }
           />
           <SelectableList
@@ -135,7 +151,9 @@ export const ObjectFilterDropdownFilterSelect = () => {
                 .filter((item) =>
                   item.label
                     .toLocaleLowerCase()
-                    .includes(searchText.toLocaleLowerCase()),
+                    .includes(
+                      objectFilterDropdownSearchInput.toLocaleLowerCase(),
+                    ),
                 )
                 .map((availableFilterDefinition, index) => (
                   <SelectableItem
@@ -146,8 +164,8 @@ export const ObjectFilterDropdownFilterSelect = () => {
                       testId={`select-filter-${index}`}
                       onClick={() => {
                         if (isCompositeField(availableFilterDefinition.type)) {
-                          setCurrentSubMenu(availableFilterDefinition.type);
-                          setCurrentParentFilterDefinition(
+                          setSubMenuFieldType(availableFilterDefinition.type);
+                          setFirstLevelFilterDefinition(
                             availableFilterDefinition,
                           );
                         } else {
@@ -166,10 +184,10 @@ export const ObjectFilterDropdownFilterSelect = () => {
           </SelectableList>
         </>
       ) : (
-        <SubMenu
-          currentSubMenu={currentSubMenu}
-          parent={currentParentFilterDefinition}
-          setCurrentSubMenu={setCurrentSubMenu}
+        <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu
+          fieldType={subMenuFieldType}
+          firstLevelFieldDefinition={firstLevelFilterDefinition}
+          onBack={handleSubMenuBack}
         />
       )}
     </>

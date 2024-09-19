@@ -1,27 +1,27 @@
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { CompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/types/CompositeFilterableFieldType';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
+import { getCompositeFieldTypeLabels } from '@/object-record/object-filter-dropdown/utils/getCompositeFieldTypeLabels';
+import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { getSubMenuHeaderTitle } from '@/object-record/object-filter-dropdown/utils/getSubMenuHeaderTitle';
-import { getSubMenuOptions } from '@/object-record/object-filter-dropdown/utils/getSubMenuOptions';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useState } from 'react';
 import { IconApps, IconChevronLeft, useIcons } from 'twenty-ui';
 
-type SubMenuProps = {
-  currentSubMenu: FilterType;
-  setCurrentSubMenu: (currentSubMenu: FilterType | null) => void;
-  parent: FilterDefinition | null;
+type ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps = {
+  fieldType: CompositeFilterableFieldType;
+  firstLevelFieldDefinition: FilterDefinition | null;
+  onBack: () => void;
 };
 
-export const SubMenu = ({
-  currentSubMenu,
-  setCurrentSubMenu,
-  parent,
-}: SubMenuProps) => {
+export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
+  fieldType,
+  firstLevelFieldDefinition,
+  onBack,
+}: ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps) => {
   const [searchText, setSearchText] = useState('');
 
   const { getIcon } = useIcons();
@@ -46,13 +46,8 @@ export const SubMenu = ({
 
   return (
     <>
-      <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onClick={() => {
-          setCurrentSubMenu(null);
-        }}
-      >
-        {getSubMenuHeaderTitle(currentSubMenu)}
+      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={onBack}>
+        {getFilterableFieldTypeLabel(fieldType)}
       </DropdownMenuHeader>
       <StyledInput
         value={searchText}
@@ -67,12 +62,12 @@ export const SubMenu = ({
           key={`select-filter-${-1}`}
           testId={`select-filter-${-1}`}
           onClick={() => {
-            handleSelectFilter(parent);
+            handleSelectFilter(firstLevelFieldDefinition);
           }}
           LeftIcon={IconApps}
-          text={`Any ${getSubMenuHeaderTitle(currentSubMenu)} field`}
+          text={`Any ${getFilterableFieldTypeLabel(fieldType)} field`}
         />
-        {getSubMenuOptions(currentSubMenu)
+        {getCompositeFieldTypeLabels(fieldType)
           .sort((a, b) => a.localeCompare(b))
           .filter((item) =>
             item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
@@ -82,14 +77,14 @@ export const SubMenu = ({
               key={`select-filter-${index}`}
               testId={`select-filter-${index}`}
               onClick={() =>
-                parent &&
+                firstLevelFieldDefinition &&
                 handleSelectFilter({
-                  ...parent,
+                  ...firstLevelFieldDefinition,
                   label: menuOption,
                 })
               }
               text={menuOption}
-              LeftIcon={getIcon(parent?.iconName)}
+              LeftIcon={getIcon(firstLevelFieldDefinition?.iconName)}
             />
           ))}
       </DropdownMenuItemsContainer>

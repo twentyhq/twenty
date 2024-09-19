@@ -2,7 +2,6 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { isDefined } from '~/utils/isDefined';
 
-import { getSubMenuOptions } from '@/object-record/object-filter-dropdown/utils/getSubMenuOptions';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { ViewFilter } from '../types/ViewFilter';
 
@@ -17,9 +16,7 @@ const getDefinitionForFilter = (
     return {
       ...filterDefinition,
       label: viewFilter.definition.label,
-      isSubField: getSubMenuOptions(viewFilter.definition.type).includes(
-        viewFilter.definition.label,
-      ),
+      isCompositeField: isCompositeField(viewFilter.definition.type),
     };
   } else {
     return filterDefinition;

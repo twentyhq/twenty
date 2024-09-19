@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
-import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
@@ -45,7 +45,7 @@ const multiSelectFieldFormSchema = z
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
-      omit(SETTINGS_FIELD_TYPE_CONFIGS, [
+      omit(SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS, [
         FieldMetadataType.Boolean,
         FieldMetadataType.Currency,
         FieldMetadataType.Relation,
