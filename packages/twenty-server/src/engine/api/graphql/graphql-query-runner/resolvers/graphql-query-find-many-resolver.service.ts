@@ -79,7 +79,8 @@ export class GraphqlQueryFindManyResolverService {
       args.orderBy ?? [],
       isForwardPagination,
     );
-    const where = graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
+    const { parsedFilters: where, withDeleted } =
+      graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
     const cursor = this.getCursor(args);
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
@@ -92,10 +93,11 @@ export class GraphqlQueryFindManyResolverService {
       order,
       select,
       take: limit + 1,
+      withDeleted,
     };
 
     const totalCount = isDefined(selectedFields.totalCount)
-      ? await repository.count({ where })
+      ? await repository.count({ where, withDeleted })
       : 0;
 
     if (cursor) {
