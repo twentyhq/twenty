@@ -1,5 +1,4 @@
 import {
-  FindOperator,
   FindOptionsOrderValue,
   FindOptionsWhere,
   ObjectLiteral,
@@ -60,19 +59,6 @@ export class GraphqlQueryParser {
 
     for (const [key, value] of Object.entries(filter)) {
       if (key === 'deletedAt') {
-        if (value instanceof FindOperator) {
-          if (value.type === 'isNull') {
-            return true;
-          }
-          if (
-            value.type === 'not' &&
-            value.value instanceof FindOperator &&
-            value.value.type === 'isNull'
-          ) {
-            return true;
-          }
-        }
-
         return true;
       }
 
