@@ -8,6 +8,7 @@ import {
   ExceptionHandlerDriverInterface,
   ExceptionHandlerSentryDriverFactoryOptions,
 } from 'src/engine/core-modules/exception-handler/interfaces';
+import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
@@ -18,9 +19,12 @@ export class ExceptionHandlerSentryDriver
       release: options.release,
       dsn: options.dsn,
       integrations: [
-        Sentry.redisIntegration(),
-        Sentry.httpIntegration(), // tracing: true
-        Sentry.expressIntegration(), // { app: options.serverInstance }
+        // TODO: Redis integration doesn't seem to work - investigate why
+        Sentry.redisIntegration({
+          cachePrefixes: Object.values(WorkspaceCacheKeys).map(key => `engine:${key}:`),
+        }),
+        Sentry.httpIntegration(),
+        Sentry.expressIntegration(), 
         Sentry.graphqlIntegration(),
         Sentry.postgresIntegration(),
         nodeProfilingIntegration(),
