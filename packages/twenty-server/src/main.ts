@@ -2,7 +2,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import * as Sentry from '@sentry/node';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import { graphqlUploadExpress } from 'graphql-upload';
@@ -14,6 +13,8 @@ import { AppModule } from './app.module';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
+
+import "./instrument";
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -33,10 +34,6 @@ const bootstrap = async () => {
 
   // Use our logger
   app.useLogger(logger);
-
-  if (Sentry.isInitialized()) {
-    Sentry.setupExpressErrorHandler(app);
-  }
 
   app.useGlobalFilters(new ApplyCorsToExceptions());
 

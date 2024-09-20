@@ -2,7 +2,7 @@ import {
   DynamicModule,
   MiddlewareConsumer,
   Module,
-  RequestMethod,
+  RequestMethod
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -25,9 +25,12 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
+import { SentryModule } from "@sentry/nestjs/setup";
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
+
 @Module({
   imports: [
+    SentryModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
