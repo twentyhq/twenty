@@ -160,46 +160,37 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           </SpreadsheetImportProvider>
-          <RecordIndexEventContext.Provider
-            value={{
-              onIndexIdentifierClick: handleIndexIdentifierClick,
-              onIndexRecordsLoaded: handleIndexRecordsLoaded,
-            }}
-          >
-            {recordIndexViewType === ViewType.Table && (
-              <>
-                <RecordIndexTableContainer
-                  recordTableId={recordIndexId}
-                  viewBarId={recordIndexId}
-                  objectNameSingular={objectNameSingular}
-                  createRecord={createRecord}
-                />
-                <RecordIndexTableContainerEffect
-                  objectNameSingular={objectNameSingular}
-                  recordTableId={recordIndexId}
-                  viewBarId={recordIndexId}
-                />
-              </>
-            )}
-            {recordIndexViewType === ViewType.Kanban && (
-              <StyledContainerWithPadding fullHeight>
-                <RecordIndexBoardContainer
-                  recordBoardId={recordIndexId}
-                  viewBarId={recordIndexId}
-                  objectNameSingular={objectNameSingular}
-                  createRecord={createRecord}
-                />
-                <RecordIndexBoardDataLoader
-                  objectNameSingular={objectNameSingular}
-                  recordBoardId={recordIndexId}
-                />
-                <RecordIndexBoardDataLoaderEffect
-                  objectNameSingular={objectNameSingular}
-                  recordBoardId={recordIndexId}
-                />
-              </StyledContainerWithPadding>
-            )}
-          </RecordIndexEventContext.Provider>
+
+          {recordIndexViewType === ViewType.Table && (
+            <>
+              <RecordIndexTableContainer
+                recordTableId={recordIndexId}
+                viewBarId={recordIndexId}
+              />
+              <RecordIndexTableContainerEffect
+                objectNameSingular={objectNameSingular}
+                recordTableId={recordIndexId}
+                viewBarId={recordIndexId}
+              />
+            </>
+          )}
+          {recordIndexViewType === ViewType.Kanban && (
+            <StyledContainerWithPadding fullHeight>
+              <RecordIndexBoardContainer
+                recordBoardId={recordIndexId}
+                viewBarId={recordIndexId}
+                objectNameSingular={objectNameSingular}
+              />
+              <RecordIndexBoardDataLoader
+                objectNameSingular={objectNameSingular}
+                recordBoardId={recordIndexId}
+              />
+              <RecordIndexBoardDataLoaderEffect
+                objectNameSingular={objectNameSingular}
+                recordBoardId={recordIndexId}
+              />
+            </StyledContainerWithPadding>
+          )}
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>
