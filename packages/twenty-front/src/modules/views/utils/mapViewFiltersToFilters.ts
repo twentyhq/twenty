@@ -16,7 +16,7 @@ const getDefinitionForFilter = (
     return {
       ...filterDefinition,
       label: viewFilter.definition.label,
-      isCompositeField: isCompositeField(viewFilter.definition.type),
+      compositeFieldName: viewFilter.definition.compositeFieldName,
     };
   } else {
     return filterDefinition;

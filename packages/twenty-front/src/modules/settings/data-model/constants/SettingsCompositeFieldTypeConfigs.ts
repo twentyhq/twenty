@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-max-consts-per-file */
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
   FieldActorValue,
@@ -25,6 +24,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
   subFields: (keyof T)[];
+  filterableSubFields: (keyof T)[];
   labelBySubField: Record<keyof T, string>;
   exampleValue: T;
 };
@@ -39,6 +39,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
     subFields: ['amountMicros', 'currencyCode'],
+    filterableSubFields: ['amountMicros', 'currencyCode'],
     labelBySubField: {
       amountMicros: 'Amount',
       currencyCode: 'Currency',
@@ -53,6 +54,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Emails',
     Icon: IllustrationIconMail,
     subFields: ['primaryEmail', 'additionalEmails'],
+    filterableSubFields: ['primaryEmail'],
     labelBySubField: {
       primaryEmail: 'Primary Email',
       additionalEmails: 'Additional Emails',
@@ -73,6 +75,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     exampleValue: { url: 'www.twenty.com', label: '' },
     category: 'Basic',
     subFields: ['url', 'label'],
+    filterableSubFields: ['url', 'label'],
     labelBySubField: {
       url: 'URL',
       label: 'Label',
@@ -88,6 +91,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
     subFields: ['primaryLinkUrl', 'primaryLinkLabel', 'secondaryLinks'],
+    filterableSubFields: ['primaryLinkUrl', 'primaryLinkLabel'],
     labelBySubField: {
       primaryLinkUrl: 'Link URL',
       primaryLinkLabel: 'Link Label',
@@ -107,6 +111,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       'primaryPhoneCountryCode',
       'additionalPhones',
     ],
+    filterableSubFields: ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
     labelBySubField: {
       primaryPhoneNumber: 'Primary Phone Number',
       primaryPhoneCountryCode: 'Primary Phone Country Code',
@@ -120,6 +125,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     exampleValue: { firstName: 'John', lastName: 'Doe' },
     category: 'Advanced',
     subFields: ['firstName', 'lastName'],
+    filterableSubFields: ['firstName', 'lastName'],
     labelBySubField: {
       firstName: 'First Name',
       lastName: 'Last Name',
@@ -137,6 +143,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       'addressPostcode',
       'addressLat',
       'addressLng',
+    ],
+    filterableSubFields: [
+      'addressStreet1',
+      'addressStreet2',
+      'addressCity',
+      'addressState',
+      'addressCountry',
+      'addressPostcode',
     ],
     labelBySubField: {
       addressStreet1: 'Address 1',
@@ -165,6 +179,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     Icon: IllustrationIconSetting,
     category: 'Basic',
     subFields: ['source', 'name', 'workspaceMemberId'],
+    filterableSubFields: ['source', 'name', 'workspaceMemberId'],
     labelBySubField: {
       source: 'Source',
       name: 'Name',

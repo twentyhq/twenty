@@ -31,28 +31,24 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           iconName: 'IconUser',
           label: 'Text',
           type: FieldMetadataType.Text,
-          fieldName: 'text',
         },
         {
           fieldMetadataId: '2',
           iconName: 'Icon123',
           label: 'Email',
           type: FieldMetadataType.Email,
-          fieldName: 'email',
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
           type: FieldMetadataType.Number,
-          fieldName: 'number',
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconCalendar',
           label: 'Date',
           type: FieldMetadataType.DateTime,
-          fieldName: 'date',
         },
       ]);
       return (

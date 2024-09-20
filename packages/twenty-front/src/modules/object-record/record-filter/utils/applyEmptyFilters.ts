@@ -13,6 +13,7 @@ import {
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
@@ -25,9 +26,9 @@ export const applyEmptyFilters = (
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
-  const newObjectRecordFilters: RecordGqlOperationFilter[] = [
-    ...objectRecordFilters,
-  ];
+  const compositeFieldName = definition.compositeFieldName;
+
+  const isCompositeField = isNonEmptyString(compositeFieldName);
 
   switch (definition.type) {
     case 'TEXT':
@@ -52,7 +53,7 @@ export const applyEmptyFilters = (
       };
       break;
     case 'FULL_NAME': {
-      if (definition.isSubField === false) {
+      if (!isCompositeField) {
         const fullNameFilters = generateILikeFiltersForCompositeFields(
           '',
           correspondingField.name,
@@ -68,12 +69,12 @@ export const applyEmptyFilters = (
           or: [
             {
               [correspondingField.name]: {
-                [definition.fieldName]: { ilike: '' },
+                [compositeFieldName]: { ilike: '' },
               },
             },
             {
               [correspondingField.name]: {
-                [definition.fieldName]: { is: 'NULL' },
+                [compositeFieldName]: { is: 'NULL' },
               },
             },
           ],
@@ -92,7 +93,7 @@ export const applyEmptyFilters = (
       };
       break;
     case 'LINKS': {
-      if (definition.isSubField === false) {
+      if (!isCompositeField) {
         const linksFilters = generateILikeFiltersForCompositeFields(
           '',
           correspondingField.name,
@@ -108,12 +109,12 @@ export const applyEmptyFilters = (
           or: [
             {
               [correspondingField.name]: {
-                [definition.fieldName]: { ilike: '' },
+                [compositeFieldName]: { ilike: '' },
               } as URLFilter,
             },
             {
               [correspondingField.name]: {
-                [definition.fieldName]: { is: 'NULL' },
+                [compositeFieldName]: { is: 'NULL' },
               } as URLFilter,
             },
           ],
@@ -122,7 +123,7 @@ export const applyEmptyFilters = (
       break;
     }
     case 'ADDRESS':
-      if (definition.isSubField === false) {
+      if (!isCompositeField) {
         emptyRecordFilter = {
           and: [
             {
@@ -216,12 +217,12 @@ export const applyEmptyFilters = (
           or: [
             {
               [correspondingField.name]: {
-                [definition.fieldName]: { ilike: '' },
+                [compositeFieldName]: { ilike: '' },
               } as AddressFilter,
             },
             {
               [correspondingField.name]: {
-                [definition.fieldName]: { is: 'NULL' },
+                [compositeFieldName]: { is: 'NULL' },
               } as AddressFilter,
             },
           ],
@@ -291,10 +292,10 @@ export const applyEmptyFilters = (
 
   switch (operand) {
     case ViewFilterOperand.IsEmpty:
-      newObjectRecordFilters.push(emptyRecordFilter);
+      objectRecordFilters.push(emptyRecordFilter);
       break;
     case ViewFilterOperand.IsNotEmpty:
-      newObjectRecordFilters.push({
+      objectRecordFilters.push({
         not: emptyRecordFilter,
       });
       break;

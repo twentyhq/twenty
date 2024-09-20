@@ -2,9 +2,10 @@ import { StyledInput } from '@/object-record/object-filter-dropdown/components/O
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { CompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/types/CompositeFilterableFieldType';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { getCompositeFieldTypeLabels } from '@/object-record/object-filter-dropdown/utils/getCompositeFieldTypeLabels';
+import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
+import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -44,6 +45,14 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
     }
   };
 
+  const options = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
+    fieldType
+  ].filterableSubFields
+    .sort((a, b) => a.localeCompare(b))
+    .filter((item) =>
+      item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
+    );
+
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={onBack}>
@@ -67,26 +76,22 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
           LeftIcon={IconApps}
           text={`Any ${getFilterableFieldTypeLabel(fieldType)} field`}
         />
-        {getCompositeFieldTypeLabels(fieldType)
-          .sort((a, b) => a.localeCompare(b))
-          .filter((item) =>
-            item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
-          )
-          .map((menuOption, index) => (
-            <MenuItem
-              key={`select-filter-${index}`}
-              testId={`select-filter-${index}`}
-              onClick={() =>
-                firstLevelFieldDefinition &&
-                handleSelectFilter({
-                  ...firstLevelFieldDefinition,
-                  label: menuOption,
-                })
-              }
-              text={menuOption}
-              LeftIcon={getIcon(firstLevelFieldDefinition?.iconName)}
-            />
-          ))}
+        {options.map((subFieldName, index) => (
+          <MenuItem
+            key={`select-filter-${index}`}
+            testId={`select-filter-${index}`}
+            onClick={() =>
+              firstLevelFieldDefinition &&
+              handleSelectFilter({
+                ...firstLevelFieldDefinition,
+                label: getCompositeSubFieldLabel(fieldType, subFieldName),
+                compositeFieldName: subFieldName,
+              })
+            }
+            text={getCompositeSubFieldLabel(fieldType, subFieldName)}
+            LeftIcon={getIcon(firstLevelFieldDefinition?.iconName)}
+          />
+        ))}
       </DropdownMenuItemsContainer>
     </>
   );

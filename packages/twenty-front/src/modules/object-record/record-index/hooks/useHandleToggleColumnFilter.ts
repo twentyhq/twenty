@@ -56,7 +56,6 @@ export const useHandleToggleColumnFilter = ({
           iconName: correspondingColumnDefinition.iconName,
           fieldMetadataId,
           type: filterType,
-          fieldName: correspondingColumnDefinition.metadata.fieldName,
         },
         value: '',
       };

@@ -21,7 +21,6 @@ const filterDefinitions: FilterDefinition[] = [
     label: 'definition label',
     iconName: 'icon',
     type: 'TEXT',
-    fieldName: 'fieldName',
   },
 ];
 

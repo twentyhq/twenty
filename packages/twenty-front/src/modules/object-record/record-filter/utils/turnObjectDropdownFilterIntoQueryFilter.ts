@@ -27,6 +27,8 @@ import {
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
 
+// TODO: break this down into smaller functions and make the whole thing immutable
+// Especially applyEmptyFilters
 export const turnObjectDropdownFilterIntoQueryFilter = (
   rawUIFilters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
@@ -37,6 +39,10 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     const correspondingField = fields.find(
       (field) => field.id === rawUIFilter.fieldMetadataId,
     );
+
+    const compositeFieldName = rawUIFilter.definition.compositeFieldName;
+
+    const isCompositeFieldFiter = isNonEmptyString(compositeFieldName);
 
     const isEmptyOperand = [
       ViewFilterOperand.IsEmpty,
@@ -325,16 +331,17 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
           correspondingField.name,
           ['primaryLinkLabel', 'primaryLinkUrl'],
         );
+
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            if (rawUIFilter.definition.isSubField === false) {
+            if (!isCompositeFieldFiter) {
               objectRecordFilters.push({
                 or: linksFilters,
               });
             } else {
               objectRecordFilters.push({
                 [correspondingField.name]: {
-                  [rawUIFilter.definition.fieldName]: {
+                  [compositeFieldName]: {
                     ilike: `%${rawUIFilter.value}%`,
                   },
                 },
@@ -342,7 +349,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             }
             break;
           case ViewFilterOperand.DoesNotContain:
-            if (rawUIFilter.definition.isSubField === false) {
+            if (!isCompositeFieldFiter) {
               objectRecordFilters.push({
                 and: linksFilters.map((filter) => {
                   return {
@@ -354,7 +361,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               objectRecordFilters.push({
                 not: {
                   [correspondingField.name]: {
-                    [rawUIFilter.definition.fieldName]: {
+                    [compositeFieldName]: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
                   },
@@ -386,14 +393,14 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         );
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            if (rawUIFilter.definition.isSubField === false) {
+            if (!isCompositeFieldFiter) {
               objectRecordFilters.push({
                 or: fullNameFilters,
               });
             } else {
               objectRecordFilters.push({
                 [correspondingField.name]: {
-                  [rawUIFilter.definition.fieldName]: {
+                  [compositeFieldName]: {
                     ilike: `%${rawUIFilter.value}%`,
                   },
                 },
@@ -401,7 +408,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             }
             break;
           case ViewFilterOperand.DoesNotContain:
-            if (rawUIFilter.definition.isSubField === false) {
+            if (!isCompositeFieldFiter) {
               objectRecordFilters.push({
                 and: fullNameFilters.map((filter) => {
                   return {
@@ -413,7 +420,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               objectRecordFilters.push({
                 not: {
                   [correspondingField.name]: {
-                    [rawUIFilter.definition.fieldName]: {
+                    [compositeFieldName]: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
                   },
@@ -440,7 +447,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       case 'ADDRESS':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            if (rawUIFilter.definition.isSubField === false) {
+            if (!isCompositeFieldFiter) {
               objectRecordFilters.push({
                 or: [
                   {
@@ -490,7 +497,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             } else {
               objectRecordFilters.push({
                 [correspondingField.name]: {
-                  [rawUIFilter.definition.fieldName]: {
+                  [compositeFieldName]: {
                     ilike: `%${rawUIFilter.value}%`,
                   } as AddressFilter,
                 },
@@ -498,7 +505,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             }
             break;
           case ViewFilterOperand.DoesNotContain:
-            if (rawUIFilter.definition.isSubField === false) {
+            if (!isCompositeFieldFiter) {
               objectRecordFilters.push({
                 and: [
                   {
@@ -534,7 +541,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               objectRecordFilters.push({
                 not: {
                   [correspondingField.name]: {
-                    [rawUIFilter.definition.fieldName]: {
+                    [compositeFieldName]: {
                       ilike: `%${rawUIFilter.value}%`,
                     } as AddressFilter,
                   },
