@@ -2,7 +2,7 @@ import {
   DynamicModule,
   MiddlewareConsumer,
   Module,
-  RequestMethod
+  RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -12,6 +12,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { SentryModule } from '@sentry/nestjs/setup';
 
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
@@ -25,7 +26,6 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
-import { SentryModule } from "@sentry/nestjs/setup";
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 
 @Module({

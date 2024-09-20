@@ -10,11 +10,10 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
 
 import { AppModule } from './app.module';
+import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
-
-import "./instrument";
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

@@ -3,9 +3,7 @@ import * as Sentry from '@sentry/node';
 import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 
-import {
-  ExceptionHandlerDriverInterface
-} from 'src/engine/core-modules/exception-handler/interfaces';
+import { ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 
 export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface

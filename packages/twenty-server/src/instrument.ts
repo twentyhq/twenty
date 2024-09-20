@@ -1,10 +1,10 @@
-import * as Sentry from "@sentry/nestjs";
+import * as Sentry from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
-import { ExceptionHandlerDriver } from "src/engine/core-modules/exception-handler/interfaces";
-import { WorkspaceCacheKeys } from "src/engine/workspace-cache-storage/workspace-cache-storage.service";
 
+import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
+import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
-if(process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
+if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
     release: process.env.SENTRY_RELEASE,

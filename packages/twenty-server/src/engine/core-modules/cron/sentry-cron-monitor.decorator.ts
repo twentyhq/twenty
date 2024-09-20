@@ -6,7 +6,6 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
     propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
-
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
