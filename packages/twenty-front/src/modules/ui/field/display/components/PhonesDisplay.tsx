@@ -39,7 +39,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
               countryCode: value.primaryPhoneCountryCode,
             }
           : null,
-        ...(value?.additionalPhones ?? []),
+        ...parseAdditionalPhones(value?.additionalPhones),
       ]
         .filter(isDefined)
         .map(({ number, countryCode }) => {
@@ -84,4 +84,24 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
       })}
     </StyledContainer>
   );
+};
+
+const parseAdditionalPhones = (additionalPhones?: any) => {
+  if (!additionalPhones) {
+    return [];
+  }
+
+  if (typeof additionalPhones === 'object') {
+    return additionalPhones;
+  }
+
+  if (typeof additionalPhones === 'string') {
+    try {
+      return JSON.parse(additionalPhones);
+    } catch (error) {
+      console.error('Error parsing additional phones', error);
+    }
+  }
+
+  return [];
 };
