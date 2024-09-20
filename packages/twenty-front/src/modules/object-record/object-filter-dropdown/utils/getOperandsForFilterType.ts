@@ -34,11 +34,11 @@ export const getOperandsForFilterType = (
     case 'DATE_TIME':
     case 'DATE':
       return [
-        ViewFilterOperand.Is,
-        ViewFilterOperand.IsRelative,
-        ViewFilterOperand.IsInPast,
-        ViewFilterOperand.IsInFuture,
-        ViewFilterOperand.IsToday,
+        // ViewFilterOperand.Is,
+        // ViewFilterOperand.IsRelative,
+        // ViewFilterOperand.IsInPast,
+        // ViewFilterOperand.IsInFuture,
+        // ViewFilterOperand.IsToday,
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
         ...emptyOperands,

@@ -60,7 +60,6 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.SELECT,
     label: 'Value type',
     description: 'View filter value type',
-    defaultValue: ViewFilterValueType.STATIC,
     options: [
       {
         value: ViewFilterValueType.STATIC,
