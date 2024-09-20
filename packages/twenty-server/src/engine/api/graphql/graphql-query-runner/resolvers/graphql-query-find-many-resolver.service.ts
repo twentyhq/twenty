@@ -1,9 +1,9 @@
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
-import { FindManyOptions, ObjectLiteral } from 'typeorm';
 
 import {
   Record as IRecord,
+  OrderByDirection,
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
@@ -19,14 +19,15 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
-import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
+import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import {
-  generateObjectMetadataMap,
   ObjectMetadataMapItem,
+  generateObjectMetadataMap,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export class GraphqlQueryFindManyResolverService {
   private twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -56,9 +57,19 @@ export class GraphqlQueryFindManyResolverService {
     const repository = dataSource.getRepository(
       objectMetadataItem.nameSingular,
     );
+
+    const queryBuilder = repository.createQueryBuilder(
+      objectMetadataItem.nameSingular,
+    );
+
+    const countQueryBuilder = repository.createQueryBuilder(
+      objectMetadataItem.nameSingular,
+    );
+
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
+
     const objectMetadata = getObjectMetadataOrThrow(
       objectMetadataMap,
       objectMetadataItem.nameSingular,
@@ -68,45 +79,82 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataMap,
     );
 
+    const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+      countQueryBuilder,
+      objectMetadataItem.nameSingular,
+      args.filter ?? ({} as Filter),
+    );
+
     const selectedFields = graphqlFields(info);
 
-    const { select, relations } = graphqlQueryParser.parseSelectedFields(
+    const { relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
       selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
-    const order = graphqlQueryParser.parseOrder(
-      args.orderBy ?? [],
-      isForwardPagination,
-    );
-    const { parsedFilters: where, withDeleted } =
-      graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
-    const cursor = this.getCursor(args);
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
-    this.addOrderByColumnsToSelect(order, select);
-    this.addForeingKeyColumnsToSelect(relations, select, objectMetadata);
-
-    const findOptions: FindManyOptions<ObjectLiteral> = {
-      where,
-      order,
-      select,
-      take: limit + 1,
-      withDeleted,
-    };
+    const withDeletedCountQueryBuilder =
+      graphqlQueryParser.applyDeletedAtToBuilder(
+        withFilterCountQueryBuilder,
+        args.filter ?? ({} as Filter),
+      );
 
     const totalCount = isDefined(selectedFields.totalCount)
-      ? await repository.count({ where, withDeleted })
+      ? await withDeletedCountQueryBuilder.getCount()
       : 0;
 
+    const cursor = this.getCursor(args);
+
+    let appliedFilters = args.filter ?? ({} as Filter);
+
+    const orderByWithIdCondition = [
+      ...(args.orderBy ?? []),
+      { id: OrderByDirection.AscNullsFirst },
+    ] as OrderBy;
+
     if (cursor) {
-      applyRangeFilter(where, cursor, isForwardPagination);
+      const cursorArgFilter = computeCursorArgFilter(
+        cursor,
+        orderByWithIdCondition,
+        isForwardPagination,
+      );
+
+      appliedFilters = (args.filter
+        ? {
+            and: [args.filter, { or: cursorArgFilter }],
+          }
+        : { or: cursorArgFilter }) as unknown as Filter;
     }
 
-    const objectRecords = (await repository.find(
-      findOptions,
-    )) as ObjectRecord[];
+    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+      queryBuilder,
+      objectMetadataItem.nameSingular,
+      appliedFilters,
+    );
+
+    const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
+      withFilterQueryBuilder,
+      orderByWithIdCondition,
+      objectMetadataItem.nameSingular,
+      isForwardPagination,
+    );
+
+    const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
+      withOrderByQueryBuilder,
+      args.filter ?? ({} as Filter),
+    );
+
+    const nonFormattedObjectRecords = await withDeletedQueryBuilder
+      .take(limit + 1)
+      .getMany();
+
+    const objectRecords = formatResult(
+      nonFormattedObjectRecords,
+      objectMetadata,
+      objectMetadataMap,
+    );
 
     const { hasNextPage, hasPreviousPage } = this.getPaginationInfo(
       objectRecords,
@@ -142,7 +190,7 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataItem.nameSingular,
       limit,
       totalCount,
-      order,
+      orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
     );
