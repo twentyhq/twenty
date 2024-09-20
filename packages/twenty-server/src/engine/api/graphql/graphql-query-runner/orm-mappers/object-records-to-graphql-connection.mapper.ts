@@ -1,6 +1,7 @@
-import { FindOptionsOrderValue } from 'typeorm';
-
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record as IRecord,
+  RecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -31,7 +32,7 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     objectName: string,
     take: number,
     totalCount: number,
-    order: Record<string, FindOptionsOrderValue> | undefined,
+    order: RecordOrderBy | undefined,
     hasNextPage: boolean,
     hasPreviousPage: boolean,
     depth = 0,
@@ -65,7 +66,7 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     objectName: string,
     take: number,
     totalCount: number,
-    order: Record<string, FindOptionsOrderValue> | undefined = {},
+    order?: RecordOrderBy,
     depth = 0,
   ): T {
     if (depth >= CONNECTION_MAX_DEPTH) {

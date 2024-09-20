@@ -1,6 +1,7 @@
-import { FindOptionsOrderValue } from 'typeorm';
-
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record as IRecord,
+  RecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -24,11 +25,15 @@ export const decodeCursor = (cursor: string): CursorData => {
 
 export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
   objectRecord: ObjectRecord,
-  order: Record<string, FindOptionsOrderValue> | undefined,
+  order: RecordOrderBy | undefined,
 ): string => {
   const orderByValues: Record<string, any> = {};
 
-  Object.keys(order ?? {}).forEach((key) => {
+  const orderBy = order?.reduce((acc, orderBy) => ({ ...acc, ...orderBy }), {});
+
+  const orderByKeys = Object.keys(orderBy ?? {});
+
+  orderByKeys?.forEach((key) => {
     orderByValues[key] = objectRecord[key];
   });
 
