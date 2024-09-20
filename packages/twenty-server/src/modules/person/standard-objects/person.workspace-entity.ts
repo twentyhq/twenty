@@ -13,6 +13,7 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/metadata.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -300,5 +301,5 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceIndex(IndexType.GIN)
-  searchVector: any;
+  [SEARCH_VECTOR_FIELD_NAME]: any;
 }

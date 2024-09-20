@@ -15,6 +15,7 @@ import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/g
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/metadata.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQuerySearchResolverService {
@@ -94,10 +95,13 @@ export class GraphqlQuerySearchResolverService {
     const resultsWithTsVector = await repository
       .createQueryBuilder()
       .select(columnsToSelect) // TODO do not stop relations
-      .where('"searchVector" @@ to_tsquery(:searchTerms)', {
+      .where(`"${SEARCH_VECTOR_FIELD_NAME}" @@ to_tsquery(:searchTerms)`, {
         searchTerms,
       })
-      .orderBy('ts_rank("searchVector", to_tsquery(:searchTerms))', 'DESC')
+      .orderBy(
+        `ts_rank("${SEARCH_VECTOR_FIELD_NAME}", to_tsquery(:searchTerms))`,
+        'DESC',
+      )
       .setParameter('searchTerms', searchTerms)
       .limit(limit)
       .execute();

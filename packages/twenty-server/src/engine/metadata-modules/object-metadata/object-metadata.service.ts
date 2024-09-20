@@ -12,6 +12,8 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
@@ -21,6 +23,7 @@ import {
   computeColumnName,
   FieldTypeAndNameMetadata,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -37,6 +40,7 @@ import {
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
+import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/metadata.constants';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -91,6 +95,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
+
+    private readonly indexMetadataService: IndexMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -581,7 +588,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isActive: false,
       isSystem: true,
       type: FieldMetadataType.TS_VECTOR,
-      name: 'searchVector',
+      name: SEARCH_VECTOR_FIELD_NAME,
       label: 'Search Vector',
       description: 'Search Vector',
       icon: 'IconSearch',
@@ -600,7 +607,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       throw new Error('No searchable field found for custom object');
     }
 
-    return this.workspaceMigrationService.createCustomMigration(
+    this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
       createdObjectMetadata.workspaceId,
       [
@@ -621,6 +628,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           } as FieldMetadataInterface<FieldMetadataType.TS_VECTOR>),
         },
       ],
+    );
+
+    await this.indexMetadataService.createIndex(
+      objectMetadataInput.workspaceId,
+      createdObjectMetadata,
+      [searchVectorFieldMetadata],
     );
   }
 
