@@ -31,6 +31,7 @@ export const workspaceMemberPrefillData = async (
         nameLastName: 'A',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'noah@demo.dev',
         userId: DEMO_SEED_USER_IDS.NOAH,
       },
       {
@@ -39,6 +40,7 @@ export const workspaceMemberPrefillData = async (
         nameLastName: 'I',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'hugo@demo.dev',
         userId: DEMO_SEED_USER_IDS.HUGO,
       },
       {
@@ -47,6 +49,7 @@ export const workspaceMemberPrefillData = async (
         nameLastName: 'Apple',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'tim@apple.dev',
         userId: DEMO_SEED_USER_IDS.TIM,
       },
     ])
