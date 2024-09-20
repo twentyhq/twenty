@@ -27,11 +27,11 @@ export class IndexMetadataService {
   async createIndex(
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
-    fieldMetadataToIndexSet: Partial<FieldMetadataEntity>[],
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
   ) {
     const tableName = computeObjectTargetTable(objectMetadata);
 
-    const columnNames: string[] = Array.from(fieldMetadataToIndexSet).map(
+    const columnNames: string[] = fieldMetadataToIndex.map(
       (fieldMetadata) => fieldMetadata.name as string,
     );
 
@@ -43,7 +43,7 @@ export class IndexMetadataService {
       savedIndexMetadata = await this.indexMetadataRepository.save({
         name: indexName,
         tableName,
-        indexFieldMetadatas: fieldMetadataToIndexSet.map(
+        indexFieldMetadatas: fieldMetadataToIndex.map(
           (fieldMetadata, index) => {
             return {
               fieldMetadataId: fieldMetadata.id,
