@@ -96,7 +96,7 @@ export const tasksByStatusView = async (
             TASK_STANDARD_FIELD_IDS.status
           ],
         isVisible: true,
-        fieldValuee: 'TODO',
+        fieldValue: 'TODO',
         position: 0,
       },
       {
@@ -105,7 +105,7 @@ export const tasksByStatusView = async (
             TASK_STANDARD_FIELD_IDS.status
           ],
         isVisible: true,
-        fieldValuee: 'IN_PROGESS',
+        fieldValue: 'IN_PROGESS',
         position: 1,
       },
       {
@@ -114,7 +114,7 @@ export const tasksByStatusView = async (
             TASK_STANDARD_FIELD_IDS.status
           ],
         isVisible: true,
-        fieldValuee: 'DONE',
+        fieldValue: 'DONE',
         position: 2,
       },
     ],

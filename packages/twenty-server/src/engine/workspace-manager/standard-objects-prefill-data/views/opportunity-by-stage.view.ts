@@ -80,7 +80,7 @@ export const opportunitiesByStageView = async (
             OPPORTUNITY_STANDARD_FIELD_IDS.stage
           ],
         isVisible: true,
-        fieldValuee: 'NEW',
+        fieldValue: 'NEW',
         position: 0,
       },
       {
@@ -89,7 +89,7 @@ export const opportunitiesByStageView = async (
             OPPORTUNITY_STANDARD_FIELD_IDS.stage
           ],
         isVisible: true,
-        fieldValuee: 'SCREENING',
+        fieldValue: 'SCREENING',
         position: 1,
       },
       {
@@ -98,7 +98,7 @@ export const opportunitiesByStageView = async (
             OPPORTUNITY_STANDARD_FIELD_IDS.stage
           ],
         isVisible: true,
-        fieldValuee: 'MEETING',
+        fieldValue: 'MEETING',
         position: 2,
       },
       {
@@ -107,7 +107,7 @@ export const opportunitiesByStageView = async (
             OPPORTUNITY_STANDARD_FIELD_IDS.stage
           ],
         isVisible: true,
-        fieldValuee: 'PROPOSAL',
+        fieldValue: 'PROPOSAL',
         position: 3,
       },
       {
@@ -116,7 +116,7 @@ export const opportunitiesByStageView = async (
             OPPORTUNITY_STANDARD_FIELD_IDS.stage
           ],
         isVisible: true,
-        fieldValuee: 'CUSTOMER',
+        fieldValue: 'CUSTOMER',
         position: 4,
       },
     ],

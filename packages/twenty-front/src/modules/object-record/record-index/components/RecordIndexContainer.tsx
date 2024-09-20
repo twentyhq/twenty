@@ -31,6 +31,9 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { ViewGroup } from '@/views/types/ViewGroup';
+import { useGroupDefinitionsFromViewGroups } from '@/object-record/record-group/hooks/useGroupDefinitionsFromViewGroups';
+import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -64,6 +67,11 @@ export const RecordIndexContainer = () => {
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+
+  const { groupDefinitions } = useGroupDefinitionsFromViewGroups({
+    viewBarComponentId: recordIndexId,
+    objectMetadataItem,
+  });
 
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
@@ -103,6 +111,34 @@ export const RecordIndexContainer = () => {
       },
     [columnDefinitions, setTableColumns],
   );
+
+  const onViewGroupsChange = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (viewGroups: ViewGroup[]) => {
+        const newGroupDefinitions = mapViewGroupsToGroupDefinitions({
+          objectMetadataItem,
+          groupDefinitions,
+          viewGroups,
+        });
+
+        console.log('newGroupDefinitions', newGroupDefinitions);
+        // setTableColumns(newFieldDefinitions);
+        // const existingRecordIndexFieldDefinitions = snapshot
+        //   .getLoadable(recordIndexFieldDefinitionsState)
+        //   .getValue();
+        // if (
+        //   !isDeeplyEqual(
+        //     existingRecordIndexFieldDefinitions,
+        //     newFieldDefinitions,
+        //   )
+        // ) {
+        //   set(recordIndexFieldDefinitionsState, newFieldDefinitions);
+        // }
+      },
+    [],
+  );
+
+  console.log('groupDefinitions', groupDefinitions);
 
   return (
     <StyledContainer>
