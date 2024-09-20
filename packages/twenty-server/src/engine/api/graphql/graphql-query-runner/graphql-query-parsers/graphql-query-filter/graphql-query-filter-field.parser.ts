@@ -1,64 +1,153 @@
-import { FindOptionsWhere, Not, ObjectLiteral } from 'typeorm';
+import { ObjectLiteral, WhereExpressionBuilder } from 'typeorm';
 
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
-import { isPlainObject } from 'src/utils/is-plain-object';
 
-import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
-import { GraphqlQueryFilterOperatorParser } from './graphql-query-filter-operator.parser';
+type WhereConditionParts = {
+  sql: string;
+  params: ObjectLiteral;
+};
 
 export class GraphqlQueryFilterFieldParser {
   private fieldMetadataMap: FieldMetadataMap;
-  private operatorParser: GraphqlQueryFilterOperatorParser;
 
   constructor(fieldMetadataMap: FieldMetadataMap) {
     this.fieldMetadataMap = fieldMetadataMap;
-    this.operatorParser = new GraphqlQueryFilterOperatorParser();
   }
 
   public parse(
+    queryBuilder: WhereExpressionBuilder,
+    objectNameSingular: string,
     key: string,
-    value: any,
-    isNegated: boolean,
-  ): FindOptionsWhere<ObjectLiteral> {
-    const fieldMetadata = this.fieldMetadataMap[key];
+    filterValue: any,
+    isFirst = false,
+  ): void {
+    const fieldMetadata = this.fieldMetadataMap[`${key}`];
 
     if (!fieldMetadata) {
-      return {
-        [key]: (value: RecordFilter, isNegated: boolean) => {
-          const conditionParser = new GraphqlQueryFilterConditionParser(
-            this.fieldMetadataMap,
-          );
-
-          return conditionParser.parse(value, isNegated);
-        },
-      };
+      throw new Error(`Field metadata not found for field: ${key}`);
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      return this.parseCompositeFieldForFilter(fieldMetadata, value, isNegated);
+      return this.parseCompositeFieldForFilter(
+        queryBuilder,
+        fieldMetadata,
+        objectNameSingular,
+        filterValue,
+        isFirst,
+      );
     }
+    const [[operator, value]] = Object.entries(filterValue);
 
-    if (isPlainObject(value)) {
-      const parsedValue = this.operatorParser.parseOperator(value, isNegated);
+    const { sql, params } = this.computeWhereConditionParts(
+      fieldMetadata,
+      operator,
+      objectNameSingular,
+      key,
+      value,
+    );
 
-      return { [key]: parsedValue };
+    if (isFirst) {
+      queryBuilder.where(sql, params);
+    } else {
+      queryBuilder.andWhere(sql, params);
     }
+  }
 
-    return { [key]: isNegated ? Not(value) : value };
+  private computeWhereConditionParts(
+    fieldMetadata: FieldMetadataInterface,
+    operator: string,
+    objectNameSingular: string,
+    key: string,
+    value: any,
+  ): WhereConditionParts {
+    const uuid = Math.random().toString(36).slice(2, 7);
+
+    switch (operator) {
+      case 'eq':
+        return {
+          sql: `${objectNameSingular}.${key} = :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'neq':
+        return {
+          sql: `${objectNameSingular}.${key} != :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'gt':
+        return {
+          sql: `${objectNameSingular}.${key} > :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'gte':
+        return {
+          sql: `${objectNameSingular}.${key} >= :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'lt':
+        return {
+          sql: `${objectNameSingular}.${key} < :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'lte':
+        return {
+          sql: `${objectNameSingular}.${key} <= :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'in':
+        return {
+          sql: `${objectNameSingular}.${key} IN (:...${key}${uuid})`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'is':
+        return {
+          sql: `${objectNameSingular}.${key} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
+          params: {},
+        };
+      case 'like':
+        return {
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      case 'ilike':
+        return {
+          sql: `${objectNameSingular}.${key} ILIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      case 'startsWith':
+        return {
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      case 'endsWith':
+        return {
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      default:
+        throw new GraphqlQueryRunnerException(
+          `Operator "${operator}" is not supported`,
+          GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+        );
+    }
   }
 
   private parseCompositeFieldForFilter(
+    queryBuilder: WhereExpressionBuilder,
     fieldMetadata: FieldMetadataInterface,
+    objectNameSingular: string,
     fieldValue: any,
-    isNegated: boolean,
-  ): FindOptionsWhere<ObjectLiteral> {
+    isFirst = false,
+  ): void {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );
@@ -69,34 +158,36 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    return Object.entries(fieldValue).reduce(
-      (result, [subFieldKey, subFieldValue]) => {
-        const subFieldMetadata = compositeType.properties.find(
-          (property) => property.name === subFieldKey,
+    Object.entries(fieldValue).map(([subFieldKey, subFieldFilter], index) => {
+      const subFieldMetadata = compositeType.properties.find(
+        (property) => property.name === subFieldKey,
+      );
+
+      if (!subFieldMetadata) {
+        throw new Error(
+          `Sub field metadata not found for composite type: ${fieldMetadata.type}`,
         );
+      }
 
-        if (!subFieldMetadata) {
-          throw new Error(
-            `Sub field metadata not found for composite type: ${fieldMetadata.type}`,
-          );
-        }
+      const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-        const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
+      const [[operator, value]] = Object.entries(
+        subFieldFilter as Record<string, any>,
+      );
 
-        if (isPlainObject(subFieldValue)) {
-          result[fullFieldName] = this.operatorParser.parseOperator(
-            subFieldValue,
-            isNegated,
-          );
-        } else {
-          result[fullFieldName] = isNegated
-            ? Not(subFieldValue)
-            : subFieldValue;
-        }
+      const { sql, params } = this.computeWhereConditionParts(
+        fieldMetadata,
+        operator,
+        objectNameSingular,
+        fullFieldName,
+        value,
+      );
 
-        return result;
-      },
-      {} as FindOptionsWhere<ObjectLiteral>,
-    );
+      if (isFirst && index === 0) {
+        queryBuilder.where(sql, params);
+      }
+
+      queryBuilder.andWhere(sql, params);
+    });
   }
 }
