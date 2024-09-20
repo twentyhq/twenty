@@ -128,8 +128,6 @@ export const CalendarEventRow = ({
   const showTitle =
     calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
 
-  console.log('calendarEvent', calendarEvent);
-
   return (
     <StyledContainer
       className={className}
