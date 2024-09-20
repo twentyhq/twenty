@@ -2,7 +2,8 @@ import { useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 
 export const RecordTableActionBar = ({
   recordTableId,
@@ -15,10 +16,12 @@ export const RecordTableActionBar = ({
     hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordTableId);
 
-  const { entityCountInCurrentViewState } = useViewStates(recordTableId);
-  const entityCountInCurrentView = useRecoilValue(
-    entityCountInCurrentViewState,
+  // TODO: verify this instance id works
+  const entityCountInCurrentView = useRecoilComponentValueV2(
+    entityCountInCurrentViewComponentState,
+    recordTableId,
   );
+
   const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
   const tableRowIds = useRecoilValue(tableRowIdsState);
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
