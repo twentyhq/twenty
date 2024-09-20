@@ -51,14 +51,15 @@ export class GraphqlQueryFilterConditionParser {
       case 'and': {
         const andWhereCondition = new Brackets((qb) => {
           value.forEach((filter: RecordFilter, index: number) => {
-            const whereCondition = new Brackets((qb) => {
+            const whereCondition = new Brackets((qb2) => {
               Object.entries(filter).forEach(
-                ([subFilterkey, subFilterValue]) => {
+                ([subFilterkey, subFilterValue], index) => {
                   this.parseKeyFilter(
-                    qb,
+                    qb2,
                     objectNameSingular,
                     subFilterkey,
                     subFilterValue,
+                    index === 0,
                   );
                 },
               );
@@ -66,29 +67,31 @@ export class GraphqlQueryFilterConditionParser {
 
             if (index === 0) {
               qb.where(whereCondition);
+            } else {
+              qb.andWhere(whereCondition);
             }
-            qb.andWhere(whereCondition);
           });
         });
 
         if (isFirst) {
           queryBuilder.where(andWhereCondition);
+        } else {
+          queryBuilder.andWhere(andWhereCondition);
         }
-
-        queryBuilder.andWhere(andWhereCondition);
         break;
       }
       case 'or': {
         const orWhereCondition = new Brackets((qb) => {
           value.forEach((filter: RecordFilter, index: number) => {
-            const whereCondition = new Brackets((qb) => {
+            const whereCondition = new Brackets((qb2) => {
               Object.entries(filter).forEach(
-                ([subFilterkey, subFilterValue]) => {
+                ([subFilterkey, subFilterValue], index) => {
                   this.parseKeyFilter(
-                    qb,
+                    qb2,
                     objectNameSingular,
                     subFilterkey,
                     subFilterValue,
+                    index === 0,
                   );
                 },
               );
@@ -96,16 +99,17 @@ export class GraphqlQueryFilterConditionParser {
 
             if (index === 0) {
               qb.where(whereCondition);
+            } else {
+              qb.orWhere(whereCondition);
             }
-            qb.orWhere(whereCondition);
           });
         });
 
         if (isFirst) {
           queryBuilder.where(orWhereCondition);
+        } else {
+          queryBuilder.andWhere(orWhereCondition);
         }
-
-        queryBuilder.andWhere(orWhereCondition);
 
         break;
       }
@@ -126,9 +130,9 @@ export class GraphqlQueryFilterConditionParser {
 
         if (isFirst) {
           queryBuilder.where(notWhereCondition);
+        } else {
+          queryBuilder.andWhere(notWhereCondition);
         }
-
-        queryBuilder.andWhere(notWhereCondition);
 
         break;
       }

@@ -31,7 +31,7 @@ export class GraphqlQueryFilterFieldParser {
     filterValue: any,
     isFirst = false,
   ): void {
-    const fieldMetadata = this.fieldMetadataMap[key];
+    const fieldMetadata = this.fieldMetadataMap[`${key}`];
 
     if (!fieldMetadata) {
       throw new Error(`Field metadata not found for field: ${key}`);
@@ -58,9 +58,9 @@ export class GraphqlQueryFilterFieldParser {
 
     if (isFirst) {
       queryBuilder.where(sql, params);
+    } else {
+      queryBuilder.andWhere(sql, params);
     }
-
-    queryBuilder.andWhere(sql, params);
   }
 
   private computeWhereConditionParts(
@@ -70,41 +70,43 @@ export class GraphqlQueryFilterFieldParser {
     key: string,
     value: any,
   ): WhereConditionParts {
+    const uuid = Math.random().toString(36).slice(2, 7);
+
     switch (operator) {
       case 'eq':
         return {
-          sql: `${objectNameSingular}.${key} = :${key}`,
-          params: { [key]: value },
+          sql: `${objectNameSingular}.${key} = :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
         };
       case 'neq':
         return {
-          sql: `${objectNameSingular}.${key} != :${key}`,
-          params: { [key]: value },
+          sql: `${objectNameSingular}.${key} != :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
         };
       case 'gt':
         return {
-          sql: `${objectNameSingular}.${key} > :${key}`,
-          params: { [key]: value },
+          sql: `${objectNameSingular}.${key} > :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
         };
       case 'gte':
         return {
-          sql: `${objectNameSingular}.${key} >= :${key}`,
-          params: { [key]: value },
+          sql: `${objectNameSingular}.${key} >= :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
         };
       case 'lt':
         return {
-          sql: `${objectNameSingular}.${key} < :${key}`,
-          params: { [key]: value },
+          sql: `${objectNameSingular}.${key} < :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
         };
       case 'lte':
         return {
-          sql: `${objectNameSingular}.${key} <= :${key}`,
-          params: { [key]: value },
+          sql: `${objectNameSingular}.${key} <= :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
         };
       case 'in':
         return {
-          sql: `${objectNameSingular}.${key} IN (:...${key})`,
-          params: { [key]: value },
+          sql: `${objectNameSingular}.${key} IN (:...${key}${uuid})`,
+          params: { [`${key}${uuid}`]: value },
         };
       case 'is':
         return {
@@ -113,23 +115,23 @@ export class GraphqlQueryFilterFieldParser {
         };
       case 'like':
         return {
-          sql: `${objectNameSingular}.${key} LIKE :${key}`,
-          params: { [key]: `${value}` },
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
         };
       case 'ilike':
         return {
-          sql: `${objectNameSingular}.${key} ILIKE :${key}`,
-          params: { [key]: `${value}` },
+          sql: `${objectNameSingular}.${key} ILIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
         };
       case 'startsWith':
         return {
-          sql: `${objectNameSingular}.${key} LIKE :${key}`,
-          params: { [key]: `${value}` },
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
         };
       case 'endsWith':
         return {
-          sql: `${objectNameSingular}.${key} LIKE :${key}`,
-          params: { [key]: `${value}` },
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
         };
       default:
         throw new GraphqlQueryRunnerException(

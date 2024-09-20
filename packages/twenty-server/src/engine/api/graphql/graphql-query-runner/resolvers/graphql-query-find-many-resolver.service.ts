@@ -3,6 +3,7 @@ import graphqlFields from 'graphql-fields';
 
 import {
   Record as IRecord,
+  OrderByDirection,
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
@@ -61,6 +62,10 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataItem.nameSingular,
     );
 
+    const countQueryBuilder = repository.createQueryBuilder(
+      objectMetadataItem.nameSingular,
+    );
+
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
     );
@@ -74,56 +79,70 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataMap,
     );
 
+    const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+      countQueryBuilder,
+      objectMetadataItem.nameSingular,
+      args.filter ?? ({} as Filter),
+    );
+
     const selectedFields = graphqlFields(info);
 
-    const { select, relations } = graphqlQueryParser.parseSelectedFields(
+    const { relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
       selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
 
-    // const order = graphqlQueryParser.parseOrder(
-    //   [...(args.orderBy ?? []), { id: OrderByDirection.AscNullsFirst }],
-    //   isForwardPagination,
-    // );
-    // const { parsedFilters: whereForCount, withDeleted } =
-    //   graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
-
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
-    // this.addOrderByColumnsToSelect(order, select);
-    // this.addForeingKeyColumnsToSelect(relations, select, objectMetadata);
+    const withDeletedCountQueryBuilder =
+      graphqlQueryParser.applyDeletedAtToBuilder(
+        withFilterCountQueryBuilder,
+        args.filter ?? ({} as Filter),
+      );
 
-    // const totalCount = isDefined(selectedFields.totalCount)
-    //   ? await repository.count({ where: whereForCount, withDeleted })
-    //   : 0;
-    const totalCount = 0;
+    const totalCount = isDefined(selectedFields.totalCount)
+      ? await withDeletedCountQueryBuilder.getCount()
+      : 0;
 
     const cursor = this.getCursor(args);
+
+    let appliedFilters = args.filter ?? ({} as Filter);
+
+    const orderByWithIdCondition = [
+      ...(args.orderBy ?? []),
+      { id: OrderByDirection.AscNullsFirst },
+    ] as OrderBy;
 
     if (cursor) {
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
+        orderByWithIdCondition,
         isForwardPagination,
       );
 
-      const combinedArgFilter = {
-        ...args.filter,
-        or: cursorArgFilter,
-      } as unknown as Filter;
-
-      // const { parsedFilters: whereForQuery } =
-      //   graphqlQueryParser.parseFilter(combinedArgFilter);
+      appliedFilters = (args.filter
+        ? {
+            and: [args.filter, { or: cursorArgFilter }],
+          }
+        : { or: cursorArgFilter }) as unknown as Filter;
     }
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItem.nameSingular,
-      args.filter ?? ({} as Filter),
+      appliedFilters,
+    );
+
+    const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
+      withFilterQueryBuilder,
+      orderByWithIdCondition,
+      objectMetadataItem.nameSingular,
+      isForwardPagination,
     );
 
     const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
-      withFilterQueryBuilder,
+      withOrderByQueryBuilder,
       args.filter ?? ({} as Filter),
     );
 
@@ -171,7 +190,7 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataItem.nameSingular,
       limit,
       totalCount,
-      {},
+      orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
     );

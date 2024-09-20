@@ -1,7 +1,7 @@
 import {
-  FindOptionsOrderValue,
   FindOptionsWhere,
   ObjectLiteral,
+  OrderByCondition,
   SelectQueryBuilder,
 } from 'typeorm';
 
@@ -12,7 +12,7 @@ import {
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
-import { GraphqlQueryOrderFieldParser as GraphqlQueryOrderParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import {
   FieldMetadataMap,
@@ -23,6 +23,7 @@ export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
   private objectMetadataMap: ObjectMetadataMap;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
+  private orderFieldParser: GraphqlQueryOrderFieldParser;
 
   constructor(
     fieldMetadataMap: FieldMetadataMap,
@@ -31,6 +32,9 @@ export class GraphqlQueryParser {
     this.objectMetadataMap = objectMetadataMap;
     this.fieldMetadataMap = fieldMetadataMap;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
+      this.fieldMetadataMap,
+    );
+    this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.fieldMetadataMap,
     );
   }
@@ -84,15 +88,19 @@ export class GraphqlQueryParser {
     return false;
   }
 
-  parseOrder(
+  applyOrderToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
     orderBy: RecordOrderBy,
+    objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, FindOptionsOrderValue> {
-    const graphqlQueryOrderParser = new GraphqlQueryOrderParser(
-      this.fieldMetadataMap,
+  ): SelectQueryBuilder<any> {
+    const parsedOrderBys = this.orderFieldParser.parse(
+      orderBy,
+      objectNameSingular,
+      isForwardPagination,
     );
 
-    return graphqlQueryOrderParser.parse(orderBy, isForwardPagination);
+    return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
   }
 
   parseSelectedFields(

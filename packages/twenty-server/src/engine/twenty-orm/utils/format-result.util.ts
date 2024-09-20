@@ -89,14 +89,10 @@ export function formatResult<T>(
 
     if (relationMetadata) {
       const toObjectMetadata =
-        this.internalContext.objectMetadataMap[
-          relationMetadata.toObjectMetadataId
-        ];
+        objectMetadataMap[relationMetadata.toObjectMetadataId];
 
       const fromObjectMetadata =
-        this.internalContext.objectMetadataMap[
-          relationMetadata.fromObjectMetadataId
-        ];
+        objectMetadataMap[relationMetadata.fromObjectMetadataId];
 
       if (!toObjectMetadata) {
         throw new Error(
@@ -110,9 +106,10 @@ export function formatResult<T>(
         );
       }
 
-      newData[key] = this.formatResult(
+      newData[key] = formatResult(
         value,
         relationType === 'one-to-many' ? toObjectMetadata : fromObjectMetadata,
+        objectMetadataMap,
       );
       continue;
     }

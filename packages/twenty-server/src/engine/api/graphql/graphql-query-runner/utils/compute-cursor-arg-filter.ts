@@ -1,7 +1,17 @@
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  OrderByDirection,
+  RecordFilter,
+  RecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 
 export const computeCursorArgFilter = (
   cursor: Record<string, any>,
+  orderBy: RecordOrderBy,
   isForwardPagination = true,
 ): RecordFilter[] => {
   const cursorKeys = Object.keys(cursor ?? {});
@@ -27,9 +37,30 @@ export const computeCursorArgFilter = (
       };
     }
 
+    const keyOrderBy = orderBy.find((order) => key in order);
+
+    if (!keyOrderBy) {
+      throw new GraphqlQueryRunnerException(
+        'Invalid cursor',
+        GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+      );
+    }
+
+    const isAscending =
+      keyOrderBy[key] === OrderByDirection.AscNullsFirst ||
+      keyOrderBy[key] === OrderByDirection.AscNullsLast;
+
+    const operator = isAscending
+      ? isForwardPagination
+        ? 'gt'
+        : 'lt'
+      : isForwardPagination
+        ? 'lt'
+        : 'gt';
+
     return {
       ...whereCondition,
-      ...{ [key]: isForwardPagination ? { gt: value } : { lt: value } },
+      ...{ [key]: { [operator]: value } },
     } as RecordFilter;
   });
 };
