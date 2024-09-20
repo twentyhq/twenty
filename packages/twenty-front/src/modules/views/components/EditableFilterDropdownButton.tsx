@@ -10,6 +10,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
 
 type EditableFilterDropdownButtonProps = {
@@ -70,7 +71,12 @@ export const EditableFilterDropdownButton = ({
     const { id: fieldId, value, operand } = viewFilter;
     if (
       !value &&
-      ![FilterOperand.IsEmpty, FilterOperand.IsNotEmpty].includes(operand)
+      ![
+        FilterOperand.IsEmpty,
+        FilterOperand.IsNotEmpty,
+        ViewFilterOperand.IsInPast,
+        ViewFilterOperand.IsInFuture,
+      ].includes(operand)
     ) {
       removeCombinedViewFilter(fieldId);
     }

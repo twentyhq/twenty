@@ -55,6 +55,10 @@ export const getOperandLabelShort = (
       return '\u00A0> ';
     case ViewFilterOperand.LessThan:
       return '\u00A0< ';
+    case ViewFilterOperand.IsInPast:
+      return ': Past';
+    case ViewFilterOperand.IsInFuture:
+      return ': Future';
     default:
       return ': ';
   }

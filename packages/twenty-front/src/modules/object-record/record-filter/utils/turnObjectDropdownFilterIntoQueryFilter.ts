@@ -26,7 +26,7 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveVariableViewFilterValue';
-import { endOfDay, startOfDay } from 'date-fns';
+import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { format } from 'date-fns-tz';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
@@ -292,16 +292,18 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       (field) => field.id === rawUIFilter.fieldMetadataId,
     );
 
-    const isEmptyOperand = [
+    const isValuelessOperand = [
       ViewFilterOperand.IsEmpty,
       ViewFilterOperand.IsNotEmpty,
+      ViewFilterOperand.IsInPast,
+      ViewFilterOperand.IsInFuture,
     ].includes(rawUIFilter.operand);
 
     if (!correspondingField) {
       continue;
     }
 
-    if (!isEmptyOperand) {
+    if (!isValuelessOperand) {
       if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
         continue;
       }
@@ -345,8 +347,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         break;
       case 'DATE':
       case 'DATE_TIME': {
-        // new Date() causes a re-render loop?
-
         const resolvedFilterValue =
           resolveFilterValue<FieldMetadataType.Date>(rawUIFilter);
 
@@ -355,6 +355,8 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
           resolvedFilterValue instanceof Date
             ? format(resolvedFilterValue, DATE_FORMAT_WITHOUT_TZ)
             : '2023-01-01T00:00:00.000';
+
+        const now = roundToNearestMinutes(new Date());
 
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan: {
@@ -431,25 +433,26 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
           case ViewFilterOperand.IsInPast:
             objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: new Date().toISOString(),
+                lte: now.toISOString(),
               } as DateFilter,
             });
             break;
           case ViewFilterOperand.IsInFuture:
             objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: new Date().toISOString(),
+                gte: now.toISOString(),
               } as DateFilter,
             });
             break;
-          case ViewFilterOperand.IsToday:
+          case ViewFilterOperand.IsToday: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: startOfDay(new Date()).toISOString(),
-                lte: endOfDay(new Date()).toISOString(),
+                gte: startOfDay(now).toISOString(),
+                lte: endOfDay(now).toISOString(),
               } as DateFilter,
             });
             break;
+          }
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`, //
@@ -531,7 +534,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'RELATION': {
-        if (!isEmptyOperand) {
+        if (!isValuelessOperand) {
           try {
             JSON.parse(rawUIFilter.value);
           } catch (e) {
@@ -828,7 +831,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'SELECT': {
-        if (isEmptyOperand) {
+        if (isValuelessOperand) {
           applyEmptyFilters(
             rawUIFilter.operand,
             correspondingField,

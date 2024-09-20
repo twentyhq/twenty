@@ -36,15 +36,17 @@ export const ObjectFilterDropdownOperandSelect = () => {
   );
 
   const handleOperandChange = (newOperand: ViewFilterOperand) => {
-    const isEmptyOperand = [
+    const isValuelessOperand = [
       ViewFilterOperand.IsEmpty,
       ViewFilterOperand.IsNotEmpty,
+      ViewFilterOperand.IsInPast,
+      ViewFilterOperand.IsInFuture,
     ].includes(newOperand);
 
     setSelectedOperandInDropdown(newOperand);
     setIsObjectFilterDropdownOperandSelectUnfolded(false);
 
-    if (isEmptyOperand) {
+    if (isValuelessOperand) {
       selectFilter?.({
         id: v4(),
         fieldMetadataId: filterDefinitionUsedInDropdown?.fieldMetadataId ?? '',
