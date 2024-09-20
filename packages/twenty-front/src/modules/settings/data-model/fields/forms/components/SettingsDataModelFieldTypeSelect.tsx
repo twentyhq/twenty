@@ -2,10 +2,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
 import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
-import {
-  SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS,
-  SettingsFieldTypeConfig,
-} from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
@@ -23,7 +21,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
-    Object.keys(SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS) as [
+    Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
       SettingsFieldType,
       ...SettingsFieldType[],
     ],
@@ -80,7 +78,7 @@ export const SettingsDataModelFieldTypeSelect = ({
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig<any>>(
-    SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS,
+    SETTINGS_FIELD_TYPE_CONFIGS,
   ).filter(
     ([key, config]) =>
       !excludedFieldTypes.includes(key as SettingsFieldType) &&
