@@ -8,6 +8,7 @@ import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from '~/utils/isDefined';
+import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;
@@ -99,7 +100,7 @@ const parseAdditionalPhones = (additionalPhones?: any) => {
     try {
       return JSON.parse(additionalPhones);
     } catch (error) {
-      console.error('Error parsing additional phones', error);
+      logError(`Error parsing additional phones' : ` + error);
     }
   }
 
