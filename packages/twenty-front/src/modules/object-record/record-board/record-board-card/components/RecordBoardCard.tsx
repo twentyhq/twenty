@@ -26,8 +26,11 @@ import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/co
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -224,13 +227,9 @@ export const RecordBoardCard = ({
     (boardField) => !boardField.isLabelIdentifier,
   );
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (
-      e.key === 'Enter' &&
-      newRecordName.trim() !== '' &&
-      position !== undefined
-    ) {
-      handleAddNewCardClick(newRecordName.trim(), position);
+  const handleCreate = (text: string) => {
+    if (text.trim() !== '' && position !== undefined) {
+      handleAddNewCardClick(text.trim(), position);
       setNewRecordName('');
       onCreateSuccess?.();
     }
@@ -251,13 +250,46 @@ export const RecordBoardCard = ({
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
           {isCreating ? (
-            <TextInputV2
-              value={newRecordName}
-              onChange={(value: string) => setNewRecordName(value)}
-              onKeyDown={handleInputKeyDown}
-              placeholder={`New ${objectMetadataItem.nameSingular}`}
-              autoFocus
-            />
+            <FieldContext.Provider
+              value={{
+                fieldDefinition: {
+                  type: FieldMetadataType.Text,
+                  fieldMetadataId: 'name',
+                  label: 'Name',
+                  iconName: 'IconText',
+                  metadata: {
+                    placeHolder: '',
+                    fieldName: 'name',
+                  } as FieldMetadata,
+                },
+                hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                recordId: '',
+                isLabelIdentifier: true,
+              }}
+            >
+              <RecordInlineCellEditMode>
+                <TextAreaInput
+                  autoFocus
+                  value={newRecordName}
+                  onEnter={(recordName) => handleCreate(recordName)}
+                  onEscape={() => {
+                    setNewRecordName('');
+                    onCreateSuccess?.();
+                  }}
+                  onClickOutside={(_, inputValue) => {
+                    if (inputValue.trim() === '') {
+                      onCreateSuccess?.();
+                    } else {
+                      handleCreate(inputValue);
+                    }
+                  }}
+                  onChange={setNewRecordName}
+                  placeholder="Label identifier"
+                  hotkeyScope={InlineCellHotkeyScope.InlineCell}
+                  copyButton={false}
+                />
+              </RecordInlineCellEditMode>
+            </FieldContext.Provider>
           ) : (
             <RecordIdentifierChip
               objectNameSingular={objectMetadataItem.nameSingular}
