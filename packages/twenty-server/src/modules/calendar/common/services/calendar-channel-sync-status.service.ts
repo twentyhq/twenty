@@ -89,7 +89,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
 
@@ -191,7 +191,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
 
@@ -216,7 +216,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
     await calendarChannelRepository.update(calendarChannelIds, {

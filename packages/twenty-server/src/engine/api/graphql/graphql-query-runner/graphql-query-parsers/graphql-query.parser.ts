@@ -1,7 +1,8 @@
 import {
-  FindOptionsOrderValue,
   FindOptionsWhere,
   ObjectLiteral,
+  OrderByCondition,
+  SelectQueryBuilder,
 } from 'typeorm';
 
 import {
@@ -10,8 +11,8 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { GraphqlQueryFilterConditionParser as GraphqlQueryFilterParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
-import { GraphqlQueryOrderFieldParser as GraphqlQueryOrderParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import {
   FieldMetadataMap,
@@ -21,6 +22,8 @@ import {
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
   private objectMetadataMap: ObjectMetadataMap;
+  private filterConditionParser: GraphqlQueryFilterConditionParser;
+  private orderFieldParser: GraphqlQueryOrderFieldParser;
 
   constructor(
     fieldMetadataMap: FieldMetadataMap,
@@ -28,33 +31,44 @@ export class GraphqlQueryParser {
   ) {
     this.objectMetadataMap = objectMetadataMap;
     this.fieldMetadataMap = fieldMetadataMap;
-  }
-
-  parseFilter(recordFilter: RecordFilter): {
-    parsedFilters:
-      | FindOptionsWhere<ObjectLiteral>
-      | FindOptionsWhere<ObjectLiteral>[];
-    withDeleted: boolean;
-  } {
-    const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
+    this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMap,
     );
+    this.orderFieldParser = new GraphqlQueryOrderFieldParser(
+      this.fieldMetadataMap,
+    );
+  }
 
-    const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
+  applyFilterToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    objectNameSingular: string,
+    recordFilter: RecordFilter,
+  ): SelectQueryBuilder<any> {
+    return this.filterConditionParser.parse(
+      queryBuilder,
+      objectNameSingular,
+      recordFilter,
+    );
+  }
 
-    const hasDeletedAtFilter = this.checkForDeletedAtFilter(parsedFilter);
+  applyDeletedAtToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    recordFilter: RecordFilter,
+  ): SelectQueryBuilder<any> {
+    if (this.checkForDeletedAtFilter(recordFilter)) {
+      queryBuilder.withDeleted();
+    }
 
-    return {
-      parsedFilters: parsedFilter,
-      withDeleted: hasDeletedAtFilter,
-    };
+    return queryBuilder;
   }
 
   private checkForDeletedAtFilter(
     filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
   ): boolean {
     if (Array.isArray(filter)) {
-      return filter.some(this.checkForDeletedAtFilter);
+      return filter.some((subFilter) =>
+        this.checkForDeletedAtFilter(subFilter),
+      );
     }
 
     for (const [key, value] of Object.entries(filter)) {
@@ -74,15 +88,19 @@ export class GraphqlQueryParser {
     return false;
   }
 
-  parseOrder(
+  applyOrderToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
     orderBy: RecordOrderBy,
+    objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, FindOptionsOrderValue> {
-    const graphqlQueryOrderParser = new GraphqlQueryOrderParser(
-      this.fieldMetadataMap,
+  ): SelectQueryBuilder<any> {
+    const parsedOrderBys = this.orderFieldParser.parse(
+      orderBy,
+      objectNameSingular,
+      isForwardPagination,
     );
 
-    return graphqlQueryOrderParser.parse(orderBy, isForwardPagination);
+    return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
   }
 
   parseSelectedFields(

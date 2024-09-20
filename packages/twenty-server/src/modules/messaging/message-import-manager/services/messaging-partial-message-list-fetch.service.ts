@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -10,6 +10,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -29,6 +30,7 @@ export class MessagingPartialMessageListFetchService {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
   ) {}
 
   public async processMessageListFetch(
@@ -77,7 +79,7 @@ export class MessagingPartialMessageListFetchService {
       }
 
       await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageExternalIds,
       );
 
@@ -90,10 +92,16 @@ export class MessagingPartialMessageListFetchService {
           'messageChannelMessageAssociation',
         );
 
-      await messageChannelMessageAssociationRepository.delete({
-        messageChannelId: messageChannel.id,
-        messageExternalId: Any(messageExternalIdsToDelete),
-      });
+      if (messageExternalIdsToDelete.length) {
+        await messageChannelMessageAssociationRepository.delete({
+          messageChannelId: messageChannel.id,
+          messageExternalId: In(messageExternalIdsToDelete),
+        });
+
+        await this.messagingMessageCleanerService.cleanWorkspaceThreads(
+          workspaceId,
+        );
+      }
 
       this.logger.log(
         `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
