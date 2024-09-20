@@ -176,6 +176,10 @@ export const SettingsObjectNewFieldStep2 = () => {
           Icon={IconHierarchy2}
           links={[
             {
+              children: 'Workspace',
+              href: '/settings/workspace',
+            },
+            {
               children: 'Objects',
               href: '/settings/objects',
             },
@@ -198,7 +202,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                 isSaveDisabled={!canSave}
                 isCancelDisabled={isSubmitting}
                 onCancel={() => {
-                  setIsConfigureStep(false);
+                  navigate(`/settings/objects/${objectSlug}`);
                 }}
                 onSave={formConfig.handleSubmit(handleSave)}
               />

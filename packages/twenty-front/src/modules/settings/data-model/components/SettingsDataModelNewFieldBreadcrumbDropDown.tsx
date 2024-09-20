@@ -17,7 +17,7 @@ type SettingsDataModelNewFieldBreadcrumbDropDownProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: default;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
