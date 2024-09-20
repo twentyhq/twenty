@@ -5,6 +5,7 @@ import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dro
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -51,9 +52,11 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
         },
       ]);
       return (
-        <ObjectFilterDropdownScope filterScopeId={instanceId}>
-          <Story />
-        </ObjectFilterDropdownScope>
+        <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+          <ObjectFilterDropdownScope filterScopeId={instanceId}>
+            <Story />
+          </ObjectFilterDropdownScope>
+        </ViewComponentInstanceContext.Provider>
       );
     },
     ObjectMetadataItemsDecorator,
