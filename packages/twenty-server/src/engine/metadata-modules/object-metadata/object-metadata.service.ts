@@ -23,6 +23,7 @@ import {
   computeColumnName,
   FieldTypeAndNameMetadata,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -634,6 +635,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadataInput.workspaceId,
       createdObjectMetadata,
       [searchVectorFieldMetadata],
+      IndexType.GIN,
     );
   }
 
