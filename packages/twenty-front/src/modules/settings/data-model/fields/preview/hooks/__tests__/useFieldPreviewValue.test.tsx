@@ -1,11 +1,10 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { FieldMetadataType } from '~/generated/graphql';
 import {
   mockedCompanyObjectMetadataItem,
@@ -13,16 +12,21 @@ import {
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
 
+import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import { useFieldPreviewValue } from '../useFieldPreviewValue';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarManagerScopeInternalContext.Provider
+    value={{
+      scopeId: 'snack-bar-manager',
+    }}
+  >
+    <RecoilRoot>
+      <MockedProvider>
         <ObjectMetadataItemsProvider>{children}</ObjectMetadataItemsProvider>
-      </SnackBarProviderScope>
-    </MockedProvider>
-  </RecoilRoot>
+      </MockedProvider>
+    </RecoilRoot>
+  </SnackBarManagerScopeInternalContext.Provider>
 );
 
 describe('useFieldPreviewValue', () => {
