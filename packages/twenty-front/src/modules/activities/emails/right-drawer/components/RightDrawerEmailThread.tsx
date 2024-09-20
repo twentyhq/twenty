@@ -13,6 +13,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconArrowBackUp } from 'twenty-ui';
 
 const StyledWrapper = styled.div`
@@ -30,12 +31,12 @@ const StyledContainer = styled.div`
   overflow-y: auto;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   justify-content: flex-end;
-  height: 50px;
+  height: ${({ isMobile }) => (isMobile ? '100px' : '50px')};
   padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   box-sizing: border-box;
@@ -43,7 +44,7 @@ const StyledButtonContainer = styled.div`
 
 export const RightDrawerEmailThread = () => {
   const setMessageThread = useSetRecoilState(messageThreadState);
-
+  const isMobile = useIsMobile();
   const {
     thread,
     messages,
@@ -156,7 +157,7 @@ export const RightDrawerEmailThread = () => {
         )}
       </StyledContainer>
       {canReply && !messageChannelLoading && (
-        <StyledButtonContainer>
+        <StyledButtonContainer isMobile={isMobile}>
           <Button
             onClick={handleReplyClick}
             title="Reply"
