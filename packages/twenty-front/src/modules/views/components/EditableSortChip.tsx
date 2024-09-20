@@ -2,18 +2,20 @@ import { IconArrowDown, IconArrowUp } from 'twenty-ui';
 
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
+import { useDeleteCombinedViewSorts } from '@/views/hooks/useDeleteCombinedViewSorts';
+import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
 
 type EditableSortChipProps = {
   viewSort: Sort;
 };
 
 export const EditableSortChip = ({ viewSort }: EditableSortChipProps) => {
-  const { removeCombinedViewSort, upsertCombinedViewSort } =
-    useCombinedViewSorts();
+  const { deleteCombinedViewSort } = useDeleteCombinedViewSorts();
+
+  const { upsertCombinedViewSort } = useUpsertCombinedViewSorts();
 
   const handleRemoveClick = () => {
-    removeCombinedViewSort(viewSort.fieldMetadataId);
+    deleteCombinedViewSort(viewSort.fieldMetadataId);
   };
 
   const handleClick = () => {

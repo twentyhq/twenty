@@ -4,7 +4,7 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useParams } from 'react-router-dom';
 
 type VariantFilterChipProps = {
@@ -16,7 +16,7 @@ export const VariantFilterChip = ({
   viewFilter,
   viewBarId,
 }: VariantFilterChipProps) => {
-  const { removeCombinedViewFilter } = useCombinedViewFilters();
+  const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
 
   const { objectNamePlural } = useParams();
 
@@ -32,7 +32,7 @@ export const VariantFilterChip = ({
   const { getIcon } = useIcons();
 
   const handleRemoveClick = () => {
-    removeCombinedViewFilter(viewFilter.id);
+    deleteCombinedViewFilter(viewFilter.id);
     if (
       viewFilter.definition.label === 'Deleted' &&
       viewFilter.operand === 'isNotEmpty'
