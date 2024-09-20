@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
@@ -25,6 +25,10 @@ export class AnalyticsService {
     workspaceDomainName: string | undefined,
     hostName: string | undefined,
   ) {
+    if (!this.environmentService.get('ANALYTICS_ENABLED')) {
+      return { success: true };
+    }
+
     if (!this.environmentService.get('TELEMETRY_ENABLED')) {
       return { success: true };
     }
