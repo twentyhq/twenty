@@ -1,10 +1,11 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
 
-import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
+import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
+import { useTheme } from '@emotion/react';
+import { useState } from 'react';
 
-const StyledButton = styled.button`
+const StyledNewButton = styled.button`
   align-items: center;
   align-self: baseline;
   background-color: ${({ theme }) => theme.background.primary};
@@ -22,12 +23,25 @@ const StyledButton = styled.button`
 `;
 
 export const RecordBoardColumnNewButton = () => {
+  const [isCreatingNewCard, setIsCreatingNewCard] = useState(false);
   const theme = useTheme();
-  const { handleAddNewCardClick } = useAddNewCard('last');
+  const handleNewButtonClick = () => {
+    setIsCreatingNewCard(true);
+  };
+
+  if (isCreatingNewCard) {
+    return (
+      <RecordBoardCard
+        isCreating={true}
+        onCreateSuccess={() => setIsCreatingNewCard(false)}
+      />
+    );
+  }
+
   return (
-    <StyledButton onClick={handleAddNewCardClick}>
+    <StyledNewButton onClick={handleNewButtonClick}>
       <IconPlus size={theme.icon.size.md} />
       New
-    </StyledButton>
+    </StyledNewButton>
   );
 };

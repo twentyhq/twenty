@@ -7,13 +7,13 @@ export const useAddNewCard = (position: string) => {
   const { createOneRecord, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
-  const handleAddNewCardClick = () => {
+  const handleAddNewCardClick = (title: string) => {
     createOneRecord({
       [selectFieldMetadataItem.name]: columnDefinition.value,
       position: position,
+      title: title,
     });
   };
-
   return {
     handleAddNewCardClick,
   };

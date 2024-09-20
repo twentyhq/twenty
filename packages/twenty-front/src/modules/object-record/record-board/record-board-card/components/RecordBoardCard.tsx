@@ -20,10 +20,15 @@ import { RecordValueSetterEffect } from '@/object-record/record-store/components
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
+
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -131,7 +136,14 @@ const StyledRecordInlineCellPlaceholder = styled.div`
   height: 24px;
 `;
 
-export const RecordBoardCard = () => {
+export const RecordBoardCard = ({
+  isCreating = false,
+  onCreateSuccess,
+}: {
+  isCreating?: boolean;
+  onCreateSuccess?: () => void;
+}) => {
+  const [newRecordName, setNewRecordName] = useState('');
   const { recordId } = useContext(RecordBoardCardContext);
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
@@ -140,7 +152,7 @@ export const RecordBoardCard = () => {
     isRecordBoardCardSelectedFamilyState,
     visibleFieldDefinitionsState,
   } = useRecordBoardStates();
-
+  const { handleAddNewCardClick } = useAddNewCard('last');
   const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
 
   const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
@@ -206,51 +218,75 @@ export const RecordBoardCard = () => {
     rootMargin: '1000px',
   });
 
-  if (!record) {
-    return null;
-  }
-
   const visibleFieldDefinitionsFiltered = visibleFieldDefinitions.filter(
     (boardField) => !boardField.isLabelIdentifier,
   );
 
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newRecordName.trim() !== '') {
+      handleAddNewCardClick(newRecordName.trim());
+      setNewRecordName('');
+      onCreateSuccess?.();
+    }
+  };
+
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
-      <RecordValueSetterEffect recordId={recordId} />
+      {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
       <StyledBoardCard
         ref={cardRef}
         selected={isCurrentCardSelected}
         onMouseLeave={onMouseLeaveBoard}
         onClick={() => {
-          setIsCurrentCardSelected(!isCurrentCardSelected);
+          if (!isCreating) {
+            setIsCurrentCardSelected(!isCurrentCardSelected);
+          }
         }}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-          <RecordIdentifierChip
-            objectNameSingular={objectMetadataItem.nameSingular}
-            record={record}
-            variant={AvatarChipVariant.Transparent}
-          />
-          {isCompactModeActive && (
-            <StyledCompactIconContainer className="compact-icon-container">
-              <LightIconButton
-                Icon={IconEye}
-                accent="tertiary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsCardInCompactMode(false);
-                }}
-              />
-            </StyledCompactIconContainer>
-          )}
-          <StyledCheckboxContainer className="checkbox-container">
-            <Checkbox
-              hoverable
-              checked={isCurrentCardSelected}
-              onChange={() => setIsCurrentCardSelected(!isCurrentCardSelected)}
-              variant={CheckboxVariant.Secondary}
+          {isCreating ? (
+            <TextInputV2
+              value={newRecordName}
+              onChange={(value: string) => setNewRecordName(value)}
+              onKeyDown={handleInputKeyDown}
+              placeholder={`New ${objectMetadataItem.nameSingular}`}
+              autoFocus
             />
-          </StyledCheckboxContainer>
+          ) : (
+            <RecordIdentifierChip
+              objectNameSingular={objectMetadataItem.nameSingular}
+              record={record as ObjectRecord}
+              variant={AvatarChipVariant.Transparent}
+            />
+          )}
+
+          {!isCreating && (
+            <>
+              {isCompactModeActive && (
+                <StyledCompactIconContainer className="compact-icon-container">
+                  <LightIconButton
+                    Icon={IconEye}
+                    accent="tertiary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsCardInCompactMode(false);
+                    }}
+                  />
+                </StyledCompactIconContainer>
+              )}
+
+              <StyledCheckboxContainer className="checkbox-container">
+                <Checkbox
+                  hoverable
+                  checked={isCurrentCardSelected}
+                  onChange={() =>
+                    setIsCurrentCardSelected(!isCurrentCardSelected)
+                  }
+                  variant={CheckboxVariant.Secondary}
+                />
+              </StyledCheckboxContainer>
+            </>
+          )}
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <AnimatedEaseInOut
@@ -263,9 +299,11 @@ export const RecordBoardCard = () => {
               >
                 <FieldContext.Provider
                   value={{
-                    recordId,
+                    recordId: isCreating ? '' : recordId,
                     maxWidth: 156,
-                    recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
+                    recoilScopeId:
+                      (isCreating ? 'new' : recordId) +
+                      fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,
                     fieldDefinition: {
                       disableTooltip: false,
