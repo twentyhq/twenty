@@ -26,11 +26,6 @@ import {
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
-import {
-  getAddressSubField,
-  getFullNameSubField,
-  getLinkSubField,
-} from '@/object-record/record-filter/utils/getCorrespondingSubfieldFromLabel';
 
 export const turnObjectDropdownFilterIntoQueryFilter = (
   rawUIFilters: Filter[],
@@ -339,7 +334,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             } else {
               objectRecordFilters.push({
                 [correspondingField.name]: {
-                  [getLinkSubField(rawUIFilter.definition.label ?? '')]: {
+                  [rawUIFilter.definition.fieldName]: {
                     ilike: `%${rawUIFilter.value}%`,
                   },
                 },
@@ -359,7 +354,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               objectRecordFilters.push({
                 not: {
                   [correspondingField.name]: {
-                    [getLinkSubField(rawUIFilter.definition.label ?? '')]: {
+                    [rawUIFilter.definition.fieldName]: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
                   },
@@ -398,7 +393,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             } else {
               objectRecordFilters.push({
                 [correspondingField.name]: {
-                  [getFullNameSubField(rawUIFilter.definition.label ?? '')]: {
+                  [rawUIFilter.definition.fieldName]: {
                     ilike: `%${rawUIFilter.value}%`,
                   },
                 },
@@ -418,7 +413,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               objectRecordFilters.push({
                 not: {
                   [correspondingField.name]: {
-                    [getFullNameSubField(rawUIFilter.definition.label ?? '')]: {
+                    [rawUIFilter.definition.fieldName]: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
                   },
@@ -495,7 +490,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             } else {
               objectRecordFilters.push({
                 [correspondingField.name]: {
-                  [getAddressSubField(rawUIFilter.definition.label ?? '')]: {
+                  [rawUIFilter.definition.fieldName]: {
                     ilike: `%${rawUIFilter.value}%`,
                   } as AddressFilter,
                 },
@@ -539,7 +534,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               objectRecordFilters.push({
                 not: {
                   [correspondingField.name]: {
-                    [getAddressSubField(rawUIFilter.definition.label ?? '')]: {
+                    [rawUIFilter.definition.fieldName]: {
                       ilike: `%${rawUIFilter.value}%`,
                     } as AddressFilter,
                   },

@@ -26,7 +26,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
   subFields: (keyof T)[];
   labelBySubField: Record<keyof T, string>;
-  subFieldByLabel: Record<string, keyof T>;
   exampleValue: T;
 };
 
@@ -44,10 +43,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       amountMicros: 'Amount',
       currencyCode: 'Currency',
     },
-    subFieldByLabel: {
-      Amount: 'amountMicros',
-      Currency: 'currencyCode',
-    },
     exampleValue: {
       amountMicros: 2000000000,
       currencyCode: CurrencyCode.USD,
@@ -61,10 +56,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     labelBySubField: {
       primaryEmail: 'Primary Email',
       additionalEmails: 'Additional Emails',
-    },
-    subFieldByLabel: {
-      'Primary Email': 'primaryEmail',
-      'Additional Emails': 'additionalEmails',
     },
     exampleValue: {
       primaryEmail: 'john@twenty.com',
@@ -86,10 +77,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       url: 'URL',
       label: 'Label',
     },
-    subFieldByLabel: {
-      URL: 'url',
-      Label: 'label',
-    },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinkValue>,
   [FieldMetadataType.Links]: {
     label: 'Links',
@@ -105,11 +92,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       primaryLinkUrl: 'Link URL',
       primaryLinkLabel: 'Link Label',
       secondaryLinks: 'Secondary Links',
-    },
-    subFieldByLabel: {
-      'Link URL': 'primaryLinkUrl',
-      'Link Label': 'primaryLinkLabel',
-      'Secondary Links': 'secondaryLinks',
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.Phones]: {
@@ -130,11 +112,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       primaryPhoneCountryCode: 'Primary Phone Country Code',
       additionalPhones: 'Additional Phones',
     },
-    subFieldByLabel: {
-      'Primary Phone Number': 'primaryPhoneNumber',
-      'Primary Phone Country Code': 'primaryPhoneCountryCode',
-      'Additional Phones': 'additionalPhones',
-    },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
   [FieldMetadataType.FullName]: {
@@ -146,10 +123,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     labelBySubField: {
       firstName: 'First Name',
       lastName: 'Last Name',
-    },
-    subFieldByLabel: {
-      'First Name': 'firstName',
-      'Last Name': 'lastName',
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.Address]: {
@@ -175,16 +148,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       addressLat: 'Latitude',
       addressLng: 'Longitude',
     },
-    subFieldByLabel: {
-      'Address 1': 'addressStreet1',
-      'Address 2': 'addressStreet2',
-      City: 'addressCity',
-      State: 'addressState',
-      Country: 'addressCountry',
-      'Post Code': 'addressPostcode',
-      Latitude: 'addressLat',
-      Longitude: 'addressLng',
-    },
     exampleValue: {
       addressStreet1: '456 Oak Street',
       addressStreet2: 'Unit 3B',
@@ -206,11 +169,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       source: 'Source',
       name: 'Name',
       workspaceMemberId: 'Workspace Member ID',
-    },
-    subFieldByLabel: {
-      Source: 'source',
-      Name: 'name',
-      'Workspace Member ID': 'workspaceMemberId',
     },
     exampleValue: { source: 'source', name: 'name', workspaceMemberId: 'id' },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,

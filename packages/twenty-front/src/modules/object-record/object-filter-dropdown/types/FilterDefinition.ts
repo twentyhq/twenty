@@ -5,6 +5,7 @@ import { FilterableFieldType } from './FilterableFieldType';
 export type FilterDefinition = {
   fieldMetadataId: string;
   label: string;
+  fieldName: string;
   iconName: string;
   type: FilterableFieldType;
   relationObjectMetadataNamePlural?: string;

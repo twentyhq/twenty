@@ -53,5 +53,5 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       metadata: fieldDefintionMetadata,
       type: field.type,
     }),
-  };
+  } satisfies FieldDefinition<FieldMetadata>;
 };

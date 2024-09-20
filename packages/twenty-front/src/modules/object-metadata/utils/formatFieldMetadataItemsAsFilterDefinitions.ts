@@ -60,6 +60,7 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
   relationObjectMetadataNameSingular:
     field.relationDefinition?.targetObjectMetadata.nameSingular,
   type: getFilterTypeFromFieldType(field.type),
+  fieldName: field.name,
 });
 
 export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {

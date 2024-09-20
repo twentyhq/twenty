@@ -12,15 +12,11 @@ import {
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import {
-  getAddressSubField,
-  getFullNameSubField,
-  getLinkSubField,
-} from '@/object-record/record-filter/utils/getCorrespondingSubfieldFromLabel';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
+// TODO: fix this
 export const applyEmptyFilters = (
   operand: ViewFilterOperand,
   correspondingField: Pick<Field, 'id' | 'name'>,
@@ -28,6 +24,10 @@ export const applyEmptyFilters = (
   definition: FilterDefinition,
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
+
+  const newObjectRecordFilters: RecordGqlOperationFilter[] = [
+    ...objectRecordFilters,
+  ];
 
   switch (definition.type) {
     case 'TEXT':
@@ -68,12 +68,12 @@ export const applyEmptyFilters = (
           or: [
             {
               [correspondingField.name]: {
-                [getFullNameSubField(definition.label ?? '')]: { ilike: '' },
+                [definition.fieldName]: { ilike: '' },
               },
             },
             {
               [correspondingField.name]: {
-                [getFullNameSubField(definition.label ?? '')]: { is: 'NULL' },
+                [definition.fieldName]: { is: 'NULL' },
               },
             },
           ],
@@ -108,12 +108,12 @@ export const applyEmptyFilters = (
           or: [
             {
               [correspondingField.name]: {
-                [getLinkSubField(definition.label ?? '')]: { ilike: '' },
+                [definition.fieldName]: { ilike: '' },
               } as URLFilter,
             },
             {
               [correspondingField.name]: {
-                [getLinkSubField(definition.label ?? '')]: { is: 'NULL' },
+                [definition.fieldName]: { is: 'NULL' },
               } as URLFilter,
             },
           ],
@@ -216,12 +216,12 @@ export const applyEmptyFilters = (
           or: [
             {
               [correspondingField.name]: {
-                [getAddressSubField(definition.label ?? '')]: { ilike: '' },
+                [definition.fieldName]: { ilike: '' },
               } as AddressFilter,
             },
             {
               [correspondingField.name]: {
-                [getAddressSubField(definition.label ?? '')]: { is: 'NULL' },
+                [definition.fieldName]: { is: 'NULL' },
               } as AddressFilter,
             },
           ],
@@ -291,10 +291,10 @@ export const applyEmptyFilters = (
 
   switch (operand) {
     case ViewFilterOperand.IsEmpty:
-      objectRecordFilters.push(emptyRecordFilter);
+      newObjectRecordFilters.push(emptyRecordFilter);
       break;
     case ViewFilterOperand.IsNotEmpty:
-      objectRecordFilters.push({
+      newObjectRecordFilters.push({
         not: emptyRecordFilter,
       });
       break;
