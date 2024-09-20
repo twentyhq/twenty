@@ -1,8 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 
 export const useHandleIndexIdentifierClick = ({
   objectMetadataItem,
@@ -13,10 +13,9 @@ export const useHandleIndexIdentifierClick = ({
 }) => {
   const navigate = useNavigate();
 
-  const currentViewId = useRecoilValue(
-    currentViewIdComponentState({
-      scopeId: recordIndexId,
-    }),
+  const currentViewId = useRecoilComponentValueV2(
+    currentViewIdComponentState,
+    recordIndexId,
   );
 
   const handleIndexIdentifierClick = (recordId: string) => {

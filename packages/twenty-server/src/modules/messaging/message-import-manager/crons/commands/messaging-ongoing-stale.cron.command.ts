@@ -3,9 +3,10 @@ import { Command, CommandRunner } from 'nest-commander';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
-
-const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
+import {
+  MESSAGING_ONGOING_STALE_CRON_PATTERN,
+  MessagingOngoingStaleCronJob,
+} from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
 
 @Command({
   name: 'cron:messaging:ongoing-stale',

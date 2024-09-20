@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
 import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
 import { CompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/types/CompositeFilterableFieldType';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
@@ -18,6 +17,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -58,7 +60,6 @@ export const ObjectFilterDropdownFilterSelect = () => {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
-    availableFilterDefinitionsState,
     objectFilterDropdownSearchInputState,
   } = useFilterDropdown();
 
@@ -66,8 +67,8 @@ export const ObjectFilterDropdownFilterSelect = () => {
     objectFilterDropdownSearchInputState,
   );
 
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
   );
 
   const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
