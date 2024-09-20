@@ -15,26 +15,30 @@ import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThrea
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { IconArrowBackUp } from 'twenty-ui';
 
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  flex: 1;
   height: 85%;
-  justify-content: flex-start;
   overflow-y: auto;
-  position: relative;
 `;
 
 const StyledButtonContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  bottom: 0;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
-  height: 110px;
-  left: 0;
-  padding-left: ${({ theme }) => theme.spacing(7)};
-  padding-top: ${({ theme }) => theme.spacing(5)};
-  position: fixed;
-  right: 0;
+  justify-content: flex-end;
+  height: 50px;
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const RightDrawerEmailThread = () => {
@@ -118,47 +122,49 @@ export const RightDrawerEmailThread = () => {
     return null;
   }
   return (
-    <StyledContainer>
-      {threadLoading ? (
-        <EmailLoader loadingText="Loading thread" />
-      ) : (
-        <>
-          <EmailThreadHeader
-            subject={subject}
-            lastMessageSentAt={lastMessage.receivedAt}
-          />
-          {firstMessages.map((message) => (
-            <EmailThreadMessage
-              key={message.id}
-              participants={message.messageParticipants}
-              body={message.text}
-              sentAt={message.receivedAt}
+    <StyledWrapper>
+      <StyledContainer>
+        {threadLoading ? (
+          <EmailLoader loadingText="Loading thread" />
+        ) : (
+          <>
+            <EmailThreadHeader
+              subject={subject}
+              lastMessageSentAt={lastMessage.receivedAt}
             />
-          ))}
-          <IntermediaryMessages messages={intermediaryMessages} />
-          <EmailThreadMessage
-            key={lastMessage.id}
-            participants={lastMessage.messageParticipants}
-            body={lastMessage.text}
-            sentAt={lastMessage.receivedAt}
-            isExpanded
-          />
-          <CustomResolverFetchMoreLoader
-            loading={threadLoading}
-            onLastRowVisible={fetchMoreMessages}
-          />
-        </>
-      )}
-      {canReply && !messageChannelLoading ? (
+            {firstMessages.map((message) => (
+              <EmailThreadMessage
+                key={message.id}
+                participants={message.messageParticipants}
+                body={message.text}
+                sentAt={message.receivedAt}
+              />
+            ))}
+            <IntermediaryMessages messages={intermediaryMessages} />
+            <EmailThreadMessage
+              key={lastMessage.id}
+              participants={lastMessage.messageParticipants}
+              body={lastMessage.text}
+              sentAt={lastMessage.receivedAt}
+              isExpanded
+            />
+            <CustomResolverFetchMoreLoader
+              loading={threadLoading}
+              onLastRowVisible={fetchMoreMessages}
+            />
+          </>
+        )}
+      </StyledContainer>
+      {canReply && !messageChannelLoading && (
         <StyledButtonContainer>
           <Button
             onClick={handleReplyClick}
-            title="Reply (View in Gmail)"
+            title="Reply"
             Icon={IconArrowBackUp}
             disabled={!canReply}
-          ></Button>
+          />
         </StyledButtonContainer>
-      ) : null}
-    </StyledContainer>
+      )}
+    </StyledWrapper>
   );
 };
