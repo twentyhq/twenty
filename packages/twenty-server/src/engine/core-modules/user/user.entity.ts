@@ -9,6 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn
 } from 'typeorm';
 
@@ -27,6 +28,7 @@ registerEnumType(OnboardingStatus, {
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
+@Unique('UQ_USER_EMAIL', ['email', 'deletedAt'])
 export class User {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -41,7 +43,7 @@ export class User {
   lastName: string;
 
   @Field()
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Field({ nullable: true })
