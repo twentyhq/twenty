@@ -1,3 +1,4 @@
+import { isArray } from 'class-validator';
 import { ObjectLiteral, WhereExpressionBuilder } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -47,6 +48,10 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
     const [[operator, value]] = Object.entries(filterValue);
+
+    if (operator === 'in' && (!isArray(value) || value.length === 0)) {
+      return;
+    }
 
     const { sql, params } = this.computeWhereConditionParts(
       fieldMetadata,
