@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
-import { IconPlus } from 'twenty-ui';
-
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
+import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { useTheme } from '@emotion/react';
-import { useState } from 'react';
+import styled from '@emotion/styled';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { IconPlus } from 'twenty-ui';
+import { v4 as uuidv4 } from 'uuid';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -22,18 +23,62 @@ const StyledNewButton = styled.button`
   }
 `;
 
-export const RecordBoardColumnNewButton = () => {
-  const [isCreatingNewCard, setIsCreatingNewCard] = useState(false);
+export const RecordBoardColumnNewButton = ({
+  columnId,
+}: {
+  columnId: string;
+}) => {
   const theme = useTheme();
-  const handleNewButtonClick = () => {
-    setIsCreatingNewCard(true);
-  };
+  const newRecord = useRecoilValue(
+    recordBoardNewRecordByColumnIdSelector({
+      familyKey: columnId,
+      scopeId: columnId,
+    }),
+  );
 
-  if (isCreatingNewCard) {
+  const handleNewButtonClick = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        if (!newRecord.isCreating) {
+          set(
+            recordBoardNewRecordByColumnIdSelector({
+              familyKey: columnId,
+              scopeId: columnId,
+            }),
+            {
+              id: uuidv4(),
+              columnId,
+              isCreating: true,
+            },
+          );
+        }
+      },
+    [columnId, newRecord],
+  );
+
+  const handleCreateSuccess = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(
+          recordBoardNewRecordByColumnIdSelector({
+            familyKey: columnId,
+            scopeId: columnId,
+          }),
+          {
+            id: '',
+            columnId,
+            isCreating: false,
+          },
+        );
+      },
+    [columnId],
+  );
+
+  if (newRecord.isCreating) {
     return (
       <RecordBoardCard
         isCreating={true}
-        onCreateSuccess={() => setIsCreatingNewCard(false)}
+        onCreateSuccess={handleCreateSuccess}
       />
     );
   }
