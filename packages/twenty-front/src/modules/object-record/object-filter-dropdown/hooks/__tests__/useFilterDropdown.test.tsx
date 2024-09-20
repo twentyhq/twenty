@@ -39,7 +39,10 @@ describe('useFilterDropdown', () => {
       useFilterDropdown({ filterDropdownId });
 
       const [availableFilterDefinitions, setAvailableFilterDefinitions] =
-        useRecoilComponentStateV2(availableFilterDefinitionsComponentState);
+        useRecoilComponentStateV2(
+          availableFilterDefinitionsComponentState,
+          filterDropdownId,
+        );
 
       return { availableFilterDefinitions, setAvailableFilterDefinitions };
     }, renderHookConfig);
