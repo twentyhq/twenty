@@ -128,6 +128,8 @@ export const CalendarEventRow = ({
   const showTitle =
     calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
 
+  console.log('calendarEvent', calendarEvent);
+
   return (
     <StyledContainer
       className={className}
@@ -176,7 +178,7 @@ export const CalendarEventRow = ({
                   : participant.displayName
               }
               placeholderColorSeed={
-                participant.workspaceMemberId ?? participant.personId
+                participant.workspaceMemberId || participant.personId
               }
               type="rounded"
             />
