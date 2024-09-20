@@ -8,6 +8,7 @@ import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/compo
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -15,6 +16,7 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -281,7 +283,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
-  // @Index(indexType)
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
@@ -295,10 +296,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
       { name: 'jobTitle', type: FieldMetadataType.TEXT },
       { name: 'phone', type: FieldMetadataType.TEXT }, // To change after phone migration
     ]),
-  }) // Ignore asExpression in syncmetadata
+  })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
+  @WorkspaceIndex(IndexType.GIN)
   searchVector: any;
 }
-
-// In fieldMetadataSettings {fieldIds:}

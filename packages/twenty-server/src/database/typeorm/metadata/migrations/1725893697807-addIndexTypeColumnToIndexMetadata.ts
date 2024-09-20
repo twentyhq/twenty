@@ -6,9 +6,7 @@ export class AddIndexTypeColumnToIndexMetadata1725893697807
   name = 'AddIndexTypeColumnToIndexMetadata1725893697807';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `CREATE TYPE metadata.INDEX_TYPES AS ENUM ('PG_SEARCH')`,
-    );
+    await queryRunner.query(`CREATE TYPE metadata.INDEX_TYPES AS ENUM ('GIN')`);
     await queryRunner.query(
       `ALTER TABLE metadata."indexMetadata" ADD COLUMN "indexType" metadata.INDEX_TYPES;`,
     );

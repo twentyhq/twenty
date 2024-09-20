@@ -13,7 +13,7 @@ import {
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export enum IndexTypes {
+export enum IndexType {
   GIN = 'GIN',
 }
 
@@ -55,8 +55,8 @@ export class IndexMetadataEntity {
 
   @Column({
     type: 'enum',
-    enum: IndexTypes,
+    enum: IndexType,
     nullable: true,
   })
-  indexType?: IndexTypes;
+  indexType?: IndexType;
 }

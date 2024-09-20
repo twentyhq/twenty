@@ -71,6 +71,7 @@ export class StandardIndexFactory {
           objectMetadataId: objectMetadata.id,
           name: workspaceIndexMetadataArgs.name,
           columns: workspaceIndexMetadataArgs.columns,
+          indexType: workspaceIndexMetadataArgs.type,
         };
 
         return indexMetadata;
