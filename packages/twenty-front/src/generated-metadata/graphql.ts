@@ -137,7 +137,6 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** Visibility of the calendar channel */
 export enum CalendarChannelVisibility {
   Metadata = 'METADATA',
   ShareEverything = 'SHARE_EVERYTHING'
@@ -377,7 +376,10 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
+<<<<<<< HEAD
   TsVector = 'TS_VECTOR',
+=======
+>>>>>>> bebeb1515bd81b42807918fd81c12f1bc1c263b7
   Uuid = 'UUID'
 }
 
@@ -433,7 +435,6 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
-/** Visibility of the message channel */
 export enum MessageChannelVisibility {
   Metadata = 'METADATA',
   ShareEverything = 'SHARE_EVERYTHING',

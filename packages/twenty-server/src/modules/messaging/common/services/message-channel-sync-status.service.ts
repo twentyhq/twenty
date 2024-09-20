@@ -79,7 +79,7 @@ export class MessageChannelSyncStatusService {
 
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:${messageChannelId}`,
       );
     }
 
@@ -174,7 +174,7 @@ export class MessageChannelSyncStatusService {
 
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:${messageChannelId}`,
       );
     }
 
@@ -199,7 +199,7 @@ export class MessageChannelSyncStatusService {
 
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:${messageChannelId}`,
       );
     }
 

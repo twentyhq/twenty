@@ -26,10 +26,13 @@ export class WorkspaceMetadataCacheService {
   ) {}
 
   @LogExecutionTime()
-  async recomputeMetadataCache(
-    workspaceId: string,
-    force = false,
-  ): Promise<void> {
+  async recomputeMetadataCache({
+    workspaceId,
+    ignoreLock = false,
+  }: {
+    workspaceId: string;
+    ignoreLock?: boolean;
+  }): Promise<void> {
     const currentCacheVersion =
       await this.getMetadataVersionFromCache(workspaceId);
 
@@ -43,17 +46,13 @@ export class WorkspaceMetadataCacheService {
       );
     }
 
-    if (!force && currentCacheVersion === currentDatabaseVersion) {
-      return;
-    }
-
     const isAlreadyCaching =
       await this.workspaceCacheStorageService.getObjectMetadataOngoingCachingLock(
         workspaceId,
         currentDatabaseVersion,
       );
 
-    if (isAlreadyCaching) {
+    if (!ignoreLock && isAlreadyCaching) {
       return;
     }
 

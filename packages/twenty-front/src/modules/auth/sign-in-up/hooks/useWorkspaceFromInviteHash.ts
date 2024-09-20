@@ -7,6 +7,7 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
+
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 

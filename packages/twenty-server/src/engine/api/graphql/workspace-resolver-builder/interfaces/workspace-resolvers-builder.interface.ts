@@ -93,6 +93,10 @@ export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
 
+export interface DestroyOneResolverArgs {
+  id: string;
+}
+
 export interface DestroyManyResolverArgs<Filter = any> {
   filter: Filter;
 }

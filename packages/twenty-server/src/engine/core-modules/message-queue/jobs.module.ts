@@ -6,6 +6,7 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceQueryRunnerJobModule } from 'src/engine/api/graphql/workspace-query-runner/jobs/workspace-query-runner-job.module';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { UpdateSubscriptionJob } from 'src/engine/core-modules/billing/jobs/update-subscription.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -39,6 +40,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     BillingModule,
     UserWorkspaceModule,
     WorkspaceModule,
+    AuthModule,
     MessagingModule,
     CalendarModule,
     CalendarEventParticipantManagerModule,

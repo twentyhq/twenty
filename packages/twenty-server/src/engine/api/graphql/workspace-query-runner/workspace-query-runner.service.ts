@@ -6,7 +6,6 @@ import { DataSource, In } from 'typeorm';
 import {
   Record as IRecord,
   RecordFilter,
-  RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import {
@@ -16,8 +15,6 @@ import {
   DeleteOneResolverArgs,
   DestroyManyResolverArgs,
   FindDuplicatesResolverArgs,
-  FindManyResolverArgs,
-  FindOneResolverArgs,
   ResolverArgsType,
   RestoreManyResolverArgs,
   UpdateManyResolverArgs,
@@ -25,7 +22,6 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
 import { WorkspaceQueryBuilderFactory } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
@@ -46,8 +42,6 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -85,67 +79,7 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
     private readonly duplicateService: DuplicateService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
   ) {}
-
-  async findMany<
-    Record extends IRecord = IRecord,
-    Filter extends RecordFilter = RecordFilter,
-    OrderBy extends RecordOrderBy = RecordOrderBy,
-  >(
-    args: FindManyResolverArgs<Filter, OrderBy>,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<Record> | undefined> {
-    const { authContext, objectMetadataItem } = options;
-    const hookedArgs =
-      await this.workspaceQueryHookService.executePreQueryHooks(
-        authContext,
-        objectMetadataItem.nameSingular,
-        'findMany',
-        args,
-      );
-
-    const computedArgs = (await this.queryRunnerArgsFactory.create(
-      hookedArgs,
-      options,
-      ResolverArgsType.FindMany,
-    )) as FindManyResolverArgs<Filter, OrderBy>;
-
-    return this.graphqlQueryRunnerService.findMany(computedArgs, options);
-  }
-
-  async findOne<
-    Record extends IRecord = IRecord,
-    Filter extends RecordFilter = RecordFilter,
-  >(
-    args: FindOneResolverArgs<Filter>,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<Record | undefined> {
-    if (!args.filter || Object.keys(args.filter).length === 0) {
-      throw new WorkspaceQueryRunnerException(
-        'Missing filter argument',
-        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
-    }
-    const { authContext, objectMetadataItem } = options;
-
-    const hookedArgs =
-      await this.workspaceQueryHookService.executePreQueryHooks(
-        authContext,
-        objectMetadataItem.nameSingular,
-        'findOne',
-        args,
-      );
-
-    const computedArgs = (await this.queryRunnerArgsFactory.create(
-      hookedArgs,
-      options,
-      ResolverArgsType.FindOne,
-    )) as FindOneResolverArgs<Filter>;
-
-    return this.graphqlQueryRunnerService.findOne(computedArgs, options);
-  }
 
   async findDuplicates<TRecord extends IRecord = IRecord>(
     args: FindDuplicatesResolverArgs<Partial<TRecord>>,
@@ -166,6 +100,10 @@ export class WorkspaceQueryRunnerService {
     }
 
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running findDuplicates for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
 
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
@@ -221,12 +159,6 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
 
-    const isQueryRunnerTwentyORMEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
-        authContext.workspace.id,
-      );
-
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     if (args.upsert) {
@@ -252,13 +184,6 @@ export class WorkspaceQueryRunnerService {
       options,
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
-
-    if (isQueryRunnerTwentyORMEnabled) {
-      return (await this.graphqlQueryRunnerService.createMany(
-        computedArgs,
-        options,
-      )) as Record[];
-    }
 
     const query = await this.workspaceQueryBuilderFactory.createMany(
       computedArgs,
@@ -312,6 +237,9 @@ export class WorkspaceQueryRunnerService {
     args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
+    console.log(
+      `running upsertMany for ${options.objectMetadataItem.nameSingular} on workspace ${options.authContext.workspace.id}`,
+    );
     const ids = args.data
       .map((item) => item.id)
       .filter((id) => id !== undefined);
@@ -378,6 +306,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running updateOne for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
@@ -453,6 +386,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running updateMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
@@ -548,6 +486,10 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
 
+    console.log(
+      `running deleteMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const maximumRecordAffected = this.environmentService.get(
@@ -637,6 +579,10 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
 
+    console.log(
+      `running destroyMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const maximumRecordAffected = this.environmentService.get(
@@ -692,6 +638,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running restoreMany for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
@@ -764,6 +714,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { authContext, objectMetadataItem } = options;
+
+    console.log(
+      `running deleteOne for ${objectMetadataItem.nameSingular} on workspace ${authContext.workspace.id}`,
+    );
+
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,

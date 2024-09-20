@@ -1,22 +1,17 @@
 import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ModuleRef } from '@nestjs/core';
 
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { render } from '@react-email/render';
-import { SendInviteLinkEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -25,6 +20,7 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
+  private userWorkspaceService: UserWorkspaceService;
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -33,13 +29,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly environmentService: EnvironmentService,
-    private readonly emailService: EmailService,
-    private readonly onboardingService: OnboardingService,
+    private moduleRef: ModuleRef,
   ) {
     super(workspaceRepository);
+    this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
+      strict: false,
+    });
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -66,7 +62,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       existingWorkspace.activationStatus !==
       WorkspaceActivationStatus.PENDING_CREATION
     ) {
-      throw new Error('Worspace is not pending creation');
+      throw new Error('Workspace is not pending creation');
     }
 
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
@@ -121,53 +117,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspaceId,
     });
     await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
-  }
-
-  async sendInviteLink(
-    emails: string[],
-    workspace: Workspace,
-    sender: User,
-  ): Promise<SendInviteLink> {
-    if (!workspace?.inviteHash) {
-      return { success: false };
-    }
-
-    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
-    const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
-
-    for (const email of emails) {
-      const emailData = {
-        link: inviteLink,
-        workspace: { name: workspace.displayName, logo: workspace.logo },
-        sender: { email: sender.email, firstName: sender.firstName },
-        serverUrl: this.environmentService.get('SERVER_URL'),
-      };
-      const emailTemplate = SendInviteLinkEmail(emailData);
-      const html = render(emailTemplate, {
-        pretty: true,
-      });
-
-      const text = render(emailTemplate, {
-        plainText: true,
-      });
-
-      await this.emailService.send({
-        from: `${this.environmentService.get(
-          'EMAIL_FROM_NAME',
-        )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-        to: email,
-        subject: 'Join your team on Twenty',
-        text,
-        html,
-      });
-    }
-
-    await this.onboardingService.setOnboardingInviteTeamPending({
-      workspaceId: workspace.id,
-      value: false,
-    });
-
-    return { success: true };
   }
 
   private async reassignOrRemoveUserDefaultWorkspace(

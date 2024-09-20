@@ -41,7 +41,6 @@ export const SignInBackgroundMockContainer = () => {
         objectNameSingular={objectNameSingular}
         recordTableId={recordIndexId}
         viewBarId={viewBarId}
-        createRecord={async () => {}}
         updateRecordMutation={() => {}}
       />
     </StyledContainer>

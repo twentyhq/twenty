@@ -3,26 +3,22 @@ import { useIcons } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { ViewType } from '@/views/types/ViewType';
+import { useContext } from 'react';
 import { capitalize } from '~/utils/string/capitalize';
 
-type RecordIndexPageHeaderProps = {
-  createRecord: () => void;
-  recordIndexId: string;
-  objectNamePlural: string;
-};
-
-export const RecordIndexPageHeader = ({
-  createRecord,
-  recordIndexId,
-  objectNamePlural,
-}: RecordIndexPageHeaderProps) => {
+export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
+
+  const { objectNamePlural, onCreateRecord } = useContext(
+    RecordIndexRootPropsContext,
+  );
 
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
@@ -40,16 +36,17 @@ export const RecordIndexPageHeader = ({
   const pageHeaderTitle =
     objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
+  const handleAddButtonClick = () => {
+    onCreateRecord();
+  };
+
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      <PageHotkeysEffect onAddButtonClick={createRecord} />
+      <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
       {isTable ? (
-        <PageAddButton onClick={createRecord} />
+        <PageAddButton onClick={handleAddButtonClick} />
       ) : (
-        <RecordIndexPageKanbanAddButton
-          recordIndexId={recordIndexId}
-          objectNamePlural={objectNamePlural}
-        />
+        <RecordIndexPageKanbanAddButton />
       )}
     </PageHeader>
   );
