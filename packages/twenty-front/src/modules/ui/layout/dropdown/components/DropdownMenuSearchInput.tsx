@@ -33,10 +33,12 @@ const StyledInput = styled.input`
   }
 `;
 
-export const DropdownMenuSearchInput = forwardRef<
-  HTMLInputElement,
-  InputHTMLAttributes<HTMLInputElement>
->(({ value, onChange, placeholder = 'Search', type }) => {
+export const DropdownMenuSearchInput: FC<ComponentPropsWithoutRef<'input'>> = ({
+  value,
+  onChange,
+  placeholder = 'Search',
+  type,
+}) => {
   const { inputRef } = useInputFocusWithoutScrollOnMount();
 
   return (
@@ -48,4 +50,4 @@ export const DropdownMenuSearchInput = forwardRef<
       />
     </StyledDropdownMenuSearchInputContainer>
   );
-});
+};
