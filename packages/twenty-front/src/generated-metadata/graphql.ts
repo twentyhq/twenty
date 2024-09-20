@@ -165,7 +165,6 @@ export type ClientConfig = {
   signInPrefilled: Scalars['Boolean']['output'];
   signUpDisabled: Scalars['Boolean']['output'];
   support: Support;
-  telemetry: Telemetry;
 };
 
 export type CreateAppTokenInput = {
@@ -1169,11 +1168,6 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String']['output'];
   supportFrontChatId?: Maybe<Scalars['String']['output']>;
-};
-
-export type Telemetry = {
-  __typename?: 'Telemetry';
-  enabled: Scalars['Boolean']['output'];
 };
 
 export type TimelineCalendarEvent = {
