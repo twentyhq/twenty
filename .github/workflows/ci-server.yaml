@@ -106,9 +106,13 @@ jobs:
         uses: ./.github/workflows/actions/task-cache
         with:
           tag: scope:backend
-      - name:  Server / Run Integration Tests
+      - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
           tasks: "test:integration"
-          extra: ">> action_logs.txt 2>&1"
+      - name: Server / Upload reset-logs file
+        uses: actions/upload-artifact@v4
+        with:
+          name: reset-logs
+          path: ./logs/reset-logs.log
