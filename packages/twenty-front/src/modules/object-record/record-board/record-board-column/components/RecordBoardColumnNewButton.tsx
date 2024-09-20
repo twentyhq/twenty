@@ -2,9 +2,9 @@ import { RecordBoardCard } from '@/object-record/record-board/record-board-card/
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
-import { v4 as uuidv4 } from 'uuid';
+import { useAddNewCard } from '../hooks/useAddNewCard';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -29,6 +29,7 @@ export const RecordBoardColumnNewButton = ({
   columnId: string;
 }) => {
   const theme = useTheme();
+ 
   const newRecord = useRecoilValue(
     recordBoardNewRecordByColumnIdSelector({
       familyKey: columnId,
@@ -36,49 +37,20 @@ export const RecordBoardColumnNewButton = ({
     }),
   );
 
-  const handleNewButtonClick = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        if (!newRecord.isCreating) {
-          set(
-            recordBoardNewRecordByColumnIdSelector({
-              familyKey: columnId,
-              scopeId: columnId,
-            }),
-            {
-              id: uuidv4(),
-              columnId,
-              isCreating: true,
-            },
-          );
-        }
-      },
-    [columnId, newRecord],
-  );
+  const { handleAddNewCardClick ,handleCreateSuccess } = useAddNewCard();
 
-  const handleCreateSuccess = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(
-          recordBoardNewRecordByColumnIdSelector({
-            familyKey: columnId,
-            scopeId: columnId,
-          }),
-          {
-            id: '',
-            columnId,
-            isCreating: false,
-          },
-        );
-      },
-    [columnId],
-  );
+  const handleNewButtonClick = () => {
+    handleAddNewCardClick('', 'last');
+  };
 
-  if (newRecord.isCreating) {
+ 
+
+  if (newRecord.isCreating && newRecord.position === 'last') {
     return (
       <RecordBoardCard
         isCreating={true}
-        onCreateSuccess={handleCreateSuccess}
+        onCreateSuccess={()=>handleCreateSuccess('last')}
+        position='last'
       />
     );
   }

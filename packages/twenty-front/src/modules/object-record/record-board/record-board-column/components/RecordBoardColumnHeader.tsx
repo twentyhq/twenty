@@ -1,18 +1,21 @@
+import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { IconDotsVertical, IconPlus, Tag } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useAddNewCard } from '../hooks/useAddNewCard';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -94,16 +97,27 @@ export const RecordBoardColumnHeader = () => {
     handleCancel,
     handleEntitySelect,
   } = useAddNewOpportunity('first');
-  const { handleAddNewCardClick } = useAddNewCard('first');
+
+  const newRecord = useRecoilValue(
+    recordBoardNewRecordByColumnIdSelector({
+      familyKey: columnDefinition.id,
+      scopeId: columnDefinition.id,
+    }),
+  );
+
+  const { handleAddNewCardClick, handleCreateSuccess } = useAddNewCard();
+
+  const handleNewButtonClick = () => {
+    handleAddNewCardClick('', 'first');
+  };
+
 
   const isOpportunity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
 
   const handleClick = isOpportunity
     ? handleAddNewOpportunityClick
-    : () => {
-        handleAddNewCardClick();
-      };
+    : handleNewButtonClick;
 
   return (
     <>
@@ -162,6 +176,13 @@ export const RecordBoardColumnHeader = () => {
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           stageId={columnDefinition.id}
+        />
+      )}
+      {newRecord?.isCreating && newRecord.position === 'first' && (
+        <RecordBoardCard
+          isCreating={true}
+          onCreateSuccess={()=>handleCreateSuccess('first')}
+          position='first'
         />
       )}
       {isCreatingCard && (

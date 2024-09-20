@@ -76,6 +76,7 @@ export const RecordIndexPageKanbanAddButton = () => {
               id: uuidv4(),
               columnId: columnDefinition.id,
               isCreating: true,
+              position: 'first',
             },
           );
           closeDropdown();

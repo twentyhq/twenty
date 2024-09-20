@@ -139,11 +139,14 @@ const StyledRecordInlineCellPlaceholder = styled.div`
 export const RecordBoardCard = ({
   isCreating = false,
   onCreateSuccess,
+  position,
 }: {
   isCreating?: boolean;
   onCreateSuccess?: () => void;
+  position?: 'first' | 'last';
 }) => {
   const [newRecordName, setNewRecordName] = useState('');
+  const { handleAddNewCardClick } = useAddNewCard();
   const { recordId } = useContext(RecordBoardCardContext);
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
@@ -152,7 +155,6 @@ export const RecordBoardCard = ({
     isRecordBoardCardSelectedFamilyState,
     visibleFieldDefinitionsState,
   } = useRecordBoardStates();
-  const { handleAddNewCardClick } = useAddNewCard('last');
   const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
 
   const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
@@ -223,8 +225,12 @@ export const RecordBoardCard = ({
   );
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && newRecordName.trim() !== '') {
-      handleAddNewCardClick(newRecordName.trim());
+    if (
+      e.key === 'Enter' &&
+      newRecordName.trim() !== '' &&
+      position !== undefined
+    ) {
+      handleAddNewCardClick(newRecordName.trim(), position);
       setNewRecordName('');
       onCreateSuccess?.();
     }
