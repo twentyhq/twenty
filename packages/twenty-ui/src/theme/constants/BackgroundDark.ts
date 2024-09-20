@@ -11,7 +11,6 @@ export const BACKGROUND_DARK = {
   secondary: GRAY_SCALE.gray80,
   tertiary: GRAY_SCALE.gray75,
   quaternary: GRAY_SCALE.gray70,
-  quinary: GRAY_SCALE.gray65,
   invertedPrimary: GRAY_SCALE.gray20,
   invertedSecondary: GRAY_SCALE.gray35,
   danger: COLOR.red80,

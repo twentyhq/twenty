@@ -40,9 +40,9 @@ const StyledCardContent = styled(CardContent)<{
 }>`
   background: ${({ theme, isActive, isFocused }) =>
     isActive
-      ? theme.background.quinary
+      ? theme.background.quaternary
       : isFocused
-        ? theme.background.quaternary
+        ? theme.background.tertiary
         : theme.background.secondary};
   display: flex;
   flex-direction: column;
