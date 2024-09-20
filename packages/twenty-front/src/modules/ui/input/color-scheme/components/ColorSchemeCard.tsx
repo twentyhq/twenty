@@ -41,7 +41,7 @@ const StyledColorSchemeBackground = styled.div<
   overflow: hidden;
   padding-left: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(6)};
-  width: 120px;
+  width: 160px;
 `;
 
 const StyledColorSchemeContent = styled(motion.div)<
@@ -120,7 +120,7 @@ const ColorSchemeSegment = ({
 
 const StyledContainer = styled.div`
   position: relative;
-  width: 120px;
+  width: 160px;
 `;
 
 const StyledMixedColorSchemeSegment = styled.div`
@@ -130,7 +130,7 @@ const StyledMixedColorSchemeSegment = styled.div`
   height: 80px;
   overflow: hidden;
   position: relative;
-  width: 120px;
+  width: 160px;
 `;
 
 const StyledCheckmarkContainer = styled(motion.div)`

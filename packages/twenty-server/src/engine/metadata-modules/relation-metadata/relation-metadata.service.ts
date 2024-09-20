@@ -13,6 +13,7 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/create-relation.input';
@@ -34,6 +35,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 import {
   RelationMetadataEntity,
@@ -54,6 +56,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly indexMetadataService: IndexMetadataService,
   ) {
     super(relationMetadataRepository);
   }
@@ -91,21 +94,22 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const fromId = uuidV4();
     const toId = uuidV4();
 
-    await this.fieldMetadataService.createMany([
-      this.createFieldMetadataForRelationMetadata(
-        relationMetadataInput,
-        'from',
-        isCustom,
-        fromId,
-      ),
-      this.createFieldMetadataForRelationMetadata(
-        relationMetadataInput,
-        'to',
-        isCustom,
-        toId,
-      ),
-      this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
-    ]);
+    const createdRelationFieldsMetadata =
+      await this.fieldMetadataService.createMany([
+        this.createFieldMetadataForRelationMetadata(
+          relationMetadataInput,
+          'from',
+          isCustom,
+          fromId,
+        ),
+        this.createFieldMetadataForRelationMetadata(
+          relationMetadataInput,
+          'to',
+          isCustom,
+          toId,
+        ),
+        this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
+      ]);
 
     const createdRelationMetadata = await super.createOne({
       ...relationMetadataInput,
@@ -117,6 +121,38 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       relationMetadataInput,
       objectMetadataMap,
       columnName,
+    );
+
+    const toObjectMetadata =
+      objectMetadataMap[relationMetadataInput.toObjectMetadataId];
+
+    const foreignKeyFieldMetadata = createdRelationFieldsMetadata.find(
+      (fieldMetadata) => fieldMetadata.type === FieldMetadataType.UUID,
+    );
+
+    if (!foreignKeyFieldMetadata) {
+      throw new RelationMetadataException(
+        `ForeignKey field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
+
+    const deletedFieldMetadata = toObjectMetadata.fields.find(
+      (fieldMetadata) =>
+        fieldMetadata.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+    );
+
+    if (!deletedFieldMetadata) {
+      throw new RelationMetadataException(
+        `Deleted field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
+
+    await this.indexMetadataService.createIndex(
+      relationMetadataInput.workspaceId,
+      toObjectMetadata,
+      [foreignKeyFieldMetadata, deletedFieldMetadata],
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
