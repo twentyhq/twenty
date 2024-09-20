@@ -5,6 +5,6 @@ import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 @Module({
   imports: [CoreEngineModule],
   providers: [],
-  exports: [],
+  exports: [CoreEngineModule],
 })
 export class GraphQLConfigModule {}

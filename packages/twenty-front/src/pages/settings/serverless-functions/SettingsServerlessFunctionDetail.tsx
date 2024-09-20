@@ -4,25 +4,26 @@ import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-fun
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { SettingsServerlessFunctionTestTabEffect } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTabEffect';
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
+import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
+import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
-import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { useState } from 'react';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
+import { isDefined } from '~/utils/isDefined';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -204,14 +205,18 @@ export const SettingsServerlessFunctionDetail = () => {
     !loading && (
       <SubMenuTopBarContainer
         Icon={IconFunction}
-        title={
-          <Breadcrumb
-            links={[
-              { children: 'Functions', href: '/settings/functions' },
-              { children: `${formValues.name}` },
-            ]}
-          />
-        }
+        title={formValues.name}
+        links={[
+          {
+            children: 'Workspace',
+            href: getSettingsPagePath(SettingsPath.Workspace),
+          },
+          {
+            children: 'Functions',
+            href: getSettingsPagePath(SettingsPath.ServerlessFunctions),
+          },
+          { children: `${formValues.name}` },
+        ]}
       >
         <SettingsPageContainer>
           <Section>

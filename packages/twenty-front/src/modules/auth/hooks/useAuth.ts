@@ -264,6 +264,7 @@ export const useAuth = () => {
       email: string,
       password: string,
       workspaceInviteHash?: string,
+      workspacePersonalInviteToken?: string,
       captchaToken?: string,
     ) => {
       setIsVerifyPendingState(true);
@@ -273,6 +274,7 @@ export const useAuth = () => {
           email,
           password,
           workspaceInviteHash,
+          workspacePersonalInviteToken,
           captchaToken,
         },
       });
@@ -296,21 +298,43 @@ export const useAuth = () => {
     [setIsVerifyPendingState, signUp, handleVerify],
   );
 
-  const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
+  const buildRedirectUrl = (
+    path: string,
+    params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+    },
+  ) => {
     const authServerUrl = REACT_APP_SERVER_BASE_URL;
-    window.location.href =
-      `${authServerUrl}/auth/google/${
-        workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
-      }` || '';
-  }, []);
+    const url = new URL(`${authServerUrl}${path}`);
+    if (isDefined(params.workspaceInviteHash)) {
+      url.searchParams.set('inviteHash', params.workspaceInviteHash);
+    }
+    if (isDefined(params.workspacePersonalInviteToken)) {
+      url.searchParams.set('inviteToken', params.workspacePersonalInviteToken);
+    }
+    return url.toString();
+  };
 
-  const handleMicrosoftLogin = useCallback((workspaceInviteHash?: string) => {
-    const authServerUrl = REACT_APP_SERVER_BASE_URL;
-    window.location.href =
-      `${authServerUrl}/auth/microsoft/${
-        workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
-      }` || '';
-  }, []);
+  const handleGoogleLogin = useCallback(
+    (params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+    }) => {
+      window.location.href = buildRedirectUrl('/auth/google', params);
+    },
+    [],
+  );
+
+  const handleMicrosoftLogin = useCallback(
+    (params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+    }) => {
+      window.location.href = buildRedirectUrl('/auth/microsoft', params);
+    },
+    [],
+  );
 
   return {
     challenge: handleChallenge,

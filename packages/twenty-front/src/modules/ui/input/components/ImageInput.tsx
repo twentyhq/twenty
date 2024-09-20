@@ -52,16 +52,17 @@ const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
   margin-left: ${({ theme }) => theme.spacing(4)};
+
+  gap: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
-  > * + * {
-    margin-left: ${({ theme }) => theme.spacing(2)};
-  }
+
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledText = styled.span`
@@ -143,7 +144,6 @@ export const ImageInput = ({
               variant="secondary"
               title="Abort"
               disabled={!pictureURI || disabled}
-              fullWidth
             />
           ) : (
             <Button
@@ -152,17 +152,14 @@ export const ImageInput = ({
               variant="secondary"
               title="Upload"
               disabled={disabled}
-              fullWidth
             />
           )}
           <Button
             Icon={IconTrash}
-            accent="danger"
             onClick={onRemove}
             variant="secondary"
             title="Remove"
             disabled={!pictureURI || disabled}
-            fullWidth
           />
         </StyledButtonContainer>
         <StyledText>
