@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useEffect, useMemo } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
@@ -12,14 +12,17 @@ import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/
 import { Button } from '@/ui/input/button/components/Button';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
+import { navigationDrawerHeightState } from '@/ui/navigation/states/navigationDrawerHeightState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconArrowBackUp } from 'twenty-ui';
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ navigationDrawerHeight: number }>`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(
+    100% - ${({ navigationDrawerHeight }) => navigationDrawerHeight}px
+  );
 `;
 
 const StyledContainer = styled.div`
@@ -31,12 +34,12 @@ const StyledContainer = styled.div`
   overflow-y: auto;
 `;
 
-const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
+const StyledButtonContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   justify-content: flex-end;
-  height: ${({ isMobile }) => (isMobile ? '100px' : '50px')};
+  height: '50px';
   padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   box-sizing: border-box;
@@ -44,7 +47,6 @@ const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
 
 export const RightDrawerEmailThread = () => {
   const setMessageThread = useSetRecoilState(messageThreadState);
-  const isMobile = useIsMobile();
   const {
     thread,
     messages,
@@ -54,7 +56,8 @@ export const RightDrawerEmailThread = () => {
     connectedAccountHandle,
     messageChannelLoading,
   } = useRightDrawerEmailThread();
-
+  const navigationDrawerHeight = useRecoilValue(navigationDrawerHeightState);
+  const isMobile = useIsMobile();
   const visibleMessages = useMemo(() => {
     return messages.filter(({ messageParticipants }) => {
       const from = messageParticipants.find(
@@ -123,7 +126,9 @@ export const RightDrawerEmailThread = () => {
     return null;
   }
   return (
-    <StyledWrapper>
+    <StyledWrapper
+      navigationDrawerHeight={isMobile ? navigationDrawerHeight : 0}
+    >
       <StyledContainer>
         {threadLoading ? (
           <EmailLoader loadingText="Loading thread" />
@@ -157,7 +162,7 @@ export const RightDrawerEmailThread = () => {
         )}
       </StyledContainer>
       {canReply && !messageChannelLoading && (
-        <StyledButtonContainer isMobile={isMobile}>
+        <StyledButtonContainer>
           <Button
             onClick={handleReplyClick}
             title="Reply"
