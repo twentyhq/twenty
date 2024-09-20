@@ -84,6 +84,7 @@ export const RecordIndexBoardDataLoaderEffect = ({
   }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
+    // TODO: Compute columns from view groups here
     setColumns(
       computeRecordBoardColumnDefinitionsFromObjectMetadata(
         objectMetadataItem,

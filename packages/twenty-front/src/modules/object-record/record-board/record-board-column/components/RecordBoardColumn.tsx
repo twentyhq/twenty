@@ -54,6 +54,8 @@ export const RecordBoardColumn = ({
     return null;
   }
 
+  console.log('columnDefinition', columnDefinition);
+
   return (
     <RecordBoardColumnContext.Provider
       value={{

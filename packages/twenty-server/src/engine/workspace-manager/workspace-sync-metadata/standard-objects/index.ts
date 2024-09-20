@@ -28,6 +28,7 @@ import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-ob
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
@@ -58,6 +59,7 @@ export const standardObjectMetadataDefinitions = [
   PersonWorkspaceEntity,
   TimelineActivityWorkspaceEntity,
   ViewFieldWorkspaceEntity,
+  ViewGroupWorkspaceEntity,
   ViewFilterWorkspaceEntity,
   ViewSortWorkspaceEntity,
   ViewWorkspaceEntity,
@@ -75,14 +77,6 @@ export const standardObjectMetadataDefinitions = [
   MessageChannelMessageAssociationWorkspaceEntity,
   NoteWorkspaceEntity,
   NoteTargetWorkspaceEntity,
-  OpportunityWorkspaceEntity,
-  PersonWorkspaceEntity,
   TaskWorkspaceEntity,
   TaskTargetWorkspaceEntity,
-  TimelineActivityWorkspaceEntity,
-  ViewFieldWorkspaceEntity,
-  ViewFilterWorkspaceEntity,
-  ViewSortWorkspaceEntity,
-  ViewWorkspaceEntity,
-  WebhookWorkspaceEntity,
 ];

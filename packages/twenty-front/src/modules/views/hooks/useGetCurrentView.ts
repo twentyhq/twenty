@@ -20,6 +20,8 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
+  console.log('RECORDS: ', views);
+
   const {
     currentViewIdState,
     viewObjectMetadataIdState,
