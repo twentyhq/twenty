@@ -376,10 +376,7 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
-<<<<<<< HEAD
   TsVector = 'TS_VECTOR',
-=======
->>>>>>> bebeb1515bd81b42807918fd81c12f1bc1c263b7
   Uuid = 'UUID'
 }
 
