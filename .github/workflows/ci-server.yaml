@@ -112,7 +112,8 @@ jobs:
           tag: scope:backend
           tasks: "test:integration"
       - name: Server / Upload reset-logs file
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reset-logs
-          path: ./logs/reset-logs.log
+          path: reset-logs.log
