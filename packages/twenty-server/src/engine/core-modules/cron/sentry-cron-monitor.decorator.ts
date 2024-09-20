@@ -32,16 +32,6 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
             timezone: 'UTC',
           },
         );
-        console.log(
-          {
-            schedule: {
-              type: 'crontab',
-              value: schedule,
-            },
-            checkinMargin: 1,
-            maxRuntime: 5,
-            timezone: 'UTC',
-          });
         const result = await originalMethod.apply(this, args);
 
         Sentry.captureCheckIn({

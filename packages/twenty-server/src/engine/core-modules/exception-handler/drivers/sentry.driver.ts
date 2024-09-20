@@ -10,9 +10,6 @@ import {
 export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
 {
-  constructor() {
-  }
-
   captureExceptions(
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
