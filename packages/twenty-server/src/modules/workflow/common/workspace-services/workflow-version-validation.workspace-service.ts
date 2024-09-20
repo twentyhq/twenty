@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 
 import {
   CreateOneResolverArgs,
@@ -88,5 +88,25 @@ export class WorkflowVersionValidationWorkspaceService {
       );
 
     assertWorkflowVersionIsDraft(workflowVersion);
+
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const otherWorkflowVersionsExist = await workflowVersionRepository.exists({
+      where: {
+        workflowId: workflowVersion.workflowId,
+        deletedAt: IsNull(),
+        id: Not(workflowVersion.id),
+      },
+    });
+
+    if (!otherWorkflowVersionsExist) {
+      throw new WorkflowQueryValidationException(
+        'The initial version of a workflow can not be deleted',
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+      );
+    }
   }
 }
