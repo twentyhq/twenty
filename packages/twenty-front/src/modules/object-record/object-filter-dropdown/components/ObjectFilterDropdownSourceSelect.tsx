@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { getSourceEnumOptions } from '@/object-record/object-filter-dropdown/utils/getSourceEnumOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
@@ -53,38 +54,9 @@ export const ObjectFilterDropdownSourceSelect = ({
   const selectedFilter = useRecoilValue(selectedFilterState);
 
   // Dynamically update sourceEnumOptions based on selectedRecordIds
-  const sourceEnumOptions: SelectableRecord[] = [
-    {
-      id: 'MANUAL',
-      name: 'MANUAL',
-      record: null,
-      isSelected: objectFilterDropdownSelectedRecordIds.includes('MANUAL'),
-    },
-    {
-      id: 'IMPORT',
-      name: 'IMPORT',
-      record: null,
-      isSelected: objectFilterDropdownSelectedRecordIds.includes('IMPORT'),
-    },
-    {
-      id: 'API',
-      name: 'API',
-      record: null,
-      isSelected: objectFilterDropdownSelectedRecordIds.includes('API'),
-    },
-    {
-      id: 'EMAIL',
-      name: 'EMAIL',
-      record: null,
-      isSelected: objectFilterDropdownSelectedRecordIds.includes('EMAIL'),
-    },
-    {
-      id: 'CALENDAR',
-      name: 'CALENDAR',
-      record: null,
-      isSelected: objectFilterDropdownSelectedRecordIds.includes('CALENDAR'),
-    },
-  ];
+  const sourceEnumOptions = getSourceEnumOptions(
+    objectFilterDropdownSelectedRecordIds,
+  );
 
   const filteredSelectedRecords = sourceEnumOptions.filter((option) =>
     objectFilterDropdownSelectedRecordIds.includes(option.id),

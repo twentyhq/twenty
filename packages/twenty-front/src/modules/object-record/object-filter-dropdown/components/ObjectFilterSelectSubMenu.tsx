@@ -1,7 +1,12 @@
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import {
+  currentParentFilterDefinitionState,
+  currentSubMenuState,
+} from '@/object-record/object-filter-dropdown/states/subMenuStates';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
+import { getHeaderTitle } from '@/object-record/object-filter-dropdown/utils/getHeaderTitle';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { getSubMenuOptions } from '@/object-record/object-filter-dropdown/utils/getSubMenuOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -10,33 +15,19 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconChevronLeft, useIcons } from 'twenty-ui';
 
-type ObjectFilterSelectSubMenuProps = {
-  currentSubMenu: FilterType;
-  setCurrentSubMenu: (currentSubMenu: FilterType | null) => void;
-  parent: FilterDefinition | null;
-};
-
-export const ObjectFilterSelectSubMenu = ({
-  currentSubMenu,
-  setCurrentSubMenu,
-  parent,
-}: ObjectFilterSelectSubMenuProps) => {
+export const ObjectFilterSelectSubMenu = () => {
   const [searchText, setSearchText] = useState('');
-
-  const getHeaderTitle = (subMenu: FilterType | null) => {
-    switch (subMenu) {
-      case 'ACTOR':
-        return 'Actor';
-      case 'SOURCE':
-        return 'Creation Source';
-      default:
-        return;
-    }
-  };
-
   const { getIcon } = useIcons();
+
+  const [currentSubMenu, setCurrentSubMenu] =
+    useRecoilState(currentSubMenuState);
+
+  const currentParentFilterDefinition = useRecoilValue(
+    currentParentFilterDefinitionState,
+  );
 
   const {
     setFilterDefinitionUsedInDropdown,
@@ -92,15 +83,17 @@ export const ObjectFilterSelectSubMenu = ({
               key={`select-filter-${index}`}
               testId={`select-filter-${index}`}
               onClick={() => {
-                parent &&
+                currentParentFilterDefinition &&
                   handleSelectFilter({
-                    ...parent,
+                    ...currentParentFilterDefinition,
                     label: menuOption.name,
                     type: menuOption.type as FilterType,
                   });
               }}
               text={menuOption.name}
-              LeftIcon={getIcon(menuOption.icon || parent?.iconName)}
+              LeftIcon={getIcon(
+                menuOption.icon || currentParentFilterDefinition?.iconName,
+              )}
             />
           ))}
       </DropdownMenuItemsContainer>

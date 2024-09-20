@@ -1,25 +1,22 @@
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
+import {
+  currentParentFilterDefinitionState,
+  currentSubMenuState,
+} from '@/object-record/object-filter-dropdown/states/subMenuStates';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { hasSubMenuFilter } from '@/object-record/object-filter-dropdown/utils/hasSubMenuFilter';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   filterDefinition: FilterDefinition;
-  setCurrentSubMenu: (subMenu: FilterType) => void;
-  setCurrentParentFilterDefinition: (
-    filterDefinition: FilterDefinition,
-  ) => void;
 };
 
 export const ObjectFilterDropdownFilterSelectMenuItem = ({
   filterDefinition,
-  setCurrentSubMenu,
-  setCurrentParentFilterDefinition,
 }: ObjectFilterDropdownFilterSelectMenuItemProps) => {
   const { selectFilter } = useSelectFilter();
 
@@ -34,6 +31,11 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   const hasSubMenu = hasSubMenuFilter(filterDefinition.type);
 
   const { getIcon } = useIcons();
+
+  const setCurrentSubMenu = useSetRecoilState(currentSubMenuState);
+  const setCurrentParentFilterDefinition = useSetRecoilState(
+    currentParentFilterDefinitionState,
+  );
 
   const handleClick = () => {
     resetSelectedItem();
