@@ -38,7 +38,7 @@ export const getOperandsForFilterType = (
         // ViewFilterOperand.IsRelative,
         ViewFilterOperand.IsInPast,
         ViewFilterOperand.IsInFuture,
-        // ViewFilterOperand.IsToday,
+        ViewFilterOperand.IsToday,
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
         ...emptyOperands,

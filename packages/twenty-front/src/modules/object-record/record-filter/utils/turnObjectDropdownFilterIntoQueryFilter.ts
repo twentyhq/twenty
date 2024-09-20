@@ -297,6 +297,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       ViewFilterOperand.IsNotEmpty,
       ViewFilterOperand.IsInPast,
       ViewFilterOperand.IsInFuture,
+      ViewFilterOperand.IsToday,
     ].includes(rawUIFilter.operand);
 
     if (!correspondingField) {
@@ -445,11 +446,20 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             });
             break;
           case ViewFilterOperand.IsToday: {
+            // And query is not working, in this case gte is ignored
             objectRecordFilters.push({
-              [correspondingField.name]: {
-                gte: startOfDay(now).toISOString(),
-                lte: endOfDay(now).toISOString(),
-              } as DateFilter,
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+              ],
             });
             break;
           }

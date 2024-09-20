@@ -59,6 +59,8 @@ export const getOperandLabelShort = (
       return ': Past';
     case ViewFilterOperand.IsInFuture:
       return ': Future';
+    case ViewFilterOperand.IsToday:
+      return ': Today';
     default:
       return ': ';
   }

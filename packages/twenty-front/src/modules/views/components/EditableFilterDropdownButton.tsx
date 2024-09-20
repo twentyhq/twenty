@@ -76,6 +76,7 @@ export const EditableFilterDropdownButton = ({
         FilterOperand.IsNotEmpty,
         ViewFilterOperand.IsInPast,
         ViewFilterOperand.IsInFuture,
+        ViewFilterOperand.IsToday,
       ].includes(operand)
     ) {
       removeCombinedViewFilter(fieldId);

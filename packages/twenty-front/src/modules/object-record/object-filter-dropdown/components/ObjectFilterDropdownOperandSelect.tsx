@@ -41,6 +41,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
       ViewFilterOperand.IsNotEmpty,
       ViewFilterOperand.IsInPast,
       ViewFilterOperand.IsInFuture,
+      ViewFilterOperand.IsToday,
     ].includes(newOperand);
 
     setSelectedOperandInDropdown(newOperand);
