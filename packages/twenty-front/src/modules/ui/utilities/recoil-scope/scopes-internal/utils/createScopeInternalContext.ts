@@ -1,10 +1,11 @@
 import { Context, createContext } from 'react';
 
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
-type ScopeInternalContext<T extends ComponentStateKey> = Context<T | null>;
+type ScopeInternalContext<T extends RecoilComponentStateKey> =
+  Context<T | null>;
 
-export const createScopeInternalContext = <T extends ComponentStateKey>(
+export const createScopeInternalContext = <T extends RecoilComponentStateKey>(
   initialValue?: T,
 ) => {
   return createContext<T | null>(

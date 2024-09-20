@@ -7,7 +7,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 
@@ -17,6 +17,7 @@ export const MAX_RECORDS_TO_DISPLAY = 3;
 type ObjectFilterDropdownRecordSelectProps = {
   viewComponentId?: string;
 };
+
 export const ObjectFilterDropdownRecordSelect = ({
   viewComponentId,
 }: ObjectFilterDropdownRecordSelectProps) => {
@@ -31,7 +32,9 @@ export const ObjectFilterDropdownRecordSelect = ({
     emptyFilterButKeepDefinition,
   } = useFilterDropdown();
 
-  const { removeCombinedViewFilter } = useCombinedViewFilters(viewComponentId);
+  const { deleteCombinedViewFilter } =
+    useDeleteCombinedViewFilters(viewComponentId);
+
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
 
@@ -78,7 +81,7 @@ export const ObjectFilterDropdownRecordSelect = ({
 
     if (newSelectedRecordIds.length === 0) {
       emptyFilterButKeepDefinition();
-      removeCombinedViewFilter(fieldId);
+      deleteCombinedViewFilter(fieldId);
       return;
     }
 
