@@ -151,10 +151,6 @@ export const PageChangeEffect = () => {
     useNonSystemActiveObjectMetadataItems();
 
   useEffect(() => {
-    console.log(
-      'nonSystemActiveObjectMetadataItems',
-      nonSystemActiveObjectMetadataItems,
-    );
     setObjectsInCommandMenu(nonSystemActiveObjectMetadataItems);
 
     addToCommandMenu([
