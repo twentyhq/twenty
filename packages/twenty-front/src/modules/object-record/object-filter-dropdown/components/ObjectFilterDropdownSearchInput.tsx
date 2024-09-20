@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -11,7 +11,6 @@ export const ObjectFilterDropdownSearchInput = () => {
     objectFilterDropdownSearchInputState,
     setObjectFilterDropdownSearchInput,
   } = useFilterDropdown();
-  const [hasFocused, setHasFocused] = useState(false);
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
