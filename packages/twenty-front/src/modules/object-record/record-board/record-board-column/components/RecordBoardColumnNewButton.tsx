@@ -29,7 +29,7 @@ export const RecordBoardColumnNewButton = ({
   columnId: string;
 }) => {
   const theme = useTheme();
- 
+
   const newRecord = useRecoilValue(
     recordBoardNewRecordByColumnIdSelector({
       familyKey: columnId,
@@ -37,20 +37,18 @@ export const RecordBoardColumnNewButton = ({
     }),
   );
 
-  const { handleAddNewCardClick ,handleCreateSuccess } = useAddNewCard();
+  const { handleAddNewCardClick, handleCreateSuccess } = useAddNewCard();
 
   const handleNewButtonClick = () => {
     handleAddNewCardClick('', 'last');
   };
 
- 
-
   if (newRecord.isCreating && newRecord.position === 'last') {
     return (
       <RecordBoardCard
         isCreating={true}
-        onCreateSuccess={()=>handleCreateSuccess('last')}
-        position='last'
+        onCreateSuccess={() => handleCreateSuccess('last')}
+        position="last"
       />
     );
   }

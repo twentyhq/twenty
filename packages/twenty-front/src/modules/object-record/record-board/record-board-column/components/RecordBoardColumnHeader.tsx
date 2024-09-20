@@ -111,7 +111,6 @@ export const RecordBoardColumnHeader = () => {
     handleAddNewCardClick('', 'first');
   };
 
-
   const isOpportunity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
 
@@ -181,8 +180,8 @@ export const RecordBoardColumnHeader = () => {
       {newRecord?.isCreating && newRecord.position === 'first' && (
         <RecordBoardCard
           isCreating={true}
-          onCreateSuccess={()=>handleCreateSuccess('first')}
-          position='first'
+          onCreateSuccess={() => handleCreateSuccess('first')}
+          position="first"
         />
       )}
       {isCreatingCard && (
