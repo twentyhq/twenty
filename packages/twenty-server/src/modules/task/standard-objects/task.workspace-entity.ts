@@ -32,7 +32,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   description: 'A task',
   icon: 'IconCheckbox',
   labelIdentifierStandardId: TASK_STANDARD_FIELD_IDS.title,
-  softDelete: true,
 })
 export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -116,15 +115,14 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.taskTargets,
-    label: 'Targets',
+    label: 'Relations',
     description: 'Task targets',
-    icon: 'IconCheckbox',
+    icon: 'IconArrowUpRight',
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
   taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({

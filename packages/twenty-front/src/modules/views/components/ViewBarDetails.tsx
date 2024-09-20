@@ -102,6 +102,7 @@ export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
   filterDropdownId,
+  viewBarId,
 }: ViewBarDetailsProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -180,6 +181,7 @@ export const ViewBarDetails = ({
               // Also as filter is spread into viewFilter, definition is present
               // FixMe: Ugly hack to make it work
               viewFilter={viewFilter as unknown as Filter}
+              viewBarId={viewBarId}
             />
           ))}
           {!!otherViewFilters.length &&

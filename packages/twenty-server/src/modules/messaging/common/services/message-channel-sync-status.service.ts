@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { Any } from 'typeorm';
 
-import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
-import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -79,7 +79,7 @@ export class MessageChannelSyncStatusService {
 
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:${messageChannelId}`,
       );
     }
 
@@ -125,6 +125,7 @@ export class MessageChannelSyncStatusService {
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
       syncStatus: MessageChannelSyncStatus.ONGOING,
+      syncStageStartedAt: new Date().toISOString(),
     });
   }
 
@@ -142,9 +143,10 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStatus: MessageChannelSyncStatus.ACTIVE,
+      syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+      throttleFailureCount: 0,
+      syncStageStartedAt: null,
     });
-
-    await this.schedulePartialMessageListFetch(messageChannelIds);
   }
 
   public async markAsMessagesImportOngoing(messageChannelIds: string[]) {
@@ -172,7 +174,7 @@ export class MessageChannelSyncStatusService {
 
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:${messageChannelId}`,
       );
     }
 
@@ -197,7 +199,7 @@ export class MessageChannelSyncStatusService {
 
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:${messageChannelId}`,
       );
     }
 

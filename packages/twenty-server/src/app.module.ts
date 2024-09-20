@@ -18,43 +18,32 @@ import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graph
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
-import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
-import { MessageQueueModule } from 'src/engine/integrations/message-queue/message-queue.module';
-import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
-import { IntegrationsModule } from './engine/integrations/integrations.module';
-
 @Module({
   imports: [
-    // Nest.js devtools, use devtools.nestjs.com to debug
-    // DevtoolsModule.registerAsync({
-    //   useFactory: (environmentService: EnvironmentService) => ({
-    //     http: environmentService.get('DEBUG_MODE'),
-    //     port: environmentService.get('DEBUG_PORT'),
-    //   }),
-    //   inject: [EnvironmentService],
-    // }),
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [CoreEngineModule, GraphQLConfigModule],
+      imports: [GraphQLConfigModule],
       useClass: GraphQLConfigService,
     }),
     TwentyORMModule,
-    // Integrations module, contains all the integrations with other services
-    IntegrationsModule,
     // Core engine module, contains all the core modules
     CoreEngineModule,
     // Modules module, contains all business logic modules
     ModulesModule,
     // Needed for the user workspace middleware
-    WorkspaceMetadataVersionModule,
+    WorkspaceCacheStorageModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,

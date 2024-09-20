@@ -29,7 +29,7 @@ registerEnumType(ServerlessFunctionSyncStatus, {
 @ObjectType('ServerlessFunction')
 @Authorize({
   authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
+    workspaceId: { eq: context?.req?.workspace?.id },
   }),
 })
 @QueryOptions({

@@ -40,10 +40,12 @@ type MultiItemFieldInputProps<T> = {
     handleDelete: () => void;
   }) => React.ReactNode;
   hotkeyScope: string;
+  newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: DropdownMenuInputProps['renderInput'];
 };
 
+// Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
 export const MultiItemFieldInput = <T,>({
   items,
   onPersist,
@@ -53,6 +55,7 @@ export const MultiItemFieldInput = <T,>({
   formatInput,
   renderItem,
   hotkeyScope,
+  newItemLabel,
   fieldMetadataType,
   renderInput,
 }: MultiItemFieldInputProps<T>) => {
@@ -181,7 +184,7 @@ export const MultiItemFieldInput = <T,>({
           <MenuItem
             onClick={handleAddButtonClick}
             LeftIcon={IconPlus}
-            text={`Add ${placeholder}`}
+            text={newItemLabel || `Add ${placeholder}`}
           />
         </DropdownMenuItemsContainer>
       )}

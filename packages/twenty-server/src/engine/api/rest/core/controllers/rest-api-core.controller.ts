@@ -14,10 +14,11 @@ import { Request, Response } from 'express';
 
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
 import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest/*')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 export class RestApiCoreController {
   constructor(private readonly restApiCoreService: RestApiCoreService) {}
 

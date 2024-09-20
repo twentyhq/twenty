@@ -7,7 +7,6 @@ import { z } from 'zod';
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsDataModelObjectAboutForm,
@@ -20,7 +19,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 
@@ -72,17 +70,18 @@ export const SettingsNewObject = () => {
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
         Icon={IconHierarchy2}
-        title={
-          <Breadcrumb
-            links={[
-              {
-                children: 'Objects',
-                href: settingsObjectsPagePath,
-              },
-              { children: 'New' },
-            ]}
-          />
-        }
+        title="New Object"
+        links={[
+          {
+            children: 'Workspace',
+            href: getSettingsPagePath(SettingsPath.Workspace),
+          },
+          {
+            children: 'Objects',
+            href: settingsObjectsPagePath,
+          },
+          { children: 'New' },
+        ]}
         actionButton={
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
@@ -93,7 +92,6 @@ export const SettingsNewObject = () => {
         }
       >
         <SettingsPageContainer>
-          <SettingsHeaderContainer></SettingsHeaderContainer>
           <Section>
             <H2Title
               title="About"

@@ -185,7 +185,11 @@ xLink
 id
 createdAt
 city
-email
+emails
+{
+  primaryEmail
+  additionalEmails
+}
 jobTitle
 name
 {

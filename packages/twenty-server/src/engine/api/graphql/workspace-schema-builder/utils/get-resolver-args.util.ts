@@ -105,6 +105,13 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
+    case 'destroyOne':
+      return {
+        id: {
+          type: GraphQLID,
+          isNullable: false,
+        },
+      };
     case 'updateMany':
       return {
         data: {

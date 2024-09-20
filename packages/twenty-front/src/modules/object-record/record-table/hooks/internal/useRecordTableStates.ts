@@ -4,6 +4,7 @@ import { RecordTableScopeInternalContext } from '@/object-record/record-table/sc
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
 import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
@@ -86,6 +87,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     isTableCellInEditModeFamilyState: extractComponentFamilyState(
       isTableCellInEditModeComponentFamilyState,
+      scopeId,
+    ),
+    isSoftDeleteActiveState: extractComponentState(
+      isSoftDeleteFilterActiveComponentState,
       scopeId,
     ),
     isSoftFocusActiveState: extractComponentState(

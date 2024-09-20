@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { objectRecordDiffMerge } from 'src/engine/integrations/event-emitter/utils/object-record-diff-merge';
+import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 
 @Injectable()
 export class TimelineActivityRepository {
