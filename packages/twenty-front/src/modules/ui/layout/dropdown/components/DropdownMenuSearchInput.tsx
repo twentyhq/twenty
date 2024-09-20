@@ -1,6 +1,6 @@
 import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
 import styled from '@emotion/styled';
-import { forwardRef, InputHTMLAttributes } from 'react';
+import { ComponentPropsWithoutRef, FC } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
