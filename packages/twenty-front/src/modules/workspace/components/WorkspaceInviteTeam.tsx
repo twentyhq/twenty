@@ -72,13 +72,16 @@ export const WorkspaceInviteTeam = () => {
   const { enqueueSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
-  const { reset, handleSubmit, control, formState } = useForm<FormInput>({
-    mode: 'onSubmit',
-    resolver: zodResolver(validationSchema()),
-    defaultValues: {
-      emails: '',
+  const { reset, handleSubmit, control, formState, watch } = useForm<FormInput>(
+    {
+      mode: 'onSubmit',
+      resolver: zodResolver(validationSchema()),
+      defaultValues: {
+        emails: '',
+      },
     },
-  });
+  );
+  const isEmailsEmpty = !watch('emails');
 
   const submit = handleSubmit(async ({ emails }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
@@ -109,7 +112,7 @@ export const WorkspaceInviteTeam = () => {
     }
   };
 
-  const { isSubmitSuccessful } = formState;
+  const { isSubmitSuccessful, errors } = formState;
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -144,6 +147,7 @@ export const WorkspaceInviteTeam = () => {
           accent="blue"
           title="Invite"
           type="submit"
+          disabled={isEmailsEmpty || !!errors.emails}
         />
       </StyledContainer>
     </form>
