@@ -16,7 +16,7 @@ import {
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { Field, FieldMetadataType } from '~/generated/graphql';
+import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
@@ -25,7 +25,7 @@ import {
   convertLessThanRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
-import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveVariableViewFilterValue';
+import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { format } from 'date-fns-tz';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
@@ -348,8 +348,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         break;
       case 'DATE':
       case 'DATE_TIME': {
-        const resolvedFilterValue =
-          resolveFilterValue<FieldMetadataType.Date>(rawUIFilter);
+        const resolvedFilterValue = resolveFilterValue(rawUIFilter);
 
         const DATE_FORMAT_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss.SSS";
         const dateISOString =

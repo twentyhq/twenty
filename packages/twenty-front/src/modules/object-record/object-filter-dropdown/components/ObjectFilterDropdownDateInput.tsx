@@ -11,7 +11,7 @@ import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
-import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveVariableViewFilterValue';
+import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { useState } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -32,7 +32,9 @@ export const ObjectFilterDropdownDateInput = () => {
   );
 
   const selectedFilter = useRecoilValue(selectedFilterState);
-  const initialFilterValue = resolveFilterValue(selectedFilter);
+  const initialFilterValue = selectedFilter
+    ? resolveFilterValue(selectedFilter)
+    : null;
   const [internalDate, setInternalDate] = useState<Date | null>(
     initialFilterValue instanceof Date ? initialFilterValue : new Date(),
   );
