@@ -9,7 +9,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  UpdateDateColumn,
+  Unique,
+  UpdateDateColumn
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -27,6 +28,7 @@ registerEnumType(OnboardingStatus, {
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
+@Unique('UQ_USER_EMAIL', ['email', 'deletedAt'])
 export class User {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
