@@ -1,20 +1,25 @@
 import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 
-export const GotoHotkeysEffect = () => {
+const SingleHotkeyHookEffect = (props: {
+  hotkey: string;
+  pathToNavigateTo: string;
+}) => {
+  const { hotkey, pathToNavigateTo } = props;
+  useGoToHotkeys(hotkey, pathToNavigateTo);
+  return <></>;
+};
+
+export const GotoHotkeys = () => {
   const { nonSystemActiveObjectMetadataItems } =
     useNonSystemActiveObjectMetadataItems();
 
-  console.log(nonSystemActiveObjectMetadataItems);
-
-  nonSystemActiveObjectMetadataItems.forEach((objectMetadataItem) => {
-    useGoToHotkeys(
-      objectMetadataItem.namePlural[0],
-      `/objects/${objectMetadataItem.namePlural}`,
-    );
-  });
-
   useGoToHotkeys('s', '/settings/profile');
 
-  return <></>;
+  return nonSystemActiveObjectMetadataItems.map((objectMetadataItem) => (
+    <SingleHotkeyHookEffect
+      hotkey={objectMetadataItem.namePlural[0]}
+      pathToNavigateTo={`/objects/${objectMetadataItem.namePlural}`}
+    />
+  ));
 };

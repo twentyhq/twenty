@@ -34,7 +34,7 @@ import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
-import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import { GotoHotkeys } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 import { Authorize } from '~/pages/auth/Authorize';
 import { Invite } from '~/pages/auth/Invite';
@@ -77,7 +77,7 @@ const ProvidersThatNeedRouterContext = () => {
                               <StrictMode>
                                 <PromiseRejectionEffect />
                                 <CommandMenuEffect />
-                                <GotoHotkeysEffect />
+                                <GotoHotkeys />
                                 <PageTitle title={pageTitle} />
                                 <Outlet />
                               </StrictMode>
