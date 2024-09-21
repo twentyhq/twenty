@@ -60,6 +60,7 @@ const StyledSummary = styled.summary`
   flex: 1;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
+  max-width: calc(50% - ${({ theme }) => theme.spacing(12)});
 `;
 
 const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
