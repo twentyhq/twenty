@@ -14,6 +14,7 @@ export const GotoHotkeys = () => {
   const { nonSystemActiveObjectMetadataItems } =
     useNonSystemActiveObjectMetadataItems();
 
+  // Hardcoded since settings is static
   useGoToHotkeys('s', '/settings/profile');
 
   return nonSystemActiveObjectMetadataItems.map((objectMetadataItem) => (
