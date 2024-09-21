@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   Relation,
   Unique,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
