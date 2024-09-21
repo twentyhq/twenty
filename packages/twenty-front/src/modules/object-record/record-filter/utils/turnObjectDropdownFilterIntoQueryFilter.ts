@@ -415,18 +415,22 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
           }
           case ViewFilterOperand.Is: {
             const isValid = resolvedFilterValue instanceof Date;
-            const defaultDate = new Date();
-            const date = isValid ? resolvedFilterValue : defaultDate;
+            const date = isValid ? resolvedFilterValue : now;
 
-            const start = format(startOfDay(date), DATE_FORMAT_WITHOUT_TZ);
-            const end = format(endOfDay(date), DATE_FORMAT_WITHOUT_TZ);
-
-            // Does not work
+            // And query is not working, lte is ignored
             objectRecordFilters.push({
-              [correspondingField.name]: {
-                gte: start,
-                lte: end,
-              } as DateFilter,
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+              ],
             });
             break;
           }
@@ -445,7 +449,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             });
             break;
           case ViewFilterOperand.IsToday: {
-            // And query is not working, in this case gte is ignored
+            // And query is not working, lte is ignored
             objectRecordFilters.push({
               and: [
                 {

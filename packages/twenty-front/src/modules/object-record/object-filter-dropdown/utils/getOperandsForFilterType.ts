@@ -34,7 +34,7 @@ export const getOperandsForFilterType = (
     case 'DATE_TIME':
     case 'DATE':
       return [
-        // ViewFilterOperand.Is,
+        ViewFilterOperand.Is,
         // ViewFilterOperand.IsRelative,
         ViewFilterOperand.IsInPast,
         ViewFilterOperand.IsInFuture,
