@@ -12,6 +12,10 @@ export const getOperandLabel = (
       return 'Greater than';
     case ViewFilterOperand.LessThan:
       return 'Less than';
+    case ViewFilterOperand.IsBefore:
+      return 'Is before';
+    case ViewFilterOperand.IsAfter:
+      return 'Is after';
     case ViewFilterOperand.Is:
       return 'Is';
     case ViewFilterOperand.IsNot:
@@ -55,6 +59,10 @@ export const getOperandLabelShort = (
       return '\u00A0> ';
     case ViewFilterOperand.LessThan:
       return '\u00A0< ';
+    case ViewFilterOperand.IsBefore:
+      return '\u00A0< ';
+    case ViewFilterOperand.IsAfter:
+      return '\u00A0> ';
     case ViewFilterOperand.IsInPast:
       return ': Past';
     case ViewFilterOperand.IsInFuture:

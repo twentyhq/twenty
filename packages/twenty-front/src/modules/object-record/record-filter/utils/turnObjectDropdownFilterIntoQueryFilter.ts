@@ -27,7 +27,6 @@ import {
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
-import { format } from 'date-fns-tz';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
@@ -349,28 +348,23 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       case 'DATE':
       case 'DATE_TIME': {
         const resolvedFilterValue = resolveFilterValue(rawUIFilter);
-
-        const DATE_FORMAT_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-        const dateISOString =
-          resolvedFilterValue instanceof Date
-            ? format(resolvedFilterValue, DATE_FORMAT_WITHOUT_TZ)
-            : '2023-01-01T00:00:00.000';
-
         const now = roundToNearestMinutes(new Date());
+        const date =
+          resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
 
         switch (rawUIFilter.operand) {
-          case ViewFilterOperand.GreaterThan: {
+          case ViewFilterOperand.IsAfter: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: dateISOString,
+                gt: date.toISOString(),
               } as DateFilter,
             });
             break;
           }
-          case ViewFilterOperand.LessThan: {
+          case ViewFilterOperand.IsBefore: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: dateISOString,
+                lt: date.toISOString(),
               } as DateFilter,
             });
             break;
@@ -408,7 +402,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
 
             objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: dateISOString,
+                lte: date.toISOString(),
               } as DateFilter,
             });
             break;

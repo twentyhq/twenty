@@ -39,8 +39,8 @@ export const getOperandsForFilterType = (
         ViewFilterOperand.IsInPast,
         ViewFilterOperand.IsInFuture,
         ViewFilterOperand.IsToday,
-        ViewFilterOperand.GreaterThan,
-        ViewFilterOperand.LessThan,
+        ViewFilterOperand.IsBefore,
+        ViewFilterOperand.IsAfter,
         ...emptyOperands,
       ];
     case 'RATING':
