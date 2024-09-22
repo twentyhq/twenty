@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
+import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
 import { isDefined } from '~/utils/isDefined';
 
 type UseHandleToggleColumnSortProps = {
@@ -22,7 +22,7 @@ export const useHandleToggleColumnSort = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { upsertCombinedViewSort } = useCombinedViewSorts(viewBarId);
+  const { upsertCombinedViewSort } = useUpsertCombinedViewSorts(viewBarId);
 
   const handleToggleColumnSort = useCallback(
     (fieldMetadataId: string) => {

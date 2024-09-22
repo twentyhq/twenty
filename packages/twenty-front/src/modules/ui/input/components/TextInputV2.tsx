@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -180,7 +181,7 @@ const TextInputV2Component = (
           </StyledLeftIconContainer>
         )}
         <StyledInput
-          data-testId={dataTestId}
+          data-testid={dataTestId}
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
@@ -188,7 +189,9 @@ const TextInputV2Component = (
           onBlur={onBlur}
           type={passwordVisible ? 'text' : type}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange?.(event.target.value);
+            onChange?.(
+              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+            );
           }}
           onKeyDown={onKeyDown}
           {...{

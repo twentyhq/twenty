@@ -72,7 +72,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const handleSave = usePreventOverlapCallback(save, 1000);
 
   const onChange = (key: string) => {
-    return async (value: string | undefined) => {
+    return async (value: string) => {
       setFormValues((prevState) => ({
         ...prevState,
         [key]: value,
