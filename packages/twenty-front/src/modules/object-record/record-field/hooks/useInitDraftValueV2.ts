@@ -27,7 +27,7 @@ export const useInitDraftValueV2 = <FieldValue>() => {
         const recordFieldInputScopeId = `${getRecordFieldInputId(
           recordId,
           fieldDefinition?.metadata?.fieldName,
-        )}-scope`;
+        )}`;
 
         const getDraftValueSelector = extractComponentSelector<
           FieldInputDraftValue<FieldValue> | undefined

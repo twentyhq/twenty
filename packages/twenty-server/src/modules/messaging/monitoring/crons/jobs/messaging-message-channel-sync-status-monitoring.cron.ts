@@ -4,16 +4,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import snakeCase from 'lodash.snakecase';
 import { Repository } from 'typeorm';
 
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
+
+export const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
+  '2/10 * * * *'; //Every 10 minutes, starting at 2 minutes past the hour
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageChannelSyncStatusMonitoringCronJob {
@@ -28,6 +32,10 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
+  @SentryCronMonitor(
+    MessagingMessageChannelSyncStatusMonitoringCronJob.name,
+    MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN,
+  )
   @Process(MessagingMessageChannelSyncStatusMonitoringCronJob.name)
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');

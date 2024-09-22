@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -46,6 +48,22 @@ export enum CalendarChannelContactAutoCreationPolicy {
   AS_ORGANIZER = 'AS_ORGANIZER',
   NONE = 'NONE',
 }
+
+registerEnumType(CalendarChannelVisibility, {
+  name: 'CalendarChannelVisibility',
+});
+
+registerEnumType(CalendarChannelSyncStatus, {
+  name: 'CalendarChannelSyncStatus',
+});
+
+registerEnumType(CalendarChannelSyncStage, {
+  name: 'CalendarChannelSyncStage',
+});
+
+registerEnumType(CalendarChannelContactAutoCreationPolicy, {
+  name: 'CalendarChannelContactAutoCreationPolicy',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,

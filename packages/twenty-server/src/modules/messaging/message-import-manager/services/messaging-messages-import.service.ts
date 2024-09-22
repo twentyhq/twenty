@@ -114,7 +114,7 @@ export class MessagingMessagesImportService {
       );
 
       messageIdsToFetch = await this.cacheStorage.setPop(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
         MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
       );
 
@@ -186,7 +186,7 @@ export class MessagingMessagesImportService {
       );
     } catch (error) {
       await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageIdsToFetch,
       );
 

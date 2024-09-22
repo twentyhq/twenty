@@ -1,0 +1,524 @@
+diff --git a/dist/cjs/index.js b/dist/cjs/index.js
+index 1684394..32602b3 100644
+--- a/dist/cjs/index.js
++++ b/dist/cjs/index.js
+@@ -3,10 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.YogaDriver = exports.AbstractYogaDriver = void 0;
+ const tslib_1 = require("tslib");
+ const graphql_1 = require("graphql");
++const schema_1 = require("@graphql-tools/schema");
+ const graphql_yoga_1 = require("graphql-yoga");
+ const common_1 = require("@nestjs/common");
+ const graphql_2 = require("@nestjs/graphql");
+ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
++    
++    schemaCache = new Map();
++
+     async start(options) {
+         const platformName = this.httpAdapterHost.httpAdapter.getType();
+         options = {
+@@ -27,7 +31,7 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+     async stop() {
+         // noop
+     }
+-    registerExpress(options, { preStartHook } = {}) {
++    registerExpress({ conditionalSchema, ...options }, { preStartHook } = {}) {
+         const app = this.httpAdapterHost.httpAdapter.getInstance();
+         preStartHook?.(app);
+         // nest's logger doesnt have the info method
+@@ -42,6 +46,46 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+         }
+         const yoga = (0, graphql_yoga_1.createYoga)({
+             ...options,
++            schema: async (request) => {
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const url = request.req.baseUrl
++
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++
++                if(this.schemaCache.has(cacheKey)) {
++                    return this.schemaCache.get(cacheKey)
++                }
++                
++                const schemas = [];
++
++                if (options.schema) {
++                    schemas.push(options.schema);
++                }
++
++                if (conditionalSchema) {
++                    const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
++                    if (conditionalSchemaResult) {
++                        schemas.push(conditionalSchemaResult);
++                    }
++                }
++
++
++                const mergedSchemas = (0, schema_1.mergeSchemas)({
++                    schemas,
++                });
++
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
++
++                this.schemaCache.set(cacheKey, mergedSchemas)
++                
++                return mergedSchemas;
++            },
+             graphqlEndpoint: options.path,
+             // disable logging by default
+             // however, if `true` use nest logger
+@@ -54,11 +98,51 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+         this.yoga = yoga;
+         app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
+     }
+-    registerFastify(options, { preStartHook } = {}) {
++    registerFastify({ conditionalSchema, ...options }, { preStartHook } = {}) {
+         const app = this.httpAdapterHost.httpAdapter.getInstance();
+         preStartHook?.(app);
+         const yoga = (0, graphql_yoga_1.createYoga)({
+             ...options,
++            schema: async (request) => {
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const url = request.req.baseUrl
++
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++
++                if(this.schemaCache.has(cacheKey)) {
++                    return this.schemaCache.get(cacheKey)
++                }
++                
++                const schemas = [];
++
++                if (options.schema) {
++                    schemas.push(options.schema);
++                }
++
++                if (conditionalSchema) {
++                    const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
++                    if (conditionalSchemaResult) {
++                        schemas.push(conditionalSchemaResult);
++                    }
++                }
++
++
++                const mergedSchemas = (0, schema_1.mergeSchemas)({
++                    schemas,
++                });
++
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
++
++                this.schemaCache.set(cacheKey, mergedSchemas)
++                
++                return mergedSchemas;
++            },
+             graphqlEndpoint: options.path,
+             // disable logging by default
+             // however, if `true` use fastify logger
+diff --git a/dist/esm/index.js b/dist/esm/index.js
+index 7068c51..b8cbf9e 100644
+--- a/dist/esm/index.js
++++ b/dist/esm/index.js
+@@ -1,9 +1,13 @@
+-import { __decorate } from "tslib";
+-import { printSchema } from 'graphql';
+-import { createYoga, filter, pipe } from 'graphql-yoga';
++import { mergeSchemas } from '@graphql-tools/schema';
+ import { Injectable, Logger } from '@nestjs/common';
+ import { AbstractGraphQLDriver, GqlSubscriptionService, } from '@nestjs/graphql';
++import { printSchema } from 'graphql';
++import { createYoga, filter, pipe } from 'graphql-yoga';
++import { __decorate } from "tslib";
+ export class AbstractYogaDriver extends AbstractGraphQLDriver {
++    
++    schemaCache = new Map();
++    
+     async start(options) {
+         const platformName = this.httpAdapterHost.httpAdapter.getType();
+         options = {
+@@ -24,7 +28,7 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+     async stop() {
+         // noop
+     }
+-    registerExpress(options, { preStartHook } = {}) {
++    registerExpress({ conditionalSchema, ...options }, { preStartHook } = {}) {
+         const app = this.httpAdapterHost.httpAdapter.getInstance();
+         preStartHook?.(app);
+         // nest's logger doesnt have the info method
+@@ -39,6 +43,46 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+         }
+         const yoga = createYoga({
+             ...options,
++            schema: async (request) => {
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const url = request.req.baseUrl
++
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++
++                if (this.schemaCache.has(cacheKey)) {
++                return this.schemaCache.get(cacheKey)
++                }
++
++                const schemas = [];
++
++                if (options.schema) {
++                schemas.push(options.schema);
++                }
++
++                if (conditionalSchema) {
++                const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
++
++                if (conditionalSchemaResult) {
++                    schemas.push(conditionalSchemaResult);
++                }
++                }
++
++                const mergedSchemas = mergeSchemas({
++                    schemas,
++                });
++
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
++
++                this.schemaCache.set(cacheKey, mergedSchemas)
++
++                return mergedSchemas;
++            },
+             graphqlEndpoint: options.path,
+             // disable logging by default
+             // however, if `true` use nest logger
+@@ -51,11 +95,51 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+         this.yoga = yoga;
+         app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
+     }
+-    registerFastify(options, { preStartHook } = {}) {
++    registerFastify({ conditionalSchema, ...options }, { preStartHook } = {}) {
+         const app = this.httpAdapterHost.httpAdapter.getInstance();
+         preStartHook?.(app);
+         const yoga = createYoga({
+             ...options,
++            schema: async (request) => {
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const url = request.req.baseUrl
++
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++
++                if (this.schemaCache.has(cacheKey)) {
++                return this.schemaCache.get(cacheKey)
++                }
++
++                const schemas = [];
++
++                if (options.schema) {
++                schemas.push(options.schema);
++                }
++
++                if (conditionalSchema) {
++                const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
++
++                if (conditionalSchemaResult) {
++                    schemas.push(conditionalSchemaResult);
++                }
++                }
++
++                const mergedSchemas = mergeSchemas({
++                schemas,
++                });
++
++                for (const key of this.schemaCache.keys()) {
++                    if (key.startsWith(`${workspaceId}-`)) {
++                        this.schemaCache.delete(key);
++                    }
++                }
++
++                this.schemaCache.set(cacheKey, mergedSchemas)
++
++                return mergedSchemas;
++            },
+             graphqlEndpoint: options.path,
+             // disable logging by default
+             // however, if `true` use fastify logger
+diff --git a/dist/typings/index.d.cts b/dist/typings/index.d.cts
+index 2c6a965..2f2b59f 100644
+--- a/dist/typings/index.d.cts
++++ b/dist/typings/index.d.cts
+@@ -1,7 +1,8 @@
+ import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
+ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+-import { YogaServerInstance, YogaServerOptions } from 'graphql-yoga';
++import { YogaServerInstance, YogaServerOptions, GraphQLSchemaWithContext, PromiseOrValue, YogaInitialContext } from 'graphql-yoga';
+ import { AbstractGraphQLDriver, GqlModuleOptions, SubscriptionConfig } from '@nestjs/graphql';
++export type YogaSchemaDefinition<TContext> = PromiseOrValue<GraphQLSchemaWithContext<TContext>> | ((context: TContext & YogaInitialContext) => PromiseOrValue<GraphQLSchemaWithContext<TContext>>);
+ export type YogaDriverPlatform = 'express' | 'fastify';
+ export type YogaDriverServerContext<Platform extends YogaDriverPlatform> = Platform extends 'fastify' ? {
+     req: FastifyRequest;
+@@ -10,7 +11,10 @@ export type YogaDriverServerContext<Platform extends YogaDriverPlatform> = Platf
+     req: ExpressRequest;
+     res: ExpressResponse;
+ };
+-export type YogaDriverServerOptions<Platform extends YogaDriverPlatform> = Omit<YogaServerOptions<YogaDriverServerContext<Platform>, never>, 'context' | 'schema'>;
++
++export type YogaDriverServerOptions<Platform extends YogaDriverPlatform> = Omit<YogaServerOptions<YogaDriverServerContext<Platform>, never>, 'context' | 'schema'> & {
++    conditionalSchema?: YogaSchemaDefinition<YogaDriverServerContext<Platform>> | undefined;
++};
+ export type YogaDriverServerInstance<Platform extends YogaDriverPlatform> = YogaServerInstance<YogaDriverServerContext<Platform>, never>;
+ export type YogaDriverConfig<Platform extends YogaDriverPlatform = 'express'> = GqlModuleOptions & YogaDriverServerOptions<Platform> & {
+     /**
+@@ -26,10 +30,10 @@ export declare abstract class AbstractYogaDriver<Platform extends YogaDriverPlat
+     protected yoga: YogaDriverServerInstance<Platform>;
+     start(options: YogaDriverConfig<Platform>): Promise<void>;
+     stop(): Promise<void>;
+-    protected registerExpress(options: YogaDriverConfig<'express'>, { preStartHook }?: {
++    protected registerExpress({ conditionalSchema, ...options }: YogaDriverConfig<'express'>, { preStartHook }?: {
+         preStartHook?: (app: Express) => void;
+     }): void;
+-    protected registerFastify(options: YogaDriverConfig<'fastify'>, { preStartHook }?: {
++    protected registerFastify({ conditionalSchema, ...options }: YogaDriverConfig<'fastify'>, { preStartHook }?: {
+         preStartHook?: (app: FastifyInstance) => void;
+     }): void;
+     subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
+diff --git a/dist/typings/index.d.ts b/dist/typings/index.d.ts
+index 2c6a965..fd86dac 100644
+--- a/dist/typings/index.d.ts
++++ b/dist/typings/index.d.ts
+@@ -1,7 +1,8 @@
+ import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
+ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+-import { YogaServerInstance, YogaServerOptions } from 'graphql-yoga';
++import { YogaServerInstance, YogaServerOptions, GraphQLSchemaWithContext, PromiseOrValue, YogaInitialContext } from 'graphql-yoga';
+ import { AbstractGraphQLDriver, GqlModuleOptions, SubscriptionConfig } from '@nestjs/graphql';
++export type YogaSchemaDefinition<TContext> = PromiseOrValue<GraphQLSchemaWithContext<TContext>> | ((context: TContext & YogaInitialContext) => PromiseOrValue<GraphQLSchemaWithContext<TContext>>);
+ export type YogaDriverPlatform = 'express' | 'fastify';
+ export type YogaDriverServerContext<Platform extends YogaDriverPlatform> = Platform extends 'fastify' ? {
+     req: FastifyRequest;
+@@ -10,7 +11,9 @@ export type YogaDriverServerContext<Platform extends YogaDriverPlatform> = Platf
+     req: ExpressRequest;
+     res: ExpressResponse;
+ };
+-export type YogaDriverServerOptions<Platform extends YogaDriverPlatform> = Omit<YogaServerOptions<YogaDriverServerContext<Platform>, never>, 'context' | 'schema'>;
++export type YogaDriverServerOptions<Platform extends YogaDriverPlatform> = Omit<YogaServerOptions<YogaDriverServerContext<Platform>, never>, 'context' | 'schema'> & {
++    conditionalSchema?: YogaSchemaDefinition<YogaDriverServerContext<Platform>> | undefined;
++};
+ export type YogaDriverServerInstance<Platform extends YogaDriverPlatform> = YogaServerInstance<YogaDriverServerContext<Platform>, never>;
+ export type YogaDriverConfig<Platform extends YogaDriverPlatform = 'express'> = GqlModuleOptions & YogaDriverServerOptions<Platform> & {
+     /**
+@@ -26,10 +29,10 @@ export declare abstract class AbstractYogaDriver<Platform extends YogaDriverPlat
+     protected yoga: YogaDriverServerInstance<Platform>;
+     start(options: YogaDriverConfig<Platform>): Promise<void>;
+     stop(): Promise<void>;
+-    protected registerExpress(options: YogaDriverConfig<'express'>, { preStartHook }?: {
++    protected registerExpress({ conditionalSchema, ...options }: YogaDriverConfig<'express'>, { preStartHook }?: {
+         preStartHook?: (app: Express) => void;
+     }): void;
+-    protected registerFastify(options: YogaDriverConfig<'fastify'>, { preStartHook }?: {
++    protected registerFastify({ conditionalSchema, ...options }: YogaDriverConfig<'fastify'>, { preStartHook }?: {
+         preStartHook?: (app: FastifyInstance) => void;
+     }): void;
+     subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
+diff --git a/src/index.ts b/src/index.ts
+index ce142f6..10e17d2 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -1,9 +1,10 @@
+ import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
+ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+-import { printSchema } from 'graphql';
+-import { createYoga, filter, pipe, YogaServerInstance, YogaServerOptions } from 'graphql-yoga';
++import { printSchema, GraphQLSchema } from 'graphql';
++import { createYoga, filter, pipe, YogaServerInstance, YogaServerOptions, GraphQLSchemaWithContext, PromiseOrValue, YogaInitialContext } from 'graphql-yoga';
+ import type { ExecutionParams } from 'subscriptions-transport-ws';
+ import { Injectable, Logger } from '@nestjs/common';
++import { mergeSchemas } from '@graphql-tools/schema';
+ import {
+   AbstractGraphQLDriver,
+   GqlModuleOptions,
+@@ -11,23 +12,31 @@ import {
+   SubscriptionConfig,
+ } from '@nestjs/graphql';
+ 
++export type YogaSchemaDefinition<TContext> =
++  | PromiseOrValue<GraphQLSchemaWithContext<TContext>>
++  | ((
++    context: TContext & YogaInitialContext,
++  ) => PromiseOrValue<GraphQLSchemaWithContext<TContext>>);
++
+ export type YogaDriverPlatform = 'express' | 'fastify';
+ 
+ export type YogaDriverServerContext<Platform extends YogaDriverPlatform> =
+   Platform extends 'fastify'
+-    ? {
+-        req: FastifyRequest;
+-        reply: FastifyReply;
+-      }
+-    : {
+-        req: ExpressRequest;
+-        res: ExpressResponse;
+-      };
++  ? {
++    req: FastifyRequest;
++    reply: FastifyReply;
++  }
++  : {
++    req: ExpressRequest;
++    res: ExpressResponse;
++  };
+ 
+ export type YogaDriverServerOptions<Platform extends YogaDriverPlatform> = Omit<
+   YogaServerOptions<YogaDriverServerContext<Platform>, never>,
+   'context' | 'schema'
+->;
++> & {
++  conditionalSchema?: YogaSchemaDefinition<YogaDriverServerContext<Platform>> | undefined;
++};
+ 
+ export type YogaDriverServerInstance<Platform extends YogaDriverPlatform> = YogaServerInstance<
+   YogaDriverServerContext<Platform>,
+@@ -53,6 +62,8 @@ export type YogaDriverSubscriptionConfig = {
+ export abstract class AbstractYogaDriver<
+   Platform extends YogaDriverPlatform,
+ > extends AbstractGraphQLDriver<YogaDriverConfig<Platform>> {
++  schemaCache = new Map();
++
+   protected yoga!: YogaDriverServerInstance<Platform>;
+ 
+   public async start(options: YogaDriverConfig<Platform>) {
+@@ -78,7 +89,7 @@ export abstract class AbstractYogaDriver<
+   }
+ 
+   protected registerExpress(
+-    options: YogaDriverConfig<'express'>,
++    { conditionalSchema, ...options }: YogaDriverConfig<'express'>,
+     { preStartHook }: { preStartHook?: (app: Express) => void } = {},
+   ) {
+     const app: Express = this.httpAdapterHost.httpAdapter.getInstance();
+@@ -98,6 +109,40 @@ export abstract class AbstractYogaDriver<
+ 
+     const yoga = createYoga<YogaDriverServerContext<'express'>>({
+       ...options,
++      schema: async request => {
++        const workspaceId = request.req.workspace.id
++        const workspaceCacheVersion = request.req.workspaceMetadataVersion
++        const workspaceUserId = request.req.user?.id ?? 'anonymous'
++        const url = request.req.baseUrl
++
++        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++
++        if (this.schemaCache.has(cacheKey)) {
++          return this.schemaCache.get(cacheKey)
++        }
++
++        const schemas: GraphQLSchema[] = [];
++
++        if (options.schema) {
++          schemas.push(options.schema);
++        }
++
++        if (conditionalSchema) {
++          const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
++
++          if (conditionalSchemaResult) {
++            schemas.push(conditionalSchemaResult);
++          }
++        }
++
++        const mergedSchemas = mergeSchemas({
++          schemas,
++        });
++
++        this.schemaCache.set(cacheKey, mergedSchemas)
++
++        return mergedSchemas;
++      },
+       graphqlEndpoint: options.path,
+       // disable logging by default
+       // however, if `true` use nest logger
+@@ -105,8 +150,8 @@ export abstract class AbstractYogaDriver<
+         options.logging == null
+           ? false
+           : options.logging
+-          ? new LoggerWithInfo('YogaDriver')
+-          : options.logging,
++            ? new LoggerWithInfo('YogaDriver')
++            : options.logging,
+     });
+ 
+     this.yoga = yoga as YogaDriverServerInstance<Platform>;
+@@ -115,7 +160,7 @@ export abstract class AbstractYogaDriver<
+   }
+ 
+   protected registerFastify(
+-    options: YogaDriverConfig<'fastify'>,
++    { conditionalSchema, ...options }: YogaDriverConfig<'fastify'>,
+     { preStartHook }: { preStartHook?: (app: FastifyInstance) => void } = {},
+   ) {
+     const app: FastifyInstance = this.httpAdapterHost.httpAdapter.getInstance();
+@@ -124,6 +169,40 @@ export abstract class AbstractYogaDriver<
+ 
+     const yoga = createYoga<YogaDriverServerContext<'fastify'>>({
+       ...options,
++      schema: async request => {
++        const workspaceId = request.req.workspace.id
++        const workspaceCacheVersion = request.req.workspaceMetadataVersion
++        const workspaceUserId = request.req.user?.id ?? 'anonymous'
++        const url = request.req.baseUrl
++
++        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
++
++        if (this.schemaCache.has(cacheKey)) {
++          return this.schemaCache.get(cacheKey)
++        }
++
++        const schemas: GraphQLSchema[] = [];
++
++        if (options.schema) {
++          schemas.push(options.schema);
++        }
++
++        if (conditionalSchema) {
++          const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
++
++          if (conditionalSchemaResult) {
++            schemas.push(conditionalSchemaResult);
++          }
++        }
++
++        const mergedSchemas = mergeSchemas({
++          schemas,
++        });
++
++        this.schemaCache.set(cacheKey, mergedSchemas)
++
++        return mergedSchemas;
++      },
+       graphqlEndpoint: options.path,
+       // disable logging by default
+       // however, if `true` use fastify logger
+@@ -191,8 +270,8 @@ export class YogaDriver<
+       const config: SubscriptionConfig =
+         options.subscriptions === true
+           ? {
+-              'graphql-ws': true,
+-            }
++            'graphql-ws': true,
++          }
+           : options.subscriptions;
+ 
+       if (config['graphql-ws']) {
