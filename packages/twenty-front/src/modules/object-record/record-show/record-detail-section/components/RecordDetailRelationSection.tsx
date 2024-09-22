@@ -13,7 +13,6 @@ import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/re
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
-import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -132,14 +131,6 @@ export const RecordDetailRelationSection = ({
   }?${qs.stringify(filterQueryParams)}`;
 
   const showContent = () => {
-    if (loading) {
-      return (
-        <RecordDetailRelationSectionSkeletonLoader
-          numSkeletons={fieldName === 'people' ? 2 : 1}
-        />
-      );
-    }
-
     return (
       relationRecords.length > 0 && (
         <RecordDetailRelationRecordsList relationRecords={relationRecords} />
@@ -154,6 +145,8 @@ export const RecordDetailRelationSection = ({
       relationFieldMetadataItem,
       recordId,
     });
+
+  if (!loading) return null;
 
   return (
     <RecordDetailSection>
