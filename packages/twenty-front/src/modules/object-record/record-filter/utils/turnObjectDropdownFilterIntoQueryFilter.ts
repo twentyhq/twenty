@@ -25,8 +25,11 @@ import {
   convertLessThanRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
+import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
+import { resolveDateViewFilterValue } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
+import { z } from 'zod';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
@@ -380,7 +383,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             break;
           }
           case ViewFilterOperand.IsRelative: {
-            /*             const dateRange = z
+            const dateRange = z
               .object({ start: z.date(), end: z.date() })
               .safeParse(resolvedFilterValue).data;
 
@@ -391,19 +394,20 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
 
             const { start, end } = dateRange ?? defaultDateRange;
 
-            // Does not work
+            // And query is not working, lte is ignored
             objectRecordFilters.push({
-              [correspondingField.name]: {
-                gte: start.toISOString(),
-                lte: end.toISOString(),
-              } as DateFilter,
-            });
-            break; */
-
-            objectRecordFilters.push({
-              [correspondingField.name]: {
-                lte: date.toISOString(),
-              } as DateFilter,
+              and: [
+                {
+                  [correspondingField.name]: {
+                    gte: start.toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    lte: end.toISOString(),
+                  } as DateFilter,
+                },
+              ],
             });
             break;
           }

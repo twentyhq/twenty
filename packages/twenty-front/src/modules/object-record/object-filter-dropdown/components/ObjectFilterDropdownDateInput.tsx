@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -31,7 +32,11 @@ export const ObjectFilterDropdownDateInput = () => {
     selectedOperandInDropdownState,
   );
 
-  const selectedFilter = useRecoilValue(selectedFilterState);
+  const selectedFilter = useRecoilValue(selectedFilterState) as
+    | (Filter & { definition: { type: 'DATE' | 'DATE_TIME' } })
+    | null
+    | undefined;
+
   const initialFilterValue = selectedFilter
     ? resolveFilterValue(selectedFilter)
     : null;
@@ -43,7 +48,7 @@ export const ObjectFilterDropdownDateInput = () => {
     direction: VariableDateViewFilterValueDirection;
     amount: number;
     unit: VariableDateViewFilterValueUnit;
-  } | null>(null);
+  } | null>(initialFilterValue instanceof Date ? null : initialFilterValue);
 
   const isDateTimeInput =
     filterDefinitionUsedInDropdown?.type === FieldMetadataType.DateTime;

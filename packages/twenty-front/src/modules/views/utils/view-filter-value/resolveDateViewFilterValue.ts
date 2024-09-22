@@ -8,6 +8,7 @@ import {
   endOfMonth,
   endOfWeek,
   endOfYear,
+  roundToNearestMinutes,
   startOfDay,
   startOfMonth,
   startOfWeek,
@@ -20,7 +21,7 @@ import {
 
 import { z } from 'zod';
 
-const variableDateViewFilterValueDirectionSchema = z.enum([
+export const variableDateViewFilterValueDirectionSchema = z.enum([
   'NEXT',
   'THIS',
   'PAST',
@@ -30,7 +31,12 @@ export type VariableDateViewFilterValueDirection = z.infer<
   typeof variableDateViewFilterValueDirectionSchema
 >;
 
-const variableDateViewFilterValueUnitSchema = z.enum([
+export const variableDateViewFilterValueAmountSchema = z
+  .number()
+  .int()
+  .positive();
+
+export const variableDateViewFilterValueUnitSchema = z.enum([
   'DAY',
   'WEEK',
   'MONTH',
@@ -42,14 +48,15 @@ export type VariableDateViewFilterValueUnit = z.infer<
 >;
 
 const variableDateViewFilterValueSchema = z.string().transform((value) => {
-  const [direction, amount, unit] = value.split('_');
+  const [direction, amountStr, unit] = value.split('_');
+  const amount = parseInt(amountStr);
   return z
-    .tuple([
-      variableDateViewFilterValueDirectionSchema,
-      z.number().int().positive(),
-      variableDateViewFilterValueUnitSchema,
-    ])
-    .parse([direction, parseInt(amount), unit]);
+    .object({
+      direction: variableDateViewFilterValueDirectionSchema,
+      amount: variableDateViewFilterValueAmountSchema,
+      unit: variableDateViewFilterValueUnitSchema,
+    })
+    .parse({ direction, amount, unit });
 });
 
 const addUnit = (
@@ -113,25 +120,28 @@ const endOfUnit = (date: Date, unit: VariableDateViewFilterValueUnit) => {
 };
 
 const resolveVariableDateViewFilterValue = (value: string) => {
-  const [direction, amount, unit] =
-    variableDateViewFilterValueSchema.parse(value);
-  const now = new Date();
+  const relativeDate = variableDateViewFilterValueSchema.parse(value);
+  const { direction, amount, unit } = relativeDate;
+  const now = roundToNearestMinutes(new Date());
 
   switch (direction) {
     case 'NEXT':
       return {
         start: now,
         end: addUnit(now, amount, unit),
+        ...relativeDate,
       };
     case 'PAST':
       return {
         start: subUnit(now, amount, unit),
         end: now,
+        ...relativeDate,
       };
     case 'THIS':
       return {
         start: startOfUnit(now, unit),
         end: endOfUnit(now, unit),
+        ...relativeDate,
       };
   }
 };

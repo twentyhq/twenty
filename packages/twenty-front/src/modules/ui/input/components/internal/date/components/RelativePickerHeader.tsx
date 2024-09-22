@@ -4,10 +4,12 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { RELATIVE_DATE_DIRECTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionOptions';
 import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
 import {
+  variableDateViewFilterValueAmountSchema,
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -34,6 +36,23 @@ export const RelativeDatePickerHeader = ({
   unit,
   onChange,
 }: RelativeDatePickerHeaderProps) => {
+  const [amountString, setAmountString] = useState(
+    amount ? amount.toString() : '',
+  );
+
+  useEffect(() => {
+    setAmountString(amount ? amount.toString() : '');
+  }, [amount]);
+
+  const textInputValue = direction === 'THIS' ? '' : amountString;
+  const textInputPlaceholder = direction === 'THIS' ? '-' : 'Number';
+
+  const isUnitPlural = amount > 1 && direction !== 'THIS';
+  const unitSelectOptions = RELATIVE_DATE_UNITS.map((unit) => ({
+    ...unit,
+    label: `${unit.label}${isUnitPlural ? 's' : ''}`,
+  }));
+
   return (
     <StyledContainer>
       <Select
@@ -49,19 +68,25 @@ export const RelativeDatePickerHeader = ({
         options={RELATIVE_DATE_DIRECTIONS}
       />
       <TextInput
-        value={amount?.toString() ?? ''}
-        onChange={(newValue) => {
-          const newNumericValue = newValue.replace(/[^0-9]/g, '');
-          if (!newNumericValue) return;
-          const newAmount = parseInt(newNumericValue, 10);
+        value={textInputValue}
+        onChange={(text) => {
+          const amountString = text.replace(/[^0-9]/g, ''); // TODO: Remove leading zeros
+          const amount = parseInt(amountString);
 
-          onChange?.({
-            direction,
-            amount: newAmount,
-            unit,
-          });
+          setAmountString(amountString);
+
+          if (
+            variableDateViewFilterValueAmountSchema.safeParse(amount).success
+          ) {
+            onChange?.({
+              direction,
+              amount,
+              unit,
+            });
+          }
         }}
-        placeholder="Number"
+        placeholder={textInputPlaceholder}
+        disabled={direction === 'THIS'}
       />
       <Select
         dropdownId="unit-select"
@@ -73,10 +98,7 @@ export const RelativeDatePickerHeader = ({
             unit: newUnit,
           })
         }
-        options={RELATIVE_DATE_UNITS.map((unit) => ({
-          ...unit,
-          label: `${unit.label}${amount > 1 ? 's' : ''}`,
-        }))}
+        options={unitSelectOptions}
       />
     </StyledContainer>
   );
