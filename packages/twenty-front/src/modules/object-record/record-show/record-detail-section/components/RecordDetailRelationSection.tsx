@@ -146,7 +146,7 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
-  if (!loading) return null;
+  if (loading) return null;
 
   return (
     <RecordDetailSection>
