@@ -80,6 +80,7 @@ export class IndexMetadataService {
           action: WorkspaceMigrationIndexActionType.CREATE,
           columns: columnNames,
           name: indexName,
+          type: indexType,
         },
       ],
     } satisfies WorkspaceMigrationTableAction;
