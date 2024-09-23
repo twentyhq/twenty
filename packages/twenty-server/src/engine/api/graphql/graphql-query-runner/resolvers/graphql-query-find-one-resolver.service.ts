@@ -18,6 +18,7 @@ import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/g
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export class GraphqlQueryFindOneResolverService {
   private twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -35,12 +36,17 @@ export class GraphqlQueryFindOneResolverService {
   ): Promise<ObjectRecord | undefined> {
     const { authContext, objectMetadataItem, info, objectMetadataCollection } =
       options;
+
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
       );
 
-    const repository = await dataSource.getRepository<ObjectRecord>(
+    const repository = dataSource.getRepository(
+      objectMetadataItem.nameSingular,
+    );
+
+    const queryBuilder = repository.createQueryBuilder(
       objectMetadataItem.nameSingular,
     );
 
@@ -52,6 +58,7 @@ export class GraphqlQueryFindOneResolverService {
       objectMetadataMap,
       objectMetadataItem.nameSingular,
     );
+
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadata.fields,
       objectMetadataMap,
@@ -59,18 +66,29 @@ export class GraphqlQueryFindOneResolverService {
 
     const selectedFields = graphqlFields(info);
 
-    const { select, relations } = graphqlQueryParser.parseSelectedFields(
+    const { relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
       selectedFields,
     );
-    const { parsedFilters: where, withDeleted } =
-      graphqlQueryParser.parseFilter(args.filter ?? ({} as Filter));
 
-    const objectRecord = (await repository.findOne({
-      where,
-      select,
-      withDeleted,
-    })) as ObjectRecord;
+    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+      queryBuilder,
+      objectMetadataItem.nameSingular,
+      args.filter ?? ({} as Filter),
+    );
+
+    const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
+      withFilterQueryBuilder,
+      args.filter ?? ({} as Filter),
+    );
+
+    const nonFormattedObjectRecord = await withDeletedQueryBuilder.getOne();
+
+    const objectRecord = formatResult(
+      nonFormattedObjectRecord,
+      objectMetadata,
+      objectMetadataMap,
+    );
 
     const limit = QUERY_MAX_RECORDS;
 
