@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ObjectFilterSelectMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectMenu';
 import { ObjectFilterSelectSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectSubMenu';
@@ -9,6 +9,7 @@ import { currentSubMenuState } from '@/object-record/object-filter-dropdown/stat
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const StyledInput = styled.input`
@@ -44,7 +45,8 @@ export const ObjectFilterDropdownFilterSelect = () => {
     availableFilterDefinitionsComponentState,
   );
 
-  const currentSubMenu = useRecoilValue(currentSubMenuState);
+  const [currentSubMenu, setCurrentSubMenu] =
+    useRecoilState(currentSubMenuState);
 
   const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
     .sort((a, b) => a.label.localeCompare(b.label))
@@ -73,6 +75,12 @@ export const ObjectFilterDropdownFilterSelect = () => {
 
     selectFilter({ filterDefinition: selectedFilterDefinition });
   };
+
+  useEffect(() => {
+    return () => {
+      setCurrentSubMenu(null);
+    };
+  }, [setCurrentSubMenu]);
 
   return !currentSubMenu ? (
     <ObjectFilterSelectMenu

@@ -7,7 +7,7 @@ import { getSourceEnumOptions } from '@/object-record/object-filter-dropdown/uti
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
@@ -33,7 +33,9 @@ export const ObjectFilterDropdownSourceSelect = ({
     emptyFilterButKeepDefinition,
   } = useFilterDropdown();
 
-  const { removeCombinedViewFilter } = useCombinedViewFilters(viewComponentId);
+  const { deleteCombinedViewFilter } =
+    useDeleteCombinedViewFilters(viewComponentId);
+
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
 
@@ -74,7 +76,7 @@ export const ObjectFilterDropdownSourceSelect = ({
 
     if (newSelectedRecordIds.length === 0) {
       emptyFilterButKeepDefinition();
-      removeCombinedViewFilter(fieldId);
+      deleteCombinedViewFilter(fieldId);
       return;
     }
 
