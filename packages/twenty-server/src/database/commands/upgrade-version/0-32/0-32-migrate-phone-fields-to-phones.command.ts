@@ -60,7 +60,6 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     this.logger.log(
       'Running command to migrate phone type fields to phones type',
     );
-
     for (const workspaceId of workspaceIds) {
       this.logger.log(`Running command for workspace ${workspaceId}`);
       try {
@@ -94,19 +93,11 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           );
         }
 
-        const standardPersonPhonesFieldType =
-          await this.fieldMetadataRepository.findOneBy({
-            workspaceId,
-            standardId: PERSON_STANDARD_FIELD_IDS.phones,
-          });
-
-        if (!isDefined(standardPersonPhonesFieldType)) {
-          await this.migrateStandardPersonPhoneField({
-            standardPersonPhoneField: standardPersonPhoneFieldWithTextType,
-            workspaceDataSource,
-            workspaceSchemaName: dataSourceMetadata.schema,
-          });
-        }
+        await this.migrateStandardPersonPhoneField({
+          standardPersonPhoneField: standardPersonPhoneFieldWithTextType,
+          workspaceDataSource,
+          workspaceSchemaName: dataSourceMetadata.schema,
+        });
 
         const fieldsWithPhoneType = await this.fieldMetadataRepository.find({
           where: {
@@ -116,7 +107,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         });
 
         for (const deprecatedPhoneField of fieldsWithPhoneType) {
-          this.migrateCustomPhoneField({
+          await this.migrateCustomPhoneField({
             phoneField: deprecatedPhoneField,
             workspaceDataSource,
             workspaceSchemaName: dataSourceMetadata.schema,
@@ -159,35 +150,47 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     await workspaceQueryRunner.connect();
     const { id: _id, ...deprecatedPhoneFieldWithoutId } =
       standardPersonPhoneField;
-    const phoneDefaultValue = deprecatedPhoneFieldWithoutId.defaultValue;
-    let parsedPhoneDefaultValue: PhoneNumber | null = null;
-    let defaultValueForPhonesField: FieldMetadataDefaultValuePhones | null =
-      null;
-
-    if (isDefined(phoneDefaultValue) && !isEmpty(phoneDefaultValue)) {
-      try {
-        parsedPhoneDefaultValue = parsePhoneNumber(phoneDefaultValue as string);
-        defaultValueForPhonesField = {
-          primaryPhoneCountryCode: `+${parsedPhoneDefaultValue.countryCallingCode}`,
-          primaryPhoneNumber: parsedPhoneDefaultValue.nationalNumber,
-          additionalPhones: null,
-        };
-      } catch (error) {
-        this.logger.log(
-          `Failed to parse phone number (${phoneDefaultValue}) for default value. Setting default value to null.`,
-        );
-      }
-    }
 
     const workspaceId = standardPersonPhoneField.workspaceId;
 
     try {
-      const newPhonesField = await this.fieldMetadataService.createOne({
-        ...deprecatedPhoneFieldWithoutId,
-        type: FieldMetadataType.PHONES,
-        defaultValue: defaultValueForPhonesField,
-        name: 'phones',
-      } satisfies CreateFieldInput);
+      let standardPersonPhonesFieldType =
+        await this.fieldMetadataRepository.findOneBy({
+          workspaceId,
+          standardId: PERSON_STANDARD_FIELD_IDS.phones,
+        });
+
+      if (!standardPersonPhonesFieldType) {
+        const phoneDefaultValue = deprecatedPhoneFieldWithoutId.defaultValue;
+        let parsedPhoneDefaultValue: PhoneNumber | null = null;
+        let defaultValueForPhonesField: FieldMetadataDefaultValuePhones | null =
+          null;
+
+        if (isDefined(phoneDefaultValue) && !isEmpty(phoneDefaultValue)) {
+          try {
+            parsedPhoneDefaultValue = parsePhoneNumber(
+              phoneDefaultValue as string,
+            );
+            defaultValueForPhonesField = {
+              primaryPhoneCountryCode: `+${parsedPhoneDefaultValue.countryCallingCode}`,
+              primaryPhoneNumber: parsedPhoneDefaultValue.nationalNumber,
+              additionalPhones: null,
+            };
+          } catch (error) {
+            this.logger.log(
+              `Failed to parse phone number (${phoneDefaultValue}) for default value. Setting default value to null.`,
+            );
+          }
+        }
+
+        standardPersonPhonesFieldType =
+          await this.fieldMetadataService.createOne({
+            ...deprecatedPhoneFieldWithoutId,
+            type: FieldMetadataType.PHONES,
+            defaultValue: defaultValueForPhonesField,
+            name: 'phones',
+          } satisfies CreateFieldInput);
+      }
 
       // Copy phone data from Text type to Phones type
       await this.copyAndParseDeprecatedPhoneFieldDataIntoNewPhonesField({
@@ -212,7 +215,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
 
       await this.viewService.addFieldToViews({
         workspaceId: workspaceId,
-        fieldId: newPhonesField.id,
+        fieldId: standardPersonPhonesFieldType.id,
         viewsIds: viewFieldsWithDeprecatedPhoneField
           .filter((viewField) => viewField.viewId !== null)
           .map((viewField) => viewField.viewId as string),
@@ -240,7 +243,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     } catch (error) {
       this.logger.log(
         chalk.red(
-          `Failed to migrate field standard person phone field to phones, rolling back.`,
+          `Failed to migrate field standard person phone field to phones, rolling back. (Error: ${error})`,
         ),
       );
 
@@ -257,7 +260,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         this.logger.log(
           `Deleting phones field of type Phone as part of rolling back.`,
         );
-        this.fieldMetadataService.deleteOneField(
+        await this.fieldMetadataService.deleteOneField(
           { id: newPhonesField.id },
           workspaceId,
         );
@@ -309,7 +312,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         ),
       );
     } finally {
-      workspaceQueryRunner.release();
+      await workspaceQueryRunner.release();
     }
   }
 
@@ -328,24 +331,30 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     for (const row of deprecatedPhoneFieldRows) {
       const phoneColumnValue = row['phone'];
 
-      const query = `UPDATE "${workspaceSchemaName}"."person" SET "phonesPrimaryPhoneCountryCode" = $1,"phonePrimaryPhoneNumber" = $2 where "id"=$3`;
+      if (isDefined(phoneColumnValue) && !isEmpty(phoneColumnValue)) {
+        const query = `UPDATE "${workspaceSchemaName}"."person" SET "phonesPrimaryPhoneCountryCode" = $1,"phonesPrimaryPhoneNumber" = $2 where "id"=$3 AND ("phonesPrimaryPhoneCountryCode" IS NULL OR "phonesPrimaryPhoneCountryCode" = '');`;
 
-      try {
-        const parsedPhoneColumnValue = parsePhoneNumber(phoneColumnValue);
+        try {
+          const parsedPhoneColumnValue = parsePhoneNumber(phoneColumnValue);
 
-        await workspaceQueryRunner.query(query, [
-          `+${parsedPhoneColumnValue.countryCallingCode}`,
-          parsedPhoneColumnValue.nationalNumber,
-          row.id,
-        ]);
-      } catch (error) {
-        this.logger.log(
-          chalk.red(
-            `Could not save phone number ${phoneColumnValue}, will try again storing value as is without parsing, with default country code.`,
-          ),
-        );
-        // Store the invalid string for invalid phone numbers
-        await workspaceQueryRunner.query(query, ['', phoneColumnValue, row.id]);
+          await workspaceQueryRunner.query(query, [
+            `+${parsedPhoneColumnValue.countryCallingCode}`,
+            parsedPhoneColumnValue.nationalNumber,
+            row.id,
+          ]);
+        } catch (error) {
+          this.logger.log(
+            chalk.red(
+              `Could not save phone number ${phoneColumnValue}, will try again storing value as is without parsing, with default country code.`,
+            ),
+          );
+          // Store the invalid string for invalid phone numbers
+          await workspaceQueryRunner.query(query, [
+            '',
+            phoneColumnValue,
+            row.id,
+          ]);
+        }
       }
     }
   }
