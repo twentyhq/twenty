@@ -470,6 +470,7 @@ export const InternalDatePicker = ({
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}
+          selected={dateToUse}
           selectedDates={selectedDates}
           openToDate={isDefined(dateToUse) ? dateToUse : undefined}
           disabledKeyboardNavigation
@@ -509,7 +510,7 @@ export const InternalDatePicker = ({
             )
           }
           onSelect={handleDateSelect}
-          selectsMultiple={true}
+          selectsMultiple={isRelative}
         />
       </div>
       {clearable && (
