@@ -37,7 +37,7 @@ import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { TokenService } from './services/token.service';
+import { TokenService } from './token/services/token.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)

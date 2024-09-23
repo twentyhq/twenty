@@ -1,3 +1,4 @@
 dist/*
 .local-storage
 logs/**/*
+*.log

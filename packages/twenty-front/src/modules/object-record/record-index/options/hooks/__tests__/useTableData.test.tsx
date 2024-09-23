@@ -1,11 +1,11 @@
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
-import { renderHook, waitFor } from '@testing-library/react';
-import { ReactNode, act } from 'react';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { percentage, sleep, useTableData } from '../useTableData';
 
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewType } from '@/views/types/ViewType';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
@@ -164,15 +164,19 @@ const mocks: MockedResponse[] = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <Router>
-    <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarManagerScopeInternalContext.Provider
+    value={{
+      scopeId: 'snack-bar-manager',
+    }}
+  >
+    <Router>
+      <RecoilRoot>
         <MockedProvider addTypename={false} mocks={mocks}>
           {children}
         </MockedProvider>
-      </SnackBarProviderScope>
-    </RecoilRoot>
-  </Router>
+      </RecoilRoot>
+    </Router>
+  </SnackBarManagerScopeInternalContext.Provider>
 );
 
 const graphqlEmptyResponse = [
@@ -190,15 +194,19 @@ const graphqlEmptyResponse = [
 ];
 
 const WrapperWithEmptyResponse = ({ children }: { children: ReactNode }) => (
-  <Router>
-    <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarManagerScopeInternalContext.Provider
+    value={{
+      scopeId: 'snack-bar-manager',
+    }}
+  >
+    <Router>
+      <RecoilRoot>
         <MockedProvider addTypename={false} mocks={graphqlEmptyResponse}>
           {children}
         </MockedProvider>
-      </SnackBarProviderScope>
-    </RecoilRoot>
-  </Router>
+      </RecoilRoot>
+    </Router>
+  </SnackBarManagerScopeInternalContext.Provider>
 );
 
 describe('useTableData', () => {
@@ -207,13 +215,13 @@ describe('useTableData', () => {
   describe('data fetching', () => {
     it('should handle no records', async () => {
       const callback = jest.fn();
+
       const { result } = renderHook(
         () =>
           useTableData({
             recordIndexId,
             objectNameSingular,
             callback,
-
             delayMs: 0,
             viewType: ViewType.Kanban,
           }),
@@ -225,7 +233,7 @@ describe('useTableData', () => {
       });
 
       await waitFor(() => {
-        expect(callback).toHaveBeenCalledWith([], []);
+        expect(callback).not.toHaveBeenCalled();
       });
     });
 

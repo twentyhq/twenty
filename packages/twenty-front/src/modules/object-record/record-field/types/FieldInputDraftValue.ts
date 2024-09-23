@@ -25,7 +25,7 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 
 export type FieldTextDraftValue = string;
-export type FieldNumberDraftValue = string;
+export type FieldNumberDraftValue = number;
 export type FieldDateTimeDraftValue = string;
 export type FieldPhoneDraftValue = string;
 export type FieldPhonesDraftValue = {

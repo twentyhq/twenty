@@ -25,7 +25,7 @@ export class MessagingAddSingleMessageToCacheForImportJob {
     const { messageExternalId, messageChannelId, workspaceId } = data;
 
     await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+      `messages-to-import:${workspaceId}:${messageChannelId}`,
       [messageExternalId],
     );
   }

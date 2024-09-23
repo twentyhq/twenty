@@ -1,3 +1,0 @@
-global.beforeEach(() => {
-  // resetDb();
-});

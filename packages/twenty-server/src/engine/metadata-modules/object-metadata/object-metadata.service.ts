@@ -10,7 +10,6 @@ import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
@@ -60,6 +59,7 @@ import {
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -85,7 +85,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(objectMetadataRepository);
   }
@@ -143,6 +142,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.deleteAllRelationsAndDropTable(objectMetadata, workspaceId);
     }
 
+    // DELETE VIEWS
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+        workspaceId,
+        'view',
+      );
+
+    const views = await viewRepository.find({
+      where: {
+        objectMetadataId: objectMetadata.id,
+      },
+    });
+
+    if (views.length > 0) {
+      await viewRepository.delete(views.map((view) => view.id));
+    }
+
+    // DELETE OBJECT
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(

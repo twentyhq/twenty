@@ -3,9 +3,10 @@ import { Command, CommandRunner } from 'nest-commander';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
-
-const CALENDAR_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
+import {
+  CALENDAR_ONGOING_STALE_CRON_PATTERN,
+  CalendarOngoingStaleCronJob,
+} from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
 
 @Command({
   name: 'cron:calendar:ongoing-stale',

@@ -1,10 +1,10 @@
 import { RecoilValueReadOnly } from 'recoil';
 
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
 export const extractComponentReadOnlySelector = <StateType>(
   componentSelector: (
-    componentStateKey: ComponentStateKey,
+    componentStateKey: RecoilComponentStateKey,
   ) => RecoilValueReadOnly<StateType>,
   scopeId: string,
 ) => {

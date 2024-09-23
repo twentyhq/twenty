@@ -18,6 +18,7 @@ import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.r
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -42,6 +43,7 @@ import { WorkspaceService } from './services/workspace.service';
         DataSourceModule,
         OnboardingModule,
         TypeORMModule,
+        WorkspaceInvitationModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

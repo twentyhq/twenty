@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useCallback, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
@@ -8,8 +8,8 @@ import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoar
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useHandleViews } from '@/views/hooks/useHandleViews';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { mapBoardFieldDefinitionsToViewFields } from '@/views/utils/mapBoardFieldDefinitionsToViewFields';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
@@ -31,7 +31,7 @@ export const useRecordIndexOptionsForBoard = ({
     useRecoilState(recordIndexFieldDefinitionsState);
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
-  const { updateCurrentView } = useHandleViews(viewBarId);
+  const { updateCurrentView } = useUpdateCurrentView(viewBarId);
   const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
 
   const [isCompactModeActive, setIsCompactModeActive] = useRecoilState(

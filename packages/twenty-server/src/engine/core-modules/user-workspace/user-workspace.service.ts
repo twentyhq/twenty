@@ -13,6 +13,11 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
+import {
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -20,8 +25,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
     private workspaceEventEmitter: WorkspaceEventEmitter,
   ) {
     super(userWorkspaceRepository);
@@ -105,6 +113,41 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
+  async validateInvitation(inviteToken: string, email: string) {
+    const appToken = await this.appTokenRepository.findOne({
+      where: {
+        value: inviteToken,
+        type: AppTokenType.InvitationToken,
+      },
+      relations: ['workspace'],
+    });
+
+    if (!appToken) {
+      throw new Error('Invalid invitation token');
+    }
+
+    if (appToken.context?.email !== email) {
+      throw new Error('Email does not match the invitation');
+    }
+
+    if (new Date(appToken.expiresAt) < new Date()) {
+      throw new Error('Invitation expired');
+    }
+
+    return appToken;
+  }
+
+  async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {
+    const appToken = await this.validateInvitation(inviteToken, user.email);
+
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      appToken.workspace.id,
+      user.email,
+    );
+
+    return await this.addUserToWorkspace(user, appToken.workspace);
+  }
+
   public async getUserCount(workspaceId): Promise<number | undefined> {
     return await this.userWorkspaceRepository.countBy({
       workspaceId,
@@ -118,6 +161,20 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return this.userWorkspaceRepository.findOneBy({
       userId,
       workspaceId,
+    });
+  }
+
+  async checkUserWorkspaceExistsByEmail(email: string, workspaceId: string) {
+    return this.userWorkspaceRepository.exists({
+      where: {
+        workspaceId,
+        user: {
+          email,
+        },
+      },
+      relations: {
+        user: true,
+      },
     });
   }
 }
