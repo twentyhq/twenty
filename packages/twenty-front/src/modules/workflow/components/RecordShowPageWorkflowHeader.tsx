@@ -12,7 +12,7 @@ import {
 } from 'twenty-ui';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 
-export const RecordShowPageHeaderWorkflow = ({
+export const RecordShowPageWorkflowHeader = ({
   workflowId,
 }: {
   workflowId: string | undefined;

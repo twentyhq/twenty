@@ -2,15 +2,15 @@ import { Meta, StoryObj } from '@storybook/react';
 import { graphql, HttpResponse } from 'msw';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { RecordShowPageHeaderWorkflow } from '@/workflow/components/RecordShowPageHeaderWorkflow';
+import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
 import { expect, within } from '@storybook/test';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-const meta: Meta<typeof RecordShowPageHeaderWorkflow> = {
-  title: 'Modules/Workflow/RecordShowPageHeaderWorkflow',
-  component: RecordShowPageHeaderWorkflow,
+const meta: Meta<typeof RecordShowPageWorkflowHeader> = {
+  title: 'Modules/Workflow/RecordShowPageWorkflowHeader',
+  component: RecordShowPageWorkflowHeader,
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
@@ -22,7 +22,7 @@ const meta: Meta<typeof RecordShowPageHeaderWorkflow> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RecordShowPageHeaderWorkflow>;
+type Story = StoryObj<typeof RecordShowPageWorkflowHeader>;
 
 const blankInitialVersionWorkflowId = '78fd5184-08f4-47b7-bb60-adb541608f65';
 
