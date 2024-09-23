@@ -4,7 +4,7 @@ export type NewCard = {
   id: string;
   columnId: string;
   isCreating: boolean;
-  position: string;
+  position: 'first' | 'last';
 };
 
 export const recordBoardNewRecordByColumnIdComponentFamilyState =
@@ -14,6 +14,6 @@ export const recordBoardNewRecordByColumnIdComponentFamilyState =
       id: '',
       columnId: '',
       isCreating: false,
-      position: '',
+      position: 'last',
     },
   });

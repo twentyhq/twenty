@@ -6,21 +6,27 @@ import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useAddNewCard = () => {
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
+  const columnContext = useContext(RecordBoardColumnContext);
   const { createOneRecord, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
   const handleAddNewCardClick = useRecoilCallback(
     ({ set }) =>
-      (title: string, position: 'first' | 'last') => {
+      (title: string, position: 'first' | 'last', columnId?: string): void => {
+        const columnDefinitionId =
+          columnId || columnContext?.columnDefinition.id;
+        if (!columnDefinitionId) {
+          throw new Error('Column ID is required');
+        }
+
         set(
           recordBoardNewRecordByColumnIdSelector({
-            familyKey: columnDefinition.id,
-            scopeId: columnDefinition.id,
+            familyKey: columnDefinitionId,
+            scopeId: columnDefinitionId,
           }),
           {
             id: uuidv4(),
-            columnId: columnDefinition.id,
+            columnId: columnDefinitionId,
             isCreating: true,
             position,
           },
@@ -28,15 +34,16 @@ export const useAddNewCard = () => {
 
         if (title !== '') {
           createOneRecord({
-            [selectFieldMetadataItem.name]: columnDefinition.value,
+            [selectFieldMetadataItem.name]:
+              columnContext?.columnDefinition.value,
             position,
             title,
           });
         }
       },
     [
-      columnDefinition.id,
-      columnDefinition.value,
+      columnContext?.columnDefinition?.id,
+      columnContext?.columnDefinition?.value,
       createOneRecord,
       selectFieldMetadataItem,
     ],
@@ -44,25 +51,65 @@ export const useAddNewCard = () => {
 
   const handleCreateSuccess = useRecoilCallback(
     ({ set }) =>
-      (position: 'first' | 'last') => {
+      (position: 'first' | 'last', columnId?: string): void => {
+        const columnDefinitionId =
+          columnId || columnContext?.columnDefinition.id;
+        if (!columnDefinitionId) {
+          throw new Error('Column ID is required');
+        }
+
         set(
           recordBoardNewRecordByColumnIdSelector({
-            familyKey: columnDefinition.id,
-            scopeId: columnDefinition.id,
+            familyKey: columnDefinitionId,
+            scopeId: columnDefinitionId,
           }),
           {
             id: '',
-            columnId: columnDefinition.id,
+            columnId: columnDefinitionId,
             isCreating: false,
             position,
           },
         );
       },
-    [columnDefinition.id],
+    [columnContext?.columnDefinition?.id],
   );
+
+  const handleCreate = (
+    title: string,
+    position: 'first' | 'last',
+    onCreateSuccess?: () => void,
+  ) => {
+    if (title.trim() !== '' && position !== undefined) {
+      handleAddNewCardClick(title.trim(), position);
+      onCreateSuccess?.();
+    }
+  };
+
+  const handleBlur = (
+    title: string,
+    position: 'first' | 'last',
+    onCreateSuccess?: () => void,
+  ) => {
+    if (title.trim() === '') {
+      onCreateSuccess?.();
+    } else {
+      handleCreate(title, position, onCreateSuccess);
+    }
+  };
+
+  const handleInputEnter = (
+    title: string,
+    position: 'first' | 'last',
+    onCreateSuccess?: () => void,
+  ) => {
+    handleCreate(title, position, onCreateSuccess);
+  };
 
   return {
     handleAddNewCardClick,
     handleCreateSuccess,
+    handleCreate,
+    handleBlur,
+    handleInputEnter,
   };
 };

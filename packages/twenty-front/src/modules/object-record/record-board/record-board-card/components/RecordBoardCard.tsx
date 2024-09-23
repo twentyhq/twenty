@@ -26,11 +26,9 @@ import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/co
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -148,7 +146,7 @@ export const RecordBoardCard = ({
   position?: 'first' | 'last';
 }) => {
   const [newRecordName, setNewRecordName] = useState('');
-  const { handleAddNewCardClick } = useAddNewCard();
+  const { handleBlur, handleInputEnter } = useAddNewCard();
   const { recordId } = useContext(RecordBoardCardContext);
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
@@ -226,14 +224,6 @@ export const RecordBoardCard = ({
     (boardField) => !boardField.isLabelIdentifier,
   );
 
-  const handleCreate = (text: string) => {
-    if (text.trim() !== '' && position !== undefined) {
-      handleAddNewCardClick(text.trim(), position);
-      setNewRecordName('');
-      onCreateSuccess?.();
-    }
-  };
-
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
       {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
@@ -248,47 +238,21 @@ export const RecordBoardCard = ({
         }}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-          {isCreating ? (
-            <FieldContext.Provider
-              value={{
-                fieldDefinition: {
-                  type: FieldMetadataType.Text,
-                  fieldMetadataId: 'name',
-                  label: 'Name',
-                  iconName: 'IconText',
-                  metadata: {
-                    placeHolder: '',
-                    fieldName: 'name',
-                  } as FieldMetadata,
-                },
-                hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                recordId: '',
-                isLabelIdentifier: true,
-              }}
-            >
-              <RecordInlineCellEditMode>
-                <TextAreaInput
-                  autoFocus
-                  value={newRecordName}
-                  onEnter={(recordName) => handleCreate(recordName)}
-                  onEscape={() => {
-                    setNewRecordName('');
-                    onCreateSuccess?.();
-                  }}
-                  onClickOutside={(_, inputValue) => {
-                    if (inputValue.trim() === '') {
-                      onCreateSuccess?.();
-                    } else {
-                      handleCreate(inputValue);
-                    }
-                  }}
-                  onChange={setNewRecordName}
-                  placeholder="Label identifier"
-                  hotkeyScope={InlineCellHotkeyScope.InlineCell}
-                  copyButton={false}
-                />
-              </RecordInlineCellEditMode>
-            </FieldContext.Provider>
+          {isCreating && position !== undefined ? (
+            <RecordInlineCellEditMode>
+              <TextInput
+                autoFocus
+                value={newRecordName}
+                onInputEnter={() =>
+                  handleInputEnter(newRecordName, position, onCreateSuccess)
+                }
+                onBlur={() =>
+                  handleBlur(newRecordName, position, onCreateSuccess)
+                }
+                onChange={(text: string) => setNewRecordName(text)}
+                placeholder="Label identifier"
+              />
+            </RecordInlineCellEditMode>
           ) : (
             <RecordIdentifierChip
               objectNameSingular={objectMetadataItem.nameSingular}

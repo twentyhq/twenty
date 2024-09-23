@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
+import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
@@ -17,9 +17,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import styled from '@emotion/styled';
 import { useCallback, useContext, useState } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IconPlus, isDefined } from 'twenty-ui';
-import { v4 as uuidv4 } from 'uuid';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   width: 100%;
@@ -57,33 +56,20 @@ export const RecordIndexPageKanbanAddButton = () => {
       objectNamePlural,
     });
 
-  const handleItemClick = useRecoilCallback(
-    ({ set }) =>
-      (columnDefinition: RecordBoardColumnDefinition) => {
-        if (isOpportunity) {
-          setIsSelectingCompany(true);
-          setSelectedColumnDefinition(columnDefinition);
-          setHotkeyScopeAndMemorizePreviousScope(
-            RelationPickerHotkeyScope.RelationPicker,
-          );
-        } else {
-          set(
-            recordBoardNewRecordByColumnIdSelector({
-              familyKey: columnDefinition.id,
-              scopeId: columnDefinition.id,
-            }),
-            {
-              id: uuidv4(),
-              columnId: columnDefinition.id,
-              isCreating: true,
-              position: 'first',
-            },
-          );
-          closeDropdown();
-        }
-      },
-    [isOpportunity, setHotkeyScopeAndMemorizePreviousScope, closeDropdown],
-  );
+  const { handleAddNewCardClick } = useAddNewCard();
+
+  const handleItemClick = (columnDefinition: RecordBoardColumnDefinition) => {
+    if (isOpportunity) {
+      setIsSelectingCompany(true);
+      setSelectedColumnDefinition(columnDefinition);
+      setHotkeyScopeAndMemorizePreviousScope(
+        RelationPickerHotkeyScope.RelationPicker,
+      );
+    } else {
+      handleAddNewCardClick('', 'first', columnDefinition.id);
+      closeDropdown();
+    }
+  };
 
   const handleEntitySelect = useCallback(
     (company?: EntityForSelect) => {

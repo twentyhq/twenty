@@ -15,7 +15,7 @@ export const recordBoardNewRecordByColumnIdSelector =
             familyKey,
             scopeId,
           }),
-        );
+        ) as NewCard;
       },
     set:
       ({ familyKey, scopeId }: { familyKey: string; scopeId: string }) =>
@@ -25,7 +25,7 @@ export const recordBoardNewRecordByColumnIdSelector =
             familyKey,
             scopeId,
           }),
-          newValue,
+          newValue as NewCard,
         );
       },
   });
