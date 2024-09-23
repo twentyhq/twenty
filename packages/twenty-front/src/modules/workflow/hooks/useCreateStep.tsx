@@ -66,9 +66,7 @@ export const useCreateStep = ({
     }
 
     await createNewWorkflowVersion({
-      name: workflow.currentVersion.name.startsWith('v')
-        ? `v${Number(workflow.currentVersion.name.slice(1)) + 1}`
-        : 'v1',
+      name: `v${workflow.versions.length + 1}`,
       status: 'DRAFT',
       trigger: workflow.currentVersion.trigger,
       steps: updatedSteps,
