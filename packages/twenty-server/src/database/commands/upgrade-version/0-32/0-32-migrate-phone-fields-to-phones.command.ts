@@ -1,9 +1,10 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
+import { isDefined, isEmpty } from 'class-validator';
 import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
 import { Command } from 'nest-commander';
-import { QueryRunner, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -11,7 +12,6 @@ import {
 } from 'src/database/commands/active-workspaces.command';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataDefaultValuePhones } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
@@ -20,6 +20,7 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -40,6 +41,8 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectDataSource('metadata')
+    private readonly metadataDataSource: DataSource,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly typeORMService: TypeORMService,
@@ -51,7 +54,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
 
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    options: MigratePhoneFieldsToPhonesCommandOptions,
+    _options: MigratePhoneFieldsToPhonesCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
@@ -79,11 +82,31 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
             `Could not connect to dataSource for workspace ${workspaceId}`,
           );
         }
-        const phoneFieldWithTextType =
+        const standardPersonPhoneFieldWithTextType =
           await this.fieldMetadataRepository.findOneBy({
             workspaceId,
             standardId: PERSON_STANDARD_FIELD_IDS.phone,
           });
+
+        if (!standardPersonPhoneFieldWithTextType) {
+          throw new Error(
+            `Could not find standard phone field on person for workspace ${workspaceId}`,
+          );
+        }
+
+        const standardPersonPhonesFieldType =
+          await this.fieldMetadataRepository.findOneBy({
+            workspaceId,
+            standardId: PERSON_STANDARD_FIELD_IDS.phones,
+          });
+
+        if (!isDefined(standardPersonPhonesFieldType)) {
+          await this.migrateStandardPersonPhoneField({
+            standardPersonPhoneField: standardPersonPhoneFieldWithTextType,
+            workspaceDataSource,
+            workspaceSchemaName: dataSourceMetadata.schema,
+          });
+        }
 
         const fieldsWithPhoneType = await this.fieldMetadataRepository.find({
           where: {
@@ -92,203 +115,17 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           },
         });
 
-        const fieldsWithPhoneData = [
-          ...fieldsWithPhoneType,
-          phoneFieldWithTextType,
-        ];
-
-        for (const fieldWithPhoneData of fieldsWithPhoneData) {
-          if (!fieldWithPhoneData) return;
-          const objectMetadata = await this.objectMetadataRepository.findOne({
-            where: { id: fieldWithPhoneData.objectMetadataId },
+        for (const deprecatedPhoneField of fieldsWithPhoneType) {
+          this.migrateCustomPhoneField({
+            phoneField: deprecatedPhoneField,
+            workspaceDataSource,
+            workspaceSchemaName: dataSourceMetadata.schema,
           });
-
-          if (!objectMetadata) {
-            throw new Error(
-              `Could not find objectMetadata for field ${fieldWithPhoneData.name}`,
-            );
-          }
-          this.logger.log(
-            `Attempting to migrate field ${fieldWithPhoneData.name} on ${objectMetadata.nameSingular}.`,
-          );
-          const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
-
-          await workspaceQueryRunner.connect();
-          const fieldName = fieldWithPhoneData.name;
-          const { id: _id, ...fieldWithPhoneDataWithoutId } =
-            fieldWithPhoneData;
-          const phoneDefaultValue = fieldWithPhoneDataWithoutId.defaultValue;
-          let parsedPhoneDefaultValue: PhoneNumber | null = null;
-          let defaultValueForPhonesField: FieldMetadataDefaultValuePhones | null =
-            null;
-
-          if (phoneDefaultValue) {
-            try {
-              parsedPhoneDefaultValue = parsePhoneNumber(
-                phoneDefaultValue as string,
-              );
-              defaultValueForPhonesField = {
-                primaryPhoneCountryCode: `+${parsedPhoneDefaultValue.countryCallingCode}`,
-                primaryPhoneNumber: parsedPhoneDefaultValue.nationalNumber,
-                additionalPhones: null,
-              };
-            } catch (error) {
-              this.logger.log('Falied to parse phone number');
-            }
-          }
-
-          try {
-            const tmpNewPhonesField = await this.fieldMetadataService.createOne(
-              {
-                ...fieldWithPhoneDataWithoutId,
-                type: FieldMetadataType.PHONES,
-                defaultValue: defaultValueForPhonesField,
-                name: `${fieldName}Tmp`,
-              } satisfies CreateFieldInput,
-            );
-
-            const tableName = computeTableName(
-              objectMetadata.nameSingular,
-              objectMetadata.isCustom,
-            );
-
-            // Migrate phone data from Phone|Text type to Phones type
-            await this.migratePhoneData({
-              phoneFieldName: fieldWithPhoneData.name,
-              tableName,
-              workspaceQueryRunner,
-              dataSourceMetadata,
-            });
-
-            // Duplicate phone field's views behaviour for new phones field
-            await this.viewService.removeFieldFromViews({
-              workspaceId: workspaceId,
-              fieldId: tmpNewPhonesField.id,
-            });
-            const viewFieldRepository =
-              await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
-                workspaceId,
-                'viewField',
-              );
-            const viewFieldsWithDeprecatedField =
-              await viewFieldRepository.find({
-                where: {
-                  fieldMetadataId: fieldWithPhoneData.id,
-                  isVisible: true,
-                },
-              });
-
-            await this.viewService.addFieldToViews({
-              workspaceId: workspaceId,
-              fieldId: tmpNewPhonesField.id,
-              viewsIds: viewFieldsWithDeprecatedField
-                .filter((viewField) => viewField.viewId !== null)
-                .map((viewField) => viewField.viewId as string),
-              positions: viewFieldsWithDeprecatedField.reduce(
-                (acc, viewField) => {
-                  if (!viewField.viewId) {
-                    return acc;
-                  }
-                  acc[viewField.viewId] = viewField.position;
-
-                  return acc;
-                },
-                [],
-              ),
-            });
-            // Delete phone field
-            await this.fieldMetadataService.deleteOneField(
-              { id: fieldWithPhoneData.id },
-              workspaceId,
-            );
-            // Rename temporary phones field
-            await this.fieldMetadataService.updateOne(tmpNewPhonesField.id, {
-              id: tmpNewPhonesField.id,
-              workspaceId: tmpNewPhonesField.workspaceId,
-              name: `${fieldName}`,
-              isCustom: tmpNewPhonesField.isCustom,
-            });
-            this.logger.log(
-              `Migration of ${fieldWithPhoneData.name} on ${objectMetadata.nameSingular} done!`,
-            );
-          } catch (error) {
-            this.logger.log(
-              `Failed to migrate field ${fieldWithPhoneData.name} on ${objectMetadata.nameSingular}, rolling back.`,
-            );
-            // Re-create initial field if it was deleted
-            const initialField =
-              await this.fieldMetadataService.findOneWithinWorkspace(
-                workspaceId,
-                {
-                  where: {
-                    name: `${fieldWithPhoneData.name}`,
-                    objectMetadataId: fieldWithPhoneData.objectMetadataId,
-                  },
-                },
-              );
-            const tmpNewPhonesField =
-              await this.fieldMetadataService.findOneWithinWorkspace(
-                workspaceId,
-                {
-                  where: {
-                    name: `${fieldWithPhoneData.name}Tmp`,
-                    objectMetadataId: fieldWithPhoneData.objectMetadataId,
-                  },
-                },
-              );
-
-            if (!initialField) {
-              this.logger.log(
-                `Re-creating initial Phone field ${fieldWithPhoneData.name} but of type phones`, // Cannot create phone fields anymore
-              );
-              const restoredField = await this.fieldMetadataService.createOne({
-                ...fieldWithPhoneData,
-                defaultValue: defaultValueForPhonesField,
-                type: FieldMetadataType.PHONES,
-              });
-              const tableName = computeTableName(
-                objectMetadata.nameSingular,
-                objectMetadata.isCustom,
-              );
-
-              if (tmpNewPhonesField) {
-                this.logger.log(
-                  `Restoring data in field ${fieldWithPhoneData.name}`,
-                );
-                await this.migrateDataWithinTable({
-                  sourceColumnName: `${tmpNewPhonesField.name}PrimaryPhoneNumber`,
-                  targetColumnName: `${restoredField.name}PrimaryPhoneNumber`,
-                  tableName,
-                  workspaceQueryRunner,
-                  dataSourceMetadata,
-                });
-                await this.migrateDataWithinTable({
-                  sourceColumnName: `${tmpNewPhonesField.name}PrimaryCountryCode`,
-                  targetColumnName: `${restoredField.name}PrimaryCountryCode`,
-                  tableName,
-                  workspaceQueryRunner,
-                  dataSourceMetadata,
-                });
-              } else {
-                this.logger.log(
-                  `Failed to restore data in link field ${fieldWithPhoneData.name}`,
-                );
-              }
-            }
-            if (tmpNewPhonesField) {
-              await this.fieldMetadataService.deleteOneField(
-                { id: tmpNewPhonesField.id },
-                workspaceId,
-              );
-            }
-          } finally {
-            await workspaceQueryRunner.release();
-          }
         }
       } catch (error) {
         this.logger.log(
           chalk.red(
-            `Running command on workspace ${workspaceId} failed with error: ${error}`,
+            `Field migration on workspace ${workspaceId} failed with error: ${error}`,
           ),
         );
         continue;
@@ -297,45 +134,201 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     }
   }
 
-  private async getPhoneRecords({
-    phoneFieldName,
-    tableName,
-    workspaceQueryRunner,
-    dataSourceMetadata,
+  private async migrateStandardPersonPhoneField({
+    standardPersonPhoneField,
+    workspaceDataSource,
+    workspaceSchemaName,
   }: {
-    phoneFieldName: string;
-    tableName: string;
-    workspaceQueryRunner: QueryRunner;
-    dataSourceMetadata: DataSourceEntity;
+    standardPersonPhoneField: FieldMetadataEntity;
+    workspaceDataSource: DataSource;
+    workspaceSchemaName: string;
   }) {
-    return await workspaceQueryRunner.query(
-      `SELECT id,"${phoneFieldName}" FROM "${dataSourceMetadata.schema}"."${tableName}" WHERE 
-      "${phoneFieldName}" IS NOT null`,
-    );
-  }
-
-  private async migratePhoneData({
-    phoneFieldName,
-    tableName,
-    workspaceQueryRunner,
-    dataSourceMetadata,
-  }: {
-    phoneFieldName: string;
-    tableName: string;
-    workspaceQueryRunner: QueryRunner;
-    dataSourceMetadata: DataSourceEntity;
-  }) {
-    const phoneRecords = await this.getPhoneRecords({
-      phoneFieldName,
-      tableName,
-      workspaceQueryRunner,
-      dataSourceMetadata,
+    const personObjectMetadata = await this.objectMetadataRepository.findOne({
+      where: { id: standardPersonPhoneField.objectMetadataId },
     });
 
-    for (const record of phoneRecords) {
-      const phoneColumnValue = record[phoneFieldName];
+    if (!personObjectMetadata) {
+      throw new Error(
+        `Could not find Person objectMetadata (id ${standardPersonPhoneField.objectMetadataId})`,
+      );
+    }
 
-      const query = `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${phoneFieldName}TmpPrimaryPhoneCountryCode" = $1,"${phoneFieldName}TmpPrimaryPhoneNumber" = $2 where "id"=$3`;
+    this.logger.log(`Attempting to migrate standard person phone field.`);
+    const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
+
+    await workspaceQueryRunner.connect();
+    const { id: _id, ...deprecatedPhoneFieldWithoutId } =
+      standardPersonPhoneField;
+    const phoneDefaultValue = deprecatedPhoneFieldWithoutId.defaultValue;
+    let parsedPhoneDefaultValue: PhoneNumber | null = null;
+    let defaultValueForPhonesField: FieldMetadataDefaultValuePhones | null =
+      null;
+
+    if (isDefined(phoneDefaultValue) && !isEmpty(phoneDefaultValue)) {
+      try {
+        parsedPhoneDefaultValue = parsePhoneNumber(phoneDefaultValue as string);
+        defaultValueForPhonesField = {
+          primaryPhoneCountryCode: `+${parsedPhoneDefaultValue.countryCallingCode}`,
+          primaryPhoneNumber: parsedPhoneDefaultValue.nationalNumber,
+          additionalPhones: null,
+        };
+      } catch (error) {
+        this.logger.log(
+          `Failed to parse phone number (${phoneDefaultValue}) for default value. Setting default value to null.`,
+        );
+      }
+    }
+
+    const workspaceId = standardPersonPhoneField.workspaceId;
+
+    try {
+      const newPhonesField = await this.fieldMetadataService.createOne({
+        ...deprecatedPhoneFieldWithoutId,
+        type: FieldMetadataType.PHONES,
+        defaultValue: defaultValueForPhonesField,
+        name: 'phones',
+      } satisfies CreateFieldInput);
+
+      // Copy phone data from Text type to Phones type
+      await this.copyAndParseDeprecatedPhoneFieldDataIntoNewPhonesField({
+        workspaceQueryRunner,
+        workspaceSchemaName,
+      });
+
+      // Add new phones field to views and hide deprecated phone field
+      const viewFieldRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
+          workspaceId,
+          'viewField',
+        );
+      const viewFieldsWithDeprecatedPhoneField = await viewFieldRepository.find(
+        {
+          where: {
+            fieldMetadataId: standardPersonPhoneField.id,
+            isVisible: true,
+          },
+        },
+      );
+
+      await this.viewService.addFieldToViews({
+        workspaceId: workspaceId,
+        fieldId: newPhonesField.id,
+        viewsIds: viewFieldsWithDeprecatedPhoneField
+          .filter((viewField) => viewField.viewId !== null)
+          .map((viewField) => viewField.viewId as string),
+        positions: viewFieldsWithDeprecatedPhoneField.reduce(
+          (acc, viewField) => {
+            if (!viewField.viewId) {
+              return acc;
+            }
+            acc[viewField.viewId] = viewField.position;
+
+            return acc;
+          },
+          [],
+        ),
+      });
+
+      await this.viewService.removeFieldFromViews({
+        workspaceId: workspaceId,
+        fieldId: standardPersonPhoneField.id,
+      });
+
+      this.logger.log(
+        `Migration of standard person phone field to phones is done!`,
+      );
+    } catch (error) {
+      this.logger.log(
+        chalk.red(
+          `Failed to migrate field standard person phone field to phones, rolling back.`,
+        ),
+      );
+
+      // Delete new phones field if it was created
+      const newPhonesField =
+        await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+          where: {
+            name: 'phones',
+            objectMetadataId: standardPersonPhoneField.objectMetadataId,
+          },
+        });
+
+      if (newPhonesField) {
+        this.logger.log(
+          `Deleting phones field of type Phone as part of rolling back.`,
+        );
+        this.fieldMetadataService.deleteOneField(
+          { id: newPhonesField.id },
+          workspaceId,
+        );
+      }
+    } finally {
+      await workspaceQueryRunner.release();
+    }
+  }
+
+  private async migrateCustomPhoneField({
+    phoneField,
+    workspaceDataSource,
+    workspaceSchemaName,
+  }: {
+    phoneField: FieldMetadataEntity;
+    workspaceDataSource: DataSource;
+    workspaceSchemaName: string;
+  }) {
+    if (!phoneField) return;
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: { id: phoneField.objectMetadataId },
+    });
+
+    if (!objectMetadata) {
+      throw new Error(
+        `Could not find objectMetadata for field ${phoneField.name}`,
+      );
+    }
+    this.logger.log(
+      `Attempting to migrate field ${phoneField.name} on ${objectMetadata.nameSingular} from Phone to Text.`,
+    );
+    const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
+
+    await workspaceQueryRunner.connect();
+
+    try {
+      await this.metadataDataSource.query(
+        `UPDATE "metadata"."fieldMetadata" SET "type" = $1 where "id"=$2`,
+        [FieldMetadataType.TEXT, phoneField.id],
+      );
+
+      await workspaceQueryRunner.query(
+        `ALTER TABLE "${workspaceSchemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" ALTER COLUMN "${computeColumnName(phoneField.name)}" TYPE TEXT`,
+      );
+    } catch (error) {
+      this.logger.log(
+        chalk.red(
+          `Failed to migrate field ${phoneField.name} on ${objectMetadata.nameSingular} from Phone to Text.`,
+        ),
+      );
+    } finally {
+      workspaceQueryRunner.release();
+    }
+  }
+
+  private async copyAndParseDeprecatedPhoneFieldDataIntoNewPhonesField({
+    workspaceQueryRunner,
+    workspaceSchemaName,
+  }: {
+    workspaceQueryRunner: QueryRunner;
+    workspaceSchemaName: string;
+  }) {
+    const deprecatedPhoneFieldRows = await workspaceQueryRunner.query(
+      `SELECT id, phone FROM "${workspaceSchemaName}"."person" WHERE 
+      phone IS NOT null`,
+    );
+
+    for (const row of deprecatedPhoneFieldRows) {
+      const phoneColumnValue = row['phone'];
+
+      const query = `UPDATE "${workspaceSchemaName}"."person" SET "phonesPrimaryPhoneCountryCode" = $1,"phonePrimaryPhoneNumber" = $2 where "id"=$3`;
 
       try {
         const parsedPhoneColumnValue = parsePhoneNumber(phoneColumnValue);
@@ -343,35 +336,17 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         await workspaceQueryRunner.query(query, [
           `+${parsedPhoneColumnValue.countryCallingCode}`,
           parsedPhoneColumnValue.nationalNumber,
-          record.id,
+          row.id,
         ]);
       } catch (error) {
+        this.logger.log(
+          chalk.red(
+            `Could not save phone number ${phoneColumnValue}, will try again storing value as is without parsing, with default country code.`,
+          ),
+        );
         // Store the invalid string for invalid phone numbers
-
-        await workspaceQueryRunner.query(query, [
-          '',
-          phoneColumnValue,
-          record.id,
-        ]);
+        await workspaceQueryRunner.query(query, ['', phoneColumnValue, row.id]);
       }
     }
-  }
-
-  private async migrateDataWithinTable({
-    sourceColumnName,
-    targetColumnName,
-    tableName,
-    workspaceQueryRunner,
-    dataSourceMetadata,
-  }: {
-    sourceColumnName: string;
-    targetColumnName: string;
-    tableName: string;
-    workspaceQueryRunner: QueryRunner;
-    dataSourceMetadata: DataSourceEntity;
-  }) {
-    await workspaceQueryRunner.query(
-      `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${targetColumnName}" = "${sourceColumnName}"`,
-    );
   }
 }
