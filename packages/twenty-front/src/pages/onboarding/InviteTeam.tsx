@@ -1,3 +1,6 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback } from 'react';
 import {
   Controller,
@@ -5,9 +8,6 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconCopy } from 'twenty-ui';
@@ -101,15 +101,15 @@ export const InviteTeam = () => {
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
-      return 'tim@apple.dev';
+      return 'tim@apple.com';
     }
     if (emailIndex === 1) {
-      return 'craig@apple.dev';
+      return 'phil@apple.com';
     }
     if (emailIndex === 2) {
-      return 'mike@apple.dev';
+      return 'jony@apple.com';
     }
-    return 'phil@apple.dev';
+    return 'craig@apple.com';
   };
 
   const copyInviteLink = () => {

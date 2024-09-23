@@ -2,9 +2,9 @@ import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinit
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
-type RecordBoardScopeInternalContextProps = ComponentStateKey & {
+type RecordBoardScopeInternalContextProps = RecoilComponentStateKey & {
   onFieldsChange: (fields: FieldDefinition<FieldMetadata>[]) => void;
   onColumnsChange: (column: RecordGroupDefinition[]) => void;
 };

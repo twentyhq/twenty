@@ -12,6 +12,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { SentryModule } from '@sentry/nestjs/setup';
 
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
@@ -26,8 +27,10 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
+
 @Module({
   imports: [
+    SentryModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
