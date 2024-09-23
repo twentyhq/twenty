@@ -44,6 +44,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         in: accounts.map((account) => account.id),
       },
     },
+    skip: !accounts.length,
   });
 
   const tabs = [
