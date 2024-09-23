@@ -34,11 +34,11 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
+  @Process(MessagingMessageChannelSyncStatusMonitoringCronJob.name)
   @SentryCronMonitor(
     MessagingMessageChannelSyncStatusMonitoringCronJob.name,
     MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN,
   )
-  @Process(MessagingMessageChannelSyncStatusMonitoringCronJob.name)
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');
 
