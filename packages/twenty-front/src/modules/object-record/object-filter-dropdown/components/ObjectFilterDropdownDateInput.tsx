@@ -44,12 +44,6 @@ export const ObjectFilterDropdownDateInput = () => {
     initialFilterValue instanceof Date ? initialFilterValue : new Date(),
   );
 
-  const [relativeDate, setRelativeDate] = useState<{
-    direction: VariableDateViewFilterValueDirection;
-    amount: number;
-    unit: VariableDateViewFilterValueUnit;
-  } | null>(initialFilterValue instanceof Date ? null : initialFilterValue);
-
   const isDateTimeInput =
     filterDefinitionUsedInDropdown?.type === FieldMetadataType.DateTime;
 
@@ -82,8 +76,6 @@ export const ObjectFilterDropdownDateInput = () => {
       unit: VariableDateViewFilterValueUnit;
     } | null,
   ) => {
-    setRelativeDate(relativeDate);
-
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     const value = relativeDate
