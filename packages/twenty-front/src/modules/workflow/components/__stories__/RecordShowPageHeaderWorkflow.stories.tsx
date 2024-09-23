@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { graphql, HttpResponse } from 'msw';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { Calendar } from '@/activities/calendar/components/Calendar';
 import { RecordShowPageHeaderWorkflow } from '@/workflow/components/RecordShowPageHeaderWorkflow';
 import { expect, within } from '@storybook/test';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -20,15 +19,17 @@ const meta: Meta<typeof RecordShowPageHeaderWorkflow> = {
   parameters: {
     container: { width: 728 },
   },
-  args: {
-    workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
-  },
 };
 
 export default meta;
-type Story = StoryObj<typeof Calendar>;
+type Story = StoryObj<typeof RecordShowPageHeaderWorkflow>;
+
+const blankInitialVersionWorkflowId = '78fd5184-08f4-47b7-bb60-adb541608f65';
 
 export const BlankInitialVersion: Story = {
+  args: {
+    workflowId: blankInitialVersionWorkflowId,
+  },
   parameters: {
     msw: {
       handlers: [
@@ -54,7 +55,7 @@ export const BlankInitialVersion: Story = {
                       'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
                     node: {
                       __typename: 'Workflow',
-                      id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                      id: blankInitialVersionWorkflowId,
                     },
                   },
                 ],
@@ -67,7 +68,7 @@ export const BlankInitialVersion: Story = {
             data: {
               workflow: {
                 __typename: 'Workflow',
-                id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                id: blankInitialVersionWorkflowId,
                 name: '1231 qqerrt',
                 statuses: null,
                 lastPublishedVersionId: '',
@@ -102,7 +103,7 @@ export const BlankInitialVersion: Story = {
                         id: 'f618843a-26be-4a54-a60f-f4ce88a594f0',
                         trigger: null,
                         deletedAt: null,
-                        workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                        workflowId: blankInitialVersionWorkflowId,
                       },
                     },
                   ],
@@ -141,7 +142,7 @@ export const BlankInitialVersion: Story = {
                       id: 'f618843a-26be-4a54-a60f-f4ce88a594f0',
                       trigger: null,
                       deletedAt: null,
-                      workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                      workflowId: blankInitialVersionWorkflowId,
                     },
                   },
                 ],
@@ -162,7 +163,12 @@ export const BlankInitialVersion: Story = {
   },
 };
 
+const activeVersionWorkflowId = 'ca177fb1-7780-4911-8b1f-ef0a245fbd61';
+
 export const ActiveVersion: Story = {
+  args: {
+    workflowId: activeVersionWorkflowId,
+  },
   parameters: {
     msw: {
       handlers: [
@@ -188,7 +194,7 @@ export const ActiveVersion: Story = {
                       'eyJwb3NpdGlvbiI6LTEsImlkIjoiN2JlM2E4MmMtNDRiNy00MTUwLWEyZTgtNDA4ODcxNDZmNGQ0In0=',
                     node: {
                       __typename: 'Workflow',
-                      id: '7be3a82c-44b7-4150-a2e8-40887146f4d4',
+                      id: activeVersionWorkflowId,
                     },
                   },
                 ],
@@ -203,7 +209,7 @@ export const ActiveVersion: Story = {
                 __typename: 'Workflow',
                 name: 'test qqqq',
                 lastPublishedVersionId: 'b57e577a-ae55-4de2-ba08-fe361dcc1a57',
-                id: '7be3a82c-44b7-4150-a2e8-40887146f4d4',
+                id: activeVersionWorkflowId,
                 deletedAt: null,
                 statuses: null,
                 createdAt: '2024-09-20T10:18:59.977Z',
@@ -250,7 +256,7 @@ export const ActiveVersion: Story = {
                             },
                           },
                         ],
-                        workflowId: '7be3a82c-44b7-4150-a2e8-40887146f4d4',
+                        workflowId: activeVersionWorkflowId,
                         trigger: {
                           type: 'DATABASE_EVENT',
                           settings: {
@@ -322,7 +328,7 @@ export const ActiveVersion: Story = {
                             },
                           },
                         ],
-                        workflowId: '7be3a82c-44b7-4150-a2e8-40887146f4d4',
+                        workflowId: activeVersionWorkflowId,
                         trigger: {
                           type: 'DATABASE_EVENT',
                           settings: {
@@ -377,7 +383,7 @@ export const ActiveVersion: Story = {
                             },
                           },
                         ],
-                        workflowId: '7be3a82c-44b7-4150-a2e8-40887146f4d4',
+                        workflowId: activeVersionWorkflowId,
                         trigger: {
                           type: 'DATABASE_EVENT',
                           settings: {
@@ -473,7 +479,7 @@ export const ActiveVersion: Story = {
                           },
                         },
                       ],
-                      workflowId: '7be3a82c-44b7-4150-a2e8-40887146f4d4',
+                      workflowId: activeVersionWorkflowId,
                       trigger: {
                         type: 'DATABASE_EVENT',
                         settings: {
@@ -502,7 +508,13 @@ export const ActiveVersion: Story = {
   },
 };
 
+const draftVersionWithPreviousActiveVersionWorkflowId =
+  '89c00f14-4ebd-4675-a098-cdf59eee372b';
+
 export const DraftVersionWithPreviousActiveVersion: Story = {
+  args: {
+    workflowId: draftVersionWithPreviousActiveVersionWorkflowId,
+  },
   parameters: {
     msw: {
       handlers: [
@@ -528,7 +540,7 @@ export const DraftVersionWithPreviousActiveVersion: Story = {
                       'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
                     node: {
                       __typename: 'Workflow',
-                      id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                      id: draftVersionWithPreviousActiveVersionWorkflowId,
                     },
                   },
                 ],
@@ -541,7 +553,7 @@ export const DraftVersionWithPreviousActiveVersion: Story = {
             data: {
               workflow: {
                 __typename: 'Workflow',
-                id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                id: draftVersionWithPreviousActiveVersionWorkflowId,
                 name: '1231 qqerrt',
                 statuses: null,
                 lastPublishedVersionId: '',
@@ -576,7 +588,8 @@ export const DraftVersionWithPreviousActiveVersion: Story = {
                         id: 'f618843a-26be-4a54-a60f-f4ce88a594f0',
                         trigger: null,
                         deletedAt: null,
-                        workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                        workflowId:
+                          draftVersionWithPreviousActiveVersionWorkflowId,
                       },
                     },
                     {
@@ -591,7 +604,8 @@ export const DraftVersionWithPreviousActiveVersion: Story = {
                         id: 'f618843a-26be-4a54-a60f-f4ce88a594f1',
                         trigger: null,
                         deletedAt: null,
-                        workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                        workflowId:
+                          draftVersionWithPreviousActiveVersionWorkflowId,
                       },
                     },
                   ],
@@ -630,7 +644,8 @@ export const DraftVersionWithPreviousActiveVersion: Story = {
                       id: 'f618843a-26be-4a54-a60f-f4ce88a594f1',
                       trigger: null,
                       deletedAt: null,
-                      workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                      workflowId:
+                        draftVersionWithPreviousActiveVersionWorkflowId,
                     },
                   },
                 ],
