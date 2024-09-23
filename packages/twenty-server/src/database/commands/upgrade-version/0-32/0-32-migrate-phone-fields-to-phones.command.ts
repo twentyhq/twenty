@@ -2,7 +2,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { isDefined, isEmpty } from 'class-validator';
-import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
+import { parsePhoneNumber } from 'libphonenumber-js';
 import { Command } from 'nest-commander';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 
@@ -14,7 +14,6 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataDefaultValuePhones } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -161,33 +160,12 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         });
 
       if (!standardPersonPhonesFieldType) {
-        const phoneDefaultValue = deprecatedPhoneFieldWithoutId.defaultValue;
-        let parsedPhoneDefaultValue: PhoneNumber | null = null;
-        let defaultValueForPhonesField: FieldMetadataDefaultValuePhones | null =
-          null;
-
-        if (isDefined(phoneDefaultValue) && !isEmpty(phoneDefaultValue)) {
-          try {
-            parsedPhoneDefaultValue = parsePhoneNumber(
-              phoneDefaultValue as string,
-            );
-            defaultValueForPhonesField = {
-              primaryPhoneCountryCode: `+${parsedPhoneDefaultValue.countryCallingCode}`,
-              primaryPhoneNumber: parsedPhoneDefaultValue.nationalNumber,
-              additionalPhones: null,
-            };
-          } catch (error) {
-            this.logger.log(
-              `Failed to parse phone number (${phoneDefaultValue}) for default value. Setting default value to null.`,
-            );
-          }
-        }
-
+        
         standardPersonPhonesFieldType =
           await this.fieldMetadataService.createOne({
             ...deprecatedPhoneFieldWithoutId,
             type: FieldMetadataType.PHONES,
-            defaultValue: defaultValueForPhonesField,
+            defaultValue: null,
             name: 'phones',
           } satisfies CreateFieldInput);
       }
