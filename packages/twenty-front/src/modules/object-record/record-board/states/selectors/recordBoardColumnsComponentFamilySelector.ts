@@ -4,16 +4,13 @@ import { isFirstRecordBoardColumnComponentFamilyState } from '@/object-record/re
 import { isLastRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isLastRecordBoardColumnComponentFamilyState';
 import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
 import { recordBoardColumnsComponentFamilyState } from '@/object-record/record-board/states/recordBoardColumnsComponentFamilyState';
-import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { guardRecoilDefaultValue } from '@/ui/utilities/recoil-scope/utils/guardRecoilDefaultValue';
 import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
 import { isDefined } from '~/utils/isDefined';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 export const recordBoardColumnsComponentFamilySelector =
-  createComponentFamilySelector<
-    RecordBoardColumnDefinition | undefined,
-    string
-  >({
+  createComponentFamilySelector<RecordGroupDefinition | undefined, string>({
     key: 'recordBoardColumnsComponentFamilySelector',
     get:
       ({

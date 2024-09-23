@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useRecordIndexPageKanbanAddButton } from '@/object-record/record-index/hooks/useRecordIndexPageKanbanAddButton';
@@ -31,7 +31,7 @@ export const RecordIndexPageKanbanAddButton = () => {
   const dropdownId = `record-index-page-add-button-dropdown`;
   const [isSelectingCompany, setIsSelectingCompany] = useState(false);
   const [selectedColumnDefinition, setSelectedColumnDefinition] =
-    useState<RecordBoardColumnDefinition>();
+    useState<RecordGroupDefinition>();
 
   const { recordIndexId, objectNamePlural } = useContext(
     RecordIndexRootPropsContext,
@@ -60,7 +60,7 @@ export const RecordIndexPageKanbanAddButton = () => {
   });
 
   const handleItemClick = useCallback(
-    (columnDefinition: RecordBoardColumnDefinition) => {
+    (columnDefinition: RecordGroupDefinition) => {
       if (isOpportunity) {
         setIsSelectingCompany(true);
         setSelectedColumnDefinition(columnDefinition);

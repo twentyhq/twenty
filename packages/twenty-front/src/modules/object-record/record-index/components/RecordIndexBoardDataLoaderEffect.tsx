@@ -1,19 +1,16 @@
-import { useCallback, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
-import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { useGroupDefinitionsFromViewGroups } from '@/object-record/record-group/hooks/useGroupDefinitionsFromViewGroups';
 
 type RecordIndexBoardDataLoaderEffectProps = {
   objectNameSingular: string;
@@ -42,6 +39,11 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
 
+  const { groupDefinitions } = useGroupDefinitionsFromViewGroups({
+    viewBarComponentId: recordBoardId,
+    objectMetadataItem,
+  });
+
   const setIsCompactModeActive = useSetRecoilState(isCompactModeActiveState);
 
   useEffect(() => {
@@ -60,23 +62,6 @@ export const RecordIndexBoardDataLoaderEffect = ({
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
-  );
-
-  const navigateToSelectSettings = useCallback(() => {
-    setNavigationMemorizedUrl(location.pathname + location.search);
-    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
-  }, [
-    navigate,
-    objectMetadataItem,
-    location.pathname,
-    location.search,
-    setNavigationMemorizedUrl,
-  ]);
-
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
   useEffect(() => {
@@ -84,21 +69,8 @@ export const RecordIndexBoardDataLoaderEffect = ({
   }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
-    // TODO: Compute columns from view groups here
-    setColumns(
-      computeRecordBoardColumnDefinitionsFromObjectMetadata(
-        objectMetadataItem,
-        recordIndexKanbanFieldMetadataId ?? '',
-        navigateToSelectSettings,
-      ),
-    );
-  }, [
-    navigateToSelectSettings,
-    objectMetadataItem,
-    objectNameSingular,
-    recordIndexKanbanFieldMetadataId,
-    setColumns,
-  ]);
+    setColumns(groupDefinitions);
+  }, [groupDefinitions, setColumns]);
 
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);

@@ -9,10 +9,10 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
-import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -116,18 +116,18 @@ export const RecordBoardColumnHeader = () => {
             <Tag
               onClick={handleBoardColumnMenuOpen}
               variant={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? 'solid'
                   : 'outline'
               }
               color={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? columnDefinition.color
                   : 'transparent'
               }
               text={columnDefinition.title}
               weight={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? 'regular'
                   : 'medium'
               }

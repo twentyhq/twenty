@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { useRecoilValue } from 'recoil';
@@ -33,7 +33,7 @@ export const useRecordIndexPageKanbanAddButton = ({
 
   const createOpportunity = (
     company: EntityForSelect,
-    columnDefinition: RecordBoardColumnDefinition,
+    columnDefinition: RecordGroupDefinition,
   ) => {
     if (isDefined(selectFieldMetadataItem)) {
       createOneRecord({
@@ -46,7 +46,7 @@ export const useRecordIndexPageKanbanAddButton = ({
   };
 
   const createRecordWithoutCompany = (
-    columnDefinition: RecordBoardColumnDefinition,
+    columnDefinition: RecordGroupDefinition,
   ) => {
     if (isDefined(selectFieldMetadataItem)) {
       createOneRecord({

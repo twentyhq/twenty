@@ -1,6 +1,5 @@
+import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { ThemeColor } from 'twenty-ui';
-
-import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupAction';
 
 export const enum RecordGroupDefinitionType {
   Value = 'value',
@@ -9,7 +8,6 @@ export const enum RecordGroupDefinitionType {
 
 export type RecordGroupDefinitionNoValue = {
   id: 'no-value';
-  fieldMetadataId: string;
   type: RecordGroupDefinitionType.NoValue;
   title: 'No Value';
   position: number;
