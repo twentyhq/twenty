@@ -112,9 +112,9 @@ export const ObjectFilterDropdownDateInput = () => {
 
   return (
     <InternalDatePicker
-      isRelativeToNow={isRelativeOperand}
+      isRelative={isRelativeOperand}
       date={internalDate}
-      relativeDate={relativeDate}
+      relativeDateFilterValue={selectedFilter?.value}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
       onMouseSelect={handleAbsoluteDateChange}

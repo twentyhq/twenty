@@ -12,8 +12,10 @@ import { isDefined } from '~/utils/isDefined';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativePickerHeader';
+import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
+  resolveVariableDateViewFilterValue,
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
@@ -272,13 +274,9 @@ const StyledButton = styled(MenuItemLeftContent)`
 `;
 
 type InternalDatePickerProps = {
-  isRelativeToNow?: boolean;
+  isRelative?: boolean;
   date: Date | null;
-  relativeDate?: {
-    direction: VariableDateViewFilterValueDirection;
-    amount: number;
-    unit: VariableDateViewFilterValueUnit;
-  } | null;
+  relativeDateFilterValue?: string;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
   onRelativeDateChange?: (
@@ -306,9 +304,9 @@ export const InternalDatePicker = ({
   isDateTimeInput,
   keyboardEventsDisabled,
   onClear,
-  isRelativeToNow,
+  isRelative,
   onRelativeDateChange,
-  relativeDate,
+  relativeDateFilterValue,
 }: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
 
@@ -457,18 +455,25 @@ export const InternalDatePicker = ({
 
   const dateToUse = isDateTimeInput ? endOfDayInLocalTimezone : dateWithoutTime;
 
+  const relativeDate = resolveVariableDateViewFilterValue(
+    relativeDateFilterValue,
+  );
+
+  const highlightedDates = relativeDate
+    ? getHighlightedDates(relativeDate.start, relativeDate.end)
+    : undefined;
+
+  const selectedDates = isRelative ? highlightedDates : [dateToUse];
+
   return (
-    <StyledContainer
-      onKeyDown={handleKeyDown}
-      calendarDisabled={isRelativeToNow}
-    >
+    <StyledContainer onKeyDown={handleKeyDown} calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}
-          selected={dateToUse}
+          selectedDates={selectedDates}
           openToDate={isDefined(dateToUse) ? dateToUse : undefined}
           disabledKeyboardNavigation
-          onChange={handleDateChange}
+          onChange={handleDateChange as any}
           customInput={
             <DateTimeInput
               date={internalDate}
@@ -481,7 +486,7 @@ export const InternalDatePicker = ({
             prevMonthButtonDisabled,
             nextMonthButtonDisabled,
           }) =>
-            isRelativeToNow ? (
+            isRelative ? (
               <RelativeDatePickerHeader
                 direction={relativeDate?.direction ?? 'PAST'}
                 amount={relativeDate?.amount ?? 1}
@@ -504,6 +509,7 @@ export const InternalDatePicker = ({
             )
           }
           onSelect={handleDateSelect}
+          selectsMultiple={true}
         />
       </div>
       {clearable && (

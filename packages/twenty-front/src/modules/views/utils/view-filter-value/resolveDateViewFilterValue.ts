@@ -119,8 +119,11 @@ const endOfUnit = (date: Date, unit: VariableDateViewFilterValueUnit) => {
   }
 };
 
-const resolveVariableDateViewFilterValue = (value: string) => {
-  const relativeDate = variableDateViewFilterValueSchema.parse(value);
+const resolveVariableDateViewFilterValueFromRelativeDate = (relativeDate: {
+  direction: VariableDateViewFilterValueDirection;
+  amount: number;
+  unit: VariableDateViewFilterValueUnit;
+}) => {
   const { direction, amount, unit } = relativeDate;
   const now = roundToNearestMinutes(new Date());
 
@@ -144,6 +147,13 @@ const resolveVariableDateViewFilterValue = (value: string) => {
         ...relativeDate,
       };
   }
+};
+
+export const resolveVariableDateViewFilterValue = (value?: string | null) => {
+  if (!value) return null;
+
+  const relativeDate = variableDateViewFilterValueSchema.parse(value);
+  return resolveVariableDateViewFilterValueFromRelativeDate(relativeDate);
 };
 
 export const resolveDateViewFilterValue = (
