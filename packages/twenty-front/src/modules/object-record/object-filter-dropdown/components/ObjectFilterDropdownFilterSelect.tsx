@@ -1,8 +1,5 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
-
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 
 import { ObjectFilterSelectMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectMenu';
 import { ObjectFilterSelectSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectSubMenu';
@@ -10,6 +7,8 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
 import { currentSubMenuState } from '@/object-record/object-filter-dropdown/states/subMenuStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from 'twenty-ui';
 
 export const StyledInput = styled.input`
@@ -41,10 +40,8 @@ export const StyledInput = styled.input`
 export const ObjectFilterDropdownFilterSelect = () => {
   const [searchText, setSearchText] = useState('');
 
-  const { availableFilterDefinitionsState } = useFilterDropdown();
-
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
   );
 
   const currentSubMenu = useRecoilValue(currentSubMenuState);

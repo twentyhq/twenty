@@ -6,15 +6,17 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
     propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
-    if (!Sentry.isInitialized()) {
-      return descriptor;
-    }
-
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
+      if (!Sentry.isInitialized()) {
+        return await originalMethod.apply(this, args);
+      }
+
+      let checkInId: string | undefined;
+
       try {
-        Sentry.captureCheckIn(
+        checkInId = Sentry.captureCheckIn(
           {
             monitorSlug,
             status: 'in_progress',
@@ -25,13 +27,14 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
               value: schedule,
             },
             checkinMargin: 1,
-            maxRuntime: 1,
+            maxRuntime: 5,
             timezone: 'UTC',
           },
         );
         const result = await originalMethod.apply(this, args);
 
         Sentry.captureCheckIn({
+          checkInId,
           monitorSlug,
           status: 'ok',
         });
@@ -39,6 +42,7 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
         return result;
       } catch (error) {
         Sentry.captureCheckIn({
+          checkInId,
           monitorSlug,
           status: 'error',
         });

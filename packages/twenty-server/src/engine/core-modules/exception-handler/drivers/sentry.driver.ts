@@ -1,42 +1,13 @@
 import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 
-import {
-  ExceptionHandlerDriverInterface,
-  ExceptionHandlerSentryDriverFactoryOptions,
-} from 'src/engine/core-modules/exception-handler/interfaces';
-import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 
 export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
 {
-  constructor(options: ExceptionHandlerSentryDriverFactoryOptions['options']) {
-    Sentry.init({
-      environment: options.environment,
-      release: options.release,
-      dsn: options.dsn,
-      integrations: [
-        // TODO: Redis integration doesn't seem to work - investigate why
-        Sentry.redisIntegration({
-          cachePrefixes: Object.values(WorkspaceCacheKeys).map(
-            (key) => `engine:${key}:`,
-          ),
-        }),
-        Sentry.httpIntegration(),
-        Sentry.expressIntegration(),
-        Sentry.graphqlIntegration(),
-        Sentry.postgresIntegration(),
-        nodeProfilingIntegration(),
-      ],
-      tracesSampleRate: 0.1,
-      profilesSampleRate: 0.3,
-      debug: options.debug,
-    });
-  }
-
   captureExceptions(
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,

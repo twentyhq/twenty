@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
-import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarSortEffectProps = {
@@ -14,23 +16,23 @@ type ViewBarSortEffectProps = {
 export const ViewBarSortEffect = ({
   sortDropdownId,
 }: ViewBarSortEffectProps) => {
-  const { availableSortDefinitionsState } = useViewStates();
-  const { upsertCombinedViewSort } = useCombinedViewSorts();
+  const { upsertCombinedViewSort } = useUpsertCombinedViewSorts();
 
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
+  // TDOO: verify this instance id works
+  const availableSortDefinitions = useRecoilComponentValueV2(
+    availableSortDefinitionsComponentState,
   );
 
-  const {
-    availableSortDefinitionsState: availableSortDefinitionsInSortDropdownState,
-    onSortSelectState,
-  } = useSortDropdown({
+  const { onSortSelectState } = useSortDropdown({
     sortDropdownId,
   });
 
-  const setAvailableSortDefinitionsInSortDropdown = useSetRecoilState(
-    availableSortDefinitionsInSortDropdownState,
-  );
+  // TDOO: verify this instance id works
+  const setAvailableSortDefinitionsInSortDropdown =
+    useSetRecoilComponentStateV2(
+      availableSortDefinitionsComponentState,
+      sortDropdownId,
+    );
   const setOnSortSelect = useSetRecoilState(onSortSelectState);
 
   useEffect(() => {

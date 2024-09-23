@@ -118,6 +118,7 @@ export class GraphqlQueryFindManyResolverService {
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
+        objectMetadata.fields,
         isForwardPagination,
       );
 
