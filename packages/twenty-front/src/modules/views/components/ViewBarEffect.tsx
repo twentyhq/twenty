@@ -1,9 +1,11 @@
 import { isUndefined } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useContext, useEffect, useState } from 'react';
 
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { View } from '@/views/types/View';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -14,21 +16,22 @@ type ViewBarEffectProps = {
 export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewBarId);
-  const {
-    onCurrentViewChangeState,
-    availableFilterDefinitionsState,
-    isPersistingViewFieldsState,
-  } = useViewStates(viewBarId);
+
+  const { onCurrentViewChange } = useContext(ViewEventContext);
 
   const [currentViewSnapshot, setCurrentViewSnapshot] = useState<
     View | undefined
   >(undefined);
 
-  const onCurrentViewChange = useRecoilValue(onCurrentViewChangeState);
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+    viewBarId,
   );
-  const isPersistingViewFields = useRecoilValue(isPersistingViewFieldsState);
+
+  const isPersistingViewFields = useRecoilComponentValueV2(
+    isPersistingViewFieldsComponentState,
+    viewBarId,
+  );
 
   useEffect(() => {
     if (

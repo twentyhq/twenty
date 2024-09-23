@@ -1,9 +1,8 @@
-import { useRecoilValue } from 'recoil';
-
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityObjectFilterDropdownButton } from './SingleEntityObjectFilterDropdownButton';
 
@@ -16,12 +15,9 @@ export const ObjectFilterDropdownButton = ({
   filterDropdownId,
   hotkeyScope,
 }: ObjectFilterDropdownButtonProps) => {
-  const { availableFilterDefinitionsState } = useFilterDropdown({
-    filterDropdownId: filterDropdownId,
-  });
-
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+    filterDropdownId,
   );
 
   const hasOnlyOneEntityFilter =

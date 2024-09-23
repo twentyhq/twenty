@@ -1,5 +1,5 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
@@ -44,12 +44,11 @@ export const TextInput = ({
   const copyRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInternalText(event.target.value);
-    onChange?.(event.target.value);
+    setInternalText(event.target.value.trim());
+    onChange?.(event.target.value.trim());
   };
-
   useEffect(() => {
-    setInternalText(value);
+    setInternalText(value.trim());
   }, [value]);
 
   useRegisterInputEvents({

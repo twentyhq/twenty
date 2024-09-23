@@ -1,9 +1,9 @@
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
 import { Sort } from '../../types/Sort';
 
-type ObjectSortDropdownScopeInternalContextProps = ComponentStateKey & {
+type ObjectSortDropdownScopeInternalContextProps = RecoilComponentStateKey & {
   onSortSelect?: (sort: Sort) => void;
 };
 
