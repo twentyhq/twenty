@@ -18,6 +18,7 @@ import {
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
+import { useSignInWithOIDC } from '@/auth/sign-in-up/hooks/useSignInWithOIDC';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
@@ -56,6 +57,7 @@ export const SignInUpForm = () => {
   const [showErrors, setShowErrors] = useState(false);
   const { signInWithGoogle } = useSignInWithGoogle();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
+  const { signInWithOIDC } = useSignInWithOIDC();
   const { form } = useSignInUpForm();
   const { handleResetPassword } = useHandleResetPassword();
 
@@ -142,6 +144,17 @@ export const SignInUpForm = () => {
               Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
               title="Continue with Microsoft"
               onClick={signInWithMicrosoft}
+              fullWidth
+            />
+            <HorizontalSeparator visible={!authProviders.oidc} />
+          </>
+        )}
+
+        {authProviders.oidc && (
+          <>
+            <MainButton
+              title="Continue with OIDC"
+              onClick={signInWithOIDC}
               fullWidth
             />
             <HorizontalSeparator visible={authProviders.password} />

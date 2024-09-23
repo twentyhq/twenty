@@ -9,6 +9,7 @@ import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
+import { OIDCAuthController } from 'src/engine/core-modules/auth/controllers/oidc-auth.controller';
 import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -61,6 +62,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
   controllers: [
     GoogleAuthController,
     MicrosoftAuthController,
+    OIDCAuthController,
     GoogleAPIsAuthController,
     VerifyAuthController,
   ],

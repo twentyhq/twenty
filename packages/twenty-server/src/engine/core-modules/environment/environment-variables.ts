@@ -2,6 +2,7 @@ import { LogLevel } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDefined,
   IsEnum,
@@ -207,6 +208,39 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_OIDC_ENABLED = false;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_ISSUER: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CLIENT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CLIENT_SECRET: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_TOKEN_URL: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_USERINFO_URL: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CALLBACK_URL: string;
+
+  @IsArray()
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_SCOPE: string[];
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)

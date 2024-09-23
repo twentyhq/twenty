@@ -336,6 +336,16 @@ export const useAuth = () => {
     [],
   );
 
+  const handleOIDCLogin = useCallback(
+    (params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+    }) => {
+      window.location.href = buildRedirectUrl('/auth/oidc', params);
+    },
+    [],
+  );
+
   return {
     challenge: handleChallenge,
     verify: handleVerify,
@@ -347,5 +357,6 @@ export const useAuth = () => {
     signInWithCredentials: handleCrendentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    signInWithOIDC: handleOIDCLogin,
   };
 };

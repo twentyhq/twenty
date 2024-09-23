@@ -49,6 +49,7 @@ export const ClientConfigProviderEffect = () => {
         google: data?.clientConfig.authProviders.google,
         microsoft: data?.clientConfig.authProviders.microsoft,
         password: data?.clientConfig.authProviders.password,
+        oidc: data?.clientConfig.authProviders.oidc,
         magicLink: false,
       });
       setIsDebugMode(data?.clientConfig.debugMode);

@@ -119,6 +119,7 @@ describe('useAuth', () => {
       microsoft: false,
       magicLink: false,
       password: false,
+      openidconnect: false,
     });
     expect(state.billing).toBeNull();
     expect(state.isSignInPrefilled).toBe(false);
