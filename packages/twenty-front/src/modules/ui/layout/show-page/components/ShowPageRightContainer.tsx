@@ -9,6 +9,7 @@ import {
   IconPaperclip,
   IconSettings,
   IconTimelineEvent,
+  IconTrash,
 } from 'twenty-ui';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
@@ -34,9 +35,9 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
+  height: 100%;
   justify-content: start;
   width: 100%;
-  height: 100%;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -252,14 +253,9 @@ export const ShowPageRightContainer = ({
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    try {
-      await deleteOneRecord(targetableObject.id);
-      closeRightDrawer();
-    } catch (error) {
-      console.error('Failed to delete the record:', error);
-    } finally {
-      setIsDeleting(false);
-    }
+    await deleteOneRecord(targetableObject.id);
+    setIsDeleting(false);
+    closeRightDrawer();
   };
 
   return (
@@ -276,6 +272,7 @@ export const ShowPageRightContainer = ({
       {isInRightDrawer && (
         <StyledButtonContainer>
           <Button
+            Icon={IconTrash}
             onClick={handleDelete}
             disabled={isDeleting}
             title={isDeleting ? 'Deleting...' : 'Delete'}
