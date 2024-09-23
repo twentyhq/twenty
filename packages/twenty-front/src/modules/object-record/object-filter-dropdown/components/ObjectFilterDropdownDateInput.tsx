@@ -102,11 +102,21 @@ export const ObjectFilterDropdownDateInput = () => {
   const isRelativeOperand =
     selectedOperandInDropdown === ViewFilterOperand.IsRelative;
 
+  const resolvedValue = selectedFilter
+    ? resolveFilterValue(selectedFilter)
+    : null;
+
+  const relativeDate =
+    resolvedValue && !(resolvedValue instanceof Date)
+      ? resolvedValue
+      : undefined;
+
   return (
     <InternalDatePicker
+      relativeDate={relativeDate}
+      highlightedDateRange={relativeDate}
       isRelative={isRelativeOperand}
       date={internalDate}
-      relativeDateFilterValue={selectedFilter?.value}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
       onMouseSelect={handleAbsoluteDateChange}

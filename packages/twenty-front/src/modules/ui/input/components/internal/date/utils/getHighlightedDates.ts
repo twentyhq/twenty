@@ -1,6 +1,12 @@
 import { addDays, addMonths, startOfDay, subMonths } from 'date-fns';
 
-export const getHighlightedDates = (start: Date, end: Date): Date[] => {
+export const getHighlightedDates = (highlightedDateRange?: {
+  start: Date;
+  end: Date;
+}): Date[] => {
+  if (!highlightedDateRange) return [];
+  const { start, end } = highlightedDateRange;
+
   const highlightedDates: Date[] = [];
   const currentDate = startOfDay(new Date());
   const twoMonthsAgo = subMonths(currentDate, 2);

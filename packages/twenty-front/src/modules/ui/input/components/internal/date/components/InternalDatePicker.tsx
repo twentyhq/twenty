@@ -15,7 +15,6 @@ import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/co
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
-  resolveVariableDateViewFilterValue,
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
@@ -276,7 +275,15 @@ const StyledButton = styled(MenuItemLeftContent)`
 type InternalDatePickerProps = {
   isRelative?: boolean;
   date: Date | null;
-  relativeDateFilterValue?: string;
+  relativeDate?: {
+    direction: VariableDateViewFilterValueDirection;
+    amount: number;
+    unit: VariableDateViewFilterValueUnit;
+  };
+  highlightedDateRange?: {
+    start: Date;
+    end: Date;
+  };
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
   onRelativeDateChange?: (
@@ -305,8 +312,9 @@ export const InternalDatePicker = ({
   keyboardEventsDisabled,
   onClear,
   isRelative,
+  relativeDate,
   onRelativeDateChange,
-  relativeDateFilterValue,
+  highlightedDateRange,
 }: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
 
@@ -455,13 +463,7 @@ export const InternalDatePicker = ({
 
   const dateToUse = isDateTimeInput ? endOfDayInLocalTimezone : dateWithoutTime;
 
-  const relativeDate = resolveVariableDateViewFilterValue(
-    relativeDateFilterValue,
-  );
-
-  const highlightedDates = relativeDate
-    ? getHighlightedDates(relativeDate.start, relativeDate.end)
-    : undefined;
+  const highlightedDates = getHighlightedDates(highlightedDateRange);
 
   const selectedDates = isRelative ? highlightedDates : [dateToUse];
 
