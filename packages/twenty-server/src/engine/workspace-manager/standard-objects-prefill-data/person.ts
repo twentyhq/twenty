@@ -18,6 +18,8 @@ export const personPrefillData = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
+      'phonesPrimaryPhoneNumber',
+      'phonesPrimaryPhoneCountryCode',
     ])
     .orIgnore()
     .values([
@@ -32,6 +34,8 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '1234567890',
+        phonesPrimaryPhoneCountryCode: '+1',
       },
       {
         nameFirstName: 'Alexandre',
@@ -44,6 +48,8 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '677118822',
+        phonesPrimaryPhoneCountryCode: '+33',
       },
       {
         nameFirstName: 'Patrick',
@@ -56,6 +62,8 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '987625341',
+        phonesPrimaryPhoneCountryCode: '+1',
       },
       {
         nameFirstName: 'Dylan',
@@ -68,6 +76,8 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '09882261',
+        phonesPrimaryPhoneCountryCode: '+1',
       },
       {
         nameFirstName: 'Ivan',
@@ -80,6 +90,8 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '88226173',
+        phonesPrimaryPhoneCountryCode: '+1',
       },
     ])
     .returning('*')
