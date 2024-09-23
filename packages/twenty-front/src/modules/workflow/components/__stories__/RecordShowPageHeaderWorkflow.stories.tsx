@@ -32,7 +32,6 @@ export const BlankInitialVersion: Story = {
   parameters: {
     msw: {
       handlers: [
-        ...graphqlMocks.handlers,
         graphql.query('FindManyWorkflows', () => {
           return HttpResponse.json({
             data: {
@@ -150,6 +149,7 @@ export const BlankInitialVersion: Story = {
             },
           });
         }),
+        ...graphqlMocks.handlers,
       ],
     },
   },
@@ -166,7 +166,6 @@ export const ActiveVersion: Story = {
   parameters: {
     msw: {
       handlers: [
-        ...graphqlMocks.handlers,
         graphql.query('FindManyWorkflows', () => {
           return HttpResponse.json({
             data: {
@@ -491,6 +490,7 @@ export const ActiveVersion: Story = {
             },
           });
         }),
+        ...graphqlMocks.handlers,
       ],
     },
   },
@@ -506,7 +506,6 @@ export const DraftVersionWithPreviousActiveVersion: Story = {
   parameters: {
     msw: {
       handlers: [
-        ...graphqlMocks.handlers,
         graphql.query('FindManyWorkflows', () => {
           return HttpResponse.json({
             data: {
@@ -639,6 +638,7 @@ export const DraftVersionWithPreviousActiveVersion: Story = {
             },
           });
         }),
+        ...graphqlMocks.handlers,
       ],
     },
   },
