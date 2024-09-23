@@ -8,6 +8,7 @@ import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from '~/utils/isDefined';
+import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;
@@ -39,7 +40,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
               countryCode: value.primaryPhoneCountryCode,
             }
           : null,
-        ...(value?.additionalPhones ?? []),
+        ...parseAdditionalPhones(value?.additionalPhones),
       ]
         .filter(isDefined)
         .map(({ number, countryCode }) => {
@@ -84,4 +85,24 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
       })}
     </StyledContainer>
   );
+};
+
+const parseAdditionalPhones = (additionalPhones?: any) => {
+  if (!additionalPhones) {
+    return [];
+  }
+
+  if (typeof additionalPhones === 'object') {
+    return additionalPhones;
+  }
+
+  if (typeof additionalPhones === 'string') {
+    try {
+      return JSON.parse(additionalPhones);
+    } catch (error) {
+      logError(`Error parsing additional phones' : ` + error);
+    }
+  }
+
+  return [];
 };
