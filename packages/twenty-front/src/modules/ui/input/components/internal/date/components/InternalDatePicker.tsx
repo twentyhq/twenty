@@ -11,7 +11,7 @@ import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals
 import { isDefined } from '~/utils/isDefined';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
-import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativePickerHeader';
+import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { UserContext } from '@/users/contexts/UserContext';
 import {

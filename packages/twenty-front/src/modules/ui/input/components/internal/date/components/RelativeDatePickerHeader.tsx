@@ -55,6 +55,7 @@ export const RelativeDatePickerHeader = ({
   return (
     <StyledContainer>
       <Select
+        disableBlur
         dropdownId="direction-select"
         value={direction}
         onChange={(newDirection) =>
@@ -88,6 +89,7 @@ export const RelativeDatePickerHeader = ({
         disabled={direction === 'THIS'}
       />
       <Select
+        disableBlur
         dropdownId="unit-select"
         value={unit}
         onChange={(newUnit) =>
