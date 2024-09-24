@@ -30,6 +30,7 @@ export class MessagingTelemetryService {
     await this.analyticsService.create(
       {
         type: 'track',
+        sessionId: '',
         data: {
           eventName: `messaging.${eventName}`,
           workspaceId,

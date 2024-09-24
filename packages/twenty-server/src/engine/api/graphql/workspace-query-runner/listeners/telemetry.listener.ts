@@ -25,6 +25,7 @@ export class TelemetryListener {
             data: {
               eventName: payload.name,
             },
+            sessionId: '',
           },
           eventPayload.userId,
           payload.workspaceId,
@@ -48,6 +49,7 @@ export class TelemetryListener {
             data: {
               eventName: 'user.signup',
             },
+            sessionId: '',
           },
           eventPayload.userId,
           payload.workspaceId,

@@ -4,7 +4,11 @@ import { useRecoilValue } from 'recoil';
 import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { useEventTracker } from '@/analytics/hooks/useEventTracker';
+import {
+  getSessionId,
+  setSessionId,
+  useEventTracker,
+} from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -163,10 +167,14 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      eventTracker('pageview', {
-        location: {
-          pathname: location.pathname,
-        },
+      setSessionId('testCookie');
+      eventTracker('pageview', getSessionId('testCookie'), {
+        pathname: location.pathname,
+        locale: navigator.language,
+        userAgent: window.navigator.userAgent,
+        href: window.location.href,
+        referrer: document.referrer,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }, 500);
   }, [eventTracker, location.pathname]);
