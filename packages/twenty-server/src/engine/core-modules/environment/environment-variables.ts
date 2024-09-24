@@ -86,12 +86,12 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ENABLED = true;
+  TELEMETRY_ENABLED = false;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  ANALYTICS_ENABLED = true;
+  ANALYTICS_ENABLED = false;
 
   @IsString()
   @IsOptional()

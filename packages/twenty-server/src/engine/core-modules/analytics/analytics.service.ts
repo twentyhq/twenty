@@ -29,45 +29,45 @@ export class AnalyticsService {
     workspaceDomainName: string | undefined,
     hostName: string | undefined,
   ) {
-    if (!this.environmentService.get('ANALYTICS_ENABLED')) {
+    if (this.environmentService.get('ANALYTICS_ENABLED')) {
+      const data = {
+        action: createEventInput.type,
+        timestamp: new Date().toISOString(),
+        version: '1',
+        session_id: createEventInput.sessionId,
+        payload: {
+          userId: userId,
+          workspaceId: workspaceId,
+          workspaceDisplayName: workspaceDisplayName,
+          workspaceDomainName: workspaceDomainName,
+          hostName: hostName,
+          ...createEventInput.data,
+        },
+      };
+
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: this.environmentService.get('TINYBIRD_TOKEN'),
+        },
+      };
+
+      try {
+        await this.httpService.axiosRef.post(
+          `/events?name=${this.datasource}`,
+          data,
+          config,
+        );
+      } catch (error) {
+        this.logger.error(error);
+
+        return { success: false };
+      }
+
       return { success: true };
     }
 
-    if (!this.environmentService.get('TELEMETRY_ENABLED')) {
+    if (this.environmentService.get('TELEMETRY_ENABLED')) {
       return { success: true };
-    }
-
-    const data = {
-      action: createEventInput.type,
-      timestamp: new Date().toISOString(),
-      version: '1',
-      session_id: createEventInput.sessionId,
-      payload: {
-        userId: userId,
-        workspaceId: workspaceId,
-        workspaceDisplayName: workspaceDisplayName,
-        workspaceDomainName: workspaceDomainName,
-        hostName: hostName,
-        ...createEventInput.data,
-      },
-    };
-
-    const config: AxiosRequestConfig = {
-      headers: {
-        Authorization: this.environmentService.get('TINYBIRD_TOKEN'),
-      },
-    };
-
-    try {
-      await this.httpService.axiosRef.post(
-        `/events?name=${this.datasource}`,
-        data,
-        config,
-      );
-    } catch (error) {
-      this.logger.error(error);
-
-      return { success: false };
     }
 
     return { success: true };
