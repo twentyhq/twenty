@@ -5,15 +5,15 @@ import { v4 } from 'uuid';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { getSourceEnumOptions } from '@/object-record/object-filter-dropdown/utils/getSourceEnumOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
-import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
+import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '[]';
-export const MAX_RECORDS_TO_DISPLAY = 3;
+export const MAX_ITEMS_TO_DISPLAY = 3;
 
 type ObjectFilterDropdownSourceSelectProps = {
   viewComponentId?: string;
@@ -55,49 +55,48 @@ export const ObjectFilterDropdownSourceSelect = ({
 
   const selectedFilter = useRecoilValue(selectedFilterState);
 
-  // Dynamically update sourceEnumOptions based on selectedRecordIds
-  const sourceEnumOptions = getSourceEnumOptions(
+  const sourceTypes = getSourceEnumOptions(
     objectFilterDropdownSelectedRecordIds,
   );
 
-  const filteredSelectedRecords = sourceEnumOptions.filter((option) =>
+  const filteredSelectedItems = sourceTypes.filter((option) =>
     objectFilterDropdownSelectedRecordIds.includes(option.id),
   );
 
-  const handleMultipleRecordSelectChange = (
-    recordToSelect: SelectableRecord,
+  const handleMultipleItemSelectChange = (
+    itemToSelect: SelectableItem,
     newSelectedValue: boolean,
   ) => {
-    const newSelectedRecordIds = newSelectedValue
-      ? [...objectFilterDropdownSelectedRecordIds, recordToSelect.id]
+    const newSelectedItemIds = newSelectedValue
+      ? [...objectFilterDropdownSelectedRecordIds, itemToSelect.id]
       : objectFilterDropdownSelectedRecordIds.filter(
-          (id) => id !== recordToSelect.id,
+          (id) => id !== itemToSelect.id,
         );
 
-    if (newSelectedRecordIds.length === 0) {
+    if (newSelectedItemIds.length === 0) {
       emptyFilterButKeepDefinition();
       deleteCombinedViewFilter(fieldId);
       return;
     }
 
-    setObjectFilterDropdownSelectedRecordIds(newSelectedRecordIds);
+    setObjectFilterDropdownSelectedRecordIds(newSelectedItemIds);
 
-    const selectedRecordNames = sourceEnumOptions
-      .filter((option) => newSelectedRecordIds.includes(option.id))
+    const selectedItemNames = sourceTypes
+      .filter((option) => newSelectedItemIds.includes(option.id))
       .map((option) => option.name);
 
     const filterDisplayValue =
-      selectedRecordNames.length > MAX_RECORDS_TO_DISPLAY
-        ? `${selectedRecordNames.length} source types`
-        : selectedRecordNames.join(', ');
+      selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
+        ? `${selectedItemNames.length} source types`
+        : selectedItemNames.join(', ');
 
     if (
       isDefined(filterDefinitionUsedInDropdown) &&
       isDefined(selectedOperandInDropdown)
     ) {
       const newFilterValue =
-        newSelectedRecordIds.length > 0
-          ? JSON.stringify(newSelectedRecordIds)
+        newSelectedItemIds.length > 0
+          ? JSON.stringify(newSelectedItemIds)
           : EMPTY_FILTER_VALUE;
 
       const viewFilter =
@@ -121,20 +120,18 @@ export const ObjectFilterDropdownSourceSelect = ({
   };
 
   return (
-    <MultipleRecordSelectDropdown
+    <MultipleSelectDropdown
       selectableListId="object-filter-source-select-id"
       hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-      recordsToSelect={sourceEnumOptions.filter(
-        (record) =>
-          !filteredSelectedRecords.some(
-            (selected) => selected.id === record.id,
-          ),
+      itemsToSelect={sourceTypes.filter(
+        (item) =>
+          !filteredSelectedItems.some((selected) => selected.id === item.id),
       )}
-      filteredSelectedRecords={filteredSelectedRecords}
-      selectedRecords={filteredSelectedRecords}
-      onChange={handleMultipleRecordSelectChange}
+      filteredSelectedItems={filteredSelectedItems}
+      selectedItems={filteredSelectedItems}
+      onChange={handleMultipleItemSelectChange}
       searchFilter={objectFilterDropdownSearchInput}
-      loadingRecords={false}
+      loadingItems={false}
     />
   );
 };

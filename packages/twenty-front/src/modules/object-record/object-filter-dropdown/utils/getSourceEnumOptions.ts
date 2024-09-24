@@ -1,38 +1,33 @@
-import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 
 export const getSourceEnumOptions = (
-  selectedRecordIds: string[],
-): SelectableRecord[] => {
+  selectedItemIds: string[],
+): SelectableItem[] => {
   return [
     {
       id: 'MANUAL',
       name: 'MANUAL',
-      record: null,
-      isSelected: selectedRecordIds.includes('MANUAL'),
+      isSelected: selectedItemIds.includes('MANUAL'),
     },
     {
       id: 'IMPORT',
       name: 'IMPORT',
-      record: null,
-      isSelected: selectedRecordIds.includes('IMPORT'),
+      isSelected: selectedItemIds.includes('IMPORT'),
     },
     {
       id: 'API',
       name: 'API',
-      record: null,
-      isSelected: selectedRecordIds.includes('API'),
+      isSelected: selectedItemIds.includes('API'),
     },
     {
       id: 'EMAIL',
       name: 'EMAIL',
-      record: null,
-      isSelected: selectedRecordIds.includes('EMAIL'),
+      isSelected: selectedItemIds.includes('EMAIL'),
     },
     {
       id: 'CALENDAR',
       name: 'CALENDAR',
-      record: null,
-      isSelected: selectedRecordIds.includes('CALENDAR'),
+      isSelected: selectedItemIds.includes('CALENDAR'),
     },
   ];
 };

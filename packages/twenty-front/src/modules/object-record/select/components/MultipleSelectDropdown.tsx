@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar } from 'twenty-ui';
 
-import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -14,26 +14,26 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-export const MultipleRecordSelectDropdown = ({
+export const MultipleSelectDropdown = ({
   selectableListId,
   hotkeyScope,
-  recordsToSelect,
-  loadingRecords,
-  filteredSelectedRecords,
+  itemsToSelect,
+  loadingItems,
+  filteredSelectedItems,
   onChange,
   searchFilter,
 }: {
   selectableListId: string;
   hotkeyScope: string;
-  recordsToSelect: SelectableRecord[];
-  filteredSelectedRecords: SelectableRecord[];
-  selectedRecords: SelectableRecord[];
+  itemsToSelect: SelectableItem[];
+  filteredSelectedItems: SelectableItem[];
+  selectedItems: SelectableItem[];
   searchFilter: string;
   onChange: (
-    changedRecordToSelect: SelectableRecord,
+    changedItemToSelect: SelectableItem,
     newSelectedValue: boolean,
   ) => void;
-  loadingRecords: boolean;
+  loadingItems: boolean;
 }) => {
   const { closeDropdown } = useDropdown();
   const { selectedItemIdState } = useSelectableListStates({
@@ -44,32 +44,32 @@ export const MultipleRecordSelectDropdown = ({
 
   const selectedItemId = useRecoilValue(selectedItemIdState);
 
-  const handleRecordSelectChange = (
-    recordToSelect: SelectableRecord,
+  const handleItemSelectChange = (
+    itemToSelect: SelectableItem,
     newSelectedValue: boolean,
   ) => {
     onChange(
       {
-        ...recordToSelect,
+        ...itemToSelect,
         isSelected: newSelectedValue,
       },
       newSelectedValue,
     );
   };
 
-  const [recordsInDropdown, setRecordInDropdown] = useState([
-    ...(filteredSelectedRecords ?? []),
-    ...(recordsToSelect ?? []),
+  const [itemsInDropdown, setItemInDropdown] = useState([
+    ...(filteredSelectedItems ?? []),
+    ...(itemsToSelect ?? []),
   ]);
 
   useEffect(() => {
-    if (!loadingRecords) {
-      setRecordInDropdown([
-        ...(filteredSelectedRecords ?? []),
-        ...(recordsToSelect ?? []),
+    if (!loadingItems) {
+      setItemInDropdown([
+        ...(filteredSelectedItems ?? []),
+        ...(itemsToSelect ?? []),
       ]);
     }
-  }, [recordsToSelect, filteredSelectedRecords, loadingRecords]);
+  }, [itemsToSelect, filteredSelectedItems, loadingItems]);
 
   useScopedHotkeys(
     [Key.Escape],
@@ -82,12 +82,12 @@ export const MultipleRecordSelectDropdown = ({
   );
 
   const showNoResult =
-    recordsToSelect?.length === 0 &&
+    itemsToSelect?.length === 0 &&
     searchFilter !== '' &&
-    filteredSelectedRecords?.length === 0 &&
-    !loadingRecords;
+    filteredSelectedItems?.length === 0 &&
+    !loadingItems;
 
-  const selectableItemIds = recordsInDropdown.map((record) => record.id);
+  const selectableItemIds = itemsInDropdown.map((item) => item.id);
 
   return (
     <SelectableList
@@ -95,45 +95,45 @@ export const MultipleRecordSelectDropdown = ({
       selectableItemIdArray={selectableItemIds}
       hotkeyScope={hotkeyScope}
       onEnter={(itemId) => {
-        const record = recordsInDropdown.findIndex(
+        const item = itemsInDropdown.findIndex(
           (entity) => entity.id === itemId,
         );
-        const recordIsSelectedInDropwdown = filteredSelectedRecords.find(
+        const itemIsSelectedInDropwdown = filteredSelectedItems.find(
           (entity) => entity.id === itemId,
         );
-        handleRecordSelectChange(
-          recordsInDropdown[record],
-          !recordIsSelectedInDropwdown,
+        handleItemSelectChange(
+          itemsInDropdown[item],
+          !itemIsSelectedInDropwdown,
         );
         resetSelectedItem();
       }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
-        {recordsInDropdown?.map((record) => {
+        {itemsInDropdown?.map((item) => {
           return (
             <MenuItemMultiSelectAvatar
-              key={record.id}
-              selected={record.isSelected}
-              isKeySelected={record.id === selectedItemId}
+              key={item.id}
+              selected={item.isSelected}
+              isKeySelected={item.id === selectedItemId}
               onSelectChange={(newCheckedValue) => {
                 resetSelectedItem();
-                handleRecordSelectChange(record, newCheckedValue);
+                handleItemSelectChange(item, newCheckedValue);
               }}
               avatar={
                 <Avatar
-                  avatarUrl={record.avatarUrl}
-                  placeholderColorSeed={record.id}
-                  placeholder={record.name}
+                  avatarUrl={item.avatarUrl}
+                  placeholderColorSeed={item.id}
+                  placeholder={item.name}
                   size="md"
-                  type={record.avatarType ?? 'rounded'}
+                  type={item.avatarType ?? 'rounded'}
                 />
               }
-              text={record.name}
+              text={item.name}
             />
           );
         })}
         {showNoResult && <MenuItem text="No result" />}
-        {loadingRecords && <DropdownMenuSkeletonItem />}
+        {loadingItems && <DropdownMenuSkeletonItem />}
       </DropdownMenuItemsContainer>
     </SelectableList>
   );

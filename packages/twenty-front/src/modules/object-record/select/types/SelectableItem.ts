@@ -1,10 +1,9 @@
 import { AvatarType } from 'twenty-ui';
 
-export type SelectableRecord = {
+export type SelectableItem<T = object> = T & {
   id: string;
   name: string;
   avatarUrl?: string;
   avatarType?: AvatarType;
-  record: any;
   isSelected: boolean;
 };
