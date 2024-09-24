@@ -9,11 +9,11 @@ export const getHighlightedDates = (highlightedDateRange?: {
 
   const highlightedDates: Date[] = [];
   const currentDate = startOfDay(new Date());
-  const twoMonthsAgo = subMonths(currentDate, 2);
-  const twoMonthsFromNow = addMonths(currentDate, 2);
+  const minDate = subMonths(currentDate, 2);
+  const maxDate = addMonths(currentDate, 2);
 
-  let dateToHighlight = start < twoMonthsAgo ? twoMonthsAgo : start;
-  const lastDate = end > twoMonthsFromNow ? twoMonthsFromNow : end;
+  let dateToHighlight = start < minDate ? minDate : start;
+  const lastDate = end > maxDate ? maxDate : end;
 
   while (dateToHighlight <= lastDate) {
     highlightedDates.push(dateToHighlight);

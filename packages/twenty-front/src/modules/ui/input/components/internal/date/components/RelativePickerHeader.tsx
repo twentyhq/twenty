@@ -1,8 +1,7 @@
+import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
+import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-
-import { RELATIVE_DATE_DIRECTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionOptions';
-import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
 import {
   variableDateViewFilterValueAmountSchema,
   VariableDateViewFilterValueDirection,
@@ -48,7 +47,7 @@ export const RelativeDatePickerHeader = ({
   const textInputPlaceholder = direction === 'THIS' ? '-' : 'Number';
 
   const isUnitPlural = amount > 1 && direction !== 'THIS';
-  const unitSelectOptions = RELATIVE_DATE_UNITS.map((unit) => ({
+  const unitSelectOptions = RELATIVE_DATE_UNITS_SELECT_OPTIONS.map((unit) => ({
     ...unit,
     label: `${unit.label}${isUnitPlural ? 's' : ''}`,
   }));
@@ -65,7 +64,7 @@ export const RelativeDatePickerHeader = ({
             unit: unit,
           })
         }
-        options={RELATIVE_DATE_DIRECTIONS}
+        options={RELATIVE_DATE_DIRECTION_SELECT_OPTIONS}
       />
       <TextInput
         value={textInputValue}
