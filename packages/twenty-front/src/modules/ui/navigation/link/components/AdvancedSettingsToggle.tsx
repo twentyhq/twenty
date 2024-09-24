@@ -21,7 +21,7 @@ const StyledText = styled.span`
 const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
-  height: 100%;
+  height: 16px;
 `;
 
 const StyledToggleContainer = styled.div`

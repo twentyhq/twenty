@@ -44,12 +44,13 @@ const StyledNavigationDrawerSection = styled(NavigationDrawerSection)<{
 }>`
   margin-left: ${({ withLeftMargin, theme }) =>
     withLeftMargin && theme.spacing(5)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(5)};
   width: 16px;
 `;
 
