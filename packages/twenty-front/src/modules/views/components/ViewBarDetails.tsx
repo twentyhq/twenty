@@ -1,20 +1,25 @@
 import styled from '@emotion/styled';
 import { ReactNode, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
+import { canPersistViewComponentFamilySelector } from '@/views/states/selectors/canPersistViewComponentFamilySelector';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { isDefined } from 'twenty-ui';
 import { VariantFilterChip } from './VariantFilterChip';
 
 export type ViewBarDetailsProps = {
@@ -99,26 +104,30 @@ export const ViewBarDetails = ({
   filterDropdownId,
   viewBarId,
 }: ViewBarDetailsProps) => {
-  const {
-    canPersistViewSelector,
-    isViewBarExpandedState,
-    availableFilterDefinitionsState,
-    availableSortDefinitionsState,
-  } = useViewStates();
-
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
-  const { hasFiltersQueryParams } = useViewFromQueryParams();
-  const canPersistView = useRecoilValue(canPersistViewSelector());
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
-  );
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
+  const viewId = currentViewWithCombinedFiltersAndSorts?.id;
+
+  const isViewBarExpanded = useRecoilComponentValueV2(
+    isViewBarExpandedComponentState,
   );
 
-  const { resetCurrentView } = useResetCurrentView();
+  const { hasFiltersQueryParams } = useViewFromQueryParams();
+
+  const canPersistView = useRecoilComponentFamilyValueV2(
+    canPersistViewComponentFamilySelector,
+    { viewId },
+  );
+
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+  );
+
+  const availableSortDefinitions = useRecoilComponentValueV2(
+    availableSortDefinitionsComponentState,
+  );
+
+  const { resetUnsavedViewStates } = useResetUnsavedViewStates();
   const canResetView = canPersistView && !hasFiltersQueryParams;
 
   const { otherViewFilters, defaultViewFilters } = useMemo(() => {
@@ -145,7 +154,9 @@ export const ViewBarDetails = ({
   }, [currentViewWithCombinedFiltersAndSorts]);
 
   const handleCancelClick = () => {
-    resetCurrentView();
+    if (isDefined(viewId)) {
+      resetUnsavedViewStates(viewId);
+    }
   };
 
   const shouldExpandViewBar =

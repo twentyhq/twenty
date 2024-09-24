@@ -12196,6 +12196,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/nestjs@npm:^8.30.0":
+  version: 8.30.0
+  resolution: "@sentry/nestjs@npm:8.30.0"
+  dependencies:
+    "@sentry/core": "npm:8.30.0"
+    "@sentry/node": "npm:8.30.0"
+    "@sentry/types": "npm:8.30.0"
+    "@sentry/utils": "npm:8.30.0"
+  peerDependencies:
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
+  checksum: 10c0/f0412787f5fac68743ed6e4f4b58fd06a198d3f0b5777dd072784d9c943fbb3725ee82b00838a7f274f4eb51d7776f5a72f80f8cba253f5c30a7649a292f20c0
+  languageName: node
+  linkType: hard
+
 "@sentry/node@npm:8.30.0, @sentry/node@npm:^8":
   version: 8.30.0
   resolution: "@sentry/node@npm:8.30.0"
@@ -47464,6 +47479,7 @@ __metadata:
     "@nx/js": "npm:18.3.3"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@revertdotdev/revert-react": "npm:^0.0.21"
+    "@sentry/nestjs": "npm:^8.30.0"
     "@types/lodash.differencewith": "npm:^4.5.9"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.8"

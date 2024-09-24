@@ -1,4 +1,3 @@
-import { isArray } from 'class-validator';
 import { ObjectLiteral, WhereExpressionBuilder } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -49,8 +48,13 @@ export class GraphqlQueryFilterFieldParser {
     }
     const [[operator, value]] = Object.entries(filterValue);
 
-    if (operator === 'in' && (!isArray(value) || value.length === 0)) {
-      return;
+    if (operator === 'in') {
+      if (!Array.isArray(value) || value.length === 0) {
+        throw new GraphqlQueryRunnerException(
+          `Invalid filter value for field ${key}. Expected non-empty array`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        );
+      }
     }
 
     const { sql, params } = this.computeWhereConditionParts(

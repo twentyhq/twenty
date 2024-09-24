@@ -1,8 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { ViewField } from '@/views/types/ViewField';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
@@ -14,21 +16,28 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
 
   const { getViewFromCache } = useGetViewFromCache();
 
-  const { isPersistingViewFieldsState, currentViewIdState } =
-    useViewStates(viewBarComponentId);
+  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+    currentViewIdComponentState,
+    viewBarComponentId,
+  );
+
+  const isPersistingViewFieldsCallbackState = useRecoilComponentCallbackStateV2(
+    isPersistingViewFieldsComponentState,
+    viewBarComponentId,
+  );
 
   const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewFieldsToSave: ViewField[]) => {
         const currentViewId = snapshot
-          .getLoadable(currentViewIdState)
+          .getLoadable(currentViewIdCallbackState)
           .getValue();
 
         if (!currentViewId) {
           return;
         }
 
-        set(isPersistingViewFieldsState, true);
+        set(isPersistingViewFieldsCallbackState, true);
 
         const view = await getViewFromCache(currentViewId);
 
@@ -85,13 +94,13 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
           updateViewFieldRecords(viewFieldsToUpdate),
         ]);
 
-        set(isPersistingViewFieldsState, false);
+        set(isPersistingViewFieldsCallbackState, false);
       },
     [
       createViewFieldRecords,
-      currentViewIdState,
+      currentViewIdCallbackState,
       getViewFromCache,
-      isPersistingViewFieldsState,
+      isPersistingViewFieldsCallbackState,
       updateViewFieldRecords,
     ],
   );

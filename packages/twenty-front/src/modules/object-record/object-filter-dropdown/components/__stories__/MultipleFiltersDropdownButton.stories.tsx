@@ -2,8 +2,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -17,9 +19,12 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
   component: MultipleFiltersDropdownButton,
   decorators: [
     (Story) => {
-      const { setAvailableFilterDefinitions } = useFilterDropdown({
-        filterDropdownId: 'entity-tasks-filter-scope',
-      });
+      const instanceId = 'entity-tasks-filter-scope';
+      const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
+        availableFilterDefinitionsComponentState,
+        instanceId,
+      );
+
       setAvailableFilterDefinitions([
         {
           fieldMetadataId: '1',
@@ -47,9 +52,11 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
         },
       ]);
       return (
-        <ObjectFilterDropdownScope filterScopeId="entity-tasks-filter-scope">
-          <Story />
-        </ObjectFilterDropdownScope>
+        <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+          <ObjectFilterDropdownScope filterScopeId={instanceId}>
+            <Story />
+          </ObjectFilterDropdownScope>
+        </ViewComponentInstanceContext.Provider>
       );
     },
     ObjectMetadataItemsDecorator,

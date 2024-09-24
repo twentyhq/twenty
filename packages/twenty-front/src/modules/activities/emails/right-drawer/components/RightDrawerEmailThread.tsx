@@ -13,33 +13,38 @@ import { Button } from '@/ui/input/button/components/Button';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconArrowBackUp } from 'twenty-ui';
+
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  flex: 1;
   height: 85%;
-  justify-content: flex-start;
   overflow-y: auto;
-  position: relative;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
-  bottom: 0;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
-  height: 110px;
-  left: 0;
-  padding-left: ${({ theme }) => theme.spacing(7)};
-  padding-top: ${({ theme }) => theme.spacing(5)};
-  position: fixed;
-  right: 0;
+  justify-content: flex-end;
+  height: ${({ isMobile }) => (isMobile ? '100px' : '50px')};
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const RightDrawerEmailThread = () => {
   const setMessageThread = useSetRecoilState(messageThreadState);
-
+  const isMobile = useIsMobile();
   const {
     thread,
     messages,
@@ -118,47 +123,49 @@ export const RightDrawerEmailThread = () => {
     return null;
   }
   return (
-    <StyledContainer>
-      {threadLoading ? (
-        <EmailLoader loadingText="Loading thread" />
-      ) : (
-        <>
-          <EmailThreadHeader
-            subject={subject}
-            lastMessageSentAt={lastMessage.receivedAt}
-          />
-          {firstMessages.map((message) => (
-            <EmailThreadMessage
-              key={message.id}
-              participants={message.messageParticipants}
-              body={message.text}
-              sentAt={message.receivedAt}
+    <StyledWrapper>
+      <StyledContainer>
+        {threadLoading ? (
+          <EmailLoader loadingText="Loading thread" />
+        ) : (
+          <>
+            <EmailThreadHeader
+              subject={subject}
+              lastMessageSentAt={lastMessage.receivedAt}
             />
-          ))}
-          <IntermediaryMessages messages={intermediaryMessages} />
-          <EmailThreadMessage
-            key={lastMessage.id}
-            participants={lastMessage.messageParticipants}
-            body={lastMessage.text}
-            sentAt={lastMessage.receivedAt}
-            isExpanded
-          />
-          <CustomResolverFetchMoreLoader
-            loading={threadLoading}
-            onLastRowVisible={fetchMoreMessages}
-          />
-        </>
-      )}
-      {canReply && !messageChannelLoading ? (
-        <StyledButtonContainer>
+            {firstMessages.map((message) => (
+              <EmailThreadMessage
+                key={message.id}
+                participants={message.messageParticipants}
+                body={message.text}
+                sentAt={message.receivedAt}
+              />
+            ))}
+            <IntermediaryMessages messages={intermediaryMessages} />
+            <EmailThreadMessage
+              key={lastMessage.id}
+              participants={lastMessage.messageParticipants}
+              body={lastMessage.text}
+              sentAt={lastMessage.receivedAt}
+              isExpanded
+            />
+            <CustomResolverFetchMoreLoader
+              loading={threadLoading}
+              onLastRowVisible={fetchMoreMessages}
+            />
+          </>
+        )}
+      </StyledContainer>
+      {canReply && !messageChannelLoading && (
+        <StyledButtonContainer isMobile={isMobile}>
           <Button
             onClick={handleReplyClick}
-            title="Reply (View in Gmail)"
+            title="Reply"
             Icon={IconArrowBackUp}
             disabled={!canReply}
-          ></Button>
+          />
         </StyledButtonContainer>
-      ) : null}
-    </StyledContainer>
+      )}
+    </StyledWrapper>
   );
 };
