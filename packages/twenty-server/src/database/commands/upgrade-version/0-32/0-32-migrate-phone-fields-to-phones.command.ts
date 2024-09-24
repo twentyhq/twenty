@@ -163,6 +163,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         standardPersonPhonesFieldType =
           await this.fieldMetadataService.createOne({
             ...deprecatedPhoneFieldWithoutId,
+            label: 'Phones',
             type: FieldMetadataType.PHONES,
             defaultValue: null,
             name: 'phones',
