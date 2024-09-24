@@ -12,6 +12,7 @@ import {
   getDevSeedCompanyCustomFields,
   getDevSeedPeopleCustomFields,
 } from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
+import { getDevSeedCustomObjects } from 'src/database/typeorm-seeds/metadata/objectsMetadata';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
@@ -150,6 +151,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           objectMetadataMap[STANDARD_OBJECT_IDS.person],
           workspaceId,
         );
+        await this.seedCustomObjects(workspaceId, dataSourceMetadata.id);
 
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
@@ -280,6 +282,17 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         ...customField,
         isCustom: true,
       });
+    }
+  }
+
+  async seedCustomObjects(workspaceId: string, dataSourceId: string) {
+    const devSeedCustomObjects = getDevSeedCustomObjects(
+      workspaceId,
+      dataSourceId,
+    );
+
+    for (const customObject of devSeedCustomObjects) {
+      await this.objectMetadataService.createOne(customObject);
     }
   }
 }
