@@ -35,9 +35,9 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       isNullable
       createdAt
       updatedAt
+      settings
       defaultValue
       options
-      settings
     }
   }
 `;
@@ -74,6 +74,7 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       isNullable
       createdAt
       updatedAt
+      settings
     }
   }
 `;
@@ -137,6 +138,7 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       isNullable
       createdAt
       updatedAt
+      settings
     }
   }
 `;

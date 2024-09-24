@@ -74,6 +74,7 @@ export const variables = {
         label: 'fieldLabel',
         name: 'fieldLabel',
         options: undefined,
+        settings: undefined,
         objectMetadataId,
         type: 'TEXT',
       },
