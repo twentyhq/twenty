@@ -107,7 +107,7 @@ export const getObjectMetadataItemsMock = () => {
                 {
                     "__typename": "field",
                     "id": "194ff398-99f9-4cbb-b87a-e44408f9c1ed",
-                    "type": "PHONE",
+                    "type": "PHONES",
                     "name": "whatsapp",
                     "label": "Whatsapp",
                     "description": "Contact's Whatsapp Number",
@@ -614,7 +614,7 @@ export const getObjectMetadataItemsMock = () => {
                 {
                     "__typename": "field",
                     "id": "9c2bf923-304d-47b7-beb0-286e3229f6ac",
-                    "type": "TEXT",
+                    "type": "PHONES",
                     "name": "phone",
                     "label": "Phone",
                     "description": "Contact’s phone number",

@@ -134,6 +134,7 @@ export {
   IconPencil,
   IconPhone,
   IconPhoto,
+  IconPhotoUp,
   IconPilcrow,
   IconPlayerPlay,
   IconPlaystationSquare,
