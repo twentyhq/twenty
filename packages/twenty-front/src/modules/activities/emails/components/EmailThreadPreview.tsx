@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Avatar, GRAY_SCALE } from 'twenty-ui';
 
@@ -155,12 +155,20 @@ export const EmailThreadPreview = ({
           <Avatar
             avatarUrl={thread?.firstParticipant?.avatarUrl}
             placeholder={thread.firstParticipant.displayName}
+            placeholderColorSeed={
+              thread.firstParticipant.workspaceMemberId ||
+              thread.firstParticipant.personId
+            }
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
             <StyledAvatar
               avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
               placeholder={thread.lastTwoParticipants[0].displayName}
+              placeholderColorSeed={
+                thread.lastTwoParticipants[0].workspaceMemberId ||
+                thread.lastTwoParticipants[0].personId
+              }
               type="rounded"
             />
           )}

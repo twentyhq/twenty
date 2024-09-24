@@ -6,6 +6,8 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 const filterDropdownId = 'filterDropdownId';
@@ -35,11 +37,13 @@ describe('useFilterDropdown', () => {
   it('should set availableFilterDefinitions', async () => {
     const { result } = renderHook(() => {
       useFilterDropdown({ filterDropdownId });
-      const { availableFilterDefinitionsState } =
-        useFilterDropdownStates(filterDropdownId);
 
       const [availableFilterDefinitions, setAvailableFilterDefinitions] =
-        useRecoilState(availableFilterDefinitionsState);
+        useRecoilComponentStateV2(
+          availableFilterDefinitionsComponentState,
+          filterDropdownId,
+        );
+
       return { availableFilterDefinitions, setAvailableFilterDefinitions };
     }, renderHookConfig);
 

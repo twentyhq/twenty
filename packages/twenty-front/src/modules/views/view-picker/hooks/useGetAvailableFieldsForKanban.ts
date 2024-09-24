@@ -5,14 +5,15 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useGetAvailableFieldsForKanban = () => {
-  const { viewObjectMetadataIdState } = useViewStates();
-
-  const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
+  const viewObjectMetadataId = useRecoilComponentValueV2(
+    viewObjectMetadataIdComponentState,
+  );
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -10,6 +10,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -25,6 +26,7 @@ export class MessagingFullMessageListFetchService {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
   ) {}
 
   public async processMessageListFetch(
@@ -51,7 +53,6 @@ export class MessagingFullMessageListFetchService {
         await messageChannelMessageAssociationRepository.find({
           where: {
             messageChannelId: messageChannel.id,
-            messageExternalId: Any(messageExternalIds),
           },
         });
 
@@ -61,17 +62,35 @@ export class MessagingFullMessageListFetchService {
             messageChannelMessageAssociation.messageExternalId,
         );
 
-      const messageIdsToImport = messageExternalIds.filter(
+      const messageExternalIdsToImport = messageExternalIds.filter(
         (messageExternalId) =>
           !existingMessageChannelMessageAssociationsExternalIds.includes(
             messageExternalId,
           ),
       );
 
-      if (messageIdsToImport.length) {
+      const messageExternalIdsToDelete =
+        existingMessageChannelMessageAssociationsExternalIds.filter(
+          (existingMessageCMAExternalId) =>
+            existingMessageCMAExternalId &&
+            !messageExternalIds.includes(existingMessageCMAExternalId),
+        );
+
+      if (messageExternalIdsToDelete.length) {
+        await messageChannelMessageAssociationRepository.delete({
+          messageChannelId: messageChannel.id,
+          messageExternalId: In(messageExternalIdsToDelete),
+        });
+
+        await this.messagingMessageCleanerService.cleanWorkspaceThreads(
+          workspaceId,
+        );
+      }
+
+      if (messageExternalIdsToImport.length) {
         await this.cacheStorage.setAdd(
-          `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-          messageIdsToImport,
+          `messages-to-import:${workspaceId}:${messageChannel.id}`,
+          messageExternalIdsToImport,
         );
       }
 

@@ -5,7 +5,7 @@ import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/h
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -13,7 +13,8 @@ export const RecordTableEmptyStateSoftDelete = () => {
   const { objectMetadataItem, objectNameSingular, recordTableId } =
     useContext(RecordTableContext);
 
-  const { removeCombinedViewFilter } = useCombinedViewFilters(recordTableId);
+  const { deleteCombinedViewFilter } =
+    useDeleteCombinedViewFilters(recordTableId);
   const { tableFiltersState } = useRecordTableStates(recordTableId);
 
   const tableFilters = useRecoilValue(tableFiltersState);
@@ -24,7 +25,7 @@ export const RecordTableEmptyStateSoftDelete = () => {
   });
 
   const handleButtonClick = async () => {
-    removeCombinedViewFilter(
+    deleteCombinedViewFilter(
       tableFilters.find(
         (filter) =>
           filter.definition.label === 'Deleted at' &&

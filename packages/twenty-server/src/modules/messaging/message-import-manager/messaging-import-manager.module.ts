@@ -9,6 +9,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshAccessTokenManagerModule } from 'src/modules/connected-account/refresh-access-token-manager/refresh-access-token-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
@@ -47,6 +48,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     FeatureFlagModule,
     MessageParticipantManagerModule,
     MessagingMonitoringModule,
+    MessagingMessageCleanerModule,
   ],
   providers: [
     MessagingMessageListFetchCronCommand,

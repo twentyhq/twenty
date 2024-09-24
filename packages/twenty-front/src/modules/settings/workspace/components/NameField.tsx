@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
+import isEmpty from 'lodash.isempty';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -40,6 +41,7 @@ export const NameField = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     useDebouncedCallback(async (name: string) => {
+      if (isEmpty(name)) return;
       // update local recoil state when workspace name is updated
       setCurrentWorkspace((currentValue) => {
         if (currentValue === null) {

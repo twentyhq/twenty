@@ -24,7 +24,7 @@ export const seedUserWorkspaces = async (
         workspaceId: workspaceId,
       },
       {
-        userId: DEMO_SEED_USER_IDS.JULIA,
+        userId: DEMO_SEED_USER_IDS.TIM,
         workspaceId: workspaceId,
       },
     ])
