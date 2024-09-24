@@ -14,6 +14,7 @@ import {
 } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { useState } from 'react';
+import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectFilterDropdownDateInput = () => {
@@ -58,7 +59,7 @@ export const ObjectFilterDropdownDateInput = () => {
       value: newDate?.toISOString() ?? '',
       valueType: ViewFilterValueType.STATIC,
       operand: selectedOperandInDropdown,
-      displayValue: newDate
+      displayValue: isDefined(newDate)
         ? isDateTimeInput
           ? newDate.toLocaleString()
           : newDate.toLocaleDateString()
