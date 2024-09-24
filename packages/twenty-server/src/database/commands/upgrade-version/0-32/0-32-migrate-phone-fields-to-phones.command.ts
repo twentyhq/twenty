@@ -160,7 +160,6 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         });
 
       if (!standardPersonPhonesFieldType) {
-        
         standardPersonPhonesFieldType =
           await this.fieldMetadataService.createOne({
             ...deprecatedPhoneFieldWithoutId,
