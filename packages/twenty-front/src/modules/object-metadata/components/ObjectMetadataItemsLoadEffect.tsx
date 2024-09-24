@@ -52,7 +52,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
       !loading &&
       !isDeeplyEqual(objectMetadataItems, toSetObjectMetadataItems)
     ) {
-      setObjectMetadataItems(filteredNewObjectMetadataItems);
+      setObjectMetadataItems(toSetObjectMetadataItems);
     }
   }, [
     currentUser,
