@@ -19,7 +19,15 @@ const mocks: MockedResponse[] = [
       `,
       variables: {
         type: 'exampleType',
-        data: { location: { pathname: '/examplePath' } },
+        sessionId: 'exampleId',
+        data: {
+          pathname: '',
+          userAgent: '',
+          timeZone: '',
+          locale: '',
+          href: '',
+          referrer: '',
+        },
       },
     },
     result: jest.fn(() => ({
