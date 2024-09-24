@@ -135,6 +135,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   favorites: '20202020-4d1d-41ac-b13b-621631298d55',
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
+  searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -300,6 +301,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
+  searchVector: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
 };
 
 export const PERSON_STANDARD_FIELD_IDS = {

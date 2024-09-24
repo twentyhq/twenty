@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
@@ -34,9 +34,9 @@ export const ObjectMetadataItemsLoadEffect = () => {
       skip: !isLoggedIn,
     });
 
-  const filteredNewObjectMetadataItems = filterTsVectorFields(
-    newObjectMetadataItems,
-  );
+  const filteredNewObjectMetadataItems = useMemo(() => {
+    return filterTsVectorFields(newObjectMetadataItems);
+  }, [newObjectMetadataItems]);
 
   const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(
     objectMetadataItemsState,

@@ -37,6 +37,11 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
+const NAME_FIELD_NAME = 'name';
+const EMAILS_FIELD_NAME = 'emails';
+const JOB_TITLE_FIELD_NAME = 'jobTitle';
+const PHONE_FIELD_NAME = 'phone';
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
   namePlural: 'people',
@@ -56,7 +61,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
-  name: FullNameMetadata | null;
+  [NAME_FIELD_NAME]: FullNameMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.email,
@@ -75,7 +80,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s Emails',
     icon: 'IconMail',
   })
-  emails: EmailsMetadata;
+  [EMAILS_FIELD_NAME]: EmailsMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
@@ -104,7 +109,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s job title',
     icon: 'IconBriefcase',
   })
-  jobTitle: string;
+  [JOB_TITLE_FIELD_NAME]: string;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phone,
@@ -113,7 +118,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
-  phone: string;
+  [PHONE_FIELD_NAME]: string;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.city,
@@ -292,10 +297,10 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields([
-      { name: 'name', type: FieldMetadataType.FULL_NAME },
-      { name: 'emails', type: FieldMetadataType.EMAILS },
-      { name: 'jobTitle', type: FieldMetadataType.TEXT },
-      { name: 'phone', type: FieldMetadataType.TEXT }, // To change after phone migration
+      { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
+      { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
+      { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
+      { name: PHONE_FIELD_NAME, type: FieldMetadataType.TEXT }, // To change after phone migration
     ]),
   })
   @WorkspaceIsNullable()

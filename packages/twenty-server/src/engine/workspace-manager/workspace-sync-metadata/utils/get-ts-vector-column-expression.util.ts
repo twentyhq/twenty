@@ -75,6 +75,21 @@ const getColumnExpression = (
         ''
       )
     `;
+  } else if (fieldType === FieldMetadataType.PHONES) {
+    if (columnName.includes('PhoneCountryCode')) {
+      return '';
+    }
+
+    return `
+      COALESCE(
+        replace(
+          ${quotedColumnName},
+          '@',
+          ' '
+        ),
+        ''
+      )
+    `;
   } else {
     return `COALESCE(${quotedColumnName}, '')`;
   }

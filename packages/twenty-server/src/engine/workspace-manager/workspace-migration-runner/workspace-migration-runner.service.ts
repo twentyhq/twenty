@@ -389,6 +389,8 @@ export class WorkspaceMigrationRunnerService {
         enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
+        asExpression: migrationColumn.asExpression,
+        generatedType: migrationColumn.generatedType,
       }),
     );
   }

@@ -6,10 +6,12 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/metadata.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -22,6 +24,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -30,6 +33,8 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+
+const NAME_FIELD_NAME = 'name';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
@@ -232,4 +237,20 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsDeprecated()
   probability: string;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: 'Search vector',
+    description: 'Search vector',
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields([
+      { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+    ]),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceIndex(IndexType.GIN)
+  [SEARCH_VECTOR_FIELD_NAME]: any;
 }
