@@ -24,12 +24,6 @@ type Story = StoryObj<typeof SettingsDataModelFieldTypeSelect>;
 
 export const Default: Story = {};
 
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
-};
-
 export const WithOpenSelect: Story = {
   play: async () => {
     const canvas = within(document.body);

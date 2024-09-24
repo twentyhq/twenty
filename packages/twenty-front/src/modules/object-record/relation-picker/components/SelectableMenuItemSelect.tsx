@@ -27,7 +27,6 @@ export const SelectableMenuItemSelect = ({
   );
 
   const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(entity.id));
-
   return (
     <StyledSelectableItem itemId={entity.id} key={entity.id}>
       <MenuItemSelectAvatar

@@ -1,17 +1,21 @@
+import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
 } from '@/workflow/types/WorkflowDiagram';
+import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { MarkerType } from '@xyflow/react';
+import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
 }: {
-  trigger: WorkflowTrigger;
+  trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
@@ -24,7 +28,7 @@ export const generateWorkflowDiagram = ({
     xPos: number,
     yPos: number,
   ) => {
-    const nodeId = v4();
+    const nodeId = step.id;
     nodes.push({
       id: nodeId,
       data: {
@@ -47,29 +51,39 @@ export const generateWorkflowDiagram = ({
       },
     });
 
-    // Recursively generate flow for the next action if it exists
-    if (step.type !== 'CODE_ACTION') {
-      // processNode(action.nextAction, nodeId, xPos + 150, yPos + 100);
-
-      throw new Error('Other types as code actions are not supported yet.');
-    }
-
     return nodeId;
   };
 
   // Start with the trigger node
-  const triggerNodeId = v4();
-  nodes.push({
-    id: triggerNodeId,
-    data: {
-      nodeType: 'trigger',
-      label: trigger.settings.eventName,
-    },
-    position: {
-      x: 0,
-      y: 0,
-    },
-  });
+  const triggerNodeId = TRIGGER_STEP_ID;
+
+  if (isDefined(trigger)) {
+    const triggerEvent = splitWorkflowTriggerEventName(
+      trigger.settings.eventName,
+    );
+
+    nodes.push({
+      id: triggerNodeId,
+      data: {
+        nodeType: 'trigger',
+        label: `${capitalize(triggerEvent.objectType)} is ${capitalize(triggerEvent.event)}`,
+      },
+      position: {
+        x: 0,
+        y: 0,
+      },
+    });
+  } else {
+    nodes.push({
+      id: triggerNodeId,
+      type: 'empty-trigger',
+      data: {} as any,
+      position: {
+        x: 0,
+        y: 0,
+      },
+    });
+  }
 
   let lastStepId = triggerNodeId;
 

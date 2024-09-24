@@ -203,6 +203,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   workflow: '20202020-b11b-4dc8-999a-6bd0a947b463',
   task: '20202020-1b1b-4b3b-8b1b-7f8d6a1d7d5c',
   note: '20202020-1f25-43fe-8b00-af212fdde824',
+  view: '20202020-5a93-4fa9-acce-e73481a0bbdf',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
 };
 
@@ -304,6 +305,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
 export const PERSON_STANDARD_FIELD_IDS = {
   name: '20202020-3875-44d5-8c33-a6239011cab8',
   email: '20202020-a740-42bb-8849-8980fb3f12e1',
+  emails: '20202020-3c51-43fa-8b6e-af39e29368ab',
   linkedinLink: '20202020-f1af-48f7-893b-2007a73dd508',
   xLink: '20202020-8fc2-487c-b84a-55a99b145cfd',
   jobTitle: '20202020-b0d0-415a-bef9-640a26dacd9b',
@@ -380,6 +382,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
+  favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
 };
 
 export const WEBHOOK_STANDARD_FIELD_IDS = {

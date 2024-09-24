@@ -4,6 +4,7 @@ import {
   getArrayRequestBody,
   getFindDuplicatesRequestBody,
   getRequestBody,
+  getUpdateRequestBody,
 } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import {
   getCreateManyResponse201,
@@ -113,7 +114,7 @@ export const computeSingleResultPath = (
         { $ref: '#/components/parameters/idPath' },
         { $ref: '#/components/parameters/depth' },
       ],
-      requestBody: getRequestBody(capitalize(item.nameSingular)),
+      requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
       responses: {
         '200': getUpdateOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },

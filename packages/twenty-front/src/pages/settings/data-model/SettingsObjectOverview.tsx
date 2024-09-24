@@ -1,24 +1,25 @@
 import { ReactFlowProvider } from 'reactflow';
 
 import { SettingsDataModelOverview } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverview';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { IconHierarchy2 } from 'twenty-ui';
 
 export const SettingsObjectOverview = () => {
   return (
     <SubMenuTopBarContainer
       Icon={IconHierarchy2}
-      title={
-        <Breadcrumb
-          links={[
-            { children: 'Data model', href: '/settings/objects' },
-            {
-              children: 'Overview',
-            },
-          ]}
-        />
-      }
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Objects', href: '/settings/objects' },
+        {
+          children: 'Overview',
+        },
+      ]}
     >
       <ReactFlowProvider>
         <SettingsDataModelOverview />

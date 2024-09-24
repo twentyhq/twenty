@@ -1,8 +1,8 @@
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
-import { ObjectMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
+import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export class GraphqlQuerySelectedFieldsRelationParser {
   private objectMetadataMap: ObjectMetadataMap;
@@ -17,11 +17,11 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     fieldValue: any,
     result: { select: Record<string, any>; relations: Record<string, any> },
   ): void {
-    result.relations[fieldKey] = true;
-
     if (!fieldValue || typeof fieldValue !== 'object') {
       return;
     }
+
+    result.relations[fieldKey] = true;
 
     const referencedObjectMetadata = getRelationObjectMetadata(
       fieldMetadata,

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
-import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter/utils/object-record-changed-values';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
@@ -50,16 +50,22 @@ export class EntityEventsToDbListener {
   }
 
   private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
-    payload.events = payload.events.filter(
+    const filteredEvents = payload.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
     await this.messageQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(CreateAuditLogFromInternalEvent.name, payload);
+    >(CreateAuditLogFromInternalEvent.name, {
+      ...payload,
+      events: filteredEvents,
+    });
 
     await this.messageQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(UpsertTimelineActivityFromInternalEvent.name, payload);
+    >(UpsertTimelineActivityFromInternalEvent.name, {
+      ...payload,
+      events: filteredEvents,
+    });
   }
 }

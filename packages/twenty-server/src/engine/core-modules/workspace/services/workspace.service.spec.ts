@@ -8,9 +8,10 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EmailService } from 'src/engine/integrations/email/email.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -59,6 +60,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: OnboardingService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceInvitationService,
           useValue: {},
         },
       ],

@@ -1,6 +1,7 @@
-import { FindOptionsOrderValue } from 'typeorm';
-
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record as IRecord,
+  RecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -9,12 +10,12 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { ObjectMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isPlainObject } from 'src/utils/is-plain-object';
@@ -28,19 +29,21 @@ export class ObjectRecordsToGraphqlConnectionMapper {
 
   public createConnection<ObjectRecord extends IRecord = IRecord>(
     objectRecords: ObjectRecord[],
+    objectName: string,
     take: number,
     totalCount: number,
-    order: Record<string, FindOptionsOrderValue> | undefined,
-    objectName: string,
+    order: RecordOrderBy | undefined,
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
     depth = 0,
   ): IConnection<ObjectRecord> {
     const edges = (objectRecords ?? []).map((objectRecord) => ({
       node: this.processRecord(
         objectRecord,
+        objectName,
         take,
         totalCount,
         order,
-        objectName,
         depth,
       ),
       cursor: encodeCursor(objectRecord, order),
@@ -49,8 +52,8 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     return {
       edges,
       pageInfo: {
-        hasNextPage: objectRecords.length === take && totalCount > take,
-        hasPreviousPage: false,
+        hasNextPage,
+        hasPreviousPage,
         startCursor: edges[0]?.cursor,
         endCursor: edges[edges.length - 1]?.cursor,
       },
@@ -58,12 +61,12 @@ export class ObjectRecordsToGraphqlConnectionMapper {
     };
   }
 
-  private processRecord<T extends Record<string, any>>(
+  public processRecord<T extends Record<string, any>>(
     objectRecord: T,
+    objectName: string,
     take: number,
     totalCount: number,
-    order: Record<string, FindOptionsOrderValue> | undefined,
-    objectName: string,
+    order?: RecordOrderBy,
     depth = 0,
   ): T {
     if (depth >= CONNECTION_MAX_DEPTH) {
@@ -96,21 +99,23 @@ export class ObjectRecordsToGraphqlConnectionMapper {
         if (Array.isArray(value)) {
           processedObjectRecord[key] = this.createConnection(
             value,
+            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
+              .nameSingular,
             take,
             value.length,
             order,
-            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
-              .nameSingular,
+            false,
+            false,
             depth + 1,
           );
         } else if (isPlainObject(value)) {
           processedObjectRecord[key] = this.processRecord(
             value,
+            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
+              .nameSingular,
             take,
             totalCount,
             order,
-            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
-              .nameSingular,
             depth + 1,
           );
         }

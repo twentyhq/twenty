@@ -1,9 +1,9 @@
-import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
-import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export type MessagingAddSingleMessageToCacheForImportJobData = {
   messageExternalId: string;
@@ -25,7 +25,7 @@ export class MessagingAddSingleMessageToCacheForImportJob {
     const { messageExternalId, messageChannelId, workspaceId } = data;
 
     await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+      `messages-to-import:${workspaceId}:${messageChannelId}`,
       [messageExternalId],
     );
   }

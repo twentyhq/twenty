@@ -17,6 +17,7 @@ import {
 export type ConfirmationModalProps = {
   isOpen: boolean;
   title: string;
+  loading?: boolean;
   subtitle: ReactNode;
   setIsOpen: (val: boolean) => void;
   onConfirmClick: () => void;
@@ -59,6 +60,7 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
 export const ConfirmationModal = ({
   isOpen = false,
   title,
+  loading,
   subtitle,
   setIsOpen,
   onConfirmClick,
@@ -83,6 +85,18 @@ export const ConfirmationModal = ({
     250,
   );
 
+  const handleConfirmClick = () => {
+    onConfirmClick();
+
+    setIsOpen(false);
+  };
+
+  const handleEnter = () => {
+    if (isValidValue) {
+      handleConfirmClick();
+    }
+  };
+
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
@@ -93,7 +107,7 @@ export const ConfirmationModal = ({
                 setIsOpen(false);
               }
             }}
-            onEnter={onConfirmClick}
+            onEnter={handleEnter}
             isClosable={true}
             padding="large"
           >
@@ -109,6 +123,7 @@ export const ConfirmationModal = ({
             {confirmationValue && (
               <Section>
                 <TextInput
+                  dataTestId="confirmation-modal-input"
                   value={inputConfirmationValue}
                   onChange={handleInputConfimrationValueChange}
                   placeholder={confirmationPlaceholder}
@@ -124,14 +139,11 @@ export const ConfirmationModal = ({
               fullWidth
             />
             <StyledCenteredButton
-              onClick={async () => {
-                await onConfirmClick();
-                setIsOpen(false);
-              }}
+              onClick={handleConfirmClick}
               variant="secondary"
               accent={confirmButtonAccent}
               title={deleteButtonText}
-              disabled={!isValidValue}
+              disabled={!isValidValue || loading}
               fullWidth
               dataTestId="confirmation-modal-confirm-button"
             />

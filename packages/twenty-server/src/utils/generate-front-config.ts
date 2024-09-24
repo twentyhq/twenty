@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { config } from 'dotenv';
-config();
+config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
 
 export function generateFrontConfig(): void {
   const configObject = {

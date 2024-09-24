@@ -5,6 +5,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -21,6 +23,13 @@ export const SettingsDevelopers = () => {
       Icon={IconCode}
       title="Developers"
       actionButton={<SettingsReadDocumentationButton />}
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Developers' },
+      ]}
     >
       <SettingsPageContainer>
         <Section>

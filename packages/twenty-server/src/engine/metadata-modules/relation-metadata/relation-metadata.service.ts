@@ -6,11 +6,14 @@ import camelCase from 'lodash.camelcase';
 import { FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/create-relation.input';
@@ -21,7 +24,7 @@ import {
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -30,7 +33,9 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 import {
   RelationMetadataEntity,
@@ -50,6 +55,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly indexMetadataService: IndexMetadataService,
   ) {
     super(relationMetadataRepository);
   }
@@ -87,21 +94,22 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const fromId = uuidV4();
     const toId = uuidV4();
 
-    await this.fieldMetadataService.createMany([
-      this.createFieldMetadataForRelationMetadata(
-        relationMetadataInput,
-        'from',
-        isCustom,
-        fromId,
-      ),
-      this.createFieldMetadataForRelationMetadata(
-        relationMetadataInput,
-        'to',
-        isCustom,
-        toId,
-      ),
-      this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
-    ]);
+    const createdRelationFieldsMetadata =
+      await this.fieldMetadataService.createMany([
+        this.createFieldMetadataForRelationMetadata(
+          relationMetadataInput,
+          'from',
+          isCustom,
+          fromId,
+        ),
+        this.createFieldMetadataForRelationMetadata(
+          relationMetadataInput,
+          'to',
+          isCustom,
+          toId,
+        ),
+        this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
+      ]);
 
     const createdRelationMetadata = await super.createOne({
       ...relationMetadataInput,
@@ -113,6 +121,38 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       relationMetadataInput,
       objectMetadataMap,
       columnName,
+    );
+
+    const toObjectMetadata =
+      objectMetadataMap[relationMetadataInput.toObjectMetadataId];
+
+    const foreignKeyFieldMetadata = createdRelationFieldsMetadata.find(
+      (fieldMetadata) => fieldMetadata.type === FieldMetadataType.UUID,
+    );
+
+    if (!foreignKeyFieldMetadata) {
+      throw new RelationMetadataException(
+        `ForeignKey field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
+
+    const deletedFieldMetadata = toObjectMetadata.fields.find(
+      (fieldMetadata) =>
+        fieldMetadata.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+    );
+
+    if (!deletedFieldMetadata) {
+      throw new RelationMetadataException(
+        `Deleted field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
+
+    await this.indexMetadataService.createIndex(
+      relationMetadataInput.workspaceId,
+      toObjectMetadata,
+      [foreignKeyFieldMetadata, deletedFieldMetadata],
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -411,43 +451,73 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   }
 
   async findManyRelationMetadataByFieldMetadataIds(
-    fieldMetadataIds: string[],
+    fieldMetadataItems: Array<
+      Pick<FieldMetadataInterface, 'id' | 'type' | 'objectMetadataId'>
+    >,
+    workspaceId: string,
   ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
-    const relationMetadataCollection =
-      await this.relationMetadataRepository.find({
-        where: [
-          {
-            fromFieldMetadataId: In(fieldMetadataIds),
-          },
-          {
-            toFieldMetadataId: In(fieldMetadataIds),
-          },
-        ],
-        relations: [
-          'fromObjectMetadata',
-          'toObjectMetadata',
-          'fromFieldMetadata',
-          'toFieldMetadata',
-        ],
-      });
+    const metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
-    const mappedResult = fieldMetadataIds.map((fieldMetadataId) => {
-      const foundRelationMetadataItem = relationMetadataCollection.find(
-        (relationMetadataItem) =>
-          relationMetadataItem.fromFieldMetadataId === fieldMetadataId ||
-          relationMetadataItem.toFieldMetadataId === fieldMetadataId,
+    if (!metadataVersion) {
+      throw new NotFoundException(
+        `Metadata version not found for workspace ${workspaceId}`,
+      );
+    }
+
+    const objectMetadataMap =
+      await this.workspaceCacheStorageService.getObjectMetadataMap(
+        workspaceId,
+        metadataVersion,
       );
 
-      return (
-        foundRelationMetadataItem ??
-        // TODO: return a relation metadata not found exception
-        new NotFoundException(
-          `RelationMetadata with fieldMetadataId ${fieldMetadataId} not found`,
-        )
+    if (!objectMetadataMap) {
+      throw new NotFoundException(
+        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
       );
+    }
+
+    const mappedResult = fieldMetadataItems.map((fieldMetadataItem) => {
+      const objectMetadata =
+        objectMetadataMap[fieldMetadataItem.objectMetadataId];
+
+      const fieldMetadata = objectMetadata.fields[fieldMetadataItem.id];
+
+      const relationMetadata =
+        fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
+
+      if (!relationMetadata) {
+        return new NotFoundException(
+          `From object metadata not found for relation ${fieldMetadata?.id}`,
+        );
+      }
+
+      const fromObjectMetadata =
+        objectMetadataMap[relationMetadata.fromObjectMetadataId];
+
+      const toObjectMetadata =
+        objectMetadataMap[relationMetadata.toObjectMetadataId];
+
+      const fromFieldMetadata =
+        objectMetadataMap[fromObjectMetadata.id].fields[
+          relationMetadata.fromFieldMetadataId
+        ];
+
+      const toFieldMetadata =
+        objectMetadataMap[toObjectMetadata.id].fields[
+          relationMetadata.toFieldMetadataId
+        ];
+
+      return {
+        ...relationMetadata,
+        fromObjectMetadata,
+        toObjectMetadata,
+        fromFieldMetadata,
+        toFieldMetadata,
+      };
     });
 
-    return mappedResult;
+    return mappedResult as (RelationMetadataEntity | NotFoundException)[];
   }
 
   private async deleteRelationWorkspaceCustomMigration(

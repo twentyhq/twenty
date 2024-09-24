@@ -32,7 +32,7 @@ import {
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -40,6 +40,7 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -57,6 +58,8 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -81,6 +84,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(objectMetadataRepository);
   }
@@ -138,6 +142,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.deleteAllRelationsAndDropTable(objectMetadata, workspaceId);
     }
 
+    // DELETE VIEWS
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+        workspaceId,
+        'view',
+      );
+
+    const views = await viewRepository.find({
+      where: {
+        objectMetadataId: objectMetadata.id,
+      },
+    });
+
+    if (views.length > 0) {
+      await viewRepository.delete(views.map((view) => view.id));
+    }
+
+    // DELETE OBJECT
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -209,7 +231,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: isCustom,
       isSystem: false,
       isRemote: objectMetadataInput.isRemote,
-      isSoftDeletable: true,
       fields: isCustom
         ? // Creating default fields.
           // No need to create a custom migration for this though as the default columns are already
@@ -268,6 +289,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               isSystem: false,
               workspaceId: objectMetadataInput.workspaceId,
               defaultValue: 'now',
+            },
+            {
+              standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+              type: FieldMetadataType.DATE_TIME,
+              name: 'deletedAt',
+              label: 'Deleted at',
+              icon: 'IconCalendarClock',
+              description: 'Deletion date',
+              isNullable: true,
+              isActive: true,
+              isCustom: false,
+              isSystem: false,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: null,
             },
             {
               standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
@@ -342,7 +377,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     createdObjectMetadata.fields.map(async (field, index) => {
-      if (field.name === 'id') {
+      if (field.name === 'id' || field.name === 'deletedAt') {
         return;
       }
 
@@ -354,6 +389,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       }') RETURNING *`,
       );
     });
+
+    await this.createViewWorkspaceFavorite(
+      objectMetadataInput.workspaceId,
+      view[0].id,
+    );
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       objectMetadataInput.workspaceId,
@@ -1245,5 +1285,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         { isActive: isActive },
       );
     }
+  }
+
+  private async createViewWorkspaceFavorite(
+    workspaceId: string,
+    viewId: string,
+  ) {
+    const favoriteRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
+        workspaceId,
+        'favorite',
+      );
+
+    const favoriteCount = await favoriteRepository.count();
+
+    return favoriteRepository.insert(
+      favoriteRepository.create({
+        viewId,
+        position: favoriteCount,
+      }),
+    );
   }
 }

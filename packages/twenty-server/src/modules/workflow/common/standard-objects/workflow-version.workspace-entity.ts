@@ -21,16 +21,17 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowStep } from 'src/modules/workflow/common/types/workflow-step.type';
-import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export enum WorkflowVersionStatus {
   DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
   DEACTIVATED = 'DEACTIVATED',
+  ARCHIVED = 'ARCHIVED',
 }
 
-export const WorkflowVersionStatusOptions = [
+const WorkflowVersionStatusOptions = [
   {
     value: WorkflowVersionStatus.DRAFT,
     label: 'Draft',
@@ -47,7 +48,13 @@ export const WorkflowVersionStatusOptions = [
     value: WorkflowVersionStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
-    color: 'gray',
+    color: 'red',
+  },
+  {
+    value: WorkflowVersionStatus.ARCHIVED,
+    label: 'Archived',
+    position: 3,
+    color: 'grey',
   },
 ];
 

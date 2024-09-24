@@ -13,7 +13,10 @@ export type WorkflowDiagramStepNodeData = {
   label: string;
 };
 
-export type WorkflowDiagramCreateStepNodeData = Record<string, never>;
+export type WorkflowDiagramCreateStepNodeData = {
+  nodeType: 'create-step';
+  parentNodeId: string;
+};
 
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData

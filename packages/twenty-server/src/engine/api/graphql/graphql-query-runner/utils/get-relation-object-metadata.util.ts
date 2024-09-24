@@ -1,6 +1,7 @@
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { ObjectMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import {
   deduceRelationDirection,
   RelationDirection,
@@ -10,14 +11,7 @@ export const getRelationObjectMetadata = (
   fieldMetadata: FieldMetadataInterface,
   objectMetadataMap: ObjectMetadataMap,
 ) => {
-  const relationMetadata =
-    fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
-
-  if (!relationMetadata) {
-    throw new Error(
-      `Relation metadata not found for field ${fieldMetadata.name}`,
-    );
-  }
+  const relationMetadata = getRelationMetadata(fieldMetadata);
 
   const relationDirection = deduceRelationDirection(
     fieldMetadata,
@@ -36,4 +30,19 @@ export const getRelationObjectMetadata = (
   }
 
   return referencedObjectMetadata;
+};
+
+export const getRelationMetadata = (
+  fieldMetadata: FieldMetadataInterface,
+): RelationMetadataEntity => {
+  const relationMetadata =
+    fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
+
+  if (!relationMetadata) {
+    throw new Error(
+      `Relation metadata not found for field ${fieldMetadata.name}`,
+    );
+  }
+
+  return relationMetadata;
 };

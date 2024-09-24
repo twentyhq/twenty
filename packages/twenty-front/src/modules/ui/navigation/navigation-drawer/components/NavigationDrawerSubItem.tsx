@@ -2,21 +2,12 @@ import {
   NavigationDrawerItem,
   NavigationDrawerItemProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import styled from '@emotion/styled';
-
-const StyledItem = styled.div`
-  &:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.spacing(0.5)};
-  }
-  margin-left: ${({ theme }) => theme.spacing(4)};
-`;
 
 type NavigationDrawerSubItemProps = NavigationDrawerItemProps;
 
 export const NavigationDrawerSubItem = ({
   className,
   label,
-  level = 1,
   Icon,
   to,
   onClick,
@@ -25,22 +16,22 @@ export const NavigationDrawerSubItem = ({
   soon,
   count,
   keyboard,
+  subItemState,
 }: NavigationDrawerSubItemProps) => {
   return (
-    <StyledItem>
-      <NavigationDrawerItem
-        className={className}
-        label={label}
-        level={level}
-        Icon={Icon}
-        to={to}
-        onClick={onClick}
-        active={active}
-        danger={danger}
-        soon={soon}
-        count={count}
-        keyboard={keyboard}
-      />
-    </StyledItem>
+    <NavigationDrawerItem
+      className={className}
+      label={label}
+      indentationLevel={2}
+      subItemState={subItemState}
+      Icon={Icon}
+      to={to}
+      onClick={onClick}
+      active={active}
+      danger={danger}
+      soon={soon}
+      count={count}
+      keyboard={keyboard}
+    />
   );
 };

@@ -21,7 +21,9 @@ import { DefaultLayout } from '~/modules/ui/layout/page/DefaultLayout';
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
+import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
+import { IconsProvider } from 'twenty-ui';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
 export type PageDecoratorArgs = {
@@ -63,6 +65,7 @@ const ApolloStorybookDevLogEffect = () => {
 const Providers = () => {
   return (
     <RecoilRoot>
+      <RecoilDebugObserverEffect />
       <ApolloProvider client={mockedApolloClient}>
         <ApolloStorybookDevLogEffect />
         <ApolloMetadataClientMockedProvider>
@@ -73,11 +76,13 @@ const Providers = () => {
               <FullHeightStorybookLayout>
                 <HelmetProvider>
                   <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                    <ObjectMetadataItemsProvider>
-                      <PrefetchDataProvider>
-                        <Outlet />
-                      </PrefetchDataProvider>
-                    </ObjectMetadataItemsProvider>
+                    <IconsProvider>
+                      <ObjectMetadataItemsProvider>
+                        <PrefetchDataProvider>
+                          <Outlet />
+                        </PrefetchDataProvider>
+                      </ObjectMetadataItemsProvider>
+                    </IconsProvider>
                   </SnackBarProviderScope>
                 </HelmetProvider>
               </FullHeightStorybookLayout>

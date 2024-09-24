@@ -142,10 +142,6 @@ export const useTableData = ({
   });
 
   useEffect(() => {
-    const MAXIMUM_REQUESTS = isDefined(totalCount)
-      ? Math.min(maximumRequests, totalCount / pageSize)
-      : maximumRequests;
-
     const fetchNextPage = async () => {
       setInflight(true);
       setPreviousRecordCount(records.length);
@@ -167,8 +163,8 @@ export const useTableData = ({
     }
 
     if (
-      pageCount >= MAXIMUM_REQUESTS ||
-      (isDefined(totalCount) && records.length === totalCount)
+      pageCount >= maximumRequests ||
+      (isDefined(totalCount) && records.length >= totalCount)
     ) {
       setPageCount(0);
 

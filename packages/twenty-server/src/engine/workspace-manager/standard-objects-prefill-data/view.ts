@@ -1,10 +1,7 @@
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { activitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all.view';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
@@ -18,19 +15,13 @@ export const viewPrefillData = async (
   entityManager: EntityManager,
   schemaName: string,
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
-  featureFlags?: FeatureFlagEntity[],
+  isWorkflowEnabled: boolean,
 ) => {
-  const isWorkflowEnabled =
-    featureFlags?.find(
-      (featureFlag) => featureFlag.key === FeatureFlagKey.IsWorkflowEnabled,
-    )?.value ?? false;
-
   const viewDefinitions = [
     await companiesAllView(objectMetadataMap),
     await peopleAllView(objectMetadataMap),
     await opportunitiesAllView(objectMetadataMap),
     await opportunitiesByStageView(objectMetadataMap),
-    await activitiesAllView(objectMetadataMap),
     await notesAllView(objectMetadataMap),
     await tasksAllView(objectMetadataMap),
     await tasksByStatusView(objectMetadataMap),
@@ -128,4 +119,6 @@ export const viewPrefillData = async (
         .execute();
     }
   }
+
+  return viewDefinitionsWithId;
 };

@@ -40,11 +40,22 @@ Run the following commands:
 
 ```
 yarn database:migrate:prod 
-yarn command:prod workspace:sync-metadata -f 
 yarn command:prod upgrade-0.23
 ```
 
 The `yarn database:migrate:prod` command will apply the migrations to the Database.  
 The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
+
+## v0.23.0 to v0.24.0
+
+Run the following commands:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
 
 <ArticleEditContent></ArticleEditContent>

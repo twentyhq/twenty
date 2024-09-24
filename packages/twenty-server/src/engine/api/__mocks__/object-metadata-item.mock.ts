@@ -7,6 +7,7 @@ export const FIELD_CURRENCY_MOCK_NAME = 'fieldCurrency';
 export const FIELD_ADDRESS_MOCK_NAME = 'fieldAddress';
 export const FIELD_ACTOR_MOCK_NAME = 'fieldActor';
 export const FIELD_FULL_NAME_MOCK_NAME = 'fieldFullName';
+export const FIELD_PHONES_MOCK_NAME = 'fieldPhones';
 
 export const fieldNumberMock = {
   name: 'fieldNumber',
@@ -156,7 +157,23 @@ const fieldRatingMock = {
   name: 'fieldRating',
   type: FieldMetadataType.RATING,
   isNullable: true,
-  defaultValue: null,
+  defaultValue: 'RATING_1',
+  options: [
+    {
+      id: '9a519a86-422b-4598-88ae-78751353f683',
+      color: 'red',
+      label: 'Opt 1',
+      value: 'RATING_1',
+      position: 0,
+    },
+    {
+      id: '33f28d51-bc82-4e1d-ae4b-d9e4c0ed0ab4',
+      color: 'purple',
+      label: 'Opt 2',
+      value: 'RATING_2',
+      position: 1,
+    },
+  ],
 };
 
 const fieldPositionMock = {
@@ -205,6 +222,7 @@ const fieldActorMock = {
     name: '',
   },
 };
+
 const fieldEmailsMock = {
   name: 'fieldEmails',
   type: FieldMetadataType.EMAILS,
@@ -212,10 +230,31 @@ const fieldEmailsMock = {
   defaultValue: [{ primaryEmail: '', additionalEmails: {} }],
 };
 
+const fieldArrayMock = {
+  name: 'fieldArray',
+  type: FieldMetadataType.ARRAY,
+  isNullable: true,
+  defaultValue: null,
+};
+
+const fieldPhonesMock = {
+  name: FIELD_PHONES_MOCK_NAME,
+  type: FieldMetadataType.PHONES,
+  isNullable: false,
+  defaultValue: [
+    {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: {},
+    },
+  ],
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
   fieldPhoneMock,
+  fieldPhonesMock,
   fieldEmailMock,
   fieldEmailsMock,
   fieldDateTimeMock,
@@ -235,6 +274,7 @@ export const fields = [
   fieldRawJsonMock,
   fieldRichTextMock,
   fieldActorMock,
+  fieldArrayMock,
 ];
 
 export const objectMetadataItemMock = {

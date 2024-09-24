@@ -29,7 +29,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { View } from '@/views/types/View';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { RelationMetadataType } from '~/generated-metadata/graphql';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -46,6 +46,12 @@ export const StyledObjectFieldTableRow = styled(TableRow)`
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledNameLabel = styled.div`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const StyledIconTableCell = styled(TableCell)`
@@ -203,17 +209,23 @@ export const SettingsObjectFieldItemTableRow = ({
     >
       <StyledNameTableCell>
         {!!Icon && (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon
+            style={{ minWidth: theme.icon.size.md }}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         )}
-        {fieldMetadataItem.label}
+        <StyledNameLabel title={fieldMetadataItem.label}>
+          {fieldMetadataItem.label}
+        </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>{typeLabel}</TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={
-            relationType === RelationMetadataType.ManyToOne ||
-            relationType === RelationMetadataType.OneToOne
+            relationType === RelationDefinitionType.ManyToOne ||
+            relationType === RelationDefinitionType.OneToOne
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
           }
@@ -257,6 +269,7 @@ export const SettingsObjectFieldItemTableRow = ({
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
             scopeKey={fieldMetadataItem.id}
+            onEdit={() => navigate(linkToNavigate)}
             onActivate={() => activateMetadataField(fieldMetadataItem)}
             onDelete={() => deleteMetadataField(fieldMetadataItem)}
           />
