@@ -92,6 +92,7 @@ export class LambdaDriver
 
     if (
       isDefined(listLayerResult.LayerVersions) &&
+      listLayerResult.LayerVersions.length > 0 &&
       listLayerResult.LayerVersions?.[0].Description === `${version}` &&
       isDefined(listLayerResult.LayerVersions[0].LayerVersionArn)
     ) {
