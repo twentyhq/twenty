@@ -26,8 +26,7 @@ const StyledAvatar = styled.div<{
   user-select: none;
 
   border-radius: ${({ rounded, type }) => {
-    if (rounded === true) return '50%';
-    return type === 'icon' ? '4px' : '2px';
+    return rounded ? '50%' : type === 'icon' ? '4px' : '2px';
   }};
   display: flex;
   font-size: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].fontSize};

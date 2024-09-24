@@ -138,8 +138,8 @@ export const ShowPageSummaryCard = ({
           placeholderColorSeed={id}
           placeholder={avatarPlaceholder}
           type={icon ? 'icon' : avatarType}
-          Icon={icon ?? undefined}
-          iconColor={iconColor ?? undefined}
+          Icon={icon}
+          iconColor={iconColor}
         />
         <StyledFileInput
           ref={inputFileRef}
