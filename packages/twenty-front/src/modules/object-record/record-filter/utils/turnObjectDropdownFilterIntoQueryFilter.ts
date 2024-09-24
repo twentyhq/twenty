@@ -394,7 +394,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
 
             const { start, end } = dateRange ?? defaultDateRange;
 
-            // And query is not working, lte is ignored
             objectRecordFilters.push({
               and: [
                 {
@@ -415,7 +414,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             const isValid = resolvedFilterValue instanceof Date;
             const date = isValid ? resolvedFilterValue : now;
 
-            // And query is not working, lte is ignored
             objectRecordFilters.push({
               and: [
                 {
@@ -447,7 +445,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             });
             break;
           case ViewFilterOperand.IsToday: {
-            // And query is not working, lte is ignored
             objectRecordFilters.push({
               and: [
                 {
