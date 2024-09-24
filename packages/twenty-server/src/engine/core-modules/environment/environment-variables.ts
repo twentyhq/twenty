@@ -91,7 +91,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  ANALYTICS_ENABLED = false;
+  ANALYTICS_ENABLED = true;
 
   @IsString()
   @IsOptional()

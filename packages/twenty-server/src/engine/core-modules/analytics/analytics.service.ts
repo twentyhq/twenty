@@ -1,16 +1,20 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
+import { AxiosRequestConfig } from 'axios';
+
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 type CreateEventInput = {
   type: string;
+  sessionId: string;
   data: object;
 };
 
 @Injectable()
 export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
+  private readonly datasource = 'analytics_events';
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -34,21 +38,34 @@ export class AnalyticsService {
     }
 
     const data = {
-      type: createEventInput.type,
-      data: {
-        hostname: hostName,
-        userUUID: userId,
-        workspaceUUID: workspaceId,
+      action: createEventInput.type,
+      timestamp: new Date().toISOString(),
+      version: '1',
+      session_id: createEventInput.sessionId,
+      payload: {
+        userId: userId,
+        workspaceId: workspaceId,
         workspaceDisplayName: workspaceDisplayName,
         workspaceDomainName: workspaceDomainName,
+        hostName: hostName,
         ...createEventInput.data,
       },
     };
 
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: this.environmentService.get('TINYBIRD_TOKEN'),
+      },
+    };
+
     try {
-      await this.httpService.axiosRef.post('/v1', data);
-    } catch {
-      this.logger.error('Failed to send analytics event');
+      await this.httpService.axiosRef.post(
+        `/events?name=${this.datasource}`,
+        data,
+        config,
+      );
+    } catch (error) {
+      this.logger.error(error);
 
       return { success: false };
     }
