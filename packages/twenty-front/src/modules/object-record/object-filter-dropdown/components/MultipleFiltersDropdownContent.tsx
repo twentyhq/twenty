@@ -38,14 +38,19 @@ export const MultipleFiltersDropdownContent = ({
   const selectedOperandInDropdown = useRecoilValue(
     selectedOperandInDropdownState,
   );
-  const isNotConfigurable =
+  const isConfigurable =
     selectedOperandInDropdown &&
     [
-      ViewFilterOperand.IsEmpty,
-      ViewFilterOperand.IsNotEmpty,
-      ViewFilterOperand.IsInFuture,
-      ViewFilterOperand.IsInPast,
-      ViewFilterOperand.IsToday,
+      ViewFilterOperand.Is,
+      ViewFilterOperand.IsNotNull,
+      ViewFilterOperand.IsNot,
+      ViewFilterOperand.LessThan,
+      ViewFilterOperand.GreaterThan,
+      ViewFilterOperand.IsBefore,
+      ViewFilterOperand.IsAfter,
+      ViewFilterOperand.Contains,
+      ViewFilterOperand.DoesNotContain,
+      ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
 
   return (
@@ -54,9 +59,7 @@ export const MultipleFiltersDropdownContent = ({
         <ObjectFilterDropdownFilterSelect />
       ) : isObjectFilterDropdownOperandSelectUnfolded ? (
         <ObjectFilterDropdownOperandSelect />
-      ) : isNotConfigurable ? (
-        <ObjectFilterDropdownOperandButton />
-      ) : (
+      ) : isConfigurable ? (
         selectedOperandInDropdown && (
           <>
             <ObjectFilterDropdownOperandButton />
@@ -101,6 +104,8 @@ export const MultipleFiltersDropdownContent = ({
             )}
           </>
         )
+      ) : (
+        <ObjectFilterDropdownOperandButton />
       )}
       <MultipleFiltersDropdownFilterOnFilterChangedEffect
         filterDefinitionUsedInDropdownType={
