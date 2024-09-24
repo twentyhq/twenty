@@ -38,8 +38,15 @@ export const RecordIndexPageKanbanAddButton = () => {
     RecordIndexRootPropsContext,
   );
 
-  const { columnIdsState } = useRecordBoardStates(recordIndexId);
+  const { columnIdsState, visibleFieldDefinitionsState } =
+    useRecordBoardStates(recordIndexId);
   const columnIds = useRecoilValue(columnIdsState);
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
+  );
+  const labelIdentifierField = visibleFieldDefinitions.find(
+    (field) => field.isLabelIdentifier,
+  );
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -66,7 +73,12 @@ export const RecordIndexPageKanbanAddButton = () => {
         RelationPickerHotkeyScope.RelationPicker,
       );
     } else {
-      handleAddNewCardClick('', 'first', columnDefinition.id);
+      handleAddNewCardClick(
+        labelIdentifierField?.label ?? '',
+        '',
+        'first',
+        columnDefinition.id,
+      );
       closeDropdown();
     }
   };

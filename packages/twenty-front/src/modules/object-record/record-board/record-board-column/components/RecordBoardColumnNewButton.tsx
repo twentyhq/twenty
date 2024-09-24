@@ -1,3 +1,4 @@
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { useTheme } from '@emotion/react';
@@ -29,6 +30,14 @@ export const RecordBoardColumnNewButton = ({
   columnId: string;
 }) => {
   const theme = useTheme();
+  const { visibleFieldDefinitionsState } = useRecordBoardStates();
+
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
+  );
+  const labelIdentifierField = visibleFieldDefinitions.find(
+    (field) => field.isLabelIdentifier,
+  );
 
   const newRecord = useRecoilValue(
     recordBoardNewRecordByColumnIdSelector({
@@ -40,7 +49,12 @@ export const RecordBoardColumnNewButton = ({
   const { handleAddNewCardClick, handleCreateSuccess } = useAddNewCard();
 
   const handleNewButtonClick = () => {
-    handleAddNewCardClick('', 'last');
+    handleAddNewCardClick(
+      labelIdentifierField?.label ?? '',
+      '',
+      'last',
+      columnId,
+    );
   };
 
   if (newRecord.isCreating && newRecord.position === 'last') {

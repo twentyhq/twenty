@@ -6,6 +6,7 @@ import { IconDotsVertical, IconPlus, Tag } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -68,6 +69,14 @@ export const RecordBoardColumnHeader = () => {
   const { columnDefinition, recordCount } = useContext(
     RecordBoardColumnContext,
   );
+  const { visibleFieldDefinitionsState } = useRecordBoardStates();
+
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
+  );
+  const labelIdentifierField = visibleFieldDefinitions.find(
+    (field) => field.isLabelIdentifier,
+  );
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -108,7 +117,12 @@ export const RecordBoardColumnHeader = () => {
   const { handleAddNewCardClick, handleCreateSuccess } = useAddNewCard();
 
   const handleNewButtonClick = () => {
-    handleAddNewCardClick('', 'first');
+    handleAddNewCardClick(
+      labelIdentifierField?.label ?? '',
+      '',
+      'first',
+      columnDefinition.id,
+    );
   };
 
   const isOpportunity =

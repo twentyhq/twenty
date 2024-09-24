@@ -145,7 +145,7 @@ export const RecordBoardCard = ({
   onCreateSuccess?: () => void;
   position?: 'first' | 'last';
 }) => {
-  const [newRecordName, setNewRecordName] = useState('');
+  const [newLabelValue, setNewLabelValue] = useState('');
   const { handleBlur, handleInputEnter } = useAddNewCard();
   const { recordId } = useContext(RecordBoardCardContext);
   const { updateOneRecord, objectMetadataItem } =
@@ -224,6 +224,10 @@ export const RecordBoardCard = ({
     (boardField) => !boardField.isLabelIdentifier,
   );
 
+  const labelIdentifierField = visibleFieldDefinitions.find(
+    (field) => field.isLabelIdentifier,
+  );
+
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
       {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
@@ -242,15 +246,25 @@ export const RecordBoardCard = ({
             <RecordInlineCellEditMode>
               <TextInput
                 autoFocus
-                value={newRecordName}
+                value={newLabelValue}
                 onInputEnter={() =>
-                  handleInputEnter(newRecordName, position, onCreateSuccess)
+                  handleInputEnter(
+                    labelIdentifierField?.label ?? '',
+                    newLabelValue,
+                    position,
+                    onCreateSuccess,
+                  )
                 }
                 onBlur={() =>
-                  handleBlur(newRecordName, position, onCreateSuccess)
+                  handleBlur(
+                    labelIdentifierField?.label ?? '',
+                    newLabelValue,
+                    position,
+                    onCreateSuccess,
+                  )
                 }
-                onChange={(text: string) => setNewRecordName(text)}
-                placeholder="Label identifier"
+                onChange={(text: string) => setNewLabelValue(text)}
+                placeholder={labelIdentifierField?.label}
               />
             </RecordInlineCellEditMode>
           ) : (
