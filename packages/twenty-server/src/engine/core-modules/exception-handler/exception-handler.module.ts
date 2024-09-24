@@ -1,15 +1,15 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
-import { EXCEPTION_HANDLER_DRIVER } from 'src/engine/core-modules/exception-handler/exception-handler.constants';
-import {
-  ConfigurableModuleClass,
-  OPTIONS_TYPE,
-  ASYNC_OPTIONS_TYPE,
-} from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
 import { ExceptionHandlerConsoleDriver } from 'src/engine/core-modules/exception-handler/drivers/console.driver';
 import { ExceptionHandlerSentryDriver } from 'src/engine/core-modules/exception-handler/drivers/sentry.driver';
+import { EXCEPTION_HANDLER_DRIVER } from 'src/engine/core-modules/exception-handler/exception-handler.constants';
+import {
+  ASYNC_OPTIONS_TYPE,
+  ConfigurableModuleClass,
+  OPTIONS_TYPE,
+} from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 
 @Global()
 @Module({
@@ -23,7 +23,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
       useValue:
         options.type === ExceptionHandlerDriver.Console
           ? new ExceptionHandlerConsoleDriver()
-          : new ExceptionHandlerSentryDriver(options.options),
+          : new ExceptionHandlerSentryDriver(),
     };
     const dynamicModule = super.forRoot(options);
 
@@ -45,7 +45,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
 
         return config.type === ExceptionHandlerDriver.Console
           ? new ExceptionHandlerConsoleDriver()
-          : new ExceptionHandlerSentryDriver(config.options);
+          : new ExceptionHandlerSentryDriver();
       },
       inject: options.inject || [],
     };

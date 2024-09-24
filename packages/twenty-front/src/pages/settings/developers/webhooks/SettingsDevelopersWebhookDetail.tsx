@@ -87,125 +87,116 @@ export const SettingsDevelopersWebhooksDetail = () => {
     navigate(developerPath);
   };
 
+  if (!webhookData?.targetUrl) {
+    return <></>;
+  }
+
   return (
-    <>
-      {webhookData?.targetUrl && (
-        <SubMenuTopBarContainer
-          Icon={IconCode}
-          title={webhookData.targetUrl}
-          links={[
-            {
-              children: 'Workspace',
-              href: getSettingsPagePath(SettingsPath.Workspace),
-            },
-            {
-              children: 'Developers',
-              href: developerPath,
-            },
-            { children: 'Webhook' },
-          ]}
-          actionButton={
-            <SaveAndCancelButtons
-              isSaveDisabled={!isDirty}
-              onCancel={() => {
-                navigate(developerPath);
+    <SubMenuTopBarContainer
+      Icon={IconCode}
+      title={webhookData.targetUrl}
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Developers',
+          href: developerPath,
+        },
+        { children: 'Webhook' },
+      ]}
+      actionButton={
+        <SaveAndCancelButtons
+          isSaveDisabled={!isDirty}
+          onCancel={() => {
+            navigate(developerPath);
+          }}
+          onSave={handleSave}
+        />
+      }
+    >
+      <SettingsPageContainer>
+        <Section>
+          <H2Title
+            title="Endpoint URL"
+            description="We will send POST requests to this endpoint for every new event"
+          />
+          <TextInput
+            placeholder="URL"
+            value={webhookData.targetUrl}
+            disabled
+            fullWidth
+          />
+        </Section>
+        <Section>
+          <H2Title title="Description" description="An optional description" />
+          <TextArea
+            placeholder="Write a description"
+            minRows={4}
+            value={description}
+            onChange={(description) => {
+              setDescription(description);
+              setIsDirty(true);
+            }}
+          />
+        </Section>
+        <Section>
+          <H2Title
+            title="Filters"
+            description="Select the event you wish to send to this endpoint"
+          />
+          <StyledFilterRow>
+            <Select
+              fullWidth
+              dropdownId="object-webhook-type-select"
+              value={operationObjectSingularName}
+              onChange={(objectSingularName) => {
+                setIsDirty(true);
+                setOperationObjectSingularName(objectSingularName);
               }}
-              onSave={handleSave}
+              options={fieldTypeOptions}
             />
-          }
-        >
-          <SettingsPageContainer>
-            <Section>
-              <H2Title
-                title="Endpoint URL"
-                description="We will send POST requests to this endpoint for every new event"
-              />
-              <TextInput
-                placeholder="URL"
-                value={webhookData.targetUrl}
-                disabled
-                fullWidth
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title="Description"
-                description="An optional description"
-              />
-              <TextArea
-                placeholder="Write a description"
-                minRows={4}
-                value={description}
-                onChange={(description) => {
-                  setDescription(description);
-                  setIsDirty(true);
-                }}
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title="Filters"
-                description="Select the event you wish to send to this endpoint"
-              />
-              <StyledFilterRow>
-                <Select
-                  fullWidth
-                  dropdownId="object-webhook-type-select"
-                  value={operationObjectSingularName}
-                  onChange={(objectSingularName) => {
-                    setIsDirty(true);
-                    setOperationObjectSingularName(objectSingularName);
-                  }}
-                  options={fieldTypeOptions}
-                />
-                <Select
-                  fullWidth
-                  dropdownId="operation-webhook-type-select"
-                  value={operationAction}
-                  onChange={(operationAction) => {
-                    setIsDirty(true);
-                    setOperationAction(operationAction);
-                  }}
-                  options={[
-                    { value: '*', label: 'All Actions' },
-                    { value: 'create', label: 'Create' },
-                    { value: 'update', label: 'Update' },
-                    { value: 'delete', label: 'Delete' },
-                  ]}
-                />
-              </StyledFilterRow>
-            </Section>
-            <Section>
-              <H2Title
-                title="Danger zone"
-                description="Delete this integration"
-              />
-              <Button
-                accent="danger"
-                variant="secondary"
-                title="Delete"
-                Icon={IconTrash}
-                onClick={() => setIsDeleteWebhookModalOpen(true)}
-              />
-              <ConfirmationModal
-                confirmationPlaceholder="yes"
-                confirmationValue="yes"
-                isOpen={isDeleteWebhookModalOpen}
-                setIsOpen={setIsDeleteWebhookModalOpen}
-                title="Delete webhook"
-                subtitle={
-                  <>
-                    Please type "yes" to confirm you want to delete this
-                    webhook.
-                  </>
-                }
-                onConfirmClick={deleteWebhook}
-                deleteButtonText="Delete webhook"
-              />
-            </Section>
-          </SettingsPageContainer>
-        </SubMenuTopBarContainer>
-      )}
-    </>
+            <Select
+              fullWidth
+              dropdownId="operation-webhook-type-select"
+              value={operationAction}
+              onChange={(operationAction) => {
+                setIsDirty(true);
+                setOperationAction(operationAction);
+              }}
+              options={[
+                { value: '*', label: 'All Actions' },
+                { value: 'create', label: 'Create' },
+                { value: 'update', label: 'Update' },
+                { value: 'delete', label: 'Delete' },
+              ]}
+            />
+          </StyledFilterRow>
+        </Section>
+        <Section>
+          <H2Title title="Danger zone" description="Delete this integration" />
+          <Button
+            accent="danger"
+            variant="secondary"
+            title="Delete"
+            Icon={IconTrash}
+            onClick={() => setIsDeleteWebhookModalOpen(true)}
+          />
+          <ConfirmationModal
+            confirmationPlaceholder="yes"
+            confirmationValue="yes"
+            isOpen={isDeleteWebhookModalOpen}
+            setIsOpen={setIsDeleteWebhookModalOpen}
+            title="Delete webhook"
+            subtitle={
+              <>Please type "yes" to confirm you want to delete this webhook.</>
+            }
+            onConfirmClick={deleteWebhook}
+            deleteButtonText="Delete webhook"
+          />
+        </Section>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };

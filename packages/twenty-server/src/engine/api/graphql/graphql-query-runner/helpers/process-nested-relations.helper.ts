@@ -1,4 +1,5 @@
 import {
+  DataSource,
   FindManyOptions,
   FindOptionsRelations,
   In,
@@ -33,6 +34,7 @@ export class ProcessNestedRelationsHelper {
     nestedRelations: any,
     limit: number,
     authContext: any,
+    dataSource: DataSource,
   ) {
     const relationFieldMetadata = parentObjectMetadataItem.fields[relationName];
     const relationMetadata = getRelationMetadata(relationFieldMetadata);
@@ -49,11 +51,9 @@ export class ProcessNestedRelationsHelper {
 
     const referenceObjectMetadataName = referenceObjectMetadata.nameSingular;
 
-    const relationRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        authContext.workspace.id,
-        referenceObjectMetadataName,
-      );
+    const relationRepository = await dataSource.getRepository(
+      referenceObjectMetadataName,
+    );
 
     const relationIds = parentObjectRecords.map((item) => item.id);
 
@@ -77,11 +77,12 @@ export class ProcessNestedRelationsHelper {
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations(
         objectMetadataMap,
-        objectMetadataMap[relationName],
+        objectMetadataMap[referenceObjectMetadataName],
         relationResults as ObjectRecord[],
         nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
         limit,
         authContext,
+        dataSource,
       );
     }
   }
@@ -94,6 +95,7 @@ export class ProcessNestedRelationsHelper {
     nestedRelations: any,
     limit: number,
     authContext: any,
+    dataSource: DataSource,
   ) {
     const relationFieldMetadata = parentObjectMetadataItem.fields[relationName];
 
@@ -104,11 +106,9 @@ export class ProcessNestedRelationsHelper {
 
     const referenceObjectMetadataName = referenceObjectMetadata.nameSingular;
 
-    const relationRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        authContext.workspace.id,
-        referenceObjectMetadataName,
-      );
+    const relationRepository = dataSource.getRepository(
+      referenceObjectMetadataName,
+    );
 
     const relationIds = parentObjectRecords.map(
       (item) => item[`${relationName}Id`],
@@ -126,6 +126,9 @@ export class ProcessNestedRelationsHelper {
     const relationResults = await relationRepository.find(relationFindOptions);
 
     parentObjectRecords.forEach((item) => {
+      if (relationResults.length === 0) {
+        (item as any)[`${relationName}Id`] = null;
+      }
       (item as any)[relationName] = relationResults.filter(
         (rel) => rel.id === item[`${relationName}Id`],
       )[0];
@@ -134,11 +137,12 @@ export class ProcessNestedRelationsHelper {
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations(
         objectMetadataMap,
-        objectMetadataMap[relationName],
+        objectMetadataMap[referenceObjectMetadataName],
         relationResults as ObjectRecord[],
         nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
         limit,
         authContext,
+        dataSource,
       );
     }
   }
@@ -150,6 +154,7 @@ export class ProcessNestedRelationsHelper {
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>,
     limit: number,
     authContext: any,
+    dataSource: DataSource,
   ) {
     for (const [relationName, nestedRelations] of Object.entries(relations)) {
       const relationFieldMetadata =
@@ -170,6 +175,7 @@ export class ProcessNestedRelationsHelper {
           nestedRelations,
           limit,
           authContext,
+          dataSource,
         );
       } else {
         await this.processFromRelation(
@@ -180,6 +186,7 @@ export class ProcessNestedRelationsHelper {
           nestedRelations,
           limit,
           authContext,
+          dataSource,
         );
       }
     }

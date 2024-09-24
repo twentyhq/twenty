@@ -93,6 +93,8 @@ export class TimelineCalendarEventService {
             participant.person?.name?.lastName ||
             participant.workspaceMember?.name.firstName ||
             participant.workspaceMember?.name.lastName ||
+            participant.displayName ||
+            participant.handle ||
             '',
           avatarUrl:
             participant.person?.avatarUrl ||

@@ -1,12 +1,16 @@
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import styled from '@emotion/styled';
 
-const StyledHeader = styled.header<{ isDropdownOpen?: boolean }>`
+const StyledHeader = styled.header<{
+  isDropdownOpen?: boolean;
+  areRecordsAvailable?: boolean;
+}>`
   align-items: center;
   display: flex;
   height: 24px;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme, areRecordsAvailable }) =>
+    areRecordsAvailable && theme.spacing(2)};
 `;
 
 const StyledTitle = styled.div`
@@ -34,6 +38,7 @@ type RecordDetailSectionHeaderProps = {
   link?: { to: string; label: string };
   rightAdornment?: React.ReactNode;
   hideRightAdornmentOnMouseLeave?: boolean;
+  areRecordsAvailable?: boolean;
 };
 
 export const RecordDetailSectionHeader = ({
@@ -41,11 +46,13 @@ export const RecordDetailSectionHeader = ({
   link,
   rightAdornment,
   hideRightAdornmentOnMouseLeave = true,
+  areRecordsAvailable = false,
 }: RecordDetailSectionHeaderProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <StyledHeader
+      areRecordsAvailable={areRecordsAvailable}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -53,7 +60,9 @@ export const RecordDetailSectionHeader = ({
         <StyledTitleLabel>{title}</StyledTitleLabel>
         {link && <StyledLink to={link.to}>{link.label}</StyledLink>}
       </StyledTitle>
-      {hideRightAdornmentOnMouseLeave && !isHovered ? null : rightAdornment}
+      {hideRightAdornmentOnMouseLeave && !isHovered && areRecordsAvailable
+        ? null
+        : rightAdornment}
     </StyledHeader>
   );
 };

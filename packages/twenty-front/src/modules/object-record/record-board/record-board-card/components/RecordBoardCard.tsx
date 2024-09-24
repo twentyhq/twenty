@@ -83,7 +83,6 @@ export const StyledBoardCardHeader = styled.div<{
 
   img {
     height: ${({ theme }) => theme.icon.size.md}px;
-    margin-right: ${({ theme }) => theme.spacing(2)};
     object-fit: cover;
     width: ${({ theme }) => theme.icon.size.md}px;
   }

@@ -7,6 +7,8 @@ import selectedSortDirectionState from '@/object-record/object-sort-dropdown/sta
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import {
   OBJECT_SORT_DROPDOWN_ID,
   VIEW_SORT_DROPDOWN_ID,
@@ -41,7 +43,6 @@ export const useObjectSortDropdown = () => {
   };
 
   const {
-    availableSortDefinitionsState,
     onSortSelectState,
     isSortSelectedState,
     objectSortDropdownSearchInputState,
@@ -52,8 +53,10 @@ export const useObjectSortDropdown = () => {
   });
 
   const isSortSelected = useRecoilValue(isSortSelectedState);
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
+
+  const availableSortDefinitions = useRecoilComponentValueV2(
+    availableSortDefinitionsComponentState,
+    VIEW_SORT_DROPDOWN_ID,
   );
   const onSortSelect = useRecoilValue(onSortSelectState);
 

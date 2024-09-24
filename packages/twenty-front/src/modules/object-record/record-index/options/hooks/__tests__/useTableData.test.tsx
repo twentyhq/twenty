@@ -1,15 +1,15 @@
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { percentage, sleep, useTableData } from '../useTableData';
 
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewType } from '@/views/types/ViewType';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
-import { ReactNode } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
@@ -26,7 +26,11 @@ const mockPerson = {
   __typename: 'Person',
   updatedAt: '2021-08-03T19:20:06.000Z',
   myCustomObjectId: '123',
-  whatsapp: '123',
+  whatsapp: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   linkedinLink: {
     primaryLinkUrl: 'https://www.linkedin.com',
     primaryLinkLabel: 'linkedin',
@@ -52,7 +56,11 @@ const mockPerson = {
   },
   performanceRating: 1,
   createdAt: '2021-08-03T19:20:06.000Z',
-  phone: 'phone',
+  phone: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   id: '123',
   city: 'city',
   companyId: '1',
@@ -80,7 +88,11 @@ const mocks: MockedResponse[] = [
                 __typename
                 updatedAt
                 myCustomObjectId
-                whatsapp
+                whatsapp {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  additionalPhones
+                }
                 linkedinLink {
                   primaryLinkUrl
                   primaryLinkLabel
@@ -106,7 +118,11 @@ const mocks: MockedResponse[] = [
                 }
                 performanceRating
                 createdAt
-                phone
+                phone {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  additionalPhones
+                }
                 id
                 city
                 companyId
@@ -148,15 +164,19 @@ const mocks: MockedResponse[] = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <Router>
-    <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarManagerScopeInternalContext.Provider
+    value={{
+      scopeId: 'snack-bar-manager',
+    }}
+  >
+    <Router>
+      <RecoilRoot>
         <MockedProvider addTypename={false} mocks={mocks}>
           {children}
         </MockedProvider>
-      </SnackBarProviderScope>
-    </RecoilRoot>
-  </Router>
+      </RecoilRoot>
+    </Router>
+  </SnackBarManagerScopeInternalContext.Provider>
 );
 
 const graphqlEmptyResponse = [
@@ -174,15 +194,19 @@ const graphqlEmptyResponse = [
 ];
 
 const WrapperWithEmptyResponse = ({ children }: { children: ReactNode }) => (
-  <Router>
-    <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarManagerScopeInternalContext.Provider
+    value={{
+      scopeId: 'snack-bar-manager',
+    }}
+  >
+    <Router>
+      <RecoilRoot>
         <MockedProvider addTypename={false} mocks={graphqlEmptyResponse}>
           {children}
         </MockedProvider>
-      </SnackBarProviderScope>
-    </RecoilRoot>
-  </Router>
+      </RecoilRoot>
+    </Router>
+  </SnackBarManagerScopeInternalContext.Provider>
 );
 
 describe('useTableData', () => {
@@ -191,13 +215,13 @@ describe('useTableData', () => {
   describe('data fetching', () => {
     it('should handle no records', async () => {
       const callback = jest.fn();
+
       const { result } = renderHook(
         () =>
           useTableData({
             recordIndexId,
             objectNameSingular,
             callback,
-
             delayMs: 0,
             viewType: ViewType.Kanban,
           }),
@@ -209,7 +233,7 @@ describe('useTableData', () => {
       });
 
       await waitFor(() => {
-        expect(callback).toHaveBeenCalledWith([], []);
+        expect(callback).not.toHaveBeenCalled();
       });
     });
 
