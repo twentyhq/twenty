@@ -1,4 +1,5 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import {
   addDays,
   addMonths,
@@ -156,13 +157,25 @@ const resolveVariableDateViewFilterValue = (value?: string | null) => {
   return resolveVariableDateViewFilterValueFromRelativeDate(relativeDate);
 };
 
-export const resolveDateViewFilterValue = (
-  viewFilter: Pick<ViewFilter, 'value' | 'valueType'>,
-) => {
+export type ResolvedDateViewFilterValue<T extends ViewFilterValueType> =
+  T extends ViewFilterValueType.VARIABLE
+    ? ReturnType<typeof resolveVariableDateViewFilterValue>
+    : Date | null;
+
+type PartialViewFilter<T extends ViewFilterValueType> = Pick<
+  ViewFilter,
+  'value' | 'valueType'
+> & { valueType: T };
+
+export const resolveDateViewFilterValue = <T extends ViewFilterValueType>(
+  viewFilter: PartialViewFilter<T>,
+): ResolvedDateViewFilterValue<T> => {
   if (!viewFilter.value) return null;
 
-  if (viewFilter.valueType === 'VARIABLE') {
-    return resolveVariableDateViewFilterValue(viewFilter.value);
+  if (viewFilter.valueType === ViewFilterValueType.VARIABLE) {
+    return resolveVariableDateViewFilterValue(
+      viewFilter.value,
+    ) as ResolvedDateViewFilterValue<T>;
   }
-  return new Date(viewFilter.value);
+  return new Date(viewFilter.value) as ResolvedDateViewFilterValue<T>;
 };

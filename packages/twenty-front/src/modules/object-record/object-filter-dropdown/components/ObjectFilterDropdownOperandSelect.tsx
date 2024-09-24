@@ -2,12 +2,13 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
 
+import { getViewFilterValueType } from '@/object-record/object-filter-dropdown/utils/getViewFilterValueType';
+import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -47,14 +48,15 @@ export const ObjectFilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown(newOperand);
     setIsObjectFilterDropdownOperandSelectUnfolded(false);
 
-    if (isValuelessOperand) {
+    if (isValuelessOperand && isDefined(filterDefinitionUsedInDropdown)) {
       selectFilter?.({
         id: v4(),
         fieldMetadataId: filterDefinitionUsedInDropdown?.fieldMetadataId ?? '',
         displayValue: '',
         operand: newOperand,
         value: '',
-        definition: filterDefinitionUsedInDropdown as FilterDefinition,
+        valueType: ViewFilterValueType.STATIC,
+        definition: filterDefinitionUsedInDropdown,
       });
       return;
     }
@@ -69,7 +71,10 @@ export const ObjectFilterDropdownOperandSelect = () => {
         displayValue: selectedFilter.displayValue,
         operand: newOperand,
         value: selectedFilter.value,
-        valueType: selectedFilter.valueType,
+        valueType: getViewFilterValueType(
+          filterDefinitionUsedInDropdown,
+          newOperand,
+        ),
         definition: filterDefinitionUsedInDropdown,
       });
     }

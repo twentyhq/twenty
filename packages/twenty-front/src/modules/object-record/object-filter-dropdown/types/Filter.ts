@@ -7,7 +7,7 @@ export type Filter = {
   variant?: 'default' | 'danger';
   fieldMetadataId: string;
   value: string;
-  valueType?: ViewFilterValueType;
+  valueType: ViewFilterValueType;
   displayValue: string;
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;

@@ -9,6 +9,7 @@ import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/F
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 
 const filterDropdownId = 'filterDropdownId';
 const renderHookConfig = {
@@ -31,6 +32,7 @@ const mockFilter: Filter = {
   fieldMetadataId: '',
   operand: ViewFilterOperand.Is,
   value: '',
+  valueType: ViewFilterValueType.STATIC,
 };
 
 describe('useFilterDropdown', () => {

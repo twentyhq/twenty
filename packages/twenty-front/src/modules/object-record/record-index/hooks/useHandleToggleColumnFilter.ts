@@ -8,6 +8,7 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { isDefined } from '~/utils/isDefined';
 
 type UseHandleToggleColumnFilterProps = {
@@ -58,6 +59,7 @@ export const useHandleToggleColumnFilter = ({
           type: filterType,
         },
         value: '',
+        valueType: ViewFilterValueType.STATIC,
       };
 
       upsertCombinedViewFilter(newFilter);

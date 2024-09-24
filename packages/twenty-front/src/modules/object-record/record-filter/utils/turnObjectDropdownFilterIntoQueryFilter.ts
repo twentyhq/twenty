@@ -26,7 +26,6 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
-import { resolveDateViewFilterValue } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
@@ -387,10 +386,14 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               .object({ start: z.date(), end: z.date() })
               .safeParse(resolvedFilterValue).data;
 
-            const defaultDateRange = resolveDateViewFilterValue({
+            const defaultDateRange = resolveFilterValue({
               value: 'PAST_1_DAY',
               valueType: ViewFilterValueType.VARIABLE,
-            }) as { start: Date; end: Date };
+              definition: { type: 'DATE' },
+            });
+
+            if (!defaultDateRange)
+              throw new Error('Failed to resolve default date range');
 
             const { start, end } = dateRange ?? defaultDateRange;
 
