@@ -86,15 +86,15 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ENABLED = false;
+  TELEMETRY_ENABLED = true;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  ANALYTICS_ENABLED = true;
+  ANALYTICS_ENABLED = false;
 
   @IsString()
-  @IsOptional()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
   TINYBIRD_TOKEN: string;
 
   @CastToPositiveNumber()

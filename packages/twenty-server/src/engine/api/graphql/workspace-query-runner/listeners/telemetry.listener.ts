@@ -21,17 +21,11 @@ export class TelemetryListener {
       payload.events.map((eventPayload) =>
         this.analyticsService.create(
           {
-            type: 'track',
-            data: {
-              eventName: payload.name,
-            },
-            sessionId: '',
+            action: payload.name,
+            payload: {}
           },
           eventPayload.userId,
           payload.workspaceId,
-          '', // voluntarily not retrieving this
-          '', // to avoid slowing down
-          this.environmentService.get('SERVER_URL'),
         ),
       ),
     );
@@ -45,17 +39,11 @@ export class TelemetryListener {
       payload.events.map((eventPayload) =>
         this.analyticsService.create(
           {
-            type: 'track',
-            data: {
-              eventName: 'user.signup',
-            },
-            sessionId: '',
+            action: 'user.signup',
+            payload: {}
           },
           eventPayload.userId,
           payload.workspaceId,
-          '',
-          '',
-          this.environmentService.get('SERVER_URL'),
         ),
       ),
     );

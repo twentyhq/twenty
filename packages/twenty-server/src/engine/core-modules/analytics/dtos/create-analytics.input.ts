@@ -8,14 +8,9 @@ export class CreateAnalyticsInput {
   @Field({ description: 'Type of the event' })
   @IsNotEmpty()
   @IsString()
-  type: string;
+  action: string;
 
-  @Field({ description: 'Session Id of the event' })
-  @IsNotEmpty()
-  @IsString()
-  sessionId: string;
-
-  @Field(() => graphqlTypeJson, { description: 'Event data in JSON format' })
+  @Field(() => graphqlTypeJson, { description: 'Event payload in JSON format' })
   @IsObject()
-  data: JSON;
+  payload: JSON;
 }

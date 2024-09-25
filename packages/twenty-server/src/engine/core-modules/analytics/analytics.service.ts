@@ -6,15 +6,14 @@ import { AxiosRequestConfig } from 'axios';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 type CreateEventInput = {
-  type: string;
-  sessionId: string;
-  data: object;
+  action: string;
+  payload: object;
 };
 
 @Injectable()
 export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
-  private readonly datasource = 'analytics_events';
+  private readonly datasource = 'analyticsEvents';
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -25,40 +24,36 @@ export class AnalyticsService {
     createEventInput: CreateEventInput,
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
-    workspaceDisplayName: string | undefined,
-    workspaceDomainName: string | undefined,
-    hostName: string | undefined,
   ) {
     if (this.environmentService.get('ANALYTICS_ENABLED')) {
       const data = {
-        action: createEventInput.type,
+        action: createEventInput.action,
         timestamp: new Date().toISOString(),
         version: '1',
-        session_id: createEventInput.sessionId,
         payload: {
           userId: userId,
           workspaceId: workspaceId,
-          workspaceDisplayName: workspaceDisplayName,
-          workspaceDomainName: workspaceDomainName,
-          hostName: hostName,
-          ...createEventInput.data,
+          ...createEventInput.payload,
         },
       };
 
       const config: AxiosRequestConfig = {
         headers: {
-          Authorization: this.environmentService.get('TINYBIRD_TOKEN'),
+          Authorization: 'Bearer ' + this.environmentService.get('TINYBIRD_TOKEN'),
         },
       };
 
       try {
-        await this.httpService.axiosRef.post(
+        const response = await this.httpService.axiosRef.post(
           `/events?name=${this.datasource}`,
           data,
           config,
         );
       } catch (error) {
-        this.logger.error(error);
+        this.logger.error('Error occurred:', error);
+        if (error.response) {
+          this.logger.error(`Error response body: ${JSON.stringify(error.response.data)}`);
+        }
 
         return { success: false };
       }

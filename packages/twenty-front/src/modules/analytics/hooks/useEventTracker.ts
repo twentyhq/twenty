@@ -30,12 +30,11 @@ export const useEventTracker = () => {
   const [createEventMutation] = useTrackMutation();
 
   return useCallback(
-    (eventAction: string, sessionId: string, eventData: EventData) => {
+    (eventAction: string, sessionId: string, eventPayload: EventData) => {
       createEventMutation({
         variables: {
-          type: eventAction,
-          sessionId: sessionId,
-          data: eventData,
+          action: eventAction,
+          payload: eventPayload,
         },
       });
     },
