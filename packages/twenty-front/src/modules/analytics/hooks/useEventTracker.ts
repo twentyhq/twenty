@@ -8,19 +8,19 @@ export interface EventData {
   href: string;
   referrer: string;
 }
-
-export const getSessionId = (cookieName: string): string => {
+export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
+export const getSessionId = (): string => {
   const cookie: { [key: string]: string } = {};
   document.cookie.split(';').forEach((el) => {
     const [key, value] = el.split('=');
     cookie[key.trim()] = value;
   });
-  return cookie[cookieName];
+  return cookie[ANALYTICS_COOKIE_NAME];
 };
 
-export const setSessionId = (cookieName: string, domain?: string): void => {
-  const sessionId = getSessionId(cookieName) || crypto.randomUUID();
-  const baseCookie = `${cookieName}=${sessionId}; Max-Age=1800; path=/; secure`;
+export const setSessionId = (domain?: string): void => {
+  const sessionId = getSessionId() || crypto.randomUUID();
+  const baseCookie = `${ANALYTICS_COOKIE_NAME}=${sessionId}; Max-Age=1800; path=/; secure`;
   const cookie = domain ? baseCookie + `; domain=${domain}` : baseCookie;
 
   document.cookie = cookie;
@@ -30,10 +30,10 @@ export const useEventTracker = () => {
   const [createEventMutation] = useTrackMutation();
 
   return useCallback(
-    (eventType: string, sessionId: string, eventData: EventData) => {
+    (eventAction: string, sessionId: string, eventData: EventData) => {
       createEventMutation({
         variables: {
-          type: eventType,
+          type: eventAction,
           sessionId: sessionId,
           data: eventData,
         },

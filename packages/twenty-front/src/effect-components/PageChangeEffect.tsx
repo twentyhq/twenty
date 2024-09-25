@@ -167,8 +167,8 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      setSessionId('testCookie');
-      eventTracker('pageview', getSessionId('testCookie'), {
+      setSessionId();
+      eventTracker('pageview', getSessionId(), {
         pathname: location.pathname,
         locale: navigator.language,
         userAgent: window.navigator.userAgent,
