@@ -153,26 +153,34 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     const workspaceId = standardPersonPhoneField.workspaceId;
 
     try {
-      let standardPersonPhonesFieldType =
+      let standardPersonPhonesField =
         await this.fieldMetadataRepository.findOneBy({
           workspaceId,
           standardId: PERSON_STANDARD_FIELD_IDS.phones,
         });
 
-      if (!standardPersonPhonesFieldType) {
-        standardPersonPhonesFieldType =
-          await this.fieldMetadataService.createOne({
-            ...deprecatedPhoneFieldWithoutId,
-            label: 'Phones',
-            type: FieldMetadataType.PHONES,
-            defaultValue: null,
-            name: 'phones',
-          } satisfies CreateFieldInput);
+      if (!standardPersonPhonesField) {
+        standardPersonPhonesField = await this.fieldMetadataService.createOne({
+          ...deprecatedPhoneFieldWithoutId,
+          label: 'Phones',
+          type: FieldMetadataType.PHONES,
+          defaultValue: null,
+          name: 'phones',
+        } satisfies CreateFieldInput);
 
         await this.viewService.removeFieldFromViews({
           workspaceId: workspaceId,
-          fieldId: standardPersonPhonesFieldType.id,
+          fieldId: standardPersonPhonesField.id,
         });
+
+        await this.fieldMetadataService.updateOne(
+          standardPersonPhonesField.id,
+          {
+            id: standardPersonPhonesField.id,
+            workspaceId: standardPersonPhonesField.workspaceId,
+            label: 'Phone (deprecated)',
+          },
+        );
       }
 
       // Copy phone data from Text type to Phones type
@@ -198,7 +206,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
 
       await this.viewService.addFieldToViews({
         workspaceId: workspaceId,
-        fieldId: standardPersonPhonesFieldType.id,
+        fieldId: standardPersonPhonesField.id,
         viewsIds: viewFieldsWithDeprecatedPhoneField
           .filter((viewField) => viewField.viewId !== null)
           .map((viewField) => viewField.viewId as string),
@@ -213,6 +221,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           },
           [],
         ),
+        size: 150,
       });
 
       await this.viewService.removeFieldFromViews({
