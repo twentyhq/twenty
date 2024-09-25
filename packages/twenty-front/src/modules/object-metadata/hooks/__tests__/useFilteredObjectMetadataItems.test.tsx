@@ -10,7 +10,7 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const mocks = [
   {
@@ -34,14 +34,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </RecoilRoot>
 );
 
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
 describe('useFilteredObjectMetadataItems', () => {
   it('should findActiveObjectMetadataItemBySlug', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredObjectMetadataItems();
       },
@@ -61,7 +59,7 @@ describe('useFilteredObjectMetadataItems', () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredObjectMetadataItems();
       },
@@ -81,7 +79,7 @@ describe('useFilteredObjectMetadataItems', () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredObjectMetadataItems();
       },
@@ -103,7 +101,7 @@ describe('useFilteredObjectMetadataItems', () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredObjectMetadataItems();
       },

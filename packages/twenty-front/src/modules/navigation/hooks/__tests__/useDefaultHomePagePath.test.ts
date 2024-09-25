@@ -4,12 +4,9 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import {
-  COMPANY_OBJECT_METADATA_ID,
-  getObjectMetadataItemsMock,
-} from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { AppPath } from '@/types/AppPath';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { mockedUserData } from '~/testing/mock-data/users';
 
 jest.mock('@/prefetch/hooks/usePrefetchedData');
@@ -21,7 +18,7 @@ const setupMockPrefetchedData = (viewId?: string) => {
           {
             id: viewId,
             __typename: 'object',
-            objectMetadataId: COMPANY_OBJECT_METADATA_ID,
+            objectMetadataId: 'REPLACE_ME',
           },
         ]
       : [],
@@ -36,7 +33,7 @@ const renderHooks = (withCurrentUser: boolean) => {
         objectMetadataItemsState,
       );
 
-      setObjectMetadataItems(getObjectMetadataItemsMock());
+      setObjectMetadataItems(generatedMockObjectMetadataItems);
 
       if (withCurrentUser) {
         setCurrentUser(mockedUserData);
