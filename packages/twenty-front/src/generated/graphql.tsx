@@ -305,6 +305,11 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
+export enum IdpType {
+  Oidc = 'OIDC',
+  Saml = 'SAML'
+}
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -344,10 +349,12 @@ export type Mutation = {
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneObject: Object;
   createOneServerlessFunction: ServerlessFunction;
   createOneServerlessFunctionFromFile: ServerlessFunction;
+  createSAMLIdentityProvider: SetupSsoOutput;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
@@ -424,6 +431,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateOidcIdentityProviderArgs = {
+  input: SetupOidcSsoInput;
+};
+
+
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
 };
@@ -432,6 +444,11 @@ export type MutationCreateOneServerlessFunctionArgs = {
 export type MutationCreateOneServerlessFunctionFromFileArgs = {
   file: Scalars['Upload'];
   input: CreateServerlessFunctionFromFileInput;
+};
+
+
+export type MutationCreateSamlIdentityProviderArgs = {
+  input: SetupSamlSsoInput;
 };
 
 
@@ -882,6 +899,30 @@ export enum ServerlessFunctionSyncStatus {
 export type SessionEntity = {
   __typename?: 'SessionEntity';
   url?: Maybe<Scalars['String']>;
+};
+
+export type SetupOidcSsoInput = {
+  authorizationURL: Scalars['String'];
+  callbackURL: Scalars['String'];
+  clientID: Scalars['String'];
+  clientSecret: Scalars['String'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
+  tokenURL: Scalars['String'];
+};
+
+export type SetupSamlSsoInput = {
+  certificate: Scalars['String'];
+  fingerprint: Scalars['String'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
+  ssoURL: Scalars['String'];
+};
+
+export type SetupSsoOutput = {
+  __typename?: 'SetupSsoOutput';
+  id: Scalars['String'];
+  type: IdpType;
 };
 
 /** Sort Directions */
