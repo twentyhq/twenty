@@ -2,7 +2,10 @@ import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { phonesFieldDefinition, ratingFieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
+import {
+  phonesFieldDefinition,
+  ratingFieldDefinition,
+} from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
