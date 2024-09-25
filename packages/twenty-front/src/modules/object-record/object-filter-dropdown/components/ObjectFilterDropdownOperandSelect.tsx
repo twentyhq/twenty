@@ -65,16 +65,20 @@ export const ObjectFilterDropdownOperandSelect = () => {
       isDefined(filterDefinitionUsedInDropdown) &&
       isDefined(selectedFilter)
     ) {
+      const valueType = getViewFilterValueType(
+        filterDefinitionUsedInDropdown,
+        newOperand,
+      );
+      const valueTypeChanged = valueType !== selectedFilter.valueType;
+      const value = valueTypeChanged ? '' : selectedFilter.value;
+
       selectFilter?.({
         id: selectedFilter.id ? selectedFilter.id : v4(),
         fieldMetadataId: selectedFilter.fieldMetadataId,
         displayValue: selectedFilter.displayValue,
         operand: newOperand,
-        value: selectedFilter.value,
-        valueType: getViewFilterValueType(
-          filterDefinitionUsedInDropdown,
-          newOperand,
-        ),
+        value,
+        valueType,
         definition: filterDefinitionUsedInDropdown,
       });
     }
