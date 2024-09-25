@@ -168,6 +168,11 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
             defaultValue: null,
             name: 'phones',
           } satisfies CreateFieldInput);
+
+        await this.viewService.removeFieldFromViews({
+          workspaceId: workspaceId,
+          fieldId: standardPersonPhonesFieldType.id,
+        });
       }
 
       // Copy phone data from Text type to Phones type
