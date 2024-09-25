@@ -172,15 +172,6 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           workspaceId: workspaceId,
           fieldId: standardPersonPhonesField.id,
         });
-
-        await this.fieldMetadataService.updateOne(
-          standardPersonPhonesField.id,
-          {
-            id: standardPersonPhonesField.id,
-            workspaceId: standardPersonPhonesField.workspaceId,
-            label: 'Phone (deprecated)',
-          },
-        );
       }
 
       // Copy phone data from Text type to Phones type
@@ -297,6 +288,12 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
       await workspaceQueryRunner.query(
         `ALTER TABLE "${workspaceSchemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" ALTER COLUMN "${computeColumnName(phoneField.name)}" TYPE TEXT`,
       );
+
+      await this.fieldMetadataService.updateOne(phoneField.id, {
+        id: phoneField.id,
+        workspaceId: phoneField.workspaceId,
+        label: 'Phone (deprecated)',
+      });
     } catch (error) {
       this.logger.log(
         chalk.red(
