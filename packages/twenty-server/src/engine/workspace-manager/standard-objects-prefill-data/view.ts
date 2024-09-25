@@ -9,6 +9,8 @@ import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
+import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
+import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 
 export const viewPrefillData = async (
@@ -25,7 +27,13 @@ export const viewPrefillData = async (
     await notesAllView(objectMetadataMap),
     await tasksAllView(objectMetadataMap),
     await tasksByStatusView(objectMetadataMap),
-    ...(isWorkflowEnabled ? [await workflowsAllView(objectMetadataMap)] : []),
+    ...(isWorkflowEnabled
+      ? [
+          await workflowsAllView(objectMetadataMap),
+          await workflowVersionsAllView(objectMetadataMap),
+          await workflowRunsAllView(objectMetadataMap),
+        ]
+      : []),
   ];
 
   const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
