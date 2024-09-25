@@ -1,7 +1,5 @@
 export const PERSON_FRAGMENT = `
       __typename
-      id
-      position
       name {
         firstName
         lastName
@@ -11,30 +9,38 @@ export const PERSON_FRAGMENT = `
         primaryLinkLabel
         secondaryLinks
       }
-      createdAt
-      avatarUrl
-      companyId
-      performanceRating
-      emails {
-        primaryEmail
-        additionalEmails
-      }
-      whatsapp
       deletedAt
-      city
-      createdBy {
-        source
-        workspaceMemberId
-        name
-      }
-      phone
-      workPrefereance
-      intro
-      jobTitle
+      createdAt
       updatedAt
+      jobTitle
+      intro
+      workPrefereance
+      performanceRating
       xLink {
         primaryLinkUrl
         primaryLinkLabel
         secondaryLinks
+      }
+      city
+      companyId
+      phones {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        additionalPhones
+      }
+      createdBy {
+        sourceworkspaceMemberIdname
+      }
+      id
+      position
+      emails {
+        primaryEmail
+        additionalEmails
+      }
+      avatarUrl
+      whatsapp {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        additionalPhones
       }
 `

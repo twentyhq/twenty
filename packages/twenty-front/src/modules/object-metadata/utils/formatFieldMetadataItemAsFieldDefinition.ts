@@ -18,6 +18,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
   showLabel,
   labelWidth,
 }: FieldMetadataItemAsFieldDefinitionProps): FieldDefinition<FieldMetadata> => {
+  console.log(field);
   const relationObjectMetadataItem =
     field.relationDefinition?.targetObjectMetadata;
 
