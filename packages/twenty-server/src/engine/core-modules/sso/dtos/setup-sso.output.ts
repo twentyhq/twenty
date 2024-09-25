@@ -9,4 +9,7 @@ export class SetupSsoOutput {
 
   @Field(() => IdpType)
   type: string;
+
+  @Field(() => String)
+  issue: string;
 }

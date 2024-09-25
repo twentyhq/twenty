@@ -160,7 +160,7 @@ export class WorkspaceInvitationService {
       },
     });
 
-    if (!appToken || !appToken.context || !('email' in appToken.context)) {
+    if (!appToken || !appToken.context?.email) {
       throw new WorkspaceInvitationException(
         'Invalid appToken',
         WorkspaceInvitationExceptionCode.INVALID_INVITATION,

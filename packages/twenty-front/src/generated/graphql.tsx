@@ -292,6 +292,17 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
+export type FindAvailableSsoidpInput = {
+  email: Scalars['String'];
+};
+
+export type FindAvailableSsoidpOutput = {
+  __typename?: 'FindAvailableSSOIDPOutput';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
@@ -327,6 +338,17 @@ export type LinksMetadata = {
   primaryLinkLabel: Scalars['String'];
   primaryLinkUrl: Scalars['String'];
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
+};
+
+export type LoginSsoInput = {
+  idpId: Scalars['String'];
+};
+
+export type LoginSsoOutput = {
+  __typename?: 'LoginSSOOutput';
+  authorizationURL: Scalars['String'];
+  id: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type LoginToken = {
@@ -366,10 +388,12 @@ export type Mutation = {
   enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
+  findAvailableSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   generateApiKeyToken: ApiKeyToken;
   generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
   impersonate: Verify;
+  loginWithSSO: LoginSsoOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -489,6 +513,11 @@ export type MutationExecuteOneServerlessFunctionArgs = {
 };
 
 
+export type MutationFindAvailableSsoIdentityProvidersArgs = {
+  input: FindAvailableSsoidpInput;
+};
+
+
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
@@ -502,6 +531,11 @@ export type MutationGenerateJwtArgs = {
 
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
+};
+
+
+export type MutationLoginWithSsoArgs = {
+  input: LoginSsoInput;
 };
 
 
@@ -902,20 +936,17 @@ export type SessionEntity = {
 };
 
 export type SetupOidcSsoInput = {
-  authorizationURL: Scalars['String'];
-  callbackURL: Scalars['String'];
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
   issuer: Scalars['String'];
-  name: Scalars['String'];
-  tokenURL: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type SetupSamlSsoInput = {
   certificate: Scalars['String'];
-  fingerprint: Scalars['String'];
+  fingerprint?: InputMaybe<Scalars['String']>;
   issuer: Scalars['String'];
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
   ssoURL: Scalars['String'];
 };
 
