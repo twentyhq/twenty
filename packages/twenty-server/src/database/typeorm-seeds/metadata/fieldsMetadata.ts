@@ -92,7 +92,7 @@ export const getDevSeedPeopleCustomFields = (
     },
     {
       workspaceId,
-      type: FieldMetadataType.PHONE,
+      type: FieldMetadataType.PHONES,
       name: 'whatsapp',
       label: 'Whatsapp',
       description: "Contact's Whatsapp Number",

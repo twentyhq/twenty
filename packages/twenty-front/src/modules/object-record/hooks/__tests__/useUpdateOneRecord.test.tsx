@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import {
@@ -11,8 +11,17 @@ import {
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 const person = { id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9' };
-const update = { name: { firstName: 'John', lastName: 'Doe' } };
-const updatePerson = { ...person, ...responseData, ...update };
+const update = {
+  name: {
+    firstName: 'John',
+    lastName: 'Doe',
+  },
+};
+const updatePerson = {
+  ...person,
+  ...responseData,
+  ...update,
+};
 
 const mocks = [
   {

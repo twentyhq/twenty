@@ -36,7 +36,10 @@ export const responseData = {
     firstName: '',
     lastName: '',
   },
-  phone: '',
+  phones: {
+    primaryPhoneCountryCode: '',
+    primaryPhoneNumber: '',
+  },
   linkedinLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',
