@@ -180,6 +180,13 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
         workspaceSchemaName,
       });
 
+      // Add (deprecated) to Phone field label
+      await this.fieldMetadataService.updateOne(standardPersonPhoneField.id, {
+        id: standardPersonPhoneField.id,
+        workspaceId: standardPersonPhoneField.workspaceId,
+        label: 'Phone (deprecated)',
+      });
+
       // Add new phones field to views and hide deprecated phone field
       const viewFieldRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
@@ -248,6 +255,13 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           workspaceId,
         );
       }
+
+      // Revert Phone field label (remove (deprecated))
+      await this.fieldMetadataService.updateOne(standardPersonPhoneField.id, {
+        id: standardPersonPhoneField.id,
+        workspaceId: standardPersonPhoneField.workspaceId,
+        label: 'Phone',
+      });
     } finally {
       await workspaceQueryRunner.release();
     }
@@ -288,12 +302,6 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
       await workspaceQueryRunner.query(
         `ALTER TABLE "${workspaceSchemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" ALTER COLUMN "${computeColumnName(phoneField.name)}" TYPE TEXT`,
       );
-
-      await this.fieldMetadataService.updateOne(phoneField.id, {
-        id: phoneField.id,
-        workspaceId: phoneField.workspaceId,
-        label: 'Phone (deprecated)',
-      });
     } catch (error) {
       this.logger.log(
         chalk.red(
