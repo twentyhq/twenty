@@ -29,20 +29,20 @@ const mocks: MockedResponse[] = [
           updateTask(id: $idToUpdate, data: $input) {
             __typename
             updatedAt
-            id
-            dueAt
-            deletedAt
-            title
-            body
-            status
             createdAt
-            position
-            assigneeId
+            deletedAt
+            dueAt
+            id
+            status
+            body
             createdBy {
               source
               workspaceMemberId
               name
             }
+            assigneeId
+            position
+            title
           }
         }
       `,
