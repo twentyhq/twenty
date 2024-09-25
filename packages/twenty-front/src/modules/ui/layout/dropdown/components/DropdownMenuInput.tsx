@@ -44,6 +44,11 @@ const StyledRightContainer = styled.div`
   transform: translateY(-50%);
 `;
 
+const StyledErrorDiv = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  padding: 0 ${({ theme }) => theme.spacing(2)} 4px;
+`;
+
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export type DropdownMenuInputProps = HTMLInputProps & {
@@ -60,6 +65,7 @@ export type DropdownMenuInputProps = HTMLInputProps & {
     autoFocus: HTMLInputProps['autoFocus'];
     placeholder: HTMLInputProps['placeholder'];
   }) => React.ReactNode;
+  error?: string | null;
 };
 
 export const DropdownMenuInput = forwardRef<
@@ -81,6 +87,7 @@ export const DropdownMenuInput = forwardRef<
       onTab,
       rightComponent,
       renderInput,
+      error,
     },
     ref,
   ) => {
@@ -99,28 +106,31 @@ export const DropdownMenuInput = forwardRef<
     });
 
     return (
-      <StyledInputContainer className={className}>
-        {renderInput ? (
-          renderInput({
-            value,
-            onChange,
-            autoFocus,
-            placeholder,
-          })
-        ) : (
-          <StyledInput
-            autoFocus={autoFocus}
-            value={value}
-            placeholder={placeholder}
-            onChange={onChange}
-            ref={combinedRef}
-            withRightComponent={!!rightComponent}
-          />
-        )}
-        {!!rightComponent && (
-          <StyledRightContainer>{rightComponent}</StyledRightContainer>
-        )}
-      </StyledInputContainer>
+      <>
+        <StyledInputContainer className={className}>
+          {renderInput ? (
+            renderInput({
+              value,
+              onChange,
+              autoFocus,
+              placeholder,
+            })
+          ) : (
+            <StyledInput
+              autoFocus={autoFocus}
+              value={value}
+              placeholder={placeholder}
+              onChange={onChange}
+              ref={combinedRef}
+              withRightComponent={!!rightComponent}
+            />
+          )}
+          {!!rightComponent && (
+            <StyledRightContainer>{rightComponent}</StyledRightContainer>
+          )}
+        </StyledInputContainer>
+        {error && <StyledErrorDiv>{error}</StyledErrorDiv>}
+      </>
     );
   },
 );

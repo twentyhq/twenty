@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus } from 'twenty-ui';
 
@@ -30,7 +30,7 @@ type MultiItemFieldInputProps<T> = {
   onPersist: (updatedItems: T[]) => void;
   onCancel?: () => void;
   placeholder: string;
-  validateInput?: (input: string) => boolean;
+  validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   formatInput?: (input: string) => T;
   renderItem: (props: {
     value: T;
@@ -74,7 +74,17 @@ export const MultiItemFieldInput = <T,>({
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
+  const [error, setError] = useState<string | null>(null);
   const isAddingNewItem = itemToEditIndex === -1;
+
+  useEffect(() => {
+    if (!validateInput) return;
+    const { isValid } = validateInput(inputValue);
+    // ONLY clear error on value change, validate only on submit
+    if (isValid) {
+      setError(null);
+    }
+  }, [inputValue, validateInput]);
 
   const handleAddButtonClick = () => {
     setItemToEditIndex(-1);
@@ -105,7 +115,13 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleSubmitInput = () => {
-    if (validateInput !== undefined && !validateInput(inputValue)) return;
+    if (validateInput !== undefined) {
+      const validationData = validateInput(inputValue) ?? { isValid: true };
+      if (!validationData.isValid) {
+        setError(validationData.errorMessage);
+        return;
+      }
+    }
 
     const newItem = formatInput
       ? formatInput(inputValue)
@@ -160,6 +176,7 @@ export const MultiItemFieldInput = <T,>({
           placeholder={placeholder}
           value={inputValue}
           hotkeyScope={hotkeyScope}
+          error={error}
           renderInput={
             renderInput
               ? (props) =>

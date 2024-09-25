@@ -49,7 +49,10 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
       onCancel={onCancel}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.Links}
-      validateInput={(input) => absoluteUrlSchema.safeParse(input).success}
+      validateInput={(input) => ({
+        isValid: absoluteUrlSchema.safeParse(input).success,
+        errorMessage: '',
+      })}
       formatInput={(input) => ({ url: input, label: '' })}
       renderItem={({
         value: link,
