@@ -1,45 +1,40 @@
 export const PERSON_FRAGMENT = `
       __typename
-      updatedAt
-      myCustomObjectId
-      whatsapp {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        additionalPhones
+      id
+      position
+      name {
+        firstName
+        lastName
       }
       linkedinLink {
         primaryLinkUrl
         primaryLinkLabel
         secondaryLinks
       }
-      name {
-        firstName
-        lastName
+      createdAt
+      avatarUrl
+      companyId
+      performanceRating
+      emails {
+        primaryEmail
+        additionalEmails
       }
-      email
-      position
+      whatsapp
+      deletedAt
+      city
       createdBy {
         source
         workspaceMemberId
         name
       }
-      avatarUrl
+      phone
+      workPrefereance
+      intro
       jobTitle
+      updatedAt
       xLink {
         primaryLinkUrl
         primaryLinkLabel
         secondaryLinks
       }
-      performanceRating
-      createdAt
-      phone {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        additionalPhones
-      }
-      id
-      city
-      companyId
-      intro
-      workPrefereance
 `
