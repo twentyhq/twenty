@@ -7,6 +7,7 @@ import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -14,6 +15,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-ui';
 
 export const useRightDrawerEmailThread = () => {
   const viewableRecordId = useRecoilValue(viewableRecordIdState);
@@ -151,9 +153,24 @@ export const useRightDrawerEmailThread = () => {
   const connectedAccountHandle =
     messageChannelData.length > 0 ? messageChannelData[0].handle : null;
 
+  const messagesWithSender: EmailThreadMessageWithSender[] = messages
+    .map((message) => {
+      const sender = messageSenders.find(
+        (messageSender) => messageSender.id === message.id,
+      );
+      if (!sender) {
+        return null;
+      }
+      return {
+        ...message,
+        sender,
+      };
+    })
+    .filter(isDefined);
+
   return {
     thread,
-    messages,
+    messages: messagesWithSender,
     messageThreadExternalId,
     connectedAccountHandle,
     threadLoading: messagesLoading,
