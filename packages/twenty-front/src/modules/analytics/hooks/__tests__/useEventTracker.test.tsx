@@ -52,6 +52,7 @@ describe('useEventTracker', () => {
   it('should make the call to track the event', async () => {
     const eventType = 'exampleType';
     const eventData = {
+      sessionId: 'exampleId',
       pathname: '',
       userAgent: '',
       timeZone: '',

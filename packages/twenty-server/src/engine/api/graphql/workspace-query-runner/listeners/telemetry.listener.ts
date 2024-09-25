@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 
 @Injectable()
 export class TelemetryListener {
   constructor(
     private readonly analyticsService: AnalyticsService,
-    private readonly environmentService: EnvironmentService,
+    private readonly telemetryService: TelemetryService,
   ) {}
 
   @OnEvent('*.created')
@@ -36,7 +36,7 @@ export class TelemetryListener {
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
     await Promise.all(
-      payload.events.map((eventPayload) =>
+      payload.events.map(async (eventPayload) => {
         this.analyticsService.create(
           {
             action: 'user.signup',
@@ -44,8 +44,21 @@ export class TelemetryListener {
           },
           eventPayload.userId,
           payload.workspaceId,
-        ),
-      ),
+        );
+
+        this.telemetryService.create(
+          {
+            action: 'user.signup',
+            payload: {
+              payload,
+              userId: undefined,
+              workspaceId: undefined,
+            },
+          },
+          eventPayload.userId,
+          payload.workspaceId,
+        );
+      }),
     );
   }
 }
