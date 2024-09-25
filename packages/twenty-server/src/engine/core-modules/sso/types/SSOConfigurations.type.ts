@@ -1,17 +1,15 @@
 import { IdpType } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 type CommonSSOConfiguration = {
+  id: string;
   issuer: string;
   name?: string;
 };
 
 export type OIDCConfiguration = {
   type: IdpType.OIDC;
-  authorizationURL: string;
-  tokenURL: string;
   clientID: string;
   clientSecret: string;
-  callbackURL: string;
 } & CommonSSOConfiguration;
 
 export type SAMLConfiguration = {

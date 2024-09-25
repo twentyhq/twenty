@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -20,6 +20,14 @@ export enum IdpType {
   SAML = 'SAML',
 }
 
+export enum OIDCResponseType {
+  // Only Authorization Code is used for now
+  CODE = 'code',
+  ID_TOKEN = 'id_token',
+  TOKEN = 'token',
+  NONE = 'none',
+}
+
 registerEnumType(IdpType, {
   name: 'IdpType',
 });
@@ -33,10 +41,7 @@ export class WorkspaceSSOIdentityProvider {
   id: string;
 
   @Column({ nullable: true })
-  name: string;
-
-  @Column()
-  issuer: string;
+  name?: string;
 
   @ManyToOne(
     () => Workspace,
@@ -65,20 +70,14 @@ export class WorkspaceSSOIdentityProvider {
   type: IdpType;
 
   // OIDC
-  @Column()
-  authorizationURL: string;
+  @Column({ nullable: true })
+  clientID?: string;
+
+  @Column({ nullable: true })
+  clientSecret?: string;
 
   @Column()
-  tokenURL: string;
-
-  @Column()
-  clientID: string;
-
-  @Column()
-  clientSecret: string;
-
-  @Column()
-  callbackURL: string;
+  issuer?: string;
 
   // SAML
   @Column({ nullable: true })

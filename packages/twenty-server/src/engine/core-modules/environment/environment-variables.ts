@@ -217,6 +217,10 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
+  @IsString()
+  @IsOptional()
+  ENTERPRISE_KEY: string;
+
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
   @IsOptional()

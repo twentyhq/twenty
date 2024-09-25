@@ -14,17 +14,15 @@ export class AddWorkspaceSSOIdentityProvider1727181198403
       CREATE TABLE "core"."workspaceSSOIdentityProvider" (
         "id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
         "name" varchar NULL,
-        "issuer" varchar NOT NULL,
         "workspaceId" uuid NOT NULL,
         "createdAt" timestamptz DEFAULT now() NOT NULL,
         "updatedAt" timestamptz DEFAULT now() NOT NULL,
         "type" "core"."idp_type_enum" DEFAULT 'OIDC' NOT NULL,
-        "authorizationURL" varchar NULL,
-        "tokenURL" varchar NOT NULL,
+        // OIDC
+        "issuer" varchar NULL,
         "clientID" varchar NULL,
         "clientSecret" varchar NULL,
-        "callbackURL" varchar NOT NULL,
-        "ssoURL" varchar NULL,
+        // SAML
         "certificate" varchar NULL,
         "fingerprint" varchar NULL
       );
