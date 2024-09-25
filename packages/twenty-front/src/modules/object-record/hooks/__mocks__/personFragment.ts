@@ -29,7 +29,9 @@ export const PERSON_FRAGMENT = `
         additionalPhones
       }
       createdBy {
-        sourceworkspaceMemberIdname
+        source
+        workspaceMemberId
+        name
       }
       id
       position

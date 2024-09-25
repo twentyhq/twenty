@@ -2,10 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import {
-  phoneFieldDefinition,
-  ratingFieldDefinition,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
+import { phonesFieldDefinition, ratingFieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
@@ -29,7 +26,7 @@ const getWrapper =
   );
 
 const RatingWrapper = getWrapper(ratingFieldDefinition);
-const PhoneWrapper = getWrapper(phoneFieldDefinition);
+const PhoneWrapper = getWrapper(phonesFieldDefinition);
 
 describe('useIsFieldInputOnly', () => {
   it('should return true', () => {
