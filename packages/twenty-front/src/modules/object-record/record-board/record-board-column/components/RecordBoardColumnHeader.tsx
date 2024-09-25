@@ -1,22 +1,19 @@
-import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconDotsVertical, IconPlus, Tag } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
+import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useAddNewCard } from '../hooks/useAddNewCard';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -69,14 +66,6 @@ export const RecordBoardColumnHeader = () => {
   const { columnDefinition, recordCount } = useContext(
     RecordBoardColumnContext,
   );
-  const { visibleFieldDefinitionsState } = useRecordBoardStates();
-
-  const visibleFieldDefinitions = useRecoilValue(
-    visibleFieldDefinitionsState(),
-  );
-  const labelIdentifierField = visibleFieldDefinitions.find(
-    (field) => field.isLabelIdentifier,
-  );
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -107,30 +96,15 @@ export const RecordBoardColumnHeader = () => {
     handleEntitySelect,
   } = useAddNewOpportunity('first');
 
-  const newRecord = useRecoilValue(
-    recordBoardNewRecordByColumnIdSelector({
-      familyKey: columnDefinition.id,
-      scopeId: columnDefinition.id,
-    }),
-  );
-
-  const { handleAddNewCardClick, handleCreateSuccess } = useAddNewCard();
-
-  const handleNewButtonClick = () => {
-    handleAddNewCardClick(
-      labelIdentifierField?.label ?? '',
-      '',
-      'first',
-      columnDefinition.id,
-    );
-  };
+  const { newRecord, handleNewButtonClick, handleCreateSuccess } =
+    useColumnNewCardActions(columnDefinition.id);
 
   const isOpportunity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
 
   const handleClick = isOpportunity
     ? handleAddNewOpportunityClick
-    : handleNewButtonClick;
+    : () => handleNewButtonClick('first');
 
   return (
     <>

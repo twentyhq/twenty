@@ -1,11 +1,8 @@
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
-import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
+import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
-import { useAddNewCard } from '../hooks/useAddNewCard';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -18,7 +15,6 @@ const StyledNewButton = styled.button`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)};
-
   &:hover {
     background-color: ${({ theme }) => theme.background.tertiary};
   }
@@ -30,32 +26,9 @@ export const RecordBoardColumnNewButton = ({
   columnId: string;
 }) => {
   const theme = useTheme();
-  const { visibleFieldDefinitionsState } = useRecordBoardStates();
 
-  const visibleFieldDefinitions = useRecoilValue(
-    visibleFieldDefinitionsState(),
-  );
-  const labelIdentifierField = visibleFieldDefinitions.find(
-    (field) => field.isLabelIdentifier,
-  );
-
-  const newRecord = useRecoilValue(
-    recordBoardNewRecordByColumnIdSelector({
-      familyKey: columnId,
-      scopeId: columnId,
-    }),
-  );
-
-  const { handleAddNewCardClick, handleCreateSuccess } = useAddNewCard();
-
-  const handleNewButtonClick = () => {
-    handleAddNewCardClick(
-      labelIdentifierField?.label ?? '',
-      '',
-      'last',
-      columnId,
-    );
-  };
+  const { newRecord, handleNewButtonClick, handleCreateSuccess } =
+    useColumnNewCardActions(columnId);
 
   if (newRecord.isCreating && newRecord.position === 'last') {
     return (
@@ -68,7 +41,7 @@ export const RecordBoardColumnNewButton = ({
   }
 
   return (
-    <StyledNewButton onClick={handleNewButtonClick}>
+    <StyledNewButton onClick={() => handleNewButtonClick('last')}>
       <IconPlus size={theme.icon.size.md} />
       New
     </StyledNewButton>
