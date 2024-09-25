@@ -1,9 +1,3 @@
-import styled from '@emotion/styled';
-import { ReactNode, useContext, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { AvatarChipVariant, IconEye } from 'twenty-ui';
-
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -15,20 +9,23 @@ import {
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
-
+import { TextInput } from '@/ui/input/components/TextInput';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
-
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
+import styled from '@emotion/styled';
+import { ReactNode, useContext, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { AvatarChipVariant, IconEye } from 'twenty-ui';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -65,6 +62,14 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   &:hover .compact-icon-container {
     opacity: 1;
   }
+`;
+
+const StyledTextInput = styled(TextInput)`
+  backdrop-filter: blur(12px) saturate(200%) contrast(50%) brightness(130%);
+  background: ${({ theme }) => theme.background.primary};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  width: ${({ theme }) => theme.spacing(53)};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -244,7 +249,7 @@ export const RecordBoardCard = ({
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
           {isCreating && position !== undefined ? (
             <RecordInlineCellEditMode>
-              <TextInput
+              <StyledTextInput
                 autoFocus
                 value={newLabelValue}
                 onInputEnter={() =>

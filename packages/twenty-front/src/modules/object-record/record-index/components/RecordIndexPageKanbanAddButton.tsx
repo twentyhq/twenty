@@ -65,24 +65,32 @@ export const RecordIndexPageKanbanAddButton = () => {
 
   const { handleAddNewCardClick } = useAddNewCard();
 
-  const handleItemClick = (columnDefinition: RecordBoardColumnDefinition) => {
-    if (isOpportunity) {
-      setIsSelectingCompany(true);
-      setSelectedColumnDefinition(columnDefinition);
-      setHotkeyScopeAndMemorizePreviousScope(
-        RelationPickerHotkeyScope.RelationPicker,
-      );
-    } else {
-      handleAddNewCardClick(
-        labelIdentifierField?.label ?? '',
-        '',
-        'first',
-        columnDefinition.id,
-      );
-      closeDropdown();
-    }
-  };
-
+  const handleItemClick = useCallback(
+    (columnDefinition: RecordBoardColumnDefinition) => {
+      if (isOpportunity) {
+        setIsSelectingCompany(true);
+        setSelectedColumnDefinition(columnDefinition);
+        setHotkeyScopeAndMemorizePreviousScope(
+          RelationPickerHotkeyScope.RelationPicker,
+        );
+      } else {
+        handleAddNewCardClick(
+          labelIdentifierField?.label ?? '',
+          '',
+          'first',
+          columnDefinition.id,
+        );
+        closeDropdown();
+      }
+    },
+    [
+      isOpportunity,
+      handleAddNewCardClick,
+      setHotkeyScopeAndMemorizePreviousScope,
+      closeDropdown,
+      labelIdentifierField,
+    ],
+  );
   const handleEntitySelect = useCallback(
     (company?: EntityForSelect) => {
       setIsSelectingCompany(false);
