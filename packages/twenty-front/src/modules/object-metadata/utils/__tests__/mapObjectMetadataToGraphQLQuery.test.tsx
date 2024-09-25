@@ -46,7 +46,11 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
         primaryEmail
         additionalEmails
     }
-    phone
+    phone 
+    {
+      primaryPhoneNumber
+      primaryPhoneCountryCode
+    }
     createdAt
     avatarUrl
     jobTitle

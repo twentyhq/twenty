@@ -5,7 +5,13 @@ export const formatFieldMetadataItemInput = (
   input: Partial<
     Pick<
       FieldMetadataItem,
-      'type' | 'label' | 'defaultValue' | 'icon' | 'description' | 'options'
+      | 'type'
+      | 'label'
+      | 'defaultValue'
+      | 'icon'
+      | 'description'
+      | 'options'
+      | 'settings'
     >
   >,
 ) => {
@@ -18,5 +24,6 @@ export const formatFieldMetadataItemInput = (
     label,
     name: label ? computeMetadataNameFromLabelOrThrow(label) : undefined,
     options: input.options,
+    settings: input.settings,
   };
 };

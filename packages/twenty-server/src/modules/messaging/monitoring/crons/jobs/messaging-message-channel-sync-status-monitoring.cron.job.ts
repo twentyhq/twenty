@@ -5,6 +5,7 @@ import snakeCase from 'lodash.snakecase';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -30,13 +31,14 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
+  @Process(MessagingMessageChannelSyncStatusMonitoringCronJob.name)
   @SentryCronMonitor(
     MessagingMessageChannelSyncStatusMonitoringCronJob.name,
     MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN,
   )
-  @Process(MessagingMessageChannelSyncStatusMonitoringCronJob.name)
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');
 
@@ -54,27 +56,35 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     });
 
     for (const activeWorkspace of activeWorkspaces) {
-      const messageChannelRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-          activeWorkspace.id,
-          'messageChannel',
-        );
-      const messageChannels = await messageChannelRepository.find({
-        select: ['id', 'syncStatus', 'connectedAccountId'],
-      });
+      try {
+        const messageChannelRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+            activeWorkspace.id,
+            'messageChannel',
+          );
+        const messageChannels = await messageChannelRepository.find({
+          select: ['id', 'syncStatus', 'connectedAccountId'],
+        });
 
-      for (const messageChannel of messageChannels) {
-        if (!messageChannel.syncStatus) {
-          continue;
+        for (const messageChannel of messageChannels) {
+          if (!messageChannel.syncStatus) {
+            continue;
+          }
+          await this.messagingTelemetryService.track({
+            eventName: `message_channel.monitoring.sync_status.${snakeCase(
+              messageChannel.syncStatus,
+            )}`,
+            workspaceId: activeWorkspace.id,
+            connectedAccountId: messageChannel.connectedAccountId,
+            messageChannelId: messageChannel.id,
+            message: messageChannel.syncStatus,
+          });
         }
-        await this.messagingTelemetryService.track({
-          eventName: `message_channel.monitoring.sync_status.${snakeCase(
-            messageChannel.syncStatus,
-          )}`,
-          workspaceId: activeWorkspace.id,
-          connectedAccountId: messageChannel.connectedAccountId,
-          messageChannelId: messageChannel.id,
-          message: messageChannel.syncStatus,
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          user: {
+            workspaceId: activeWorkspace.id,
+          },
         });
       }
     }

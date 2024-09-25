@@ -9,9 +9,9 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
-  existingLabels?: string[],
+  existingOtherLabels: string[] = [],
 ) => {
-  return fieldMetadataItemSchema(existingLabels || []).pick({
+  return fieldMetadataItemSchema(existingOtherLabels).pick({
     icon: true,
     label: true,
   });

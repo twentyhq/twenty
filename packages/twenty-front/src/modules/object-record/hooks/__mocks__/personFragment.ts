@@ -2,7 +2,11 @@ export const PERSON_FRAGMENT = `
       __typename
       updatedAt
       myCustomObjectId
-      whatsapp
+      whatsapp {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        additionalPhones
+      }
       linkedinLink {
         primaryLinkUrl
         primaryLinkLabel
@@ -28,7 +32,11 @@ export const PERSON_FRAGMENT = `
       }
       performanceRating
       createdAt
-      phone
+      phone {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        additionalPhones
+      }
       id
       city
       companyId
