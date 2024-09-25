@@ -153,25 +153,24 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
     const workspaceId = standardPersonPhoneField.workspaceId;
 
     try {
-      let standardPersonPhonesFieldType =
+      let standardPersonPhonesField =
         await this.fieldMetadataRepository.findOneBy({
           workspaceId,
           standardId: PERSON_STANDARD_FIELD_IDS.phones,
         });
 
-      if (!standardPersonPhonesFieldType) {
-        standardPersonPhonesFieldType =
-          await this.fieldMetadataService.createOne({
-            ...deprecatedPhoneFieldWithoutId,
-            label: 'Phones',
-            type: FieldMetadataType.PHONES,
-            defaultValue: null,
-            name: 'phones',
-          } satisfies CreateFieldInput);
+      if (!standardPersonPhonesField) {
+        standardPersonPhonesField = await this.fieldMetadataService.createOne({
+          ...deprecatedPhoneFieldWithoutId,
+          label: 'Phones',
+          type: FieldMetadataType.PHONES,
+          defaultValue: null,
+          name: 'phones',
+        } satisfies CreateFieldInput);
 
         await this.viewService.removeFieldFromViews({
           workspaceId: workspaceId,
-          fieldId: standardPersonPhonesFieldType.id,
+          fieldId: standardPersonPhonesField.id,
         });
       }
 
@@ -179,6 +178,13 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
       await this.copyAndParseDeprecatedPhoneFieldDataIntoNewPhonesField({
         workspaceQueryRunner,
         workspaceSchemaName,
+      });
+
+      // Add (deprecated) to Phone field label
+      await this.fieldMetadataService.updateOne(standardPersonPhoneField.id, {
+        id: standardPersonPhoneField.id,
+        workspaceId: standardPersonPhoneField.workspaceId,
+        label: 'Phone (deprecated)',
       });
 
       // Add new phones field to views and hide deprecated phone field
@@ -198,7 +204,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
 
       await this.viewService.addFieldToViews({
         workspaceId: workspaceId,
-        fieldId: standardPersonPhonesFieldType.id,
+        fieldId: standardPersonPhonesField.id,
         viewsIds: viewFieldsWithDeprecatedPhoneField
           .filter((viewField) => viewField.viewId !== null)
           .map((viewField) => viewField.viewId as string),
@@ -213,6 +219,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           },
           [],
         ),
+        size: 150,
       });
 
       await this.viewService.removeFieldFromViews({
@@ -248,6 +255,13 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           workspaceId,
         );
       }
+
+      // Revert Phone field label (remove (deprecated))
+      await this.fieldMetadataService.updateOne(standardPersonPhoneField.id, {
+        id: standardPersonPhoneField.id,
+        workspaceId: standardPersonPhoneField.workspaceId,
+        label: 'Phone',
+      });
     } finally {
       await workspaceQueryRunner.release();
     }
