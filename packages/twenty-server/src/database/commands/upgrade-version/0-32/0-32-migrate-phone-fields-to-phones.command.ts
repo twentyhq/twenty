@@ -172,15 +172,6 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           workspaceId: workspaceId,
           fieldId: standardPersonPhonesField.id,
         });
-
-        await this.fieldMetadataService.updateOne(
-          standardPersonPhonesField.id,
-          {
-            id: standardPersonPhonesField.id,
-            workspaceId: standardPersonPhonesField.workspaceId,
-            label: 'Phone (deprecated)',
-          },
-        );
       }
 
       // Copy phone data from Text type to Phones type
