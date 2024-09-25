@@ -35,6 +35,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { useGroupDefinitionsFromViewGroups } from '@/object-record/record-group/hooks/useGroupDefinitionsFromViewGroups';
 import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -69,8 +70,11 @@ export const RecordIndexContainer = () => {
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
+  const { currentViewWithSavedFiltersAndSorts } =
+    useGetCurrentView(recordIndexId);
+
   const { groupDefinitions } = useGroupDefinitionsFromViewGroups({
-    viewBarComponentId: recordIndexId,
+    view: currentViewWithSavedFiltersAndSorts,
     objectMetadataItem,
   });
 

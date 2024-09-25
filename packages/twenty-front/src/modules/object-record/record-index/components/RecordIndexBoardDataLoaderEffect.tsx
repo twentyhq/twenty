@@ -11,6 +11,7 @@ import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-in
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { useGroupDefinitionsFromViewGroups } from '@/object-record/record-group/hooks/useGroupDefinitionsFromViewGroups';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 
 type RecordIndexBoardDataLoaderEffectProps = {
   objectNameSingular: string;
@@ -39,8 +40,11 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
 
+  const { currentViewWithSavedFiltersAndSorts } =
+    useGetCurrentView(recordBoardId);
+
   const { groupDefinitions } = useGroupDefinitionsFromViewGroups({
-    viewBarComponentId: recordBoardId,
+    view: currentViewWithSavedFiltersAndSorts,
     objectMetadataItem,
   });
 

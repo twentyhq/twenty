@@ -15,6 +15,9 @@ import { mapBoardFieldDefinitionsToViewFields } from '@/views/utils/mapBoardFiel
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
+import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
+import { mapGroupDefinitionsToViewGroups } from '@/views/utils/mapGroupDefinitionsToViewGroups';
 
 type useRecordIndexOptionsForBoardParams = {
   objectNameSingular: string;
@@ -29,8 +32,11 @@ export const useRecordIndexOptionsForBoard = ({
 }: useRecordIndexOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
     useRecoilState(recordIndexFieldDefinitionsState);
+  const [recordIndexGroupDefinitions, setRecordIndexGroupDefinitions] =
+    useRecoilState(recordIndexGroupDefinitionsState);
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
+  const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);
   const { updateCurrentView } = useUpdateCurrentView(viewBarId);
   const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
 
@@ -69,6 +75,17 @@ export const useRecordIndexOptionsForBoard = ({
             boardFieldA.position - boardFieldB.position,
         ),
     [recordIndexFieldDefinitions],
+  );
+
+  const visibleBoardGroups = useMemo(
+    () =>
+      recordIndexGroupDefinitions
+        .filter((boardGroup) => boardGroup.isVisible)
+        .sort(
+          (boardGroupA, boardGroupB) =>
+            boardGroupA.position - boardGroupB.position,
+        ),
+    [recordIndexGroupDefinitions],
   );
 
   const hiddenBoardFields = useMemo(
@@ -113,6 +130,30 @@ export const useRecordIndexOptionsForBoard = ({
       saveViewFields(mapBoardFieldDefinitionsToViewFields(updatedFields));
     },
     [saveViewFields, setRecordIndexFieldDefinitions, visibleBoardFields],
+  );
+
+  const handleReorderGroups: OnDragEndResponder = useCallback(
+    (result) => {
+      if (!result.destination) {
+        return;
+      }
+
+      const reorderedVisibleBoardGroups = moveArrayItem(visibleBoardGroups, {
+        fromIndex: result.source.index - 1,
+        toIndex: result.destination.index - 1,
+      });
+
+      if (isDeeplyEqual(visibleBoardGroups, reorderedVisibleBoardGroups))
+        return;
+
+      const updatedGroups = [...reorderedVisibleBoardGroups].map(
+        (group, index) => ({ ...group, position: index }),
+      );
+
+      setRecordIndexGroupDefinitions(updatedGroups);
+      saveViewGroups(mapGroupDefinitionsToViewGroups(updatedGroups));
+    },
+    [saveViewGroups, setRecordIndexGroupDefinitions, visibleBoardGroups],
   );
 
   // Todo : this seems over complex and should at least be extracted to an util with unit test.
@@ -196,6 +237,7 @@ export const useRecordIndexOptionsForBoard = ({
     handleBoardFieldVisibilityChange,
     visibleBoardFields,
     hiddenBoardFields,
+    handleReorderGroups,
     isCompactModeActive,
     setAndPersistIsCompactModeActive,
   };

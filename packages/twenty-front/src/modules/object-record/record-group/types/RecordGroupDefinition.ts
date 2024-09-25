@@ -12,6 +12,7 @@ export type RecordGroupDefinitionNoValue = {
   title: 'No Value';
   position: number;
   value: null;
+  isVisible: boolean;
   actions: RecordGroupAction[];
 };
 
@@ -23,6 +24,7 @@ export type RecordGroupDefinitionValue = {
   value: string;
   color: ThemeColor;
   position: number;
+  isVisible: boolean;
   actions: RecordGroupAction[];
 };
 
