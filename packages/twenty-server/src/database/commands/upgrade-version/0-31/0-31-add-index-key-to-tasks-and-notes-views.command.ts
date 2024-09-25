@@ -11,6 +11,7 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
@@ -89,19 +90,18 @@ export class AddIndexKeyToTasksAndNotesViewsCommand extends ActiveWorkspacesComm
 
     const tasksAndNotesObjectMetadataIds = objectMetadataEntities.filter(
       (entity) =>
-        entity.namePlural === 'tasks' || entity.namePlural === 'notes',
+        entity.standardId === STANDARD_OBJECT_IDS.task ||
+        entity.standardId === STANDARD_OBJECT_IDS.note,
     );
 
-    const viewsToUpdate = allViews
-      .filter((view) =>
+    const viewsToUpdate = allViews.filter(
+      (view) =>
         tasksAndNotesObjectMetadataIds.some(
           (entity) => entity.id === view.objectMetadataId,
-        ),
-      )
-      .filter(
-        (view) =>
-          ['All Tasks', 'All Notes'].includes(view.name) && view.key === null,
-      );
+        ) &&
+        ['All Tasks', 'All Notes'].includes(view.name) &&
+        view.key === null,
+    );
 
     if (dryRun) {
       this.logger.log(
