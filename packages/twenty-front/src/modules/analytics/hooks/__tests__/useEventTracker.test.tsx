@@ -11,16 +11,16 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation Track($type: String!, $sessionId: String!, $data: JSON!) {
-          track(type: $type, sessionId: $sessionId, data: $data) {
+        mutation Track($action: String!, $payload: JSON!) {
+          track(action: $action, payload: $payload) {
             success
           }
         }
       `,
       variables: {
-        type: 'exampleType',
-        sessionId: 'exampleId',
-        data: {
+        action: 'exampleType',
+        payload: {
+          sessionId: 'exampleId',
           pathname: '',
           userAgent: '',
           timeZone: '',
@@ -59,12 +59,11 @@ describe('useEventTracker', () => {
       href: '',
       referrer: '',
     };
-    const sessionId = 'exampleId';
     const { result } = renderHook(() => useEventTracker(), {
       wrapper: Wrapper,
     });
     act(() => {
-      result.current(eventType, sessionId, eventData);
+      result.current(eventType, eventData);
     });
     await waitFor(() => {
       expect(mocks[0].result).toHaveBeenCalled();

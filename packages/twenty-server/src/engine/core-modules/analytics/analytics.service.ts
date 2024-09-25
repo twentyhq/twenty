@@ -13,7 +13,7 @@ type CreateEventInput = {
 @Injectable()
 export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
-  private readonly datasource = 'analyticsEvents';
+  private readonly datasource = 'analyticsEvent';
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -39,7 +39,8 @@ export class AnalyticsService {
 
       const config: AxiosRequestConfig = {
         headers: {
-          Authorization: 'Bearer ' + this.environmentService.get('TINYBIRD_TOKEN'),
+          Authorization:
+            'Bearer ' + this.environmentService.get('TINYBIRD_TOKEN'),
         },
       };
 
@@ -52,7 +53,9 @@ export class AnalyticsService {
       } catch (error) {
         this.logger.error('Error occurred:', error);
         if (error.response) {
-          this.logger.error(`Error response body: ${JSON.stringify(error.response.data)}`);
+          this.logger.error(
+            `Error response body: ${JSON.stringify(error.response.data)}`,
+          );
         }
 
         return { success: false };

@@ -22,7 +22,7 @@ export class TelemetryListener {
         this.analyticsService.create(
           {
             action: payload.name,
-            payload: {}
+            payload: {},
           },
           eventPayload.userId,
           payload.workspaceId,
@@ -40,7 +40,7 @@ export class TelemetryListener {
         this.analyticsService.create(
           {
             action: 'user.signup',
-            payload: {}
+            payload: {},
           },
           eventPayload.userId,
           payload.workspaceId,

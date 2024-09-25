@@ -5,7 +5,6 @@ import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import {
-  getSessionId,
   setSessionId,
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
@@ -168,7 +167,7 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     setTimeout(() => {
       setSessionId();
-      eventTracker('pageview', getSessionId(), {
+      eventTracker('pageview', {
         pathname: location.pathname,
         locale: navigator.language,
         userAgent: window.navigator.userAgent,
