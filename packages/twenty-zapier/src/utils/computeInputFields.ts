@@ -12,8 +12,11 @@ const getTypeFromFieldMetadataType = (
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
+      return 'string'
     case FieldMetadataType.EMAIL:
-    case FieldMetadataType.LINK:
+      return 'string'
+    case FieldMetadataType.LINKS:
+      return 'string';
     case FieldMetadataType.RATING:
       return 'string';
     case FieldMetadataType.DATE_TIME:
@@ -52,8 +55,8 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       return [firstName, lastName];
     }
-    case FieldMetadataType.LINK: {
-      const url: NodeField = {
+    case FieldMetadataType.LINKS: {
+      const primaryLinkUrl: NodeField = {
         type: 'TEXT',
         name: 'url',
         label: 'Url',
@@ -61,7 +64,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         isNullable: true,
         defaultValue: null,
       };
-      const label: NodeField = {
+      const primaryLinkLabel: NodeField = {
         type: 'TEXT',
         name: 'label',
         label: 'Label',
@@ -69,7 +72,15 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         isNullable: true,
         defaultValue: null,
       };
-      return [url, label];
+      const secondaryLinks: NodeField = {
+        type: 'RAW_JSON',
+        name: 'links',
+        label: 'Links',
+        description: 'Links',
+        isNullable: true,
+        defaultValue: null,
+      }
+      return [primaryLinkUrl, primaryLinkLabel, secondaryLinks];
     }
     case FieldMetadataType.CURRENCY: {
       const amountMicros: NodeField = {
@@ -141,6 +152,52 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       return [address1, address2, city, state, postalCode, country];
     }
+    case FieldMetadataType.PHONE: {
+      const primaryPhoneNumber: NodeField = {
+        type: 'TEXT',
+        name: 'phoneNumber',
+        label: 'Phone Number',
+        description: 'Phone Number',
+        isNullable: true,
+        defaultValue: null,
+      };
+      const primaryPhoneCountryCode: NodeField = {
+        type: 'TEXT',
+        name: 'phoneCountrtyCode',
+        label: 'Country Code',
+        description: 'Country Code',
+        isNullable: true,
+        defaultValue: null,
+      };
+      const additionalPhones: NodeField = {
+        type: 'RAW_JSON',
+        name: 'additionalPhoneNumbers',
+        label: 'Additional Phone Numbers',
+        description: 'Additional Phone Numbers',
+        isNullable: true,
+        defaultValue: null,
+      };
+      return [primaryPhoneNumber, primaryPhoneCountryCode, additionalPhones];
+    }
+    case FieldMetadataType.EMAIL: {
+      const primaryEmail: NodeField = {
+        type: 'TEXT',
+        name: 'email',
+        label: 'Email',
+        description: 'Email',
+        isNullable: true,
+        defaultValue: null,
+      };
+      const additionalEmails: NodeField = {
+        type: 'RAW_JSON',
+        name: 'additionalEmails',
+        label: 'Additional Emails',
+        description: 'Additional Emails',
+        isNullable: true,
+        defaultValue: null,
+      };
+      return [primaryEmail, additionalEmails];
+    }
     default:
       throw new Error(`Unknown nodeField type: ${nodeField.type}`);
   }
@@ -159,7 +216,7 @@ export const computeInputFields = (
     const nodeField = field.node;
     switch (nodeField.type) {
       case FieldMetadataType.FULL_NAME:
-      case FieldMetadataType.LINK:
+      case FieldMetadataType.LINKS:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.ADDRESS:
         for (const subNodeField of get_subfieldsFromField(nodeField)) {
