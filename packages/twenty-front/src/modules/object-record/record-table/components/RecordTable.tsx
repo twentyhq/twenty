@@ -13,10 +13,8 @@ import { useRecoilValue } from 'recoil';
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-spacing: 0;
-  margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
   table-layout: fixed;
-
-  width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
+  width: 100%;
 `;
 
 type RecordTableProps = {
