@@ -9,32 +9,50 @@ import {
   SetupOIDCSsoInput,
   SetupSAMLSsoInput,
 } from 'src/engine/core-modules/sso/dtos/setup-sso.input';
-import { IdpType } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { SetupSsoOutput } from 'src/engine/core-modules/sso/dtos/setup-sso.output';
+import { LoginSSOInput } from 'src/engine/core-modules/sso/dtos/login-sso.input';
+import { LoginSSOOutput } from 'src/engine/core-modules/sso/dtos/login-sso.output';
+import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
+import { FindAvailableSSOIDPInput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.input';
+import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 
-@UseGuards(WorkspaceAuthGuard)
 @Resolver()
 export class SSOResolver {
-  constructor(private readonly ssoService: SSOService) {}
+  constructor(private readonly sSOService: SSOService) {}
 
+  @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
   @Mutation(() => SetupSsoOutput)
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOIDCSsoInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.ssoService.createSSOIdentityProvider(
-      { ...setupSsoInput, type: IdpType.OIDC },
+    return this.sSOService.createOIDCIdentityProvider(
+      setupSsoInput,
       workspaceId,
     );
   }
 
+  @UseGuards(SSOProviderEnabledGuard)
+  @Mutation(() => [FindAvailableSSOIDPOutput])
+  async findAvailableSSOIdentityProviders(
+    @Args('input') { email }: FindAvailableSSOIDPInput,
+  ) {
+    return this.sSOService.findAvailableSSOIdentityProviders(email);
+  }
+
+  @Mutation(() => LoginSSOOutput)
+  async loginWithSSO(@Args('input') { idpId }: LoginSSOInput) {
+    return this.sSOService.loginWithSSO(idpId);
+  }
+
+  @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
   @Mutation(() => SetupSsoOutput)
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSAMLSsoInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.ssoService.createSSOIdentityProvider(
-      { ...setupSsoInput, type: IdpType.SAML },
+    return this.sSOService.createSAMLIdentityProvider(
+      setupSsoInput,
       workspaceId,
     );
   }

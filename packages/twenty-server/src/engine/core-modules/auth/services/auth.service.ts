@@ -43,7 +43,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
