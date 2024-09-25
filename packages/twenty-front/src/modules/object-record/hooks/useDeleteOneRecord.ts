@@ -1,10 +1,9 @@
-import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
+import { useCallback } from 'react';
 
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { capitalize } from '~/utils/string/capitalize';
@@ -23,10 +22,6 @@ export const useDeleteOneRecord = ({
     objectNameSingular,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular,
-  });
-
   const { deleteOneRecordMutation } = useDeleteOneRecordMutation({
     objectNameSingular,
   });
@@ -38,13 +33,20 @@ export const useDeleteOneRecord = ({
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
+      const findOneQueryName = `FindOne${capitalize(objectNameSingular)}`;
+      const findManyQueryName = `FindMany${capitalize(
+        objectMetadataItem.namePlural,
+      )}`;
+
       const deletedRecord = await apolloClient.mutate({
         mutation: deleteOneRecordMutation,
         variables: { idToDelete },
+        refetchQueries: [findOneQueryName, findManyQueryName],
         optimisticResponse: {
           [mutationResponseField]: {
             __typename: capitalize(objectNameSingular),
             id: idToDelete,
+            deletedAt: new Date().toISOString(),
           },
         },
         update: (cache, { data }) => {
@@ -52,14 +54,10 @@ export const useDeleteOneRecord = ({
 
           if (!record) return;
 
-          const cachedRecord = getRecordFromCache(record.id, cache);
-
-          if (!cachedRecord) return;
-
           triggerDeleteRecordsOptimisticEffect({
             cache,
             objectMetadataItem,
-            recordsToDelete: [cachedRecord],
+            recordsToDelete: [record],
             objectMetadataItems,
           });
         },
@@ -70,7 +68,6 @@ export const useDeleteOneRecord = ({
     [
       apolloClient,
       deleteOneRecordMutation,
-      getRecordFromCache,
       mutationResponseField,
       objectMetadataItem,
       objectNameSingular,

@@ -45,7 +45,6 @@ export const ShowPageMoreButton = ({
   const handleDelete = () => {
     deleteOneRecord(recordId);
     closeDropdown();
-    navigate(navigationMemorizedUrl, { replace: true });
   };
 
   const handleDestroy = () => {
