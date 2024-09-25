@@ -24,7 +24,6 @@ const basePerson = {
     firstName: '',
     lastName: '',
   },
-  phone: '',
   linkedinLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',

@@ -197,6 +197,10 @@ name
   lastName
 }
 phone
+{
+  primaryPhoneNumber
+  primaryPhoneCountryCode
+}
 linkedinLink
 {
   primaryLinkUrl

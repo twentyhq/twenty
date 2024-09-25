@@ -1,4 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { percentage, sleep, useTableData } from '../useTableData';
 
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -9,7 +10,6 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import { ViewType } from '@/views/types/ViewType';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
-import { ReactNode } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
@@ -26,7 +26,11 @@ const mockPerson = {
   __typename: 'Person',
   updatedAt: '2021-08-03T19:20:06.000Z',
   myCustomObjectId: '123',
-  whatsapp: '123',
+  whatsapp: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   linkedinLink: {
     primaryLinkUrl: 'https://www.linkedin.com',
     primaryLinkLabel: 'linkedin',
@@ -52,7 +56,11 @@ const mockPerson = {
   },
   performanceRating: 1,
   createdAt: '2021-08-03T19:20:06.000Z',
-  phone: 'phone',
+  phone: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   id: '123',
   city: 'city',
   companyId: '1',
@@ -80,7 +88,11 @@ const mocks: MockedResponse[] = [
                 __typename
                 updatedAt
                 myCustomObjectId
-                whatsapp
+                whatsapp {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  additionalPhones
+                }
                 linkedinLink {
                   primaryLinkUrl
                   primaryLinkLabel
@@ -106,7 +118,11 @@ const mocks: MockedResponse[] = [
                 }
                 performanceRating
                 createdAt
-                phone
+                phone {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  additionalPhones
+                }
                 id
                 city
                 companyId
