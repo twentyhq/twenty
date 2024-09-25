@@ -11,7 +11,7 @@ export class GraphqlQueryDestroyOneResolverService {
     this.twentyORMGlobalManager = twentyORMGlobalManager;
   }
 
-  async destroyOne<ObjectRecord extends IRecord = IRecord>(
+  async resolve<ObjectRecord extends IRecord = IRecord>(
     args: DestroyOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord> {

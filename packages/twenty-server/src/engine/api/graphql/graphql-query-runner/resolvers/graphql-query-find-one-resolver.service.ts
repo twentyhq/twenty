@@ -27,7 +27,7 @@ export class GraphqlQueryFindOneResolverService {
     this.twentyORMGlobalManager = twentyORMGlobalManager;
   }
 
-  async findOne<
+  async resolve<
     ObjectRecord extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
   >(
@@ -99,9 +99,7 @@ export class GraphqlQueryFindOneResolverService {
       );
     }
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper(
-      this.twentyORMGlobalManager,
-    );
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     const objectRecords = [objectRecord];
 

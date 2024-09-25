@@ -39,7 +39,7 @@ export class GraphqlQueryParser {
     );
   }
 
-  applyFilterToBuilder(
+  public applyFilterToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
     recordFilter: RecordFilter,
@@ -51,7 +51,7 @@ export class GraphqlQueryParser {
     );
   }
 
-  applyDeletedAtToBuilder(
+  public applyDeletedAtToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     recordFilter: RecordFilter,
   ): SelectQueryBuilder<any> {
@@ -88,7 +88,7 @@ export class GraphqlQueryParser {
     return false;
   }
 
-  applyOrderToBuilder(
+  public applyOrderToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     orderBy: RecordOrderBy,
     objectNameSingular: string,
@@ -103,7 +103,7 @@ export class GraphqlQueryParser {
     return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
   }
 
-  parseSelectedFields(
+  public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataInterface,
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): { select: Record<string, any>; relations: Record<string, any> } {

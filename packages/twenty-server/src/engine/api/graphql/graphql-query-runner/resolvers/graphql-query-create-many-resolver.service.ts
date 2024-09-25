@@ -18,7 +18,7 @@ export class GraphqlQueryCreateManyResolverService {
     this.twentyORMGlobalManager = twentyORMGlobalManager;
   }
 
-  async createMany<ObjectRecord extends IRecord = IRecord>(
+  async resolve<ObjectRecord extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord[] | undefined> {

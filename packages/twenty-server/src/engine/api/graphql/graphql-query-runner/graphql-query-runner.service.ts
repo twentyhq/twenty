@@ -88,7 +88,7 @@ export class GraphqlQueryRunnerService {
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
 
-    return graphqlQueryFindOneResolverService.findOne(computedArgs, options);
+    return graphqlQueryFindOneResolverService.resolve(computedArgs, options);
   }
 
   @LogExecutionTime()
@@ -119,7 +119,7 @@ export class GraphqlQueryRunnerService {
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
-    return graphqlQueryFindManyResolverService.findMany(computedArgs, options);
+    return graphqlQueryFindManyResolverService.resolve(computedArgs, options);
   }
 
   @LogExecutionTime()
@@ -157,7 +157,7 @@ export class GraphqlQueryRunnerService {
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<ObjectRecord>;
 
-    const results = (await graphqlQueryCreateManyResolverService.createMany(
+    const results = (await graphqlQueryCreateManyResolverService.resolve(
       computedArgs,
       options,
     )) as ObjectRecord[];
@@ -209,7 +209,7 @@ export class GraphqlQueryRunnerService {
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<ObjectRecord>;
 
-    const results = (await graphqlQueryCreateManyResolverService.createMany(
+    const results = (await graphqlQueryCreateManyResolverService.resolve(
       computedArgs,
       options,
     )) as ObjectRecord[];
@@ -288,6 +288,6 @@ export class GraphqlQueryRunnerService {
     const graphqlQueryDestroyOneResolverService =
       new GraphqlQueryDestroyOneResolverService(this.twentyORMGlobalManager);
 
-    return graphqlQueryDestroyOneResolverService.destroyOne(args, options);
+    return graphqlQueryDestroyOneResolverService.resolve(args, options);
   }
 }

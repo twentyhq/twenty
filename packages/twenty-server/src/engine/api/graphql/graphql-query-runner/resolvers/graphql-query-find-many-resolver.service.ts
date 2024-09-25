@@ -22,10 +22,7 @@ import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/g
 import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
 import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
-import {
-  ObjectMetadataMapItem,
-  generateObjectMetadataMap,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -36,7 +33,7 @@ export class GraphqlQueryFindManyResolverService {
     this.twentyORMGlobalManager = twentyORMGlobalManager;
   }
 
-  async findMany<
+  async resolve<
     ObjectRecord extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
     OrderBy extends RecordOrderBy = RecordOrderBy,
@@ -167,9 +164,7 @@ export class GraphqlQueryFindManyResolverService {
       objectRecords.pop();
     }
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper(
-      this.twentyORMGlobalManager,
-    );
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     if (relations) {
       await processNestedRelationsHelper.processNestedRelations(
@@ -243,29 +238,6 @@ export class GraphqlQueryFindManyResolverService {
     if (args.before) return decodeCursor(args.before);
 
     return undefined;
-  }
-
-  private addOrderByColumnsToSelect(
-    order: Record<string, any>,
-    select: Record<string, boolean>,
-  ) {
-    for (const column of Object.keys(order || {})) {
-      if (!select[column]) {
-        select[column] = true;
-      }
-    }
-  }
-
-  private addForeingKeyColumnsToSelect(
-    relations: Record<string, any>,
-    select: Record<string, boolean>,
-    objectMetadata: ObjectMetadataMapItem,
-  ) {
-    for (const column of Object.keys(relations || {})) {
-      if (!select[`${column}Id`] && objectMetadata.fields[`${column}Id`]) {
-        select[`${column}Id`] = true;
-      }
-    }
   }
 
   private getPaginationInfo(
