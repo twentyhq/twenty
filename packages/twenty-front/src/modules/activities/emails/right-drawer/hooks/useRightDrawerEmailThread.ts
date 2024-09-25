@@ -6,6 +6,7 @@ import { EmailThread } from '@/activities/emails/types/EmailThread';
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
+import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -73,6 +74,33 @@ export const useRightDrawerEmailThread = () => {
       setLastMessageId(lastMessage.id);
     }
   }, [messages, isMessagesFetchComplete]);
+
+  // TODO: introduce nested filters so we can retrieve the message sender directly from the message query
+  const { records: messageSenders } =
+    useFindManyRecords<EmailThreadMessageParticipant>({
+      filter: {
+        messageId: {
+          in: messages.map(({ id }) => id),
+        },
+        role: {
+          eq: 'from',
+        },
+      },
+      objectNameSingular: CoreObjectNameSingular.MessageParticipant,
+      recordGqlFields: {
+        id: true,
+        role: true,
+        displayName: true,
+        participant: {
+          id: true,
+          email: true,
+          name: true,
+        },
+        person: true,
+        workspaceMember: true,
+      },
+      skip: !isMessagesFetchComplete,
+    });
 
   const { records: messageChannelMessageAssociationData } =
     useFindManyRecords<MessageChannelMessageAssociation>({
