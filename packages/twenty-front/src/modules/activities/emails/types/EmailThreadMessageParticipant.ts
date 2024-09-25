@@ -7,6 +7,7 @@ export type EmailThreadMessageParticipant = {
   displayName: string;
   handle: string;
   role: EmailParticipantRole;
+  messageId: string;
   person: Person;
   workspaceMember: WorkspaceMember;
   __typename: 'EmailThreadMessageParticipant';

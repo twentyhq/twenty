@@ -9,6 +9,7 @@ describe('getDisplayNameFromParticipant', () => {
     displayName: '',
     handle: '',
     role: 'from',
+    messageId: '638f52d1-fd55-4a2b-b0f3-9858ea3b2e91',
     person: {
       __typename: 'Person',
       id: '1',

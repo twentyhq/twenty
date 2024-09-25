@@ -93,15 +93,12 @@ export const useRightDrawerEmailThread = () => {
         id: true,
         role: true,
         displayName: true,
-        participant: {
-          id: true,
-          email: true,
-          name: true,
-        },
+        messageId: true,
+        handle: true,
         person: true,
         workspaceMember: true,
       },
-      skip: !isMessagesFetchComplete,
+      skip: messages.length === 0,
     });
 
   const { records: messageChannelMessageAssociationData } =
@@ -156,7 +153,7 @@ export const useRightDrawerEmailThread = () => {
   const messagesWithSender: EmailThreadMessageWithSender[] = messages
     .map((message) => {
       const sender = messageSenders.find(
-        (messageSender) => messageSender.id === message.id,
+        (messageSender) => messageSender.messageId === message.id,
       );
       if (!sender) {
         return null;
