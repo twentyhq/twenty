@@ -44,7 +44,7 @@ const StyledPlusIconContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 32px;
+  width: 100%;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
