@@ -21,7 +21,7 @@ const StyledHeader = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: left;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: 25px;
   width: 100%;
 `;
 
@@ -45,9 +45,13 @@ const StyledHeaderActions = styled.div`
   margin-left: auto;
 `;
 const StyledHeaderContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
+  height: 40px;
   justify-content: space-between;
+  position: fixed;
   width: 100%;
+  padding-top: 10px;
 `;
 const StyledLeftContainer = styled.div`
   align-items: center;
