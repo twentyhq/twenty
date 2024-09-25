@@ -28,15 +28,16 @@ const mocks: MockedResponse[] = [
         mutation UpdateOneTask($idToUpdate: ID!, $input: TaskUpdateInput!) {
           updateTask(id: $idToUpdate, data: $input) {
             __typename
-            status
-            assigneeId
             updatedAt
-            body
-            createdAt
-            dueAt
-            position
             id
+            dueAt
+            deletedAt
             title
+            body
+            status
+            createdAt
+            position
+            assigneeId
             createdBy {
               source
               workspaceMemberId
@@ -53,7 +54,7 @@ const mocks: MockedResponse[] = [
     result: jest.fn(() => ({
       data: {
         updateTask: {
-          __typename: 'Activity',
+          __typename: 'Task',
           createdAt: '2024-03-15T07:33:14.212Z',
           reminderAt: null,
           authorId: '123',

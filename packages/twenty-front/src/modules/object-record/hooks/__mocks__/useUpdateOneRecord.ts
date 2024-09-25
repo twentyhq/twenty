@@ -18,7 +18,6 @@ const basePerson = {
   },
   createdAt: '',
   city: '',
-  email: '',
   jobTitle: '',
   name: {
     firstName: '',

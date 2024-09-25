@@ -22,20 +22,24 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
   });
 
   it('should return expected definitions', () => {
+    const companyObjectMetadata = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'company',
+    );
+
     const { result } = renderHook(
       (objectMetadataItem?: Nullable<ObjectMetadataItem>) => {
         return useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
       },
       {
-        initialProps: generatedMockObjectMetadataItems[1],
+        initialProps: companyObjectMetadata,
       },
     );
 
     const { columnDefinitions, filterDefinitions, sortDefinitions } =
       result.current;
 
-    expect(columnDefinitions.length).toBe(5);
-    expect(filterDefinitions.length).toBe(4);
-    expect(sortDefinitions.length).toBe(4);
+    expect(columnDefinitions.length).toBe(21);
+    expect(filterDefinitions.length).toBe(14);
+    expect(sortDefinitions.length).toBe(14);
   });
 });

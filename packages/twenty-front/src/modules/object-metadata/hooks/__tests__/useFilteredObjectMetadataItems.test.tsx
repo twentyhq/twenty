@@ -76,6 +76,10 @@ describe('useFilteredObjectMetadataItems', () => {
   });
 
   it('should findObjectMetadataItemById', async () => {
+    const peopleObjectMetadata = generatedMockObjectMetadataItems.find(
+      (item) => item.namePlural === 'people',
+    );
+
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
@@ -90,7 +94,7 @@ describe('useFilteredObjectMetadataItems', () => {
 
     act(() => {
       const res = result.current.findObjectMetadataItemById(
-        'ff2881da-89f6-4f15-8f0a-e3f355ea3b94',
+        peopleObjectMetadata?.id,
       );
       expect(res).toBeDefined();
       expect(res?.namePlural).toBe('people');

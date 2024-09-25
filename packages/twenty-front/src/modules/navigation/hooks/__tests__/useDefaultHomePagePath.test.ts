@@ -11,6 +11,10 @@ import { mockedUserData } from '~/testing/mock-data/users';
 
 jest.mock('@/prefetch/hooks/usePrefetchedData');
 const setupMockPrefetchedData = (viewId?: string) => {
+  const companyObjectMetadata = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'company',
+  );
+
   jest.mocked(usePrefetchedData).mockReturnValue({
     isDataPrefetched: true,
     records: viewId
@@ -18,7 +22,7 @@ const setupMockPrefetchedData = (viewId?: string) => {
           {
             id: viewId,
             __typename: 'object',
-            objectMetadataId: 'REPLACE_ME',
+            objectMetadataId: companyObjectMetadata?.id,
           },
         ]
       : [],
