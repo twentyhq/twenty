@@ -163,7 +163,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       const primaryPhoneCountryCode: NodeField = {
         type: 'TEXT',
-        name: 'phoneCountrtyCode',
+        name: 'phoneCountryCode',
         label: 'Country Code',
         description: 'Country Code',
         isNullable: true,
