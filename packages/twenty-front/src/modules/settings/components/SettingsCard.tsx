@@ -30,7 +30,7 @@ const StyledCard = styled(Card)<{
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
   width: 100%;
   & :hover {
-    background-color: ${({ theme }) => theme.background.quaternary};
+    background-color: ${({ theme }) => theme.background.tertiary};
   }
 `;
 
