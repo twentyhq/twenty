@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 import { IconPencil } from 'twenty-ui';
 
 import {
-  phoneFieldDefinition,
+  phonesFieldDefinition,
   relationFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -29,7 +29,7 @@ const getWrapper =
     </FieldContext.Provider>
   );
 
-const PhoneWrapper = getWrapper(phoneFieldDefinition);
+const PhoneWrapper = getWrapper(phonesFieldDefinition);
 const RelationWrapper = getWrapper(relationFieldDefinition);
 
 describe('useGetButtonIcon', () => {
