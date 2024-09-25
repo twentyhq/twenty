@@ -2,6 +2,8 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldDateTimeMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useDateTimeFieldDisplay = () => {
@@ -16,7 +18,7 @@ export const useDateTimeFieldDisplay = () => {
   );
 
   return {
-    fieldDefinition,
+    fieldDefinition: fieldDefinition as FieldDefinition<FieldDateTimeMetadata>,
     fieldValue,
     hotkeyScope,
     clearable,

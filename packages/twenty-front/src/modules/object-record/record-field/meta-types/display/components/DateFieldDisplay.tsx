@@ -2,7 +2,15 @@ import { useDateFieldDisplay } from '@/object-record/record-field/meta-types/hoo
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 
 export const DateFieldDisplay = () => {
-  const { fieldValue } = useDateFieldDisplay();
+  const { fieldValue, fieldDefinition } = useDateFieldDisplay();
 
-  return <DateDisplay value={fieldValue} />;
+  const displayAsRelativeDate =
+    fieldDefinition.metadata?.settings?.displayAsRelativeDate;
+
+  return (
+    <DateDisplay
+      value={fieldValue}
+      displayAsRelativeDate={displayAsRelativeDate}
+    />
+  );
 };

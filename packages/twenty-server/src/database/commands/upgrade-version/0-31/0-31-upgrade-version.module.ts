@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AddIndexKeyToTasksAndNotesViewsCommand } from 'src/database/commands/upgrade-version/0-31/0-31-add-index-key-to-tasks-and-notes-views.command';
 import { BackfillWorkspaceFavoritesCommand } from 'src/database/commands/upgrade-version/0-31/0-31-backfill-workspace-favorites.command';
 import { CleanViewsWithDeletedObjectMetadataCommand } from 'src/database/commands/upgrade-version/0-31/0-31-clean-views-with-deleted-object-metadata.command';
 import { UpgradeTo0_31Command } from 'src/database/commands/upgrade-version/0-31/0-31-upgrade-version.command';
@@ -18,6 +19,7 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     UpgradeTo0_31Command,
     BackfillWorkspaceFavoritesCommand,
     CleanViewsWithDeletedObjectMetadataCommand,
+    AddIndexKeyToTasksAndNotesViewsCommand,
   ],
 })
 export class UpgradeTo0_31CommandModule {}
