@@ -141,6 +141,10 @@ const StyledRecordInlineCellPlaceholder = styled.div`
   height: 24px;
 `;
 
+const StyledRecordInlineCell = styled(RecordInlineCell)`
+  height: 24px;
+`;
+
 export const RecordBoardCard = ({
   isCreating = false,
   onCreateSuccess,
@@ -308,11 +312,12 @@ export const RecordBoardCard = ({
             </>
           )}
         </StyledBoardCardHeader>
-        <StyledBoardCardBody>
-          <AnimatedEaseInOut
-            isOpen={!isCardInCompactMode || !isCompactModeActive}
-            initial={false}
-          >
+
+        <AnimatedEaseInOut
+          isOpen={!isCardInCompactMode || !isCompactModeActive}
+          initial={false}
+        >
+          <StyledBoardCardBody>
             {visibleFieldDefinitionsFiltered.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
@@ -343,15 +348,15 @@ export const RecordBoardCard = ({
                   }}
                 >
                   {inView ? (
-                    <RecordInlineCell />
+                    <StyledRecordInlineCell />
                   ) : (
                     <StyledRecordInlineCellPlaceholder />
                   )}
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
             ))}
-          </AnimatedEaseInOut>
-        </StyledBoardCardBody>
+          </StyledBoardCardBody>
+        </AnimatedEaseInOut>
       </StyledBoardCard>
     </StyledBoardCardWrapper>
   );
