@@ -19,7 +19,6 @@ const StyledPlusIconHeaderCell = styled.th<{
   &:hover {
     background: ${theme.background.transparent.light};
   };
-  padding-left: ${theme.spacing(3)};
   `;
   }};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -28,12 +27,12 @@ const StyledPlusIconHeaderCell = styled.th<{
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
   min-width: 32px;
+  width: 32px;
   border-right: none !important;
 
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen
       ? `
-    width: 32px;
     background-color: ${theme.background.primary};
     `
       : ''};
