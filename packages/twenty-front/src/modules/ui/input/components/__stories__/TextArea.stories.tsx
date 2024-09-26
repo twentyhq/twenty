@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { TextArea, TextAreaProps } from '../TextArea';
@@ -36,4 +36,8 @@ export const Filled: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true, value: 'Lorem Ipsum' },
+};
+
+export const WithLabel: Story = {
+  args: { label: 'My Textarea' },
 };
