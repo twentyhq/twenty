@@ -1,16 +1,23 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import {
   WorkflowExecutorException,
   WorkflowExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import {
+  WorkflowActionType,
+  WorkflowStep,
+} from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
 export type WorkflowExecutionOutput = {
-  result?: object;
+  steps: {
+    type: WorkflowActionType;
+    result: object | undefined;
+    error: object | undefined;
+  }[];
   error?: object;
 };
 
@@ -22,17 +29,17 @@ export class WorkflowExecutorWorkspaceService {
     currentStepIndex,
     steps,
     payload,
+    output,
     attemptCount = 1,
   }: {
     currentStepIndex: number;
     steps: WorkflowStep[];
+    output: WorkflowExecutionOutput;
     payload?: object;
     attemptCount?: number;
   }): Promise<WorkflowExecutionOutput> {
     if (currentStepIndex >= steps.length) {
-      return {
-        result: payload,
-      };
+      return output;
     }
 
     const step = steps[currentStepIndex];
@@ -44,11 +51,23 @@ export class WorkflowExecutorWorkspaceService {
       payload,
     });
 
+    const stepOutput = {
+      type: step.type,
+      result: result.result,
+      error: result.error,
+    };
+
+    const updatedOutput = {
+      ...output,
+      steps: [...output.steps, stepOutput],
+    };
+
     if (result.result) {
       return await this.execute({
         currentStepIndex: currentStepIndex + 1,
         steps,
         payload: result.result,
+        output: updatedOutput,
       });
     }
 
@@ -64,6 +83,7 @@ export class WorkflowExecutorWorkspaceService {
         currentStepIndex: currentStepIndex + 1,
         steps,
         payload,
+        output: updatedOutput,
       });
     }
 
@@ -75,6 +95,7 @@ export class WorkflowExecutorWorkspaceService {
         currentStepIndex,
         steps,
         payload,
+        output,
         attemptCount: attemptCount + 1,
       });
     }
