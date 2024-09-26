@@ -45,6 +45,7 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
         in: accounts.map((account) => account.id),
       },
     },
+    skip: !accounts.length,
   });
 
   const tabs = [

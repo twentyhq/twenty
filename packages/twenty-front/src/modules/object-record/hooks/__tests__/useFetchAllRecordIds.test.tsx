@@ -4,7 +4,6 @@ import { ReactNode, useEffect } from 'react';
 import { RecoilRoot, useRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import {
   mockPageSize,
   peopleMockWithIdsOnly,
@@ -18,6 +17,7 @@ import {
 } from '@/object-record/hooks/__mocks__/useFetchAllRecordIds';
 import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const mocks = [
   {
@@ -75,7 +75,7 @@ describe('useFetchAllRecordIds', () => {
         );
 
         useEffect(() => {
-          setObjectMetadataItems(getObjectMetadataItemsMock());
+          setObjectMetadataItems(generatedMockObjectMetadataItems);
         }, [setObjectMetadataItems]);
 
         return useFetchAllRecordIds({
