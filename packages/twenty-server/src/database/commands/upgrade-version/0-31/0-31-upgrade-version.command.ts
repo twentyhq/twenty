@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { AddIndexKeyToTasksAndNotesViewsCommand } from 'src/database/commands/upgrade-version/0-31/0-31-add-index-key-to-tasks-and-notes-views.command';
 import { BackfillWorkspaceFavoritesCommand } from 'src/database/commands/upgrade-version/0-31/0-31-backfill-workspace-favorites.command';
-import { CleanViewsWithDeletedObjectMetadataCommand } from 'src/database/commands/upgrade-version/0-31/0-31-clean-views-with-deleted-object-metadata.command';
+import { CleanViewsAssociatedWithOutdatedObjectsCommand } from 'src/database/commands/upgrade-version/0-31/0-31-clean-views-associated-with-outdated-objects.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -24,7 +24,7 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly backfillWorkspaceFavoritesCommand: BackfillWorkspaceFavoritesCommand,
-    private readonly cleanViewsWithDeletedObjectMetadataCommand: CleanViewsWithDeletedObjectMetadataCommand,
+    private readonly cleanViewsAssociatedWithOutdatedObjectsCommand: CleanViewsAssociatedWithOutdatedObjectsCommand,
     private readonly addIndexKeyToTasksAndNotesViewsCommand: AddIndexKeyToTasksAndNotesViewsCommand,
   ) {
     super(workspaceRepository);
@@ -43,7 +43,7 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
       },
       workspaceIds,
     );
-    await this.cleanViewsWithDeletedObjectMetadataCommand.executeActiveWorkspacesCommand(
+    await this.cleanViewsAssociatedWithOutdatedObjectsCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
