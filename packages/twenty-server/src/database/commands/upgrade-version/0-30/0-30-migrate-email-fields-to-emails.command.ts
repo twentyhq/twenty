@@ -93,6 +93,12 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
       }
 
       try {
+        await this.migratePersonEmailFieldToEmailsField(
+          workspaceId,
+          workspaceQueryRunner,
+          dataSourceMetadata,
+        );
+
         const customFieldsWithEmailType =
           await this.fieldMetadataRepository.find({
             where: {
@@ -101,12 +107,6 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
               isCustom: true,
             },
           });
-
-        await this.migratePersonEmailFieldToEmailsField(
-          workspaceId,
-          workspaceQueryRunner,
-          dataSourceMetadata,
-        );
 
         for (const customFieldWithEmailType of customFieldsWithEmailType) {
           const objectMetadata = await this.objectMetadataRepository.findOne({
