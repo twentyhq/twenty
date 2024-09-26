@@ -12,6 +12,7 @@ import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const defaultResponseData = {
   pageInfo: {
@@ -65,7 +66,7 @@ const mockPerson = {
   city: 'city',
   companyId: '1',
   intro: 'intro',
-  workPrefereance: 'workPrefereance',
+  workPreference: 'workPrefereance',
 };
 const mocks: MockedResponse[] = [
   {
@@ -86,48 +87,51 @@ const mocks: MockedResponse[] = [
             edges {
               node {
                 __typename
-                updatedAt
-                myCustomObjectId
-                whatsapp {
-                  primaryPhoneNumber
-                  primaryPhoneCountryCode
-                  additionalPhones
+                name {
+                  firstName
+                  lastName
                 }
                 linkedinLink {
                   primaryLinkUrl
                   primaryLinkLabel
                   secondaryLinks
                 }
-                name {
-                  firstName
-                  lastName
-                }
-                email
-                position
-                createdBy {
-                  source
-                  workspaceMemberId
-                  name
-                }
-                avatarUrl
+                deletedAt
+                createdAt
+                updatedAt
                 jobTitle
+                intro
+                workPrefereance
+                performanceRating
                 xLink {
                   primaryLinkUrl
                   primaryLinkLabel
                   secondaryLinks
                 }
-                performanceRating
-                createdAt
-                phone {
+                city
+                companyId
+                phones {
                   primaryPhoneNumber
                   primaryPhoneCountryCode
                   additionalPhones
                 }
+                createdBy {
+                  source
+                  workspaceMemberId
+                  name
+                }
                 id
-                city
-                companyId
-                intro
-                workPrefereance
+                position
+                emails {
+                  primaryEmail
+                  additionalEmails
+                }
+                avatarUrl
+                whatsapp {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  additionalPhones
+                }
               }
               cursor
             }
@@ -292,9 +296,17 @@ describe('useTableData', () => {
         },
       );
 
+      const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      );
+
+      const updatedAtFieldMetadataItem = personObjectMetadataItem?.fields.find(
+        (field) => field.name === 'updatedAt',
+      );
+
       await act(async () => {
         result.current.setKanbanFieldName.setKanbanFieldMetadataName(
-          result.current.kanbanData.hiddenBoardFields[0].metadata.fieldName,
+          updatedAtFieldMetadataItem?.name,
         );
       });
 
@@ -309,7 +321,7 @@ describe('useTableData', () => {
             {
               defaultValue: 'now',
               editButtonIcon: undefined,
-              fieldMetadataId: '102963b7-3e77-4293-a1e6-1ab59a02b663',
+              fieldMetadataId: updatedAtFieldMetadataItem?.id,
               iconName: 'IconCalendarClock',
               isFilterable: true,
               isLabelIdentifier: false,
@@ -329,7 +341,7 @@ describe('useTableData', () => {
                 relationType: undefined,
                 targetFieldMetadataName: '',
               },
-              position: 0,
+              position: 7,
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',

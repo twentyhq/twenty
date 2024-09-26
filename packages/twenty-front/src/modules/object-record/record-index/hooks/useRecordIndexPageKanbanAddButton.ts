@@ -45,21 +45,9 @@ export const useRecordIndexPageKanbanAddButton = ({
     }
   };
 
-  const createRecordWithoutCompany = (
-    columnDefinition: RecordBoardColumnDefinition,
-  ) => {
-    if (isDefined(selectFieldMetadataItem)) {
-      createOneRecord({
-        [selectFieldMetadataItem.name]: columnDefinition?.value,
-        position: 'first',
-      });
-    }
-  };
-
   return {
     selectFieldMetadataItem,
     isOpportunity,
     createOpportunity,
-    createRecordWithoutCompany,
   };
 };
