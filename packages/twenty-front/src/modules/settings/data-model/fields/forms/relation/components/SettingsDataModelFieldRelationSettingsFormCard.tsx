@@ -29,11 +29,13 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 
 const StyledPreviewContent = styled.div`
   display: flex;
+  flex-direction: column;
   gap: 6px;
 `;
 
 const StyledRelationImage = styled.img<{ flip?: boolean }>`
-  transform: ${({ flip }) => (flip ? 'scaleX(-1)' : 'none')};
+  transform: ${({ flip }) => (flip ? 'scaleX(-1) rotate(270deg)' : 'none')};
+  margin: auto;
   width: 54px;
 `;
 

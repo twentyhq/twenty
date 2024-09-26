@@ -18,13 +18,11 @@ const basePerson = {
   },
   createdAt: '',
   city: '',
-  email: '',
   jobTitle: '',
   name: {
     firstName: '',
     lastName: '',
   },
-  phone: '',
   linkedinLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',

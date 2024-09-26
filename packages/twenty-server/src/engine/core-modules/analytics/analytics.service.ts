@@ -1,16 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { AxiosRequestConfig } from 'axios';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 type CreateEventInput = {
-  type: string;
-  data: object;
+  action: string;
+  payload: object;
 };
 
 @Injectable()
 export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
+  private readonly datasource = 'event';
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -21,30 +24,42 @@ export class AnalyticsService {
     createEventInput: CreateEventInput,
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
-    workspaceDisplayName: string | undefined,
-    workspaceDomainName: string | undefined,
-    hostName: string | undefined,
   ) {
-    if (!this.environmentService.get('TELEMETRY_ENABLED')) {
+    if (this.environmentService.get('ANALYTICS_ENABLED')) {
       return { success: true };
     }
 
     const data = {
-      type: createEventInput.type,
-      data: {
-        hostname: hostName,
-        userUUID: userId,
-        workspaceUUID: workspaceId,
-        workspaceDisplayName: workspaceDisplayName,
-        workspaceDomainName: workspaceDomainName,
-        ...createEventInput.data,
+      action: createEventInput.action,
+      timestamp: new Date().toISOString(),
+      version: '1',
+      payload: {
+        userId: userId,
+        workspaceId: workspaceId,
+        ...createEventInput.payload,
+      },
+    };
+
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization:
+          'Bearer ' + this.environmentService.get('TINYBIRD_TOKEN'),
       },
     };
 
     try {
-      await this.httpService.axiosRef.post('/v1', data);
-    } catch {
-      this.logger.error('Failed to send analytics event');
+      await this.httpService.axiosRef.post(
+        `/events?name=${this.datasource}`,
+        data,
+        config,
+      );
+    } catch (error) {
+      this.logger.error('Error occurred:', error);
+      if (error.response) {
+        this.logger.error(
+          `Error response body: ${JSON.stringify(error.response.data)}`,
+        );
+      }
 
       return { success: false };
     }

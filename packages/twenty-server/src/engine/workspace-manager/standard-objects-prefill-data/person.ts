@@ -1,5 +1,13 @@
 import { EntityManager } from 'typeorm';
 
+import {
+  AIRBNB_ID,
+  FIGMA_ID,
+  NOTION_ID,
+  QONTO_ID,
+  STRIPE_ID,
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
+
 // FixMe: Is this file a duplicate of src/database/typeorm-seeds/workspace/people.ts
 export const personPrefillData = async (
   entityManager: EntityManager,
@@ -18,6 +26,9 @@ export const personPrefillData = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
+      'phonesPrimaryPhoneNumber',
+      'phonesPrimaryPhoneCountryCode',
+      'companyId',
     ])
     .orIgnore()
     .values([
@@ -32,6 +43,9 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '1234567890',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: AIRBNB_ID,
       },
       {
         nameFirstName: 'Alexandre',
@@ -44,6 +58,9 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '677118822',
+        phonesPrimaryPhoneCountryCode: '+33',
+        companyId: QONTO_ID,
       },
       {
         nameFirstName: 'Patrick',
@@ -56,6 +73,9 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '987625341',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: STRIPE_ID,
       },
       {
         nameFirstName: 'Dylan',
@@ -68,6 +88,9 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '09882261',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: FIGMA_ID,
       },
       {
         nameFirstName: 'Ivan',
@@ -80,6 +103,9 @@ export const personPrefillData = async (
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        phonesPrimaryPhoneNumber: '88226173',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: NOTION_ID,
       },
     ])
     .returning('*')

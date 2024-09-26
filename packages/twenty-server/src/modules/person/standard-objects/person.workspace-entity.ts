@@ -7,6 +7,7 @@ import {
 import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
@@ -40,7 +41,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
 const JOB_TITLE_FIELD_NAME = 'jobTitle';
-const PHONE_FIELD_NAME = 'phone';
+const PHONES_FIELD_NAME = 'phones';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
@@ -118,7 +119,17 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
-  [PHONE_FIELD_NAME]: string;
+  @WorkspaceIsDeprecated()
+  phone: string;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.phones,
+    type: FieldMetadataType.PHONES,
+    label: 'Phones',
+    description: 'Contact’s phone numbers',
+    icon: 'IconPhone',
+  })
+  [PHONES_FIELD_NAME]: PhonesMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.city,
@@ -300,7 +311,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
       { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
       { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
       { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-      { name: PHONE_FIELD_NAME, type: FieldMetadataType.TEXT }, // To change after phone migration
+      { name: PHONES_FIELD_NAME, type: FieldMetadataType.PHONES }, // To change after phone migration
     ]),
   })
   @WorkspaceIsNullable()

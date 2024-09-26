@@ -31,9 +31,6 @@ export class AnalyticsResolver {
       createAnalyticsInput,
       user?.id,
       workspace?.id,
-      workspace?.displayName,
-      workspace?.domainName,
-      this.environmentService.get('SERVER_URL') ?? request.hostname,
     );
   }
 }

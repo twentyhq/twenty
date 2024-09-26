@@ -26,13 +26,13 @@ const mocks: MockedResponse[] = [
         mutation CreateOneTask($input: TaskCreateInput!) {
           createTask(data: $input) {
             __typename
-            status
-            assigneeId
             updatedAt
-            body
             createdAt
             dueAt
             id
+            status
+            body
+            assigneeId
             title
           }
         }

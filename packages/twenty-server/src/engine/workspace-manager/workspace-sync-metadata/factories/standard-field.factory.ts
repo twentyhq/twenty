@@ -160,6 +160,7 @@ export class StandardFieldFactory {
         description: workspaceFieldMetadataArgs.description,
         defaultValue: workspaceFieldMetadataArgs.defaultValue,
         options: workspaceFieldMetadataArgs.options,
+        settings: workspaceFieldMetadataArgs.settings,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,

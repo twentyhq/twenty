@@ -13,10 +13,6 @@ export const mockedClientConfig: ClientConfig = {
     microsoft: false,
     __typename: 'AuthProviders',
   },
-  telemetry: {
-    enabled: false,
-    __typename: 'Telemetry',
-  },
   support: {
     supportDriver: 'front',
     supportFrontChatId: null,
