@@ -1,4 +1,4 @@
-import { WorkflowEditActionForm } from '@/workflow/components/WorkflowEditActionForm';
+import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { WorkflowEditTriggerForm } from '@/workflow/components/WorkflowEditTriggerForm';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflowVersionStep';
@@ -84,10 +84,16 @@ export const RightDrawerWorkflowEditStepContent = ({
     );
   }
 
-  return (
-    <WorkflowEditActionForm
-      action={stepDefinition.definition}
-      onActionUpdate={updateStep}
-    />
-  );
+  if (stepDefinition.type === 'action') {
+    if (stepDefinition.definition.type === 'CODE') {
+      return (
+        <WorkflowEditActionFormServerlessFunction
+          action={stepDefinition.definition}
+          onActionUpdate={updateStep}
+        />
+      );
+    }
+  }
+
+  return <p>Not defined yet</p>;
 };
