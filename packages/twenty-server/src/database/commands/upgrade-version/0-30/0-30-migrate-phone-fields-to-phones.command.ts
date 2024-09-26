@@ -29,7 +29,7 @@ import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view
 
 type MigratePhoneFieldsToPhonesCommandOptions = ActiveWorkspacesCommandOptions;
 @Command({
-  name: 'upgrade-0.32:migrate-phone-fields-to-phones',
+  name: 'upgrade-0.30:migrate-phone-fields-to-phones',
   description: 'Migrating fields of deprecated type PHONE to type PHONES',
 })
 export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRunner {
