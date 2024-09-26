@@ -16,6 +16,12 @@ export const DateTimeSettingsTimeFormatSelect = ({
   value,
 }: DateTimeSettingsTimeFormatSelectProps) => {
   const setTimeZone = timeZone === 'system' ? detectTimeZone() : timeZone;
+
+  const is12HourFormat = (timeZone: string): boolean => {
+    const formattedTime = formatInTimeZone(new Date(), timeZone, 'hh:mm a');
+    return formattedTime.includes('AM') || formattedTime.includes('PM');
+  };
+
   return (
     <Select
       dropdownId="datetime-settings-time-format"
@@ -25,7 +31,11 @@ export const DateTimeSettingsTimeFormatSelect = ({
       value={value}
       options={[
         {
-          label: 'System settings',
+          label: `System Settings - ${formatInTimeZone(
+            Date.now(),
+            setTimeZone,
+            is12HourFormat(setTimeZone) ? TimeFormat.HOUR_12 : TimeFormat.HOUR_24,
+          )}`,
           value: TimeFormat.SYSTEM,
         },
         {

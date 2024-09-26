@@ -8,10 +8,17 @@ type DateTimeSettingsTimeZoneSelectProps = {
   onChange: (nextValue: string) => void;
 };
 
+const getSystemTimeZoneOption = () => {
+  const systemTimeZone = detectTimeZone();
+  return findAvailableTimeZoneOption(systemTimeZone);
+};
+
 export const DateTimeSettingsTimeZoneSelect = ({
   value = detectTimeZone(),
   onChange,
 }: DateTimeSettingsTimeZoneSelectProps) => {
+  const systemTimeZoneOption = getSystemTimeZoneOption();
+
   return (
     <Select
       dropdownId="settings-accounts-calendar-time-zone"
@@ -19,12 +26,13 @@ export const DateTimeSettingsTimeZoneSelect = ({
       label="Time zone"
       fullWidth
       value={
-        value === 'system'
-          ? 'System settings'
-          : findAvailableTimeZoneOption(value)?.value
+        value
       }
       options={[
-        { label: 'System settings', value: 'system' },
+        {
+          label: `System settings - ${systemTimeZoneOption?.label}`,
+          value: 'system',
+        },
         ...AVAILABLE_TIMEZONE_OPTIONS,
       ]}
       onChange={onChange}
