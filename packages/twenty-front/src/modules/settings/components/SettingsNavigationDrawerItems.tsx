@@ -1,6 +1,5 @@
 import { useRecoilValue } from 'recoil';
 import {
-  ANIMATION,
   IconApps,
   IconAt,
   IconCalendarEvent,
@@ -23,6 +22,7 @@ import {
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
+import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
@@ -64,11 +64,6 @@ const StyledIconTool = styled(IconTool)`
   margin-right: 3px;
 `;
 
-const StyledAdvancedSection = styled(motion.div)`
-  display: flex;
-  width: 100%;
-`;
-
 type SettingsNavigationItem = {
   label: string;
   path: SettingsPath;
@@ -77,18 +72,11 @@ type SettingsNavigationItem = {
   indentationLevel?: NavigationDrawerItemIndentationLevel;
 };
 
-const advancedSectionAnimationConfig = {
-  initial: {
-    opacity: 0,
-    height: 0,
-  },
-  animate: {
-    opacity: 1,
-    height: 'auto',
-  },
-};
-
 export const SettingsNavigationDrawerItems = () => {
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const { contentRef, motionAnimationVariants } = useExpandedHeightAnimation(
+    isAdvancedModeEnabled,
+  );
   const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
@@ -100,9 +88,6 @@ export const SettingsNavigationDrawerItems = () => {
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-
-  // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
   const accountSubSettings: SettingsNavigationItem[] = [
@@ -211,13 +196,12 @@ export const SettingsNavigationDrawerItems = () => {
       </StyledNavigationDrawerSection>
       <AnimatePresence>
         {isAdvancedModeEnabled && (
-          <StyledAdvancedSection
-            initial={advancedSectionAnimationConfig.initial}
-            animate={advancedSectionAnimationConfig.animate}
-            exit={advancedSectionAnimationConfig.initial}
-            transition={{
-              duration: ANIMATION.duration.normal,
-            }}
+          <motion.div
+            ref={contentRef}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={motionAnimationVariants}
           >
             <StyledDeveloperSection>
               <StyledIconContainer>
@@ -239,7 +223,7 @@ export const SettingsNavigationDrawerItems = () => {
                 )}
               </StyledNavigationDrawerSection>
             </StyledDeveloperSection>
-          </StyledAdvancedSection>
+          </motion.div>
         )}
       </AnimatePresence>
       <StyledNavigationDrawerSection withLeftMargin>
