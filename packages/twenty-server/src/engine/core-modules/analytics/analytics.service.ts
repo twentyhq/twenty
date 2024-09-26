@@ -25,7 +25,7 @@ export class AnalyticsService {
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
   ) {
-    if (this.environmentService.get('ANALYTICS_ENABLED')) {
+    if (!this.environmentService.get('ANALYTICS_ENABLED')) {
       return { success: true };
     }
 

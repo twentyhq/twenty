@@ -1,6 +1,4 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-
-import { Request } from 'express';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -25,7 +23,6 @@ export class AnalyticsResolver {
     @Args() createAnalyticsInput: CreateAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
-    @Context('req') request: Request,
   ) {
     return this.analyticsService.create(
       createAnalyticsInput,
