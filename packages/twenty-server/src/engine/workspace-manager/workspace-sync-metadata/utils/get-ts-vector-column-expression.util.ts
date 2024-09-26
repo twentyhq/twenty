@@ -1,4 +1,9 @@
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import {
+  phonesCompositeType,
+  PRIMARY_PHONE_COUNTRY_CODE,
+  PRIMARY_PHONE_NUMBER,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   computeColumnName,
@@ -41,6 +46,42 @@ const getColumnExpressionsFromField = (
       );
     }
 
+    if (compositeType === phonesCompositeType) {
+      const primaryPhoneNumberProperty = compositeType.properties.find(
+        (property) => property.name === PRIMARY_PHONE_NUMBER,
+      );
+
+      const primaryPhoneCountryCodeProperty = compositeType.properties.find(
+        (property) => property.name === PRIMARY_PHONE_COUNTRY_CODE,
+      );
+
+      if (!primaryPhoneNumberProperty || !primaryPhoneCountryCodeProperty) {
+        throw new Error(
+          'Primary phone number or country code properties not found for field metadata type PHONES',
+        );
+      }
+
+      const countryCodeColumn = computeCompositeColumnName(
+        fieldMetadataTypeAndName.name,
+        primaryPhoneNumberProperty,
+      );
+      const phoneNumberColumn = computeCompositeColumnName(
+        fieldMetadataTypeAndName.name,
+        primaryPhoneCountryCodeProperty,
+      );
+      const concatenatedCountryCodeAndNumberExpression = `
+      COALESCE(
+        CONCAT_WS(' ',
+          "${phoneNumberColumn}",
+          "${countryCodeColumn}"
+        ),
+        ''
+      )
+    `;
+
+      return [concatenatedCountryCodeAndNumberExpression];
+    }
+
     return compositeType.properties
       .filter((property) => property.type === FieldMetadataType.TEXT)
       .map((property) => {
@@ -65,21 +106,6 @@ const getColumnExpression = (
   const quotedColumnName = `"${columnName}"`;
 
   if (fieldType === FieldMetadataType.EMAILS) {
-    return `
-      COALESCE(
-        replace(
-          ${quotedColumnName},
-          '@',
-          ' '
-        ),
-        ''
-      )
-    `;
-  } else if (fieldType === FieldMetadataType.PHONES) {
-    if (columnName.includes('PhoneCountryCode')) {
-      return '';
-    }
-
     return `
       COALESCE(
         replace(
