@@ -1,3 +1,4 @@
+import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
 import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { WorkflowEditTriggerForm } from '@/workflow/components/WorkflowEditTriggerForm';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
@@ -88,6 +89,15 @@ export const RightDrawerWorkflowEditStepContent = ({
     if (stepDefinition.definition.type === 'CODE') {
       return (
         <WorkflowEditActionFormServerlessFunction
+          action={stepDefinition.definition}
+          onActionUpdate={updateStep}
+        />
+      );
+    }
+
+    if (stepDefinition.definition.type === 'SEND_EMAIL') {
+      return (
+        <WorkflowEditActionFormSendEmail
           action={stepDefinition.definition}
           onActionUpdate={updateStep}
         />

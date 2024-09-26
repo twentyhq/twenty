@@ -2,7 +2,7 @@ import { WorkflowDiagramBaseStepNode } from '@/workflow/components/WorkflowDiagr
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCode, IconPlaylistAdd } from 'twenty-ui';
+import { IconCode, IconMail, IconPlaylistAdd } from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -33,11 +33,25 @@ export const WorkflowDiagramStepNode = ({
         );
       }
       case 'action': {
-        return (
-          <StyledStepNodeLabelIconContainer>
-            <IconCode size={theme.icon.size.sm} color={theme.color.orange} />
-          </StyledStepNodeLabelIconContainer>
-        );
+        switch (data.actionType) {
+          case 'CODE': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconCode
+                  size={theme.icon.size.sm}
+                  color={theme.color.orange}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+          case 'SEND_EMAIL': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconMail size={theme.icon.size.sm} color={theme.color.blue} />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+        }
       }
     }
 
