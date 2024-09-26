@@ -19,7 +19,7 @@ export const WorkspaceFavorites = () => {
 
   return (
     <NavigationDrawerSectionForObjectMetadataItems
-      sectionTitle={'Workspace Favorites'}
+      sectionTitle={'Workspace'}
       objectMetadataItems={objectMetadataItemsToDisplay}
       views={views}
       isRemote={false}
