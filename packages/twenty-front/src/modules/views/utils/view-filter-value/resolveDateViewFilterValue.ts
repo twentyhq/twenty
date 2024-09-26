@@ -22,7 +22,7 @@ import {
 
 import { z } from 'zod';
 
-export const variableDateViewFilterValueDirectionSchema = z.enum([
+const variableDateViewFilterValueDirectionSchema = z.enum([
   'NEXT',
   'THIS',
   'PAST',
@@ -32,10 +32,9 @@ export type VariableDateViewFilterValueDirection = z.infer<
   typeof variableDateViewFilterValueDirectionSchema
 >;
 
-export const variableDateViewFilterValueAmountSchema = z
-  .number()
-  .int()
-  .positive();
+const variableDateViewFilterValueAmountSchema = z
+  .union([z.coerce.number().int().positive(), z.literal('undefined')])
+  .transform((val) => (val === 'undefined' ? undefined : val));
 
 export const variableDateViewFilterValueUnitSchema = z.enum([
   'DAY',
@@ -48,16 +47,24 @@ export type VariableDateViewFilterValueUnit = z.infer<
   typeof variableDateViewFilterValueUnitSchema
 >;
 
+export const variableDateViewFilterValuePartsSchema = z
+  .object({
+    direction: variableDateViewFilterValueDirectionSchema,
+    amount: variableDateViewFilterValueAmountSchema,
+    unit: variableDateViewFilterValueUnitSchema,
+  })
+  .refine((data) => !(data.amount === undefined && data.direction !== 'THIS'), {
+    message: "Amount cannot be 'undefined' unless direction is 'THIS'",
+  });
+
 const variableDateViewFilterValueSchema = z.string().transform((value) => {
-  const [direction, amountStr, unit] = value.split('_');
-  const amount = parseInt(amountStr);
-  return z
-    .object({
-      direction: variableDateViewFilterValueDirectionSchema,
-      amount: variableDateViewFilterValueAmountSchema,
-      unit: variableDateViewFilterValueUnitSchema,
-    })
-    .parse({ direction, amount, unit });
+  const [direction, amount, unit] = value.split('_');
+
+  return variableDateViewFilterValuePartsSchema.parse({
+    direction,
+    amount,
+    unit,
+  });
 });
 
 const addUnit = (
@@ -122,7 +129,7 @@ const endOfUnit = (date: Date, unit: VariableDateViewFilterValueUnit) => {
 
 const resolveVariableDateViewFilterValueFromRelativeDate = (relativeDate: {
   direction: VariableDateViewFilterValueDirection;
-  amount: number;
+  amount?: number;
   unit: VariableDateViewFilterValueUnit;
 }) => {
   const { direction, amount, unit } = relativeDate;
@@ -130,12 +137,14 @@ const resolveVariableDateViewFilterValueFromRelativeDate = (relativeDate: {
 
   switch (direction) {
     case 'NEXT':
+      if (amount === undefined) throw new Error('Amount is required');
       return {
         start: now,
         end: addUnit(now, amount, unit),
         ...relativeDate,
       };
     case 'PAST':
+      if (amount === undefined) throw new Error('Amount is required');
       return {
         start: subUnit(now, amount, unit),
         end: now,

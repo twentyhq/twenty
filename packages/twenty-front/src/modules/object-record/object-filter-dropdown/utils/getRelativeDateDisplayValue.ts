@@ -7,7 +7,7 @@ import { capitalize } from '~/utils/string/capitalize';
 export const getRelativeDateDisplayValue = (
   relativeDate: {
     direction: VariableDateViewFilterValueDirection;
-    amount: number;
+    amount?: number;
     unit: VariableDateViewFilterValueUnit;
   } | null,
 ) => {
@@ -16,7 +16,13 @@ export const getRelativeDateDisplayValue = (
 
   const directionStr = capitalize(direction.toLowerCase());
   const amountStr = direction === 'THIS' ? '' : amount;
-  const unitStr = amount > 1 ? plural(unit.toLowerCase()) : unit.toLowerCase();
+  const unitStr = amount
+    ? amount > 1
+      ? plural(unit.toLowerCase())
+      : unit.toLowerCase()
+    : undefined;
 
-  return `${directionStr} ${amountStr} ${unitStr}`;
+  return [directionStr, amountStr, unitStr]
+    .filter((item) => item !== undefined)
+    .join(' ');
 };

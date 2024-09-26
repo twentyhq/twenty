@@ -73,7 +73,7 @@ export const ObjectFilterDropdownDateInput = () => {
   const handleRelativeDateChange = (
     relativeDate: {
       direction: VariableDateViewFilterValueDirection;
-      amount: number;
+      amount?: number;
       unit: VariableDateViewFilterValueUnit;
     } | null,
   ) => {

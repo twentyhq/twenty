@@ -5,6 +5,6 @@ import {
 
 export const computeVariableDateViewFilterValue = (
   direction: VariableDateViewFilterValueDirection,
-  amount: number,
+  amount: number | undefined,
   unit: VariableDateViewFilterValueUnit,
-) => `${direction}_${amount}_${unit}`;
+) => `${direction}_${amount?.toString()}_${unit}`;

@@ -3,8 +3,8 @@ import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/intern
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import {
-  variableDateViewFilterValueAmountSchema,
   VariableDateViewFilterValueDirection,
+  variableDateViewFilterValuePartsSchema,
   VariableDateViewFilterValueUnit,
 } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import styled from '@emotion/styled';
@@ -20,33 +20,34 @@ const StyledContainer = styled.div`
 
 type RelativeDatePickerHeaderProps = {
   direction: VariableDateViewFilterValueDirection;
-  amount: number;
+  amount?: number;
   unit: VariableDateViewFilterValueUnit;
   onChange?: (value: {
     direction: VariableDateViewFilterValueDirection;
-    amount: number;
+    amount?: number;
     unit: VariableDateViewFilterValueUnit;
   }) => void;
 };
 
-export const RelativeDatePickerHeader = ({
-  direction,
-  amount,
-  unit,
-  onChange,
-}: RelativeDatePickerHeaderProps) => {
+export const RelativeDatePickerHeader = (
+  props: RelativeDatePickerHeaderProps,
+) => {
+  const [direction, setDirection] = useState(props.direction);
   const [amountString, setAmountString] = useState(
-    amount ? amount.toString() : '',
+    props.amount ? props.amount.toString() : '',
   );
+  const [unit, setUnit] = useState(props.unit);
 
   useEffect(() => {
-    setAmountString(amount ? amount.toString() : '');
-  }, [amount]);
+    setAmountString(props.amount ? props.amount.toString() : '');
+    setUnit(props.unit);
+    setDirection(props.direction);
+  }, [props.amount, props.unit, props.direction]);
 
   const textInputValue = direction === 'THIS' ? '' : amountString;
   const textInputPlaceholder = direction === 'THIS' ? '-' : 'Number';
 
-  const isUnitPlural = amount > 1 && direction !== 'THIS';
+  const isUnitPlural = props.amount && props.amount > 1 && direction !== 'THIS';
   const unitSelectOptions = RELATIVE_DATE_UNITS_SELECT_OPTIONS.map((unit) => ({
     ...unit,
     label: `${unit.label}${isUnitPlural ? 's' : ''}`,
@@ -58,31 +59,35 @@ export const RelativeDatePickerHeader = ({
         disableBlur
         dropdownId="direction-select"
         value={direction}
-        onChange={(newDirection) =>
-          onChange?.({
+        onChange={(newDirection) => {
+          setDirection(newDirection);
+          if (props.amount === undefined && newDirection !== 'THIS') return;
+          props.onChange?.({
             direction: newDirection,
-            amount: amount,
+            amount: props.amount,
             unit: unit,
-          })
-        }
+          });
+        }}
         options={RELATIVE_DATE_DIRECTION_SELECT_OPTIONS}
       />
       <TextInput
         value={textInputValue}
         onChange={(text) => {
-          const amountString = text.replace(/[^0-9]/g, ''); // TODO: Remove leading zeros
+          const amountString = text.replace(/[^0-9]|^0+/g, '');
           const amount = parseInt(amountString);
 
           setAmountString(amountString);
 
+          const valueParts = {
+            direction,
+            amount,
+            unit,
+          };
+
           if (
-            variableDateViewFilterValueAmountSchema.safeParse(amount).success
+            variableDateViewFilterValuePartsSchema.safeParse(valueParts).success
           ) {
-            onChange?.({
-              direction,
-              amount,
-              unit,
-            });
+            props.onChange?.(valueParts);
           }
         }}
         placeholder={textInputPlaceholder}
@@ -92,13 +97,15 @@ export const RelativeDatePickerHeader = ({
         disableBlur
         dropdownId="unit-select"
         value={unit}
-        onChange={(newUnit) =>
-          onChange?.({
+        onChange={(newUnit) => {
+          setUnit(newUnit);
+          if (direction !== 'THIS' && props.amount === undefined) return;
+          props.onChange?.({
             direction,
-            amount,
+            amount: props.amount,
             unit: newUnit,
-          })
-        }
+          });
+        }}
         options={unitSelectOptions}
       />
     </StyledContainer>

@@ -277,7 +277,7 @@ type InternalDatePickerProps = {
   date: Date | null;
   relativeDate?: {
     direction: VariableDateViewFilterValueDirection;
-    amount: number;
+    amount?: number;
     unit: VariableDateViewFilterValueUnit;
   };
   highlightedDateRange?: {
@@ -289,7 +289,7 @@ type InternalDatePickerProps = {
   onRelativeDateChange?: (
     relativeDate: {
       direction: VariableDateViewFilterValueDirection;
-      amount: number;
+      amount?: number;
       unit: VariableDateViewFilterValueUnit;
     } | null,
   ) => void;
@@ -492,7 +492,7 @@ export const InternalDatePicker = ({
             isRelative ? (
               <RelativeDatePickerHeader
                 direction={relativeDate?.direction ?? 'PAST'}
-                amount={relativeDate?.amount ?? 1}
+                amount={relativeDate?.amount}
                 unit={relativeDate?.unit ?? 'DAY'}
                 onChange={onRelativeDateChange}
               />
