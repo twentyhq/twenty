@@ -67,6 +67,11 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
+  // const isPersistingViewGroups = useRecoilComponentValueV2(
+  //   isPersistingViewGroupsComponentState,
+  //   recordBoardId,
+  // );
+
   useListenClickOutsideByClassName({
     classNames: ['record-board-card'],
     excludeClassNames: ['action-bar', 'context-menu'],
@@ -140,6 +145,12 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
     ],
   );
 
+  // FixMe: Check if we really need this as it depends on the times it takes to update the view groups
+  // if (isPersistingViewGroups) {
+  //   // TODO: Add skeleton state
+  //   return null;
+  // }
+
   return (
     <RecordBoardScope
       recordBoardScopeId={getScopeIdFromComponentId(recordBoardId)}
@@ -151,10 +162,11 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
         <ScrollWrapper contextProviderName="recordBoard">
           <StyledContainer ref={boardRef}>
             <DragDropContext onDragEnd={onDragEnd}>
-              {columnIds.map((columnId) => (
+              {columnIds.map((columnId, index) => (
                 <RecordBoardColumn
                   key={columnId}
                   recordBoardColumnId={columnId}
+                  __indexDebug={index}
                 />
               ))}
             </DragDropContext>

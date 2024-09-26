@@ -442,6 +442,7 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
   addUserToWorkspace: User;
+  addUserToWorkspaceByInviteToken: User;
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
@@ -460,6 +461,7 @@ export type Mutation = {
   deleteOneRemoteServer: RemoteServer;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
+  deleteWorkspaceInvitation: Scalars['String']['output'];
   disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
@@ -471,8 +473,9 @@ export type Mutation = {
   impersonate: Verify;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
+  resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
-  sendInviteLink: SendInviteLink;
+  sendInvitations: SendInvitationsOutput;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   syncRemoteTable: RemoteTable;
@@ -506,6 +509,11 @@ export type MutationActivateWorkspaceArgs = {
 
 export type MutationAddUserToWorkspaceArgs = {
   inviteHash: Scalars['String']['input'];
+};
+
+
+export type MutationAddUserToWorkspaceByInviteTokenArgs = {
+  inviteToken: Scalars['String']['input'];
 };
 
 
@@ -595,6 +603,11 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 };
 
 
+export type MutationDeleteWorkspaceInvitationArgs = {
+  appTokenId: Scalars['String']['input'];
+};
+
+
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String']['input'];
 };
@@ -638,12 +651,17 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationResendWorkspaceInvitationArgs = {
+  appTokenId: Scalars['String']['input'];
+};
+
+
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
 };
 
 
-export type MutationSendInviteLinkArgs = {
+export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']['input']>;
 };
 
@@ -653,6 +671,7 @@ export type MutationSignUpArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+  workspacePersonalInviteToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -819,6 +838,7 @@ export type Query = {
   findManyRemoteServersByType: Array<RemoteServer>;
   findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
+  findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAISQLQuery: AisqlQueryResult;
   getAvailablePackages: Scalars['JSON']['output'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -1048,8 +1068,10 @@ export type RunWorkflowVersionInput = {
   workflowVersionId: Scalars['String']['input'];
 };
 
-export type SendInviteLink = {
-  __typename?: 'SendInviteLink';
+export type SendInvitationsOutput = {
+  __typename?: 'SendInvitationsOutput';
+  errors: Array<Scalars['String']['output']>;
+  result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
 };
@@ -1458,6 +1480,13 @@ export type WorkspaceEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the Workspace */
   node: Workspace;
+};
+
+export type WorkspaceInvitation = {
+  __typename?: 'WorkspaceInvitation';
+  email: Scalars['String']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
 };
 
 export type WorkspaceInviteHashValid = {

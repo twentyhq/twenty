@@ -1,6 +1,4 @@
-import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isDefined } from '~/utils/isDefined';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { ViewGroup } from '@/views/types/ViewGroup';
 import {
@@ -12,23 +10,21 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const mapViewGroupsToGroupDefinitions = ({
   objectMetadataItem,
-  groupDefinitions,
   viewGroups,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  groupDefinitions: RecordGroupDefinition[];
   viewGroups: ViewGroup[];
 }): RecordGroupDefinition[] => {
-  const groupDefinitionsById = mapArrayToObject(
-    groupDefinitions,
-    ({ id }) => id,
-  );
+  // const groupDefinitionsById = mapArrayToObject(
+  //   groupDefinitions,
+  //   ({ id }) => id,
+  // );
 
   const groupDefinitionsFromViewGroups = viewGroups
     .map((viewGroup) => {
-      const correspondingGroupDefinition = groupDefinitionsById[viewGroup.id];
+      // const correspondingGroupDefinition = groupDefinitionsById[viewGroup.id];
 
-      if (isUndefinedOrNull(correspondingGroupDefinition)) return null;
+      // if (isUndefinedOrNull(correspondingGroupDefinition)) return null;
 
       const selectFieldMetadataItem = objectMetadataItem.fields.find(
         (field) =>
@@ -45,21 +41,26 @@ export const mapViewGroupsToGroupDefinitions = ({
         );
       }
 
+      const selectedOption = selectFieldMetadataItem.options.find(
+        (option) => option.value === viewGroup.fieldValue,
+      );
+
+      if (!selectedOption) return null;
+
       return {
         id: viewGroup.id,
         fieldMetadataId: viewGroup.fieldMetadataId,
         type: RecordGroupDefinitionType.Value,
-        title: correspondingGroupDefinition.title,
-        value: correspondingGroupDefinition.value,
-        color:
-          'color' in correspondingGroupDefinition
-            ? correspondingGroupDefinition.color
-            : undefined,
+        title: selectedOption.label,
+        value: selectedOption.value,
+        color: selectedOption.color,
         position: viewGroup.position,
-        actions: correspondingGroupDefinition.actions,
+        isVisible: viewGroup.isVisible,
+        actions: [],
       } as RecordGroupDefinition;
     })
-    .filter(isDefined);
+    .filter(isDefined)
+    .sort((a, b) => a.position - b.position);
 
   return groupDefinitionsFromViewGroups;
 };

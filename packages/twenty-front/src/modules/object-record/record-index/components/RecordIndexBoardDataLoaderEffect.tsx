@@ -10,8 +10,7 @@ import { recordIndexIsCompactModeActiveState } from '@/object-record/record-inde
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useGroupDefinitionsFromViewGroups } from '@/object-record/record-group/hooks/useGroupDefinitionsFromViewGroups';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
 
 type RecordIndexBoardDataLoaderEffectProps = {
   objectNameSingular: string;
@@ -30,6 +29,10 @@ export const RecordIndexBoardDataLoaderEffect = ({
     recordIndexFieldDefinitionsState,
   );
 
+  const recordIndexGroupDefinitions = useRecoilValue(
+    recordIndexGroupDefinitionsState,
+  );
+
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
     recordIndexKanbanFieldMetadataIdState,
   );
@@ -39,14 +42,6 @@ export const RecordIndexBoardDataLoaderEffect = ({
   );
 
   const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
-
-  const { currentViewWithSavedFiltersAndSorts } =
-    useGetCurrentView(recordBoardId);
-
-  const { groupDefinitions } = useGroupDefinitionsFromViewGroups({
-    view: currentViewWithSavedFiltersAndSorts,
-    objectMetadataItem,
-  });
 
   const setIsCompactModeActive = useSetRecoilState(isCompactModeActiveState);
 
@@ -73,9 +68,10 @@ export const RecordIndexBoardDataLoaderEffect = ({
   }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
-    setColumns(groupDefinitions);
-  }, [groupDefinitions, setColumns]);
+    setColumns(recordIndexGroupDefinitions);
+  }, [recordIndexGroupDefinitions, setColumns]);
 
+  // FixMe: Why do we have 2 useEffects for setFieldDefinitions?
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);

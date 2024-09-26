@@ -3,14 +3,12 @@ import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewGroup } from '@/views/types/ViewGroup';
 
@@ -75,46 +73,45 @@ export const usePersistViewGroupRecords = () => {
   );
 
   const updateViewGroupRecords = useCallback(
-    (viewGroupsToUpdate: ViewGroup[]) => {
+    async (viewGroupsToUpdate: ViewGroup[]) => {
       if (!viewGroupsToUpdate.length) return;
 
-      return Promise.all(
-        viewGroupsToUpdate.map((viewGroup) =>
-          apolloClient.mutate({
-            mutation: updateOneRecordMutation,
-            variables: {
-              idToUpdate: viewGroup.id,
-              input: {
-                isVisible: viewGroup.isVisible,
-                position: viewGroup.position,
-              },
+      const mutationPromises = viewGroupsToUpdate.map((viewGroup) =>
+        apolloClient.mutate<{ updateViewGroup: ViewGroup }>({
+          mutation: updateOneRecordMutation,
+          variables: {
+            idToUpdate: viewGroup.id,
+            input: {
+              isVisible: viewGroup.isVisible,
+              position: viewGroup.position,
             },
-            update: (cache, { data }) => {
-              const record = data?.['updateViewGroup'];
-              if (!record) return;
-              const cachedRecord = getRecordFromCache<ObjectRecord>(record.id);
-
-              if (!cachedRecord) return;
-
-              triggerUpdateRecordOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                currentRecord: cachedRecord,
-                updatedRecord: record,
-                objectMetadataItems,
-              });
-            },
-          }),
-        ),
+          },
+          // Avoid cache being updated with stale data
+          fetchPolicy: 'no-cache',
+        }),
       );
+
+      const mutationResults = await Promise.all(mutationPromises);
+
+      // FixMe: Using triggerCreateRecordsOptimisticEffect is actaully causing multiple records to be created
+      mutationResults.forEach(({ data }) => {
+        const record = data?.['updateViewGroup'];
+
+        if (!record) return;
+
+        apolloClient.cache.modify({
+          id: apolloClient.cache.identify({
+            __typename: 'ViewGroup',
+            id: record.id,
+          }),
+          fields: {
+            isVisible: () => record.isVisible,
+            position: () => record.position,
+          },
+        });
+      });
     },
-    [
-      apolloClient,
-      getRecordFromCache,
-      objectMetadataItem,
-      objectMetadataItems,
-      updateOneRecordMutation,
-    ],
+    [apolloClient, updateOneRecordMutation],
   );
 
   return {

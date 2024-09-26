@@ -23,10 +23,12 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
 
 type RecordBoardColumnProps = {
   recordBoardColumnId: string;
+  __indexDebug: number;
 };
 
 export const RecordBoardColumn = ({
   recordBoardColumnId,
+  __indexDebug,
 }: RecordBoardColumnProps) => {
   const {
     isFirstColumnFamilyState,

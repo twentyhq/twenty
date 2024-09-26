@@ -124,6 +124,8 @@ export const RecordIndexOptionsDropdownContent = ({
   const {
     visibleBoardFields,
     hiddenBoardFields,
+    visibleBoardGroups,
+    hiddenBoardGroups,
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
     handleReorderGroups,
@@ -216,7 +218,7 @@ export const RecordIndexOptionsDropdownContent = ({
           </DropdownMenuHeader>
           <ViewGroupsVisibilityDropdownSection
             title={fieldMetadataItem?.label ?? ''}
-            viewGroups={groupDefinitions}
+            viewGroups={visibleBoardGroups}
             onDragEnd={handleReorderGroups}
             onVisibilityChange={() => {}}
             isDraggable
@@ -267,7 +269,7 @@ export const RecordIndexOptionsDropdownContent = ({
           </DropdownMenuHeader>
           <ViewGroupsVisibilityDropdownSection
             title={`Hidden ${fieldMetadataItem?.label}`}
-            viewGroups={groupDefinitions}
+            viewGroups={hiddenBoardGroups}
             onVisibilityChange={() => {}}
             isDraggable={false}
             showSubheader={false}

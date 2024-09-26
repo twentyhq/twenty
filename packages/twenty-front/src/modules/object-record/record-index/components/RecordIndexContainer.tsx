@@ -33,9 +33,9 @@ import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { ViewGroup } from '@/views/types/ViewGroup';
-import { useGroupDefinitionsFromViewGroups } from '@/object-record/record-group/hooks/useGroupDefinitionsFromViewGroups';
 import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
+import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -70,14 +70,6 @@ export const RecordIndexContainer = () => {
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { currentViewWithSavedFiltersAndSorts } =
-    useGetCurrentView(recordIndexId);
-
-  const { groupDefinitions } = useGroupDefinitionsFromViewGroups({
-    view: currentViewWithSavedFiltersAndSorts,
-    objectMetadataItem,
-  });
-
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
@@ -90,6 +82,8 @@ export const RecordIndexContainer = () => {
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableId: recordIndexId,
   });
+
+  const { setColumns } = useRecordBoard(recordIndexId);
 
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -122,28 +116,26 @@ export const RecordIndexContainer = () => {
       (viewGroups: ViewGroup[]) => {
         const newGroupDefinitions = mapViewGroupsToGroupDefinitions({
           objectMetadataItem,
-          groupDefinitions,
           viewGroups,
         });
 
-        console.log('newGroupDefinitions', newGroupDefinitions);
-        // setTableColumns(newFieldDefinitions);
-        // const existingRecordIndexFieldDefinitions = snapshot
-        //   .getLoadable(recordIndexFieldDefinitionsState)
-        //   .getValue();
-        // if (
-        //   !isDeeplyEqual(
-        //     existingRecordIndexFieldDefinitions,
-        //     newFieldDefinitions,
-        //   )
-        // ) {
-        //   set(recordIndexFieldDefinitionsState, newFieldDefinitions);
-        // }
-      },
-    [],
-  );
+        setColumns(newGroupDefinitions);
 
-  console.log('groupDefinitions', groupDefinitions);
+        const existingRecordIndexGroupDefinitions = snapshot
+          .getLoadable(recordIndexGroupDefinitionsState)
+          .getValue();
+
+        if (
+          !isDeeplyEqual(
+            existingRecordIndexGroupDefinitions,
+            newGroupDefinitions,
+          )
+        ) {
+          set(recordIndexGroupDefinitionsState, newGroupDefinitions);
+        }
+      },
+    [objectMetadataItem, setColumns],
+  );
 
   return (
     <StyledContainer>
@@ -169,6 +161,7 @@ export const RecordIndexContainer = () => {
                   }
 
                   onViewFieldsChange(view.viewFields);
+                  onViewGroupsChange(view.viewGroups);
                   setTableFilters(
                     mapViewFiltersToFilters(
                       view.viewFilters,

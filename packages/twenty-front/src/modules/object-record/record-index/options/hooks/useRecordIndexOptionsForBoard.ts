@@ -108,6 +108,17 @@ export const useRecordIndexOptionsForBoard = ({
     [availableColumnDefinitions, recordIndexFieldDefinitionsByKey],
   );
 
+  const hiddenBoardGroups = useMemo(
+    () =>
+      recordIndexGroupDefinitions
+        .filter((boardGroup) => !boardGroup.isVisible)
+        .map((boardGroup) => ({
+          ...boardGroup,
+          isVisible: false,
+        })),
+    [recordIndexGroupDefinitions],
+  );
+
   const handleReorderBoardFields: OnDragEndResponder = useCallback(
     (result) => {
       if (!result.destination) {
@@ -237,6 +248,8 @@ export const useRecordIndexOptionsForBoard = ({
     handleBoardFieldVisibilityChange,
     visibleBoardFields,
     hiddenBoardFields,
+    visibleBoardGroups,
+    hiddenBoardGroups,
     handleReorderGroups,
     isCompactModeActive,
     setAndPersistIsCompactModeActive,
