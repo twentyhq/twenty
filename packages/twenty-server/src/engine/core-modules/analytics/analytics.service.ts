@@ -13,7 +13,7 @@ type CreateEventInput = {
 @Injectable()
 export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
-  private readonly datasource = 'event';
+  private readonly defaultDatasource = 'event';
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -29,16 +29,31 @@ export class AnalyticsService {
       return { success: true };
     }
 
-    const data = {
-      action: createEventInput.action,
-      timestamp: new Date().toISOString(),
-      version: '1',
-      payload: {
-        userId: userId,
-        workspaceId: workspaceId,
-        ...createEventInput.payload,
-      },
-    };
+    let data;
+
+    switch (createEventInput.action) {
+      case 'pageview':
+        data = {
+          timestamp: new Date().toISOString(),
+          version: '1',
+          userId: userId,
+          workspaceId: workspaceId,
+          ...createEventInput.payload,
+        };
+        break;
+      default:
+        data = {
+          action: createEventInput.action,
+          timestamp: new Date().toISOString(),
+          version: '1',
+          userId: userId,
+          workspaceId: workspaceId,
+          payload: {
+            ...createEventInput.payload,
+          },
+        };
+        break;
+    }
 
     const config: AxiosRequestConfig = {
       headers: {
@@ -47,9 +62,14 @@ export class AnalyticsService {
       },
     };
 
+    const datasource =
+      createEventInput.action === 'pageview'
+        ? 'pageview'
+        : this.defaultDatasource;
+
     try {
       await this.httpService.axiosRef.post(
-        `/events?name=${this.datasource}`,
+        `/events?name=${datasource}`,
         data,
         config,
       );
