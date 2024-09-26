@@ -9,6 +9,7 @@ import {
   IconMail,
   StyledText,
   Avatar,
+  MOBILE_VIEWPORT,
 } from 'twenty-ui';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useTheme } from '@emotion/react';
@@ -51,6 +52,24 @@ const StyledButtonContainer = styled.div`
 
 const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledTableRow = styled(TableRow)`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: grid;
+    grid-template-columns: 3fr;
+  }
+`;
+
+const StyledTableCell = styled(TableCell)`
+  padding: ${({ theme }) => theme.spacing(1)};
+
+  &:first-child {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: scroll;
+    text-overflow: ellipsis;
+  }
 `;
 
 const StyledTableHeaderRow = styled(Table)`
@@ -225,8 +244,10 @@ export const SettingsWorkspaceMembers = () => {
               </StyledTableHeaderRow>
               {workspaceInvitations?.map((workspaceInvitation) => (
                 <StyledTable key={workspaceInvitation.id}>
-                  <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
-                    <TableCell>
+                  <StyledTableRow
+                    gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}
+                  >
+                    <StyledTableCell>
                       <StyledText
                         PrefixComponent={
                           <IconMail
@@ -236,14 +257,14 @@ export const SettingsWorkspaceMembers = () => {
                         }
                         text={workspaceInvitation.email}
                       />
-                    </TableCell>
-                    <TableCell align={'right'}>
+                    </StyledTableCell>
+                    <StyledTableCell align={'right'}>
                       <Status
                         color={'gray'}
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}
                       />
-                    </TableCell>
-                    <TableCell align={'right'}>
+                    </StyledTableCell>
+                    <StyledTableCell align={'right'}>
                       <StyledButtonContainer>
                         <IconButton
                           onClick={() => {
@@ -266,8 +287,8 @@ export const SettingsWorkspaceMembers = () => {
                           Icon={IconTrash}
                         />
                       </StyledButtonContainer>
-                    </TableCell>
-                  </TableRow>
+                    </StyledTableCell>
+                  </StyledTableRow>
                 </StyledTable>
               ))}
             </Table>
