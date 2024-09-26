@@ -33,7 +33,7 @@ export const EmailsFieldInput = ({ onCancel }: EmailsFieldInputProps) => {
   const validateInput = useCallback(
     (input: string) => ({
       isValid: VALIDATORS.EMAIL(input),
-      errorMessage: 'Invalid email',
+      errorMessage: '',
     }),
     [],
   );

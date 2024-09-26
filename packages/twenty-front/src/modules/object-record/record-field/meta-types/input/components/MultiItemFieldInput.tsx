@@ -74,15 +74,18 @@ export const MultiItemFieldInput = <T,>({
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
-  const [error, setError] = useState<string | null>(null);
+  const [errorData, setErrorData] = useState({
+    isValid: true,
+    errorMessage: '',
+  });
   const isAddingNewItem = itemToEditIndex === -1;
 
   useEffect(() => {
     if (!validateInput) return;
-    const { isValid } = validateInput(inputValue);
+    const errorData = validateInput(inputValue);
     // ONLY clear error on value change, validate only on submit
-    if (isValid) {
-      setError(null);
+    if (errorData.isValid) {
+      setErrorData(errorData);
     }
   }, [inputValue, validateInput]);
 
@@ -118,7 +121,7 @@ export const MultiItemFieldInput = <T,>({
     if (validateInput !== undefined) {
       const validationData = validateInput(inputValue) ?? { isValid: true };
       if (!validationData.isValid) {
-        setError(validationData.errorMessage);
+        setErrorData(validationData);
         return;
       }
     }
@@ -176,7 +179,7 @@ export const MultiItemFieldInput = <T,>({
           placeholder={placeholder}
           value={inputValue}
           hotkeyScope={hotkeyScope}
-          error={error}
+          hasError={!errorData.isValid}
           renderInput={
             renderInput
               ? (props) =>
