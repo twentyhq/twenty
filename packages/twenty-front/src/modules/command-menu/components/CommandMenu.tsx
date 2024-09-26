@@ -18,6 +18,7 @@ import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainNa
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
+import { Opportunity } from '@/opportunities/Opportunity';
 import { Person } from '@/people/types/Person';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -169,7 +170,7 @@ export const CommandMenu = () => {
   const isSearchEnabled = useIsFeatureEnabled('IS_SEARCH_ENABLED');
 
   const { records: peopleFromFindMany } = useFindManyRecords<Person>({
-    skip: !isCommandMenuOpened,
+    skip: !isCommandMenuOpened || isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
@@ -196,8 +197,15 @@ export const CommandMenu = () => {
 
   const people = isSearchEnabled ? peopleFromSearch : peopleFromFindMany;
 
-  const { records: companies } = useFindManyRecords<Company>({
-    skip: !isCommandMenuOpened,
+  const { records: companiesFromSearch } = useSearchRecords<Company>({
+    skip: !isCommandMenuOpened || !isSearchEnabled,
+    objectNameSingular: CoreObjectNameSingular.Company,
+    limit: 3,
+    searchInput: commandMenuSearch ?? undefined,
+  });
+
+  const { records: companiesFromFindMany } = useFindManyRecords<Company>({
+    skip: !isCommandMenuOpened || isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Company,
     filter: commandMenuSearch
       ? {
@@ -206,6 +214,10 @@ export const CommandMenu = () => {
       : undefined,
     limit: 3,
   });
+
+  const companies = isSearchEnabled
+    ? companiesFromSearch
+    : companiesFromFindMany;
 
   const { records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
@@ -219,7 +231,7 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { records: opportunities } = useFindManyRecords({
+  const { records: opportunitiesFromFindMany } = useFindManyRecords({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Opportunity,
     filter: commandMenuSearch
@@ -229,6 +241,17 @@ export const CommandMenu = () => {
       : undefined,
     limit: 3,
   });
+
+  const { records: opportunitiesFromSearch } = useSearchRecords<Opportunity>({
+    skip: !isCommandMenuOpened || !isSearchEnabled,
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
+    limit: 3,
+    searchInput: commandMenuSearch ?? undefined,
+  });
+
+  const opportunities = isSearchEnabled
+    ? opportunitiesFromSearch
+    : opportunitiesFromFindMany;
 
   const peopleCommands = useMemo(
     () =>

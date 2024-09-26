@@ -89,12 +89,12 @@ export class GraphqlQuerySearchResolverService {
       graphqlFields(info),
     );
 
-    const columnsToSelect = this.formatSelectedColumns(select);
+    // const columnsToSelect = this.formatSelectedColumns(select);
     const limit = args?.limit ?? QUERY_MAX_RECORDS; // TODO: make it an arg
 
-    const resultsWithTsVector = await repository
+    const resultsWithTsVector = (await repository
       .createQueryBuilder()
-      .select(columnsToSelect) // TODO do not stop relations
+      // .select(columnsToSelect)
       .where(`"${SEARCH_VECTOR_FIELD_NAME}" @@ to_tsquery(:searchTerms)`, {
         searchTerms,
       })
@@ -104,7 +104,7 @@ export class GraphqlQuerySearchResolverService {
       )
       .setParameter('searchTerms', searchTerms)
       .limit(limit)
-      .execute();
+      .getMany()) as any[];
 
     const objectRecords = await repository.formatResult(resultsWithTsVector);
     const typeORMObjectRecordsParser =
