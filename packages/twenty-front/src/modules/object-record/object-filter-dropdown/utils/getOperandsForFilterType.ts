@@ -31,6 +31,11 @@ export const getOperandsForFilterType = (
       ];
     case 'CURRENCY':
     case 'NUMBER':
+      return [
+        ViewFilterOperand.GreaterThan,
+        ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
     case 'DATE_TIME':
     case 'DATE':
       return [
