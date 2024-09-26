@@ -13,17 +13,19 @@ export const useObjectMetadataItemsInWorkspaceFavorites = () => {
     workspaceFavorites.map((favorite) => favorite.recordId),
   );
 
-  const favoriteViewObjectMetadataIds = views.reduce<string[]>((acc, view) => {
-    if (workspaceFavoriteIds.has(view.id)) {
-      acc.push(view.objectMetadataId);
-    }
-    return acc;
-  }, []);
+  const favoriteViewObjectMetadataIds = new Set(
+    views.reduce<string[]>((acc, view) => {
+      if (workspaceFavoriteIds.has(view.id)) {
+        acc.push(view.objectMetadataId);
+      }
+      return acc;
+    }, []),
+  );
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
   const objectMetadataItemsInWorkspaceFavorites = objectMetadataItems.filter(
-    (item) => favoriteViewObjectMetadataIds.includes(item.id),
+    (item) => favoriteViewObjectMetadataIds.has(item.id),
   );
 
   return {

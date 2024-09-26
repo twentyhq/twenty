@@ -20,18 +20,18 @@ export const viewPrefillData = async (
   isWorkflowEnabled: boolean,
 ) => {
   const viewDefinitions = [
-    await companiesAllView(objectMetadataMap),
-    await peopleAllView(objectMetadataMap),
-    await opportunitiesAllView(objectMetadataMap),
-    await opportunitiesByStageView(objectMetadataMap),
-    await notesAllView(objectMetadataMap),
-    await tasksAllView(objectMetadataMap),
-    await tasksByStatusView(objectMetadataMap),
+    companiesAllView(objectMetadataMap),
+    peopleAllView(objectMetadataMap),
+    opportunitiesAllView(objectMetadataMap),
+    opportunitiesByStageView(objectMetadataMap),
+    notesAllView(objectMetadataMap),
+    tasksAllView(objectMetadataMap),
+    tasksByStatusView(objectMetadataMap),
     ...(isWorkflowEnabled
       ? [
-          await workflowsAllView(objectMetadataMap),
-          await workflowVersionsAllView(objectMetadataMap),
-          await workflowRunsAllView(objectMetadataMap),
+          workflowsAllView(objectMetadataMap),
+          workflowVersionsAllView(objectMetadataMap),
+          workflowRunsAllView(objectMetadataMap),
         ]
       : []),
   ];
