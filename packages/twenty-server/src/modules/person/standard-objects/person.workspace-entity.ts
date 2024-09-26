@@ -41,7 +41,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
 const JOB_TITLE_FIELD_NAME = 'jobTitle';
-const PHONES_FIELD_NAME = 'phones';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
@@ -129,7 +128,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s phone numbers',
     icon: 'IconPhone',
   })
-  [PHONES_FIELD_NAME]: PhonesMetadata;
+  phones: PhonesMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.city,
@@ -311,7 +310,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
       { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
       { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
       { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-      { name: PHONES_FIELD_NAME, type: FieldMetadataType.PHONES }, // To change after phone migration
     ]),
   })
   @WorkspaceIsNullable()

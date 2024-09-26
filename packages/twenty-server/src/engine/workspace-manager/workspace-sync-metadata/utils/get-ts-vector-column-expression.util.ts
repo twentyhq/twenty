@@ -1,9 +1,4 @@
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import {
-  phonesCompositeType,
-  PRIMARY_PHONE_COUNTRY_CODE,
-  PRIMARY_PHONE_NUMBER,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   computeColumnName,
@@ -44,42 +39,6 @@ const getColumnExpressionsFromField = (
         `Composite type not found for field metadata type: ${fieldMetadataTypeAndName.type}`,
         WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
       );
-    }
-
-    if (compositeType === phonesCompositeType) {
-      const primaryPhoneNumberProperty = compositeType.properties.find(
-        (property) => property.name === PRIMARY_PHONE_NUMBER,
-      );
-
-      const primaryPhoneCountryCodeProperty = compositeType.properties.find(
-        (property) => property.name === PRIMARY_PHONE_COUNTRY_CODE,
-      );
-
-      if (!primaryPhoneNumberProperty || !primaryPhoneCountryCodeProperty) {
-        throw new Error(
-          'Primary phone number or country code properties not found for field metadata type PHONES',
-        );
-      }
-
-      const countryCodeColumn = computeCompositeColumnName(
-        fieldMetadataTypeAndName.name,
-        primaryPhoneNumberProperty,
-      );
-      const phoneNumberColumn = computeCompositeColumnName(
-        fieldMetadataTypeAndName.name,
-        primaryPhoneCountryCodeProperty,
-      );
-      const concatenatedCountryCodeAndNumberExpression = `
-      COALESCE(
-        CONCAT_WS(' ',
-          "${phoneNumberColumn}",
-          "${countryCodeColumn}"
-        ),
-        ''
-      )
-    `;
-
-      return [concatenatedCountryCodeAndNumberExpression];
     }
 
     return compositeType.properties
