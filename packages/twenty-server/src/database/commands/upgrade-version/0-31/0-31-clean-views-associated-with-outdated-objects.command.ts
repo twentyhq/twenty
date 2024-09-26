@@ -11,13 +11,15 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
-  name: 'upgrade-0.31:clean-views-with-deleted-object-metadata',
-  description: 'Clean views with deleted object metadata',
+  name: 'upgrade-0.31:clean-views-associated-with-outdated-objects',
+  description:
+    'Clean views associated with deleted object metadata or activities',
 })
-export class CleanViewsWithDeletedObjectMetadataCommand extends ActiveWorkspacesCommandRunner {
+export class CleanViewsAssociatedWithOutdatedObjectsCommand extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -88,7 +90,9 @@ export class CleanViewsWithDeletedObjectMetadataCommand extends ActiveWorkspaces
     });
 
     const validObjectMetadataIds = new Set(
-      objectMetadataEntities.map((entity) => entity.id),
+      objectMetadataEntities
+        .filter((entity) => entity.standardId !== STANDARD_OBJECT_IDS.activity)
+        .map((entity) => entity.id),
     );
 
     const viewIdsToDelete = allViews
