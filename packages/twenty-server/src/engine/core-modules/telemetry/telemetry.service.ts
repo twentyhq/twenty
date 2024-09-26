@@ -1,8 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { AxiosRequestConfig } from 'axios';
-
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 type CreateEventInput = {
@@ -11,9 +9,8 @@ type CreateEventInput = {
 };
 
 @Injectable()
-export class AnalyticsService {
-  private readonly logger = new Logger(AnalyticsService.name);
-  private readonly datasource = 'event';
+export class TelemetryService {
+  private readonly logger = new Logger(TelemetryService.name);
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -25,7 +22,7 @@ export class AnalyticsService {
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
   ) {
-    if (this.environmentService.get('ANALYTICS_ENABLED')) {
+    if (!this.environmentService.get('TELEMETRY_ENABLED')) {
       return { success: true };
     }
 
@@ -40,19 +37,8 @@ export class AnalyticsService {
       },
     };
 
-    const config: AxiosRequestConfig = {
-      headers: {
-        Authorization:
-          'Bearer ' + this.environmentService.get('TINYBIRD_TOKEN'),
-      },
-    };
-
     try {
-      await this.httpService.axiosRef.post(
-        `/events?name=${this.datasource}`,
-        data,
-        config,
-      );
+      await this.httpService.axiosRef.post(`/selfHostingEvent`, data);
     } catch (error) {
       this.logger.error('Error occurred:', error);
       if (error.response) {
