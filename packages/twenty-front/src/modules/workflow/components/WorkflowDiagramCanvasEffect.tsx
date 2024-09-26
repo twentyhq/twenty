@@ -34,7 +34,7 @@ export const WorkflowDiagramCanvasEffect = () => {
       const isClosingStep = isDefined(selectedNode) === false;
 
       if (isClosingStep) {
-        // closeRightDrawer();
+        closeRightDrawer();
 
         return;
       }
