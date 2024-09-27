@@ -67,5 +67,10 @@ export class UpgradeTo0_30Command extends ActiveWorkspacesCommandRunner {
       options,
       workspaceIds,
     );
+    await this.fixViewFilterOperandForDateTimeCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
   }
 }
