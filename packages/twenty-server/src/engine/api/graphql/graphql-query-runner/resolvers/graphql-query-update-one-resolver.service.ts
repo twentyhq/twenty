@@ -1,11 +1,14 @@
 import graphqlFields from 'graphql-fields';
-import { In, InsertResult } from 'typeorm';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
@@ -14,8 +17,8 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-export class GraphqlQueryCreateManyResolverService
-  implements ResolverService<CreateManyResolverArgs, IRecord[]>
+export class GraphqlQueryUpdateOneResolverService
+  implements ResolverService<UpdateOneResolverArgs, IRecord>
 {
   private twentyORMGlobalManager: TwentyORMGlobalManager;
 
@@ -24,9 +27,9 @@ export class GraphqlQueryCreateManyResolverService
   }
 
   async resolve<ObjectRecord extends IRecord = IRecord>(
-    args: CreateManyResolverArgs<Partial<ObjectRecord>>,
+    args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItem, objectMetadataCollection, info } =
       options;
     const repository =
@@ -54,43 +57,41 @@ export class GraphqlQueryCreateManyResolverService
       selectedFields,
     );
 
-    const objectRecords: InsertResult = !args.upsert
-      ? await repository.insert(args.data)
-      : await repository.upsert(args.data, {
-          conflictPaths: ['id'],
-          skipUpdateIfNoValuesChanged: true,
-        });
+    await repository.update(args.id, args.data);
 
-    const upsertedRecords = await repository.find({
+    const updatedRecords = await repository.find({
       where: {
-        id: In(objectRecords.generatedMaps.map((record) => record.id)),
+        id: args.id,
       },
       select,
       relations,
     });
 
+    if (updatedRecords.length === 0) {
+      throw new GraphqlQueryRunnerException(
+        'Record not found',
+        GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+      );
+    }
+
+    const updatedRecord = updatedRecords[0] as ObjectRecord;
+
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
-    return upsertedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord(
-        record,
-        objectMetadataItem.nameSingular,
-        1,
-        1,
-      ),
+    return typeORMObjectRecordsParser.processRecord<ObjectRecord>(
+      updatedRecord,
+      objectMetadataItem.nameSingular,
+      1,
+      1,
     );
   }
 
-  public validate<T extends IRecord>(
-    args: CreateManyResolverArgs<Partial<T>>,
+  validate<ObjectRecord extends IRecord = IRecord>(
+    args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): void {
     assertMutationNotOnRemoteObject(options.objectMetadataItem);
-    args.data.forEach((record) => {
-      if (record?.id) {
-        assertIsValidUuid(record.id);
-      }
-    });
+    assertIsValidUuid(args.id);
   }
 }

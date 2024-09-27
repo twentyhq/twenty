@@ -1,5 +1,6 @@
 import graphqlFields from 'graphql-fields';
 
+import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
   Record as IRecord,
   RecordFilter,
@@ -16,11 +17,17 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
+import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
-export class GraphqlQueryFindOneResolverService {
+export class GraphqlQueryFindOneResolverService
+  implements ResolverService<FindOneResolverArgs, IRecord>
+{
   private twentyORMGlobalManager: TwentyORMGlobalManager;
 
   constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
@@ -33,7 +40,7 @@ export class GraphqlQueryFindOneResolverService {
   >(
     args: FindOneResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord | undefined> {
+  ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItem, info, objectMetadataCollection } =
       options;
 
@@ -124,5 +131,17 @@ export class GraphqlQueryFindOneResolverService {
       1,
       1,
     ) as ObjectRecord;
+  }
+
+  public validate<F extends RecordFilter>(
+    args: FindOneResolverArgs<F>,
+    _options: WorkspaceQueryRunnerOptions,
+  ): void {
+    if (!args.filter || Object.keys(args.filter).length === 0) {
+      throw new WorkspaceQueryRunnerException(
+        'Missing filter argument',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
   }
 }

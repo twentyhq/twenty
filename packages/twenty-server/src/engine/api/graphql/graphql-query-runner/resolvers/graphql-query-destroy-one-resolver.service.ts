@@ -1,10 +1,13 @@
+import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { DestroyOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-export class GraphqlQueryDestroyOneResolverService {
+export class GraphqlQueryDestroyOneResolverService
+  implements ResolverService<DestroyOneResolverArgs, IRecord>
+{
   private twentyORMGlobalManager: TwentyORMGlobalManager;
 
   constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
@@ -29,5 +32,11 @@ export class GraphqlQueryDestroyOneResolverService {
     await repository.delete(args.id);
 
     return record as ObjectRecord;
+  }
+
+  validate(args: DestroyOneResolverArgs) {
+    if (!args.id) {
+      throw new Error('Missing id');
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
 
+import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
   Record as IRecord,
   OrderByDirection,
@@ -20,13 +21,18 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
-import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import {
+  getCursor,
+  getPaginationInfo,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
-export class GraphqlQueryFindManyResolverService {
+export class GraphqlQueryFindManyResolverService
+  implements ResolverService<FindManyResolverArgs, IConnection<IRecord>>
+{
   private twentyORMGlobalManager: TwentyORMGlobalManager;
 
   constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
@@ -43,8 +49,6 @@ export class GraphqlQueryFindManyResolverService {
   ): Promise<IConnection<ObjectRecord>> {
     const { authContext, objectMetadataItem, info, objectMetadataCollection } =
       options;
-
-    this.validateArgsOrThrow(args);
 
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
@@ -102,7 +106,7 @@ export class GraphqlQueryFindManyResolverService {
       ? await withDeletedCountQueryBuilder.getCount()
       : 0;
 
-    const cursor = this.getCursor(args);
+    const cursor = getCursor(args);
 
     let appliedFilters = args.filter ?? ({} as Filter);
 
@@ -154,7 +158,7 @@ export class GraphqlQueryFindManyResolverService {
       objectMetadataMap,
     );
 
-    const { hasNextPage, hasPreviousPage } = this.getPaginationInfo(
+    const { hasNextPage, hasPreviousPage } = getPaginationInfo(
       objectRecords,
       limit,
       isForwardPagination,
@@ -192,7 +196,7 @@ export class GraphqlQueryFindManyResolverService {
     );
   }
 
-  private validateArgsOrThrow(args: FindManyResolverArgs<any, any>) {
+  public validate(args: FindManyResolverArgs<any, any>) {
     if (args.first && args.last) {
       throw new GraphqlQueryRunnerException(
         'Cannot provide both first and last',
@@ -229,27 +233,5 @@ export class GraphqlQueryFindManyResolverService {
         GraphqlQueryRunnerExceptionCode.INVALID_ARGS_LAST,
       );
     }
-  }
-
-  private getCursor(
-    args: FindManyResolverArgs<any, any>,
-  ): Record<string, any> | undefined {
-    if (args.after) return decodeCursor(args.after);
-    if (args.before) return decodeCursor(args.before);
-
-    return undefined;
-  }
-
-  private getPaginationInfo(
-    objectRecords: any[],
-    limit: number,
-    isForwardPagination: boolean,
-  ) {
-    const hasMoreRecords = objectRecords.length > limit;
-
-    return {
-      hasNextPage: isForwardPagination && hasMoreRecords,
-      hasPreviousPage: !isForwardPagination && hasMoreRecords,
-    };
   }
 }

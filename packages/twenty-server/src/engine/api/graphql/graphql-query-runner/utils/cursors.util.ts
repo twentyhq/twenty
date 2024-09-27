@@ -2,6 +2,7 @@ import {
   Record as IRecord,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -43,4 +44,26 @@ export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
   };
 
   return Buffer.from(JSON.stringify(cursorData)).toString('base64');
+};
+
+export const getCursor = (
+  args: FindManyResolverArgs<any, any>,
+): Record<string, any> | undefined => {
+  if (args.after) return decodeCursor(args.after);
+  if (args.before) return decodeCursor(args.before);
+
+  return undefined;
+};
+
+export const getPaginationInfo = (
+  objectRecords: any[],
+  limit: number,
+  isForwardPagination: boolean,
+) => {
+  const hasMoreRecords = objectRecords.length > limit;
+
+  return {
+    hasNextPage: isForwardPagination && hasMoreRecords,
+    hasPreviousPage: !isForwardPagination && hasMoreRecords,
+  };
 };
