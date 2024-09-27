@@ -13,7 +13,6 @@ import { PageHeader } from './PageHeader';
 type SubMenuTopBarContainerProps = {
   children: JSX.Element | JSX.Element[];
   title?: string;
-  description?: string;
   actionButton?: ReactNode;
   Icon: IconComponent;
   className?: string;
@@ -34,18 +33,9 @@ const StyledTitle = styled.h3`
   margin: ${({ theme }) => theme.spacing(8, 8, 2)};
 `;
 
-const StyledDescription = styled.h3`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin: ${({ theme }) => theme.spacing(4, 8, 0)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
-`;
-
 export const SubMenuTopBarContainer = ({
   children,
   title,
-  description,
   actionButton,
   className,
   links,
@@ -58,7 +48,6 @@ export const SubMenuTopBarContainer = ({
       <PageBody>
         <InformationBannerWrapper />
         {title && <StyledTitle>{title}</StyledTitle>}
-        {description && <StyledDescription>{description}</StyledDescription>}
         {children}
       </PageBody>
     </StyledContainer>

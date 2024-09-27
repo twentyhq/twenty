@@ -9,8 +9,7 @@ import { IconMail } from 'twenty-ui';
 export const SettingsAccountsEmails = () => (
   <SubMenuTopBarContainer
     Icon={IconMail}
-    title="Connected Accounts"
-    description="Manage your internet accounts"
+    title="Emails"
     links={[
       {
         children: 'User',
