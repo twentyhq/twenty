@@ -12,7 +12,6 @@ import {
 import { RecoilRoot } from 'recoil';
 
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloMetadataClientProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
@@ -77,11 +76,9 @@ const Providers = () => {
                 <HelmetProvider>
                   <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
                     <IconsProvider>
-                      <ObjectMetadataItemsProvider>
-                        <PrefetchDataProvider>
-                          <Outlet />
-                        </PrefetchDataProvider>
-                      </ObjectMetadataItemsProvider>
+                      <PrefetchDataProvider>
+                        <Outlet />
+                      </PrefetchDataProvider>
                     </IconsProvider>
                   </SnackBarProviderScope>
                 </HelmetProvider>
