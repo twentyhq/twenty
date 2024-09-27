@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FocusEventHandler } from 'react';
+import { FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -25,7 +25,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledLabel = styled.div`
+const StyledLabel = styled.label`
   color: ${({ theme }) => theme.font.color.light};
   display: block;
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -73,6 +73,8 @@ export const TextArea = ({
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, MAX_ROWS);
 
+  const inputId = useId();
+
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -88,9 +90,10 @@ export const TextArea = ({
 
   return (
     <StyledContainer>
-      {label && <StyledLabel>{label}</StyledLabel>}
+      {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
 
       <StyledTextArea
+        id={inputId}
         placeholder={placeholder}
         maxRows={MAX_ROWS}
         minRows={computedMinRows}
