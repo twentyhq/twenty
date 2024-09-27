@@ -17310,6 +17310,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/pluralize@npm:^0.0.33":
+  version: 0.0.33
+  resolution: "@types/pluralize@npm:0.0.33"
+  checksum: 10c0/24899caf85b79dd291a6b6e9b9f3b67b452b18d578d0ac0d531a705bf5ee0361d9386ea1f8532c64de9e22c6e9606c5497787bb5e31bd299c487980436c59785
+  languageName: node
+  linkType: hard
+
 "@types/pretty-hrtime@npm:^1.0.0":
   version: 1.0.3
   resolution: "@types/pretty-hrtime@npm:1.0.3"
@@ -47693,6 +47700,7 @@ __metadata:
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
     "@types/passport-microsoft": "npm:^1.0.3"
+    "@types/pluralize": "npm:^0.0.33"
     "@types/react": "npm:^18.2.39"
     "@types/react-datepicker": "npm:^6.2.0"
     "@types/react-dom": "npm:^18.2.15"

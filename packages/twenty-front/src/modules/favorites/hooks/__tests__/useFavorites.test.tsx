@@ -8,9 +8,9 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import {
   favoriteId,
   favoriteTargetObjectRecord,
@@ -28,8 +28,6 @@ jest.mock('uuid', () => ({
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
-
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
@@ -51,7 +49,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },
@@ -72,7 +70,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },
@@ -100,7 +98,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },
@@ -125,7 +123,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },

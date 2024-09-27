@@ -160,12 +160,29 @@ export class GraphqlQueryRunnerService {
     args: DestroyOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord> {
-    return this.executeQuery<DestroyOneResolverArgs, ObjectRecord>(
+    const result = await this.executeQuery<
+      DestroyOneResolverArgs,
+      ObjectRecord
+    >(
       new GraphqlQueryDestroyOneResolverService(this.twentyORMGlobalManager),
       'destroyOne',
       args,
       options,
     );
+
+    await this.triggerWebhooks(
+      [result],
+      CallWebhookJobsJobOperation.destroy,
+      options,
+    );
+
+    this.emitDestroyEvents(
+      [result],
+      options.authContext,
+      options.objectMetadataItem,
+    );
+
+    return result;
   }
 
   public async updateOne<ObjectRecord extends IRecord>(
@@ -249,10 +266,59 @@ export class GraphqlQueryRunnerService {
         userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        properties: { after: record },
+        properties: {
+          before: null,
+          after: this.removeNestedProperties(record),
+        },
       })),
       authContext.workspace.id,
     );
+  }
+
+  private emitDestroyEvents<T extends IRecord>(
+    records: T[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ): void {
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.destroyed`,
+      records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: this.removeNestedProperties(record),
+            after: null,
+          },
+        };
+      }),
+      authContext.workspace.id,
+    );
+  }
+
+  private removeNestedProperties<Record extends IRecord = IRecord>(
+    record: Record,
+  ) {
+    if (!record) {
+      return;
+    }
+
+    const sanitizedRecord = {};
+
+    for (const [key, value] of Object.entries(record)) {
+      if (value && typeof value === 'object' && value['edges']) {
+        continue;
+      }
+
+      if (key === '__typename') {
+        continue;
+      }
+
+      sanitizedRecord[key] = value;
+    }
+
+    return sanitizedRecord;
   }
 
   private async triggerWebhooks<T>(

@@ -11,13 +11,14 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
-  name: 'upgrade-0.31:clean-views-with-deleted-object-metadata',
-  description: 'Clean views with deleted object metadata',
+  name: 'upgrade-0.31:add-index-key-to-tasks-and-notes-views',
+  description: 'Add index key to tasks and notes views',
 })
-export class CleanViewsWithDeletedObjectMetadataCommand extends ActiveWorkspacesCommandRunner {
+export class AddIndexKeyToTasksAndNotesViewsCommand extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -41,7 +42,7 @@ export class CleanViewsWithDeletedObjectMetadataCommand extends ActiveWorkspaces
       try {
         this.logger.log(chalk.green(`Cleaning views of ${workspaceId}.`));
 
-        await this.cleanViewsWithDeletedObjectMetadata(
+        await this.addIndexKeyToTasksAndNotesViews(
           workspaceId,
           _options.dryRun ?? false,
         );
@@ -66,7 +67,7 @@ export class CleanViewsWithDeletedObjectMetadataCommand extends ActiveWorkspaces
     }
   }
 
-  private async cleanViewsWithDeletedObjectMetadata(
+  private async addIndexKeyToTasksAndNotesViews(
     workspaceId: string,
     dryRun: boolean,
   ): Promise<void> {
@@ -87,29 +88,41 @@ export class CleanViewsWithDeletedObjectMetadataCommand extends ActiveWorkspaces
       },
     });
 
-    const validObjectMetadataIds = new Set(
-      objectMetadataEntities.map((entity) => entity.id),
+    const tasksAndNotesObjectMetadataIds = objectMetadataEntities.filter(
+      (entity) =>
+        entity.standardId === STANDARD_OBJECT_IDS.task ||
+        entity.standardId === STANDARD_OBJECT_IDS.note,
     );
 
-    const viewIdsToDelete = allViews
-      .filter((view) => !validObjectMetadataIds.has(view.objectMetadataId))
-      .map((view) => view.id);
+    const viewsToUpdate = allViews.filter(
+      (view) =>
+        tasksAndNotesObjectMetadataIds.some(
+          (entity) => entity.id === view.objectMetadataId,
+        ) &&
+        ['All Tasks', 'All Notes'].includes(view.name) &&
+        view.key === null,
+    );
 
     if (dryRun) {
       this.logger.log(
         chalk.green(
-          `Found ${viewIdsToDelete.length} views to clean in workspace ${workspaceId}.`,
+          `Found ${viewsToUpdate.length} views to update in workspace ${workspaceId}.`,
         ),
       );
     }
 
-    if (viewIdsToDelete.length > 0 && !dryRun) {
-      await viewRepository.delete(viewIdsToDelete);
-      this.logger.log(chalk.green(`Cleaning ${viewIdsToDelete.length} views.`));
+    if (viewsToUpdate.length > 0 && !dryRun) {
+      await viewRepository.update(
+        viewsToUpdate.map((view) => view.id),
+        {
+          key: 'INDEX',
+        },
+      );
+      this.logger.log(chalk.green(`Updating ${viewsToUpdate.length} views.`));
     }
 
-    if (viewIdsToDelete.length === 0) {
-      this.logger.log(chalk.green(`No views to clean.`));
+    if (viewsToUpdate.length === 0 && !dryRun) {
+      this.logger.log(chalk.green(`No views to update.`));
     }
   }
 }

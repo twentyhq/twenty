@@ -4,19 +4,16 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDefined } from '~/utils/isDefined';
 
 import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
 export const useObjectMetadataItem = ({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-
-  // Todo: deprecate this logic as mocked objectMetadataItems are load in ObjectMetadataItemsLoadEffect anyway
-  const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
@@ -29,11 +26,11 @@ export const useObjectMetadataItem = ({
 
   if (currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active) {
     objectMetadataItem =
-      mockObjectMetadataItems.find(
+      generatedMockObjectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.nameSingular === objectNameSingular,
       ) ?? null;
-    objectMetadataItems = mockObjectMetadataItems;
+    objectMetadataItems = generatedMockObjectMetadataItems;
   }
 
   if (!isDefined(objectMetadataItem)) {

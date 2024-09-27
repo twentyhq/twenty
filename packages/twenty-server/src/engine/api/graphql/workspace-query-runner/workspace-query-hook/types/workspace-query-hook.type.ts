@@ -4,6 +4,7 @@ import {
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
   DestroyManyResolverArgs,
+  DestroyOneResolverArgs,
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
@@ -39,4 +40,6 @@ export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
                     ? RestoreManyResolverArgs
                     : T extends 'destroyMany'
                       ? DestroyManyResolverArgs
-                      : never;
+                      : T extends 'destroyOne'
+                        ? DestroyOneResolverArgs
+                        : never;

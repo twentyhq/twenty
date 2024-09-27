@@ -1,7 +1,7 @@
-import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ApolloError, gql } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { useApolloFactory } from '../useApolloFactory';
@@ -77,8 +77,8 @@ describe('useApolloFactory', () => {
       await act(async () => {
         await result.current.factory.mutate({
           mutation: gql`
-            mutation Track($type: String!, $data: JSON!) {
-              track(type: $type, data: $data) {
+            mutation Track($type: String!, $sessionId: String!, $data: JSON!) {
+              track(type: $type, sessionId: $sessionId, data: $data) {
                 success
               }
             }
