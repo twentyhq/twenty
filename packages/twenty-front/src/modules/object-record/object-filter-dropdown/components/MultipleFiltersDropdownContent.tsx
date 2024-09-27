@@ -81,7 +81,7 @@ export const MultipleFiltersDropdownContent = ({
               <ObjectFilterDropdownOperandSelect />
             </StyledOperandSelectContainer>
           )}
-          {!isConfigurable && selectedOperandInDropdown && (
+          {isConfigurable && selectedOperandInDropdown && (
             <>
               {[
                 'TEXT',
