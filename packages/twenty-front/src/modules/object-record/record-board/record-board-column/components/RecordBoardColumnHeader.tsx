@@ -7,8 +7,8 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
+import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
@@ -90,21 +90,24 @@ export const RecordBoardColumnHeader = () => {
   const boardColumnTotal = 0;
 
   const {
-    isCreatingCard,
-    handleAddNewOpportunityClick,
-    handleCancel,
+    newRecord,
+    handleNewButtonClick,
+    handleCreateSuccess,
+    newOpportunity,
+    handleNewOpportunityButtonClick,
     handleEntitySelect,
-  } = useAddNewOpportunity('first');
-
-  const { newRecord, handleNewButtonClick, handleCreateSuccess } =
-    useColumnNewCardActions(columnDefinition.id);
+    handleCancel,
+  } = useColumnNewCardActions(columnDefinition.id);
+  const { isOpportunitiesCompanyFieldDisabled } =
+    useIsOpportunitiesCompanyFieldDisabled();
 
   const isOpportunity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
 
-  const handleClick = isOpportunity
-    ? handleAddNewOpportunityClick
-    : () => handleNewButtonClick('first');
+  const handleClick =
+    isOpportunity && !isOpportunitiesCompanyFieldDisabled
+      ? () => handleNewOpportunityButtonClick('first')
+      : () => handleNewButtonClick('first');
 
   return (
     <>
@@ -172,11 +175,13 @@ export const RecordBoardColumnHeader = () => {
           position="first"
         />
       )}
-      {isCreatingCard && (
+      {newOpportunity.isCreating && newOpportunity.position === 'first' && (
         <SingleEntitySelect
           disableBackgroundBlur
-          onCancel={handleCancel}
-          onEntitySelected={handleEntitySelect}
+          onCancel={() => handleCancel('first', columnDefinition.id)}
+          onEntitySelected={(company) =>
+            company ? handleEntitySelect('first', company) : null
+          }
           relationObjectNameSingular={CoreObjectNameSingular.Company}
           relationPickerScopeId="relation-picker"
           selectedRelationRecordIds={[]}

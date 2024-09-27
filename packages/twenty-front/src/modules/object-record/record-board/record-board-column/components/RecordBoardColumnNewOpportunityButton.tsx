@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
+import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 
 const StyledButton = styled.button`
@@ -23,27 +23,34 @@ const StyledButton = styled.button`
   }
 `;
 
-export const RecordBoardColumnNewOpportunityButton = () => {
+export const RecordBoardColumnNewOpportunityButton = ({
+  columnId,
+}: {
+  columnId: string;
+}) => {
   const theme = useTheme();
+
   const {
-    isCreatingCard,
-    handleAddNewOpportunityClick,
-    handleCancel,
+    newOpportunity,
+    handleNewOpportunityButtonClick,
     handleEntitySelect,
-  } = useAddNewOpportunity('last');
+    handleCancel,
+  } = useColumnNewCardActions(columnId);
   return (
     <>
-      {isCreatingCard ? (
+      {newOpportunity.isCreating && newOpportunity.position === 'last' ? (
         <SingleEntitySelect
           disableBackgroundBlur
-          onCancel={handleCancel}
-          onEntitySelected={handleEntitySelect}
+          onCancel={() => handleCancel('last', columnId)}
+          onEntitySelected={(company) =>
+            company ? handleEntitySelect('last', company) : null
+          }
           relationObjectNameSingular={CoreObjectNameSingular.Company}
           relationPickerScopeId="relation-picker"
           selectedRelationRecordIds={[]}
         />
       ) : (
-        <StyledButton onClick={handleAddNewOpportunityClick}>
+        <StyledButton onClick={() => handleNewOpportunityButtonClick('last')}>
           <IconPlus size={theme.icon.size.md} />
           New
         </StyledButton>
