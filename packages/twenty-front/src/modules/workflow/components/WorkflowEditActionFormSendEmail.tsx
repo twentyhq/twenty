@@ -54,6 +54,12 @@ export const WorkflowEditActionFormSendEmail = ({
     });
   }, 1_000);
 
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
+
   const handleSave = form.handleSubmit(saveAction);
 
   return (
