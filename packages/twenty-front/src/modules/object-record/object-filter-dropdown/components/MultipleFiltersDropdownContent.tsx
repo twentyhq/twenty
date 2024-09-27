@@ -19,7 +19,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledOperandSelectContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme }) => theme.background.secondary};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   left: 10px;
