@@ -282,7 +282,6 @@ export const SettingsWorkspaceMembers = () => {
                               workspaceInvitation.id,
                             );
                           }}
-                          accent="danger"
                           variant="tertiary"
                           size="medium"
                           Icon={IconTrash}
