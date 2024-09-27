@@ -12,9 +12,8 @@ import {
   VariableDateViewFilterValueUnit,
 } from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-ui';
-import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectFilterDropdownDateInput = () => {
@@ -47,29 +46,6 @@ export const ObjectFilterDropdownDateInput = () => {
 
   const isDateTimeInput =
     filterDefinitionUsedInDropdown?.type === FieldMetadataType.DateTime;
-
-  useEffect(() => {
-    if (selectedFilter?.operand !== ViewFilterOperand.IsRelative) {
-      if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
-
-      const now = new Date();
-      const dateResult = z.coerce.date().safeParse(selectedFilter?.value);
-      const date = dateResult.success ? dateResult.data : now;
-      const value = date.toISOString();
-      const displayValue = isDateTimeInput
-        ? date.toLocaleString()
-        : date.toLocaleDateString();
-
-      selectFilter?.({
-        id: selectedFilter?.id ? selectedFilter.id : v4(),
-        fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-        value,
-        displayValue,
-        operand: selectedOperandInDropdown,
-        definition: filterDefinitionUsedInDropdown,
-      });
-    }
-  }, [selectedOperandInDropdown]);
 
   const handleAbsoluteDateChange = (newDate: Date | null) => {
     setInternalDate(newDate);
