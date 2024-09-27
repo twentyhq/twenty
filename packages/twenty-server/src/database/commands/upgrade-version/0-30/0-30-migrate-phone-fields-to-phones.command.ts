@@ -174,7 +174,7 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           [
             PERSON_STANDARD_FIELD_IDS.phones,
             'false',
-            standardPersonPhoneField.id,
+            standardPersonPhonesField.id,
           ],
         );
 
