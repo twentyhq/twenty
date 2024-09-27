@@ -391,7 +391,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
-  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
+  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
@@ -426,7 +426,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
 
-  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Memory;
+  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Redis;
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
