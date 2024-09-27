@@ -78,9 +78,9 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
           },
         );
 
-        const moreThanUpdatedResult = await viewFilterRepository.update(
+        const greaterThanUpdatedResult = await viewFilterRepository.update(
           {
-            operand: 'moreThan',
+            operand: 'greaterThan',
             fieldMetadataId: Any(dateTimeFieldMetadataIds),
           },
           {
@@ -89,7 +89,7 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
         );
 
         this.logger.log(
-          `Updated ${(lessThanUpdatedResult.affected ?? 0) + (moreThanUpdatedResult.affected ?? 0)} view filters for workspace ${workspaceId}`,
+          `Updated ${(lessThanUpdatedResult.affected ?? 0) + (greaterThanUpdatedResult.affected ?? 0)} view filters for workspace ${workspaceId}`,
         );
       } catch (error) {
         this.logger.log(
