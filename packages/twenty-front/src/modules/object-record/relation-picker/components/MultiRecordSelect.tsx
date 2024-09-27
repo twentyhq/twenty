@@ -28,6 +28,14 @@ export const StyledSelectableItem = styled(SelectableItem)`
   width: 100%;
 `;
 
+const StyledDropdownMenuSeparator = styled(DropdownMenuSeparator)`
+  margin-left: calc(-1 * var(--padding));
+`;
+
+const StyledCreateNewButton = styled(CreateNewButton)`
+  margin-top: 4px;
+`;
+
 export const MultiRecordSelect = ({
   onChange,
   onSubmit,
@@ -146,10 +154,8 @@ export const MultiRecordSelect = ({
           )}
           {isDefined(onCreate) && (
             <>
-              {objectRecordsIdsMultiSelect.length > 0 && (
-                <DropdownMenuSeparator />
-              )}
-              <CreateNewButton
+              <StyledDropdownMenuSeparator />
+              <StyledCreateNewButton
                 onClick={debouncedOnCreate}
                 LeftIcon={IconPlus}
                 text="Add New"
