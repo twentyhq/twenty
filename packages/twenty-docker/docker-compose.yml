@@ -25,11 +25,8 @@ services:
       PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_HOST: ${REDIS_HOST}
-
-      MESSAGE_QUEUE_TYPE: ${MESSAGE_QUEUE_TYPE}
-      CACHE_STORAGE_TYPE: redis
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
 
       ENABLE_DB_MIGRATIONS: "true"
 
@@ -62,13 +59,10 @@ services:
       PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
 
       ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
-
-      MESSAGE_QUEUE_TYPE: ${MESSAGE_QUEUE_TYPE}
-      CACHE_STORAGE_TYPE: ${CACHE_STORAGE_TYPE}
 
       STORAGE_TYPE: ${STORAGE_TYPE}
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
