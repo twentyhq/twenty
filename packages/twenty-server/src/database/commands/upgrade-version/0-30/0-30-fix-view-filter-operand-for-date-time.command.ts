@@ -74,7 +74,7 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
             fieldMetadataId: Any(dateTimeFieldMetadataIds),
           },
           {
-            operand: 'before',
+            operand: 'isBefore',
           },
         );
 
@@ -84,13 +84,13 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
             fieldMetadataId: Any(dateTimeFieldMetadataIds),
           },
           {
-            operand: 'after',
+            operand: 'isAfter',
           },
         );
       } catch (error) {
         this.logger.log(
           chalk.red(
-            `Could not connect to workspace data source for workspace ${workspaceId}`,
+            `Error running command for workspace ${workspaceId}: ${error}`,
           ),
         );
         continue;
