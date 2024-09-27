@@ -68,7 +68,7 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
           (fieldMetadata) => fieldMetadata.id,
         );
 
-        await viewFilterRepository.update(
+        const lessThanUpdatedResult = await viewFilterRepository.update(
           {
             operand: 'lessThan',
             fieldMetadataId: Any(dateTimeFieldMetadataIds),
@@ -78,7 +78,7 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
           },
         );
 
-        await viewFilterRepository.update(
+        const moreThanUpdatedResult = await viewFilterRepository.update(
           {
             operand: 'moreThan',
             fieldMetadataId: Any(dateTimeFieldMetadataIds),
@@ -87,6 +87,10 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
             operand: 'isAfter',
           },
         );
+
+        this.logger.log(
+          `Updated ${(lessThanUpdatedResult.affected ?? 0) + (moreThanUpdatedResult.affected ?? 0)} view filters for workspace ${workspaceId}`,
+        );
       } catch (error) {
         this.logger.log(
           chalk.red(
@@ -94,7 +98,13 @@ export class FixViewFilterOperandForDateTimeCommand extends ActiveWorkspacesComm
           ),
         );
         continue;
+      } finally {
+        this.logger.log(
+          chalk.green(`Finished running command for workspace ${workspaceId}.`),
+        );
       }
+
+      this.logger.log(chalk.green(`Command completed!`));
     }
   }
 }
