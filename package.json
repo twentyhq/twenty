@@ -273,6 +273,7 @@
     "@types/node": "18.19.26",
     "@types/passport-google-oauth20": "^2.0.11",
     "@types/passport-jwt": "^3.0.8",
+    "@types/pluralize": "^0.0.33",
     "@types/react": "^18.2.39",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.2.15",

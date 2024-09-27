@@ -54,11 +54,20 @@ export const MultipleFiltersDropdownContent = ({
     selectedOperandInDropdownState,
   );
 
-  const isEmptyOperand =
+  const isConfigurable =
     selectedOperandInDropdown &&
-    [ViewFilterOperand.IsEmpty, ViewFilterOperand.IsNotEmpty].includes(
-      selectedOperandInDropdown,
-    );
+    [
+      ViewFilterOperand.Is,
+      ViewFilterOperand.IsNotNull,
+      ViewFilterOperand.IsNot,
+      ViewFilterOperand.LessThan,
+      ViewFilterOperand.GreaterThan,
+      ViewFilterOperand.IsBefore,
+      ViewFilterOperand.IsAfter,
+      ViewFilterOperand.Contains,
+      ViewFilterOperand.DoesNotContain,
+      ViewFilterOperand.IsRelative,
+    ].includes(selectedOperandInDropdown);
 
   return (
     <StyledContainer>
@@ -72,7 +81,7 @@ export const MultipleFiltersDropdownContent = ({
               <ObjectFilterDropdownOperandSelect />
             </StyledOperandSelectContainer>
           )}
-          {!isEmptyOperand && selectedOperandInDropdown && (
+          {isConfigurable && selectedOperandInDropdown && (
             <>
               {[
                 'TEXT',

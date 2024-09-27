@@ -9,6 +9,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
@@ -74,7 +75,13 @@ export const EditableFilterDropdownButton = ({
     const { id: fieldId, value, operand } = viewFilter;
     if (
       !value &&
-      ![FilterOperand.IsEmpty, FilterOperand.IsNotEmpty].includes(operand)
+      ![
+        FilterOperand.IsEmpty,
+        FilterOperand.IsNotEmpty,
+        ViewFilterOperand.IsInPast,
+        ViewFilterOperand.IsInFuture,
+        ViewFilterOperand.IsToday,
+      ].includes(operand)
     ) {
       deleteCombinedViewFilter(fieldId);
     }
