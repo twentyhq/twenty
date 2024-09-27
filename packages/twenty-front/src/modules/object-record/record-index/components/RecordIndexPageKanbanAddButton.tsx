@@ -1,9 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
-import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
@@ -30,12 +28,9 @@ const StyledDropDownMenu = styled(DropdownMenu)`
 export const RecordIndexPageKanbanAddButton = () => {
   const dropdownId = `record-index-page-add-button-dropdown`;
 
-  const { recordIndexId, objectNamePlural } = useContext(
+  const { recordIndexId, objectNameSingular } = useContext(
     RecordIndexRootPropsContext,
   );
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
@@ -61,21 +56,19 @@ export const RecordIndexPageKanbanAddButton = () => {
   const { closeDropdown } = useDropdown(dropdownId);
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
-  const { handleAddNewOpportunityClick } = useAddNewOpportunity();
   const { handleAddNewCardClick } = useAddNewCard();
 
   const handleItemClick = useCallback(
     (columnDefinition: RecordBoardColumnDefinition) => {
-      if (isOpportunity && !isOpportunitiesCompanyFieldDisabled) {
-        handleAddNewOpportunityClick('first', columnDefinition.id);
-      } else {
-        handleAddNewCardClick(
-          labelIdentifierField?.label ?? '',
-          '',
-          'first',
-          columnDefinition.id,
-        );
-      }
+      const isOpportunityEnabled =
+        isOpportunity && !isOpportunitiesCompanyFieldDisabled;
+      handleAddNewCardClick(
+        labelIdentifierField?.label ?? '',
+        '',
+        'first',
+        isOpportunityEnabled,
+        columnDefinition.id,
+      );
       closeDropdown();
     },
     [
@@ -83,7 +76,6 @@ export const RecordIndexPageKanbanAddButton = () => {
       handleAddNewCardClick,
       closeDropdown,
       labelIdentifierField,
-      handleAddNewOpportunityClick,
       isOpportunitiesCompanyFieldDisabled,
     ],
   );

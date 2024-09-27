@@ -93,21 +93,15 @@ export const RecordBoardColumnHeader = () => {
     newRecord,
     handleNewButtonClick,
     handleCreateSuccess,
-    newOpportunity,
-    handleNewOpportunityButtonClick,
+
     handleEntitySelect,
-    handleCancel,
   } = useColumnNewCardActions(columnDefinition.id);
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
 
   const isOpportunity =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
-
-  const handleClick =
-    isOpportunity && !isOpportunitiesCompanyFieldDisabled
-      ? () => handleNewOpportunityButtonClick('first')
-      : () => handleNewButtonClick('first');
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity &&
+    !isOpportunitiesCompanyFieldDisabled;
 
   return (
     <>
@@ -155,7 +149,7 @@ export const RecordBoardColumnHeader = () => {
                 <LightIconButton
                   accent="tertiary"
                   Icon={IconPlus}
-                  onClick={handleClick}
+                  onClick={() => handleNewButtonClick('first', isOpportunity)}
                 />
               </StyledHeaderActions>
             )}
@@ -168,25 +162,29 @@ export const RecordBoardColumnHeader = () => {
           stageId={columnDefinition.id}
         />
       )}
-      {newRecord?.isCreating && newRecord.position === 'first' && (
-        <RecordBoardCard
-          isCreating={true}
-          onCreateSuccess={() => handleCreateSuccess('first')}
-          position="first"
-        />
-      )}
-      {newOpportunity.isCreating && newOpportunity.position === 'first' && (
-        <SingleEntitySelect
-          disableBackgroundBlur
-          onCancel={() => handleCancel('first', columnDefinition.id)}
-          onEntitySelected={(company) =>
-            company ? handleEntitySelect('first', company) : null
-          }
-          relationObjectNameSingular={CoreObjectNameSingular.Company}
-          relationPickerScopeId="relation-picker"
-          selectedRelationRecordIds={[]}
-        />
-      )}
+      {newRecord?.isCreating &&
+        newRecord.position === 'first' &&
+        !newRecord.isOpportunity && (
+          <RecordBoardCard
+            isCreating={true}
+            onCreateSuccess={() => handleCreateSuccess('first')}
+            position="first"
+          />
+        )}
+      {newRecord.isCreating &&
+        newRecord.position === 'first' &&
+        newRecord.isOpportunity && (
+          <SingleEntitySelect
+            disableBackgroundBlur
+            onCancel={() => handleCreateSuccess('first', columnDefinition.id)}
+            onEntitySelected={(company) =>
+              company ? handleEntitySelect('first', company) : null
+            }
+            relationObjectNameSingular={CoreObjectNameSingular.Company}
+            relationPickerScopeId="relation-picker"
+            selectedRelationRecordIds={[]}
+          />
+        )}
     </>
   );
 };

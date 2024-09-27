@@ -31,17 +31,19 @@ export const RecordBoardColumnNewOpportunityButton = ({
   const theme = useTheme();
 
   const {
-    newOpportunity,
-    handleNewOpportunityButtonClick,
+    newRecord,
+    handleNewButtonClick,
     handleEntitySelect,
-    handleCancel,
+    handleCreateSuccess,
   } = useColumnNewCardActions(columnId);
   return (
     <>
-      {newOpportunity.isCreating && newOpportunity.position === 'last' ? (
+      {newRecord.isCreating &&
+      newRecord.position === 'last' &&
+      newRecord.isOpportunity ? (
         <SingleEntitySelect
           disableBackgroundBlur
-          onCancel={() => handleCancel('last', columnId)}
+          onCancel={() => handleCreateSuccess('last', columnId, false)}
           onEntitySelected={(company) =>
             company ? handleEntitySelect('last', company) : null
           }
@@ -50,7 +52,7 @@ export const RecordBoardColumnNewOpportunityButton = ({
           selectedRelationRecordIds={[]}
         />
       ) : (
-        <StyledButton onClick={() => handleNewOpportunityButtonClick('last')}>
+        <StyledButton onClick={() => handleNewButtonClick('last', true)}>
           <IconPlus size={theme.icon.size.md} />
           New
         </StyledButton>
