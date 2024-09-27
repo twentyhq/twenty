@@ -57,15 +57,15 @@ export class GraphqlQueryUpdateOneResolverService
       selectedFields,
     );
 
-    await repository.update(args.id, args.data);
+    const queryBuilder = repository.createQueryBuilder(
+      objectMetadataItem.nameSingular,
+    );
 
-    const updatedRecords = await repository.find({
-      where: {
-        id: args.id,
-      },
-      select,
-      relations,
-    });
+    const withFilterQueryBuilder = queryBuilder.where({ id: args.id });
+
+    await withFilterQueryBuilder.update().set(args.data).execute();
+
+    const updatedRecords = await withFilterQueryBuilder.getMany();
 
     if (updatedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(

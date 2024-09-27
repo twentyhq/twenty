@@ -82,8 +82,8 @@ export class GraphqlQueryCreateManyResolverService
     );
   }
 
-  public validate<T extends IRecord>(
-    args: CreateManyResolverArgs<Partial<T>>,
+  public validate<ObjectRecord extends IRecord>(
+    args: CreateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): void {
     assertMutationNotOnRemoteObject(options.objectMetadataItem);

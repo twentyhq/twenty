@@ -1,5 +1,3 @@
-import graphqlFields from 'graphql-fields';
-
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -25,7 +23,7 @@ export class GraphqlQueryUpdateManyResolverService
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord[]> {
-    const { authContext, objectMetadataItem, objectMetadataCollection, info } =
+    const { authContext, objectMetadataItem, objectMetadataCollection } =
       options;
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -45,16 +43,21 @@ export class GraphqlQueryUpdateManyResolverService
       objectMetadataMap,
     );
 
-    const selectedFields = graphqlFields(info);
-
-    const { select, relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
-      selectedFields,
-    );
-
     const queryBuilder = repository.createQueryBuilder(
       objectMetadataItem.nameSingular,
     );
+
+    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+      queryBuilder,
+      objectMetadataItem.nameSingular,
+      args.filter,
+    );
+
+    await withFilterQueryBuilder.update().set(args.data).execute();
+
+    const updatedRecords = await withFilterQueryBuilder.getMany();
+
+    return updatedRecords as ObjectRecord[];
   }
 
   validate<ObjectRecord extends IRecord = IRecord>(
@@ -62,6 +65,6 @@ export class GraphqlQueryUpdateManyResolverService
     options: WorkspaceQueryRunnerOptions,
   ): void {
     assertMutationNotOnRemoteObject(options.objectMetadataItem);
-    args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
+    args.filter?.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
 }

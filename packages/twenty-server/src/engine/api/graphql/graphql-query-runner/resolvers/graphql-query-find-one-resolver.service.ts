@@ -133,8 +133,8 @@ export class GraphqlQueryFindOneResolverService
     ) as ObjectRecord;
   }
 
-  public validate<F extends RecordFilter>(
-    args: FindOneResolverArgs<F>,
+  public validate<Filter extends RecordFilter>(
+    args: FindOneResolverArgs<Filter>,
     _options: WorkspaceQueryRunnerOptions,
   ): void {
     if (!args.filter || Object.keys(args.filter).length === 0) {

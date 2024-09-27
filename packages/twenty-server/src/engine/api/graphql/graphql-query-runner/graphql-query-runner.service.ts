@@ -268,7 +268,7 @@ export class GraphqlQueryRunnerService {
         objectMetadata: objectMetadataItem,
         properties: {
           before: null,
-          after: this.removeNestedProperties(record),
+          after: this.removeGraphQLProperties(record),
         },
       })),
       authContext.workspace.id,
@@ -288,7 +288,7 @@ export class GraphqlQueryRunnerService {
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeNestedProperties(record),
+            before: this.removeGraphQLProperties(record),
             after: null,
           },
         };
@@ -297,8 +297,8 @@ export class GraphqlQueryRunnerService {
     );
   }
 
-  private removeNestedProperties<Record extends IRecord = IRecord>(
-    record: Record,
+  private removeGraphQLProperties<ObjectRecord extends IRecord>(
+    record: ObjectRecord,
   ) {
     if (!record) {
       return;

@@ -196,7 +196,10 @@ export class GraphqlQueryFindManyResolverService
     );
   }
 
-  public validate(args: FindManyResolverArgs<any, any>) {
+  public validate<Filter extends RecordFilter>(
+    args: FindManyResolverArgs<Filter>,
+    _options: WorkspaceQueryRunnerOptions,
+  ): void {
     if (args.first && args.last) {
       throw new GraphqlQueryRunnerException(
         'Cannot provide both first and last',
