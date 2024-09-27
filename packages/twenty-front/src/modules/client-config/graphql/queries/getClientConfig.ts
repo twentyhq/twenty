@@ -16,9 +16,6 @@ export const GET_CLIENT_CONFIG = gql`
       signInPrefilled
       signUpDisabled
       debugMode
-      telemetry {
-        enabled
-      }
       support {
         supportDriver
         supportFrontChatId

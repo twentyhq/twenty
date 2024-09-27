@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
@@ -37,8 +38,15 @@ export const RecordIndexPageKanbanAddButton = () => {
     RecordIndexRootPropsContext,
   );
 
-  const { columnIdsState } = useRecordBoardStates(recordIndexId);
+  const { columnIdsState, visibleFieldDefinitionsState } =
+    useRecordBoardStates(recordIndexId);
   const columnIds = useRecoilValue(columnIdsState);
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
+  );
+  const labelIdentifierField = visibleFieldDefinitions.find(
+    (field) => field.isLabelIdentifier,
+  );
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -50,14 +58,12 @@ export const RecordIndexPageKanbanAddButton = () => {
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const {
-    selectFieldMetadataItem,
-    isOpportunity,
-    createOpportunity,
-    createRecordWithoutCompany,
-  } = useRecordIndexPageKanbanAddButton({
-    objectNamePlural,
-  });
+  const { selectFieldMetadataItem, isOpportunity, createOpportunity } =
+    useRecordIndexPageKanbanAddButton({
+      objectNamePlural,
+    });
+
+  const { handleAddNewCardClick } = useAddNewCard();
 
   const handleItemClick = useCallback(
     (columnDefinition: RecordBoardColumnDefinition) => {
@@ -68,18 +74,23 @@ export const RecordIndexPageKanbanAddButton = () => {
           RelationPickerHotkeyScope.RelationPicker,
         );
       } else {
-        createRecordWithoutCompany(columnDefinition);
+        handleAddNewCardClick(
+          labelIdentifierField?.label ?? '',
+          '',
+          'first',
+          columnDefinition.id,
+        );
         closeDropdown();
       }
     },
     [
       isOpportunity,
-      createRecordWithoutCompany,
+      handleAddNewCardClick,
       setHotkeyScopeAndMemorizePreviousScope,
       closeDropdown,
+      labelIdentifierField,
     ],
   );
-
   const handleEntitySelect = useCallback(
     (company?: EntityForSelect) => {
       setIsSelectingCompany(false);

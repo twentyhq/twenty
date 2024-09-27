@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { FixEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-30/0-30-fix-email-field-migration.command';
 import { MigrateEmailFieldsToEmailsCommand } from 'src/database/commands/upgrade-version/0-30/0-30-migrate-email-fields-to-emails.command';
+import { MigratePhoneFieldsToPhonesCommand } from 'src/database/commands/upgrade-version/0-30/0-30-migrate-phone-fields-to-phones.command';
 import { SetStaleMessageSyncBackToPendingCommand } from 'src/database/commands/upgrade-version/0-30/0-30-set-stale-message-sync-back-to-pending';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
@@ -26,6 +27,7 @@ export class UpgradeTo0_30Command extends ActiveWorkspacesCommandRunner {
     private readonly migrateEmailFieldsToEmails: MigrateEmailFieldsToEmailsCommand,
     private readonly setStaleMessageSyncBackToPendingCommand: SetStaleMessageSyncBackToPendingCommand,
     private readonly fixEmailFieldsToEmailsCommand: FixEmailFieldsToEmailsCommand,
+    private readonly migratePhoneFieldsToPhones: MigratePhoneFieldsToPhonesCommand,
   ) {
     super(workspaceRepository);
   }
@@ -54,6 +56,11 @@ export class UpgradeTo0_30Command extends ActiveWorkspacesCommandRunner {
       workspaceIds,
     );
     await this.fixEmailFieldsToEmailsCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+    await this.migratePhoneFieldsToPhones.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,

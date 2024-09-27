@@ -1,14 +1,14 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import {
   query,
   responseData,
@@ -75,11 +75,9 @@ describe('useFilteredSearchEntityQuery', () => {
           locale: 'en',
         });
 
-        const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
 
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredSearchEntityQuery({
           orderByField: 'name',

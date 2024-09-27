@@ -5,6 +5,7 @@ import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/A
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
+import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -156,7 +157,7 @@ export const RecordShowContainer = ({
       objectNameSingular !== CoreObjectNameSingular.Task &&
       fieldMetadataItem.name !== 'taskTargets',
   );
-
+  const { Icon, IconColor } = useGetStandardObjectIcon(objectNameSingular);
   const isReadOnly = objectMetadataItem.isRemote;
   const isMobile = useIsMobile() || isInRightDrawer;
   const isPrefetchLoading = useIsPrefetchLoading();
@@ -166,6 +167,8 @@ export const RecordShowContainer = ({
       isMobile={isMobile}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+      icon={Icon}
+      iconColor={IconColor}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordFromStore.createdAt ?? ''}
       loading={isPrefetchLoading || loading || recordLoading}

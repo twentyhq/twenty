@@ -36,4 +36,7 @@ export type FieldMetadataItem = Omit<
       'id' | 'nameSingular' | 'namePlural'
     >;
   } | null;
+  settings?: {
+    displayAsRelativeDate?: boolean;
+  };
 };

@@ -39,6 +39,21 @@ export const StyledInput = styled.input`
   }
 `;
 
+const StyledContainer = styled.div`
+  position: relative;
+`;
+
+const StyledSelectedSortDirectionContainer = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  width: 100%;
+  z-index: 1000;
+`;
+
 export type ObjectSortDropdownButtonProps = {
   sortDropdownId: string;
   hotkeyScope: HotkeyScope;
@@ -95,60 +110,61 @@ export const ObjectSortDropdownButton = ({
         }
         dropdownComponents={
           <>
-            {isSortDirectionMenuUnfolded ? (
-              <DropdownMenuItemsContainer>
-                {SORT_DIRECTIONS.map((sortOrder, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => {
-                      setSelectedSortDirection(sortOrder);
-                      setIsSortDirectionMenuUnfolded(false);
-                    }}
-                    text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
-                  />
-                ))}
-              </DropdownMenuItemsContainer>
-            ) : (
-              <>
-                <DropdownMenuHeader
-                  EndIcon={IconChevronDown}
-                  onClick={() => setIsSortDirectionMenuUnfolded(true)}
-                >
-                  {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-                </DropdownMenuHeader>
-                <StyledInput
-                  autoFocus
-                  value={objectSortDropdownSearchInput}
-                  placeholder="Search fields"
-                  onChange={(event) =>
-                    setObjectSortDropdownSearchInput(event.target.value)
-                  }
-                />
+            {isSortDirectionMenuUnfolded && (
+              <StyledSelectedSortDirectionContainer>
                 <DropdownMenuItemsContainer>
-                  {[...availableSortDefinitions]
-                    .sort((a, b) => a.label.localeCompare(b.label))
-                    .filter((item) =>
-                      item.label
-                        .toLocaleLowerCase()
-                        .includes(
-                          objectSortDropdownSearchInput.toLocaleLowerCase(),
-                        ),
-                    )
-                    .map((availableSortDefinition, index) => (
-                      <MenuItem
-                        testId={`select-sort-${index}`}
-                        key={index}
-                        onClick={() => {
-                          setObjectSortDropdownSearchInput('');
-                          handleAddSort(availableSortDefinition);
-                        }}
-                        LeftIcon={getIcon(availableSortDefinition.iconName)}
-                        text={availableSortDefinition.label}
-                      />
-                    ))}
+                  {SORT_DIRECTIONS.map((sortOrder, index) => (
+                    <MenuItem
+                      key={index}
+                      onClick={() => {
+                        setSelectedSortDirection(sortOrder);
+                        setIsSortDirectionMenuUnfolded(false);
+                      }}
+                      text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                    />
+                  ))}
                 </DropdownMenuItemsContainer>
-              </>
+              </StyledSelectedSortDirectionContainer>
             )}
+            <StyledContainer>
+              <DropdownMenuHeader
+                EndIcon={IconChevronDown}
+                onClick={() => setIsSortDirectionMenuUnfolded(true)}
+              >
+                {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+              </DropdownMenuHeader>
+              <StyledInput
+                autoFocus
+                value={objectSortDropdownSearchInput}
+                placeholder="Search fields"
+                onChange={(event) =>
+                  setObjectSortDropdownSearchInput(event.target.value)
+                }
+              />
+              <DropdownMenuItemsContainer>
+                {[...availableSortDefinitions]
+                  .sort((a, b) => a.label.localeCompare(b.label))
+                  .filter((item) =>
+                    item.label
+                      .toLocaleLowerCase()
+                      .includes(
+                        objectSortDropdownSearchInput.toLocaleLowerCase(),
+                      ),
+                  )
+                  .map((availableSortDefinition, index) => (
+                    <MenuItem
+                      testId={`select-sort-${index}`}
+                      key={index}
+                      onClick={() => {
+                        setObjectSortDropdownSearchInput('');
+                        handleAddSort(availableSortDefinition);
+                      }}
+                      LeftIcon={getIcon(availableSortDefinition.iconName)}
+                      text={availableSortDefinition.label}
+                    />
+                  ))}
+              </DropdownMenuItemsContainer>
+            </StyledContainer>
           </>
         }
         onClose={handleDropdownButtonClose}
