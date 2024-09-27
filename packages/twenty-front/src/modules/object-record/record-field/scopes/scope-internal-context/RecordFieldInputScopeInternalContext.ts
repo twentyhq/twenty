@@ -1,7 +1,7 @@
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
-type RecordFieldInputScopeInternalContextProps = ComponentStateKey;
+type RecordFieldInputScopeInternalContextProps = RecoilComponentStateKey;
 
 export const RecordFieldInputScopeInternalContext =
   createScopeInternalContext<RecordFieldInputScopeInternalContextProps>();

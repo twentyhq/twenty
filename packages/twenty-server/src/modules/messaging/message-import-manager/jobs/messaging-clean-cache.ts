@@ -28,7 +28,7 @@ export class MessagingCleanCacheJob {
     );
 
     await this.cacheStorage.del(
-      `messages-to-import:${data.workspaceId}:gmail:${data.messageChannelId}`,
+      `messages-to-import:${data.workspaceId}:${data.messageChannelId}`,
     );
 
     this.logger.log(

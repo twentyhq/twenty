@@ -7,7 +7,7 @@ import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldM
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { isDefined } from '~/utils/isDefined';
 
 type UseHandleToggleColumnFilterProps = {
@@ -26,7 +26,7 @@ export const useHandleToggleColumnFilter = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { upsertCombinedViewFilter } = useCombinedViewFilters(viewBarId);
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
   const { openDropdown } = useDropdownV2();
 
   const handleToggleColumnFilter = useCallback(

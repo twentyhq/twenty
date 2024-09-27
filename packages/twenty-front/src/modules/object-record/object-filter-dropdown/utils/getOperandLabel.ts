@@ -12,6 +12,10 @@ export const getOperandLabel = (
       return 'Greater than';
     case ViewFilterOperand.LessThan:
       return 'Less than';
+    case ViewFilterOperand.IsBefore:
+      return 'Is before';
+    case ViewFilterOperand.IsAfter:
+      return 'Is after';
     case ViewFilterOperand.Is:
       return 'Is';
     case ViewFilterOperand.IsNot:
@@ -22,6 +26,14 @@ export const getOperandLabel = (
       return 'Is empty';
     case ViewFilterOperand.IsNotEmpty:
       return 'Is not empty';
+    case ViewFilterOperand.IsRelative:
+      return 'Is relative';
+    case ViewFilterOperand.IsInPast:
+      return 'Is in past';
+    case ViewFilterOperand.IsInFuture:
+      return 'Is in future';
+    case ViewFilterOperand.IsToday:
+      return 'Is today';
     default:
       return '';
   }
@@ -47,6 +59,16 @@ export const getOperandLabelShort = (
       return '\u00A0> ';
     case ViewFilterOperand.LessThan:
       return '\u00A0< ';
+    case ViewFilterOperand.IsBefore:
+      return '\u00A0< ';
+    case ViewFilterOperand.IsAfter:
+      return '\u00A0> ';
+    case ViewFilterOperand.IsInPast:
+      return ': Past';
+    case ViewFilterOperand.IsInFuture:
+      return ': Future';
+    case ViewFilterOperand.IsToday:
+      return ': Today';
     default:
       return ': ';
   }

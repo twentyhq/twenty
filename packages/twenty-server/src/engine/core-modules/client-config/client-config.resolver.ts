@@ -1,4 +1,4 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { Query, Resolver } from '@nestjs/graphql';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
@@ -16,9 +16,6 @@ export class ClientConfigResolver {
         magicLink: false,
         password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
-      },
-      telemetry: {
-        enabled: this.environmentService.get('TELEMETRY_ENABLED'),
       },
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),

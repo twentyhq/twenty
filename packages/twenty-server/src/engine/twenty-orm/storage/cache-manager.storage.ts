@@ -13,8 +13,6 @@ export class CacheManager<T> {
     const [workspaceId] = cacheKey.split('-');
 
     if (this.cache.has(cacheKey)) {
-      console.log('Cache hit for key:', cacheKey);
-
       return this.cache.get(cacheKey)!;
     }
 
@@ -25,7 +23,6 @@ export class CacheManager<T> {
       }
     }
 
-    console.log('Cache miss for key:', cacheKey);
     const value = await factory();
 
     if (!value) {

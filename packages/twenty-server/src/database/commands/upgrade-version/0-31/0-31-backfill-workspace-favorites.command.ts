@@ -2,13 +2,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -21,6 +22,8 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository);
@@ -37,11 +40,18 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
       this.logger.log(`Running command for workspace ${workspaceId}`);
 
       try {
-        const workspaceIndexViews = await this.getIndexViews(workspaceId);
+        const allWorkspaceIndexViews = await this.getIndexViews(workspaceId);
+
+        const activeWorkspaceIndexViews =
+          await this.filterViewsWithoutObjectMetadata(
+            workspaceId,
+            allWorkspaceIndexViews,
+          );
 
         await this.createViewWorkspaceFavorites(
           workspaceId,
-          workspaceIndexViews.map((view) => view.id),
+          activeWorkspaceIndexViews.map((view) => view.id),
+          _options.dryRun ?? false,
         );
 
         this.logger.log(
@@ -85,9 +95,30 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
     });
   }
 
+  private async filterViewsWithoutObjectMetadata(
+    workspaceId: string,
+    views: ViewWorkspaceEntity[],
+  ): Promise<ViewWorkspaceEntity[]> {
+    const viewObjectMetadataIds = views.map((view) => view.objectMetadataId);
+
+    const objectMetadataEntities = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+        id: In(viewObjectMetadataIds),
+      },
+    });
+
+    const objectMetadataIds = new Set(
+      objectMetadataEntities.map((entity) => entity.id),
+    );
+
+    return views.filter((view) => objectMetadataIds.has(view.objectMetadataId));
+  }
+
   private async createViewWorkspaceFavorites(
     workspaceId: string,
     viewIds: string[],
+    dryRun: boolean,
   ) {
     const favoriteRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
@@ -96,6 +127,7 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
       );
 
     let nextFavoritePosition = await favoriteRepository.count();
+    let createdFavorites = 0;
 
     for (const viewId of viewIds) {
       const existingFavorites = await favoriteRepository.find({
@@ -108,14 +140,23 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
         continue;
       }
 
-      await favoriteRepository.insert(
-        favoriteRepository.create({
-          viewId,
-          position: nextFavoritePosition,
-        }),
-      );
+      if (!dryRun) {
+        await favoriteRepository.insert(
+          favoriteRepository.create({
+            viewId,
+            position: nextFavoritePosition,
+          }),
+        );
+      }
 
+      createdFavorites++;
       nextFavoritePosition++;
     }
+
+    this.logger.log(
+      chalk.green(
+        `Found ${createdFavorites} favorites to backfill in workspace ${workspaceId}.`,
+      ),
+    );
   }
 }

@@ -5,7 +5,7 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import {
   RecordFieldValueSelectorContextProvider,
@@ -21,9 +21,8 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { mockPerformance } from './mock';
-
-const objectMetadataItems = getObjectMetadataItemsMock();
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(
@@ -48,7 +47,7 @@ const RelationFieldValueSetterEffect = () => {
       mockPerformance.relationFieldValue,
     );
 
-    setObjectMetadataItems(objectMetadataItems);
+    setObjectMetadataItems(generatedMockObjectMetadataItems);
   }, [setEntity, setRelationEntity, setRecordValue, setObjectMetadataItems]);
 
   return null;

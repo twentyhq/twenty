@@ -1,35 +1,13 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
 
-import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
+import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 
-import {
-  ExceptionHandlerDriverInterface,
-  ExceptionHandlerSentryDriverFactoryOptions,
-} from 'src/engine/core-modules/exception-handler/interfaces';
+import { ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 
 export class ExceptionHandlerSentryDriver
   implements ExceptionHandlerDriverInterface
 {
-  constructor(options: ExceptionHandlerSentryDriverFactoryOptions['options']) {
-    Sentry.init({
-      environment: options.environment,
-      release: options.release,
-      dsn: options.dsn,
-      integrations: [
-        new Sentry.Integrations.Http({ tracing: true }),
-        new Sentry.Integrations.Express({ app: options.serverInstance }),
-        new Sentry.Integrations.GraphQL(),
-        new Sentry.Integrations.Postgres(),
-        new ProfilingIntegration(),
-      ],
-      tracesSampleRate: 0.1,
-      profilesSampleRate: 0.3,
-      debug: options.debug,
-    });
-  }
-
   captureExceptions(
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,

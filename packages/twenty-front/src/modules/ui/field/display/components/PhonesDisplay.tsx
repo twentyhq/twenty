@@ -8,6 +8,7 @@ import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from '~/utils/isDefined';
+import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;
@@ -39,7 +40,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
               countryCode: value.primaryPhoneCountryCode,
             }
           : null,
-        ...(value?.additionalPhones ?? []),
+        ...parseAdditionalPhones(value?.additionalPhones),
       ]
         .filter(isDefined)
         .map(({ number, countryCode }) => {
@@ -55,16 +56,27 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
     ],
   );
 
+  const parsePhoneNumberOrReturnInvalidValue = (number: string) => {
+    try {
+      return { parsedPhone: parsePhoneNumber(number) };
+    } catch (e) {
+      return { invalidPhone: number };
+    }
+  };
+
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {phones.map(({ number, countryCode }, index) => {
-        const parsedPhone = parsePhoneNumber(countryCode + number);
-        const URI = parsedPhone.getURI();
+        const { parsedPhone, invalidPhone } =
+          parsePhoneNumberOrReturnInvalidValue(countryCode + number);
+        const URI = parsedPhone?.getURI();
         return (
           <RoundedLink
             key={index}
-            href={URI}
-            label={parsedPhone.formatInternational()}
+            href={URI || ''}
+            label={
+              parsedPhone ? parsedPhone.formatInternational() : invalidPhone
+            }
           />
         );
       })}
@@ -72,16 +84,39 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
   ) : (
     <StyledContainer>
       {phones.map(({ number, countryCode }, index) => {
-        const parsedPhone = parsePhoneNumber(countryCode + number);
-        const URI = parsedPhone.getURI();
+        const { parsedPhone, invalidPhone } =
+          parsePhoneNumberOrReturnInvalidValue(countryCode + number);
+        const URI = parsedPhone?.getURI();
         return (
           <RoundedLink
             key={index}
-            href={URI}
-            label={parsedPhone.formatInternational()}
+            href={URI || ''}
+            label={
+              parsedPhone ? parsedPhone.formatInternational() : invalidPhone
+            }
           />
         );
       })}
     </StyledContainer>
   );
+};
+
+const parseAdditionalPhones = (additionalPhones?: any) => {
+  if (!additionalPhones) {
+    return [];
+  }
+
+  if (typeof additionalPhones === 'object') {
+    return additionalPhones;
+  }
+
+  if (typeof additionalPhones === 'string') {
+    try {
+      return JSON.parse(additionalPhones);
+    } catch (error) {
+      logError(`Error parsing additional phones' : ` + error);
+    }
+  }
+
+  return [];
 };

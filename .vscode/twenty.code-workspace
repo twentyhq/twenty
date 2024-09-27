@@ -21,6 +21,10 @@
       "path": "../packages/twenty-ui"
     },
     {
+      "name": "packages/twenty-emails",
+      "path": "../packages/twenty-emails"
+    },
+    {
       "name": "packages/twenty-postgres",
       "path": "../packages/twenty-postgres"
     },

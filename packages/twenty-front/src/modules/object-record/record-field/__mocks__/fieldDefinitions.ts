@@ -72,11 +72,11 @@ export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
   },
 };
 
-const phoneFieldMetadataItem = mockedPersonObjectMetadataItem.fields?.find(
-  ({ name }) => name === 'phone',
+const phonesFieldMetadataItem = mockedPersonObjectMetadataItem.fields?.find(
+  ({ name }) => name === 'phones',
 );
-export const phoneFieldDefinition = formatFieldMetadataItemAsFieldDefinition({
-  field: phoneFieldMetadataItem!,
+export const phonesFieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+  field: phonesFieldMetadataItem!,
   objectMetadataItem: mockedPersonObjectMetadataItem,
 });
 

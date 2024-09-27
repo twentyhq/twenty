@@ -5,7 +5,7 @@ import {
   ObjectEdge,
   ObjectMetadataItemsQuery,
 } from '~/generated-metadata/graphql';
-import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/standard-metadata-query-result';
+import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 
 // TODO: replace with new mock
 const customObjectMetadataItemEdge: ObjectEdge = {
