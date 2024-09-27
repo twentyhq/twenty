@@ -30,12 +30,16 @@ import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
 import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { IconSettings } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -51,6 +55,12 @@ const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
 `;
 
 export const RecordIndexContainer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
+
   const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
     recordIndexViewTypeState,
   );
@@ -85,6 +95,17 @@ export const RecordIndexContainer = () => {
 
   const { setColumns } = useRecordBoard(recordIndexId);
 
+  const navigateToSelectSettings = useCallback(() => {
+    setNavigationMemorizedUrl(location.pathname + location.search);
+    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
+  }, [
+    navigate,
+    objectMetadataItem,
+    location.pathname,
+    location.search,
+    setNavigationMemorizedUrl,
+  ]);
+
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewFields: ViewField[]) => {
@@ -114,10 +135,35 @@ export const RecordIndexContainer = () => {
   const onViewGroupsChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewGroups: ViewGroup[]) => {
-        const newGroupDefinitions = mapViewGroupsToGroupDefinitions({
+        let newGroupDefinitions = mapViewGroupsToGroupDefinitions({
           objectMetadataItem,
           viewGroups,
         });
+
+        newGroupDefinitions = newGroupDefinitions.map((groupDefition) => ({
+          ...groupDefition,
+          actions: [
+            {
+              id: 'edit',
+              label: 'Edit',
+              icon: IconSettings,
+              position: 0,
+              callback: () => {
+                navigateToSelectSettings();
+              },
+            },
+            // TODO: Maybe we should define actions somewhere else
+            // {
+            //   id: 'hide',
+            //   label: 'Hide',
+            //   icon: IconEyeOff,
+            //   position: 1,
+            //   callback: () => {
+            //     handleBoardGroupVisibilityChange(groupDefition);
+            //   },
+            // },
+          ],
+        }));
 
         setColumns(newGroupDefinitions);
 

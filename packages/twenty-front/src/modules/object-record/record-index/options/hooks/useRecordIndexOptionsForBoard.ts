@@ -18,6 +18,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
 import { mapGroupDefinitionsToViewGroups } from '@/views/utils/mapGroupDefinitionsToViewGroups';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 type useRecordIndexOptionsForBoardParams = {
   objectNameSingular: string;
@@ -56,6 +57,21 @@ export const useRecordIndexOptionsForBoard = ({
       columnDefinitions.filter(({ isLabelIdentifier }) => !isLabelIdentifier),
     [columnDefinitions],
   );
+
+  const viewGroupFieldMetadataItem = useMemo(() => {
+    if (recordIndexGroupDefinitions.length === 0) return null;
+    // We're assuming that all groups have the same fieldMetadataId for now
+    const fieldMetadataId =
+      'fieldMetadataId' in recordIndexGroupDefinitions[0]
+        ? recordIndexGroupDefinitions[0].fieldMetadataId
+        : null;
+
+    if (!fieldMetadataId) return null;
+
+    return objectMetadataItem.fields.find(
+      (field) => field.id === fieldMetadataId,
+    );
+  }, [objectMetadataItem, recordIndexGroupDefinitions]);
 
   const recordIndexFieldDefinitionsByKey = useMemo(
     () =>
@@ -232,6 +248,29 @@ export const useRecordIndexOptionsForBoard = ({
     ],
   );
 
+  const handleBoardGroupVisibilityChange = useCallback(
+    async (updatedGroupDefinition: RecordGroupDefinition) => {
+      const updatedGroupsDefinitions = recordIndexGroupDefinitions.map(
+        (groupDefinition) =>
+          groupDefinition.id === updatedGroupDefinition.id
+            ? {
+                ...groupDefinition,
+                isVisible: !groupDefinition.isVisible,
+              }
+            : groupDefinition,
+      );
+
+      setRecordIndexGroupDefinitions(updatedGroupsDefinitions);
+
+      saveViewGroups(mapGroupDefinitionsToViewGroups(updatedGroupsDefinitions));
+    },
+    [
+      recordIndexGroupDefinitions,
+      setRecordIndexGroupDefinitions,
+      saveViewGroups,
+    ],
+  );
+
   const setAndPersistIsCompactModeActive = useCallback(
     (isCompactModeActive: boolean, view: GraphQLView | undefined) => {
       if (!view) return;
@@ -246,6 +285,8 @@ export const useRecordIndexOptionsForBoard = ({
   return {
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
+    handleBoardGroupVisibilityChange,
+    viewGroupFieldMetadataItem,
     visibleBoardFields,
     hiddenBoardFields,
     visibleBoardGroups,

@@ -15,16 +15,15 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
           .getLoadable(columnIdsState)
           .getValue();
 
-        const columnIds = columns.map(({ id }) => id);
+        const columnIds = columns
+          .filter(({ isVisible }) => isVisible)
+          .map(({ id }) => id);
 
         if (isDeeplyEqual(currentColumnsIds, columnIds)) {
           return;
         }
 
-        set(
-          columnIdsState,
-          columns.map((column) => column.id),
-        );
+        set(columnIdsState, columnIds);
 
         columns.forEach((column) => {
           const currentColumn = snapshot

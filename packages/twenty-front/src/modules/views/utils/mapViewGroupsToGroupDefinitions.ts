@@ -3,6 +3,7 @@ import { isDefined } from '~/utils/isDefined';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import {
   RecordGroupDefinition,
+  RecordGroupDefinitionNoValue,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -15,33 +16,28 @@ export const mapViewGroupsToGroupDefinitions = ({
   objectMetadataItem: ObjectMetadataItem;
   viewGroups: ViewGroup[];
 }): RecordGroupDefinition[] => {
-  // const groupDefinitionsById = mapArrayToObject(
-  //   groupDefinitions,
-  //   ({ id }) => id,
-  // );
+  if (viewGroups.length === 0) {
+    return [];
+  }
 
+  const fieldMetadataId = viewGroups?.[0]?.fieldMetadataId;
+  const selectFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) =>
+      field.id === fieldMetadataId && field.type === FieldMetadataType.Select,
+  );
+
+  if (!selectFieldMetadataItem) {
+    return [];
+  }
+
+  if (!selectFieldMetadataItem.options) {
+    throw new Error(
+      `Select Field ${objectMetadataItem.nameSingular} has no options`,
+    );
+  }
   const groupDefinitionsFromViewGroups = viewGroups
     .map((viewGroup) => {
-      // const correspondingGroupDefinition = groupDefinitionsById[viewGroup.id];
-
-      // if (isUndefinedOrNull(correspondingGroupDefinition)) return null;
-
-      const selectFieldMetadataItem = objectMetadataItem.fields.find(
-        (field) =>
-          field.id === viewGroup.fieldMetadataId &&
-          // TODO: Only Select type for now, but we should support other types
-          field.type === FieldMetadataType.Select,
-      );
-
-      if (!selectFieldMetadataItem) return null;
-
-      if (!selectFieldMetadataItem.options) {
-        throw new Error(
-          `Select Field ${objectMetadataItem.nameSingular} has no options`,
-        );
-      }
-
-      const selectedOption = selectFieldMetadataItem.options.find(
+      const selectedOption = selectFieldMetadataItem.options!.find(
         (option) => option.value === viewGroup.fieldValue,
       );
 
@@ -61,6 +57,23 @@ export const mapViewGroupsToGroupDefinitions = ({
     })
     .filter(isDefined)
     .sort((a, b) => a.position - b.position);
+
+  if (selectFieldMetadataItem.isNullable === true) {
+    const noValueColumn = {
+      id: 'no-value',
+      title: 'No Value',
+      type: RecordGroupDefinitionType.NoValue,
+      value: null,
+      actions: [],
+      position:
+        groupDefinitionsFromViewGroups
+          .map((option) => option.position)
+          .reduce((a, b) => Math.max(a, b), 0) + 1,
+      isVisible: true,
+    } satisfies RecordGroupDefinitionNoValue;
+
+    return [...groupDefinitionsFromViewGroups, noValueColumn];
+  }
 
   return groupDefinitionsFromViewGroups;
 };
