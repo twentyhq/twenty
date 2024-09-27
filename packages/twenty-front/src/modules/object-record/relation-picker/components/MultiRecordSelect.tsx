@@ -30,6 +30,7 @@ export const StyledSelectableItem = styled(SelectableItem)`
 
 const StyledDropdownMenuSeparator = styled(DropdownMenuSeparator)`
   margin-left: calc(-1 * var(--padding));
+  width: calc(100% + 2 * var(--padding));
 `;
 
 const StyledCreateNewButton = styled(CreateNewButton)`
