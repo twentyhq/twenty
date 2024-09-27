@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { Any, EntityManager } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
@@ -67,6 +67,9 @@ export class WorkspaceSyncIndexMetadataService {
     let originalIndexMetadataCollection = await indexMetadataRepository.find({
       where: {
         workspaceId: context.workspaceId,
+        objectMetadataId: Any(
+          Object.values(originalObjectMetadataMap).map((object) => object.id),
+        ),
       },
       relations: ['indexFieldMetadatas.fieldMetadata'],
     });

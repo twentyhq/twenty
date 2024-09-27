@@ -60,11 +60,6 @@ export class InputTypeDefinitionFactory {
 
             return {
               ...this.generateFields(objectMetadata, kind, options),
-              // Incrémenter version metadata !!
-              // pas besoin de codegen
-              // regarder PR de felix qui a modifié ce meme genre de truc pour rajouter l'argument Upsert
-              // ne doit etre ajouté que pour le findMany, peut etre déjà géré vu que filter que pour findMany
-              // search: String, // à creuser ?
               and: {
                 type: andOrType,
               },

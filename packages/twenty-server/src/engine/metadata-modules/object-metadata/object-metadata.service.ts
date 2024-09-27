@@ -27,6 +27,7 @@ import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-meta
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -602,7 +603,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             (field) =>
               field.id === createdObjectMetadata.labelIdentifierFieldMetadataId,
           )
-        : createdObjectMetadata.fields.find((field) => field.name === 'name');
+        : createdObjectMetadata.fields.find(
+            (field) => field.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+          );
 
     if (!isDefined(searchableFieldForCustomObject)) {
       throw new Error('No searchable field found for custom object');

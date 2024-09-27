@@ -1,5 +1,3 @@
-import graphqlFields from 'graphql-fields';
-
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -10,7 +8,6 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -34,7 +31,7 @@ export class GraphqlQuerySearchResolverService {
     args: SearchResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<ObjectRecord>> {
-    const { authContext, objectMetadataItem, objectMetadataCollection, info } =
+    const { authContext, objectMetadataItem, objectMetadataCollection } =
       options;
 
     const isQueryRunnerTwentyORMEnabled =
@@ -74,27 +71,15 @@ export class GraphqlQuerySearchResolverService {
       );
     }
 
-    const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadata.fields,
-      objectMetadataMap,
-    );
-
     if (!args.searchInput) {
       return {} as IConnection<ObjectRecord>;
     }
     const searchTerms = this.formatSearchTerms(args.searchInput);
 
-    const { select } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
-      graphqlFields(info),
-    );
-
-    // const columnsToSelect = this.formatSelectedColumns(select);
-    const limit = args?.limit ?? QUERY_MAX_RECORDS; // TODO: make it an arg
+    const limit = args?.limit ?? QUERY_MAX_RECORDS;
 
     const resultsWithTsVector = (await repository
       .createQueryBuilder()
-      // .select(columnsToSelect)
       .where(`"${SEARCH_VECTOR_FIELD_NAME}" @@ to_tsquery(:searchTerms)`, {
         searchTerms,
       })
@@ -131,13 +116,6 @@ export class GraphqlQuerySearchResolverService {
     const words = searchTerm.trim().split(/\s+/);
     const formattedWords = words.map((word) => `${word}:*`);
 
-    return formattedWords.join(' | '); // TODO: also do that for emails?
-  }
-
-  private formatSelectedColumns(obj: Record<string, any>) {
-    return Object.entries(obj)
-      .filter(([_, value]) => value === true)
-      .map(([key, _]) => `"${key}"`)
-      .join(', ');
+    return formattedWords.join(' | ');
   }
 }

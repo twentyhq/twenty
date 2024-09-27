@@ -5,7 +5,6 @@ import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/worksp
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
@@ -41,49 +40,16 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
   }
 
   protected handleAlterAction(
-    currentFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
-    alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
-    options?: WorkspaceColumnActionOptions,
+    _currentFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    _alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    _options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter[] {
-    // TO DO implement
-    const currentColumnName = computeColumnName(currentFieldMetadata);
-    const alteredColumnName = computeColumnName(alteredFieldMetadata);
-    const defaultValue =
-      alteredFieldMetadata.defaultValue ?? options?.defaultValue;
-    const serializedDefaultValue = serializeDefaultValue(defaultValue);
-
-    if (!currentColumnName || !alteredColumnName) {
-      this.logger.error(
-        `Column name not found for current or altered field metadata, can be due to a missing or an invalid target column map. Current column name: ${currentColumnName}, Altered column name: ${alteredColumnName}.`,
-      );
-      throw new WorkspaceMigrationException(
-        `Column name not found for current or altered field metadata`,
-        WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
-      );
-    }
-
-    return [
-      {
-        action: WorkspaceMigrationColumnActionType.ALTER,
-        currentColumnDefinition: {
-          columnName: currentColumnName,
-          columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
-          isNullable: currentFieldMetadata.isNullable ?? true,
-          defaultValue: serializeDefaultValue(
-            currentFieldMetadata.defaultValue,
-          ),
-          generatedType: currentFieldMetadata.generatedType,
-          asExpression: currentFieldMetadata.asExpression,
-        },
-        alteredColumnDefinition: {
-          columnName: alteredColumnName,
-          columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
-          isNullable: alteredFieldMetadata.isNullable ?? true,
-          defaultValue: serializedDefaultValue,
-          generatedType: alteredFieldMetadata.generatedType,
-          asExpression: alteredFieldMetadata.asExpression,
-        },
-      },
-    ];
+    this.logger.error(
+      `TsVectorColumnActionFactory.handleAlterAction has not been implemented yet.`,
+    );
+    throw new WorkspaceMigrationException(
+      `TsVectorColumnActionFactory.handleAlterAction has not been implemented yet.`,
+      WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
+    );
   }
 }

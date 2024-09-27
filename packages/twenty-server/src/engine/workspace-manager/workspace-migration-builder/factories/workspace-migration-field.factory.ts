@@ -92,9 +92,7 @@ export class WorkspaceMigrationFieldFactory {
         continue;
       }
 
-      let migrations: WorkspaceMigrationTableAction[] = [];
-
-      migrations = [
+      const migrations = [
         {
           name: computeObjectTargetTable(
             originalObjectMetadataMap[fieldMetadata.objectMetadataId],

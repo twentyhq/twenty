@@ -40,6 +40,8 @@ export function WorkspaceIndex(
       }
     }
 
+    const indexType = columnsOrIndexType as IndexType;
+
     metadataArgsStorage.addIndexes({
       name: `IDX_${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.constructor.name),
@@ -47,7 +49,7 @@ export function WorkspaceIndex(
       ])}`,
       columns: [propertyKey.toString()],
       target: target.constructor,
-      type: columnsOrIndexType as IndexType,
+      type: indexType,
       gate,
     });
   };
