@@ -180,7 +180,7 @@ export const RecordIndexContainer = () => {
           set(recordIndexGroupDefinitionsState, newGroupDefinitions);
         }
       },
-    [objectMetadataItem, setColumns],
+    [navigateToSelectSettings, objectMetadataItem, setColumns],
   );
 
   return (
