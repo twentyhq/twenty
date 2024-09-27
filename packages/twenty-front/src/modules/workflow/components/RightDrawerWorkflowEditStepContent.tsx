@@ -105,5 +105,5 @@ export const RightDrawerWorkflowEditStepContent = ({
     }
   }
 
-  return <p>Not defined yet</p>;
+  throw new Error(`Unsupported step: ${JSON.stringify(stepDefinition)}`);
 };
