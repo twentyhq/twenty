@@ -116,11 +116,7 @@ export const SettingsDataModelFieldTypeSelect = ({
     (keyboardEvent) => {
       keyboardEvent.preventDefault();
       const flattenedConfigs = getFlattenedConfigs();
-      setFocusedIndex((prevIndex) =>
-        prevIndex === null || prevIndex === flattenedConfigs.length - 1
-          ? 0
-          : prevIndex + 1,
-      );
+      setFocusedIndex((prevIndex) => (prevIndex + 1) % flattenedConfigs.length);
     },
     SettingsDataModelHotkeyScope.SettingsDataModelFieldTypeSelect,
     [fieldTypeConfigs],
@@ -131,10 +127,9 @@ export const SettingsDataModelFieldTypeSelect = ({
     (keyboardEvent) => {
       keyboardEvent.preventDefault();
       const flattenedConfigs = getFlattenedConfigs();
-      setFocusedIndex((prevIndex) =>
-        prevIndex === null || prevIndex === 0
-          ? flattenedConfigs.length - 1
-          : prevIndex - 1,
+      setFocusedIndex(
+        (prevIndex) =>
+          (prevIndex - 1 + flattenedConfigs.length) % flattenedConfigs.length,
       );
     },
     SettingsDataModelHotkeyScope.SettingsDataModelFieldTypeSelect,
@@ -198,9 +193,7 @@ export const SettingsDataModelFieldTypeSelect = ({
               LeftIcon={IconSearch}
               placeholder="Search a type"
               value={searchQuery}
-              onChange={(text: string) => {
-                setSearchQuery(text);
-              }}
+              onChange={setSearchQuery}
             />
           </Section>
           {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
