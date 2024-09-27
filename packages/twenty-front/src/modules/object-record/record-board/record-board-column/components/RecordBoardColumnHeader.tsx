@@ -164,27 +164,24 @@ export const RecordBoardColumnHeader = () => {
       )}
       {newRecord?.isCreating &&
         newRecord.position === 'first' &&
-        !newRecord.isOpportunity && (
-          <RecordBoardCard
-            isCreating={true}
-            onCreateSuccess={() => handleCreateSuccess('first')}
-            position="first"
-          />
-        )}
-      {newRecord.isCreating &&
-        newRecord.position === 'first' &&
-        newRecord.isOpportunity && (
+        (newRecord.isOpportunity ? (
           <SingleEntitySelect
             disableBackgroundBlur
             onCancel={() => handleCreateSuccess('first', columnDefinition.id)}
             onEntitySelected={(company) =>
-              company ? handleEntitySelect('first', company) : null
+              company && handleEntitySelect('first', company)
             }
             relationObjectNameSingular={CoreObjectNameSingular.Company}
             relationPickerScopeId="relation-picker"
             selectedRelationRecordIds={[]}
           />
-        )}
+        ) : (
+          <RecordBoardCard
+            isCreating={true}
+            onCreateSuccess={() => handleCreateSuccess('first')}
+            position="first"
+          />
+        ))}
     </>
   );
 };
