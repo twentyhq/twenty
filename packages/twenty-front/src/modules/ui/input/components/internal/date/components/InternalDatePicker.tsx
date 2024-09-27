@@ -444,6 +444,15 @@ export const InternalDatePicker = ({
     zone: isDateTimeInput ? timeZone : 'local',
   });
 
+  console.log(
+    'date',
+    date,
+    'internalDate',
+    internalDate,
+    'dateParsed',
+    dateParsed,
+  );
+
   // We have to force a end of day on the computer local timezone with the given date
   // Because JS Date API cannot hold a timezone other than the local one
   // And if we don't do that workaround we will have problems when changing the date

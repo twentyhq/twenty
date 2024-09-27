@@ -8,7 +8,6 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
@@ -62,7 +61,6 @@ export const useHandleToggleTrashColumnFilter = ({
         type: filterType,
       },
       value: '',
-      valueType: ViewFilterValueType.STATIC,
     };
 
     upsertCombinedViewFilter(newFilter);

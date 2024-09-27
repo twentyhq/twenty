@@ -360,7 +360,6 @@ export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-c9aa-4c94-8d0e-9592f5008fb0',
   operand: '20202020-bd23-48c4-9fab-29d1ffb80310',
   value: '20202020-1e55-4a1e-a1d2-fefb86a5fce5',
-  valueType: '20202020-518f-4840-a5b9-c5d74689839e',
   displayValue: '20202020-1270-4ebf-9018-c0ec10d5038e',
   view: '20202020-4f5b-487e-829c-3d881c163611',
 };

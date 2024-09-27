@@ -1,4 +1,3 @@
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { ViewFilterOperand } from './ViewFilterOperand';
 
 export type ViewFilter = {
@@ -12,5 +11,4 @@ export type ViewFilter = {
   createdAt?: string;
   updatedAt?: string;
   viewId?: string;
-  valueType: ViewFilterValueType;
 };

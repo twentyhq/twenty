@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 
 export const ObjectFilterDropdownNumberInput = () => {
   const {
@@ -54,7 +53,6 @@ export const ObjectFilterDropdownNumberInput = () => {
             id: selectedFilter?.id ? selectedFilter.id : v4(),
             fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
             value: newValue,
-            valueType: ViewFilterValueType.STATIC,
             operand: selectedOperandInDropdown,
             displayValue: newValue,
             definition: filterDefinitionUsedInDropdown,

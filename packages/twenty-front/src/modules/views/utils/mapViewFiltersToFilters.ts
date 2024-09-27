@@ -21,7 +21,6 @@ export const mapViewFiltersToFilters = (
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: viewFilter.value,
-        valueType: viewFilter.valueType,
         displayValue: viewFilter.displayValue,
         operand: viewFilter.operand,
         definition: availableFilterDefinition,

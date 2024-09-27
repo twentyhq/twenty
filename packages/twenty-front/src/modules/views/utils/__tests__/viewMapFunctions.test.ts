@@ -5,7 +5,6 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { ViewSort } from '@/views/types/ViewSort';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -50,7 +49,6 @@ describe('mapViewFiltersToFilters', () => {
         id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
-        valueType: ViewFilterValueType.STATIC,
         displayValue: 'Test Display Value',
         operand: ViewFilterOperand.Is,
       },
@@ -60,7 +58,6 @@ describe('mapViewFiltersToFilters', () => {
         id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
-        valueType: ViewFilterValueType.STATIC,
         displayValue: 'Test Display Value',
         operand: ViewFilterOperand.Is,
         definition: {

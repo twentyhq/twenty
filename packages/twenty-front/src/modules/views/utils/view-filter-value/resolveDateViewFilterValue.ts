@@ -1,5 +1,5 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import {
   addDays,
   addMonths,
@@ -166,25 +166,25 @@ const resolveVariableDateViewFilterValue = (value?: string | null) => {
   return resolveVariableDateViewFilterValueFromRelativeDate(relativeDate);
 };
 
-export type ResolvedDateViewFilterValue<T extends ViewFilterValueType> =
-  T extends ViewFilterValueType.VARIABLE
+export type ResolvedDateViewFilterValue<O extends ViewFilterOperand> =
+  O extends ViewFilterOperand.IsRelative
     ? ReturnType<typeof resolveVariableDateViewFilterValue>
     : Date | null;
 
-type PartialViewFilter<T extends ViewFilterValueType> = Pick<
+type PartialViewFilter<O extends ViewFilterOperand> = Pick<
   ViewFilter,
-  'value' | 'valueType'
-> & { valueType: T };
+  'value'
+> & { operand: O };
 
-export const resolveDateViewFilterValue = <T extends ViewFilterValueType>(
-  viewFilter: PartialViewFilter<T>,
-): ResolvedDateViewFilterValue<T> => {
+export const resolveDateViewFilterValue = <O extends ViewFilterOperand>(
+  viewFilter: PartialViewFilter<O>,
+): ResolvedDateViewFilterValue<O> => {
   if (!viewFilter.value) return null;
 
-  if (viewFilter.valueType === ViewFilterValueType.VARIABLE) {
+  if (viewFilter.operand === ViewFilterOperand.IsRelative) {
     return resolveVariableDateViewFilterValue(
       viewFilter.value,
-    ) as ResolvedDateViewFilterValue<T>;
+    ) as ResolvedDateViewFilterValue<O>;
   }
-  return new Date(viewFilter.value) as ResolvedDateViewFilterValue<T>;
+  return new Date(viewFilter.value) as ResolvedDateViewFilterValue<O>;
 };

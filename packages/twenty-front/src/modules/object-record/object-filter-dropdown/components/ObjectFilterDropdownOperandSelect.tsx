@@ -7,8 +7,6 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
 
-import { getViewFilterValueType } from '@/object-record/object-filter-dropdown/utils/getViewFilterValueType';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -55,7 +53,6 @@ export const ObjectFilterDropdownOperandSelect = () => {
         displayValue: '',
         operand: newOperand,
         value: '',
-        valueType: ViewFilterValueType.STATIC,
         definition: filterDefinitionUsedInDropdown,
       });
       return;
@@ -65,12 +62,12 @@ export const ObjectFilterDropdownOperandSelect = () => {
       isDefined(filterDefinitionUsedInDropdown) &&
       isDefined(selectedFilter)
     ) {
-      const valueType = getViewFilterValueType(
-        filterDefinitionUsedInDropdown,
-        newOperand,
-      );
-      const valueTypeChanged = valueType !== selectedFilter.valueType;
-      const value = valueTypeChanged ? '' : selectedFilter.value;
+      const clearValueOperands = [ViewFilterOperand.IsRelative];
+      const shouldClearValue =
+        clearValueOperands.includes(selectedFilter.operand) ||
+        clearValueOperands.includes(newOperand);
+
+      const value = shouldClearValue ? '' : selectedFilter.value;
 
       selectFilter?.({
         id: selectedFilter.id ? selectedFilter.id : v4(),
@@ -78,7 +75,6 @@ export const ObjectFilterDropdownOperandSelect = () => {
         displayValue: selectedFilter.displayValue,
         operand: newOperand,
         value,
-        valueType,
         definition: filterDefinitionUsedInDropdown,
       });
     }

@@ -9,7 +9,6 @@ import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForS
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -130,7 +129,6 @@ export const ObjectFilterDropdownRecordSelect = ({
         displayValue: filterDisplayValue,
         fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
         value: newFilterValue,
-        valueType: ViewFilterValueType.STATIC,
       });
     }
   };

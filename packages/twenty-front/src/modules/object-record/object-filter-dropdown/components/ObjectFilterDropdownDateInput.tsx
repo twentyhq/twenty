@@ -6,7 +6,6 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { computeVariableDateViewFilterValue } from '@/views/utils/view-filter-value/computeVariableDateViewFilterValue';
 import {
   VariableDateViewFilterValueDirection,
@@ -41,6 +40,12 @@ export const ObjectFilterDropdownDateInput = () => {
   const initialFilterValue = selectedFilter
     ? resolveFilterValue(selectedFilter)
     : null;
+  console.log(
+    'selectedFilter',
+    selectedFilter,
+    'initialFilterValue',
+    initialFilterValue,
+  );
   const [internalDate, setInternalDate] = useState<Date | null>(
     initialFilterValue instanceof Date ? initialFilterValue : new Date(),
   );
@@ -57,7 +62,6 @@ export const ObjectFilterDropdownDateInput = () => {
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       value: newDate?.toISOString() ?? '',
-      valueType: ViewFilterValueType.STATIC,
       operand: selectedOperandInDropdown,
       displayValue: isDefined(newDate)
         ? isDateTimeInput
@@ -91,7 +95,6 @@ export const ObjectFilterDropdownDateInput = () => {
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       value,
-      valueType: ViewFilterValueType.VARIABLE,
       operand: selectedOperandInDropdown,
       displayValue: getRelativeDateDisplayValue(relativeDate),
       definition: filterDefinitionUsedInDropdown,

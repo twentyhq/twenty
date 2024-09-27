@@ -12,7 +12,6 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { getViewFilterValueType } from '@/object-record/object-filter-dropdown/utils/getViewFilterValueType';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -158,10 +157,6 @@ export const useViewFromQueryParams = () => {
                   fieldMetadataId: fieldMetadataItem.id,
                   operand: filterOperandFromURL as ViewFilterOperand,
                   value: filterValueAsString,
-                  valueType: getViewFilterValueType(
-                    filterDefinition,
-                    filterOperandFromURL as ViewFilterOperand,
-                  ),
                   displayValue:
                     relationRecordNames?.join(', ') ?? filterValueAsString,
                   definition: filterDefinition,

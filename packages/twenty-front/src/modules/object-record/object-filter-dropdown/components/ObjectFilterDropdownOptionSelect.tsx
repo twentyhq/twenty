@@ -16,7 +16,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelect } from '@/ui/navigation/menu-item/components/MenuItemMultiSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { ViewFilterValueType } from '@/views/types/ViewFilterValueType';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -136,7 +135,6 @@ export const ObjectFilterDropdownOptionSelect = () => {
         displayValue: filterDisplayValue,
         fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
         value: newFilterValue,
-        valueType: ViewFilterValueType.STATIC,
       });
     }
     resetSelectedItem();
