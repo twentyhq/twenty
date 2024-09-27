@@ -7,6 +7,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
 
+import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -62,17 +63,17 @@ export const ObjectFilterDropdownOperandSelect = () => {
       isDefined(filterDefinitionUsedInDropdown) &&
       isDefined(selectedFilter)
     ) {
-      const clearValueOperands = [ViewFilterOperand.IsRelative];
-      const shouldClearValue =
-        clearValueOperands.includes(selectedFilter.operand) ||
-        clearValueOperands.includes(newOperand);
-
-      const value = shouldClearValue ? '' : selectedFilter.value;
+      const { value, displayValue } = getInitialFilterValue(
+        filterDefinitionUsedInDropdown.type,
+        newOperand,
+        selectedFilter.value,
+        selectedFilter.displayValue,
+      );
 
       selectFilter?.({
         id: selectedFilter.id ? selectedFilter.id : v4(),
         fieldMetadataId: selectedFilter.fieldMetadataId,
-        displayValue: selectedFilter.displayValue,
+        displayValue,
         operand: newOperand,
         value,
         definition: filterDefinitionUsedInDropdown,
