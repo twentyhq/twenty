@@ -37,13 +37,13 @@ export const WorkflowEffect = ({
           workflowDiagramState,
         );
 
-        const lastWorkflowDiagram = getWorkflowVersionDiagram(currentVersion);
+        const nextWorkflowDiagram = getWorkflowVersionDiagram(currentVersion);
 
-        let mergedWorkflowDiagram = lastWorkflowDiagram;
+        let mergedWorkflowDiagram = nextWorkflowDiagram;
         if (isDefined(previousWorkflowDiagram)) {
           mergedWorkflowDiagram = mergeWorkflowDiagrams(
             previousWorkflowDiagram,
-            mergedWorkflowDiagram,
+            nextWorkflowDiagram,
           );
         }
 

@@ -1,4 +1,9 @@
-import { WorkflowDiagram } from '@/workflow/types/WorkflowDiagram';
+import {
+  WorkflowDiagram,
+  WorkflowDiagramNode,
+} from '@/workflow/types/WorkflowDiagram';
+
+const nodePropertiesToPreserve: Array<keyof WorkflowDiagramNode> = ['selected'];
 
 export const mergeWorkflowDiagrams = (
   previousDiagram: WorkflowDiagram,
@@ -9,24 +14,20 @@ export const mergeWorkflowDiagrams = (
       (previousNode) => previousNode.id === nextNode.id,
     );
 
-    return {
-      ...previousNode,
-      ...nextNode,
-    };
-  });
-  const lastEdges = nextDiagram.edges.map((nextEdge) => {
-    const previousEdge = previousDiagram.edges.find(
-      (previousEdge) => previousEdge.id === nextEdge.id,
+    const nodeWithPreservedProperties = nodePropertiesToPreserve.reduce(
+      (nodeToSet, propertyToPreserve) => {
+        return Object.assign(nodeToSet, {
+          [propertyToPreserve]: previousNode?.[propertyToPreserve],
+        });
+      },
+      {} as Partial<WorkflowDiagramNode>,
     );
 
-    return {
-      ...previousEdge,
-      ...nextEdge,
-    };
+    return Object.assign(nodeWithPreservedProperties, nextNode);
   });
 
   return {
     nodes: lastNodes,
-    edges: lastEdges,
+    edges: nextDiagram.edges,
   };
 };
