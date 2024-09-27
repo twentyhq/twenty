@@ -168,10 +168,14 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           name: 'phones',
         } satisfies CreateFieldInput);
 
-        // StandardId is not exposed in CreateFieldInput
+        // StandardId and isCustom are not exposed in CreateFieldInput
         await this.metadataDataSource.query(
-          `UPDATE "metadata"."fieldMetadata" SET "standardId" = $1 where "id"=$2`,
-          [PERSON_STANDARD_FIELD_IDS.phones, standardPersonPhoneField.id],
+          `UPDATE "metadata"."fieldMetadata" SET "standardId" = $1, "isCustom" = $2 where "id"=$3`,
+          [
+            PERSON_STANDARD_FIELD_IDS.phones,
+            'false',
+            standardPersonPhoneField.id,
+          ],
         );
 
         await this.viewService.removeFieldFromViews({
