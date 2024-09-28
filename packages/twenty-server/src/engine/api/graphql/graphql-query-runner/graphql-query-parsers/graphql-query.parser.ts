@@ -62,9 +62,9 @@ export class GraphqlQueryParser {
     return queryBuilder;
   }
 
-  private checkForDeletedAtFilter(
+  private checkForDeletedAtFilter = (
     filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
-  ): boolean {
+  ): boolean => {
     if (Array.isArray(filter)) {
       return filter.some((subFilter) =>
         this.checkForDeletedAtFilter(subFilter),
@@ -86,7 +86,7 @@ export class GraphqlQueryParser {
     }
 
     return false;
-  }
+  };
 
   applyOrderToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
