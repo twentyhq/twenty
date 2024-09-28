@@ -49,6 +49,13 @@ export class EntityEventsToDbListener {
     return this.handle(payload);
   }
 
+  @OnEvent('*.destroyed')
+  async handleDestroy(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+  ) {
+    return this.handle(payload);
+  }
+
   private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
     const filteredEvents = payload.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
