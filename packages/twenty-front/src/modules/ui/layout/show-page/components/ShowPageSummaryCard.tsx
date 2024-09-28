@@ -70,6 +70,7 @@ const StyledTitle = styled.div<{ isMobile: boolean }>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   width: ${({ isMobile }) => (isMobile ? '' : '100%')};
+  max-width: 90%;
 `;
 
 const StyledAvatarWrapper = styled.div`
