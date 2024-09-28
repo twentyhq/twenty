@@ -2,7 +2,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
+import {
+  AppTooltip,
+  Avatar,
+  AvatarType,
+  IconComponent,
+  MOBILE_VIEWPORT,
+} from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
@@ -46,6 +52,9 @@ const StyledInfoContainer = styled.div<{ isMobile: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    overflow-x: hidden;
+  }
 `;
 
 const StyledDate = styled.div<{ isMobile: boolean }>`
