@@ -8,7 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  phoneFieldDefinition,
+  phonesFieldDefinition,
   relationFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import {
@@ -33,7 +33,16 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query,
-      variables: { idToUpdate: 'recordId', input: { phone: '+1 123 456' } },
+      variables: {
+        idToUpdate: 'recordId',
+        input: {
+          phones: {
+            primaryPhoneNumber: '123 456',
+            primaryPhoneCountryCode: '+1',
+            additionalPhones: [],
+          },
+        },
+      },
     },
     result: jest.fn(() => ({
       data: {
@@ -98,7 +107,7 @@ const getWrapper =
     );
   };
 
-const PhoneWrapper = getWrapper(phoneFieldDefinition);
+const PhoneWrapper = getWrapper(phonesFieldDefinition);
 const RelationWrapper = getWrapper(relationFieldDefinition);
 
 describe('usePersistField', () => {
@@ -118,7 +127,11 @@ describe('usePersistField', () => {
     );
 
     act(() => {
-      result.current.persistField('+1 123 456');
+      result.current.persistField({
+        primaryPhoneNumber: '123 456',
+        primaryPhoneCountryCode: '+1',
+        additionalPhones: [],
+      });
     });
 
     await waitFor(() => {

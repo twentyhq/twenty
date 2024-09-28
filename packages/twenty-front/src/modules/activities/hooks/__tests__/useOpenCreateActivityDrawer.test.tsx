@@ -6,10 +6,10 @@ import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import gql from 'graphql-tag';
 import pick from 'lodash.pick';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const mockedDate = '2024-03-15T12:00:00.000Z';
@@ -69,7 +69,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </RecoilRoot>
 );
 
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
+const mockObjectMetadataItems = generatedMockObjectMetadataItems;
 
 describe('useOpenCreateActivityDrawer', () => {
   it('works as expected', async () => {

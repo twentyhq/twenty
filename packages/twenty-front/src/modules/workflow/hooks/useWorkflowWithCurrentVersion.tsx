@@ -19,6 +19,9 @@ export const useWorkflowWithCurrentVersion = (
       id: true,
       name: true,
       statuses: true,
+      versions: {
+        totalCount: true,
+      },
     },
     skip: !isDefined(workflowId),
   });

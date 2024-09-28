@@ -55,23 +55,11 @@ export const RightDrawerEmailThread = () => {
     messageChannelLoading,
   } = useRightDrawerEmailThread();
 
-  const visibleMessages = useMemo(() => {
-    return messages.filter(({ messageParticipants }) => {
-      const from = messageParticipants.find(
-        (participant) => participant.role === 'from',
-      );
-      const receivers = messageParticipants.filter(
-        (participant) => participant.role !== 'from',
-      );
-      return from && receivers.length > 0;
-    });
-  }, [messages]);
-
   useEffect(() => {
-    if (!visibleMessages[0]?.messageThread) {
+    if (!messages[0]?.messageThread) {
       return;
     }
-    setMessageThread(visibleMessages[0]?.messageThread);
+    setMessageThread(messages[0]?.messageThread);
   });
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
@@ -93,17 +81,17 @@ export const RightDrawerEmailThread = () => {
     ),
   });
 
-  const visibleMessagesCount = visibleMessages.length;
-  const is5OrMoreMessages = visibleMessagesCount >= 5;
-  const firstMessages = visibleMessages.slice(
+  const messagesCount = messages.length;
+  const is5OrMoreMessages = messagesCount >= 5;
+  const firstMessages = messages.slice(
     0,
-    is5OrMoreMessages ? 2 : visibleMessagesCount - 1,
+    is5OrMoreMessages ? 2 : messagesCount - 1,
   );
   const intermediaryMessages = is5OrMoreMessages
-    ? visibleMessages.slice(2, visibleMessagesCount - 1)
+    ? messages.slice(2, messagesCount - 1)
     : [];
-  const lastMessage = visibleMessages[visibleMessagesCount - 1];
-  const subject = visibleMessages[0]?.subject;
+  const lastMessage = messages[messagesCount - 1];
+  const subject = messages[0]?.subject;
 
   const canReply = useMemo(() => {
     return (
@@ -119,7 +107,7 @@ export const RightDrawerEmailThread = () => {
     const url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
     window.open(url, '_blank');
   };
-  if (!thread) {
+  if (!thread || !messages.length) {
     return null;
   }
   return (
@@ -136,6 +124,7 @@ export const RightDrawerEmailThread = () => {
             {firstMessages.map((message) => (
               <EmailThreadMessage
                 key={message.id}
+                sender={message.sender}
                 participants={message.messageParticipants}
                 body={message.text}
                 sentAt={message.receivedAt}
@@ -144,6 +133,7 @@ export const RightDrawerEmailThread = () => {
             <IntermediaryMessages messages={intermediaryMessages} />
             <EmailThreadMessage
               key={lastMessage.id}
+              sender={lastMessage.sender}
               participants={lastMessage.messageParticipants}
               body={lastMessage.text}
               sentAt={lastMessage.receivedAt}
