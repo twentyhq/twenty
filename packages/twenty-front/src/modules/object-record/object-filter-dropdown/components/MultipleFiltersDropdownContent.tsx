@@ -1,3 +1,4 @@
+import { ObjectFilterDropdownAdvancedInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownAdvancedInput';
 import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -73,6 +74,8 @@ export const MultipleFiltersDropdownContent = ({
     <StyledContainer>
       {!filterDefinitionUsedInDropdown ? (
         <ObjectFilterDropdownFilterSelect />
+      ) : filterDefinitionUsedInDropdown.type === 'ADVANCED' ? (
+        <ObjectFilterDropdownAdvancedInput />
       ) : (
         <>
           <ObjectFilterDropdownOperandButton />

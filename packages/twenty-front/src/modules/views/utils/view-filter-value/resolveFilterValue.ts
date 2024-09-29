@@ -1,6 +1,7 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { resolveAdvancedViewFilterValue } from '@/views/utils/view-filter-value/resolveAdvancedViewFilterValue';
 import { resolveNumberViewFilterValue } from '@/views/utils/view-filter-value/resolveNumberViewFilterValue';
 import {
   resolveDateViewFilterValue,
@@ -14,7 +15,9 @@ type ResolvedFilterValue<
   ? ResolvedDateViewFilterValue<O>
   : T extends 'NUMBER'
     ? ReturnType<typeof resolveNumberViewFilterValue>
-    : string;
+    : T extends 'ADVANCED'
+      ? ReturnType<typeof resolveAdvancedViewFilterValue>
+      : string;
 
 type PartialFilter<T extends FilterType, O extends ViewFilterOperand> = Pick<
   Filter,
@@ -36,6 +39,11 @@ export const resolveFilterValue = <
       return resolveDateViewFilterValue(filter) as ResolvedFilterValue<T, O>;
     case 'NUMBER':
       return resolveNumberViewFilterValue(filter) as ResolvedFilterValue<T, O>;
+    case 'ADVANCED':
+      return resolveAdvancedViewFilterValue(filter) as ResolvedFilterValue<
+        T,
+        O
+      >;
     default:
       return filter.value as ResolvedFilterValue<T, O>;
   }

@@ -29,6 +29,7 @@ import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilte
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
+import { advancedFilterToQueryFilter } from './advancedFilterToQueryFilter';
 
 export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
   definition: {
@@ -1018,6 +1019,17 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
             );
         }
+        break;
+      }
+      case 'ADVANCED': {
+        const value = resolveFilterValue(rawUIFilter);
+        if (!value) {
+          console.log('Advanced filter value is null');
+          break;
+        }
+        // TODO: Why is value an ImmutableTree?
+        const recordGqlOperationFilter = advancedFilterToQueryFilter(value);
+
         break;
       }
       default:
