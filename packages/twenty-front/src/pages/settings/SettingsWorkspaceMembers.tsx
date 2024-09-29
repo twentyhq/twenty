@@ -63,12 +63,16 @@ const StyledTableRow = styled(TableRow)`
 
 const StyledTableCell = styled(TableCell)`
   padding: ${({ theme }) => theme.spacing(1)};
-
-  &:first-child {
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: scroll;
-    text-overflow: ellipsis;
+  text-align: left;
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    &:first-child {
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: scroll;
+      text-overflow: ellipsis;
+      scroll-behavior: smooth;
+      scroll-snap-align: start;
+    }
   }
 `;
 
@@ -201,7 +205,7 @@ export const SettingsWorkspaceMembers = () => {
                       }
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell align={'left'}>
                     <StyledText
                       text={workspaceMember.userEmail}
                       color={theme.font.color.secondary}
