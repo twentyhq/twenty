@@ -23,6 +23,7 @@ type ShowPageSummaryCardProps = {
   title: ReactNode;
   loading: boolean;
   isMobile?: boolean;
+  isAvatarEditable?: boolean;
 };
 
 export const StyledShowPageSummaryCard = styled.div<{
@@ -63,8 +64,9 @@ const StyledTitle = styled.div<{ isMobile: boolean }>`
   width: ${({ isMobile }) => (isMobile ? '' : '100%')};
 `;
 
-const StyledAvatarWrapper = styled.div`
-  cursor: pointer;
+const StyledAvatarWrapper = styled.div<{ isAvatarEditable: boolean }>`
+  cursor: ${({ isAvatarEditable }) =>
+    isAvatarEditable ? 'pointer' : 'default'};
 `;
 
 const StyledFileInput = styled.input`
@@ -107,6 +109,7 @@ export const ShowPageSummaryCard = ({
   title,
   loading,
   isMobile = false,
+  isAvatarEditable = false,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -130,7 +133,7 @@ export const ShowPageSummaryCard = ({
 
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
-      <StyledAvatarWrapper>
+      <StyledAvatarWrapper isAvatarEditable={isAvatarEditable}>
         <Avatar
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
