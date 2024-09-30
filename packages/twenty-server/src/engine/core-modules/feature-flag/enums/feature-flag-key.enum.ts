@@ -11,4 +11,5 @@ export enum FeatureFlagKey {
   IsQueryRunnerTwentyORMEnabled = 'IS_QUERY_RUNNER_TWENTY_ORM_ENABLED',
   IsWorkspaceFavoriteEnabled = 'IS_WORKSPACE_FAVORITE_ENABLED',
   IsSearchEnabled = 'IS_SEARCH_ENABLED',
+  IsWorkspaceMigratedForSearch = 'IS_WORKSPACE_MIGRATED_FOR_SEARCH',
 }
