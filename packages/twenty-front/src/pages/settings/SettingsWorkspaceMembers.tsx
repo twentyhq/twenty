@@ -82,6 +82,8 @@ const StyledIconWrapper = styled.div`
 const StyledScrollableTextContainer = styled.div`
   display: inline-block;
   max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
 `;
 
 const StyledTableHeaderRow = styled(Table)`
@@ -186,7 +188,7 @@ export const SettingsWorkspaceMembers = () => {
           />
           <Table>
             <StyledTableHeaderRow>
-              <TableRow>
+              <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
                 <TableHeader>Name</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader align={'right'}></TableHeader>
@@ -213,7 +215,7 @@ export const SettingsWorkspaceMembers = () => {
                       }
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell align={'center'}>
                     <StyledText
                       text={workspaceMember.userEmail}
                       color={theme.font.color.secondary}
