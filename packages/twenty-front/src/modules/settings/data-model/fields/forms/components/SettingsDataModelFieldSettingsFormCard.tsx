@@ -11,6 +11,8 @@ import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
+import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
+import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
@@ -52,6 +54,10 @@ const multiSelectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.MultiSelect) })
   .merge(settingsDataModelFieldMultiSelectFormSchema);
 
+const numberFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Number) })
+  .merge(settingsDataModelFieldNumberFormSchema);
+
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
@@ -63,6 +69,7 @@ const otherFieldsFormSchema = z.object({
         FieldMetadataType.MultiSelect,
         FieldMetadataType.Date,
         FieldMetadataType.DateTime,
+        FieldMetadataType.Number,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
   ),
@@ -78,6 +85,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     relationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
+    numberFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
@@ -157,6 +165,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Relation) {
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Number) {
+    return (
+      <SettingsDataModelFieldNumberSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
