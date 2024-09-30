@@ -107,7 +107,6 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
             <TextInput
-              style={{ flexGrow: 1, width: 0, overflowX: 'auto' }}
               value={attachmentName}
               onChange={handleOnChange}
               onBlur={handleOnBlur}
