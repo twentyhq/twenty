@@ -19,7 +19,6 @@ import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/wo
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowExecutionOutput } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -27,6 +26,14 @@ export enum WorkflowRunStatus {
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
 }
+
+export type WorkflowRunOutput = {
+  steps: {
+    type: string;
+    result: object | undefined;
+    error: object | undefined;
+  }[];
+};
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowRun,
@@ -116,7 +123,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Json object to provide output of the workflow run',
   })
   @WorkspaceIsNullable()
-  output: WorkflowExecutionOutput | null;
+  output: WorkflowRunOutput | null;
 
   // Relations
   @WorkspaceRelation({

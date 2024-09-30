@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  WorkflowExecutorException,
-  WorkflowExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-executor/exceptions/workflow-executor.exception';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import {
   WorkflowActionType,
@@ -12,13 +9,13 @@ import {
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
-export type WorkflowExecutionOutput = {
+export type WorkflowExecutorOutput = {
   steps: {
     type: WorkflowActionType;
     result: object | undefined;
     error: object | undefined;
   }[];
-  error?: object;
+  status?: WorkflowRunStatus;
 };
 
 @Injectable()
@@ -34,12 +31,12 @@ export class WorkflowExecutorWorkspaceService {
   }: {
     currentStepIndex: number;
     steps: WorkflowStep[];
-    output: WorkflowExecutionOutput;
+    output: WorkflowExecutorOutput;
     payload?: object;
     attemptCount?: number;
-  }): Promise<WorkflowExecutionOutput> {
+  }): Promise<WorkflowExecutorOutput> {
     if (currentStepIndex >= steps.length) {
-      return output;
+      return { ...output, status: WorkflowRunStatus.COMPLETED };
     }
 
     const step = steps[currentStepIndex];
@@ -72,10 +69,20 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     if (!result.error) {
-      throw new WorkflowExecutorException(
-        'Execution result error, no data or error',
-        WorkflowExecutorExceptionCode.WORKFLOW_FAILED,
-      );
+      return {
+        ...output,
+        steps: [
+          ...output.steps,
+          {
+            type: step.type,
+            result: undefined,
+            error: {
+              errorMessage: 'Execution result error, no data or error',
+            },
+          },
+        ],
+        status: WorkflowRunStatus.FAILED,
+      };
     }
 
     if (step.settings.errorHandlingOptions.continueOnFailure.value) {
@@ -100,9 +107,6 @@ export class WorkflowExecutorWorkspaceService {
       });
     }
 
-    throw new WorkflowExecutorException(
-      `Workflow failed: ${result.error}`,
-      WorkflowExecutorExceptionCode.WORKFLOW_FAILED,
-    );
+    return { ...updatedOutput, status: WorkflowRunStatus.FAILED };
   }
 }

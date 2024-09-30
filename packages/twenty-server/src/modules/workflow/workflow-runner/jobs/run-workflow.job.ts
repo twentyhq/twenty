@@ -36,8 +36,8 @@ export class RunWorkflowJob {
         workflowVersionId,
       );
 
-    try {
-      const output = await this.workflowExecutorWorkspaceService.execute({
+    const { steps, status } =
+      await this.workflowExecutorWorkspaceService.execute({
         currentStepIndex: 0,
         steps: workflowVersion.steps || [],
         payload,
@@ -46,22 +46,12 @@ export class RunWorkflowJob {
         },
       });
 
-      await this.workflowRunWorkspaceService.endWorkflowRun(
-        workflowRunId,
-        WorkflowRunStatus.COMPLETED,
-        output,
-      );
-    } catch (error) {
-      await this.workflowRunWorkspaceService.endWorkflowRun(
-        workflowRunId,
-        WorkflowRunStatus.FAILED,
-        {
-          steps: [],
-          error,
-        },
-      );
-
-      throw error;
-    }
+    await this.workflowRunWorkspaceService.endWorkflowRun(
+      workflowRunId,
+      status || WorkflowRunStatus.FAILED,
+      {
+        steps,
+      },
+    );
   }
 }

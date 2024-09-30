@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
+  WorkflowRunOutput,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowExecutionOutput } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -74,7 +74,7 @@ export class WorkflowRunWorkspaceService {
   async endWorkflowRun(
     workflowRunId: string,
     status: WorkflowRunStatus,
-    output: WorkflowExecutionOutput,
+    output: WorkflowRunOutput,
   ) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
