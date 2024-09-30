@@ -33,13 +33,14 @@ const StyledTextArea = styled(TextareaAutosize)`
   resize: none;
   max-height: 400px;
   width: calc(100% - ${({ theme }) => theme.spacing(7)});
+  padding: 0px;
 `;
 
 const StyledTextAreaContainer = styled.div`
-  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   position: relative;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   background: ${({ theme }) => theme.background.primary};
 `;
