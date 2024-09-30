@@ -23,7 +23,6 @@ type ShowPageSummaryCardProps = {
   title: ReactNode;
   loading: boolean;
   isMobile?: boolean;
-  isAvatarEditable?: boolean;
 };
 
 export const StyledShowPageSummaryCard = styled.div<{
@@ -109,7 +108,6 @@ export const ShowPageSummaryCard = ({
   title,
   loading,
   isMobile = false,
-  isAvatarEditable = false,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -133,7 +131,7 @@ export const ShowPageSummaryCard = ({
 
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
-      <StyledAvatarWrapper isAvatarEditable={isAvatarEditable}>
+      <StyledAvatarWrapper isAvatarEditable={!!onUploadPicture}>
         <Avatar
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}

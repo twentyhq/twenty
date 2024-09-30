@@ -201,7 +201,6 @@ export const RecordShowContainer = ({
         </FieldContext.Provider>
       }
       avatarType={recordIdentifier?.avatarType ?? 'rounded'}
-      isAvatarEditable={objectNameSingular === 'person'}
       onUploadPicture={
         objectNameSingular === 'person' ? onUploadPicture : undefined
       }
