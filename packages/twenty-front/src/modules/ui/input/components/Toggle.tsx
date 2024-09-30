@@ -16,7 +16,7 @@ type ContainerProps = {
 const StyledContainer = styled.div<ContainerProps>`
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
-    isOn ? (color ?? theme.color.blue) : theme.background.invertedSecondary};
+    isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -30,7 +30,7 @@ const StyledContainer = styled.div<ContainerProps>`
 const StyledCircle = styled(motion.div)<{
   size: ToggleSize;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${({ theme }) => theme.background.secondary};
   border-radius: 50%;
   height: ${({ size }) => (size === 'small' ? 12 : 16)}px;
   width: ${({ size }) => (size === 'small' ? 12 : 16)}px;
