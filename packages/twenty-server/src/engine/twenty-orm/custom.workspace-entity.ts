@@ -9,7 +9,11 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/metadata.constants';
+import {
+  SEARCH_VECTOR_FIELD_DESCRIPTION,
+  SEARCH_VECTOR_FIELD_LABEL,
+  SEARCH_VECTOR_FIELD_NAME,
+} from 'src/engine/metadata-modules/utils/metadata.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceCustomEntity } from 'src/engine/twenty-orm/decorators/workspace-custom-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -145,9 +149,8 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
-    label: 'Search vector',
-    description: 'Search vector',
-    icon: 'IconUser',
+    label: SEARCH_VECTOR_FIELD_LABEL,
+    description: SEARCH_VECTOR_FIELD_DESCRIPTION,
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields([
       {

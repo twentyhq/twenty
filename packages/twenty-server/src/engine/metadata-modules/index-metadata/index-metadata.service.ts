@@ -32,6 +32,7 @@ export class IndexMetadataService {
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
+    isCustom: boolean,
     indexType?: IndexType,
   ) {
     const tableName = computeObjectTargetTable(objectMetadata);
@@ -59,6 +60,7 @@ export class IndexMetadataService {
         workspaceId,
         objectMetadataId: objectMetadata.id,
         ...(isDefined(indexType) ? { type: indexType } : {}),
+        isCustom: isCustom,
       });
     } catch (error) {
       throw new Error(

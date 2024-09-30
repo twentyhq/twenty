@@ -50,7 +50,6 @@ export class WorkspaceSyncIndexMetadataService {
           workspaceId: context.workspaceId,
           // We're only interested in standard objects
           fields: { isCustom: false },
-          isCustom: false,
         },
         relations: ['dataSource', 'fields', 'indexes'],
       });
@@ -62,6 +61,13 @@ export class WorkspaceSyncIndexMetadataService {
       (objectMetadata) => objectMetadata.nameSingular,
     );
 
+    const originalCustomObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
+      originalObjectMetadataCollection.filter(
+        (objectMetadata) => objectMetadata.isCustom,
+      ),
+      (objectMetadata) => objectMetadata.nameSingular,
+    );
+
     const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
 
     let originalIndexMetadataCollection = await indexMetadataRepository.find({
@@ -70,6 +76,7 @@ export class WorkspaceSyncIndexMetadataService {
         objectMetadataId: Any(
           Object.values(originalObjectMetadataMap).map((object) => object.id),
         ),
+        isCustom: false,
       },
       relations: ['indexFieldMetadatas.fieldMetadata'],
     });
@@ -79,6 +86,7 @@ export class WorkspaceSyncIndexMetadataService {
       standardObjectMetadataDefinitions,
       context,
       originalObjectMetadataMap,
+      originalCustomObjectMetadataMap,
       workspaceFeatureFlagsMap,
     );
 

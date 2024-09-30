@@ -53,6 +53,9 @@ export class IndexMetadataEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @Column({ default: false })
+  isCustom: boolean;
+
   @Column({
     type: 'enum',
     enum: IndexType,
