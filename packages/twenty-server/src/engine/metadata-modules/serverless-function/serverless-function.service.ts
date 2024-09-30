@@ -13,7 +13,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
-import { SOURCE_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/source-file-name';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
@@ -71,8 +71,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       });
 
       const fileStream = await this.fileStorageService.read({
-        folderPath,
-        filename: SOURCE_FILE_NAME,
+        folderPath: join(folderPath, 'src'),
+        filename: INDEX_FILE_NAME,
       });
 
       return await readFileContent(fileStream);
@@ -224,7 +224,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
     await this.fileStorageService.write({
       file: serverlessFunctionInput.code,
-      name: SOURCE_FILE_NAME,
+      name: INDEX_FILE_NAME,
       mimeType: undefined,
       folder: fileFolder,
     });

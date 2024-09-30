@@ -29,7 +29,7 @@ export const compileTypescript2 = (folderPath: string) => {
     esModuleInterop: true,
     resolveJsonModule: true,
     allowSyntheticDefaultImports: true,
-    outDir: join(folderPath, 'dist'),
+    outDir: join(folderPath, 'dist', 'src'),
     types: ['node'],
   };
 
