@@ -66,7 +66,8 @@ const StyledInputsContainer = styled.div`
 `;
 
 const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
-  .filter(([value]) => 'ONE_TO_ONE' !== value)
+  .filter(([key]) => key !== RelationDefinitionType.ManyToMany) // Not supported yet
+  .filter(([key]) => key !== RelationDefinitionType.OneToOne)
   .map(([value, { label, Icon }]) => ({
     label,
     value: value as RelationType,
