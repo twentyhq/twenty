@@ -12,6 +12,7 @@ import {
 } from '@/object-record/hooks/__mocks__/useFindManyRecords';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const mocks = [
@@ -30,11 +31,13 @@ const mocks = [
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-      <MockedProvider mocks={mocks} addTypename={false}>
-        {children}
-      </MockedProvider>
-    </SnackBarProviderScope>
+    <JestObjectMetadataItemSetter>
+      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+        <MockedProvider mocks={mocks} addTypename={false}>
+          {children}
+        </MockedProvider>
+      </SnackBarProviderScope>
+    </JestObjectMetadataItemSetter>
   </RecoilRoot>
 );
 
