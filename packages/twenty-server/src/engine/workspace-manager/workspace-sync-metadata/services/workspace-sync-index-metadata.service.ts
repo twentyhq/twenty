@@ -48,7 +48,7 @@ export class WorkspaceSyncIndexMetadataService {
       await objectMetadataRepository.find({
         where: {
           workspaceId: context.workspaceId,
-          // We're only interested in standard fields
+          // We're only interested in standard objects
           fields: { isCustom: false },
           isCustom: false,
         },

@@ -54,12 +54,8 @@ export const ObjectMetadataItemsLoadEffect = () => {
   }, [
     currentUser,
     currentWorkspace?.activationStatus,
-<<<<<<< HEAD
-    loading,
     filteredNewObjectMetadataItems,
-=======
     newObjectMetadataItems,
->>>>>>> 1e4ed1e96fb099dc6985ce12abb962d6c2d26b67
     objectMetadataItems,
     setObjectMetadataItems,
   ]);
