@@ -27,12 +27,14 @@ const StyledRow = styled.div`
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(2)};
   height: 32px;
+  gap: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledLeftContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
+  flex-grow: 1;
 `;
 
 const StyledRightContent = styled.div`
@@ -52,6 +54,9 @@ const StyledLink = styled.a`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   text-decoration: none;
+  width: 0;
+  flex-grow: 1;
+  overflow: auto;
   :hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
@@ -102,6 +107,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
             <TextInput
+              style={{ flexGrow: 1, width: 0, overflowX: 'auto' }}
               value={attachmentName}
               onChange={handleOnChange}
               onBlur={handleOnBlur}
