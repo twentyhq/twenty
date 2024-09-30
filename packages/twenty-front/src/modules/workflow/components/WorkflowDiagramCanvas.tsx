@@ -17,6 +17,7 @@ import {
   applyNodeChanges,
   Background,
   EdgeChange,
+  FitViewOptions,
   NodeChange,
   ReactFlow,
 } from '@xyflow/react';
@@ -31,6 +32,11 @@ const StyledStatusTagContainer = styled.div`
   position: absolute;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
+
+const defaultFitViewOptions: FitViewOptions = {
+  minZoom: 1.3,
+  maxZoom: 1.3,
+};
 
 export const WorkflowDiagramCanvas = ({
   diagram,
@@ -83,6 +89,10 @@ export const WorkflowDiagramCanvas = ({
   return (
     <>
       <ReactFlow
+        key={workflowWithCurrentVersion.currentVersion.id}
+        onInit={({ fitView }) => {
+          fitView(defaultFitViewOptions);
+        }}
         nodeTypes={{
           default: WorkflowDiagramStepNode,
           'create-step': WorkflowDiagramCreateStepNode,
