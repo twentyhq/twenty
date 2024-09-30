@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import fs from 'fs';
-import { join } from 'path';
+import { mkdir } from 'fs/promises';
+import { dirname, join } from 'path';
 
 import {
   CopyObjectCommand,
@@ -24,6 +25,7 @@ import {
 import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 import { isDefined } from 'src/utils/is-defined';
+import { pipeline } from 'stream/promises';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -271,6 +273,18 @@ export class S3Driver implements StorageDriver {
     }
   }
 
+  async writeToFile(readable: Readable, filePath: string): Promise<void> {
+    const writable = fs.createWriteStream(filePath);
+
+    return new Promise<void>((resolve, reject) => {
+      // Pipe the readable stream to the writable stream
+      readable.pipe(writable);
+
+      writable.on('finish', resolve);
+      writable.on('error', reject);
+    });
+  }
+
   async download(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
@@ -281,7 +295,12 @@ export class S3Driver implements StorageDriver {
 
     if (isDefined(params.from.filename)) {
       try {
-        // Check if the source file exists
+        const dir = params.to.folderPath;
+
+        if (!fs.existsSync(dir)) {
+          await mkdir(dir, { recursive: true });
+        }
+
         const fileStream = await this.read({
           folderPath: params.from.folderPath,
           filename: params.from.filename,
@@ -291,10 +310,8 @@ export class S3Driver implements StorageDriver {
           params.to.folderPath,
           params.to.filename || params.from.filename,
         );
-        const writeStream = fs.createWriteStream(toPath);
 
-        fileStream.pipe(writeStream);
-        writeStream.end();
+        await this.writeToFile(fileStream, toPath);
 
         return;
       } catch (error) {

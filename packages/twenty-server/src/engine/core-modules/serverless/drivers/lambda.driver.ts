@@ -46,6 +46,7 @@ import {
 import { isDefined } from 'src/utils/is-defined';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
+import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -239,6 +240,20 @@ export class LambdaDriver
     if (!newVersion) {
       throw new Error('New published version is undefined');
     }
+
+    const draftFolderPath = getServerlessFolder({
+      serverlessFunction: serverlessFunction,
+      version: 'draft',
+    });
+    const newFolderPath = getServerlessFolder({
+      serverlessFunction: serverlessFunction,
+      version: newVersion,
+    });
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftFolderPath },
+      to: { folderPath: newFolderPath },
+    });
 
     return newVersion;
   }

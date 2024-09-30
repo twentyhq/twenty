@@ -81,6 +81,14 @@ export const SettingsServerlessFunctionDetail = () => {
     };
   };
 
+  const onCodeChange = async (filePath: string, value: string) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      code: { ...prevState.code, [filePath]: value },
+    }));
+    await handleSave();
+  };
+
   const resetDisabled =
     !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
   const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
@@ -166,18 +174,17 @@ export const SettingsServerlessFunctionDetail = () => {
     { id: 'settings', title: 'Settings', Icon: IconSettings },
   ];
 
-  const files = [
-    {
-      path: 'src/index.ts',
-      language: 'typescript',
-      content: formValues.code,
-    },
-    {
-      path: '.env',
-      language: 'plaintext',
-      content: 'VAR = value',
-    },
-  ];
+  const files = formValues.code
+    ? Object.keys(formValues.code)
+        .map((key) => {
+          return {
+            path: key,
+            language: key === '.env' ? 'plaintext' : 'typescript',
+            content: formValues.code?.[key] || '',
+          };
+        })
+        .reverse()
+    : [];
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
@@ -190,7 +197,7 @@ export const SettingsServerlessFunctionDetail = () => {
             handleReset={handleReset}
             resetDisabled={resetDisabled}
             publishDisabled={publishDisabled}
-            onChange={onChange}
+            onChange={onCodeChange}
             setIsCodeValid={setIsCodeValid}
           />
         );

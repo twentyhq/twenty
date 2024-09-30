@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { join } from 'path';
+import { basename, dirname, join } from 'path';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
@@ -31,6 +31,7 @@ import { getLastLayerDependencies } from 'src/engine/core-modules/serverless/dri
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
+import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -49,7 +50,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     workspaceId: string,
     id: string,
     version: string,
-  ) {
+  ): Promise<{ [filePath: string]: string } | undefined> {
     const serverlessFunction = await this.serverlessFunctionRepository.findOne({
       where: {
         id,
@@ -70,12 +71,20 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
         version,
       });
 
-      const fileStream = await this.fileStorageService.read({
+      const indexFileStream = await this.fileStorageService.read({
         folderPath: join(folderPath, 'src'),
         filename: INDEX_FILE_NAME,
       });
 
-      return await readFileContent(fileStream);
+      const envFileStream = await this.fileStorageService.read({
+        folderPath: folderPath,
+        filename: ENV_FILE_NAME,
+      });
+
+      return {
+        '.env': await readFileContent(envFileStream),
+        'src/index.ts': await readFileContent(indexFileStream),
+      };
     } catch (error) {
       if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
         return;
@@ -135,8 +144,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
 
       if (
-        serverlessFunctionCreateHash(latestCode || '') ===
-        serverlessFunctionCreateHash(draftCode || '')
+        serverlessFunctionCreateHash(JSON.stringify(latestCode)) ===
+        serverlessFunctionCreateHash(JSON.stringify(draftCode))
       ) {
         throw new Error(
           'Cannot publish a new version when code has not changed',
@@ -147,20 +156,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     const newVersion = await this.serverlessService.publish(
       existingServerlessFunction,
     );
-
-    const draftFolderPath = getServerlessFolder({
-      serverlessFunction: existingServerlessFunction,
-      version: 'draft',
-    });
-    const newFolderPath = getServerlessFolder({
-      serverlessFunction: existingServerlessFunction,
-      version: newVersion,
-    });
-
-    await this.fileStorageService.copy({
-      from: { folderPath: draftFolderPath },
-      to: { folderPath: newFolderPath },
-    });
 
     await super.updateOne(existingServerlessFunction.id, {
       latestVersion: newVersion,
@@ -222,12 +217,14 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       version: 'draft',
     });
 
-    await this.fileStorageService.write({
-      file: serverlessFunctionInput.code,
-      name: INDEX_FILE_NAME,
-      mimeType: undefined,
-      folder: fileFolder,
-    });
+    for (const key of Object.keys(serverlessFunctionInput.code)) {
+      await this.fileStorageService.write({
+        file: serverlessFunctionInput.code[key],
+        name: basename(key),
+        mimeType: undefined,
+        folder: join(fileFolder, dirname(key)),
+      });
+    }
 
     await this.serverlessService.build(existingServerlessFunction, 'draft');
     await super.updateOne(existingServerlessFunction.id, {

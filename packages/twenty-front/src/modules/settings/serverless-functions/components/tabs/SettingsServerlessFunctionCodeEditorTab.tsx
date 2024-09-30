@@ -36,7 +36,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   handleReset: () => void;
   resetDisabled: boolean;
   publishDisabled: boolean;
-  onChange: (key: string) => (value: string) => void;
+  onChange: (filePath: string, value: string) => void;
   setIsCodeValid: (isCodeValid: boolean) => void;
 }) => {
   const { activeTabIdState } = useTabList(
@@ -110,7 +110,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
         <CodeEditor
           files={files}
           currentFilePath={activeTabId}
-          onChange={onChange('code')}
+          onChange={(newCodeValue) => onChange(activeTabId, newCodeValue)}
           setIsCodeValid={setIsCodeValid}
         />
       )}

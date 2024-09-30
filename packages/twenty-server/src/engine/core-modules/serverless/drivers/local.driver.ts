@@ -2,6 +2,8 @@ import { fork } from 'child_process';
 import { promises as fs, existsSync } from 'fs';
 import { join } from 'path';
 
+import dotenv from 'dotenv';
+
 import {
   ServerlessDriver,
   ServerlessExecuteError,
@@ -17,6 +19,10 @@ import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/co
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
 import { compileTypescript2 } from 'src/engine/core-modules/serverless/drivers/utils/compile-typescript';
+import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
+import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
+
+const LISTENER_FILE_NAME = 'listener.js';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -58,42 +64,40 @@ export class LocalDriver
   async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
-    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
-    const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
+    const computedVersion =
+      version === 'latest' ? serverlessFunction.latestVersion : version;
 
-    const draftFolderPath = getServerlessFolder({
+    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
+
+    const inMemoryServerlessFunctionFolderPath =
+      this.getInMemoryServerlessFunctionFolderPath(
+        serverlessFunction,
+        computedVersion,
+      );
+
+    const folderPath = getServerlessFolder({
       serverlessFunction,
       version,
     });
 
     await this.fileStorageService.download({
-      from: { folderPath: draftFolderPath },
+      from: { folderPath },
       to: { folderPath: inMemoryServerlessFunctionFolderPath },
     });
 
     compileTypescript2(inMemoryServerlessFunctionFolderPath);
-  }
 
-  async publish(serverlessFunction: ServerlessFunctionEntity) {
-    await this.build(serverlessFunction, 'draft');
+    const envFileContent = await fs.readFile(
+      join(inMemoryServerlessFunctionFolderPath, ENV_FILE_NAME),
+    );
 
-    return serverlessFunction.latestVersion
-      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
-      : '1';
-  }
-
-  async execute(
-    serverlessFunction: ServerlessFunctionEntity,
-    payload: object,
-    version: string,
-  ): Promise<ServerlessExecuteResult> {
-    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
-
-    const startTime = Date.now();
+    const envVariables = dotenv.parse(envFileContent);
 
     const listener = `
     const index_1 = require("./src/index");
+    
+    process.env = ${JSON.stringify(envVariables)}
+    
     process.on('message', async (message) => {
       const { event, context } = message;
       try {
@@ -109,24 +113,26 @@ export class LocalDriver
     });
     `;
 
-    const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
-
-    try {
-      await fs.writeFile(
-        join(inMemoryServerlessFunctionFolderPath, 'dist', 'listener.js'),
-        listener,
-      );
-    } catch (err) {
-      if (err.code !== 'EEXIST') {
-        throw err;
-      }
-    }
+    await fs.writeFile(
+      join(
+        inMemoryServerlessFunctionFolderPath,
+        OUTDIR_FOLDER,
+        LISTENER_FILE_NAME,
+      ),
+      listener,
+    );
 
     try {
       await fs.symlink(
-        this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
-        inMemoryServerlessFunctionFolderPath,
+        join(
+          this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
+          'node_modules',
+        ),
+        join(
+          inMemoryServerlessFunctionFolderPath,
+          OUTDIR_FOLDER,
+          'node_modules',
+        ),
         'dir',
       );
     } catch (err) {
@@ -134,11 +140,48 @@ export class LocalDriver
         throw err;
       }
     }
+  }
+
+  async publish(serverlessFunction: ServerlessFunctionEntity) {
+    const newVersion = serverlessFunction.latestVersion
+      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
+      : '1';
+
+    const draftFolderPath = getServerlessFolder({
+      serverlessFunction: serverlessFunction,
+      version: 'draft',
+    });
+    const newFolderPath = getServerlessFolder({
+      serverlessFunction: serverlessFunction,
+      version: newVersion,
+    });
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftFolderPath },
+      to: { folderPath: newFolderPath },
+    });
+
+    await this.build(serverlessFunction, newVersion);
+
+    return newVersion;
+  }
+
+  async execute(
+    serverlessFunction: ServerlessFunctionEntity,
+    payload: object,
+    version: string,
+  ): Promise<ServerlessExecuteResult> {
+    const startTime = Date.now();
+    const computedVersion =
+      version === 'latest' ? serverlessFunction.latestVersion : version;
 
     const listenerFile = join(
-      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version),
-      'dist',
-      'listener.js',
+      this.getInMemoryServerlessFunctionFolderPath(
+        serverlessFunction,
+        computedVersion,
+      ),
+      OUTDIR_FOLDER,
+      LISTENER_FILE_NAME,
     );
 
     return await new Promise((resolve, reject) => {

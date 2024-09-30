@@ -1,6 +1,7 @@
 import { join } from 'path';
 
 import ts, { createProgram } from 'typescript';
+import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
 
 export const compileTypescript = (typescriptCode: string): string => {
   const options: ts.CompilerOptions = {
@@ -10,7 +11,7 @@ export const compileTypescript = (typescriptCode: string): string => {
     esModuleInterop: true,
     resolveJsonModule: true,
     allowSyntheticDefaultImports: true,
-    outDir: './dist',
+    outDir: `./${OUTDIR_FOLDER}`,
     types: ['node'],
   };
 
@@ -29,7 +30,7 @@ export const compileTypescript2 = (folderPath: string) => {
     esModuleInterop: true,
     resolveJsonModule: true,
     allowSyntheticDefaultImports: true,
-    outDir: join(folderPath, 'dist', 'src'),
+    outDir: join(folderPath, OUTDIR_FOLDER, 'src'),
     types: ['node'],
   };
 

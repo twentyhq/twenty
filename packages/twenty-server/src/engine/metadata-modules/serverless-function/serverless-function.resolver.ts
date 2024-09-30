@@ -61,7 +61,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Query(() => String, { nullable: true })
+  @Query(() => graphqlTypeJson, { nullable: true })
   async getServerlessFunctionSourceCode(
     @Args('input') input: GetServerlessFunctionSourceCodeInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
