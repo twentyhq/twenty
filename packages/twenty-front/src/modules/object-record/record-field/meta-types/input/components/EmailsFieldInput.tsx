@@ -1,9 +1,9 @@
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
+import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { VALIDATORS } from '~/utils/validators';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type EmailsFieldInputProps = {
@@ -32,7 +32,7 @@ export const EmailsFieldInput = ({ onCancel }: EmailsFieldInputProps) => {
 
   const validateInput = useCallback(
     (input: string) => ({
-      isValid: VALIDATORS.EMAIL(input),
+      isValid: emailSchema.safeParse(input).success,
       errorMessage: '',
     }),
     [],
