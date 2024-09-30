@@ -1,4 +1,6 @@
-import ts from 'typescript';
+import { join } from 'path';
+
+import ts, { createProgram } from 'typescript';
 
 export const compileTypescript = (typescriptCode: string): string => {
   const options: ts.CompilerOptions = {
@@ -17,4 +19,19 @@ export const compileTypescript = (typescriptCode: string): string => {
   });
 
   return result.outputText;
+};
+
+export const compileTypescript2 = (folderPath: string) => {
+  const options: ts.CompilerOptions = {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2017,
+    moduleResolution: ts.ModuleResolutionKind.Node10,
+    esModuleInterop: true,
+    resolveJsonModule: true,
+    allowSyntheticDefaultImports: true,
+    outDir: join(folderPath, 'dist'),
+    types: ['node'],
+  };
+
+  createProgram([join(folderPath, 'src', 'index.ts')], options).emit();
 };

@@ -156,4 +156,35 @@ export class LocalDriver implements StorageDriver {
       throw error;
     }
   }
+
+  async download(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    if (!params.from.filename && params.to.filename) {
+      throw new Error('Cannot copy folder to file');
+    }
+    const fromPath = join(
+      `${this.options.storagePath}/`,
+      params.from.folderPath,
+      params.from.filename || '',
+    );
+
+    const toPath = join(params.to.folderPath, params.to.filename || '');
+
+    await this.createFolder(dirname(toPath));
+
+    try {
+      await fs.cp(fromPath, toPath, { recursive: true });
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
+  }
 }

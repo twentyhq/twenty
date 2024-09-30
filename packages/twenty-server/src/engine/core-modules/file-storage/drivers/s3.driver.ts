@@ -1,4 +1,6 @@
 import { Readable } from 'stream';
+import fs from 'fs';
+import { join } from 'path';
 
 import {
   CopyObjectCommand,
@@ -260,6 +262,82 @@ export class S3Driver implements StorageDriver {
       }
 
       await this.copy({
+        from: {
+          folderPath: fromFolderPath,
+          filename,
+        },
+        to: { folderPath: toFolderPath, filename },
+      });
+    }
+  }
+
+  async download(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    if (!params.from.filename && params.to.filename) {
+      throw new Error('Cannot copy folder to file');
+    }
+
+    if (isDefined(params.from.filename)) {
+      try {
+        // Check if the source file exists
+        const fileStream = await this.read({
+          folderPath: params.from.folderPath,
+          filename: params.from.filename,
+        });
+
+        const toPath = join(
+          params.to.folderPath,
+          params.to.filename || params.from.filename,
+        );
+        const writeStream = fs.createWriteStream(toPath);
+
+        fileStream.pipe(writeStream);
+        writeStream.end();
+
+        return;
+      } catch (error) {
+        if (error.name === 'NotFound') {
+          throw new FileStorageException(
+            'File not found',
+            FileStorageExceptionCode.FILE_NOT_FOUND,
+          );
+        }
+        // For other errors, throw the original error
+        throw error;
+      }
+    }
+
+    const listedObjects = await this.s3Client.send(
+      new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: params.from.folderPath,
+      }),
+    );
+
+    if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+      throw new Error('No objects found in the source folder.');
+    }
+
+    for (const object of listedObjects.Contents) {
+      const match = object.Key?.match(/(.*)\/(.*)/);
+
+      if (!isDefined(match)) {
+        continue;
+      }
+      const fromFolderPath = match[1];
+      const filename = match[2];
+      const toFolderPath = fromFolderPath.replace(
+        params.from.folderPath,
+        params.to.folderPath,
+      );
+
+      if (!isDefined(toFolderPath)) {
+        continue;
+      }
+
+      await this.download({
         from: {
           folderPath: fromFolderPath,
           filename,

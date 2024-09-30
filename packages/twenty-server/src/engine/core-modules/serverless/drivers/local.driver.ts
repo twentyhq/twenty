@@ -25,6 +25,7 @@ import {
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
+import { compileTypescript2 } from 'src/engine/core-modules/serverless/drivers/utils/compile-typescript';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -40,6 +41,13 @@ export class LocalDriver
     super();
     this.fileStorageService = options.fileStorageService;
   }
+
+  private getInMemoryServerlessFunctionFolderPath = (
+    serverlessFunction: ServerlessFunctionEntity,
+    version: string,
+  ) => {
+    return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
+  };
 
   private getInMemoryLayerFolderPath = (version: number) => {
     return join(SERVERLESS_TMPDIR_FOLDER, COMMON_LAYER_NAME, `${version}`);
@@ -60,22 +68,32 @@ export class LocalDriver
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
     await this.createLayerIfNotExists(serverlessFunction.layerVersion);
-    const javascriptCode = await this.getCompiledCode(
-      serverlessFunction,
-      this.fileStorageService,
-    );
+    const inMemoryServerlessFunctionFolderPath =
+      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, 'draft');
 
     const draftFolderPath = getServerlessFolder({
       serverlessFunction,
       version: 'draft',
     });
 
+    await this.fileStorageService.download({
+      from: { folderPath: draftFolderPath },
+      to: { folderPath: inMemoryServerlessFunctionFolderPath },
+    });
+
+    compileTypescript2(inMemoryServerlessFunctionFolderPath);
+
+    /*const javascriptCode = await this.getCompiledCode(
+      serverlessFunction,
+      this.fileStorageService,
+    );
+
     await this.fileStorageService.write({
       file: javascriptCode,
       name: BUILD_FILE_NAME,
       mimeType: undefined,
       folder: draftFolderPath,
-    });
+    });*/
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
