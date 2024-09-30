@@ -3,8 +3,8 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-run.workspace-service';
 
@@ -36,24 +36,23 @@ export class RunWorkflowJob {
         workflowVersionId,
       );
 
-    try {
+    const { steps, status } =
       await this.workflowExecutorWorkspaceService.execute({
         currentStepIndex: 0,
         steps: workflowVersion.steps || [],
         payload,
+        output: {
+          steps: [],
+          status: WorkflowRunStatus.RUNNING,
+        },
       });
 
-      await this.workflowRunWorkspaceService.endWorkflowRun(
-        workflowRunId,
-        WorkflowRunStatus.COMPLETED,
-      );
-    } catch (error) {
-      await this.workflowRunWorkspaceService.endWorkflowRun(
-        workflowRunId,
-        WorkflowRunStatus.FAILED,
-      );
-
-      throw error;
-    }
+    await this.workflowRunWorkspaceService.endWorkflowRun(
+      workflowRunId,
+      status,
+      {
+        steps,
+      },
+    );
   }
 }
