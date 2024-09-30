@@ -35,10 +35,7 @@ type TaskGroupsProps = {
   showAddButton?: boolean;
 };
 
-export const TaskGroups = ({
-  targetableObjects,
-  showAddButton,
-}: TaskGroupsProps) => {
+export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
   const { tasks, tasksLoading } = useTasks({
     targetableObjects: targetableObjects ?? [],
   });
@@ -103,7 +100,8 @@ export const TaskGroups = ({
           title={status}
           tasks={tasksByStatus}
           button={
-            showAddButton && (
+            (status === 'TODO' ||
+              !sortedTasksByStatus.some(([s]) => s === 'TODO')) && (
               <AddTaskButton activityTargetableObjects={targetableObjects} />
             )
           }
