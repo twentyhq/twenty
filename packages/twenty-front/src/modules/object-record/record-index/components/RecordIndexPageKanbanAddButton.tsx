@@ -1,7 +1,9 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useRecordIndexPageKanbanAddButton } from '@/object-record/record-index/hooks/useRecordIndexPageKanbanAddButton';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
@@ -14,7 +16,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconPlus, isDefined } from 'twenty-ui';
 
@@ -26,22 +28,25 @@ const StyledDropDownMenu = styled(DropdownMenu)`
   width: 200px;
 `;
 
-type RecordIndexPageKanbanAddButtonProps = {
-  recordIndexId: string;
-  objectNamePlural: string;
-};
-
-export const RecordIndexPageKanbanAddButton = ({
-  recordIndexId,
-  objectNamePlural,
-}: RecordIndexPageKanbanAddButtonProps) => {
+export const RecordIndexPageKanbanAddButton = () => {
   const dropdownId = `record-index-page-add-button-dropdown`;
   const [isSelectingCompany, setIsSelectingCompany] = useState(false);
   const [selectedColumnDefinition, setSelectedColumnDefinition] =
     useState<RecordBoardColumnDefinition>();
 
-  const { columnIdsState } = useRecordBoardStates(recordIndexId);
+  const { recordIndexId, objectNamePlural } = useContext(
+    RecordIndexRootPropsContext,
+  );
+
+  const { columnIdsState, visibleFieldDefinitionsState } =
+    useRecordBoardStates(recordIndexId);
   const columnIds = useRecoilValue(columnIdsState);
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
+  );
+  const labelIdentifierField = visibleFieldDefinitions.find(
+    (field) => field.isLabelIdentifier,
+  );
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -53,14 +58,12 @@ export const RecordIndexPageKanbanAddButton = ({
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const {
-    selectFieldMetadataItem,
-    isOpportunity,
-    createOpportunity,
-    createRecordWithoutCompany,
-  } = useRecordIndexPageKanbanAddButton({
-    objectNamePlural,
-  });
+  const { selectFieldMetadataItem, isOpportunity, createOpportunity } =
+    useRecordIndexPageKanbanAddButton({
+      objectNamePlural,
+    });
+
+  const { handleAddNewCardClick } = useAddNewCard();
 
   const handleItemClick = useCallback(
     (columnDefinition: RecordBoardColumnDefinition) => {
@@ -71,18 +74,23 @@ export const RecordIndexPageKanbanAddButton = ({
           RelationPickerHotkeyScope.RelationPicker,
         );
       } else {
-        createRecordWithoutCompany(columnDefinition);
+        handleAddNewCardClick(
+          labelIdentifierField?.label ?? '',
+          '',
+          'first',
+          columnDefinition.id,
+        );
         closeDropdown();
       }
     },
     [
       isOpportunity,
-      createRecordWithoutCompany,
+      handleAddNewCardClick,
       setHotkeyScopeAndMemorizePreviousScope,
       closeDropdown,
+      labelIdentifierField,
     ],
   );
-
   const handleEntitySelect = useCallback(
     (company?: EntityForSelect) => {
       setIsSelectingCompany(false);

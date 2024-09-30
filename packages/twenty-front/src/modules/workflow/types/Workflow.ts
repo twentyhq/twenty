@@ -78,5 +78,5 @@ export type Workflow = {
 };
 
 export type WorkflowWithCurrentVersion = Workflow & {
-  currentVersion: WorkflowVersion | undefined;
+  currentVersion: WorkflowVersion;
 };

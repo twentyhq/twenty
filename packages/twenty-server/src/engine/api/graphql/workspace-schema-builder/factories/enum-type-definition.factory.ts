@@ -3,15 +3,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { pascalCase } from 'src/utils/pascal-case';
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
+import { pascalCase } from 'src/utils/pascal-case';
 
 export interface EnumTypeDefinition {
   target: string;
@@ -53,7 +54,7 @@ export class EnumTypeDefinitionFactory {
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
-    const enumOptions = fieldMetadata.options as Array<
+    const enumOptions = transformEnumValue(fieldMetadata.options) as Array<
       FieldMetadataDefaultOption | FieldMetadataComplexOption
     >;
 

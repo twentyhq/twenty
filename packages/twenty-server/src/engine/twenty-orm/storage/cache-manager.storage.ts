@@ -34,6 +34,16 @@ export class CacheManager<T> {
     return value;
   }
 
+  async clearKey(
+    cacheKey: CacheKey,
+    onDelete?: (value: T) => Promise<void> | void,
+  ): Promise<void> {
+    if (this.cache.has(cacheKey)) {
+      await onDelete?.(this.cache.get(cacheKey)!);
+      this.cache.delete(cacheKey);
+    }
+  }
+
   async clear(onDelete?: (value: T) => Promise<void> | void): Promise<void> {
     for (const value of this.cache.values()) {
       await onDelete?.(value);

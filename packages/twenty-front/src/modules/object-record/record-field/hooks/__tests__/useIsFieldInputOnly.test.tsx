@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import {
-  phoneFieldDefinition,
+  phonesFieldDefinition,
   ratingFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -29,7 +29,7 @@ const getWrapper =
   );
 
 const RatingWrapper = getWrapper(ratingFieldDefinition);
-const PhoneWrapper = getWrapper(phoneFieldDefinition);
+const PhoneWrapper = getWrapper(phonesFieldDefinition);
 
 describe('useIsFieldInputOnly', () => {
   it('should return true', () => {

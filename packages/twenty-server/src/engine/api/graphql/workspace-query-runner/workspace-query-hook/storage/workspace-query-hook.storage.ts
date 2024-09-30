@@ -66,4 +66,25 @@ export class WorkspaceQueryHookStorage {
 
     this.postHookInstances.get(key)?.push(data);
   }
+
+  getWorkspaceQueryPostHookInstances(
+    key: WorkspaceQueryHookKey,
+  ): WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] {
+    const methodName = key.split('.')?.[1] as
+      | WorkspaceResolverBuilderMethodNames
+      | undefined;
+    let wildcardInstances: WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] =
+      [];
+
+    if (!methodName) {
+      throw new Error(`Can't split workspace query hook key: ${key}`);
+    }
+
+    // Retrive wildcard post-hook instances
+    if (this.postHookInstances.has(`*.${methodName}`)) {
+      wildcardInstances = this.postHookInstances.get(`*.${methodName}`)!;
+    }
+
+    return [...wildcardInstances, ...(this.postHookInstances.get(key) ?? [])];
+  }
 }

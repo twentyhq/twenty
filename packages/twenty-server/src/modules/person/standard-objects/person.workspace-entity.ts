@@ -4,8 +4,10 @@ import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -14,6 +16,7 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -40,7 +43,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   icon: 'IconUser',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
-  softDelete: true,
 })
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -60,7 +62,17 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s Email',
     icon: 'IconMail',
   })
+  @WorkspaceIsDeprecated()
   email: string;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.emails,
+    type: FieldMetadataType.EMAILS,
+    label: 'Emails',
+    description: 'Contact’s Emails',
+    icon: 'IconMail',
+  })
+  emails: EmailsMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
@@ -98,7 +110,17 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
+  @WorkspaceIsDeprecated()
   phone: string;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.phones,
+    type: FieldMetadataType.PHONES,
+    label: 'Phones',
+    description: 'Contact’s phone numbers',
+    icon: 'IconPhone',
+  })
+  phones: PhonesMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.city,

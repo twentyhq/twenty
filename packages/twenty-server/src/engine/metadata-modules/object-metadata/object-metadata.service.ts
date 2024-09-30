@@ -10,8 +10,6 @@ import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
@@ -34,7 +32,7 @@ import {
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -61,6 +59,7 @@ import {
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -86,7 +85,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(objectMetadataRepository);
   }
@@ -144,6 +142,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.deleteAllRelationsAndDropTable(objectMetadata, workspaceId);
     }
 
+    // DELETE VIEWS
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+        workspaceId,
+        'view',
+      );
+
+    const views = await viewRepository.find({
+      where: {
+        objectMetadataId: objectMetadata.id,
+      },
+    });
+
+    if (views.length > 0) {
+      await viewRepository.delete(views.map((view) => view.id));
+    }
+
+    // DELETE OBJECT
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -215,7 +231,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: isCustom,
       isSystem: false,
       isRemote: objectMetadataInput.isRemote,
-      isSoftDeletable: true,
       fields: isCustom
         ? // Creating default fields.
           // No need to create a custom migration for this though as the default columns are already
@@ -375,18 +390,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     });
 
-    const isViewWorkspaceFavoriteEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsWorkspaceFavoriteEnabled,
-        objectMetadataInput.workspaceId,
-      );
-
-    if (isViewWorkspaceFavoriteEnabled) {
-      await this.createViewWorkspaceFavorite(
-        objectMetadataInput.workspaceId,
-        view[0].id,
-      );
-    }
+    await this.createViewWorkspaceFavorite(
+      objectMetadataInput.workspaceId,
+      view[0].id,
+    );
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       objectMetadataInput.workspaceId,

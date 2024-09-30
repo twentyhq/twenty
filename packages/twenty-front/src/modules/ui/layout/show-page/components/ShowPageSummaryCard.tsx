@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { AppTooltip, Avatar, AvatarType } from 'twenty-ui';
+import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
@@ -17,6 +17,8 @@ type ShowPageSummaryCardProps = {
   date: string;
   id?: string;
   logoOrAvatar?: string;
+  icon?: IconComponent;
+  iconColor?: string;
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
   loading: boolean;
@@ -99,6 +101,8 @@ export const ShowPageSummaryCard = ({
   date,
   id,
   logoOrAvatar,
+  icon,
+  iconColor,
   onUploadPicture,
   title,
   loading,
@@ -133,7 +137,9 @@ export const ShowPageSummaryCard = ({
           size="xl"
           placeholderColorSeed={id}
           placeholder={avatarPlaceholder}
-          type={avatarType}
+          type={icon ? 'icon' : avatarType}
+          Icon={icon}
+          iconColor={iconColor}
         />
         <StyledFileInput
           ref={inputFileRef}

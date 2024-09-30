@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -28,7 +28,7 @@ export class MessagingCleanCacheJob {
     );
 
     await this.cacheStorage.del(
-      `messages-to-import:${data.workspaceId}:gmail:${data.messageChannelId}`,
+      `messages-to-import:${data.workspaceId}:${data.messageChannelId}`,
     );
 
     this.logger.log(

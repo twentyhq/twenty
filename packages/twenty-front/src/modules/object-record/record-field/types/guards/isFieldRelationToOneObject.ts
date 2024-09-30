@@ -1,9 +1,11 @@
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldDefinition } from '../FieldDefinition';
-import { FieldMetadata, FieldRelationOneMetadata } from '../FieldMetadata';
+import { FieldMetadata } from '../FieldMetadata';
 
 export const isFieldRelationToOneObject = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
-): field is FieldDefinition<FieldRelationOneMetadata> =>
-  isFieldRelation(field) && field.metadata.relationType === 'TO_ONE_OBJECT';
+): field is FieldDefinition<FieldMetadata> =>
+  isFieldRelation(field) &&
+  field.metadata.relationType === RelationDefinitionType.ManyToOne;

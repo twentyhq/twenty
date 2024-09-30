@@ -6,7 +6,7 @@ import {
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { CreateAppTokenInput } from 'src/engine/core-modules/app-token/dtos/create-app-token.input';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 export const appTokenAutoResolverOpts: AutoResolverOpts<
   any,
@@ -34,6 +34,6 @@ export const appTokenAutoResolverOpts: AutoResolverOpts<
       one: { disabled: true },
     },
     delete: { many: { disabled: true }, one: { disabled: true } },
-    guards: [JwtAuthGuard],
+    guards: [WorkspaceAuthGuard],
   },
 ];

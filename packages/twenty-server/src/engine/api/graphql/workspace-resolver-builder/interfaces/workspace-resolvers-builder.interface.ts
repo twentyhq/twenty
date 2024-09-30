@@ -22,6 +22,7 @@ export enum ResolverArgsType {
   DeleteMany = 'DeleteMany',
   RestoreMany = 'RestoreMany',
   DestroyMany = 'DestroyMany',
+  DestroyOne = 'DestroyOne',
 }
 
 export interface FindManyResolverArgs<
@@ -86,6 +87,10 @@ export interface DeleteManyResolverArgs<Filter = any> {
 
 export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
+}
+
+export interface DestroyOneResolverArgs {
+  id: string;
 }
 
 export interface DestroyManyResolverArgs<Filter = any> {

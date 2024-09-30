@@ -69,6 +69,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       icon: options.icon,
       defaultValue,
       options: options.options,
+      settings: options.settings,
       isPrimary,
       isNullable,
       isSystem,

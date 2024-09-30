@@ -13,8 +13,6 @@ import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/re
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
-import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
-import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -30,8 +28,10 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
@@ -53,6 +53,7 @@ export const RecordDetailRelationSection = ({
   } = fieldDefinition.metadata as FieldRelationMetadata;
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
+  const isMobile = useIsMobile();
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
@@ -67,8 +68,8 @@ export const RecordDetailRelationSection = ({
   >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
-  const isToOneObject = relationType === 'TO_ONE_OBJECT';
-  const isFromManyObjects = relationType === 'FROM_MANY_OBJECTS';
+  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
+  const isToManyObjects = RelationDefinitionType.OneToMany;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
@@ -130,20 +131,10 @@ export const RecordDetailRelationSection = ({
   }?${qs.stringify(filterQueryParams)}`;
 
   const showContent = () => {
-    if (loading) {
-      return (
-        <RecordDetailRelationSectionSkeletonLoader
-          numSkeletons={fieldName === 'people' ? 2 : 1}
-        />
-      );
-    }
-
-    return relationRecords.length ? (
-      <RecordDetailRelationRecordsList relationRecords={relationRecords} />
-    ) : (
-      <RecordDetailRelationRecordsListEmptyState
-        relationObjectMetadataItem={relationObjectMetadataItem}
-      />
+    return (
+      relationRecords.length > 0 && (
+        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+      )
     );
   };
 
@@ -155,19 +146,25 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
+  if (loading) return null;
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
         title={fieldDefinition.label}
         link={
-          isFromManyObjects
+          isToManyObjects
             ? {
                 to: filterLinkHref,
-                label: `All (${relationRecords.length})`,
+                label:
+                  relationRecords.length > 0
+                    ? `All (${relationRecords.length})`
+                    : '',
               }
             : undefined
         }
-        hideRightAdornmentOnMouseLeave={!isDropdownOpen}
+        hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
+        areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
           <DropdownScope dropdownScopeId={dropdownId}>
             <StyledAddDropdown

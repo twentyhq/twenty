@@ -1,17 +1,18 @@
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { percentage, sleep, useTableData } from '../useTableData';
 
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewType } from '@/views/types/ViewType';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
-import { ReactNode } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const defaultResponseData = {
   pageInfo: {
@@ -26,7 +27,11 @@ const mockPerson = {
   __typename: 'Person',
   updatedAt: '2021-08-03T19:20:06.000Z',
   myCustomObjectId: '123',
-  whatsapp: '123',
+  whatsapp: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   linkedinLink: {
     primaryLinkUrl: 'https://www.linkedin.com',
     primaryLinkLabel: 'linkedin',
@@ -52,12 +57,16 @@ const mockPerson = {
   },
   performanceRating: 1,
   createdAt: '2021-08-03T19:20:06.000Z',
-  phone: 'phone',
+  phone: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   id: '123',
   city: 'city',
   companyId: '1',
   intro: 'intro',
-  workPrefereance: 'workPrefereance',
+  workPreference: 'workPrefereance',
 };
 const mocks: MockedResponse[] = [
   {
@@ -78,40 +87,51 @@ const mocks: MockedResponse[] = [
             edges {
               node {
                 __typename
-                updatedAt
-                myCustomObjectId
-                whatsapp
+                name {
+                  firstName
+                  lastName
+                }
                 linkedinLink {
                   primaryLinkUrl
                   primaryLinkLabel
                   secondaryLinks
                 }
-                name {
-                  firstName
-                  lastName
-                }
-                email
-                position
-                createdBy {
-                  source
-                  workspaceMemberId
-                  name
-                }
-                avatarUrl
+                deletedAt
+                createdAt
+                updatedAt
                 jobTitle
+                intro
+                workPrefereance
+                performanceRating
                 xLink {
                   primaryLinkUrl
                   primaryLinkLabel
                   secondaryLinks
                 }
-                performanceRating
-                createdAt
-                phone
-                id
                 city
                 companyId
-                intro
-                workPrefereance
+                phones {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  additionalPhones
+                }
+                createdBy {
+                  source
+                  workspaceMemberId
+                  name
+                }
+                id
+                position
+                emails {
+                  primaryEmail
+                  additionalEmails
+                }
+                avatarUrl
+                whatsapp {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                  additionalPhones
+                }
               }
               cursor
             }
@@ -148,15 +168,19 @@ const mocks: MockedResponse[] = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <Router>
-    <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarManagerScopeInternalContext.Provider
+    value={{
+      scopeId: 'snack-bar-manager',
+    }}
+  >
+    <Router>
+      <RecoilRoot>
         <MockedProvider addTypename={false} mocks={mocks}>
           {children}
         </MockedProvider>
-      </SnackBarProviderScope>
-    </RecoilRoot>
-  </Router>
+      </RecoilRoot>
+    </Router>
+  </SnackBarManagerScopeInternalContext.Provider>
 );
 
 const graphqlEmptyResponse = [
@@ -174,15 +198,19 @@ const graphqlEmptyResponse = [
 ];
 
 const WrapperWithEmptyResponse = ({ children }: { children: ReactNode }) => (
-  <Router>
-    <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+  <SnackBarManagerScopeInternalContext.Provider
+    value={{
+      scopeId: 'snack-bar-manager',
+    }}
+  >
+    <Router>
+      <RecoilRoot>
         <MockedProvider addTypename={false} mocks={graphqlEmptyResponse}>
           {children}
         </MockedProvider>
-      </SnackBarProviderScope>
-    </RecoilRoot>
-  </Router>
+      </RecoilRoot>
+    </Router>
+  </SnackBarManagerScopeInternalContext.Provider>
 );
 
 describe('useTableData', () => {
@@ -191,13 +219,13 @@ describe('useTableData', () => {
   describe('data fetching', () => {
     it('should handle no records', async () => {
       const callback = jest.fn();
+
       const { result } = renderHook(
         () =>
           useTableData({
             recordIndexId,
             objectNameSingular,
             callback,
-
             delayMs: 0,
             viewType: ViewType.Kanban,
           }),
@@ -209,7 +237,7 @@ describe('useTableData', () => {
       });
 
       await waitFor(() => {
-        expect(callback).toHaveBeenCalledWith([], []);
+        expect(callback).not.toHaveBeenCalled();
       });
     });
 
@@ -268,9 +296,17 @@ describe('useTableData', () => {
         },
       );
 
+      const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      );
+
+      const updatedAtFieldMetadataItem = personObjectMetadataItem?.fields.find(
+        (field) => field.name === 'updatedAt',
+      );
+
       await act(async () => {
         result.current.setKanbanFieldName.setKanbanFieldMetadataName(
-          result.current.kanbanData.hiddenBoardFields[0].metadata.fieldName,
+          updatedAtFieldMetadataItem?.name,
         );
       });
 
@@ -285,7 +321,7 @@ describe('useTableData', () => {
             {
               defaultValue: 'now',
               editButtonIcon: undefined,
-              fieldMetadataId: '102963b7-3e77-4293-a1e6-1ab59a02b663',
+              fieldMetadataId: updatedAtFieldMetadataItem?.id,
               iconName: 'IconCalendarClock',
               isFilterable: true,
               isLabelIdentifier: false,
@@ -305,7 +341,7 @@ describe('useTableData', () => {
                 relationType: undefined,
                 targetFieldMetadataName: '',
               },
-              position: 0,
+              position: 7,
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',

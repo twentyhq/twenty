@@ -10,7 +10,7 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const mocks = [
   {
@@ -34,14 +34,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </RecoilRoot>
 );
 
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
 describe('useFilteredObjectMetadataItems', () => {
   it('should findActiveObjectMetadataItemBySlug', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredObjectMetadataItems();
       },
@@ -57,11 +55,35 @@ describe('useFilteredObjectMetadataItems', () => {
     });
   });
 
-  it('should findObjectMetadataItemById', async () => {
+  it('should findObjectMetadataItemBySlug', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
+
+        return useFilteredObjectMetadataItems();
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    act(() => {
+      const res = result.current.findObjectMetadataItemBySlug('people');
+      expect(res).toBeDefined();
+      expect(res?.namePlural).toBe('people');
+    });
+  });
+
+  it('should findObjectMetadataItemById', async () => {
+    const peopleObjectMetadata = generatedMockObjectMetadataItems.find(
+      (item) => item.namePlural === 'people',
+    );
+
+    const { result } = renderHook(
+      () => {
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredObjectMetadataItems();
       },
@@ -72,7 +94,7 @@ describe('useFilteredObjectMetadataItems', () => {
 
     act(() => {
       const res = result.current.findObjectMetadataItemById(
-        'ff2881da-89f6-4f15-8f0a-e3f355ea3b94',
+        peopleObjectMetadata?.id,
       );
       expect(res).toBeDefined();
       expect(res?.namePlural).toBe('people');
@@ -83,7 +105,7 @@ describe('useFilteredObjectMetadataItems', () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredObjectMetadataItems();
       },

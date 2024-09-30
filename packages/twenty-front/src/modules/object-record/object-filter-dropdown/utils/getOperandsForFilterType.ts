@@ -22,6 +22,7 @@ export const getOperandsForFilterType = (
     case 'LINK':
     case 'LINKS':
     case 'ACTOR':
+    case 'ARRAY':
     case 'PHONES':
       return [
         ViewFilterOperand.Contains,
@@ -30,11 +31,21 @@ export const getOperandsForFilterType = (
       ];
     case 'CURRENCY':
     case 'NUMBER':
-    case 'DATE_TIME':
-    case 'DATE':
       return [
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
+    case 'DATE_TIME':
+    case 'DATE':
+      return [
+        ViewFilterOperand.Is,
+        ViewFilterOperand.IsRelative,
+        ViewFilterOperand.IsInPast,
+        ViewFilterOperand.IsInFuture,
+        ViewFilterOperand.IsToday,
+        ViewFilterOperand.IsBefore,
+        ViewFilterOperand.IsAfter,
         ...emptyOperands,
       ];
     case 'RATING':
