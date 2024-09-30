@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import {
-  WorkflowActionType,
-  WorkflowStep,
-} from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+  WorkflowRunOutput,
+  WorkflowRunStatus,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
 export type WorkflowExecutorOutput = {
-  steps: {
-    type: WorkflowActionType;
-    result: object | undefined;
-    error: object | undefined;
-  }[];
+  steps: WorkflowRunOutput['steps'];
   status: WorkflowRunStatus;
 };
 
@@ -48,15 +44,23 @@ export class WorkflowExecutorWorkspaceService {
       payload,
     });
 
-    const stepOutput = {
+    const baseStepOutput = {
+      id: step.id,
+      name: step.name,
       type: step.type,
-      result: result.result,
-      error: result.error,
+      attemptCount,
     };
 
     const updatedOutput = {
       ...output,
-      steps: [...output.steps, stepOutput],
+      steps: [
+        ...output.steps,
+        {
+          ...baseStepOutput,
+          result: result.result,
+          error: result.error?.errorMessage,
+        },
+      ],
     };
 
     if (result.result) {
@@ -74,11 +78,9 @@ export class WorkflowExecutorWorkspaceService {
         steps: [
           ...output.steps,
           {
-            type: step.type,
+            ...baseStepOutput,
             result: undefined,
-            error: {
-              errorMessage: 'Execution result error, no data or error',
-            },
+            error: 'Execution result error, no data or error',
           },
         ],
         status: WorkflowRunStatus.FAILED,
@@ -102,7 +104,7 @@ export class WorkflowExecutorWorkspaceService {
         currentStepIndex,
         steps,
         payload,
-        output,
+        output: updatedOutput,
         attemptCount: attemptCount + 1,
       });
     }

@@ -29,9 +29,12 @@ export enum WorkflowRunStatus {
 
 export type WorkflowRunOutput = {
   steps: {
+    id: string;
+    name: string;
     type: string;
+    attemptCount: number;
     result: object | undefined;
-    error: object | undefined;
+    error: string | undefined;
   }[];
 };
 
