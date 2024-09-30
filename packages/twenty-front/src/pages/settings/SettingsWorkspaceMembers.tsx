@@ -60,7 +60,6 @@ const StyledTableRow = styled(TableRow)`
     grid-template-columns: 3fr;
   }
 `;
-
 const StyledTableCell = styled(TableCell)`
   padding: ${({ theme }) => theme.spacing(1)};
   text-align: left;
@@ -74,6 +73,15 @@ const StyledTableCell = styled(TableCell)`
       scroll-snap-align: start;
     }
   }
+`;
+const StyledIconWrapper = styled.div`
+  margin-right: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+`;
+
+const StyledScrollableTextContainer = styled.div`
+  display: inline-block;
+  max-width: 100%;
 `;
 
 const StyledTableHeaderRow = styled(Table)`
@@ -205,7 +213,7 @@ export const SettingsWorkspaceMembers = () => {
                       }
                     />
                   </TableCell>
-                  <TableCell align={'left'}>
+                  <TableCell>
                     <StyledText
                       text={workspaceMember.userEmail}
                       color={theme.font.color.secondary}
@@ -252,15 +260,15 @@ export const SettingsWorkspaceMembers = () => {
                     gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}
                   >
                     <StyledTableCell>
-                      <StyledText
-                        PrefixComponent={
-                          <IconMail
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
-                          />
-                        }
-                        text={workspaceInvitation.email}
-                      />
+                      <StyledIconWrapper>
+                        <IconMail
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      </StyledIconWrapper>
+                      <StyledScrollableTextContainer>
+                        {workspaceInvitation.email}
+                      </StyledScrollableTextContainer>
                     </StyledTableCell>
                     <StyledTableCell align={'right'}>
                       <Status
