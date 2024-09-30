@@ -111,6 +111,10 @@ const StyledContainer = withTheme(styled.div<
 
   border-radius: ${({ theme, variant }) =>
     variant === ChipVariant.Rounded ? '50px' : theme.border.radius.sm};
+
+  & > svg {
+    flex-shrink: 0;
+  }
 `);
 
 export const Chip = ({

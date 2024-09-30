@@ -12,7 +12,7 @@ export const WorkflowDiagramCreateStepNode = () => {
     <>
       <StyledTargetHandle type="target" position={Position.Top} />
 
-      <IconButton Icon={IconPlus} />
+      <IconButton Icon={IconPlus} size="small" />
     </>
   );
 };
