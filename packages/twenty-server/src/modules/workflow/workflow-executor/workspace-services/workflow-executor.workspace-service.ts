@@ -15,7 +15,7 @@ export type WorkflowExecutorOutput = {
     result: object | undefined;
     error: object | undefined;
   }[];
-  status?: WorkflowRunStatus;
+  status: WorkflowRunStatus;
 };
 
 @Injectable()

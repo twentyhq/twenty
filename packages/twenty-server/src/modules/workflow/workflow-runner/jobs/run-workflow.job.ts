@@ -43,12 +43,13 @@ export class RunWorkflowJob {
         payload,
         output: {
           steps: [],
+          status: WorkflowRunStatus.RUNNING,
         },
       });
 
     await this.workflowRunWorkspaceService.endWorkflowRun(
       workflowRunId,
-      status || WorkflowRunStatus.FAILED,
+      status,
       {
         steps,
       },
