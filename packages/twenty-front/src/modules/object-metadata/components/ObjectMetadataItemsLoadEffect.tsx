@@ -29,7 +29,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isLoggedIn = useIsLogged();
 
-  const { objectMetadataItems: newObjectMetadataItems, loading } =
+  const { objectMetadataItems: newObjectMetadataItems } =
     useFindManyObjectMetadataItems({
       skip: !isLoggedIn,
     });
@@ -48,17 +48,18 @@ export const ObjectMetadataItemsLoadEffect = () => {
       currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active
         ? generatedMockObjectMetadataItems
         : filteredNewObjectMetadataItems;
-    if (
-      !loading &&
-      !isDeeplyEqual(objectMetadataItems, toSetObjectMetadataItems)
-    ) {
+    if (!isDeeplyEqual(objectMetadataItems, toSetObjectMetadataItems)) {
       setObjectMetadataItems(toSetObjectMetadataItems);
     }
   }, [
     currentUser,
     currentWorkspace?.activationStatus,
+<<<<<<< HEAD
     loading,
     filteredNewObjectMetadataItems,
+=======
+    newObjectMetadataItems,
+>>>>>>> 1e4ed1e96fb099dc6985ce12abb962d6c2d26b67
     objectMetadataItems,
     setObjectMetadataItems,
   ]);

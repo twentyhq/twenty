@@ -183,7 +183,6 @@ export const CommandMenu = () => {
             'emails',
             ['primaryEmail'],
           ),
-          { phone: { ilike: `%${commandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,

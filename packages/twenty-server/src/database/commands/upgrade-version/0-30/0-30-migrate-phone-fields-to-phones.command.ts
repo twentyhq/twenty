@@ -29,7 +29,7 @@ import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view
 
 type MigratePhoneFieldsToPhonesCommandOptions = ActiveWorkspacesCommandOptions;
 @Command({
-  name: 'upgrade-0.32:migrate-phone-fields-to-phones',
+  name: 'upgrade-0.30:migrate-phone-fields-to-phones',
   description: 'Migrating fields of deprecated type PHONE to type PHONES',
 })
 export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRunner {
@@ -167,6 +167,16 @@ export class MigratePhoneFieldsToPhonesCommand extends ActiveWorkspacesCommandRu
           defaultValue: null,
           name: 'phones',
         } satisfies CreateFieldInput);
+
+        // StandardId and isCustom are not exposed in CreateFieldInput
+        await this.metadataDataSource.query(
+          `UPDATE "metadata"."fieldMetadata" SET "standardId" = $1, "isCustom" = $2 where "id"=$3`,
+          [
+            PERSON_STANDARD_FIELD_IDS.phones,
+            'false',
+            standardPersonPhonesField.id,
+          ],
+        );
 
         await this.viewService.removeFieldFromViews({
           workspaceId: workspaceId,
