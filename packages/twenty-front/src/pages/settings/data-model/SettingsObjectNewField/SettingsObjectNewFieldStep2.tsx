@@ -2,6 +2,7 @@ import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCre
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -50,7 +51,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [isConfigureStep, setIsConfigureStep] = useState(false);
-  const { findActiveObjectMetadataItemBySlug } =
+  const { findActiveObjectMetadataItemBySlug, findObjectMetadataItemById } =
     useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
@@ -65,6 +66,13 @@ export const SettingsObjectNewFieldStep2 = () => {
       ),
     ),
   });
+
+  const fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> =
+    {
+      icon: formConfig.watch('icon'),
+      label: formConfig.watch('label') || 'Employees',
+      type: formConfig.watch('type'),
+    };
 
   useEffect(() => {
     if (!activeObjectMetadataItem) {
@@ -90,6 +98,10 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const relationObjectMetadataId = formConfig.watch(
     'relation.objectMetadataId',
+  );
+  const relationType = formConfig.watch('relation.type');
+  const relationObjectMetadataItem = findObjectMetadataItemById(
+    relationObjectMetadataId,
   );
 
   useFindManyRecords<View>({
@@ -238,6 +250,8 @@ export const SettingsObjectNewFieldStep2 = () => {
                     description="The name and icon of this field"
                   />
                   <SettingsDataModelFieldIconLabelForm
+                    relationObjectMetadataItem={relationObjectMetadataItem}
+                    relationType={relationType}
                     maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                   />
                 </Section>
@@ -249,11 +263,7 @@ export const SettingsObjectNewFieldStep2 = () => {
 
                   <SettingsDataModelFieldSettingsFormCard
                     isCreatingField
-                    fieldMetadataItem={{
-                      icon: formConfig.watch('icon'),
-                      label: formConfig.watch('label') || 'Employees',
-                      type: formConfig.watch('type'),
-                    }}
+                    fieldMetadataItem={fieldMetadataItem}
                     objectMetadataItem={activeObjectMetadataItem}
                   />
                 </Section>
