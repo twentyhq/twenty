@@ -1,4 +1,5 @@
-import { ImmutableTree, Utils } from '@react-awesome-query-builder/ui';
+import { AdvancedFilterQuery } from '@/object-record/object-filter-dropdown/types/AdvancedFilterQuery';
 
-export const computeAdvancedViewFilterValue = (immutableTree: ImmutableTree) =>
-  JSON.stringify(Utils.getTree(immutableTree));
+export const computeAdvancedViewFilterValue = (
+  advancedFilterQuery: AdvancedFilterQuery,
+) => JSON.stringify(advancedFilterQuery);

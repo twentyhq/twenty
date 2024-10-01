@@ -3203,15 +3203,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.24.5":
-  version: 7.25.6
-  resolution: "@babel/runtime@npm:7.25.6"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 10c0/d6143adf5aa1ce79ed374e33fdfd74fa975055a80bc6e479672ab1eadc4e4bfd7484444e17dd063a1d180e051f3ec62b357c7a2b817e7657687b47313158c3d2
-  languageName: node
-  linkType: hard
-
 "@babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7, @babel/template@npm:^7.22.15, @babel/template@npm:^7.22.5, @babel/template@npm:^7.24.7, @babel/template@npm:^7.25.0, @babel/template@npm:^7.3.3":
   version: 7.25.0
   resolution: "@babel/template@npm:7.25.0"
@@ -11236,40 +11227,6 @@ __metadata:
   version: 1.1.0
   resolution: "@radix-ui/rect@npm:1.1.0"
   checksum: 10c0/a26ff7f8708fb5f2f7949baad70a6b2a597d761ee4dd4aadaf1c1a33ea82ea23dfef6ce6366a08310c5d008cdd60b2e626e4ee03fa342bd5f246ddd9d427f6be
-  languageName: node
-  linkType: hard
-
-"@react-awesome-query-builder/core@npm:^6.6.3":
-  version: 6.6.3
-  resolution: "@react-awesome-query-builder/core@npm:6.6.3"
-  dependencies:
-    "@babel/runtime": "npm:^7.24.5"
-    clone: "npm:^2.1.2"
-    i18next: "npm:^23.11.5"
-    immutable: "npm:^4.3.6"
-    json-logic-js: "npm:^2.0.2"
-    lodash: "npm:^4.17.21"
-    moment: "npm:^2.30.1"
-    spel2js: "npm:^0.2.8"
-    sqlstring: "npm:^2.3.3"
-  checksum: 10c0/40e0a75589a78d7928959e5407c49a3b392c1b39c0a151b3ad116dc31475e5dae09032878476b48322d9da7f626a99324cc7f3a4ea12f10beb1a19ef2202ec38
-  languageName: node
-  linkType: hard
-
-"@react-awesome-query-builder/ui@npm:^6.6.3":
-  version: 6.6.3
-  resolution: "@react-awesome-query-builder/ui@npm:6.6.3"
-  dependencies:
-    "@react-awesome-query-builder/core": "npm:^6.6.3"
-    classnames: "npm:^2.5.1"
-    lodash: "npm:^4.17.21"
-    prop-types: "npm:^15.8.1"
-    react-redux: "npm:^8.1.3"
-    redux: "npm:^4.2.1"
-  peerDependencies:
-    react: ^16.8.4 || ^17.0.1 || ^18.0.0
-    react-dom: ^16.8.4 || ^17.0.1 || ^18.0.0
-  checksum: 10c0/d7fb4c4faef156dff6641caab7ba1d00d7cd433ab3790cc25ffb1193bbe64a1cbaad8195e614aab865738a22608c5255c3d8706baf2044ae3263658ca1facaa5
   languageName: node
   linkType: hard
 
@@ -22918,7 +22875,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clone@npm:^2.1.1, clone@npm:^2.1.2":
+"clone@npm:^2.1.1":
   version: 2.1.2
   resolution: "clone@npm:2.1.2"
   checksum: 10c0/ed0601cd0b1606bc7d82ee7175b97e68d1dd9b91fd1250a3617b38d34a095f8ee0431d40a1a611122dcccb4f93295b4fdb94942aa763392b5fe44effa50c2d5e
@@ -31010,15 +30967,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^23.11.5":
-  version: 23.15.1
-  resolution: "i18next@npm:23.15.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.23.2"
-  checksum: 10c0/06bf6c45c70ebe8cc1181ce5f367f6a60acc798abb1926329e67e092a25762cabbfed64ac149745d515f724d2a6fef3bf809bd4fd8f505a7966e9e4dd2e3fd69
-  languageName: node
-  linkType: hard
-
 "iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
@@ -31147,13 +31095,6 @@ __metadata:
   version: 9.0.21
   resolution: "immer@npm:9.0.21"
   checksum: 10c0/03ea3ed5d4d72e8bd428df4a38ad7e483ea8308e9a113d3b42e0ea2cc0cc38340eb0a6aca69592abbbf047c685dbda04e3d34bf2ff438ab57339ed0a34cc0a05
-  languageName: node
-  linkType: hard
-
-"immutable@npm:^4.3.6":
-  version: 4.3.7
-  resolution: "immutable@npm:4.3.7"
-  checksum: 10c0/9b099197081b22f6433003e34929da8ecddbbdc1474cdc8aa3b7669dee4adda349c06143de22def36016d1b6de5322b043eccd7a11db1dad2ca85dad4fff5435
   languageName: node
   linkType: hard
 
@@ -33639,13 +33580,6 @@ __metadata:
   bin:
     json-diff: bin/json-diff.js
   checksum: 10c0/971983f0e93c4f55c2d2bee8429e84e61ca054144ddcaf5cecf8aff33e68756fd93dcdd2ff8f19a12ef9aa5063b0e81087bbb266f4c0db5de6fe3e8440da8b99
-  languageName: node
-  linkType: hard
-
-"json-logic-js@npm:^2.0.2":
-  version: 2.0.5
-  resolution: "json-logic-js@npm:2.0.5"
-  checksum: 10c0/c80d96a9f704dac2f4488c7119d9c94cbf67adbd93cb47eaa5b7eadc4947f18ed6d62fd5555f245cc2f87525f9e8d7bd5f70bd9e7fba2c70366e63bd68010f23
   languageName: node
   linkType: hard
 
@@ -37719,7 +37653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.22.1, moment@npm:^2.30.1":
+"moment@npm:^2.22.1":
   version: 2.30.1
   resolution: "moment@npm:2.30.1"
   checksum: 10c0/865e4279418c6de666fca7786607705fd0189d8a7b7624e2e56be99290ac846f90878a6f602e34b4e0455c549b85385b1baf9966845962b313699e7cb847543a
@@ -45436,13 +45370,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"spel2js@npm:^0.2.8":
-  version: 0.2.8
-  resolution: "spel2js@npm:0.2.8"
-  checksum: 10c0/8f716e98d688a2300b23db0cf78f0ec4e428a265cce156ffc828945b82642cab7df4496e86bed6e7fbb4bdc1cc2b7580d049424e40be57d072c276d48261f1bf
-  languageName: node
-  linkType: hard
-
 "split-on-first@npm:^1.0.0":
   version: 1.1.0
   resolution: "split-on-first@npm:1.1.0"
@@ -45477,13 +45404,6 @@ __metadata:
   version: 1.0.3
   resolution: "sprintf-js@npm:1.0.3"
   checksum: 10c0/ecadcfe4c771890140da5023d43e190b7566d9cf8b2d238600f31bec0fc653f328da4450eb04bd59a431771a8e9cc0e118f0aa3974b683a4981b4e07abc2a5bb
-  languageName: node
-  linkType: hard
-
-"sqlstring@npm:^2.3.3":
-  version: 2.3.3
-  resolution: "sqlstring@npm:2.3.3"
-  checksum: 10c0/3b5dd7badb3d6312f494cfa6c9a381ee630fbe3dbd571c4c9eb8ecdb99a7bf5a1f7a5043191d768797f6b3c04eed5958ac6a5f948b998f0a138294c6d3125fbd
   languageName: node
   linkType: hard
 
@@ -47709,8 +47629,6 @@ __metadata:
     "@playwright/test": "npm:^1.46.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
-    "@react-awesome-query-builder/core": "npm:^6.6.3"
-    "@react-awesome-query-builder/ui": "npm:^6.6.3"
     "@react-email/components": "npm:0.0.12"
     "@react-email/render": "npm:0.0.10"
     "@sentry/node": "npm:^8"
