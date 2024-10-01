@@ -1,7 +1,9 @@
 import { join } from 'path';
 
 import ts, { createProgram } from 'typescript';
+
 import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 
 export const compileTypescript = (typescriptCode: string): string => {
   const options: ts.CompilerOptions = {
@@ -34,5 +36,5 @@ export const compileTypescript2 = (folderPath: string) => {
     types: ['node'],
   };
 
-  createProgram([join(folderPath, 'src', 'index.ts')], options).emit();
+  createProgram([join(folderPath, 'src', INDEX_FILE_NAME)], options).emit();
 };
