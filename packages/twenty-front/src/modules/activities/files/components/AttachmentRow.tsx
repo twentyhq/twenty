@@ -14,7 +14,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { IconCalendar } from 'twenty-ui';
-
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
@@ -29,16 +29,27 @@ const StyledRow = styled.div`
   height: 32px;
 `;
 
-const StyledLeftContent = styled.div`
+const StyledLeftContent = styled.div<{ isMobile: boolean }>`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
+  width: 80%;
+  overflow: scroll;
+  scroll-behavior: smooth;
+  scroll-snap-align: start;
+  white-space: pre;
 `;
 
 const StyledRightContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(0.5)};
+  padding: ${({ theme }) => theme.spacing(0.6)};
+  white-space: pre;
+`;
+
+const StyledAttachment = styled.div<{ isMobile: boolean }>`
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledCalendarIconContainer = styled.div`
@@ -61,7 +72,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [attachmentName, setAttachmentName] = useState(attachment.name);
-
+  const isMobile = useIsMobile();
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
     [attachment?.id],
@@ -98,8 +109,18 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledRow>
-        <StyledLeftContent>
-          <AttachmentIcon attachmentType={attachment.type} />
+        {isMobile && (
+          <StyledAttachment isMobile={isMobile}>
+            <AttachmentIcon attachmentType={attachment.type} />
+          </StyledAttachment>
+        )}
+
+        <StyledLeftContent isMobile={isMobile}>
+          {!isMobile && (
+            <StyledAttachment isMobile={isMobile}>
+              <AttachmentIcon attachmentType={attachment.type} />
+            </StyledAttachment>
+          )}
           {isEditing ? (
             <TextInput
               value={attachmentName}
