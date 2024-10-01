@@ -188,7 +188,7 @@ export const SettingsWorkspaceMembers = () => {
           />
           <Table>
             <StyledTableHeaderRow>
-              <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
+              <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(23)}`}>
                 <TableHeader>Name</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader align={'right'}></TableHeader>
