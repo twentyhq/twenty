@@ -25,6 +25,9 @@ import {
   convertLessThanRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
+import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
+import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
+import { z } from 'zod';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
@@ -289,16 +292,19 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       (field) => field.id === rawUIFilter.fieldMetadataId,
     );
 
-    const isEmptyOperand = [
+    const isValuelessOperand = [
       ViewFilterOperand.IsEmpty,
       ViewFilterOperand.IsNotEmpty,
+      ViewFilterOperand.IsInPast,
+      ViewFilterOperand.IsInFuture,
+      ViewFilterOperand.IsToday,
     ].includes(rawUIFilter.operand);
 
     if (!correspondingField) {
       continue;
     }
 
-    if (!isEmptyOperand) {
+    if (!isValuelessOperand) {
       if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
         continue;
       }
@@ -341,24 +347,31 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'DATE':
-      case 'DATE_TIME':
+      case 'DATE_TIME': {
+        const resolvedFilterValue = resolveFilterValue(rawUIFilter);
+        const now = roundToNearestMinutes(new Date());
+        const date =
+          resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
+
         switch (rawUIFilter.operand) {
-          case ViewFilterOperand.GreaterThan:
+          case ViewFilterOperand.IsAfter: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: rawUIFilter.value,
+                gt: date.toISOString(),
               } as DateFilter,
             });
             break;
-          case ViewFilterOperand.LessThan:
+          }
+          case ViewFilterOperand.IsBefore: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: rawUIFilter.value,
+                lt: date.toISOString(),
               } as DateFilter,
             });
             break;
+          }
           case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
+          case ViewFilterOperand.IsNotEmpty: {
             applyEmptyFilters(
               rawUIFilter.operand,
               correspondingField,
@@ -366,12 +379,99 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.definition.type,
             );
             break;
+          }
+          case ViewFilterOperand.IsRelative: {
+            const dateRange = z
+              .object({ start: z.date(), end: z.date() })
+              .safeParse(resolvedFilterValue).data;
+
+            const defaultDateRange = resolveFilterValue({
+              value: 'PAST_1_DAY',
+              definition: {
+                type: 'DATE',
+              },
+              operand: ViewFilterOperand.IsRelative,
+            });
+
+            if (!defaultDateRange)
+              throw new Error('Failed to resolve default date range');
+
+            const { start, end } = dateRange ?? defaultDateRange;
+
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    gte: start.toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    lte: end.toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
+          case ViewFilterOperand.Is: {
+            const isValid = resolvedFilterValue instanceof Date;
+            const date = isValid ? resolvedFilterValue : now;
+
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
+          case ViewFilterOperand.IsInPast:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                lte: now.toISOString(),
+              } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsInFuture:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                gte: now.toISOString(),
+              } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsToday: {
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
           default:
             throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`, //
             );
         }
         break;
+      }
       case 'RATING':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Is:
@@ -446,7 +546,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'RELATION': {
-        if (!isEmptyOperand) {
+        if (!isValuelessOperand) {
           try {
             JSON.parse(rawUIFilter.value);
           } catch (e) {
@@ -743,7 +843,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'SELECT': {
-        if (isEmptyOperand) {
+        if (isValuelessOperand) {
           applyEmptyFilters(
             rawUIFilter.operand,
             correspondingField,

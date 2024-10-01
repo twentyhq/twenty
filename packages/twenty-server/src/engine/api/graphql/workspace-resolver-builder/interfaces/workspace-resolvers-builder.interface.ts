@@ -22,6 +22,7 @@ export enum ResolverArgsType {
   DeleteMany = 'DeleteMany',
   RestoreMany = 'RestoreMany',
   DestroyMany = 'DestroyMany',
+  DestroyOne = 'DestroyOne',
 }
 
 export interface FindManyResolverArgs<
