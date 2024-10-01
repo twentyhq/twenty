@@ -33,7 +33,7 @@ const StyledToggleContainer = styled.div`
 `;
 
 const StyledIconTool = styled(IconTool)`
-  margin-right: 3px;
+  margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 export const AdvancedSettingsToggle = () => {
