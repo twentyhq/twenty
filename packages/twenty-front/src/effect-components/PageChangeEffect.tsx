@@ -19,6 +19,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreCurrentViewIdState } from '@/context-store/states/contextStoreCurrentViewIdState';
+import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -76,6 +77,9 @@ export const PageChangeEffect = () => {
   const setContextStoreCurrentObjectMetadataId = useSetRecoilState(
     contextStoreCurrentObjectMetadataIdState,
   );
+  const setContextStoreTargetedRecordIds = useSetRecoilState(
+    contextStoreTargetedRecordIdsState,
+  );
 
   useEffect(() => {
     cleanRecoilState();
@@ -96,9 +100,14 @@ export const PageChangeEffect = () => {
   }, [navigate, pageChangeEffectNavigateLocation]);
 
   useEffect(() => {
-    const viewId = searchParams.get('viewId');
+    const viewId = searchParams.get('view');
     setContextStoreCurrentViewId(viewId);
-  }, [searchParams, setContextStoreCurrentViewId]);
+    setContextStoreTargetedRecordIds([]);
+  }, [
+    searchParams,
+    setContextStoreCurrentViewId,
+    setContextStoreTargetedRecordIds,
+  ]);
 
   useEffect(() => {
     setContextStoreCurrentObjectMetadataId(objectMetadataItem?.id ?? null);
