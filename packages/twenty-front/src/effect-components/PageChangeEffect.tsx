@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -12,6 +12,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
+import { contextStoreCurrentViewIdState } from '@/context-store/states/contextStoreCurrentViewIdState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
@@ -49,6 +50,12 @@ export const PageChangeEffect = () => {
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
+  const [searchParams] = useSearchParams();
+
+  const setContextStoreCurrentViewId = useSetRecoilState(
+    contextStoreCurrentViewIdState,
+  );
+
   useEffect(() => {
     cleanRecoilState();
   }, [cleanRecoilState]);
@@ -66,6 +73,11 @@ export const PageChangeEffect = () => {
       navigate(pageChangeEffectNavigateLocation);
     }
   }, [navigate, pageChangeEffectNavigateLocation]);
+
+  useEffect(() => {
+    const viewId = searchParams.get('viewId');
+    setContextStoreCurrentViewId(viewId);
+  }, [searchParams, setContextStoreCurrentViewId]);
 
   useEffect(() => {
     switch (true) {
