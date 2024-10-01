@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { wrapHeadingsWithAnchor } from '@/shared-utils/wrapHeadingsWithAnchor';
@@ -9,6 +9,12 @@ import { wrapHeadingsWithAnchor } from '@/shared-utils/wrapHeadingsWithAnchor';
 const StyledContent = styled.div`
   flex: 1;
   max-width: 950px;
+
+  pre {
+    background: #1414140a;
+    padding: 4px;
+    border-radius: 4px;
+  }
 
   code {
     overflow: auto;
