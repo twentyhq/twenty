@@ -63,8 +63,9 @@ const StyledTitle = styled.div<{ isMobile: boolean }>`
   max-width: 90%;
 `;
 
-const StyledAvatarWrapper = styled.div`
-  cursor: pointer;
+const StyledAvatarWrapper = styled.div<{ isAvatarEditable: boolean }>`
+  cursor: ${({ isAvatarEditable }) =>
+    isAvatarEditable ? 'pointer' : 'default'};
 `;
 
 const StyledFileInput = styled.input`
@@ -130,7 +131,7 @@ export const ShowPageSummaryCard = ({
 
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
-      <StyledAvatarWrapper>
+      <StyledAvatarWrapper isAvatarEditable={!!onUploadPicture}>
         <Avatar
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
