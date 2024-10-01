@@ -75,8 +75,10 @@ const StyledTableCell = styled(TableCell)`
   }
 `;
 const StyledIconWrapper = styled.div`
-  margin-right: ${({ theme }) => theme.spacing(1)};
+  left: 2px;
+  margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
+  top: 2px;
 `;
 
 const StyledScrollableTextContainer = styled.div`
