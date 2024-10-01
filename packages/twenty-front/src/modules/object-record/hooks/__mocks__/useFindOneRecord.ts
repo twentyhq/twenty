@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
 import { responseData as person } from './useUpdateOneRecord';
 
 export const query = gql`

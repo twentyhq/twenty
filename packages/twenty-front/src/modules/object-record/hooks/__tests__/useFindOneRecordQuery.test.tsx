@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
-import { RecoilRoot } from 'recoil';
 
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
+import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
 
 const expectedQueryTemplate = `
 query FindOnePerson($objectRecordId: ID!) {
@@ -12,6 +12,10 @@ query FindOnePerson($objectRecordId: ID!) {
   }
 }
 `.replace(/\s/g, '');
+
+const Wrapper = getJestHookMockWrapper({
+  apolloMocks: [],
+});
 
 describe('useFindOneRecordQuery', () => {
   it('should return a valid findOneRecordQuery', () => {
@@ -23,7 +27,7 @@ describe('useFindOneRecordQuery', () => {
           objectNameSingular,
         }),
       {
-        wrapper: RecoilRoot,
+        wrapper: Wrapper,
       },
     );
 

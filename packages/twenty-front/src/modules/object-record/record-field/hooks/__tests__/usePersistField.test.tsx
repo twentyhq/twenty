@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   phonesFieldDefinition,

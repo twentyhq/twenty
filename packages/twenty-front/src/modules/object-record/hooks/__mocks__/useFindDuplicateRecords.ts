@@ -1,4 +1,4 @@
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
 import { gql } from '@apollo/client';
 import { getPeopleMock } from '~/testing/mock-data/people';
 

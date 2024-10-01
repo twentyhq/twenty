@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 import { RecoilRoot } from 'recoil';
 
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 
 const expectedQueryTemplate = `
