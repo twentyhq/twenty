@@ -20,7 +20,7 @@ export const WorkflowDiagramStepNode = ({
   selected,
 }: {
   data: WorkflowDiagramStepNodeData;
-  selected: boolean;
+  selected: boolean | undefined;
 }) => {
   const theme = useTheme();
 
