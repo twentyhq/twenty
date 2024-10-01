@@ -102,6 +102,7 @@ export const QueryParamsViewIdEffect = () => {
     setCurrentViewId,
     setLastVisitedObjectMetadataItem,
     setLastVisitedView,
+    setViewInUrl,
     viewIdQueryParam,
     viewsOnCurrentObject,
   ]);
