@@ -10,12 +10,6 @@ const StyledContent = styled.div`
   flex: 1;
   max-width: 950px;
 
-  pre {
-    background: #1414140a;
-    padding: 4px;
-    border-radius: 4px;
-  }
-
   code {
     overflow: auto;
     white-space: pre-wrap;
@@ -23,6 +17,21 @@ const StyledContent = styled.div`
     max-width: 100%;
     line-height: 1.8;
     color: black;
+    padding: 4px;
+    border-radius: 4px;
+    background: #1414140a;
+  }
+
+  pre {
+    background: #1414140a;
+    padding: 4px;
+    border-radius: 4px;
+
+    code {
+      padding: 0;
+      border-radius: 0;
+      background: none;
+    }
   }
 
   p {
