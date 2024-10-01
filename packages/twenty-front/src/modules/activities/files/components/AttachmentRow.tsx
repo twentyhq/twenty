@@ -146,7 +146,10 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             scopeKey={attachment.id}
             onDelete={handleDelete}
             onDownload={() => {
-              downloadFile(attachment.fullPath, attachment.name);
+              downloadFile(
+                attachment.fullPath,
+                `${attachmentName}${fileExtension}`,
+              );
             }}
             onRename={handleRename}
           />
