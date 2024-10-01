@@ -21,6 +21,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import groupBy from 'lodash.groupby';
+import { useMemo } from 'react';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
@@ -55,6 +56,19 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
     (activeTabId !== 'done' && tasks?.length === 0) ||
     (activeTabId === 'done' && tasks?.length === 0);
 
+  const sortedTasksByStatus = useMemo(
+    () =>
+      Object.entries(groupBy(tasks, ({ status }) => status)).sort(
+        ([statusA], [statusB]) => statusB.localeCompare(statusA),
+      ),
+    [tasks],
+  );
+
+  const hasTodoStatus = useMemo(
+    () => sortedTasksByStatus.some(([status]) => status === 'TODO'),
+    [sortedTasksByStatus],
+  );
+
   if (isLoading && isTasksEmpty) {
     return <SkeletonLoader />;
   }
@@ -88,10 +102,6 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
     );
   }
 
-  const sortedTasksByStatus = Object.entries(
-    groupBy(tasks, ({ status }) => status),
-  ).toSorted(([statusA], [statusB]) => statusB.localeCompare(statusA));
-
   return (
     <StyledContainer>
       {sortedTasksByStatus.map(([status, tasksByStatus]: [string, Task[]]) => (
@@ -100,8 +110,7 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
           title={status}
           tasks={tasksByStatus}
           button={
-            (status === 'TODO' ||
-              !sortedTasksByStatus.some(([s]) => s === 'TODO')) && (
+            (status === 'TODO' || !hasTodoStatus) && (
               <AddTaskButton activityTargetableObjects={targetableObjects} />
             )
           }
