@@ -76,34 +76,42 @@ export const RightDrawerWorkflowEditStepContent = ({
     workflow,
   });
 
-  if (stepDefinition.type === 'trigger') {
-    return (
-      <WorkflowEditTriggerForm
-        trigger={stepDefinition.definition}
-        onTriggerUpdate={updateTrigger}
-      />
-    );
-  }
-
-  if (stepDefinition.type === 'action') {
-    if (stepDefinition.definition.type === 'CODE') {
+  switch (stepDefinition.type) {
+    case 'trigger': {
       return (
-        <WorkflowEditActionFormServerlessFunction
-          action={stepDefinition.definition}
-          onActionUpdate={updateStep}
+        <WorkflowEditTriggerForm
+          trigger={stepDefinition.definition}
+          onTriggerUpdate={updateTrigger}
         />
       );
     }
-
-    if (stepDefinition.definition.type === 'SEND_EMAIL') {
-      return (
-        <WorkflowEditActionFormSendEmail
-          action={stepDefinition.definition}
-          onActionUpdate={updateStep}
-        />
-      );
+    case 'action': {
+      switch (stepDefinition.definition.type) {
+        case 'CODE': {
+          return (
+            <WorkflowEditActionFormServerlessFunction
+              action={stepDefinition.definition}
+              onActionUpdate={updateStep}
+            />
+          );
+        }
+        case 'SEND_EMAIL': {
+          return (
+            <WorkflowEditActionFormSendEmail
+              action={stepDefinition.definition}
+              onActionUpdate={updateStep}
+            />
+          );
+        }
+        default: {
+          throw new Error(
+            `Unsupported step: ${JSON.stringify(stepDefinition)}`,
+          );
+        }
+      }
+    }
+    default: {
+      throw new Error(`Unsupported step: ${JSON.stringify(stepDefinition)}`);
     }
   }
-
-  throw new Error(`Unsupported step: ${JSON.stringify(stepDefinition)}`);
 };
