@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="oss.gg">
+  <a href="https://oss.gg/">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/twentyhq/twenty/blob/33be2dbbe14eea00445010ecb9cd53ed603c01d5/packages/twenty-website/public/images/readme/Github%20Read-me%20banner.png">
       <source media="(prefers-color-scheme: light)" srcset="https://github.com/twentyhq/twenty/blob/33be2dbbe14eea00445010ecb9cd53ed603c01d5/packages/twenty-website/public/images/readme/Github%20Read-me%20banner.png">
