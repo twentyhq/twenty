@@ -40,7 +40,6 @@ export const RecordShowPage = () => {
     <RecordFieldValueSelectorContextProvider>
       <RecordValueSetterEffect recordId={objectRecordId} />
       <RecordShowPageEffect recordId={objectRecordId} />
-
       <PageContainer>
         <PageTitle title={pageTitle} />
         <RecordShowPageHeader

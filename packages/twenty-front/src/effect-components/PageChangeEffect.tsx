@@ -120,7 +120,6 @@ export const PageChangeEffect = () => {
           goto: true,
           keyboardShortcutMenu: true,
         });
-
         break;
       }
       case isMatchingLocation(AppPath.RecordShowPage): {
