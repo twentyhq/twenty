@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class AddIsCustomColumnToIndexMetadata1727699709905
   implements MigrationInterface
 {
-  name = 'AddIsCustom1727699709905';
+  name = 'AddIsCustomColumnToIndexMetadata1727699709905';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`

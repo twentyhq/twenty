@@ -242,7 +242,7 @@ export const CommandMenu = () => {
   });
 
   const { records: opportunitiesFromFindMany } = useFindManyRecords({
-    skip: !isCommandMenuOpened,
+    skip: !isCommandMenuOpened || isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Opportunity,
     filter: commandMenuSearch
       ? {

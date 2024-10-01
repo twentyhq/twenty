@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useEffect } from 'react';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -34,31 +34,32 @@ export const ObjectMetadataItemsLoadEffect = () => {
       skip: !isLoggedIn,
     });
 
-  const filteredNewObjectMetadataItems = useMemo(() => {
-    return filterTsVectorFields(newObjectMetadataItems);
-  }, [newObjectMetadataItems]);
+  const updateObjectMetadataItems = useRecoilCallback(
+    ({ set, snapshot }) =>
+      () => {
+        const filteredFields = filterTsVectorFields(newObjectMetadataItems);
+        const toSetObjectMetadataItems =
+          isUndefinedOrNull(currentUser) ||
+          currentWorkspace?.activationStatus !==
+            WorkspaceActivationStatus.Active
+            ? generatedMockObjectMetadataItems
+            : filteredFields;
 
-  const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(
-    objectMetadataItemsState,
+        if (
+          !isDeeplyEqual(
+            snapshot.getLoadable(objectMetadataItemsState).getValue(),
+            toSetObjectMetadataItems,
+          )
+        ) {
+          set(objectMetadataItemsState, toSetObjectMetadataItems);
+        }
+      },
+    [currentUser, currentWorkspace?.activationStatus, newObjectMetadataItems],
   );
 
   useEffect(() => {
-    const toSetObjectMetadataItems =
-      isUndefinedOrNull(currentUser) ||
-      currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active
-        ? generatedMockObjectMetadataItems
-        : filteredNewObjectMetadataItems;
-    if (!isDeeplyEqual(objectMetadataItems, toSetObjectMetadataItems)) {
-      setObjectMetadataItems(toSetObjectMetadataItems);
-    }
-  }, [
-    currentUser,
-    currentWorkspace?.activationStatus,
-    filteredNewObjectMetadataItems,
-    newObjectMetadataItems,
-    objectMetadataItems,
-    setObjectMetadataItems,
-  ]);
+    updateObjectMetadataItems();
+  }, [updateObjectMetadataItems]);
 
   return <></>;
 };

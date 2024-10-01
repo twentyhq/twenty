@@ -255,6 +255,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceIndex(IndexType.GIN)
+  @WorkspaceIndex({ indexType: IndexType.GIN })
   [SEARCH_VECTOR_FIELD_NAME]: any;
 }
