@@ -51,9 +51,7 @@ export class StandardIndexFactory {
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
-    const workspaceEntity = metadataArgsStorage.filterEntities(
-      CustomWorkspaceEntity,
-    );
+    const workspaceEntity = metadataArgsStorage.filterEntities(target);
 
     if (!workspaceEntity) {
       throw new Error(
