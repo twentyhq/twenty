@@ -35,7 +35,7 @@ const StyledLeftContent = styled.div<{ isMobile: boolean }>`
   gap: ${({ theme }) => theme.spacing(2)};
   width: 80%;
   overflow: scroll;
-  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   scroll-snap-align: start;
   white-space: pre;
 `;
