@@ -9,7 +9,7 @@ import { View } from '@/views/types/View';
 export const WorkspaceFavorites = () => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
-  const { objectMetadataItems: objectMetadataItemsToDisplay } =
+  const { activeObjectMetadataItems: objectMetadataItemsToDisplay } =
     useObjectMetadataItemsInWorkspaceFavorites();
 
   const loading = useIsPrefetchLoading();

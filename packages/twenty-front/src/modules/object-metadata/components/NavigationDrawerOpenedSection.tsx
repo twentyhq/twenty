@@ -26,7 +26,7 @@ export const NavigationDrawerOpenedSection = () => {
   const currentPath = useLocation().pathname;
   const currentObjectNamePlural = extractObjectFromCurrentPath(currentPath);
 
-  const { objectMetadataItems: objectMetadataItemsCurrentlyDisplayed } =
+  const { activeObjectMetadataItems: objectMetadataItemsCurrentlyDisplayed } =
     useObjectMetadataItemsInWorkspaceFavorites();
 
   if (!currentObjectNamePlural) {

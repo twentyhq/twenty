@@ -22,13 +22,14 @@ export const useObjectMetadataItemsInWorkspaceFavorites = () => {
     }, []),
   );
 
-  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const objectMetadataItemsInWorkspaceFavorites = objectMetadataItems.filter(
-    (item) => favoriteViewObjectMetadataIds.has(item.id),
-  );
+  const activeObjectMetadataItemsInWorkspaceFavorites =
+    activeObjectMetadataItems.filter((item) =>
+      favoriteViewObjectMetadataIds.has(item.id),
+    );
 
   return {
-    objectMetadataItems: objectMetadataItemsInWorkspaceFavorites,
+    activeObjectMetadataItems: activeObjectMetadataItemsInWorkspaceFavorites,
   };
 };
