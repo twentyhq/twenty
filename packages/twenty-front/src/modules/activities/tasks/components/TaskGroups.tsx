@@ -33,7 +33,6 @@ const StyledContainer = styled.div`
 type TaskGroupsProps = {
   filterDropdownId?: string;
   targetableObjects?: ActivityTargetableObject[];
-  showAddButton?: boolean;
 };
 
 export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
