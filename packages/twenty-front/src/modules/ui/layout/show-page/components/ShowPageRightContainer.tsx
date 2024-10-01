@@ -260,7 +260,6 @@ export const ShowPageRightContainer = ({
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    console.log('targetableObject', targetableObject);
     await deleteOneRecord(targetableObject.id);
     setIsDeleting(false);
   };
