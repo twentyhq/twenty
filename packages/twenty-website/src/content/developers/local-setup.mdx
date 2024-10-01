@@ -122,6 +122,8 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```
   </ArticleTab>
   <ArticleTab>
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
+
     <b>Option 1 :</b> To provision your database locally:
     ```bash
     make postgres-on-linux
@@ -138,19 +140,35 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
   </ArticleTab>
 </ArticleTabs>
 
+## Step 4: Set up a Redis Database (cache)
+Twenty requires a redis cache to provide the best performances
 
-## Step 4: Setup environment variables
+<ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
+  <ArticleTab>
+    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+  </ArticleTab>
+  <ArticleTab>
+    To provision your database locally with `brew`:
+    ```bash
+    brew install redis
+    ```
+  </ArticleTab>
+  <ArticleTab>
+    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+  </ArticleTab>
+</ArticleTabs>
+
+## Step 5: Setup environment variables
 
 Use environment variables or `.env` files to configure your project.
 
 Copy the `.env.example` files in `/front` and `/server`:
 ```bash
 cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
-
 cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
-## Step 5: Installing dependencies
+## Step 6: Installing dependencies
 
 <ArticleWarning>
 
@@ -161,13 +179,11 @@ Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contri
 To build Twenty server and seed some data into your database, run the following commands:
 ```bash
 nvm install # installs recommended node version
-
 nvm use # use recommended node version
-
 yarn
 ```
 
-## Step 6: Running the project
+## Step 7: Running the project
 
 Setup your database with the following command:
 ```bash
@@ -177,7 +193,6 @@ npx nx database:reset twenty-server
 Start the server and the frontend:
 ```bash
 npx nx start twenty-server
-
 npx nx start twenty-front
 ```
 
