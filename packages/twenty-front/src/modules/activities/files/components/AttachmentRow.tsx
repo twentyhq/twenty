@@ -60,7 +60,17 @@ const StyledLink = styled.a`
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
-  const [attachmentName, setAttachmentName] = useState(attachment.name);
+  const getFileNameAndExtension = (filename: string) => {
+    const lastDotIndex = filename.lastIndexOf('.');
+    return {
+      name: filename.substring(0, lastDotIndex),
+      extension: filename.substring(lastDotIndex),
+    };
+  };
+
+  const { name: originalName, extension: fileExtension } =
+    getFileNameAndExtension(attachment.name);
+  const [attachmentName, setAttachmentName] = useState(originalName);
 
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
@@ -82,17 +92,27 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const handleRename = () => {
     setIsEditing(true);
   };
-
-  const handleOnBlur = () => {
+  const saveAttachmentName = () => {
     setIsEditing(false);
+    const newFileName = `${attachmentName}${fileExtension}`;
     updateOneAttachment({
       idToUpdate: attachment.id,
-      updateOneRecordInput: { name: attachmentName },
+      updateOneRecordInput: { name: newFileName },
     });
+  };
+
+  const handleOnBlur = () => {
+    saveAttachmentName();
   };
 
   const handleOnChange = (newName: string) => {
     setAttachmentName(newName);
+  };
+
+  const handleOnKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveAttachmentName();
+    }
   };
 
   return (
@@ -106,7 +126,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
               onChange={handleOnChange}
               onBlur={handleOnBlur}
               autoFocus
-              fullWidth
+              onKeyDown={handleOnKeyDown}
             />
           ) : (
             <StyledLink
