@@ -2,6 +2,7 @@ import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useProcessRecordsForCSVExport } from '@/object-record/record-index/options/hooks/useProcessRecordsForCSVExport';
 import {
   useTableData,
@@ -142,7 +143,7 @@ export const useExportTableData = ({
   filename,
   maximumRequests = 100,
   objectNameSingular,
-  pageSize = 30,
+  pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   viewType,
 }: UseExportTableDataOptions) => {
