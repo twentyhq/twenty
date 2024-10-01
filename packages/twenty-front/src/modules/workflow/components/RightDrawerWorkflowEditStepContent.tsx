@@ -6,6 +6,7 @@ import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflow
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -103,15 +104,12 @@ export const RightDrawerWorkflowEditStepContent = ({
             />
           );
         }
-        default: {
-          throw new Error(
-            `Unsupported step: ${JSON.stringify(stepDefinition)}`,
-          );
-        }
       }
     }
-    default: {
-      throw new Error(`Unsupported step: ${JSON.stringify(stepDefinition)}`);
-    }
   }
+
+  return assertUnreachable(
+    stepDefinition,
+    `Unsupported step: ${JSON.stringify(stepDefinition)}`,
+  );
 };

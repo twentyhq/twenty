@@ -1,5 +1,6 @@
 import { WorkflowDiagramBaseStepNode } from '@/workflow/components/WorkflowDiagramBaseStepNode';
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCode, IconMail, IconPlaylistAdd } from 'twenty-ui';
@@ -32,6 +33,9 @@ export const WorkflowDiagramStepNode = ({
           </StyledStepNodeLabelIconContainer>
         );
       }
+      case 'condition': {
+        return null;
+      }
       case 'action': {
         switch (data.actionType) {
           case 'CODE': {
@@ -55,7 +59,7 @@ export const WorkflowDiagramStepNode = ({
       }
     }
 
-    return null;
+    return assertUnreachable(data);
   };
 
   return (
