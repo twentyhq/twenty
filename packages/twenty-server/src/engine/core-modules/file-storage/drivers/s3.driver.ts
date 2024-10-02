@@ -297,9 +297,7 @@ export class S3Driver implements StorageDriver {
       try {
         const dir = params.to.folderPath;
 
-        if (!fs.existsSync(dir)) {
-          await mkdir(dir, { recursive: true });
-        }
+        await mkdir(dir, { recursive: true });
 
         const fileStream = await this.read({
           folderPath: params.from.folderPath,

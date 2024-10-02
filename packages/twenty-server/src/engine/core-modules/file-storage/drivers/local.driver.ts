@@ -21,10 +21,6 @@ export class LocalDriver implements StorageDriver {
   }
 
   async createFolder(path: string) {
-    if (existsSync(path)) {
-      return;
-    }
-
     return fs.mkdir(path, { recursive: true });
   }
 

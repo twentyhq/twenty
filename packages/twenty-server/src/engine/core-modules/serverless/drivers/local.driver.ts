@@ -49,11 +49,11 @@ export class LocalDriver implements ServerlessDriver {
     const inMemoryLastVersionLayerFolderPath =
       this.getInMemoryLayerFolderPath(version);
 
-    if (existsSync(inMemoryLastVersionLayerFolderPath)) {
-      return;
+    try {
+      await fs.access(inMemoryLastVersionLayerFolderPath);
+    } catch (e) {
+      await copyAndBuildDependencies(inMemoryLastVersionLayerFolderPath);
     }
-
-    await copyAndBuildDependencies(inMemoryLastVersionLayerFolderPath);
   }
 
   async delete() {}
