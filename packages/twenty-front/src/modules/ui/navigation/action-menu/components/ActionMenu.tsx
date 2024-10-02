@@ -15,7 +15,7 @@ export const ActionMenu = () => {
   );
 
   useEffect(() => {
-    if (contextStoreTargetedRecordIds.length > 1) {
+    if (contextStoreTargetedRecordIds.length !== 1) {
       setContextMenuOpenState(false);
     }
   }, [contextStoreTargetedRecordIds, setContextMenuOpenState]);
