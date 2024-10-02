@@ -27,6 +27,17 @@ export enum WorkflowRunStatus {
   FAILED = 'FAILED',
 }
 
+export type WorkflowRunOutput = {
+  steps: {
+    id: string;
+    name: string;
+    type: string;
+    attemptCount: number;
+    result: object | undefined;
+    error: string | undefined;
+  }[];
+};
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowRun,
   namePlural: 'workflowRuns',
@@ -107,6 +118,15 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     },
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.output,
+    type: FieldMetadataType.RAW_JSON,
+    label: 'Output',
+    description: 'Json object to provide output of the workflow run',
+  })
+  @WorkspaceIsNullable()
+  output: WorkflowRunOutput | null;
 
   // Relations
   @WorkspaceRelation({

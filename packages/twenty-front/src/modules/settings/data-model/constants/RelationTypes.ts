@@ -1,6 +1,5 @@
 import {
   IconComponent,
-  IllustrationIconManyToMany,
   IllustrationIconOneToMany,
   IllustrationIconOneToOne,
 } from 'twenty-ui';
@@ -32,13 +31,6 @@ export const RELATION_TYPES: Record<
   [RelationDefinitionType.ManyToOne]: {
     label: 'Belongs to one',
     Icon: IllustrationIconOneToMany,
-    imageSrc: OneToManySvg,
-    isImageFlipped: true,
-  },
-  // Not supported yet
-  [RelationDefinitionType.ManyToMany]: {
-    label: 'Belongs to many',
-    Icon: IllustrationIconManyToMany,
     imageSrc: OneToManySvg,
     isImageFlipped: true,
   },
