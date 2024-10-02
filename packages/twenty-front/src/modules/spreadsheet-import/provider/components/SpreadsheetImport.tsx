@@ -24,13 +24,16 @@ export const defaultSpreadsheetImportProps: Partial<
 export const SpreadsheetImport = <T extends string>(
   props: SpreadsheetImportProps<T>,
 ) => {
+  const mergedProps = {
+    ...defaultSpreadsheetImportProps,
+    ...props,
+  } as SpreadsheetImportProps<T>;
+
   return (
-    <ReactSpreadsheetImportContextProvider values={props}>
-      <ModalWrapper isOpen={props.isOpen} onClose={props.onClose}>
+    <ReactSpreadsheetImportContextProvider values={mergedProps}>
+      <ModalWrapper isOpen={mergedProps.isOpen} onClose={mergedProps.onClose}>
         <SpreadsheetImportStepperContainer />
       </ModalWrapper>
     </ReactSpreadsheetImportContextProvider>
   );
 };
-
-SpreadsheetImport.defaultProps = defaultSpreadsheetImportProps;
