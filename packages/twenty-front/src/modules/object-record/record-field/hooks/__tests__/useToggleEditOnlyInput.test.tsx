@@ -26,35 +26,13 @@ const mocks: MockedResponse[] = [
         ) {
           updateCompany(id: $idToUpdate, data: $input) {
             __typename
-            id
-            visaSponsorship
-            createdBy {
-              source
-              workspaceMemberId
-              name
-            }
+            updatedAt
             domainName {
               primaryLinkUrl
               primaryLinkLabel
               secondaryLinks
             }
-            introVideo {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
-            }
-            position
-            annualRecurringRevenue {
-              amountMicros
-              currencyCode
-            }
-            employees
-            linkedinLink {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
-            }
-            workPolicy
+            visaSponsorship
             address {
               addressStreet1
               addressStreet2
@@ -65,16 +43,38 @@ const mocks: MockedResponse[] = [
               addressLat
               addressLng
             }
+            position
+            employees
+            deletedAt
+            accountOwnerId
+            annualRecurringRevenue {
+              amountMicros
+              currencyCode
+            }
+            id
             name
-            updatedAt
             xLink {
               primaryLinkUrl
               primaryLinkLabel
               secondaryLinks
             }
-            myCustomField
             createdAt
-            accountOwnerId
+            createdBy {
+              source
+              workspaceMemberId
+              name
+            }
+            workPolicy
+            introVideo {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            linkedinLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
             tagline
             idealCustomerProfile
           }

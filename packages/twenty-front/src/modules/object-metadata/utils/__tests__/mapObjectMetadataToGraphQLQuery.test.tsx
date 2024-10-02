@@ -1,10 +1,8 @@
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
 
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
-const personObjectMetadataItem = mockObjectMetadataItems.find(
+const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 );
 
@@ -15,7 +13,7 @@ if (!personObjectMetadataItem) {
 describe('mapObjectMetadataToGraphQLQuery', () => {
   it('should query only specified recordGqlFields', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordGqlFields: {
         company: true,
@@ -122,7 +120,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
 
   it('should load only specified operation fields nested', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
       recordGqlFields: { company: { id: true }, id: true, name: true },
     });

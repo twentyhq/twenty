@@ -5,10 +5,10 @@ import { settingsDataModelFieldIconLabelFormSchema } from '@/settings/data-model
 import { settingsDataModelFieldSettingsFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsDataModelFieldTypeFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 
-export const settingsFieldFormSchema = (existingLabels?: string[]) => {
+export const settingsFieldFormSchema = (existingOtherLabels?: string[]) => {
   return z
     .object({})
-    .merge(settingsDataModelFieldIconLabelFormSchema(existingLabels))
+    .merge(settingsDataModelFieldIconLabelFormSchema(existingOtherLabels))
     .merge(settingsDataModelFieldDescriptionFormSchema())
     .merge(settingsDataModelFieldTypeFormSchema)
     .and(settingsDataModelFieldSettingsFormSchema);

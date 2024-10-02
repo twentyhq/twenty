@@ -72,6 +72,7 @@ describe('generateWorkflowDiagram', () => {
     for (const [index, step] of steps.entries()) {
       expect(stepNodes[index].data).toEqual({
         nodeType: 'action',
+        actionType: 'CODE',
         label: step.name,
       });
     }

@@ -1,10 +1,8 @@
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { normalizeGQLField } from '~/utils/normalizeGQLField';
 
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
-const personObjectMetadataItem = mockObjectMetadataItems.find(
+const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 );
 
@@ -15,7 +13,7 @@ if (!personObjectMetadataItem) {
 describe('mapFieldMetadataToGraphQLQuery', () => {
   it('should return fieldName if simpleValue', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'id',
       )!,
@@ -24,7 +22,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   });
   it('should return fieldName if composite', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'name',
       )!,
@@ -40,7 +38,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
 
   it('should return non relation subFields if relation', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
@@ -96,7 +94,7 @@ idealCustomerProfile
 
   it('should return only return relation subFields that are in recordGqlFields', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       relationrecordFields: {
         accountOwner: { id: true, name: true },
         people: true,

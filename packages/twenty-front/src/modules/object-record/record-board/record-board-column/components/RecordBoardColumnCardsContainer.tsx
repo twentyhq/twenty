@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 import { Draggable, DroppableProvided } from '@hello-pangea/dnd';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -110,7 +110,7 @@ export const RecordBoardColumnCardsContainer = ({
               CoreObjectNameSingular.Opportunity ? (
                 <RecordBoardColumnNewOpportunityButton />
               ) : (
-                <RecordBoardColumnNewButton />
+                <RecordBoardColumnNewButton columnId={columnDefinition.id} />
               )}
             </StyledNewButtonContainer>
           </div>

@@ -10,19 +10,11 @@ export const ObjectFilterDropdownOperandButton = () => {
   const {
     selectedOperandInDropdownState,
     setIsObjectFilterDropdownOperandSelectUnfolded,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
   } = useFilterDropdown();
 
   const selectedOperandInDropdown = useRecoilValue(
     selectedOperandInDropdownState,
   );
-  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-  );
-
-  if (isObjectFilterDropdownOperandSelectUnfolded) {
-    return null;
-  }
 
   return (
     <DropdownMenuHeader

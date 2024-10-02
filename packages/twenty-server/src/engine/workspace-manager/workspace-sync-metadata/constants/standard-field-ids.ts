@@ -310,7 +310,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   xLink: '20202020-8fc2-487c-b84a-55a99b145cfd',
   jobTitle: '20202020-b0d0-415a-bef9-640a26dacd9b',
   phone: '20202020-4564-4b8b-a09f-05445f2e0bce',
-  phones: '34becd3e-3c51-43fa-8b6e-af39e29368ab',
+  phones: '20202020-0638-448e-8825-439134618022',
   city: '20202020-5243-4ffb-afc5-2c675da41346',
   avatarUrl: '20202020-b8a6-40df-961c-373dc5d2ec21',
   position: '20202020-fcd5-4231-aff5-fff583eaa0b1',
@@ -415,6 +415,7 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   endedAt: '20202020-e1c1-4b6b-bbbd-b2beaf2e159e',
   status: '20202020-6b3e-4f9c-8c2b-2e5b8e6d6f3b',
   createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
+  output: '20202020-7be4-4db2-8ac6-3ff0d740843d',
 };
 
 export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {

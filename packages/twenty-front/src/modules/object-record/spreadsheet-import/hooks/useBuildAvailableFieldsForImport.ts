@@ -15,6 +15,7 @@ export const useBuildAvailableFieldsForImport = () => {
   ) => {
     const availableFieldsForImport: AvailableFieldForImport[] = [];
 
+    // Todo: refactor this to avoid this else if syntax with duplicated code
     for (const fieldMetadataItem of fieldMetadataItems) {
       if (fieldMetadataItem.type === FieldMetadataType.FullName) {
         const { firstNameLabel, lastNameLabel } =
@@ -154,6 +155,42 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldMetadataItem.type,
             fieldMetadataItem.label,
           ),
+        });
+      } else if (fieldMetadataItem.type === FieldMetadataType.Emails) {
+        Object.entries(
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Emails],
+        ).forEach(([_, fieldLabel]) => {
+          availableFieldsForImport.push({
+            icon: getIcon(fieldMetadataItem.icon),
+            label: `${fieldLabel} (${fieldMetadataItem.label})`,
+            key: `${fieldLabel} (${fieldMetadataItem.name})`,
+            fieldType: {
+              type: 'input',
+            },
+            fieldValidationDefinitions:
+              getSpreadSheetFieldValidationDefinitions(
+                fieldMetadataItem.type,
+                `${fieldLabel} (${fieldMetadataItem.label})`,
+              ),
+          });
+        });
+      } else if (fieldMetadataItem.type === FieldMetadataType.Phones) {
+        Object.entries(
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Phones],
+        ).forEach(([_, fieldLabel]) => {
+          availableFieldsForImport.push({
+            icon: getIcon(fieldMetadataItem.icon),
+            label: `${fieldLabel} (${fieldMetadataItem.label})`,
+            key: `${fieldLabel} (${fieldMetadataItem.name})`,
+            fieldType: {
+              type: 'input',
+            },
+            fieldValidationDefinitions:
+              getSpreadSheetFieldValidationDefinitions(
+                fieldMetadataItem.type,
+                `${fieldLabel} (${fieldMetadataItem.label})`,
+              ),
+          });
         });
       } else {
         availableFieldsForImport.push({

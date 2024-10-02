@@ -165,7 +165,6 @@ export type ClientConfig = {
   signInPrefilled: Scalars['Boolean']['output'];
   signUpDisabled: Scalars['Boolean']['output'];
   support: Support;
-  telemetry: Telemetry;
 };
 
 export type CreateAppTokenInput = {
@@ -985,7 +984,6 @@ export type RelationDefinition = {
 
 /** Relation definition type */
 export enum RelationDefinitionType {
-  ManyToMany = 'MANY_TO_MANY',
   ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
   OneToOne = 'ONE_TO_ONE'
@@ -993,7 +991,6 @@ export enum RelationDefinitionType {
 
 /** Type of the relation */
 export enum RelationMetadataType {
-  ManyToMany = 'MANY_TO_MANY',
   ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
   OneToOne = 'ONE_TO_ONE'
@@ -1169,11 +1166,6 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String']['output'];
   supportFrontChatId?: Maybe<Scalars['String']['output']>;
-};
-
-export type Telemetry = {
-  __typename?: 'Telemetry';
-  enabled: Scalars['Boolean']['output'];
 };
 
 export type TimelineCalendarEvent = {
