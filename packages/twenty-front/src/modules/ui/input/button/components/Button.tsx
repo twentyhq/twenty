@@ -341,7 +341,7 @@ const StyledButton = styled('button', {
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify};
   padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
+    return `0 ${theme.spacing(1.5)}`;
   }};
 
   transition: background 0.1s ease;
