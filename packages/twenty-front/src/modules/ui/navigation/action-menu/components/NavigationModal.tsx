@@ -2,15 +2,13 @@ import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEnt
 
 type NavigationModalProps = {
   actionMenuEntries: ActionMenuEntry[];
-  customClassName: string;
 };
 
 export const NavigationModal = ({
   actionMenuEntries,
-  customClassName,
 }: NavigationModalProps) => {
   return (
-    <div data-select-disable className={customClassName}>
+    <div data-select-disable>
       {actionMenuEntries.map((actionMenuEntry, index) =>
         actionMenuEntry.ConfirmationModal ? (
           <div key={index}>{actionMenuEntry.ConfirmationModal}</div>

@@ -25,7 +25,6 @@ const meta: Meta<typeof NavigationModal> = {
         onClick: () => {},
       },
     ],
-    customClassName: 'customClassName',
   },
 };
 

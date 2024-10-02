@@ -7,7 +7,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 
 import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '../../states/contextMenuPositionState';
-import { ContextMenu } from '../ContextMenu';
+import { ActionMenuDropdown } from '../ActionMenuDropdown';
 
 const FilledContextMenu = () => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
@@ -17,10 +17,10 @@ const FilledContextMenu = () => {
   });
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   setContextMenuOpenState(true);
-  return <ContextMenu />;
+  return <ActionMenuDropdown />;
 };
 
-const meta: Meta<typeof ContextMenu> = {
+const meta: Meta<typeof ActionMenuDropdown> = {
   title: 'UI/Navigation/ContextMenu/ContextMenu',
   component: FilledContextMenu,
   decorators: [
@@ -39,6 +39,6 @@ const meta: Meta<typeof ContextMenu> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ContextMenu>;
+type Story = StoryObj<typeof ActionMenuDropdown>;
 
 export const Default: Story = {};

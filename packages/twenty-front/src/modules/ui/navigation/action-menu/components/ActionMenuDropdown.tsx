@@ -4,12 +4,11 @@ import { useRecoilValue } from 'recoil';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { actionMenuEntriesState } from '../states/actionMenuEntriesState';
-import { contextMenuIsOpenState } from '../states/contextMenuIsOpenState';
 import { PositionType } from '../types/PositionType';
 
 import { contextMenuPositionState } from '@/ui/navigation/action-menu/states/contextMenuPositionState';
-import { ContextMenuItem } from './ContextMenuItem';
+import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type StyledContainerProps = {
   position: PositionType;
@@ -34,15 +33,14 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   z-index: 2;
 `;
 
-export const ContextMenu = () => {
+export const ActionMenuDropdown = ({
+  actionMenuEntries,
+}: {
+  actionMenuEntries: ActionMenuEntry[];
+}) => {
   const contextMenuPosition = useRecoilValue(contextMenuPositionState);
-  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
-  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
 
-  if (!contextMenuIsOpen) {
-    return null;
-  }
-
+  //TODO: remove this
   const width = actionMenuEntries.some(
     (actionMenuEntry) => actionMenuEntry.label === 'Remove from favorites',
   )
@@ -51,15 +49,18 @@ export const ContextMenu = () => {
 
   return (
     <>
-      <StyledContainerContextMenu
-        className="context-menu"
-        position={contextMenuPosition}
-      >
+      <StyledContainerContextMenu position={contextMenuPosition}>
         <DropdownMenu data-select-disable width={width}>
           <DropdownMenuItemsContainer>
-            {actionMenuEntries.map((item, index) => {
-              return <ContextMenuItem key={index} item={item} />;
-            })}
+            {actionMenuEntries.map((item, index) => (
+              <MenuItem
+                key={index}
+                LeftIcon={item.Icon}
+                onClick={item.onClick}
+                accent={item.accent}
+                text={item.label}
+              />
+            ))}
           </DropdownMenuItemsContainer>
         </DropdownMenu>
       </StyledContainerContextMenu>

@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
-import { actionMenuEntriesState } from '@/ui/navigation/action-menu/states/actionMenuEntriesState';
-import { contextMenuIsOpenState } from '@/ui/navigation/action-menu/states/contextMenuIsOpenState';
+import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
 import { ActionBarItem } from './ActionBarItem';
 
 const StyledContainerActionBar = styled.div`
@@ -35,32 +31,17 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionBar = () => {
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
-
-  const contextStoreTargetedRecordIds = useRecoilValue(
-    contextStoreTargetedRecordIdsState,
-  );
-
-  useEffect(() => {
-    if (contextStoreTargetedRecordIds.length > 1) {
-      setContextMenuOpenState(false);
-    }
-  }, [contextStoreTargetedRecordIds, setContextMenuOpenState]);
-
-  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
-  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
-
-  if (contextMenuIsOpen || !contextStoreTargetedRecordIds.length) {
-    return null;
-  }
-
+export const ActionBar = ({
+  selectedRecordIds,
+  actionMenuEntries,
+}: {
+  selectedRecordIds: string[];
+  actionMenuEntries: ActionMenuEntry[];
+}) => {
   return (
     <>
       <StyledContainerActionBar data-select-disable className="action-bar">
-        <StyledLabel>
-          {contextStoreTargetedRecordIds?.length} selected:
-        </StyledLabel>
+        <StyledLabel>{selectedRecordIds?.length} selected:</StyledLabel>
         {actionMenuEntries.map((item, index) => (
           <ActionBarItem key={index} item={item} />
         ))}
