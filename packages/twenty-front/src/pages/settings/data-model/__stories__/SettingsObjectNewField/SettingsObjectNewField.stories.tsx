@@ -15,7 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectNewField,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:objectSlug/new-field/step-2',
+    routePath: '/settings/objects/:objectSlug/new-field',
     routeParams: { ':objectSlug': 'companies' },
   },
   parameters: {

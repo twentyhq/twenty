@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
@@ -237,7 +238,7 @@ export const SettingsRoutes = ({
   isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
 }: SettingsRoutesProps) => (
-  <Suspense fallback={null}>
+  <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
       <Route path={SettingsPath.Appearance} element={<SettingsAppearance />} />

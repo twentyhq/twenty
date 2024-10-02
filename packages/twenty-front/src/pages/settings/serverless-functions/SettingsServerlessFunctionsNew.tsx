@@ -13,7 +13,6 @@ import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconFunction } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from '~/utils/isDefined';
 
@@ -79,7 +78,6 @@ export const SettingsServerlessFunctionsNew = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconFunction}
       title="New Function"
       links={[
         {

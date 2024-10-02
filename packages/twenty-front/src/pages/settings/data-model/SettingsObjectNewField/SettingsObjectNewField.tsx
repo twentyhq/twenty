@@ -22,13 +22,12 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useApolloClient } from '@apollo/client';
-import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { H1Title, H1TitleFontColor, H2Title, IconHierarchy2 } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -38,10 +37,6 @@ type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 >;
 
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
-  padding-top: ${({ theme }) => theme.spacing(3)};
-`;
 export const SettingsObjectNewField = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
@@ -186,8 +181,11 @@ export const SettingsObjectNewField = () => {
         {...formConfig}
       >
         <SubMenuTopBarContainer
-          Icon={IconHierarchy2}
           links={[
+            {
+              children: 'Workspace',
+              href: '/settings/workspace',
+            },
             {
               children: 'Objects',
               href: '/settings/objects',
@@ -205,6 +203,9 @@ export const SettingsObjectNewField = () => {
               ),
             },
           ]}
+          title={
+            !isConfigureStep ? '1. Select a field type' : '2. Configure field'
+          }
           actionButton={
             !activeObjectMetadataItem.isRemote && (
               <SaveAndCancelButtons
@@ -223,15 +224,6 @@ export const SettingsObjectNewField = () => {
           }
         >
           <SettingsPageContainer>
-            <StyledH1Title
-              title={
-                !isConfigureStep
-                  ? '1. Select a field type'
-                  : '2. Configure field'
-              }
-              fontColor={H1TitleFontColor.Primary}
-            />
-
             {!isConfigureStep ? (
               <SettingsDataModelFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}

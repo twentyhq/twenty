@@ -10,7 +10,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconHierarchy2, IconPlus } from 'twenty-ui';
+import { H2Title, IconPlus } from 'twenty-ui';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
 const StyledDiv = styled.div`
@@ -42,7 +42,6 @@ export const SettingsObjectDetailPageContent = ({
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconHierarchy2}
       title={objectMetadataItem.labelPlural}
       links={[
         {

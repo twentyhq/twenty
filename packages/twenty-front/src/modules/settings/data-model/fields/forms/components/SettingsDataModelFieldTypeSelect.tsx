@@ -114,62 +114,68 @@ export const SettingsDataModelFieldTypeSelect = ({
   };
 
   return (
-    <Controller
-      name="type"
-      control={control}
-      render={({ field: { onChange } }) => (
-        <StyledTypeSelectContainer className={className}>
-          <Section>
-            <StyledSearchInput
-              LeftIcon={IconSearch}
-              placeholder="Search a type"
-              value={searchQuery}
-              onChange={setSearchQuery}
-            />
-          </Section>
-          {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
-            <Section key={category}>
-              <H2Title
-                title={category}
-                description={
-                  SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
-                }
-              />
-              <StyledContainer>
-                {fieldTypeConfigs
-                  .filter(([, config]) => config.category === category)
-                  .map(([key, config]) => (
-                    <StyledCardContainer>
-                      <UndecoratedLink
-                        to="#"
-                        fullWidth
-                        onClick={(e) => {
-                          e.preventDefault();
-                          const newFieldType =
-                            key as SettingsSupportedFieldType;
-                          onChange(newFieldType);
-                          resetDefaultValueField(newFieldType);
-                          onFieldTypeSelect(newFieldType);
-                        }}
-                      >
-                        <SettingsCard
-                          key={key}
-                          Icon={
-                            <config.Icon
-                              size={theme.icon.size.xl}
-                              stroke={theme.icon.stroke.sm}
-                            />
-                          }
-                          title={config.label}
-                        />
-                      </UndecoratedLink>
-                    </StyledCardContainer>
-                  ))}
-              </StyledContainer>
-            </Section>
-          ))}
-        </StyledTypeSelectContainer>
-      )}
-    />
+    <>
+      {' '}
+      <Section>
+        <StyledSearchInput
+          LeftIcon={IconSearch}
+          placeholder="Search a type"
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+      </Section>
+      <Controller
+        name="type"
+        control={control}
+        render={({ field: { onChange } }) => (
+          <StyledTypeSelectContainer
+            className={className}
+            style={{ position: 'relative' }}
+          >
+            {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
+              <Section key={category}>
+                <H2Title
+                  title={category}
+                  description={
+                    SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
+                  }
+                />
+                <StyledContainer>
+                  {fieldTypeConfigs
+                    .filter(([, config]) => config.category === category)
+                    .map(([key, config]) => (
+                      <StyledCardContainer>
+                        <UndecoratedLink
+                          to="#"
+                          fullWidth
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const newFieldType =
+                              key as SettingsSupportedFieldType;
+                            onChange(newFieldType);
+                            resetDefaultValueField(newFieldType);
+                            onFieldTypeSelect(newFieldType);
+                          }}
+                        >
+                          <SettingsCard
+                            key={key}
+                            Icon={
+                              <config.Icon
+                                size={theme.icon.size.xl}
+                                stroke={theme.icon.stroke.sm}
+                              />
+                            }
+                            title={config.label}
+                          />
+                        </UndecoratedLink>
+                      </StyledCardContainer>
+                    ))}
+                </StyledContainer>
+              </Section>
+            ))}
+          </StyledTypeSelectContainer>
+        )}
+      />
+    </>
   );
 };
