@@ -9,6 +9,7 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 
 export const SettingsWorkspace = () => (
   <SubMenuTopBarContainer
@@ -40,6 +41,9 @@ export const SettingsWorkspace = () => (
       </Section>
       <Section>
         <DeleteWorkspace />
+      </Section>
+      <Section>
+        <GithubVersionLink />
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
