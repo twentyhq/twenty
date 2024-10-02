@@ -47,7 +47,7 @@ export class DeleteOneResolverFactory
           );
 
         if (isQueryRunnerTwentyORMEnabled) {
-          return await this.graphqlQueryRunnerService.updateOne(args, options);
+          return await this.graphqlQueryRunnerService.deleteOne(args, options);
         }
 
         return await this.workspaceQueryRunnerService.deleteOne(args, options);

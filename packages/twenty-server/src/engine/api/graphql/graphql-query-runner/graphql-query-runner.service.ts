@@ -11,6 +11,7 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import {
   CreateManyResolverArgs,
   CreateOneResolverArgs,
+  DeleteManyResolverArgs,
   DeleteOneResolverArgs,
   DestroyOneResolverArgs,
   FindDuplicatesResolverArgs,
@@ -18,13 +19,14 @@ import {
   FindOneResolverArgs,
   ResolverArgs,
   ResolverArgsType,
+  RestoreManyResolverArgs,
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
   WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { GraphqlQueryResolverFactory } from 'src/engine/api/graphql/graphql-query-runner/factories/graphql-query-resolver.factory';
+import { ApiEventEmitterHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/api-event-emitter.helper';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
@@ -32,7 +34,6 @@ import {
   CallWebhookJobsJobOperation,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -101,13 +102,17 @@ export class GraphqlQueryRunnerService {
 
     // TODO: trigger webhooks should be a consequence of the emitCreateEvents
     // TODO: emitCreateEvents should be moved to the ORM layer
+    const workspaceEventEmitter = new ApiEventEmitterHelper(
+      this.workspaceEventEmitter,
+    );
+
     if (results) {
       await this.triggerWebhooks(
         results,
         CallWebhookJobsJobOperation.create,
         options,
       );
-      this.emitCreateEvents(
+      workspaceEventEmitter.emitCreateEvents(
         results,
         options.authContext,
         options.objectMetadataItem,
@@ -129,13 +134,17 @@ export class GraphqlQueryRunnerService {
 
     // TODO: trigger webhooks should be a consequence of the emitCreateEvents
     // TODO: emitCreateEvents should be moved to the ORM layer
+    const workspaceEventEmitter = new ApiEventEmitterHelper(
+      this.workspaceEventEmitter,
+    );
+
     if (results) {
       await this.triggerWebhooks(
         results,
         CallWebhookJobsJobOperation.create,
         options,
       );
-      this.emitCreateEvents(
+      workspaceEventEmitter.emitCreateEvents(
         results,
         options.authContext,
         options.objectMetadataItem,
@@ -155,13 +164,17 @@ export class GraphqlQueryRunnerService {
       ObjectRecord
     >('destroyOne', args, options);
 
+    const workspaceEventEmitter = new ApiEventEmitterHelper(
+      this.workspaceEventEmitter,
+    );
+
     await this.triggerWebhooks(
       [result],
       CallWebhookJobsJobOperation.destroy,
       options,
     );
 
-    this.emitDestroyEvents(
+    workspaceEventEmitter.emitDestroyEvents(
       [result],
       options.authContext,
       options.objectMetadataItem,
@@ -170,6 +183,7 @@ export class GraphqlQueryRunnerService {
     return result;
   }
 
+  @LogExecutionTime()
   public async updateOne<ObjectRecord extends IRecord>(
     args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
@@ -190,13 +204,17 @@ export class GraphqlQueryRunnerService {
       ObjectRecord
     >('updateOne', args, options);
 
+    const workspaceEventEmitter = new ApiEventEmitterHelper(
+      this.workspaceEventEmitter,
+    );
+
     await this.triggerWebhooks(
       [result],
       CallWebhookJobsJobOperation.update,
       options,
     );
 
-    this.emitUpdateEvents(
+    workspaceEventEmitter.emitUpdateEvents(
       [existingRecord],
       [result],
       Object.keys(args.data),
@@ -207,6 +225,7 @@ export class GraphqlQueryRunnerService {
     return result;
   }
 
+  @LogExecutionTime()
   public async updateMany<ObjectRecord extends IRecord>(
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
@@ -227,13 +246,17 @@ export class GraphqlQueryRunnerService {
       ObjectRecord[]
     >('updateMany', args, options);
 
+    const workspaceEventEmitter = new ApiEventEmitterHelper(
+      this.workspaceEventEmitter,
+    );
+
     await this.triggerWebhooks(
       result,
       CallWebhookJobsJobOperation.update,
       options,
     );
 
-    this.emitUpdateEvents(
+    workspaceEventEmitter.emitUpdateEvents(
       existingRecords.edges.map((edge) => edge.node),
       result,
       Object.keys(args.data),
@@ -244,6 +267,7 @@ export class GraphqlQueryRunnerService {
     return result;
   }
 
+  @LogExecutionTime()
   public async deleteOne<ObjectRecord extends IRecord & { deletedAt?: Date }>(
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
@@ -260,16 +284,83 @@ export class GraphqlQueryRunnerService {
       options,
     );
 
+    const workspaceEventEmitter = new ApiEventEmitterHelper(
+      this.workspaceEventEmitter,
+    );
+
     await this.triggerWebhooks(
       [result],
       CallWebhookJobsJobOperation.delete,
       options,
     );
 
-    this.emitDeletedEvents(
+    workspaceEventEmitter.emitDeletedEvents(
       [result],
       options.authContext,
       options.objectMetadataItem,
+    );
+
+    return result;
+  }
+
+  @LogExecutionTime()
+  public async deleteMany<ObjectRecord extends IRecord & { deletedAt?: Date }>(
+    args: DeleteManyResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord[]> {
+    const result = await this.executeQuery<
+      UpdateManyResolverArgs<Partial<ObjectRecord>>,
+      ObjectRecord[]
+    >(
+      'deleteMany',
+      {
+        filter: args.filter,
+
+        data: { deletedAt: new Date() } as Partial<ObjectRecord>,
+      },
+      options,
+    );
+
+    const workspaceEventEmitter = new ApiEventEmitterHelper(
+      this.workspaceEventEmitter,
+    );
+
+    await this.triggerWebhooks(
+      result,
+      CallWebhookJobsJobOperation.delete,
+      options,
+    );
+
+    workspaceEventEmitter.emitDeletedEvents(
+      result,
+      options.authContext,
+      options.objectMetadataItem,
+    );
+
+    return result;
+  }
+
+  public async restoreMany<ObjectRecord extends IRecord>(
+    args: RestoreManyResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord> {
+    const result = await this.executeQuery<
+      UpdateManyResolverArgs<Partial<ObjectRecord>>,
+      ObjectRecord
+    >(
+      'restoreMany',
+      {
+        filter: args.filter,
+        data: { deletedAt: null } as Partial<ObjectRecord>,
+      },
+      options,
+    );
+
+    // TODO: Add restore webhook?
+    await this.triggerWebhooks(
+      [result],
+      CallWebhookJobsJobOperation.update,
+      options,
     );
 
     return result;
@@ -311,129 +402,6 @@ export class GraphqlQueryRunnerService {
     );
 
     return results;
-  }
-
-  private emitCreateEvents<T extends IRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.created`,
-      records.map((record) => ({
-        userId: authContext.user?.id,
-        recordId: record.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          before: null,
-          after: this.removeGraphQLProperties(record),
-        },
-      })),
-      authContext.workspace.id,
-    );
-  }
-
-  private emitUpdateEvents<T extends IRecord>(
-    existingRecords: T[],
-    records: T[],
-    updatedFields: string[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
-    const mappedExistingRecords = existingRecords.reduce(
-      (acc, { id, ...record }) => ({
-        ...acc,
-        [id]: record,
-      }),
-      {},
-    );
-
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.updated`,
-      records.map((record) => {
-        return {
-          userId: authContext.user?.id,
-          recordId: record.id,
-          objectMetadata: objectMetadataItem,
-          properties: {
-            before: mappedExistingRecords[record.id]
-              ? this.removeGraphQLProperties(mappedExistingRecords[record.id])
-              : undefined,
-            after: this.removeGraphQLProperties(record),
-            updatedFields,
-          },
-        };
-      }),
-      authContext.workspace.id,
-    );
-  }
-
-  private emitDeletedEvents<T extends IRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.deleted`,
-      records.map((record) => {
-        return {
-          userId: authContext.user?.id,
-          recordId: record.id,
-          objectMetadata: objectMetadataItem,
-          properties: {
-            before: this.removeGraphQLProperties(record),
-            after: null,
-          },
-        };
-      }),
-      authContext.workspace.id,
-    );
-  }
-
-  private emitDestroyEvents<T extends IRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.destroyed`,
-      records.map((record) => {
-        return {
-          userId: authContext.user?.id,
-          recordId: record.id,
-          objectMetadata: objectMetadataItem,
-          properties: {
-            before: this.removeGraphQLProperties(record),
-            after: null,
-          },
-        };
-      }),
-      authContext.workspace.id,
-    );
-  }
-
-  private removeGraphQLProperties<ObjectRecord extends IRecord>(
-    record: ObjectRecord,
-  ) {
-    if (!record) {
-      return;
-    }
-
-    const sanitizedRecord = {};
-
-    for (const [key, value] of Object.entries(record)) {
-      if (value && typeof value === 'object' && value['edges']) {
-        continue;
-      }
-
-      if (key === '__typename') {
-        continue;
-      }
-
-      sanitizedRecord[key] = value;
-    }
-
-    return sanitizedRecord;
   }
 
   private async triggerWebhooks<T>(

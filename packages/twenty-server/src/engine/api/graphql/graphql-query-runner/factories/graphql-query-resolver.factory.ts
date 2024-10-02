@@ -32,8 +32,10 @@ export class GraphqlQueryResolverFactory {
       case 'destroyOne':
         return this.moduleRef.get(GraphqlQueryDestroyOneResolverService);
       case 'updateOne':
+      case 'deleteOne':
         return this.moduleRef.get(GraphqlQueryUpdateOneResolverService);
       case 'updateMany':
+      case 'deleteMany':
         return this.moduleRef.get(GraphqlQueryUpdateManyResolverService);
       default:
         throw new Error(`Unsupported operation: ${operationName}`);
