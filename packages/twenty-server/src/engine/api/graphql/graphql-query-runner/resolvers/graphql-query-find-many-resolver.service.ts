@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
 
@@ -30,14 +32,13 @@ import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/gen
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
+@Injectable()
 export class GraphqlQueryFindManyResolverService
   implements ResolverService<FindManyResolverArgs, IConnection<IRecord>>
 {
-  private twentyORMGlobalManager: TwentyORMGlobalManager;
-
-  constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
-    this.twentyORMGlobalManager = twentyORMGlobalManager;
-  }
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   async resolve<
     ObjectRecord extends IRecord = IRecord,
@@ -185,7 +186,7 @@ export class GraphqlQueryFindManyResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
-    return typeORMObjectRecordsParser.createConnection(
+    const result = typeORMObjectRecordsParser.createConnection(
       objectRecords,
       objectMetadataItem.nameSingular,
       limit,
@@ -194,6 +195,8 @@ export class GraphqlQueryFindManyResolverService
       hasNextPage,
       hasPreviousPage,
     );
+
+    return result;
   }
 
   public validate<Filter extends RecordFilter>(

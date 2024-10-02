@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import graphqlFields from 'graphql-fields';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
@@ -25,14 +27,13 @@ import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/gen
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
+@Injectable()
 export class GraphqlQueryFindOneResolverService
   implements ResolverService<FindOneResolverArgs, IRecord>
 {
-  private twentyORMGlobalManager: TwentyORMGlobalManager;
-
-  constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
-    this.twentyORMGlobalManager = twentyORMGlobalManager;
-  }
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   async resolve<
     ObjectRecord extends IRecord = IRecord,

@@ -6,6 +6,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
+
 export function formatData<T>(
   data: T,
   objectMetadata: ObjectMetadataMapItem,
@@ -30,7 +31,12 @@ export function formatData<T>(
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      newData[key] = formatCompositeField(value, fieldMetadata);
+      const formattedCompositeField = formatCompositeField(
+        value,
+        fieldMetadata,
+      );
+
+      Object.assign(newData, formattedCompositeField);
     } else {
       newData[key] = formatFieldMetadataValue(value, fieldMetadata);
     }
@@ -59,9 +65,9 @@ function formatCompositeField(
     const subFieldKey = property.name;
     const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-    if (value && value[fullFieldName]) {
-      formattedCompositeField[subFieldKey] = formatFieldMetadataValue(
-        value[fullFieldName],
+    if (value && value[subFieldKey] !== undefined) {
+      formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
+        value[subFieldKey],
         property as unknown as FieldMetadataInterface,
       );
     }

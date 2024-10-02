@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
   Record as IRecord,
   RecordFilter,
@@ -13,6 +12,7 @@ import {
   CreateManyResolverArgs,
   CreateOneResolverArgs,
   DestroyOneResolverArgs,
+  FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   ResolverArgs,
@@ -23,12 +23,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
-import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-one-resolver.service';
-import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
-import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
-import { GraphqlQueryUpdateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-many-resolver.service';
-import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-one-resolver.service';
+import { GraphqlQueryResolverFactory } from 'src/engine/api/graphql/graphql-query-runner/factories/graphql-query-resolver.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
@@ -41,19 +36,18 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class GraphqlQueryRunnerService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly graphqlQueryResolverFactory: GraphqlQueryResolverFactory,
   ) {}
 
   @LogExecutionTime()
@@ -62,7 +56,6 @@ export class GraphqlQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord> {
     return this.executeQuery<FindOneResolverArgs<Filter>, ObjectRecord>(
-      new GraphqlQueryFindOneResolverService(this.twentyORMGlobalManager),
       'findOne',
       args,
       options,
@@ -81,12 +74,18 @@ export class GraphqlQueryRunnerService {
     return this.executeQuery<
       FindManyResolverArgs<Filter, OrderBy>,
       IConnection<ObjectRecord, IEdge<ObjectRecord>>
-    >(
-      new GraphqlQueryFindManyResolverService(this.twentyORMGlobalManager),
-      'findMany',
-      args,
-      options,
-    );
+    >('findMany', args, options);
+  }
+
+  @LogExecutionTime()
+  async findDuplicates<ObjectRecord extends IRecord>(
+    args: FindDuplicatesResolverArgs<Partial<ObjectRecord>>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<IConnection<ObjectRecord>[]> {
+    return this.executeQuery<
+      FindDuplicatesResolverArgs<Partial<ObjectRecord>>,
+      IConnection<ObjectRecord>[]
+    >('findDuplicates', args, options);
   }
 
   @LogExecutionTime()
@@ -97,12 +96,7 @@ export class GraphqlQueryRunnerService {
     const results = await this.executeQuery<
       CreateManyResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord[]
-    >(
-      new GraphqlQueryCreateManyResolverService(this.twentyORMGlobalManager),
-      'createMany',
-      { data: [args.data], upsert: args.upsert },
-      options,
-    );
+    >('createMany', { data: [args.data], upsert: args.upsert }, options);
 
     // TODO: trigger webhooks should be a consequence of the emitCreateEvents
     // TODO: emitCreateEvents should be moved to the ORM layer
@@ -130,12 +124,7 @@ export class GraphqlQueryRunnerService {
     const results = await this.executeQuery<
       CreateManyResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord[]
-    >(
-      new GraphqlQueryCreateManyResolverService(this.twentyORMGlobalManager),
-      'createMany',
-      args,
-      options,
-    );
+    >('createMany', args, options);
 
     // TODO: trigger webhooks should be a consequence of the emitCreateEvents
     // TODO: emitCreateEvents should be moved to the ORM layer
@@ -163,12 +152,7 @@ export class GraphqlQueryRunnerService {
     const result = await this.executeQuery<
       DestroyOneResolverArgs,
       ObjectRecord
-    >(
-      new GraphqlQueryDestroyOneResolverService(this.twentyORMGlobalManager),
-      'destroyOne',
-      args,
-      options,
-    );
+    >('destroyOne', args, options);
 
     await this.triggerWebhooks(
       [result],
@@ -192,12 +176,7 @@ export class GraphqlQueryRunnerService {
     const result = await this.executeQuery<
       UpdateOneResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord
-    >(
-      new GraphqlQueryUpdateOneResolverService(this.twentyORMGlobalManager),
-      'updateOne',
-      args,
-      options,
-    );
+    >('updateOne', args, options);
 
     return result;
   }
@@ -209,23 +188,20 @@ export class GraphqlQueryRunnerService {
     const result = await this.executeQuery<
       UpdateManyResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord[]
-    >(
-      new GraphqlQueryUpdateManyResolverService(this.twentyORMGlobalManager),
-      'updateMany',
-      args,
-      options,
-    );
+    >('updateMany', args, options);
 
     return result;
   }
 
   private async executeQuery<Input extends ResolverArgs, Response>(
-    resolver: ResolverService<Input, Response>,
     operationName: WorkspaceResolverBuilderMethodNames,
     args: Input,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Response> {
     const { authContext, objectMetadataItem } = options;
+
+    const resolver =
+      this.graphqlQueryResolverFactory.getResolver(operationName);
 
     resolver.validate(args, options);
 

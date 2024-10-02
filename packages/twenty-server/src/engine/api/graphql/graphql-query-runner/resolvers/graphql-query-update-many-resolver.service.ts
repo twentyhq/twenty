@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -9,15 +11,15 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
+@Injectable()
 export class GraphqlQueryUpdateManyResolverService
   implements ResolverService<UpdateManyResolverArgs, IRecord[]>
 {
-  private twentyORMGlobalManager: TwentyORMGlobalManager;
-
-  constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
-    this.twentyORMGlobalManager = twentyORMGlobalManager;
-  }
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   async resolve<ObjectRecord extends IRecord = IRecord>(
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
@@ -55,7 +57,14 @@ export class GraphqlQueryUpdateManyResolverService
 
     await withFilterQueryBuilder.update().set(args.data).execute();
 
-    const updatedRecords = await withFilterQueryBuilder.getMany();
+    const nonFormattedUpdatedObjectRecords =
+      await withFilterQueryBuilder.getMany();
+
+    const updatedRecords = formatResult(
+      nonFormattedUpdatedObjectRecords,
+      objectMetadata,
+      objectMetadataMap,
+    );
 
     return updatedRecords as ObjectRecord[];
   }

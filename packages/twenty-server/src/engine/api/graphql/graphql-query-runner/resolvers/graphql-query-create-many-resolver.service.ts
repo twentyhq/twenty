@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import graphqlFields from 'graphql-fields';
 import { In, InsertResult } from 'typeorm';
 
@@ -13,15 +15,15 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
+@Injectable()
 export class GraphqlQueryCreateManyResolverService
   implements ResolverService<CreateManyResolverArgs, IRecord[]>
 {
-  private twentyORMGlobalManager: TwentyORMGlobalManager;
-
-  constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
-    this.twentyORMGlobalManager = twentyORMGlobalManager;
-  }
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   async resolve<ObjectRecord extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Partial<ObjectRecord>>,
@@ -61,13 +63,19 @@ export class GraphqlQueryCreateManyResolverService
           skipUpdateIfNoValuesChanged: true,
         });
 
-    const upsertedRecords = await repository.find({
+    const nonFormattedupsertedRecords = await repository.find({
       where: {
         id: In(objectRecords.generatedMaps.map((record) => record.id)),
       },
       select,
       relations,
     });
+
+    const upsertedRecords = formatResult(
+      nonFormattedupsertedRecords,
+      objectMetadata,
+      objectMetadataMap,
+    );
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
