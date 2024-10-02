@@ -11,6 +11,7 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import {
   CreateManyResolverArgs,
   CreateOneResolverArgs,
+  DeleteOneResolverArgs,
   DestroyOneResolverArgs,
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
@@ -236,6 +237,37 @@ export class GraphqlQueryRunnerService {
       existingRecords.edges.map((edge) => edge.node),
       result,
       Object.keys(args.data),
+      options.authContext,
+      options.objectMetadataItem,
+    );
+
+    return result;
+  }
+
+  public async deleteOne<ObjectRecord extends IRecord & { deletedAt?: Date }>(
+    args: DeleteOneResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord> {
+    const result = await this.executeQuery<
+      UpdateOneResolverArgs<Partial<ObjectRecord>>,
+      ObjectRecord
+    >(
+      'deleteOne',
+      {
+        id: args.id,
+        data: { deletedAt: new Date() } as Partial<ObjectRecord>,
+      },
+      options,
+    );
+
+    await this.triggerWebhooks(
+      [result],
+      CallWebhookJobsJobOperation.delete,
+      options,
+    );
+
+    this.emitDeletedEvents(
+      [result],
       options.authContext,
       options.objectMetadataItem,
     );
