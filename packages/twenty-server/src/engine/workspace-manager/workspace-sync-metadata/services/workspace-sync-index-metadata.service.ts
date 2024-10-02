@@ -55,11 +55,14 @@ export class WorkspaceSyncIndexMetadataService {
       });
 
     // Create map of object metadata & field metadata by unique identifier
-    const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
-      originalObjectMetadataCollection,
-      // Relation are based on the singular name
-      (objectMetadata) => objectMetadata.nameSingular,
-    );
+    const originalStandardObjectMetadataMap =
+      mapObjectMetadataByUniqueIdentifier(
+        originalObjectMetadataCollection.filter(
+          (objectMetadata) => !objectMetadata.isCustom,
+        ),
+        // Relation are based on the singular name
+        (objectMetadata) => objectMetadata.nameSingular,
+      );
 
     const originalCustomObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
       originalObjectMetadataCollection.filter(
@@ -74,7 +77,9 @@ export class WorkspaceSyncIndexMetadataService {
       where: {
         workspaceId: context.workspaceId,
         objectMetadataId: Any(
-          Object.values(originalObjectMetadataMap).map((object) => object.id),
+          Object.values(originalObjectMetadataCollection).map(
+            (object) => object.id,
+          ),
         ),
         isCustom: false,
       },
@@ -85,7 +90,7 @@ export class WorkspaceSyncIndexMetadataService {
     let standardIndexMetadataCollection = this.standardIndexFactory.create(
       standardObjectMetadataDefinitions,
       context,
-      originalObjectMetadataMap,
+      originalStandardObjectMetadataMap,
       originalCustomObjectMetadataMap,
       workspaceFeatureFlagsMap,
     );

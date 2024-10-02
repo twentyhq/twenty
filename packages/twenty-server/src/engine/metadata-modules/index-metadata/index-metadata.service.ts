@@ -59,7 +59,7 @@ export class IndexMetadataService {
         ),
         workspaceId,
         objectMetadataId: objectMetadata.id,
-        ...(isDefined(indexType) ? { type: indexType } : {}),
+        ...(isDefined(indexType) ? { indexType: indexType } : {}),
         isCustom: isCustom,
       });
     } catch (error) {

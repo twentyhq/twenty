@@ -18,16 +18,16 @@ export class StandardIndexFactory {
   create(
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
+    originalStandardObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     originalCustomObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const standardIndexOnStandardObjects =
       standardObjectMetadataDefinitions.flatMap((standardObjectMetadata) =>
-        this.createIndexMetadata(
+        this.createStandardIndexMetadataForStandardObject(
           standardObjectMetadata,
           context,
-          originalObjectMetadataMap,
+          originalStandardObjectMetadataMap,
           workspaceFeatureFlagsMap,
         ),
       );
@@ -45,10 +45,10 @@ export class StandardIndexFactory {
     ].flat();
   }
 
-  private createIndexMetadata(
+  private createStandardIndexMetadataForStandardObject(
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
+    originalStandardObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const workspaceEntity = metadataArgsStorage.filterEntities(target);
@@ -75,7 +75,7 @@ export class StandardIndexFactory {
     return workspaceIndexMetadataArgsCollection.map(
       (workspaceIndexMetadataArgs) => {
         const objectMetadata =
-          originalObjectMetadataMap[workspaceEntity.nameSingular];
+          originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
 
         if (!objectMetadata) {
           throw new Error(

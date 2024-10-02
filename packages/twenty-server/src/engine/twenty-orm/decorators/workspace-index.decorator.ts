@@ -25,7 +25,9 @@ export function WorkspaceIndex(
     }
 
     if (propertyKey !== undefined && metadata?.columns !== undefined) {
-      throw new Error('Class level WorkspaceIndex should be used with columns');
+      throw new Error(
+        'Property level WorkspaceIndex should not be used with columns',
+      );
     }
 
     const gate = TypedReflect.getMetadata(
@@ -47,15 +49,16 @@ export function WorkspaceIndex(
           columns,
           target: target,
           gate,
+          ...(isDefined(metadata?.indexType)
+            ? { type: metadata.indexType }
+            : {}),
         });
 
         return;
       }
     }
 
-    if (isDefined(metadata?.indexType)) {
-      const indexType = metadata.indexType;
-
+    if (isDefined(propertyKey)) {
       metadataArgsStorage.addIndexes({
         name: `IDX_${generateDeterministicIndexName([
           convertClassNameToObjectMetadataName(target.constructor.name),
@@ -63,7 +66,7 @@ export function WorkspaceIndex(
         ])}`,
         columns: [propertyKey.toString()],
         target: target.constructor,
-        type: indexType,
+        ...(isDefined(metadata?.indexType) ? { type: metadata.indexType } : {}),
         gate,
       });
     }

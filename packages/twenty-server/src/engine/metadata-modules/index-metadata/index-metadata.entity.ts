@@ -14,6 +14,7 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export enum IndexType {
+  BTREE = 'BTREE',
   GIN = 'GIN',
 }
 
@@ -61,5 +62,5 @@ export class IndexMetadataEntity {
     enum: IndexType,
     nullable: true,
   })
-  indexType?: IndexType;
+  indexType?: IndexType; // defaults to BTREE
 }
