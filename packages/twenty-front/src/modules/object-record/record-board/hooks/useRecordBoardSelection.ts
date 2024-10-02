@@ -1,17 +1,19 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { contextMenuIsOpenState } from '@/ui/navigation/action-menu/states/contextMenuIsOpenState';
+import { actionMenuDropdownIsOpenState } from '@/ui/navigation/action-menu/states/actionMenuDropdownIsOpenState';
 
 export const useRecordBoardSelection = (recordBoardId?: string) => {
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const setActionMenuDropdownOpenState = useSetRecoilState(
+    actionMenuDropdownIsOpenState,
+  );
   const { selectedRecordIdsSelector, isRecordBoardCardSelectedFamilyState } =
     useRecordBoardStates(recordBoardId);
 
   const resetRecordSelection = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        setContextMenuOpenState(false);
+        setActionMenuDropdownOpenState(false);
         const recordIds = snapshot
           .getLoadable(selectedRecordIdsSelector())
           .getValue();
@@ -23,7 +25,7 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
     [
       selectedRecordIdsSelector,
       isRecordBoardCardSelectedFamilyState,
-      setContextMenuOpenState,
+      setActionMenuDropdownOpenState,
     ],
   );
 

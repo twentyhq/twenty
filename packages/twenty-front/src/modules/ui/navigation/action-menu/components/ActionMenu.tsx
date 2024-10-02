@@ -2,13 +2,15 @@ import { contextStoreTargetedRecordIdsState } from '@/context-store/states/conte
 import { ActionBar } from '@/ui/navigation/action-menu/components/ActionBar';
 import { ActionMenuDropdown } from '@/ui/navigation/action-menu/components/ActionMenuDropdown';
 import { NavigationModal } from '@/ui/navigation/action-menu/components/NavigationModal';
+import { actionMenuDropdownIsOpenState } from '@/ui/navigation/action-menu/states/actionMenuDropdownIsOpenState';
 import { actionMenuEntriesState } from '@/ui/navigation/action-menu/states/actionMenuEntriesState';
-import { contextMenuIsOpenState } from '@/ui/navigation/action-menu/states/contextMenuIsOpenState';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 export const ActionMenu = () => {
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const setActionMenuDropdownOpenState = useSetRecoilState(
+    actionMenuDropdownIsOpenState,
+  );
 
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
@@ -16,11 +18,13 @@ export const ActionMenu = () => {
 
   useEffect(() => {
     if (contextStoreTargetedRecordIds.length !== 1) {
-      setContextMenuOpenState(false);
+      setActionMenuDropdownOpenState(false);
     }
-  }, [contextStoreTargetedRecordIds, setContextMenuOpenState]);
+  }, [contextStoreTargetedRecordIds, setActionMenuDropdownOpenState]);
 
-  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
+  const actionMenuDropdownIsOpen = useRecoilValue(
+    actionMenuDropdownIsOpenState,
+  );
   const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
 
   if (!contextStoreTargetedRecordIds.length) {
@@ -29,13 +33,13 @@ export const ActionMenu = () => {
 
   return (
     <>
-      {!contextMenuIsOpen && (
+      {!actionMenuDropdownIsOpen && (
         <ActionBar
           selectedRecordIds={contextStoreTargetedRecordIds}
           actionMenuEntries={actionMenuEntries}
         />
       )}
-      {contextMenuIsOpen && (
+      {actionMenuDropdownIsOpen && (
         <ActionMenuDropdown actionMenuEntries={actionMenuEntries} />
       )}
       <NavigationModal actionMenuEntries={actionMenuEntries} />

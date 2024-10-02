@@ -5,24 +5,28 @@ import { ComponentDecorator } from 'twenty-ui';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
-import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '../../states/contextMenuPositionState';
+import { actionMenuDropdownIsOpenState } from '../../states/actionMenuDropdownIsOpenState';
+import { actionMenuDropdownPositionState } from '../../states/actionMenuDropdownPositionState';
 import { ActionMenuDropdown } from '../ActionMenuDropdown';
 
-const FilledContextMenu = () => {
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
-  setContextMenuPosition({
+const FilledActionMenuDropdown = () => {
+  const setActionMenuDropdownPosition = useSetRecoilState(
+    actionMenuDropdownPositionState,
+  );
+  setActionMenuDropdownPosition({
     x: 100,
     y: 10,
   });
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
-  setContextMenuOpenState(true);
+  const setActionMenuDropdownOpenState = useSetRecoilState(
+    actionMenuDropdownIsOpenState,
+  );
+  setActionMenuDropdownOpenState(true);
   return <ActionMenuDropdown />;
 };
 
 const meta: Meta<typeof ActionMenuDropdown> = {
-  title: 'UI/Navigation/ContextMenu/ContextMenu',
-  component: FilledContextMenu,
+  title: 'UI/Navigation/ActionMenuDropdown/ActionMenuDropdown',
+  component: FilledActionMenuDropdown,
   decorators: [
     MemoryRouterDecorator,
     (Story) => (

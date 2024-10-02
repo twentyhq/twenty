@@ -24,7 +24,7 @@ export type RecordTableContextProps = {
   onMoveFocus: (direction: MoveFocusDirection) => void;
   onCloseTableCell: () => void;
   onMoveSoftFocusToCell: (cellPosition: TableCellPosition) => void;
-  onContextMenu: (event: React.MouseEvent, recordId: string) => void;
+  onActionMenuDropdown: (event: React.MouseEvent, recordId: string) => void;
   onCellMouseEnter: (args: HandleContainerMouseEnterArgs) => void;
   visibleTableColumns: ColumnDefinition<FieldMetadata>[];
   recordTableId: string;

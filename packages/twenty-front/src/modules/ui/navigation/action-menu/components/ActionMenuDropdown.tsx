@@ -6,7 +6,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 
 import { PositionType } from '../types/PositionType';
 
-import { contextMenuPositionState } from '@/ui/navigation/action-menu/states/contextMenuPositionState';
+import { actionMenuDropdownPositionState } from '@/ui/navigation/action-menu/states/actionMenuDropdownPositionState';
 import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
@@ -14,7 +14,7 @@ type StyledContainerProps = {
   position: PositionType;
 };
 
-const StyledContainerContextMenu = styled.div<StyledContainerProps>`
+const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   align-items: flex-start;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -38,7 +38,9 @@ export const ActionMenuDropdown = ({
 }: {
   actionMenuEntries: ActionMenuEntry[];
 }) => {
-  const contextMenuPosition = useRecoilValue(contextMenuPositionState);
+  const actionMenuDropdownPosition = useRecoilValue(
+    actionMenuDropdownPositionState,
+  );
 
   //TODO: remove this
   const width = actionMenuEntries.some(
@@ -49,7 +51,7 @@ export const ActionMenuDropdown = ({
 
   return (
     <>
-      <StyledContainerContextMenu position={contextMenuPosition}>
+      <StyledContainerActionMenuDropdown position={actionMenuDropdownPosition}>
         <DropdownMenu data-select-disable width={width}>
           <DropdownMenuItemsContainer>
             {actionMenuEntries.map((item, index) => (
@@ -63,7 +65,7 @@ export const ActionMenuDropdown = ({
             ))}
           </DropdownMenuItemsContainer>
         </DropdownMenu>
-      </StyledContainerContextMenu>
+      </StyledContainerActionMenuDropdown>
     </>
   );
 };

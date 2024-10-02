@@ -1,29 +1,29 @@
 import { useRecoilCallback } from 'recoil';
 
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { contextMenuIsOpenState } from '@/ui/navigation/action-menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/navigation/action-menu/states/contextMenuPositionState';
+import { actionMenuDropdownIsOpenState } from '@/ui/navigation/action-menu/states/actionMenuDropdownIsOpenState';
+import { actionMenuDropdownPositionState } from '@/ui/navigation/action-menu/states/actionMenuDropdownPositionState';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 
-export const useTriggerContextMenu = ({
+export const useTriggerActionMenuDropdown = ({
   recordTableId,
 }: {
   recordTableId: string;
 }) => {
-  const triggerContextMenu = useRecoilCallback(
+  const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
       (event: React.MouseEvent, recordId: string) => {
         event.preventDefault();
 
         const tableScopeId = getScopeIdFromComponentId(recordTableId);
 
-        set(contextMenuPositionState, {
+        set(actionMenuDropdownPositionState, {
           x: event.clientX,
           y: event.clientY,
         });
-        set(contextMenuIsOpenState, true);
+        set(actionMenuDropdownIsOpenState, true);
 
         const isRowSelectedFamilyState = extractComponentFamilyState(
           isRowSelectedComponentFamilyState,
@@ -42,5 +42,5 @@ export const useTriggerContextMenu = ({
     [recordTableId],
   );
 
-  return { triggerContextMenu };
+  return { triggerActionMenuDropdown };
 };

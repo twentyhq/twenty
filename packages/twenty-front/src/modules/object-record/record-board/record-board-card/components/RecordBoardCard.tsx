@@ -17,8 +17,8 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { contextMenuIsOpenState } from '@/ui/navigation/action-menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/navigation/action-menu/states/contextMenuPositionState';
+import { actionMenuDropdownIsOpenState } from '@/ui/navigation/action-menu/states/actionMenuDropdownIsOpenState';
+import { actionMenuDropdownPositionState } from '@/ui/navigation/action-menu/states/actionMenuDropdownPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import styled from '@emotion/styled';
@@ -178,17 +178,21 @@ export const RecordBoardCard = ({
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const setActionMenuDropdownPosition = useSetRecoilState(
+    actionMenuDropdownPositionState,
+  );
+  const setActionMenuDropdownOpenState = useSetRecoilState(
+    actionMenuDropdownIsOpenState,
+  );
 
-  const handleContextMenu = (event: React.MouseEvent) => {
+  const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsCurrentCardSelected(true);
-    setContextMenuPosition({
+    setActionMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
-    setContextMenuOpenState(true);
+    setActionMenuDropdownOpenState(true);
   };
 
   const PreventSelectOnClickContainer = ({
@@ -238,7 +242,7 @@ export const RecordBoardCard = ({
   );
 
   return (
-    <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
+    <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
       {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
       <StyledBoardCard
         ref={cardRef}
