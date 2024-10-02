@@ -37,6 +37,14 @@ export const useUpdateOneObjectMetadataItem = () => {
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      optimisticResponse: {
+        updateOneObject: {
+          id: idToUpdate,
+          updatedAt: new Date().toISOString(),
+          __typename: 'object',
+          ...updatePayload,
+        } as UpdateOneObjectMetadataItemMutation['updateOneObject'],
+      },
     });
   };
 

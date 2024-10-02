@@ -30,6 +30,12 @@ export const useDeleteOneRelationMetadataItem = () => {
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      optimisticResponse: {
+        deleteOneRelation: {
+          id: idToDelete,
+          __typename: 'relation',
+        },
+      },
     });
   };
 
