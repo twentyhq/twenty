@@ -5,6 +5,9 @@ import { IconChevronDown, useIcons } from 'twenty-ui';
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,7 +15,7 @@ import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/Styl
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-
+import { useContext } from 'react';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
 export const StyledInput = styled.input`
@@ -94,6 +97,44 @@ export const ObjectSortDropdownButton = ({
 
   const { getIcon } = useIcons();
 
+  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+    useRecordTableStates(recordIndexId);
+
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleColumnsIds = visibleTableColumns.map(
+    (column) => column.fieldMetadataId,
+  );
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const hiddenColumnIds = hiddenTableColumns.map(
+    (column) => column.fieldMetadataId,
+  );
+
+  const visibleColumnsSortDefinitions = [...availableSortDefinitions]
+    .sort((a, b) => {
+      return (
+        visibleColumnsIds.indexOf(a.fieldMetadataId) -
+        visibleColumnsIds.indexOf(b.fieldMetadataId)
+      );
+    })
+    .filter(
+      (item) =>
+        item.label
+          .toLocaleLowerCase()
+          .includes(objectSortDropdownSearchInput.toLocaleLowerCase()) &&
+        visibleColumnsIds.includes(item.fieldMetadataId),
+    );
+
+  const hiddenColumnsSortDefinitions = [...availableSortDefinitions]
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .filter(
+      (item) =>
+        item.label
+          .toLocaleLowerCase()
+          .includes(objectSortDropdownSearchInput.toLocaleLowerCase()) &&
+        hiddenColumnIds.includes(item.fieldMetadataId),
+    );
+
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
       <Dropdown
@@ -142,27 +183,38 @@ export const ObjectSortDropdownButton = ({
                 }
               />
               <DropdownMenuItemsContainer>
-                {[...availableSortDefinitions]
-                  .sort((a, b) => a.label.localeCompare(b.label))
-                  .filter((item) =>
-                    item.label
-                      .toLocaleLowerCase()
-                      .includes(
-                        objectSortDropdownSearchInput.toLocaleLowerCase(),
-                      ),
-                  )
-                  .map((availableSortDefinition, index) => (
+                {visibleColumnsSortDefinitions.map(
+                  (visibleSortDefinition, index) => (
                     <MenuItem
-                      testId={`select-sort-${index}`}
+                      testId={`visible-select-sort-${index}`}
                       key={index}
                       onClick={() => {
                         setObjectSortDropdownSearchInput('');
-                        handleAddSort(availableSortDefinition);
+                        handleAddSort(visibleSortDefinition);
                       }}
-                      LeftIcon={getIcon(availableSortDefinition.iconName)}
-                      text={availableSortDefinition.label}
+                      LeftIcon={getIcon(visibleSortDefinition.iconName)}
+                      text={visibleSortDefinition.label}
                     />
-                  ))}
+                  ),
+                )}
+                {visibleColumnsSortDefinitions.length > 0 &&
+                  hiddenColumnsSortDefinitions.length > 0 && (
+                    <SeparatorLineText> </SeparatorLineText>
+                  )}
+                {hiddenColumnsSortDefinitions.map(
+                  (hiddenSortDefinition, index) => (
+                    <MenuItem
+                      testId={`hidden-select-sort-${index}`}
+                      key={index}
+                      onClick={() => {
+                        setObjectSortDropdownSearchInput('');
+                        handleAddSort(hiddenSortDefinition);
+                      }}
+                      LeftIcon={getIcon(hiddenSortDefinition.iconName)}
+                      text={hiddenSortDefinition.label}
+                    />
+                  ),
+                )}
               </DropdownMenuItemsContainer>
             </StyledContainer>
           </>
