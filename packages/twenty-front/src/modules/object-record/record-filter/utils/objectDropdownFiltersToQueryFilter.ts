@@ -36,6 +36,7 @@ export type ObjectDropdownFilter = Pick<
 > & {
   definition: {
     type: Filter['definition']['type'];
+    subFieldType?: Filter['definition']['subFieldType'];
   };
 };
 
@@ -334,7 +335,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-      break;
     case 'DATE':
     case 'DATE_TIME': {
       const resolvedFilterValue = resolveFilterValue(rawUIFilter);
@@ -487,7 +487,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-      break;
     case 'NUMBER':
       switch (rawUIFilter.operand) {
         case ViewFilterOperand.GreaterThan:
@@ -514,7 +513,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-      break;
     case 'RELATION': {
       if (!isValuelessOperand) {
         try {
@@ -527,30 +525,30 @@ export const objectDropdownFilterToQueryFilter = (
 
         const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
-        if (parsedRecordIds.length > 0) {
-          switch (rawUIFilter.operand) {
-            case ViewFilterOperand.Is:
-              return {
+        if (parsedRecordIds.length < 1) {
+          return;
+        }
+
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Is:
+            return {
+              [correspondingField.name + 'Id']: {
+                in: parsedRecordIds,
+              } as RelationFilter,
+            };
+          case ViewFilterOperand.IsNot:
+            return {
+              not: {
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
                 } as RelationFilter,
-              };
-            case ViewFilterOperand.IsNot:
-              if (parsedRecordIds.length > 0) {
-                return {
-                  not: {
-                    [correspondingField.name + 'Id']: {
-                      in: parsedRecordIds,
-                    } as RelationFilter,
-                  },
-                };
-              }
-              break;
-            default:
-              throw new Error(
-                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-              );
-          }
+              },
+            };
+
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
         }
       } else {
         switch (rawUIFilter.operand) {
@@ -567,7 +565,6 @@ export const objectDropdownFilterToQueryFilter = (
             );
         }
       }
-      break;
     }
     case 'CURRENCY':
       switch (rawUIFilter.operand) {
@@ -595,7 +592,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-      break;
     case 'LINK':
       switch (rawUIFilter.operand) {
         case ViewFilterOperand.Contains:
@@ -628,7 +624,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-      break;
     case 'LINKS': {
       const linksFilters = generateILikeFiltersForCompositeFields(
         rawUIFilter.value,
@@ -660,7 +655,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-      break;
     }
     case 'FULL_NAME': {
       const fullNameFilters = generateILikeFiltersForCompositeFields(
@@ -787,7 +781,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-      break;
     case 'SELECT': {
       if (isValuelessOperand) {
         return getEmptyFilter(
@@ -800,7 +793,7 @@ export const objectDropdownFilterToQueryFilter = (
       let parsedOptionValues: string[] = [];
 
       if (!isNonEmptyString(stringifiedSelectValues)) {
-        break;
+        return;
       }
 
       try {
@@ -811,69 +804,110 @@ export const objectDropdownFilterToQueryFilter = (
         );
       }
 
-      if (parsedOptionValues.length > 0) {
-        switch (rawUIFilter.operand) {
-          case ViewFilterOperand.Is:
-            return {
+      if (parsedOptionValues.length < 1) {
+        return;
+      }
+
+      switch (rawUIFilter.operand) {
+        case ViewFilterOperand.Is:
+          return {
+            [correspondingField.name]: {
+              in: parsedOptionValues,
+            } as UUIDFilter,
+          };
+        case ViewFilterOperand.IsNot:
+          return {
+            not: {
               [correspondingField.name]: {
                 in: parsedOptionValues,
               } as UUIDFilter,
-            };
-          case ViewFilterOperand.IsNot:
-            return {
-              not: {
-                [correspondingField.name]: {
-                  in: parsedOptionValues,
-                } as UUIDFilter,
-              },
-            };
-          default:
-            throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-            );
-        }
+            },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+          );
       }
-      break;
     }
     case 'ACTOR':
-      switch (rawUIFilter.operand) {
-        case ViewFilterOperand.Contains:
-          return {
-            or: [
-              {
-                [correspondingField.name]: {
-                  name: {
-                    ilike: `%${rawUIFilter.value}%`,
+      if (rawUIFilter.definition.subFieldType !== undefined) {
+        const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
+        switch (rawUIFilter.definition.subFieldType) {
+          case 'SOURCE':
+            switch (rawUIFilter.operand) {
+              case ViewFilterOperand.Is:
+                return {
+                  [correspondingField.name]: {
+                    source: {
+                      in: parsedRecordIds,
+                    } as RelationFilter,
                   },
-                } as ActorFilter,
-              },
-            ],
-          };
-        case ViewFilterOperand.DoesNotContain:
-          return {
-            and: [
-              {
-                not: {
+                };
+              case ViewFilterOperand.IsNot: {
+                if (parsedRecordIds.length < 1) {
+                  return;
+                }
+                return {
+                  not: {
+                    [correspondingField.name]: {
+                      [rawUIFilter.definition.subFieldType.toLowerCase()]: {
+                        in: parsedRecordIds,
+                      } as RelationFilter,
+                    },
+                  },
+                };
+              }
+
+              default:
+                throw new Error(
+                  `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.subFieldType} filter`,
+                );
+            }
+          default:
+            throw new Error(
+              `Wrong subFieldType ${rawUIFilter.definition.subFieldType} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+      } else {
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            return {
+              or: [
+                {
                   [correspondingField.name]: {
                     name: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
                   } as ActorFilter,
                 },
-              },
-            ],
-          };
-        case ViewFilterOperand.IsEmpty:
-        case ViewFilterOperand.IsNotEmpty:
-          return getEmptyFilter(
-            rawUIFilter.operand,
-            correspondingField,
-            rawUIFilter.definition.type,
-          );
-        default:
-          throw new Error(
-            `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-          );
+              ],
+            };
+          case ViewFilterOperand.DoesNotContain:
+            return {
+              and: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      name: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as ActorFilter,
+                  },
+                },
+              ],
+            };
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            return getEmptyFilter(
+              rawUIFilter.operand,
+              correspondingField,
+              rawUIFilter.definition.type,
+            );
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
       }
     case 'EMAILS':
       switch (rawUIFilter.operand) {

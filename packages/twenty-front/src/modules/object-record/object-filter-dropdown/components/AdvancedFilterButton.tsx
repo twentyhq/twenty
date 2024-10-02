@@ -22,14 +22,7 @@ export const StyledPill = styled(Pill)`
   color: ${({ theme }) => theme.color.blue};
 `;
 
-interface AdvancedFilterButtonProps {
-  onClick: () => void;
-  advancedFilterQuerySubFilterCount: number;
-}
-
-export const AdvancedFilterButton = ({
-  onClick,
-}: AdvancedFilterButtonProps) => {
+export const AdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
   const editAdvancedFilter = () => {
