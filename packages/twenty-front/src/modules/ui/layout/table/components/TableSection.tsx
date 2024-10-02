@@ -1,6 +1,6 @@
-import { ReactNode, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ReactNode, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui';
 
 import { TableBody } from './TableBody';
@@ -30,7 +30,7 @@ const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
 const StyledSection = styled.div<{ isExpanded: boolean }>`
   max-height: ${({ isExpanded }) => (isExpanded ? '1000px' : 0)};
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
-  overflow: hidden;
+  overflow-y: auto;
   transition:
     max-height ${({ theme }) => theme.animation.duration.normal}s,
     opacity ${({ theme }) => theme.animation.duration.normal}s;
