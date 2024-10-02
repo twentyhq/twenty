@@ -18,4 +18,5 @@ export type FilterType =
   | 'MULTI_SELECT'
   | 'ACTOR'
   | 'ARRAY'
-  | 'ADVANCED';
+  | 'ADVANCED'
+  | 'SOURCE';

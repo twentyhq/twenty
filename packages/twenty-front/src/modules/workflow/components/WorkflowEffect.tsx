@@ -1,10 +1,16 @@
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import {
+  WorkflowVersion,
+  WorkflowWithCurrentVersion,
+} from '@/workflow/types/Workflow';
+
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/utils/getWorkflowVersionDiagram';
+import { mergeWorkflowDiagrams } from '@/workflow/utils/mergeWorkflowDiagrams';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowEffectProps = {
@@ -23,6 +29,34 @@ export const WorkflowEffect = ({
     setWorkflowId(workflowId);
   }, [setWorkflowId, workflowId]);
 
+  const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
+    ({ snapshot, set }) => {
+      return (currentVersion: WorkflowVersion) => {
+        const previousWorkflowDiagram = getSnapshotValue(
+          snapshot,
+          workflowDiagramState,
+        );
+
+        const nextWorkflowDiagram = getWorkflowVersionDiagram(currentVersion);
+
+        let mergedWorkflowDiagram = nextWorkflowDiagram;
+        if (isDefined(previousWorkflowDiagram)) {
+          mergedWorkflowDiagram = mergeWorkflowDiagrams(
+            previousWorkflowDiagram,
+            nextWorkflowDiagram,
+          );
+        }
+
+        const workflowDiagramWithCreateStepNodes = addCreateStepNodes(
+          mergedWorkflowDiagram,
+        );
+
+        set(workflowDiagramState, workflowDiagramWithCreateStepNodes);
+      };
+    },
+    [],
+  );
+
   useEffect(() => {
     const currentVersion = workflowWithCurrentVersion?.currentVersion;
     if (!isDefined(currentVersion)) {
@@ -31,12 +65,12 @@ export const WorkflowEffect = ({
       return;
     }
 
-    const lastWorkflowDiagram = getWorkflowVersionDiagram(currentVersion);
-    const workflowDiagramWithCreateStepNodes =
-      addCreateStepNodes(lastWorkflowDiagram);
-
-    setWorkflowDiagram(workflowDiagramWithCreateStepNodes);
-  }, [setWorkflowDiagram, workflowWithCurrentVersion?.currentVersion]);
+    computeAndMergeNewWorkflowDiagram(currentVersion);
+  }, [
+    computeAndMergeNewWorkflowDiagram,
+    setWorkflowDiagram,
+    workflowWithCurrentVersion?.currentVersion,
+  ]);
 
   return null;
 };
