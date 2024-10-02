@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { AdvancedFilterQueryBuilder } from '@/object-record/object-filter-dropdown/components/AdvancedFilterQueryBuilder';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { AdvancedFilterQuery } from '@/object-record/object-filter-dropdown/types/AdvancedFilterQuery';

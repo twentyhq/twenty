@@ -1004,7 +1004,7 @@ export const objectDropdownFiltersToQueryFilter = (
       (field) => field.id === rawUIFilter.fieldMetadataId,
     );
 
-    if (!correspondingField) return;
+    if (!correspondingField) return undefined;
 
     return objectDropdownFilterToQueryFilter(rawUIFilter, correspondingField);
   });
