@@ -198,6 +198,7 @@ export class GraphqlQueryRunnerService {
     this.emitUpdateEvents(
       [existingRecord],
       [result],
+      Object.keys(args.data),
       options.authContext,
       options.objectMetadataItem,
     );
@@ -234,6 +235,7 @@ export class GraphqlQueryRunnerService {
     this.emitUpdateEvents(
       existingRecords.edges.map((edge) => edge.node),
       result,
+      Object.keys(args.data),
       options.authContext,
       options.objectMetadataItem,
     );
@@ -302,11 +304,16 @@ export class GraphqlQueryRunnerService {
   private emitUpdateEvents<T extends IRecord>(
     existingRecords: T[],
     records: T[],
+    updatedFields: string[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    const mappedExistingRecords = new Map(
-      existingRecords.map((record) => [record.id, record]),
+    const mappedExistingRecords = existingRecords.reduce(
+      (acc, { id, ...record }) => ({
+        ...acc,
+        [id]: record,
+      }),
+      {},
     );
 
     this.workspaceEventEmitter.emit(
@@ -321,6 +328,7 @@ export class GraphqlQueryRunnerService {
               ? this.removeGraphQLProperties(mappedExistingRecords[record.id])
               : undefined,
             after: this.removeGraphQLProperties(record),
+            updatedFields,
           },
         };
       }),
