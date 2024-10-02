@@ -205,11 +205,7 @@ export const RecordBoardCard = ({
     </StyledFieldContainer>
   );
 
-  const onMouseLeaveBoard = () => {
-    if (isCompactModeActive) {
-      setIsCardInCompactMode(true);
-    }
-  };
+  
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
@@ -243,7 +239,6 @@ export const RecordBoardCard = ({
       <StyledBoardCard
         ref={cardRef}
         selected={isCurrentCardSelected}
-        onMouseLeave={onMouseLeaveBoard}
         onClick={() => {
           if (!isCreating) {
             setIsCurrentCardSelected(!isCurrentCardSelected);
@@ -293,7 +288,7 @@ export const RecordBoardCard = ({
                     accent="tertiary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setIsCardInCompactMode(false);
+                      setIsCardInCompactMode((prev) => !prev);
                     }}
                   />
                 </StyledCompactIconContainer>
