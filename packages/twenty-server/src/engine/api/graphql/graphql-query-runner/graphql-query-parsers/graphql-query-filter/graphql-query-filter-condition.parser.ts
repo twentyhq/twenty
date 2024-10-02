@@ -46,7 +46,7 @@ export class GraphqlQueryFilterConditionParser {
     queryBuilder: WhereExpressionBuilder,
     objectNameSingular: string,
     key: string,
-    value: unknown,
+    value: any,
     isFirst = false,
   ): void {
     if (this.isLogicOperator(key)) {

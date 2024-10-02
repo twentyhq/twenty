@@ -173,10 +173,34 @@ export class GraphqlQueryRunnerService {
     args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord> {
+    const existingRecord = await this.executeQuery<
+      FindOneResolverArgs,
+      ObjectRecord
+    >(
+      'findOne',
+      {
+        filter: { id: { eq: args.id } },
+      },
+      options,
+    );
+
     const result = await this.executeQuery<
       UpdateOneResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord
     >('updateOne', args, options);
+
+    await this.triggerWebhooks(
+      [result],
+      CallWebhookJobsJobOperation.update,
+      options,
+    );
+
+    this.emitUpdateEvents(
+      [existingRecord],
+      [result],
+      options.authContext,
+      options.objectMetadataItem,
+    );
 
     return result;
   }
@@ -185,10 +209,34 @@ export class GraphqlQueryRunnerService {
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord[]> {
+    const existingRecords = await this.executeQuery<
+      FindManyResolverArgs,
+      IConnection<ObjectRecord, IEdge<ObjectRecord>>
+    >(
+      'findMany',
+      {
+        filter: args.filter,
+      },
+      options,
+    );
+
     const result = await this.executeQuery<
       UpdateManyResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord[]
     >('updateMany', args, options);
+
+    await this.triggerWebhooks(
+      result,
+      CallWebhookJobsJobOperation.update,
+      options,
+    );
+
+    this.emitUpdateEvents(
+      existingRecords.edges.map((edge) => edge.node),
+      result,
+      options.authContext,
+      options.objectMetadataItem,
+    );
 
     return result;
   }
@@ -247,6 +295,57 @@ export class GraphqlQueryRunnerService {
           after: this.removeGraphQLProperties(record),
         },
       })),
+      authContext.workspace.id,
+    );
+  }
+
+  private emitUpdateEvents<T extends IRecord>(
+    existingRecords: T[],
+    records: T[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ): void {
+    const mappedExistingRecords = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
+
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.updated`,
+      records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: mappedExistingRecords[record.id]
+              ? this.removeGraphQLProperties(mappedExistingRecords[record.id])
+              : undefined,
+            after: this.removeGraphQLProperties(record),
+          },
+        };
+      }),
+      authContext.workspace.id,
+    );
+  }
+
+  private emitDeletedEvents<T extends IRecord>(
+    records: T[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ): void {
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.deleted`,
+      records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: this.removeGraphQLProperties(record),
+            after: null,
+          },
+        };
+      }),
       authContext.workspace.id,
     );
   }
