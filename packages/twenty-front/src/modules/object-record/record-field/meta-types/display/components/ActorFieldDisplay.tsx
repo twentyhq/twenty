@@ -20,7 +20,7 @@ export const ActorFieldDisplay = () => {
       name={name}
       source={fieldValue.source}
       avatarUrl={
-        fieldValue.workspaceMemberId
+        fieldValue?.workspaceMemberId
           ? fieldValue.workspaceMember?.avatarUrl
           : DEFAULT_WORKSPACE_LOGO
       }
