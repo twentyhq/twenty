@@ -2,6 +2,7 @@ import { Readable } from 'stream';
 import fs from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
+import { pipeline } from 'stream/promises';
 
 import {
   CopyObjectCommand,
@@ -310,7 +311,7 @@ export class S3Driver implements StorageDriver {
           params.to.filename || params.from.filename,
         );
 
-        await this.writeToFile(fileStream, toPath);
+        await pipeline(fileStream, fs.createWriteStream(toPath));
 
         return;
       } catch (error) {
