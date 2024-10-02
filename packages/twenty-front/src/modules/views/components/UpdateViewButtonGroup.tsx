@@ -28,7 +28,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 const StyledDropdownButton = styled(Button)`
-  padding: ${({ theme }) => theme.spacing(1.5)};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 export type UpdateViewButtonGroupProps = {
   hotkeyScope: HotkeyScope;
