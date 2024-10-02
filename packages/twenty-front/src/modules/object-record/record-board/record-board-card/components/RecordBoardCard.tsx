@@ -205,8 +205,6 @@ export const RecordBoardCard = ({
     </StyledFieldContainer>
   );
 
-  
-
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
