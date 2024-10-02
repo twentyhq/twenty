@@ -3,7 +3,7 @@ name: Assign
 on:
   issues:
     types: [opened, edited]
-  pull_request
+  pull_request:
 
 jobs:
   add-assigness:
