@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
-const DropdownButton = styled(Button)`
+const StyledDropdownButton = styled(Button)`
   padding: ${({ theme }) => theme.spacing(1.5)};
 `;
 export type UpdateViewButtonGroupProps = {
@@ -101,7 +101,7 @@ export const UpdateViewButtonGroup = ({
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
             dropdownHotkeyScope={hotkeyScope}
             clickableComponent={
-              <DropdownButton
+              <StyledDropdownButton
                 size="small"
                 accent="blue"
                 Icon={IconChevronDown}
