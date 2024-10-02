@@ -273,18 +273,6 @@ export class S3Driver implements StorageDriver {
     }
   }
 
-  async writeToFile(readable: Readable, filePath: string): Promise<void> {
-    const writable = fs.createWriteStream(filePath);
-
-    return new Promise<void>((resolve, reject) => {
-      // Pipe the readable stream to the writable stream
-      readable.pipe(writable);
-
-      writable.on('finish', resolve);
-      writable.on('error', reject);
-    });
-  }
-
   async download(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
