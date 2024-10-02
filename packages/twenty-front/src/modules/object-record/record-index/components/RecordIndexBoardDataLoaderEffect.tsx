@@ -124,7 +124,7 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+  const { setActionMenuEntries } = useRecordActionBar({
     objectMetadataItem,
     selectedRecordIds,
     callback: resetRecordSelection,
@@ -135,9 +135,8 @@ export const RecordIndexBoardDataLoaderEffect = ({
   );
 
   useEffect(() => {
-    setActionBarEntries?.();
-    setContextMenuEntries?.();
-  }, [setActionBarEntries, setContextMenuEntries]);
+    setActionMenuEntries?.();
+  }, [setActionMenuEntries]);
 
   useEffect(() => {
     setContextStoreTargetedRecordIds(selectedRecordIds);

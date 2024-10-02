@@ -1,8 +1,8 @@
-import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
+import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type ContextMenuItemProps = {
-  item: ContextMenuEntry;
+  item: ActionMenuEntry;
 };
 
 export const ContextMenuItem = ({ item }: ContextMenuItemProps) => (

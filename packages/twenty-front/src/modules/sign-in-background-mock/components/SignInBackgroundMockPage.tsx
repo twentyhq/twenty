@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { IconBuildingSkyscraper } from 'twenty-ui';
 
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
 import { SignInBackgroundMockContainer } from '@/sign-in-background-mock/components/SignInBackgroundMockContainer';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -28,7 +27,6 @@ export const SignInBackgroundMockPage = () => {
           <StyledTableContainer>
             <SignInBackgroundMockContainer />
           </StyledTableContainer>
-          <RecordTableContextMenu recordTableId="mock" />
         </RecordFieldValueSelectorContextProvider>
       </PageBody>
     </PageContainer>

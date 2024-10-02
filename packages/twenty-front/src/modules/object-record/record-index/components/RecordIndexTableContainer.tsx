@@ -3,7 +3,6 @@ import { RecordUpdateHookParams } from '@/object-record/record-field/contexts/Fi
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
-import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
 import { useContext } from 'react';
 
 type RecordIndexTableContainerProps = {
@@ -37,7 +36,6 @@ export const RecordIndexTableContainer = ({
         updateRecordMutation={updateEntity}
       />
       <RecordIndexRemoveSortingModal recordTableId={recordTableId} />
-      <RecordTableContextMenu recordTableId={recordTableId} />
     </>
   );
 };

@@ -13,9 +13,9 @@ import {
 } from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
-import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
-import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
+
+import { actionMenuEntriesState } from '@/ui/navigation/action-menu/states/actionMenuEntriesState';
+import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
 import { isDefined } from '~/utils/isDefined';
 
 type useRecordActionBarProps = {
@@ -31,8 +31,7 @@ export const useRecordActionBar = ({
   callback,
   totalNumberOfRecordsSelected,
 }: useRecordActionBarProps) => {
-  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
-  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
+  const setActionMenuEntries = useSetRecoilState(actionMenuEntriesState);
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 
@@ -97,7 +96,7 @@ export const useRecordActionBar = ({
   const canDelete =
     !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
 
-  const menuActions: ContextMenuEntry[] = useMemo(
+  const menuActions: ActionMenuEntry[] = useMemo(
     () =>
       [
         {
@@ -105,7 +104,7 @@ export const useRecordActionBar = ({
           Icon: IconFileExport,
           accent: 'default',
           onClick: () => download(),
-        } satisfies ContextMenuEntry,
+        } satisfies ActionMenuEntry,
         canDelete
           ? ({
               label: 'Delete',
@@ -134,7 +133,7 @@ export const useRecordActionBar = ({
                   }`}
                 />
               ),
-            } satisfies ContextMenuEntry)
+            } satisfies ActionMenuEntry)
           : undefined,
       ].filter(isDefined),
     [
@@ -154,8 +153,8 @@ export const useRecordActionBar = ({
     !!favorites?.find((favorite) => favorite.recordId === selectedRecordIds[0]);
 
   return {
-    setContextMenuEntries: useCallback(() => {
-      setContextMenuEntries([
+    setActionMenuEntries: useCallback(() => {
+      setActionMenuEntries([
         ...menuActions,
         ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
           ? [
@@ -182,31 +181,7 @@ export const useRecordActionBar = ({
       hasOnlyOneRecordSelected,
       isFavorite,
       isRemoteObject,
-      setContextMenuEntries,
+      setActionMenuEntries,
     ]),
-
-    setActionBarEntries: useCallback(() => {
-      setActionBarEntriesState([
-        /*
-              {
-                label: 'Actions',
-                Icon: IconClick,
-                subActions: 
-                
-                /* [
-                  {
-                    label: 'Enrich',
-                    Icon: IconPuzzle,
-                    onClick: handleExecuteQuickActionOnClick,
-                  },
-                  {
-                    label: 'Send to mailjet',
-                    Icon: IconMail,
-                  },
-                ],
-          */
-        ...menuActions,
-      ]);
-    }, [menuActions, setActionBarEntriesState]),
   };
 };

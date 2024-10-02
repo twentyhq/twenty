@@ -74,7 +74,7 @@ export const RecordIndexTableContainerEffect = ({
           (tableRowIds.length - selectedRowIds.length) // unselected row Ids
       : selectedRowIds.length;
 
-  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+  const { setActionMenuEntries } = useRecordActionBar({
     objectMetadataItem,
     selectedRecordIds: selectedRowIds,
     callback: resetTableRowSelection,
@@ -106,9 +106,8 @@ export const RecordIndexTableContainerEffect = ({
   }, [setOnToggleColumnSort, handleToggleColumnSort]);
 
   useEffect(() => {
-    setActionBarEntries?.();
-    setContextMenuEntries?.();
-  }, [setActionBarEntries, setContextMenuEntries]);
+    setActionMenuEntries?.();
+  }, [setActionMenuEntries]);
 
   useEffect(() => {
     setOnEntityCountChange(

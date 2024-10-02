@@ -5,12 +5,12 @@ import { IconChevronDown } from 'twenty-ui';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ActionBarEntry } from '@/ui/navigation/action-bar/types/ActionBarEntry';
+import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionBarItemProps = {
-  item: ActionBarEntry;
+  item: ActionMenuEntry;
 };
 
 const StyledButton = styled.div<{ accent: MenuItemAccent }>`

@@ -5,7 +5,6 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
-import { RecordBoardContextMenu } from '@/object-record/record-board/context-menu/components/RecordBoardContextMenu';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 
@@ -50,7 +49,6 @@ export const RecordIndexBoardContainer = ({
       }}
     >
       <RecordBoard recordBoardId={recordBoardId} />
-      <RecordBoardContextMenu recordBoardId={recordBoardId} />
     </RecordBoardContext.Provider>
   );
 };

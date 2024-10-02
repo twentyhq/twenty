@@ -75,16 +75,15 @@ export const SignInBackgroundMockContainerEffect = ({
     setTableColumns,
   ]);
 
-  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+  const { setActionMenuEntries } = useRecordActionBar({
     objectMetadataItem,
     selectedRecordIds: [],
     callback: resetTableRowSelection,
   });
 
   useEffect(() => {
-    setActionBarEntries?.();
-    setContextMenuEntries?.();
-  }, [setActionBarEntries, setContextMenuEntries]);
+    setActionMenuEntries?.();
+  }, [setActionMenuEntries]);
 
   useEffect(() => {
     setOnEntityCountChange(

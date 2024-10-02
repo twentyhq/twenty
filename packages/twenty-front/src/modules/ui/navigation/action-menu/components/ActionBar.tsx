@@ -2,11 +2,9 @@ import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
-import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
-import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
-
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { actionMenuEntriesState } from '@/ui/navigation/action-menu/states/actionMenuEntriesState';
+import { contextMenuIsOpenState } from '@/ui/navigation/action-menu/states/contextMenuIsOpenState';
 import { ActionBarItem } from './ActionBarItem';
 
 const StyledContainerActionBar = styled.div`
@@ -51,7 +49,7 @@ export const ActionBar = () => {
   }, [contextStoreTargetedRecordIds, setContextMenuOpenState]);
 
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
-  const actionBarEntries = useRecoilValue(actionBarEntriesState);
+  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
 
   if (contextMenuIsOpen || !contextStoreTargetedRecordIds.length) {
     return null;
@@ -63,14 +61,10 @@ export const ActionBar = () => {
         <StyledLabel>
           {contextStoreTargetedRecordIds?.length} selected:
         </StyledLabel>
-        {actionBarEntries.map((item, index) => (
+        {actionMenuEntries.map((item, index) => (
           <ActionBarItem key={index} item={item} />
         ))}
       </StyledContainerActionBar>
-      <SharedNavigationModal
-        actionBarEntries={actionBarEntries}
-        customClassName="action-bar"
-      />
     </>
   );
 };
