@@ -2,7 +2,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordUpdateHookParams } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
 import { useContext } from 'react';
@@ -37,7 +36,6 @@ export const RecordIndexTableContainer = ({
         viewBarId={viewBarId}
         updateRecordMutation={updateEntity}
       />
-      <RecordTableActionBar recordTableId={recordTableId} />
       <RecordIndexRemoveSortingModal recordTableId={recordTableId} />
       <RecordTableContextMenu recordTableId={recordTableId} />
     </>

@@ -1,18 +1,13 @@
 import styled from '@emotion/styled';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
 
-import { isDefined } from '~/utils/isDefined';
+import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { ActionBarItem } from './ActionBarItem';
-
-type ActionBarProps = {
-  selectedIds?: string[];
-  totalNumberOfSelectedRecords?: number;
-};
 
 const StyledContainerActionBar = styled.div`
   align-items: center;
@@ -42,42 +37,32 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionBar = ({
-  selectedIds = [],
-  totalNumberOfSelectedRecords,
-}: ActionBarProps) => {
+export const ActionBar = () => {
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
+  const contextStoreTargetedRecordIds = useRecoilValue(
+    contextStoreTargetedRecordIdsState,
+  );
+
   useEffect(() => {
-    if (selectedIds && selectedIds.length > 1) {
+    if (contextStoreTargetedRecordIds.length > 1) {
       setContextMenuOpenState(false);
     }
-  }, [selectedIds, setContextMenuOpenState]);
+  }, [contextStoreTargetedRecordIds, setContextMenuOpenState]);
 
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
-  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  if (contextMenuIsOpen) {
+  if (contextMenuIsOpen || !contextStoreTargetedRecordIds.length) {
     return null;
   }
 
-  const selectedNumberLabel =
-    totalNumberOfSelectedRecords ?? selectedIds?.length;
-
-  const showSelectedNumberLabel =
-    isDefined(totalNumberOfSelectedRecords) || Array.isArray(selectedIds);
-
   return (
     <>
-      <StyledContainerActionBar
-        data-select-disable
-        className="action-bar"
-        ref={wrapperRef}
-      >
-        {showSelectedNumberLabel && (
-          <StyledLabel>{selectedNumberLabel} selected:</StyledLabel>
-        )}
+      <StyledContainerActionBar data-select-disable className="action-bar">
+        <StyledLabel>
+          {contextStoreTargetedRecordIds?.length} selected:
+        </StyledLabel>
         {actionBarEntries.map((item, index) => (
           <ActionBarItem key={index} item={item} />
         ))}
