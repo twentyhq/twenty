@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
@@ -7,11 +7,15 @@ import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const StyledInput = styled.input`
@@ -46,14 +50,45 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
   );
+  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+    useRecordTableStates(recordIndexId);
 
-  const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .filter((item) =>
-      item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleColumnsIds = visibleTableColumns.map(
+    (column) => column.fieldMetadataId,
+  );
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const hiddenColumnIds = hiddenTableColumns.map(
+    (column) => column.fieldMetadataId,
+  );
+
+  const visibleColumnsFilterDefinitions = [...availableFilterDefinitions]
+    .sort((a, b) => {
+      return (
+        visibleColumnsIds.indexOf(a.fieldMetadataId) -
+        visibleColumnsIds.indexOf(b.fieldMetadataId)
+      );
+    })
+    .filter(
+      (item) =>
+        item.label
+          .toLocaleLowerCase()
+          .includes(searchText.toLocaleLowerCase()) &&
+        visibleColumnsIds.includes(item.fieldMetadataId),
     );
 
-  const selectableListItemIds = sortedAvailableFilterDefinitions.map(
+  const hiddenColumnsFilterDefinitions = [...availableFilterDefinitions]
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .filter(
+      (item) =>
+        item.label
+          .toLocaleLowerCase()
+          .includes(searchText.toLocaleLowerCase()) &&
+        hiddenColumnIds.includes(item.fieldMetadataId),
+    );
+
+  const selectableListItemIds = availableFilterDefinitions.map(
     (item) => item.fieldMetadataId,
   );
 
@@ -62,7 +97,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
 
   const handleEnter = (itemId: string) => {
-    const selectedFilterDefinition = sortedAvailableFilterDefinitions.find(
+    const selectedFilterDefinition = availableFilterDefinitions.find(
       (item) => item.fieldMetadataId === itemId,
     );
 
@@ -92,14 +127,30 @@ export const ObjectFilterDropdownFilterSelect = () => {
         onEnter={handleEnter}
       >
         <DropdownMenuItemsContainer>
-          {sortedAvailableFilterDefinitions.map(
-            (availableFilterDefinition, index) => (
+          {visibleColumnsFilterDefinitions.map(
+            (visibleFilterDefinition, index) => (
               <SelectableItem
-                itemId={availableFilterDefinition.fieldMetadataId}
-                key={`select-filter-${index}`}
+                itemId={visibleFilterDefinition.fieldMetadataId}
+                key={`visible-select-filter-${index}`}
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
-                  filterDefinition={availableFilterDefinition}
+                  filterDefinition={visibleFilterDefinition}
+                />
+              </SelectableItem>
+            ),
+          )}
+          {visibleColumnsFilterDefinitions.length > 0 &&
+            hiddenColumnsFilterDefinitions.length > 0 && (
+              <SeparatorLineText> </SeparatorLineText>
+            )}
+          {hiddenColumnsFilterDefinitions.map(
+            (hiddenFilterDefinition, index) => (
+              <SelectableItem
+                itemId={hiddenFilterDefinition.fieldMetadataId}
+                key={`hidden-select-filter-${index}`}
+              >
+                <ObjectFilterDropdownFilterSelectMenuItem
+                  filterDefinition={hiddenFilterDefinition}
                 />
               </SelectableItem>
             ),
