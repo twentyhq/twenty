@@ -90,13 +90,16 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const resetDisabled =
-    !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
-  const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
+    !isDefined(latestVersionCode) ||
+    JSON.stringify(latestVersionCode) === JSON.stringify(formValues.code);
+  const publishDisabled =
+    !isCodeValid ||
+    JSON.stringify(latestVersionCode) === JSON.stringify(formValues.code);
 
   const handleReset = async () => {
     try {
       const newState = {
-        code: latestVersionCode || '',
+        code: latestVersionCode || {},
       };
       setFormValues((prevState) => ({
         ...prevState,
