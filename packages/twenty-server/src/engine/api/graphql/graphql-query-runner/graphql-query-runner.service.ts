@@ -340,6 +340,7 @@ export class GraphqlQueryRunnerService {
     return result;
   }
 
+  @LogExecutionTime()
   public async restoreMany<ObjectRecord extends IRecord>(
     args: RestoreManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
