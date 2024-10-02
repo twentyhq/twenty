@@ -202,19 +202,11 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
   })),
 );
 
-const SettingsObjectNewFieldStep1 = lazy(() =>
+const SettingsObjectNewField = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1'
+    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewField'
   ).then((module) => ({
-    default: module.SettingsObjectNewFieldStep1,
-  })),
-);
-
-const SettingsObjectNewFieldStep2 = lazy(() =>
-  import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2'
-  ).then((module) => ({
-    default: module.SettingsObjectNewFieldStep2,
+    default: module.SettingsObjectNewField,
   })),
 );
 
@@ -344,13 +336,10 @@ export const SettingsRoutes = ({
         path={SettingsPath.IntegrationDatabaseConnection}
         element={<SettingsIntegrationShowDatabaseConnection />}
       />
+
       <Route
-        path={SettingsPath.ObjectNewFieldStep1}
-        element={<SettingsObjectNewFieldStep1 />}
-      />
-      <Route
-        path={SettingsPath.ObjectNewFieldStep2}
-        element={<SettingsObjectNewFieldStep2 />}
+        path={SettingsPath.ObjectNewField}
+        element={<SettingsObjectNewField />}
       />
       <Route
         path={SettingsPath.ObjectFieldEdit}

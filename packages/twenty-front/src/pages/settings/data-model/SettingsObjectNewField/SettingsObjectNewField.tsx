@@ -42,14 +42,16 @@ const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
   padding-top: ${({ theme }) => theme.spacing(3)};
 `;
-export const SettingsObjectNewFieldStep2 = () => {
+export const SettingsObjectNewField = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
+  const fieldTypeFromUrl = searchParams.get(
+    'fieldType',
+  ) as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
 
-  const [isConfigureStep, setIsConfigureStep] = useState(false);
+  const [isConfigureStep, setIsConfigureStep] = useState(!!fieldTypeFromUrl);
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
 
@@ -64,6 +66,9 @@ export const SettingsObjectNewFieldStep2 = () => {
         activeObjectMetadataItem?.fields.map((value) => value.name),
       ),
     ),
+    defaultValues: {
+      type: fieldTypeFromUrl || FieldMetadataType.Text,
+    },
   });
 
   useEffect(() => {
@@ -170,6 +175,11 @@ export const SettingsObjectNewFieldStep2 = () => {
     ] as const
   ).filter(isDefined);
 
+  const handleFieldTypeSelect = (selectedType: SettingsSupportedFieldType) => {
+    navigate(`?fieldType=${selectedType}`, { replace: true });
+    setIsConfigureStep(true);
+  };
+
   return (
     <RecordFieldValueSelectorContextProvider>
       <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
@@ -226,9 +236,9 @@ export const SettingsObjectNewFieldStep2 = () => {
               <SettingsDataModelFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
                 fieldMetadataItem={{
-                  type: fieldType,
+                  type: formConfig.watch('type'),
                 }}
-                onFieldTypeSelect={() => setIsConfigureStep(true)}
+                onFieldTypeSelect={handleFieldTypeSelect}
               />
             ) : (
               <>

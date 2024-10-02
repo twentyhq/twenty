@@ -7,12 +7,12 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsObjectNewFieldStep2 } from '../../SettingsObjectNewField/SettingsObjectNewFieldStep2';
+import { SettingsObjectNewField } from '../../SettingsObjectNewField/SettingsObjectNewField';
 
 const meta: Meta<PageDecoratorArgs> = {
   title:
-    'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldStep2',
-  component: SettingsObjectNewFieldStep2,
+    'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewField',
+  component: SettingsObjectNewField,
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/:objectSlug/new-field/step-2',
@@ -25,7 +25,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsObjectNewFieldStep2>;
+export type Story = StoryObj<typeof SettingsObjectNewField>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

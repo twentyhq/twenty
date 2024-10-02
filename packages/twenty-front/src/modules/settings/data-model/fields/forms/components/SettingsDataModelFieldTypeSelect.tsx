@@ -11,6 +11,7 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
@@ -40,7 +41,7 @@ type SettingsDataModelFieldTypeSelectProps = {
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
   >;
-  onFieldTypeSelect: () => void;
+  onFieldTypeSelect: (fieldType: SettingsSupportedFieldType) => void;
 };
 
 const StyledTypeSelectContainer = styled.div`
@@ -116,11 +117,6 @@ export const SettingsDataModelFieldTypeSelect = ({
     <Controller
       name="type"
       control={control}
-      defaultValue={
-        fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
-          ? (fieldMetadataItem.type as SettingsSupportedFieldType)
-          : FieldMetadataType.Text
-      }
       render={({ field: { onChange } }) => (
         <StyledTypeSelectContainer className={className}>
           <Section>
@@ -144,23 +140,29 @@ export const SettingsDataModelFieldTypeSelect = ({
                   .filter(([, config]) => config.category === category)
                   .map(([key, config]) => (
                     <StyledCardContainer>
-                      <SettingsCard
-                        key={key}
-                        onClick={() => {
-                          onChange(key as SettingsSupportedFieldType);
-                          resetDefaultValueField(
-                            key as SettingsSupportedFieldType,
-                          );
-                          onFieldTypeSelect();
+                      <UndecoratedLink
+                        to="#"
+                        fullWidth
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const newFieldType =
+                            key as SettingsSupportedFieldType;
+                          onChange(newFieldType);
+                          resetDefaultValueField(newFieldType);
+                          onFieldTypeSelect(newFieldType);
                         }}
-                        Icon={
-                          <config.Icon
-                            size={theme.icon.size.xl}
-                            stroke={theme.icon.stroke.sm}
-                          />
-                        }
-                        title={config.label}
-                      />
+                      >
+                        <SettingsCard
+                          key={key}
+                          Icon={
+                            <config.Icon
+                              size={theme.icon.size.xl}
+                              stroke={theme.icon.stroke.sm}
+                            />
+                          }
+                          title={config.label}
+                        />
+                      </UndecoratedLink>
                     </StyledCardContainer>
                   ))}
               </StyledContainer>
