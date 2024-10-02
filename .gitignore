@@ -1,4 +1,5 @@
 **/**/.env
+!**/base-typescript-project/**/.env
 .DS_Store
 /.idea
 **/**/node_modules/
