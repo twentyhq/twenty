@@ -19,6 +19,7 @@ import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -108,6 +109,10 @@ export const ShowPageRightContainer = ({
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
   const isMobile = useIsMobile() || isInRightDrawer;
+
+  const isNewViewableRecordLoading = useRecoilValue(
+    isNewViewableRecordLoadingState,
+  );
 
   const tabs = [
     {
@@ -229,7 +234,7 @@ export const ShowPageRightContainer = ({
     <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
-          loading={loading}
+          loading={loading || isNewViewableRecordLoading}
           tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
           tabs={tabs}
         />
