@@ -96,9 +96,9 @@ export const ObjectFilterDropdownFilterSelect = () => {
             (availableFilterDefinition, index) => (
               <SelectableItem
                 itemId={availableFilterDefinition.fieldMetadataId}
+                key={`select-filter-${index}`}
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
-                  key={`select-filter-${index}`}
                   filterDefinition={availableFilterDefinition}
                 />
               </SelectableItem>

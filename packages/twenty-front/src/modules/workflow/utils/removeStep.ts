@@ -1,14 +1,12 @@
 import { WorkflowStep } from '@/workflow/types/Workflow';
 import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
 
-export const replaceStep = <T extends WorkflowStep>({
+export const removeStep = ({
   steps: stepsInitial,
   stepId,
-  stepToReplace,
 }: {
   steps: Array<WorkflowStep>;
-  stepId: string;
-  stepToReplace: Partial<Omit<T, 'id'>>;
+  stepId: string | undefined;
 }) => {
   const steps = structuredClone(stepsInitial);
 
@@ -17,10 +15,7 @@ export const replaceStep = <T extends WorkflowStep>({
     stepId,
   });
 
-  parentStepPosition.steps[parentStepPosition.index] = {
-    ...parentStepPosition.steps[parentStepPosition.index],
-    ...stepToReplace,
-  };
+  parentStepPosition.steps.splice(parentStepPosition.index, 1);
 
   return steps;
 };
