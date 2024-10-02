@@ -179,7 +179,7 @@ export const SettingsServerlessFunctionDetail = () => {
         .map((key) => {
           return {
             path: key,
-            language: key === '.env' ? 'plaintext' : 'typescript',
+            language: key === '.env' ? 'ini' : 'typescript',
             content: formValues.code?.[key] || '',
           };
         })
