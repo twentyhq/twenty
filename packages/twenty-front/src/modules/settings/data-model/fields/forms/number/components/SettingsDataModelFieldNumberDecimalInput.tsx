@@ -8,6 +8,7 @@ import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
 type SettingsDataModelFieldNumberDecimalsInputProps = {
   value: number;
   onChange: (value: number) => void;
+  disabled?: boolean;
 };
 
 const StyledCounterContainer = styled.div`
@@ -56,8 +57,8 @@ const StyledTextInput = styled(TextInput)`
     background: ${({ theme }) => theme.background.noisy};
   }
   input ~ div {
-    padding-right: 0px;
-    border-radius: 4px;
+    padding-right: ${({ theme }) => theme.spacing(0)};
+    border-radius: ${({ theme }) => theme.spacing(1)};
     background: ${({ theme }) => theme.background.noisy};
   }
 `;
@@ -97,6 +98,7 @@ const MAX_VALUE = 100;
 export const SettingsDataModelFieldNumberDecimalsInput = ({
   value,
   onChange,
+  disabled,
 }: SettingsDataModelFieldNumberDecimalsInputProps) => {
   const exampleValue = (1000).toFixed(value);
 
@@ -121,6 +123,10 @@ export const SettingsDataModelFieldNumberDecimalsInput = ({
       return;
     }
 
+    if (castedNumber < MIN_VALUE) {
+      return;
+    }
+
     if (castedNumber > MAX_VALUE) {
       onChange(MAX_VALUE);
       return;
@@ -139,17 +145,20 @@ export const SettingsDataModelFieldNumberDecimalsInput = ({
               variant="secondary"
               onClick={handleDecrementCounter}
               Icon={IconMinus}
+              disabled={disabled}
             />
             <StyledTextInput
               name="decimals"
               fullWidth
               value={value.toString()}
               onChange={(value) => handleTextInputChange(value)}
+              disabled={disabled}
             />
             <StyledControlButton
               variant="secondary"
               onClick={handleIncrementCounter}
               Icon={IconPlus}
+              disabled={disabled}
             />
           </StyledCounterControlsIcons>
         </StyledCounterInnerContainer>

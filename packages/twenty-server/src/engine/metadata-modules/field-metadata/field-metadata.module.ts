@@ -12,6 +12,7 @@ import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
@@ -44,7 +45,11 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         TypeORMModule,
         ActorModule,
       ],
-      services: [IsFieldMetadataDefaultValue, FieldMetadataService],
+      services: [
+        IsFieldMetadataDefaultValue,
+        FieldMetadataService,
+        FieldMetadataValidationService,
+      ],
       resolvers: [
         {
           EntityClass: FieldMetadataEntity,

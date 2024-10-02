@@ -40,7 +40,6 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                 createdAt
                 updatedAt
                 defaultValue
-                settings
                 options
                 settings
                 relationDefinition {

@@ -5,6 +5,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
 import { SettingsDataModelFieldNumberDecimalsInput } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberDecimalInput';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,
@@ -31,9 +32,11 @@ export const SettingsDataModelFieldNumberForm = ({
   return (
     <CardContent>
       <Controller
-        disabled={disabled}
         name="settings"
-        defaultValue={{ decimals: fieldMetadataItem?.settings?.decimals ?? 0 }}
+        defaultValue={{
+          decimals:
+            fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
+        }}
         control={control}
         render={({ field: { onChange, value } }) => {
           const count = value?.decimals ?? 0;
@@ -42,6 +45,7 @@ export const SettingsDataModelFieldNumberForm = ({
             <SettingsDataModelFieldNumberDecimalsInput
               value={count}
               onChange={(value) => onChange({ decimals: value })}
+              disabled={disabled}
             ></SettingsDataModelFieldNumberDecimalsInput>
           );
         }}

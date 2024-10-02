@@ -38,7 +38,6 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       settings
       defaultValue
       options
-      settings
     }
   }
 `;
