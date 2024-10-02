@@ -11,7 +11,7 @@ export const getSubMenuOptions = (subMenu: FilterType | null) => {
         },
         {
           name: 'Creator Name',
-          icon: 'IconUserCircle',
+          icon: 'IconId',
           type: 'ACTOR',
         },
       ];

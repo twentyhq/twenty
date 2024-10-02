@@ -1,4 +1,12 @@
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import {
+  IconApi,
+  IconCsv,
+  IconGmail,
+  IconGoogleCalendar,
+  IconSettingsAutomation,
+  IconUserCircle,
+} from 'twenty-ui';
 
 export const getSourceEnumOptions = (
   selectedItemIds: string[],
@@ -6,28 +14,43 @@ export const getSourceEnumOptions = (
   return [
     {
       id: 'MANUAL',
-      name: 'MANUAL',
+      name: 'User',
       isSelected: selectedItemIds.includes('MANUAL'),
+      AvatarIcon: IconUserCircle,
+      isIconInverted: true,
     },
     {
       id: 'IMPORT',
-      name: 'IMPORT',
+      name: 'Import',
       isSelected: selectedItemIds.includes('IMPORT'),
+      AvatarIcon: IconCsv,
+      isIconInverted: true,
     },
     {
       id: 'API',
-      name: 'API',
+      name: 'Api',
       isSelected: selectedItemIds.includes('API'),
+      AvatarIcon: IconApi,
+      isIconInverted: true,
     },
     {
       id: 'EMAIL',
-      name: 'EMAIL',
+      name: 'Email',
       isSelected: selectedItemIds.includes('EMAIL'),
+      AvatarIcon: IconGmail,
     },
     {
       id: 'CALENDAR',
-      name: 'CALENDAR',
+      name: 'Calendar',
       isSelected: selectedItemIds.includes('CALENDAR'),
+      AvatarIcon: IconGoogleCalendar,
+    },
+    {
+      id: 'WORKFLOW',
+      name: 'Workflow',
+      isSelected: selectedItemIds.includes('WORKFLOW'),
+      AvatarIcon: IconSettingsAutomation,
+      isIconInverted: true,
     },
   ];
 };

@@ -1,7 +1,8 @@
+import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar } from 'twenty-ui';
+import { AvatarChip } from 'twenty-ui';
 
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -13,6 +14,16 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+
+const StyledAvatarChip = styled(AvatarChip)`
+  &.avatar-icon-container {
+    color: ${({ theme }) => theme.font.color.secondary};
+    gap: ${({ theme }) => theme.spacing(2)};
+    padding-left: 0px;
+    padding-right: 0px;
+    font-size: ${({ theme }) => theme.font.size.md};
+  }
+`;
 
 export const MultipleSelectDropdown = ({
   selectableListId,
@@ -120,15 +131,16 @@ export const MultipleSelectDropdown = ({
                 handleItemSelectChange(item, newCheckedValue);
               }}
               avatar={
-                <Avatar
+                <StyledAvatarChip
+                  className="avatar-icon-container"
+                  name={item.name}
                   avatarUrl={item.avatarUrl}
+                  LeftIcon={item.AvatarIcon}
+                  avatarType={item.avatarType}
+                  isIconInverted={item.isIconInverted}
                   placeholderColorSeed={item.id}
-                  placeholder={item.name}
-                  size="md"
-                  type={item.avatarType ?? 'rounded'}
                 />
               }
-              text={item.name}
             />
           );
         })}
