@@ -1,7 +1,7 @@
 import { Readable } from 'stream';
 import fs from 'fs';
 import { mkdir } from 'fs/promises';
-import { dirname, join } from 'path';
+import { join } from 'path';
 
 import {
   CopyObjectCommand,
@@ -25,7 +25,6 @@ import {
 import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 import { isDefined } from 'src/utils/is-defined';
-import { pipeline } from 'stream/promises';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
