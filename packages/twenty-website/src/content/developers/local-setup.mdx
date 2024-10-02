@@ -145,7 +145,13 @@ Twenty requires a redis cache to provide the best performances
 
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
-    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    <b>Option 1:</b> To install redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    
+    <b>Option 2:</b> If you have docker installed:
+    ```bash
+    cp ./packages/twenty-docker/.env.example ./packages/twenty-docker/.env
+    make docker-dev-up
+    ```
   </ArticleTab>
   <ArticleTab>
     To provision your database locally with `brew`:

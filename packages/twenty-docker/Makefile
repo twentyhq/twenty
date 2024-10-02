@@ -1,21 +1,21 @@
 dev-build:
-	@docker compose -f dev/docker-compose.yml down -v
-	@docker compose -f dev/docker-compose.yml build
+	@docker compose -f docker-compose.yml down -v
+	@docker compose -f docker-compose.yml build
 
 dev-up:
-	@docker compose -f dev/docker-compose.yml up -d
+	@docker compose -f docker-compose.yml up -d
 
 dev-start:
-	@docker compose -f dev/docker-compose.yml start
+	@docker compose -f docker-compose.yml start
 
 dev-stop:
-	@docker compose -f dev/docker-compose.yml stop
+	@docker compose -f docker-compose.yml stop
 
 dev-down:
-	@docker compose -f dev/docker-compose.yml down -v
+	@docker compose -f docker-compose.yml down -v
 
 dev-sh:
-	@docker compose -f dev/docker-compose.yml exec twenty-dev sh
+	@docker compose -f docker-compose.yml exec twenty-dev sh
 
 dev-postgres-build:
 	@docker stop twenty_postgres || true
