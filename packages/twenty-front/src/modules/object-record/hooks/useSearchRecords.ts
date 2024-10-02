@@ -87,7 +87,7 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
 
   return {
     objectMetadataItem,
-    records: records ?? [],
+    records: records,
     loading,
     error,
   };

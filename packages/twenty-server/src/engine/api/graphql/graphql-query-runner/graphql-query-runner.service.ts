@@ -182,6 +182,7 @@ export class GraphqlQueryRunnerService {
     return results?.[0] as ObjectRecord;
   }
 
+  @LogExecutionTime()
   async search<ObjectRecord extends IRecord = IRecord>(
     args: SearchResolverArgs,
     options: WorkspaceQueryRunnerOptions,

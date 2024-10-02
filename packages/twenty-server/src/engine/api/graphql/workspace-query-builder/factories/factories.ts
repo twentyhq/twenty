@@ -1,5 +1,4 @@
 import { ForeignDataWrapperServerQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-server-query.factory';
-import { SearchQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/search-query.factory';
 
 import { ArgsAliasFactory } from './args-alias.factory';
 import { ArgsStringFactory } from './args-string.factory';
@@ -32,5 +31,4 @@ export const workspaceQueryBuilderFactories = [
   UpdateManyQueryFactory,
   DeleteManyQueryFactory,
   ForeignDataWrapperServerQueryFactory,
-  SearchQueryFactory,
 ];

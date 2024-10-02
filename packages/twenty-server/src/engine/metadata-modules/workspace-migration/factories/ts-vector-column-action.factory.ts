@@ -44,9 +44,6 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
     _alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
     _options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter[] {
-    this.logger.error(
-      `TsVectorColumnActionFactory.handleAlterAction has not been implemented yet.`,
-    );
     throw new WorkspaceMigrationException(
       `TsVectorColumnActionFactory.handleAlterAction has not been implemented yet.`,
       WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,

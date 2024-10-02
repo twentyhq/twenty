@@ -9,10 +9,9 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/constants/search-vector-field-name.constants';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
-import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/metadata.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class GraphqlQuerySearchResolverService {
@@ -34,16 +33,15 @@ export class GraphqlQuerySearchResolverService {
     const { authContext, objectMetadataItem, objectMetadataCollection } =
       options;
 
-    const isQueryRunnerTwentyORMEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+    const featureFlagsForWorkspace =
+      await this.featureFlagService.getWorkspaceFeatureFlags(
         authContext.workspace.id,
       );
 
-    const isSearchEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsSearchEnabled,
-      authContext.workspace.id,
-    );
+    const isQueryRunnerTwentyORMEnabled =
+      featureFlagsForWorkspace.IS_QUERY_RUNNER_TWENTY_ORM_ENABLED;
+
+    const isSearchEnabled = featureFlagsForWorkspace.IS_SEARCH_ENABLED;
 
     if (!isQueryRunnerTwentyORMEnabled || !isSearchEnabled) {
       throw new GraphqlQueryRunnerException(
@@ -89,16 +87,13 @@ export class GraphqlQuerySearchResolverService {
       )
       .setParameter('searchTerms', searchTerms)
       .limit(limit)
-      .getMany()) as any[];
+      .getMany()) as ObjectRecord[];
 
     const objectRecords = await repository.formatResult(resultsWithTsVector);
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
-    const where = {};
-    const totalCount = await repository.count({
-      where,
-    });
+    const totalCount = await repository.count({});
     const order = undefined;
 
     return typeORMObjectRecordsParser.createConnection(

@@ -59,11 +59,10 @@ const getColumnExpressionsFromField = (
 
         return getColumnExpression(columnName, fieldMetadataTypeAndName.type);
       });
-  } else {
-    const columnName = computeColumnName(fieldMetadataTypeAndName.name);
-
-    return [getColumnExpression(columnName, fieldMetadataTypeAndName.type)];
   }
+  const columnName = computeColumnName(fieldMetadataTypeAndName.name);
+
+  return [getColumnExpression(columnName, fieldMetadataTypeAndName.type)];
 };
 
 const getColumnExpression = (
