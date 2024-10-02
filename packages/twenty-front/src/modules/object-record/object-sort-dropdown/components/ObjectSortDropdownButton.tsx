@@ -110,30 +110,25 @@ export const ObjectSortDropdownButton = ({
     (column) => column.fieldMetadataId,
   );
 
-  const visibleColumnsSortDefinitions = [...availableSortDefinitions]
+  const filteredSearchInputSortDefinitions = availableSortDefinitions.filter(
+    (item) =>
+      item.label
+        .toLocaleLowerCase()
+        .includes(objectSortDropdownSearchInput.toLocaleLowerCase()),
+  );
+
+  const visibleColumnsSortDefinitions = filteredSearchInputSortDefinitions
     .sort((a, b) => {
       return (
         visibleColumnsIds.indexOf(a.fieldMetadataId) -
         visibleColumnsIds.indexOf(b.fieldMetadataId)
       );
     })
-    .filter(
-      (item) =>
-        item.label
-          .toLocaleLowerCase()
-          .includes(objectSortDropdownSearchInput.toLocaleLowerCase()) &&
-        visibleColumnsIds.includes(item.fieldMetadataId),
-    );
+    .filter((item) => visibleColumnsIds.includes(item.fieldMetadataId));
 
-  const hiddenColumnsSortDefinitions = [...availableSortDefinitions]
+  const hiddenColumnsSortDefinitions = filteredSearchInputSortDefinitions
     .sort((a, b) => a.label.localeCompare(b.label))
-    .filter(
-      (item) =>
-        item.label
-          .toLocaleLowerCase()
-          .includes(objectSortDropdownSearchInput.toLocaleLowerCase()) &&
-        hiddenColumnIds.includes(item.fieldMetadataId),
-    );
+    .filter((item) => hiddenColumnIds.includes(item.fieldMetadataId));
 
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>

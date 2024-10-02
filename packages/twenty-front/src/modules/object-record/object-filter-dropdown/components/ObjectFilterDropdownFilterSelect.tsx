@@ -63,30 +63,24 @@ export const ObjectFilterDropdownFilterSelect = () => {
     (column) => column.fieldMetadataId,
   );
 
-  const visibleColumnsFilterDefinitions = [...availableFilterDefinitions]
+  const filteredSearchInputFilterDefinitions =
+    availableFilterDefinitions.filter((item) =>
+      item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
+    );
+
+  const visibleColumnsFilterDefinitions = filteredSearchInputFilterDefinitions
+
     .sort((a, b) => {
       return (
         visibleColumnsIds.indexOf(a.fieldMetadataId) -
         visibleColumnsIds.indexOf(b.fieldMetadataId)
       );
     })
-    .filter(
-      (item) =>
-        item.label
-          .toLocaleLowerCase()
-          .includes(searchText.toLocaleLowerCase()) &&
-        visibleColumnsIds.includes(item.fieldMetadataId),
-    );
+    .filter((item) => visibleColumnsIds.includes(item.fieldMetadataId));
 
-  const hiddenColumnsFilterDefinitions = [...availableFilterDefinitions]
+  const hiddenColumnsFilterDefinitions = filteredSearchInputFilterDefinitions
     .sort((a, b) => a.label.localeCompare(b.label))
-    .filter(
-      (item) =>
-        item.label
-          .toLocaleLowerCase()
-          .includes(searchText.toLocaleLowerCase()) &&
-        hiddenColumnIds.includes(item.fieldMetadataId),
-    );
+    .filter((item) => hiddenColumnIds.includes(item.fieldMetadataId));
 
   const selectableListItemIds = availableFilterDefinitions.map(
     (item) => item.fieldMetadataId,
