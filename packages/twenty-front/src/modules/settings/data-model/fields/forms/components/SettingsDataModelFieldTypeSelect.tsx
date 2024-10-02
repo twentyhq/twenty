@@ -35,7 +35,6 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldTypeSelectProps = {
-  className?: string;
   excludedFieldTypes?: SettingsSupportedFieldType[];
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
@@ -71,7 +70,6 @@ const StyledSearchInput = styled(TextInput)`
 `;
 
 export const SettingsDataModelFieldTypeSelect = ({
-  className,
   excludedFieldTypes = [],
   fieldMetadataItem,
   onFieldTypeSelect,
@@ -128,10 +126,7 @@ export const SettingsDataModelFieldTypeSelect = ({
         name="type"
         control={control}
         render={({ field: { onChange } }) => (
-          <StyledTypeSelectContainer
-            className={className}
-            style={{ position: 'relative' }}
-          >
+          <StyledTypeSelectContainer>
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
               <Section key={category}>
                 <H2Title
@@ -144,7 +139,7 @@ export const SettingsDataModelFieldTypeSelect = ({
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
                     .map(([key, config]) => (
-                      <StyledCardContainer>
+                      <StyledCardContainer key={key}>
                         <UndecoratedLink
                           to="#"
                           fullWidth
