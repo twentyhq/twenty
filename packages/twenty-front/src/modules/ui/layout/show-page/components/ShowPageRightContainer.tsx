@@ -1,5 +1,24 @@
+import { Calendar } from '@/activities/calendar/components/Calendar';
+import { EmailThreads } from '@/activities/emails/components/EmailThreads';
+import { Attachments } from '@/activities/files/components/Attachments';
+import { Notes } from '@/activities/notes/components/Notes';
+import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
+import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { Button } from '@/ui/input/button/components/Button';
+import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
+import { TabList } from '@/ui/layout/tab/components/TabList';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { Workflow } from '@/workflow/components/Workflow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
@@ -9,30 +28,17 @@ import {
   IconPaperclip,
   IconSettings,
   IconTimelineEvent,
+  IconTrash,
 } from 'twenty-ui';
-
-import { Calendar } from '@/activities/calendar/components/Calendar';
-import { EmailThreads } from '@/activities/emails/components/EmailThreads';
-import { Attachments } from '@/activities/files/components/Attachments';
-import { Notes } from '@/activities/notes/components/Notes';
-import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
-import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Workflow } from '@/workflow/components/Workflow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
+  height: 100%;
   justify-content: start;
   width: 100%;
-  height: 100%;
+  position: relative;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -55,6 +61,26 @@ const StyledGreyBox = styled.div<{ isInRightDrawer: boolean }>`
 
   margin: ${({ isInRightDrawer, theme }) =>
     isInRightDrawer ? theme.spacing(4) : ''};
+`;
+
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  bottom: 0;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  justify-content: flex-end;
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+`;
+
+const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.spacing(16) : 0};
 `;
 
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
@@ -107,7 +133,7 @@ export const ShowPageRightContainer = ({
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
-  const isMobile = useIsMobile() || isInRightDrawer;
+  const isMobile = useIsMobile();
 
   const tabs = [
     {
@@ -125,7 +151,7 @@ export const ShowPageRightContainer = ({
       id: 'fields',
       title: 'Fields',
       Icon: IconList,
-      hide: !isMobile,
+      hide: !(isMobile || isInRightDrawer),
     },
     {
       id: 'timeline',
@@ -225,6 +251,23 @@ export const ShowPageRightContainer = ({
         return <></>;
     }
   };
+
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+  });
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    await deleteOneRecord(targetableObject.id);
+    setIsDeleting(false);
+  };
+
+  const [recordFromStore] = useRecoilState<ObjectRecord | null>(
+    recordStoreFamilyState(targetableObject.id),
+  );
+
   return (
     <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
@@ -235,7 +278,19 @@ export const ShowPageRightContainer = ({
         />
       </StyledTabListContainer>
       {summaryCard}
-      {renderActiveTabContent()}
+      <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+        {renderActiveTabContent()}
+      </StyledContentContainer>
+      {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
+        <StyledButtonContainer>
+          <Button
+            Icon={IconTrash}
+            onClick={handleDelete}
+            disabled={isDeleting}
+            title={isDeleting ? 'Deleting...' : 'Delete'}
+          ></Button>
+        </StyledButtonContainer>
+      )}
     </StyledShowPageRightContainer>
   );
 };
