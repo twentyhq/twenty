@@ -26,6 +26,7 @@ import { RecordDetailRelationSection } from '@/object-record/record-show/record-
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
@@ -69,7 +70,7 @@ export const RecordShowContainer = ({
     recordLoadingFamilyState(objectRecordId),
   );
 
-  const [recordFromStore] = useRecoilState<any>(
+  const [recordFromStore] = useRecoilState<ObjectRecord | null>(
     recordStoreFamilyState(objectRecordId),
   );
 

@@ -1,17 +1,15 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-
-import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
+import { ObjectFilterSelectMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectMenu';
+import { ObjectFilterSelectSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectSubMenu';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { currentSubMenuState } from '@/object-record/object-filter-dropdown/states/subMenuStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const StyledInput = styled.input`
@@ -47,6 +45,9 @@ export const ObjectFilterDropdownFilterSelect = () => {
     availableFilterDefinitionsComponentState,
   );
 
+  const [currentSubMenu, setCurrentSubMenu] =
+    useRecoilState(currentSubMenuState);
+
   const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
     .sort((a, b) => a.label.localeCompare(b.label))
     .filter((item) =>
@@ -75,37 +76,21 @@ export const ObjectFilterDropdownFilterSelect = () => {
     selectFilter({ filterDefinition: selectedFilterDefinition });
   };
 
-  return (
-    <>
-      <StyledInput
-        value={searchText}
-        autoFocus
-        placeholder="Search fields"
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setSearchText(event.target.value)
-        }
-      />
-      <SelectableList
-        hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
-        selectableItemIdArray={selectableListItemIds}
-        selectableListId={OBJECT_FILTER_DROPDOWN_ID}
-        onEnter={handleEnter}
-      >
-        <DropdownMenuItemsContainer>
-          {sortedAvailableFilterDefinitions.map(
-            (availableFilterDefinition, index) => (
-              <SelectableItem
-                itemId={availableFilterDefinition.fieldMetadataId}
-                key={`select-filter-${index}`}
-              >
-                <ObjectFilterDropdownFilterSelectMenuItem
-                  filterDefinition={availableFilterDefinition}
-                />
-              </SelectableItem>
-            ),
-          )}
-        </DropdownMenuItemsContainer>
-      </SelectableList>
-    </>
+  useEffect(() => {
+    return () => {
+      setCurrentSubMenu(null);
+    };
+  }, [setCurrentSubMenu]);
+
+  return !currentSubMenu ? (
+    <ObjectFilterSelectMenu
+      searchText={searchText}
+      setSearchText={setSearchText}
+      sortedAvailableFilterDefinitions={sortedAvailableFilterDefinitions}
+      selectableListItemIds={selectableListItemIds}
+      handleEnter={handleEnter}
+    />
+  ) : (
+    <ObjectFilterSelectSubMenu />
   );
 };
