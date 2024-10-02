@@ -1,0 +1,2 @@
+- name: Issues Helper
+  uses: actions-cool/issues-helper@v3.6.0
