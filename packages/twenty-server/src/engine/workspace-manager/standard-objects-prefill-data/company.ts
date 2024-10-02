@@ -45,7 +45,7 @@ export const companyPrefillData = async (
         position: 1,
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
-        createdByName: 'System',
+        createdByName: 'Twenty (Sample data)',
       },
       {
         id: QONTO_ID,
@@ -61,7 +61,7 @@ export const companyPrefillData = async (
         position: 2,
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
-        createdByName: 'System',
+        createdByName: 'Twenty (Sample data)',
       },
       {
         id: STRIPE_ID,
@@ -77,7 +77,7 @@ export const companyPrefillData = async (
         position: 3,
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
-        createdByName: 'System',
+        createdByName: 'Twenty (Sample data)',
       },
       {
         id: FIGMA_ID,
@@ -93,7 +93,7 @@ export const companyPrefillData = async (
         position: 4,
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
-        createdByName: 'System',
+        createdByName: 'Twenty (Sample data)',
       },
       {
         id: NOTION_ID,
@@ -109,7 +109,7 @@ export const companyPrefillData = async (
         position: 5,
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
-        createdByName: 'System',
+        createdByName: 'Twenty (Sample data)',
       },
     ])
     .returning('*')
