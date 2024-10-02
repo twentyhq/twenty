@@ -5,8 +5,8 @@ import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
+import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
+import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
@@ -26,24 +26,23 @@ export const useDeleteOneRecord = ({
     objectNameSingular,
   });
 
-  const { updateOneRecordMutation } = useUpdateOneRecordMutation({
+  const { deleteOneRecordMutation } = useDeleteOneRecordMutation({
     objectNameSingular,
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const mutationResponseField =
-    getUpdateOneRecordMutationResponseField(objectNameSingular);
+    getDeleteOneRecordMutationResponseField(objectNameSingular);
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
       const currentTimestamp = new Date().toISOString();
 
       const deletedRecord = await apolloClient.mutate({
-        mutation: updateOneRecordMutation,
+        mutation: deleteOneRecordMutation,
         variables: {
-          idToUpdate: idToDelete,
-          input: { deletedAt: currentTimestamp },
+          idToDelete: idToDelete,
         },
         optimisticResponse: {
           [mutationResponseField]: {
@@ -74,7 +73,7 @@ export const useDeleteOneRecord = ({
     },
     [
       apolloClient,
-      updateOneRecordMutation,
+      deleteOneRecordMutation,
       getRecordFromCache,
       mutationResponseField,
       objectMetadataItem,
