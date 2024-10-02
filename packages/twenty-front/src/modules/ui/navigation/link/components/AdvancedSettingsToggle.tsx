@@ -29,7 +29,6 @@ const StyledToggleContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 140px;
 `;
 
 const StyledIconTool = styled(IconTool)`
@@ -51,7 +50,7 @@ export const AdvancedSettingsToggle = () => {
         <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
       </StyledIconContainer>
       <StyledToggleContainer>
-        <StyledText>Advanced:</StyledText>
+        <StyledText>Advanced</StyledText>
         <Toggle
           onChange={onChange}
           color={MAIN_COLORS.yellow}
