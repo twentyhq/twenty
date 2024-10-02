@@ -114,7 +114,11 @@ export class GraphqlQuerySearchResolverService {
 
   private formatSearchTerms(searchTerm: string) {
     const words = searchTerm.trim().split(/\s+/);
-    const formattedWords = words.map((word) => `${word}:*`);
+    const formattedWords = words.map((word) => {
+      const escapedWord = word.replace(/[:'&|!()]/g, '\\$&');
+
+      return `${escapedWord}:*`;
+    });
 
     return formattedWords.join(' | ');
   }
