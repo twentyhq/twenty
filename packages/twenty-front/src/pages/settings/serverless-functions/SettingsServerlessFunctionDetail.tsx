@@ -24,7 +24,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDefined } from '~/utils/isDefined';
-import { isDeeplyEqual } from 'packages/twenty-front/src/utils/isDeeplyEqual';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
