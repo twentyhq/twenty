@@ -42,6 +42,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
   RowIcon?: IconComponent;
+  RowIconFn?: (item: ListItem) => IconComponent;
   RowRightComponent: ComponentType<{ item: ListItem }>;
   footerButtonLabel?: string;
   onFooterButtonClick?: () => void;
@@ -58,6 +59,7 @@ export const SettingsListCard = <
   isLoading,
   onRowClick,
   RowIcon,
+  RowIconFn,
   RowRightComponent,
   onFooterButtonClick,
   footerButtonLabel,
@@ -71,7 +73,7 @@ export const SettingsListCard = <
       {items.map((item, index) => (
         <SettingsListItemCardContent
           key={item.id}
-          LeftIcon={RowIcon}
+          LeftIcon={RowIconFn ? RowIconFn(item) : RowIcon}
           label={getItemLabel(item)}
           rightComponent={<RowRightComponent item={item} />}
           divider={index < items.length - 1}

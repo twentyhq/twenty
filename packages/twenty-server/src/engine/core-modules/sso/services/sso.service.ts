@@ -42,44 +42,58 @@ export class SSOService {
   async createOIDCIdentityProvider(
     data: Pick<
       WorkspaceSSOIdentityProvider,
-      'issuer' | 'clientID' | 'clientSecret'
+      'issuer' | 'clientID' | 'clientSecret' | 'name'
     >,
     workspaceId: string,
   ) {
-    if (!data.issuer) {
-      throw new SSOException(
-        'Invalid issuer URL',
-        SSOExceptionCode.INVALID_ISSUER_URL,
+    try {
+      if (!data.issuer) {
+        throw new SSOException(
+          'Invalid issuer URL',
+          SSOExceptionCode.INVALID_ISSUER_URL,
+        );
+      }
+
+      const issuer = await Issuer.discover(data.issuer);
+
+      if (!issuer.metadata.issuer) {
+        throw new SSOException(
+          'Invalid issuer URL from discovery',
+          SSOExceptionCode.INVALID_ISSUER_URL,
+        );
+      }
+
+      const idp = await this.workspaceSSOIdentityProviderRepository.save({
+        type: IdpType.OIDC,
+        clientID: data.clientID,
+        clientSecret: data.clientSecret,
+        issuer: issuer.metadata.issuer,
+        name: data.name,
+        workspaceId,
+      });
+
+      return {
+        id: idp.id,
+        type: idp.type,
+        name: idp.name,
+        issuer: idp.issuer,
+      };
+    } catch (err) {
+      if (err instanceof SSOException) {
+        return err;
+      }
+
+      return new SSOException(
+        'Unknown SSO configuration error',
+        SSOExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR,
       );
     }
-
-    const issuer = await Issuer.discover(data.issuer);
-
-    if (issuer.metadata.issuer) {
-      throw new SSOException(
-        'Invalid issuer URL from discovery',
-        SSOExceptionCode.INVALID_ISSUER_URL,
-      );
-    }
-
-    const idp = await this.workspaceSSOIdentityProviderRepository.save({
-      type: IdpType.OIDC,
-      clientID: data.clientID,
-      clientSecret: data.clientSecret,
-      issuer: issuer.metadata.issuer,
-      workspaceId,
-    });
-
-    return {
-      id: idp.id,
-      type: idp.type,
-    };
   }
 
   async createSAMLIdentityProvider(
     data: Pick<
       WorkspaceSSOIdentityProvider,
-      'ssoURL' | 'certificate' | 'fingerprint'
+      'ssoURL' | 'certificate' | 'fingerprint' | 'id'
     >,
     workspaceId: string,
   ) {
@@ -92,7 +106,7 @@ export class SSOService {
     return {
       id: idp.id,
       type: idp.type,
-      // TODO url should be generate before the creation of the entity
+      name: idp.name,
       issuer: this.buildIssuerURL(idp),
     };
   }
@@ -118,6 +132,7 @@ export class SSOService {
       ).map(async (idp) => ({
         id: idp.id,
         name: idp.name ?? 'Unknown',
+        issuer: idp.issuer,
         type: idp.type,
       })),
     );
@@ -233,5 +248,12 @@ export class SSOService {
     }
 
     return null;
+  }
+
+  async listSSOIdentityProvidersByWorkspaceId(workspaceId: string) {
+    return this.workspaceSSOIdentityProviderRepository.find({
+      where: { workspaceId },
+      select: ['id', 'name', 'type', 'issuer'],
+    });
   }
 }

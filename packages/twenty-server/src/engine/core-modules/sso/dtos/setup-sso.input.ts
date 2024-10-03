@@ -1,15 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsString, IsUrl, IsOptional } from 'class-validator';
+import { IsString, IsUrl, IsOptional, IsUUID } from 'class-validator';
 
 import { IsX509Certificate } from 'src/engine/core-modules/sso/dtos/validators/x509.validator';
 
 @InputType()
 class SetupSsoInputCommon {
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @IsString()
-  @IsOptional()
-  name?: string;
+  name: string;
 }
 
 @InputType()
@@ -30,6 +29,10 @@ export class SetupOIDCSsoInput extends SetupSsoInputCommon {
 
 @InputType()
 export class SetupSAMLSsoInput extends SetupSsoInputCommon {
+  @Field(() => String)
+  @IsUUID()
+  id: string;
+
   @Field(() => String)
   @IsUrl({ protocols: ['http', 'https'] })
   ssoURL: string;

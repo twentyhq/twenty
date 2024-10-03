@@ -163,6 +163,7 @@ export class SSOAuthController {
         this.tokenService.computeRedirectURI(loginToken.token),
       );
     } catch (err) {
+      // TODO: improve error management
       console.log('>>>>>>>>>>>>>>', err);
       res.status(403).send(err.message);
     }

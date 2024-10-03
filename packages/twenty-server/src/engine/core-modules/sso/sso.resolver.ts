@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -38,6 +38,14 @@ export class SSOResolver {
     @Args('input') { email }: FindAvailableSSOIDPInput,
   ) {
     return this.sSOService.findAvailableSSOIdentityProviders(email);
+  }
+
+  @UseGuards(SSOProviderEnabledGuard)
+  @Query(() => [FindAvailableSSOIDPOutput])
+  async listSSOIdentityProvidersByWorkspaceId(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.sSOService.listSSOIdentityProvidersByWorkspaceId(workspaceId);
   }
 
   @Mutation(() => LoginSSOOutput)

@@ -11,5 +11,8 @@ export class SetupSsoOutput {
   type: string;
 
   @Field(() => String)
-  issue: string;
+  issuer: string;
+
+  @Field(() => String)
+  name: string;
 }

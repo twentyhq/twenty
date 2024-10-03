@@ -69,15 +69,15 @@ export class WorkspaceSSOIdentityProvider {
   })
   type: IdpType;
 
+  @Column()
+  issuer: string;
+
   // OIDC
   @Column({ nullable: true })
   clientID?: string;
 
   @Column({ nullable: true })
   clientSecret?: string;
-
-  @Column()
-  issuer?: string;
 
   // SAML
   @Column({ nullable: true })
