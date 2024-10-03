@@ -5,6 +5,7 @@ import { TABLE_COLUMNS_DENY_LIST } from '@/object-record/relation-picker/constan
 export const filterAvailableTableColumns = (
   columnDefinition: ColumnDefinition<FieldMetadata>,
 ): boolean => {
+  // Removed the ManyToMany check since it's no longer needed
   if (TABLE_COLUMNS_DENY_LIST.includes(columnDefinition.metadata.fieldName)) {
     return false;
   }
