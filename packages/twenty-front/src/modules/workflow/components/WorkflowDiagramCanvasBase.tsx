@@ -1,14 +1,9 @@
-import { WorkflowDiagramCanvasEffect } from '@/workflow/components/WorkflowDiagramCanvasEffect';
-import { WorkflowDiagramCreateStepNode } from '@/workflow/components/WorkflowDiagramCreateStepNode';
-import { WorkflowDiagramEmptyTrigger } from '@/workflow/components/WorkflowDiagramEmptyTrigger';
-import { WorkflowDiagramStepNode } from '@/workflow/components/WorkflowDiagramStepNode';
-import { WorkflowVersionStatusTag } from '@/workflow/components/WorkflowVersionStatusTag';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
+  WorkflowDiagramNodeType,
 } from '@/workflow/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/utils/getOrganizedDiagram';
 import styled from '@emotion/styled';
@@ -19,10 +14,11 @@ import {
   EdgeChange,
   FitViewOptions,
   NodeChange,
+  NodeProps,
   ReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined } from 'twenty-ui';
 
@@ -58,12 +54,24 @@ const defaultFitViewOptions: FitViewOptions = {
   maxZoom: 1.3,
 };
 
-export const WorkflowDiagramCanvas = ({
+export const WorkflowDiagramCanvasBase = ({
   diagram,
-  workflowWithCurrentVersion,
+  nodeTypes,
+  children,
 }: {
   diagram: WorkflowDiagram;
-  workflowWithCurrentVersion: WorkflowWithCurrentVersion;
+  nodeTypes: Partial<
+    Record<
+      WorkflowDiagramNodeType,
+      React.ComponentType<
+        NodeProps & {
+          data: any;
+          type: any;
+        }
+      >
+    >
+  >;
+  children?: React.ReactNode;
 }) => {
   const { nodes, edges } = useMemo(
     () => getOrganizedDiagram(diagram),
@@ -109,31 +117,20 @@ export const WorkflowDiagramCanvas = ({
   return (
     <StyledResetReactflowStyles>
       <ReactFlow
-        key={workflowWithCurrentVersion.currentVersion.id}
         onInit={({ fitView }) => {
           fitView(defaultFitViewOptions);
         }}
-        nodeTypes={{
-          default: WorkflowDiagramStepNode,
-          'create-step': WorkflowDiagramCreateStepNode,
-          'empty-trigger': WorkflowDiagramEmptyTrigger,
-        }}
+        nodeTypes={nodeTypes}
         fitView
         nodes={nodes.map((node) => ({ ...node, draggable: false }))}
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
       >
-        <WorkflowDiagramCanvasEffect />
-
         <Background color={GRAY_SCALE.gray25} size={2} />
-      </ReactFlow>
 
-      <StyledStatusTagContainer>
-        <WorkflowVersionStatusTag
-          versionStatus={workflowWithCurrentVersion.currentVersion.status}
-        />
-      </StyledStatusTagContainer>
+        {children}
+      </ReactFlow>
     </StyledResetReactflowStyles>
   );
 };

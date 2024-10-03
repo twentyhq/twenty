@@ -1,6 +1,5 @@
-import { WorkflowDiagramCanvas } from '@/workflow/components/WorkflowDiagramCanvas';
-import { WorkflowDiagramEffect } from '@/workflow/components/WorkflowDiagramEffect';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { WorkflowDiagramCanvasReadonly } from '@/workflow/components/WorkflowDiagramCanvasReadonly';
+import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import '@xyflow/react/dist/style.css';
 import { useRecoilValue } from 'recoil';
@@ -11,21 +10,14 @@ export const WorkflowVersionVisualizer = ({
 }: {
   workflowVersionId: string;
 }) => {
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
+  const workflowVersion = useWorkflowVersion(workflowVersionId);
+
   const workflowDiagram = useRecoilValue(workflowDiagramState);
 
-  return (
-    <>
-      <WorkflowDiagramEffect
-        workflowWithCurrentVersion={workflowWithCurrentVersion}
-      />
-
-      {isDefined(workflowDiagram) && isDefined(workflowWithCurrentVersion) ? (
-        <WorkflowDiagramCanvas
-          diagram={workflowDiagram}
-          workflowWithCurrentVersion={workflowWithCurrentVersion}
-        />
-      ) : null}
-    </>
-  );
+  return isDefined(workflowDiagram) && isDefined(workflowVersion) ? (
+    <WorkflowDiagramCanvasReadonly
+      diagram={workflowDiagram}
+      workflowVersion={workflowVersion}
+    />
+  ) : null;
 };

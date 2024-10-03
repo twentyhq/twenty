@@ -1,5 +1,5 @@
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { WorkflowDiagramCanvas } from '@/workflow/components/WorkflowDiagramCanvas';
+import { WorkflowDiagramCanvasEditable } from '@/workflow/components/WorkflowDiagramCanvasEditable';
 import { WorkflowDiagramEffect } from '@/workflow/components/WorkflowDiagramEffect';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
@@ -24,7 +24,7 @@ export const WorkflowVisualizer = ({
       />
 
       {isDefined(workflowDiagram) && isDefined(workflowWithCurrentVersion) ? (
-        <WorkflowDiagramCanvas
+        <WorkflowDiagramCanvasEditable
           diagram={workflowDiagram}
           workflowWithCurrentVersion={workflowWithCurrentVersion}
         />
