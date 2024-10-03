@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { ActionBarItem } from './ActionBarItem';
 
 const StyledContainerActionBar = styled.div`
@@ -39,13 +40,11 @@ export const ActionBar = ({
   actionMenuEntries: ActionMenuEntry[];
 }) => {
   return (
-    <>
-      <StyledContainerActionBar data-select-disable className="action-bar">
-        <StyledLabel>{selectedRecordIds?.length} selected:</StyledLabel>
-        {actionMenuEntries.map((item, index) => (
-          <ActionBarItem key={index} item={item} />
-        ))}
-      </StyledContainerActionBar>
-    </>
+    <BottomBar bottomBarId="action-bar">
+      <StyledLabel>{selectedRecordIds?.length} selected:</StyledLabel>
+      {actionMenuEntries.map((item, index) => (
+        <ActionBarItem key={index} item={item} />
+      ))}
+    </BottomBar>
   );
 };
