@@ -11,6 +11,9 @@ const StyledFieldInputOverlay = styled.div`
   margin: -1px;
   width: 100%;
   ${OVERLAY_BACKGROUND}
+  @media (min-width: 340px) and (max-width: 380px) {
+    width: 85%;
+  }
 `;
 
 export const FieldInputOverlay = StyledFieldInputOverlay;
