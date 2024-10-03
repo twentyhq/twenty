@@ -209,6 +209,9 @@ export class ProcessNestedRelationsHelper {
     ids: any[],
     limit: number,
   ): Promise<any[]> {
+    if (ids.length === 0) {
+      return [];
+    }
     const findOptions: FindManyOptions = {
       where: { [field]: In(ids) },
       take: limit,
