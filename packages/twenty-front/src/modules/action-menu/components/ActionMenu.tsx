@@ -1,9 +1,9 @@
+import { ActionBar } from '@/action-menu/components/ActionBar';
+import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
+import { ActionMenuNavigationModal } from '@/action-menu/components/ActionMenuNavigationModal';
+import { actionMenuDropdownIsOpenState } from '@/action-menu/states/actionMenuDropdownIsOpenState';
+import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
-import { ActionBar } from '@/ui/navigation/action-menu/components/ActionBar';
-import { ActionMenuDropdown } from '@/ui/navigation/action-menu/components/ActionMenuDropdown';
-import { NavigationModal } from '@/ui/navigation/action-menu/components/NavigationModal';
-import { actionMenuDropdownIsOpenState } from '@/ui/navigation/action-menu/states/actionMenuDropdownIsOpenState';
-import { actionMenuEntriesState } from '@/ui/navigation/action-menu/states/actionMenuEntriesState';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -42,7 +42,7 @@ export const ActionMenu = () => {
       {actionMenuDropdownIsOpen && (
         <ActionMenuDropdown actionMenuEntries={actionMenuEntries} />
       )}
-      <NavigationModal actionMenuEntries={actionMenuEntries} />
+      <ActionMenuNavigationModal actionMenuEntries={actionMenuEntries} />
     </>
   );
 };

@@ -6,8 +6,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 
 import { PositionType } from '../types/PositionType';
 
-import { actionMenuDropdownPositionState } from '@/ui/navigation/action-menu/states/actionMenuDropdownPositionState';
-import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
+import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type StyledContainerProps = {

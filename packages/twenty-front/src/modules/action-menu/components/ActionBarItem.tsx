@@ -2,10 +2,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronDown } from 'twenty-ui';
 
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 

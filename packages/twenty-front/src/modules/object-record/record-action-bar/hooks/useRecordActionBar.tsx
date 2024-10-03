@@ -14,8 +14,8 @@ import {
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
-import { actionMenuEntriesState } from '@/ui/navigation/action-menu/states/actionMenuEntriesState';
-import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
+import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { isDefined } from '~/utils/isDefined';
 
 type useRecordActionBarProps = {

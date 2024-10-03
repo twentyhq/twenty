@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { ActionBarItem } from './ActionBarItem';
 
 const StyledContainerActionBar = styled.div`

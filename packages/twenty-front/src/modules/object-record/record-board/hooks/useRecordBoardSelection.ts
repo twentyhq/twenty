@@ -1,7 +1,7 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { actionMenuDropdownIsOpenState } from '@/action-menu/states/actionMenuDropdownIsOpenState';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { actionMenuDropdownIsOpenState } from '@/ui/navigation/action-menu/states/actionMenuDropdownIsOpenState';
 
 export const useRecordBoardSelection = (recordBoardId?: string) => {
   const setActionMenuDropdownOpenState = useSetRecoilState(

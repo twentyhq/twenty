@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { IconTrash } from 'twenty-ui';
 
+import { ActionMenuNavigationModal } from '@/action-menu/components/NavigationModal';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { NavigationModal } from '@/ui/navigation/action-menu/components/NavigationModal';
 
-const meta: Meta<typeof NavigationModal> = {
+const meta: Meta<typeof ActionMenuNavigationModal> = {
   title: 'UI/Navigation/Shared/NavigationModal',
-  component: NavigationModal,
+  component: ActionMenuNavigationModal,
   args: {
     actionMenuEntries: [
       {
@@ -29,6 +29,6 @@ const meta: Meta<typeof NavigationModal> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof NavigationModal>;
+type Story = StoryObj<typeof ActionMenuNavigationModal>;
 
 export const Default: Story = {};

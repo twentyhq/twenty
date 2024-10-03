@@ -1,4 +1,4 @@
-import { PositionType } from '@/ui/navigation/action-menu/types/PositionType';
+import { PositionType } from '@/action-menu/types/PositionType';
 import { createState } from 'twenty-ui';
 
 export const actionMenuDropdownPositionState = createState<PositionType>({

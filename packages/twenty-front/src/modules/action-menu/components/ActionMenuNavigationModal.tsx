@@ -1,12 +1,12 @@
-import { ActionMenuEntry } from '@/ui/navigation/action-menu/types/ActionMenuEntry';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 
-type NavigationModalProps = {
+type ActionMenuNavigationModalProps = {
   actionMenuEntries: ActionMenuEntry[];
 };
 
-export const NavigationModal = ({
+export const ActionMenuNavigationModal = ({
   actionMenuEntries,
-}: NavigationModalProps) => {
+}: ActionMenuNavigationModalProps) => {
   return (
     <div data-select-disable>
       {actionMenuEntries.map((actionMenuEntry, index) =>
