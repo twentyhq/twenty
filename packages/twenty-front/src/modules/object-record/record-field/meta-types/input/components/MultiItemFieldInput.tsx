@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus } from 'twenty-ui';
 
@@ -80,14 +80,14 @@ export const MultiItemFieldInput = <T,>({
   });
   const isAddingNewItem = itemToEditIndex === -1;
 
-  useEffect(() => {
+  const handleOnChange = (value: string) => {
+    setInputValue(value);
     if (!validateInput) return;
-    const errorData = validateInput(inputValue);
-    // ONLY clear error on value change, validate only on submit
+
     if (errorData.isValid) {
       setErrorData(errorData);
     }
-  }, [inputValue, validateInput]);
+  };
 
   const handleAddButtonClick = () => {
     setItemToEditIndex(-1);
@@ -190,7 +190,7 @@ export const MultiItemFieldInput = <T,>({
                   })
               : undefined
           }
-          onChange={(event) => setInputValue(event.target.value)}
+          onChange={(event) => handleOnChange(event.target.value)}
           onEnter={handleSubmitInput}
           rightComponent={
             <LightIconButton
