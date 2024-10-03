@@ -108,6 +108,7 @@ export const useOpenCreateActivityDrawer = ({
     }
 
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    setViewableRecordId(activity.id);
 
     setIsUpsertingActivityInDB(false);
     setIsNewViewableRecordLoading(false);
