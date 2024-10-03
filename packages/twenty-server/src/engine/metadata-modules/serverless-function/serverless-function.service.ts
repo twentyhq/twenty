@@ -269,9 +269,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       version: 'draft',
     });
 
-    const baseProjectFiles = await getBaseTypescriptProjectFiles();
-
-    for (const file of baseProjectFiles) {
+    for (const file of await getBaseTypescriptProjectFiles) {
       await this.fileStorageService.write({
         file: file.content,
         name: file.name,
