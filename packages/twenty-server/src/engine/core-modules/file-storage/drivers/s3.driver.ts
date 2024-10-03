@@ -192,6 +192,23 @@ export class S3Driver implements StorageDriver {
     }
   }
 
+  extractFolderAndFilePaths(objectKey: string | undefined) {
+    if (!isDefined(objectKey)) {
+      return;
+    }
+
+    const result = /(?<folder>.*)\/(?<file>.*)/.exec(objectKey);
+
+    if (!isDefined(result) || !isDefined(result.groups)) {
+      return;
+    }
+
+    const fromFolderPath = result.groups.folder;
+    const filename = result.groups.file;
+
+    return { fromFolderPath, filename };
+  }
+
   async copy(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
@@ -247,13 +264,14 @@ export class S3Driver implements StorageDriver {
     }
 
     for (const object of listedObjects.Contents) {
-      const match = object.Key?.match(/(.*)\/(.*)/);
+      const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
 
-      if (!isDefined(match)) {
+      if (!isDefined(folderAndFilePaths)) {
         continue;
       }
-      const fromFolderPath = match[1];
-      const filename = match[2];
+
+      const { fromFolderPath, filename } = folderAndFilePaths;
+
       const toFolderPath = fromFolderPath.replace(
         params.from.folderPath,
         params.to.folderPath,
@@ -326,13 +344,13 @@ export class S3Driver implements StorageDriver {
     }
 
     for (const object of listedObjects.Contents) {
-      const match = object.Key?.match(/(.*)\/(.*)/);
+      const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
 
-      if (!isDefined(match)) {
+      if (!isDefined(folderAndFilePaths)) {
         continue;
       }
-      const fromFolderPath = match[1];
-      const filename = match[2];
+
+      const { fromFolderPath, filename } = folderAndFilePaths;
       const toFolderPath = fromFolderPath.replace(
         params.from.folderPath,
         params.to.folderPath,
