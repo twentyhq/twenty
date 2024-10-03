@@ -24,6 +24,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDefined } from '~/utils/isDefined';
+import { isDeeplyEqual } from 'packages/twenty-front/src/utils/isDeeplyEqual';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -91,10 +92,9 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const resetDisabled =
     !isDefined(latestVersionCode) ||
-    JSON.stringify(latestVersionCode) === JSON.stringify(formValues.code);
+    isDeeplyEqual(latestVersionCode, formValues.code);
   const publishDisabled =
-    !isCodeValid ||
-    JSON.stringify(latestVersionCode) === JSON.stringify(formValues.code);
+    !isCodeValid || isDeeplyEqual(latestVersionCode, formValues.code);
 
   const handleReset = async () => {
     try {
