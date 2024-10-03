@@ -86,7 +86,7 @@ export const NavigationDrawer = ({
   };
 
   const desktopWidth = !isNavigationDrawerExpanded
-    ? 40
+    ? 42
     : DESKTOP_NAV_DRAWER_WIDTHS.menu;
 
   const mobileWidth = isNavigationDrawerExpanded ? '100%' : 0;

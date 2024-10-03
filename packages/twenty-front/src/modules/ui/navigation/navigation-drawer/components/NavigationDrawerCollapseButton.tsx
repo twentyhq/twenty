@@ -40,7 +40,9 @@ export const NavigationDrawerCollapseButton = ({
     <StyledCollapseButton
       className={className}
       onClick={() =>
-        setIsNavigationDrawerExpanded((previousIsOpen) => !previousIsOpen)
+        setIsNavigationDrawerExpanded(
+          (previousIsExpanded) => !previousIsExpanded,
+        )
       }
     >
       <IconButton
