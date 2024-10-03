@@ -5,7 +5,6 @@ import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
@@ -28,13 +27,19 @@ const StyledAnimatedContainer = styled(motion.div)`
   justify-content: end;
 `;
 
-const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
+const StyledContainer = styled.div<{
+  isSubMenu?: boolean;
+  isNavigationDrawerExpanded: boolean;
+}>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
-  min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
+  min-width: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded
+      ? `${DESKTOP_NAV_DRAWER_WIDTHS.menu}px`
+      : 'auto'};
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
@@ -71,7 +76,6 @@ export const NavigationDrawer = ({
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
-  const isSettingsPage = useIsSettingsPage();
 
   const handleHover = () => {
     setIsHovered(true);
@@ -82,7 +86,7 @@ export const NavigationDrawer = ({
   };
 
   const desktopWidth = !isNavigationDrawerExpanded
-    ? 12
+    ? 40
     : DESKTOP_NAV_DRAWER_WIDTHS.menu;
 
   const mobileWidth = isNavigationDrawerExpanded ? '100%' : 0;
@@ -93,7 +97,6 @@ export const NavigationDrawer = ({
       initial={false}
       animate={{
         width: isMobile ? mobileWidth : desktopWidth,
-        opacity: isNavigationDrawerExpanded || isSettingsPage ? 1 : 0,
       }}
       transition={{
         duration: theme.animation.duration.normal,
@@ -103,6 +106,7 @@ export const NavigationDrawer = ({
         isSubMenu={isSubMenu}
         onMouseEnter={handleHover}
         onMouseLeave={handleMouseLeave}
+        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       >
         {isSubMenu && title ? (
           !isMobile && <NavigationDrawerBackButton title={title} />
