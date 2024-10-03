@@ -16,7 +16,7 @@ const getAllFiles = async (
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      await getAllFiles(rootDir, fullPath, files);
+      return getAllFiles(rootDir, fullPath, files);
     } else {
       files.push({
         path: path.relative(rootDir, dir),
