@@ -9,6 +9,7 @@ import { isFieldRelation } from '@/object-record/record-field/types/guards/isFie
 import { computeEmptyDraftValue } from '@/object-record/record-field/utils/computeEmptyDraftValue';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
@@ -32,7 +33,9 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
     }
 
     return {
-      amount: fieldValue?.amountMicros ? fieldValue.amountMicros / 1000000 : '',
+      amount: isUndefinedOrNull(fieldValue?.amountMicros)
+        ? ''
+        : (fieldValue.amountMicros / 1000000).toString(),
       currencyCode: fieldValue?.currencyCode ?? '',
     } as unknown as FieldInputDraftValue<FieldValue>;
   }
