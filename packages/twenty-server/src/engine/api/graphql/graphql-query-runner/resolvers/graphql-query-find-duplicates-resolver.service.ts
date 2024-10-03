@@ -20,6 +20,7 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { settings } from 'src/engine/constants/settings';
 import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
+import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -128,7 +129,7 @@ export class GraphqlQueryFindDuplicatesResolverService
   }
 
   private buildDuplicateConditions(
-    objectMetadataItem: any,
+    objectMetadataMapItem: ObjectMetadataMapItem,
     records?: Partial<IRecord>[] | undefined,
     filteringByExistingRecordId?: string,
   ) {
@@ -136,8 +137,9 @@ export class GraphqlQueryFindDuplicatesResolverService
       return {};
     }
 
-    const criteriaCollection =
-      this.getApplicableDuplicateCriteriaCollection(objectMetadataItem);
+    const criteriaCollection = this.getApplicableDuplicateCriteriaCollection(
+      objectMetadataMapItem,
+    );
 
     const conditions = records.flatMap((record) => {
       const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
@@ -151,7 +153,7 @@ export class GraphqlQueryFindDuplicatesResolverService
       );
 
       return criteriaWithMatchingArgs.map((criteria) => {
-        const condition: any = {};
+        const condition = {};
 
         criteria.columnNames.forEach((columnName) => {
           condition[columnName] = { eq: record[columnName] };
@@ -174,10 +176,12 @@ export class GraphqlQueryFindDuplicatesResolverService
     return filter;
   }
 
-  private getApplicableDuplicateCriteriaCollection(objectMetadataItem: any) {
+  private getApplicableDuplicateCriteriaCollection(
+    objectMetadataMapItem: ObjectMetadataMapItem,
+  ) {
     return DUPLICATE_CRITERIA_COLLECTION.filter(
       (duplicateCriteria) =>
-        duplicateCriteria.objectName === objectMetadataItem.nameSingular,
+        duplicateCriteria.objectName === objectMetadataMapItem.nameSingular,
     );
   }
 

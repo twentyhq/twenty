@@ -17,20 +17,6 @@ type WhereConditionParts = {
   params: ObjectLiteral;
 };
 
-type ComparisonOperator =
-  | 'eq'
-  | 'neq'
-  | 'gt'
-  | 'gte'
-  | 'lt'
-  | 'lte'
-  | 'in'
-  | 'is'
-  | 'like'
-  | 'ilike'
-  | 'startsWith'
-  | 'endsWith';
-
 export class GraphqlQueryFilterFieldParser {
   private fieldMetadataMap: FieldMetadataMap;
 
@@ -52,24 +38,23 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      this.parseCompositeFieldForFilter(
+      return this.parseCompositeFieldForFilter(
         queryBuilder,
         fieldMetadata,
         objectNameSingular,
         filterValue,
         isFirst,
       );
-
-      return;
     }
+    const [[operator, value]] = Object.entries(filterValue);
 
-    const [operator, value] = this.extractOperatorAndValue(filterValue);
-
-    if (operator === 'in' && (!Array.isArray(value) || value.length === 0)) {
-      throw new GraphqlQueryRunnerException(
-        `Invalid filter value for field ${key}. Expected non-empty array`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
+    if (operator === 'in') {
+      if (!Array.isArray(value) || value.length === 0) {
+        throw new GraphqlQueryRunnerException(
+          `Invalid filter value for field ${key}. Expected non-empty array`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        );
+      }
     }
 
     const { sql, params } = this.computeWhereConditionParts(
@@ -79,7 +64,88 @@ export class GraphqlQueryFilterFieldParser {
       value,
     );
 
-    this.applyWhereCondition(queryBuilder, sql, params, isFirst);
+    if (isFirst) {
+      queryBuilder.where(sql, params);
+    } else {
+      queryBuilder.andWhere(sql, params);
+    }
+  }
+
+  private computeWhereConditionParts(
+    operator: string,
+    objectNameSingular: string,
+    key: string,
+    value: any,
+  ): WhereConditionParts {
+    const uuid = Math.random().toString(36).slice(2, 7);
+
+    switch (operator) {
+      case 'eq':
+        return {
+          sql: `${objectNameSingular}.${key} = :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'neq':
+        return {
+          sql: `${objectNameSingular}.${key} != :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'gt':
+        return {
+          sql: `${objectNameSingular}.${key} > :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'gte':
+        return {
+          sql: `${objectNameSingular}.${key} >= :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'lt':
+        return {
+          sql: `${objectNameSingular}.${key} < :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'lte':
+        return {
+          sql: `${objectNameSingular}.${key} <= :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'in':
+        return {
+          sql: `${objectNameSingular}.${key} IN (:...${key}${uuid})`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      case 'is':
+        return {
+          sql: `${objectNameSingular}.${key} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
+          params: {},
+        };
+      case 'like':
+        return {
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      case 'ilike':
+        return {
+          sql: `${objectNameSingular}.${key} ILIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      case 'startsWith':
+        return {
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      case 'endsWith':
+        return {
+          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          params: { [`${key}${uuid}`]: `${value}` },
+        };
+      default:
+        throw new GraphqlQueryRunnerException(
+          `Operator "${operator}" is not supported`,
+          GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+        );
+    }
   }
 
   private parseCompositeFieldForFilter(
@@ -99,129 +165,35 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    Object.entries(fieldValue).forEach(
-      ([subFieldKey, subFieldFilter], index) => {
-        const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
-
-        const [operator, value] = this.extractOperatorAndValue(
-          subFieldFilter as Record<string, any>,
-        );
-        const { sql, params } = this.computeWhereConditionParts(
-          operator,
-          objectNameSingular,
-          fullFieldName,
-          value,
-        );
-
-        this.applyWhereCondition(
-          queryBuilder,
-          sql,
-          params,
-          isFirst && index === 0,
-        );
-      },
-    );
-  }
-
-  private extractOperatorAndValue(filterValue: any): [ComparisonOperator, any] {
-    const entries = Object.entries(filterValue);
-
-    if (entries.length !== 1) {
-      throw new GraphqlQueryRunnerException(
-        'Invalid filter value. Expected exactly one operator-value pair.',
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+    Object.entries(fieldValue).map(([subFieldKey, subFieldFilter], index) => {
+      const subFieldMetadata = compositeType.properties.find(
+        (property) => property.name === subFieldKey,
       );
-    }
 
-    return entries[0] as [ComparisonOperator, any];
-  }
+      if (!subFieldMetadata) {
+        throw new Error(
+          `Sub field metadata not found for composite type: ${fieldMetadata.type}`,
+        );
+      }
 
-  private applyWhereCondition(
-    queryBuilder: WhereExpressionBuilder,
-    sql: string,
-    params: ObjectLiteral,
-    isFirst: boolean,
-  ): void {
-    if (isFirst) {
-      queryBuilder.where(sql, params);
-    } else {
+      const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
+
+      const [[operator, value]] = Object.entries(
+        subFieldFilter as Record<string, any>,
+      );
+
+      const { sql, params } = this.computeWhereConditionParts(
+        operator,
+        objectNameSingular,
+        fullFieldName,
+        value,
+      );
+
+      if (isFirst && index === 0) {
+        queryBuilder.where(sql, params);
+      }
+
       queryBuilder.andWhere(sql, params);
-    }
-  }
-
-  private computeWhereConditionParts(
-    operator: ComparisonOperator,
-    objectNameSingular: string,
-    key: string,
-    value: any,
-  ): WhereConditionParts {
-    const uuid = Math.random().toString(36).slice(2, 7);
-    const paramKey = `${key}${uuid}`;
-    const columnName = `${objectNameSingular}.${key}`;
-
-    const operatorMap: Record<
-      ComparisonOperator,
-      (columnName: string, paramKey: string) => WhereConditionParts
-    > = {
-      eq: (col, param) => ({
-        sql: `${col} = :${param}`,
-        params: { [param]: value },
-      }),
-      neq: (col, param) => ({
-        sql: `${col} != :${param}`,
-        params: { [param]: value },
-      }),
-      gt: (col, param) => ({
-        sql: `${col} > :${param}`,
-        params: { [param]: value },
-      }),
-      gte: (col, param) => ({
-        sql: `${col} >= :${param}`,
-        params: { [param]: value },
-      }),
-      lt: (col, param) => ({
-        sql: `${col} < :${param}`,
-        params: { [param]: value },
-      }),
-      lte: (col, param) => ({
-        sql: `${col} <= :${param}`,
-        params: { [param]: value },
-      }),
-      in: (col, param) => ({
-        sql: `${col} IN (:...${param})`,
-        params: { [param]: value },
-      }),
-      is: (col) => ({
-        sql: `${col} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
-        params: {},
-      }),
-      like: (col, param) => ({
-        sql: `${col} LIKE :${param}`,
-        params: { [param]: value },
-      }),
-      ilike: (col, param) => ({
-        sql: `${col} ILIKE :${param}`,
-        params: { [param]: value },
-      }),
-      startsWith: (col, param) => ({
-        sql: `${col} LIKE :${param}`,
-        params: { [param]: `${value}%` },
-      }),
-      endsWith: (col, param) => ({
-        sql: `${col} LIKE :${param}`,
-        params: { [param]: `%${value}` },
-      }),
-    };
-
-    const operatorFunction = operatorMap[operator];
-
-    if (!operatorFunction) {
-      throw new GraphqlQueryRunnerException(
-        `Operator "${operator}" is not supported`,
-        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
-      );
-    }
-
-    return operatorFunction(columnName, paramKey);
+    });
   }
 }
