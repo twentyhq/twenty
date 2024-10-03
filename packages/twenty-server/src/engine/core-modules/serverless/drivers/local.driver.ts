@@ -1,5 +1,5 @@
 import { fork } from 'child_process';
-import { promises as fs, existsSync } from 'fs';
+import { promises as fs } from 'fs';
 import { join } from 'path';
 
 import dotenv from 'dotenv';
@@ -179,72 +179,85 @@ export class LocalDriver implements ServerlessDriver {
       LISTENER_FILE_NAME,
     );
 
-    return await new Promise((resolve, reject) => {
-      const child = fork(listenerFile, { silent: true });
+    try {
+      return await new Promise((resolve, reject) => {
+        const child = fork(listenerFile, { silent: true });
 
-      child.on('message', (message: object | ServerlessExecuteError) => {
-        const duration = Date.now() - startTime;
+        child.on('message', (message: object | ServerlessExecuteError) => {
+          const duration = Date.now() - startTime;
 
-        if ('errorType' in message) {
+          if ('errorType' in message) {
+            resolve({
+              data: null,
+              duration,
+              error: message,
+              status: ServerlessFunctionExecutionStatus.ERROR,
+            });
+          } else {
+            resolve({
+              data: message,
+              duration,
+              status: ServerlessFunctionExecutionStatus.SUCCESS,
+            });
+          }
+          child.kill();
+        });
+
+        child.stderr?.on('data', (data) => {
+          const stackTrace = data
+            .toString()
+            .split('\n')
+            .filter((line: string) => line.trim() !== '');
+          const errorTrace = stackTrace.filter((line: string) =>
+            line.includes('Error: '),
+          )?.[0];
+
+          let errorType = 'Unknown';
+          let errorMessage = '';
+
+          if (errorTrace) {
+            errorType = errorTrace.split(':')[0];
+            errorMessage = errorTrace.split(': ')[1];
+          }
+          const duration = Date.now() - startTime;
+
           resolve({
             data: null,
             duration,
-            error: message,
             status: ServerlessFunctionExecutionStatus.ERROR,
+            error: {
+              errorType,
+              errorMessage,
+              stackTrace: stackTrace,
+            },
           });
-        } else {
-          resolve({
-            data: message,
-            duration,
-            status: ServerlessFunctionExecutionStatus.SUCCESS,
-          });
-        }
-        child.kill();
-      });
-
-      child.stderr?.on('data', (data) => {
-        const stackTrace = data
-          .toString()
-          .split('\n')
-          .filter((line: string) => line.trim() !== '');
-        const errorTrace = stackTrace.filter((line: string) =>
-          line.includes('Error: '),
-        )?.[0];
-
-        let errorType = 'Unknown';
-        let errorMessage = '';
-
-        if (errorTrace) {
-          errorType = errorTrace.split(':')[0];
-          errorMessage = errorTrace.split(': ')[1];
-        }
-        const duration = Date.now() - startTime;
-
-        resolve({
-          data: null,
-          duration,
-          status: ServerlessFunctionExecutionStatus.ERROR,
-          error: {
-            errorType,
-            errorMessage,
-            stackTrace: stackTrace,
-          },
+          child.kill();
         });
-        child.kill();
-      });
 
-      child.on('error', (error) => {
-        reject(error);
-        child.kill();
-      });
+        child.on('error', (error) => {
+          reject(error);
+          child.kill();
+        });
 
-      child.on('exit', (code) => {
-        if (code && code !== 0) {
-          reject(new Error(`Child process exited with code ${code}`));
-        }
-      });
+        child.on('exit', (code) => {
+          if (code && code !== 0) {
+            reject(new Error(`Child process exited with code ${code}`));
+          }
+        });
 
-      child.send({ event: payload });
-    });
+        child.send({ event: payload });
+      });
+    } catch (error) {
+      return {
+        data: null,
+        duration: Date.now() - startTime,
+        error: {
+          errorType: 'UnhandledError',
+          errorMessage: error.message || 'Unknown error',
+          stackTrace: error.stack ? error.stack.split('\n') : [],
+        },
+        status: ServerlessFunctionExecutionStatus.ERROR,
+      };
+    }
   }
 }
