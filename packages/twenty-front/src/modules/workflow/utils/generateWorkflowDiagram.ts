@@ -33,6 +33,7 @@ export const generateWorkflowDiagram = ({
       id: nodeId,
       data: {
         nodeType: 'action',
+        actionType: step.type,
         label: step.name,
       },
       position: {

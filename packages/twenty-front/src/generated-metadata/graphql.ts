@@ -984,7 +984,6 @@ export type RelationDefinition = {
 
 /** Relation definition type */
 export enum RelationDefinitionType {
-  ManyToMany = 'MANY_TO_MANY',
   ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
   OneToOne = 'ONE_TO_ONE'
@@ -992,7 +991,6 @@ export enum RelationDefinitionType {
 
 /** Type of the relation */
 export enum RelationMetadataType {
-  ManyToMany = 'MANY_TO_MANY',
   ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
   OneToOne = 'ONE_TO_ONE'

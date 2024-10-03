@@ -1,40 +1,10 @@
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowAction } from '@/workflow/types/Workflow';
+import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
+import { WorkflowCodeStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCode, isDefined } from 'twenty-ui';
-
-const StyledTriggerHeader = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledTriggerHeaderTitle = styled.p`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  font-size: ${({ theme }) => theme.font.size.xl};
-
-  margin: ${({ theme }) => theme.spacing(3)} 0;
-`;
-
-const StyledTriggerHeaderType = styled.p`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin: 0;
-`;
-
-const StyledTriggerHeaderIconContainer = styled.div`
-  align-self: flex-start;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
 
 const StyledTriggerSettings = styled.div`
   padding: ${({ theme }) => theme.spacing(6)};
@@ -43,12 +13,12 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const WorkflowEditActionForm = ({
+export const WorkflowEditActionFormServerlessFunction = ({
   action,
   onActionUpdate,
 }: {
-  action: WorkflowAction;
-  onActionUpdate: (trigger: WorkflowAction) => void;
+  action: WorkflowCodeStep;
+  onActionUpdate: (trigger: WorkflowCodeStep) => void;
 }) => {
   const theme = useTheme();
 
@@ -67,19 +37,11 @@ export const WorkflowEditActionForm = ({
   ];
 
   return (
-    <>
-      <StyledTriggerHeader>
-        <StyledTriggerHeaderIconContainer>
-          <IconCode color={theme.color.orange} />
-        </StyledTriggerHeaderIconContainer>
-
-        <StyledTriggerHeaderTitle>
-          Code - Serverless Function
-        </StyledTriggerHeaderTitle>
-
-        <StyledTriggerHeaderType>Code</StyledTriggerHeaderType>
-      </StyledTriggerHeader>
-
+    <WorkflowEditActionFormBase
+      ActionIcon={<IconCode color={theme.color.orange} />}
+      actionTitle="Code - Serverless Function"
+      actionType="Code"
+    >
       <StyledTriggerSettings>
         <Select
           dropdownId="workflow-edit-action-function"
@@ -98,6 +60,6 @@ export const WorkflowEditActionForm = ({
           }}
         />
       </StyledTriggerSettings>
-    </>
+    </WorkflowEditActionFormBase>
   );
 };

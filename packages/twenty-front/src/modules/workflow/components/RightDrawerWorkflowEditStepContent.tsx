@@ -1,11 +1,13 @@
-import { WorkflowEditActionForm } from '@/workflow/components/WorkflowEditActionForm';
+import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
+import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { WorkflowEditTriggerForm } from '@/workflow/components/WorkflowEditTriggerForm';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { findStepPosition } from '@/workflow/utils/findStepPosition';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -41,10 +43,13 @@ const getStepDefinitionOrThrow = ({
     );
   }
 
-  const selectedNodePosition = findStepPositionOrThrow({
+  const selectedNodePosition = findStepPosition({
     steps: currentVersion.steps,
     stepId: stepId,
   });
+  if (!isDefined(selectedNodePosition)) {
+    return undefined;
+  }
 
   return {
     type: 'action',
@@ -74,20 +79,43 @@ export const RightDrawerWorkflowEditStepContent = ({
     stepId: workflowSelectedNode,
     workflow,
   });
-
-  if (stepDefinition.type === 'trigger') {
-    return (
-      <WorkflowEditTriggerForm
-        trigger={stepDefinition.definition}
-        onTriggerUpdate={updateTrigger}
-      />
-    );
+  if (!isDefined(stepDefinition)) {
+    return null;
   }
 
-  return (
-    <WorkflowEditActionForm
-      action={stepDefinition.definition}
-      onActionUpdate={updateStep}
-    />
+  switch (stepDefinition.type) {
+    case 'trigger': {
+      return (
+        <WorkflowEditTriggerForm
+          trigger={stepDefinition.definition}
+          onTriggerUpdate={updateTrigger}
+        />
+      );
+    }
+    case 'action': {
+      switch (stepDefinition.definition.type) {
+        case 'CODE': {
+          return (
+            <WorkflowEditActionFormServerlessFunction
+              action={stepDefinition.definition}
+              onActionUpdate={updateStep}
+            />
+          );
+        }
+        case 'SEND_EMAIL': {
+          return (
+            <WorkflowEditActionFormSendEmail
+              action={stepDefinition.definition}
+              onActionUpdate={updateStep}
+            />
+          );
+        }
+      }
+    }
+  }
+
+  return assertUnreachable(
+    stepDefinition,
+    `Unsupported step: ${JSON.stringify(stepDefinition)}`,
   );
 };

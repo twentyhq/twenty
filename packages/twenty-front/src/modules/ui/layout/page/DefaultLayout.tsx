@@ -85,7 +85,7 @@ export const DefaultLayout = () => {
                 ? (windowsWidth -
                     (OBJECT_SETTINGS_WIDTH +
                       DESKTOP_NAV_DRAWER_WIDTHS.menu +
-                      64)) /
+                      88)) /
                   2
                 : 0,
           }}

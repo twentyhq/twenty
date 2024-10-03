@@ -5,7 +5,7 @@ import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapTo
 
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
@@ -109,19 +109,19 @@ export const useRecordsForSelect = ({
       .map((record) => ({
         ...record,
         isSelected: true,
-      })) as SelectableRecord[],
+      })) as SelectableItem[],
     filteredSelectedRecords: filteredSelectedRecordsData
       .map(mapToObjectRecordIdentifier)
       .map((record) => ({
         ...record,
         isSelected: true,
-      })) as SelectableRecord[],
+      })) as SelectableItem[],
     recordsToSelect: recordsToSelectData
       .map(mapToObjectRecordIdentifier)
       .map((record) => ({
         ...record,
         isSelected: false,
-      })) as SelectableRecord[],
+      })) as SelectableItem[],
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||
