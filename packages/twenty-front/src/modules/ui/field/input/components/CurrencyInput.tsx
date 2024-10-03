@@ -15,7 +15,7 @@ export const StyledIMaskInput = styled(IMaskInput)<StyledInputProps>`
   margin: 0;
   ${TEXT_INPUT_STYLE}
   width: 100%;
-  padding: ${({ theme }) => `${theme.spacing(0)} ${theme.spacing(1)}`};
+  padding: ${({ theme }) => `${theme.spacing(0)} ${theme.spacing(1.5)}`};
 `;
 
 const StyledContainer = styled.div`
