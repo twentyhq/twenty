@@ -1,3 +1,4 @@
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import {
   ActorMetadata,
   FieldActorSource,
@@ -9,9 +10,6 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { SEARCH_VECTOR_FIELD_DESCRIPTION } from 'src/engine/metadata-modules/utils/constants/search-vector-field-description.constants';
-import { SEARCH_VECTOR_FIELD_LABEL } from 'src/engine/metadata-modules/utils/constants/search-vector-field-label.constants';
-import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/constants/search-vector-field-name.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceCustomEntity } from 'src/engine/twenty-orm/decorators/workspace-custom-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -147,8 +145,8 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
-    label: SEARCH_VECTOR_FIELD_LABEL,
-    description: SEARCH_VECTOR_FIELD_DESCRIPTION,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields([
       {
@@ -160,5 +158,5 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD_NAME]: any;
+  [SEARCH_VECTOR_FIELD.name]: any;
 }

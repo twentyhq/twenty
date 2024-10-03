@@ -12,18 +12,7 @@ export class AddIndexTypeColumnToIndexMetadata1725893697807
 
     await queryRunner.query(`
       ALTER TABLE metadata."indexMetadata" 
-      ADD COLUMN "indexType" metadata.INDEX_TYPES DEFAULT 'BTREE'
-    `);
-
-    await queryRunner.query(`
-      UPDATE metadata."indexMetadata"
-      SET "indexType" = 'BTREE'
-      WHERE "indexType" IS NULL
-    `);
-
-    await queryRunner.query(`
-      ALTER TABLE metadata."indexMetadata" 
-      ALTER COLUMN "indexType" SET NOT NULL
+      ADD COLUMN "indexType" metadata.INDEX_TYPES NOT NULL DEFAULT 'BTREE';
     `);
   }
 

@@ -61,6 +61,7 @@ export class IndexMetadataEntity {
     type: 'enum',
     enum: IndexType,
     nullable: true,
+    default: IndexType.BTREE,
   })
-  indexType?: IndexType; // defaults to BTREE
+  indexType?: IndexType;
 }

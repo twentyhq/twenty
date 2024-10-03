@@ -33,7 +33,7 @@ type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
       : GraphQLOutputType;
   };
 
-function generateFields<
+export const generateFields = <
   T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind,
 >(
   objectMetadata: ObjectMetadataInterface,
@@ -42,7 +42,7 @@ function generateFields<
   typeFactory: TypeFactory<T>,
 ): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
-  : GraphQLFieldConfigMap<any, any> {
+  : GraphQLFieldConfigMap<any, any> => {
   const fields = {};
 
   for (const fieldMetadata of objectMetadata.fields) {
@@ -88,15 +88,13 @@ function generateFields<
   }
 
   return fields;
-}
+};
 
 // Type guard
-function isInputTypeDefinitionKind(
+const isInputTypeDefinitionKind = (
   kind: InputTypeDefinitionKind | ObjectTypeDefinitionKind,
-): kind is InputTypeDefinitionKind {
+): kind is InputTypeDefinitionKind => {
   return Object.values(InputTypeDefinitionKind).includes(
     kind as InputTypeDefinitionKind,
   );
-}
-
-export { generateFields };
+};

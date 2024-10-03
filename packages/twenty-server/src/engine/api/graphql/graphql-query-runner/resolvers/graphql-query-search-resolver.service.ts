@@ -10,7 +10,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/constants/search-vector-field-name.constants';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -78,11 +78,11 @@ export class GraphqlQuerySearchResolverService {
 
     const resultsWithTsVector = (await repository
       .createQueryBuilder()
-      .where(`"${SEARCH_VECTOR_FIELD_NAME}" @@ to_tsquery(:searchTerms)`, {
+      .where(`"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`, {
         searchTerms,
       })
       .orderBy(
-        `ts_rank("${SEARCH_VECTOR_FIELD_NAME}", to_tsquery(:searchTerms))`,
+        `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
         'DESC',
       )
       .setParameter('searchTerms', searchTerms)
@@ -93,7 +93,7 @@ export class GraphqlQuerySearchResolverService {
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
-    const totalCount = await repository.count({});
+    const totalCount = await repository.count();
     const order = undefined;
 
     return typeORMObjectRecordsParser.createConnection(

@@ -14,6 +14,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
@@ -42,9 +43,6 @@ import {
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
-import { SEARCH_VECTOR_FIELD_DESCRIPTION } from 'src/engine/metadata-modules/utils/constants/search-vector-field-description.constants';
-import { SEARCH_VECTOR_FIELD_LABEL } from 'src/engine/metadata-modules/utils/constants/search-vector-field-label.constants';
-import { SEARCH_VECTOR_FIELD_NAME } from 'src/engine/metadata-modules/utils/constants/search-vector-field-name.constants';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -592,9 +590,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isActive: false,
       isSystem: true,
       type: FieldMetadataType.TS_VECTOR,
-      name: SEARCH_VECTOR_FIELD_NAME,
-      label: SEARCH_VECTOR_FIELD_LABEL,
-      description: SEARCH_VECTOR_FIELD_DESCRIPTION,
+      name: SEARCH_VECTOR_FIELD.name,
+      label: SEARCH_VECTOR_FIELD.label,
+      description: SEARCH_VECTOR_FIELD.description,
       isNullable: true,
     });
 
