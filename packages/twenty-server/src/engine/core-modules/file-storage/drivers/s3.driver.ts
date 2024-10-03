@@ -243,7 +243,7 @@ export class S3Driver implements StorageDriver {
     );
 
     if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-      throw new Error('No objects found in the source folder.');
+      throw new Error(`No objects found in the source folder ${fromKey}.`);
     }
 
     for (const object of listedObjects.Contents) {
@@ -320,7 +320,9 @@ export class S3Driver implements StorageDriver {
     );
 
     if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-      throw new Error('No objects found in the source folder.');
+      throw new Error(
+        `No objects found in the source folder ${params.from.folderPath}.`,
+      );
     }
 
     for (const object of listedObjects.Contents) {
