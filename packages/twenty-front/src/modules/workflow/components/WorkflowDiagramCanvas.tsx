@@ -26,6 +26,26 @@ import { useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined } from 'twenty-ui';
 
+const StyledResetReactflowStyles = styled.div`
+  height: 100%;
+  width: 100%;
+  position: relative;
+
+  /* Below we reset the default styling of Reactflow */
+  .react-flow__node-input,
+  .react-flow__node-default,
+  .react-flow__node-output,
+  .react-flow__node-group {
+    padding: 0;
+  }
+
+  --xy-node-border-radius: none;
+  --xy-node-border: none;
+  --xy-node-background-color: none;
+  --xy-node-boxshadow-hover: none;
+  --xy-node-boxshadow-selected: none;
+`;
+
 const StyledStatusTagContainer = styled.div`
   left: 0;
   top: 0;
@@ -87,7 +107,7 @@ export const WorkflowDiagramCanvas = ({
   };
 
   return (
-    <>
+    <StyledResetReactflowStyles>
       <ReactFlow
         key={workflowWithCurrentVersion.currentVersion.id}
         onInit={({ fitView }) => {
@@ -114,6 +134,6 @@ export const WorkflowDiagramCanvas = ({
           versionStatus={workflowWithCurrentVersion.currentVersion.status}
         />
       </StyledStatusTagContainer>
-    </>
+    </StyledResetReactflowStyles>
   );
 };

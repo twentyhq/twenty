@@ -15,7 +15,8 @@ import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/Show
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Workflow } from '@/workflow/components/Workflow';
+import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
+import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualizerEffect';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -130,6 +131,10 @@ export const ShowPageRightContainer = ({
     isWorkflowEnabled &&
     targetableObject.targetObjectNameSingular ===
       CoreObjectNameSingular.Workflow;
+  const isWorkflowVersion =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.WorkflowVersion;
 
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
@@ -162,7 +167,7 @@ export const ShowPageRightContainer = ({
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isInRightDrawer || isWorkflow,
+      hide: !timeline || isInRightDrawer || isWorkflow || isWorkflowVersion,
     },
     {
       id: 'tasks',
@@ -174,7 +179,8 @@ export const ShowPageRightContainer = ({
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Task ||
-        isWorkflow,
+        isWorkflow ||
+        isWorkflowVersion,
     },
     {
       id: 'notes',
@@ -186,13 +192,14 @@ export const ShowPageRightContainer = ({
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Task ||
-        isWorkflow,
+        isWorkflow ||
+        isWorkflowVersion,
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: !notes || isWorkflow,
+      hide: !notes || isWorkflow || isWorkflowVersion,
     },
     {
       id: 'emails',
@@ -211,6 +218,12 @@ export const ShowPageRightContainer = ({
       title: 'Workflow',
       Icon: IconSettings,
       hide: !isWorkflow,
+    },
+    {
+      id: 'flow',
+      title: 'Flow',
+      Icon: IconSettings,
+      hide: !isWorkflowVersion,
     },
   ];
   const renderActiveTabContent = () => {
@@ -251,7 +264,15 @@ export const ShowPageRightContainer = ({
       case 'calendar':
         return <Calendar targetableObject={targetableObject} />;
       case 'workflow':
-        return <Workflow targetableObject={targetableObject} />;
+        return (
+          <>
+            <WorkflowVisualizerEffect workflowId={targetableObject.id} />
+
+            <WorkflowVisualizer targetableObject={targetableObject} />
+          </>
+        );
+      case 'flow':
+        return <WorkflowVisualizer targetableObject={targetableObject} />;
       default:
         return <></>;
     }
