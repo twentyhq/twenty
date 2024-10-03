@@ -22,4 +22,6 @@ export interface FieldMetadataInterface<
   fromRelationMetadata?: RelationMetadataEntity;
   toRelationMetadata?: RelationMetadataEntity;
   isCustom?: boolean;
+  generatedType?: 'STORED' | 'VIRTUAL';
+  asExpression?: string;
 }

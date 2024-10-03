@@ -1,7 +1,4 @@
-import { css, Global, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet } from 'react-router-dom';
+import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -14,7 +11,10 @@ import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
-import { AuthModal } from '@/auth/components/AuthModal';
+import { css, Global, useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { Outlet } from 'react-router-dom';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -85,7 +85,7 @@ export const DefaultLayout = () => {
                 ? (windowsWidth -
                     (OBJECT_SETTINGS_WIDTH +
                       DESKTOP_NAV_DRAWER_WIDTHS.menu +
-                      64)) /
+                      88)) /
                   2
                 : 0,
           }}
