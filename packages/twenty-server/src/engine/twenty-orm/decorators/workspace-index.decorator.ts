@@ -1,6 +1,7 @@
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { getColumnsForIndex } from 'src/engine/twenty-orm/utils/get-default-columns-for-index.util';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { isDefined } from 'src/utils/is-defined';
 import { TypedReflect } from 'src/utils/typed-reflect';
@@ -59,12 +60,20 @@ export function WorkspaceIndex(
     }
 
     if (isDefined(propertyKey)) {
+      const additionalDefaultColumnsForIndex = getColumnsForIndex(
+        metadata?.indexType,
+      );
+      const columns = [
+        propertyKey.toString(),
+        ...additionalDefaultColumnsForIndex,
+      ];
+
       metadataArgsStorage.addIndexes({
         name: `IDX_${generateDeterministicIndexName([
           convertClassNameToObjectMetadataName(target.constructor.name),
-          ...[propertyKey.toString()],
+          ...columns,
         ])}`,
-        columns: [propertyKey.toString()],
+        columns,
         target: target.constructor,
         ...(isDefined(metadata?.indexType) ? { type: metadata.indexType } : {}),
         gate,
