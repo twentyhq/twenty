@@ -15,7 +15,7 @@ import {
   SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
+import { MOBILE_VIEWPORT } from '@ui/theme/constants/MobileViewport';
 type SettingsDataModelFieldRelationSettingsFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
@@ -29,12 +29,16 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 
 const StyledPreviewContent = styled.div`
   display: flex;
-  flex-direction: column;
   gap: 6px;
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-direction: column;
+  }
 `;
 
 const StyledRelationImage = styled.img<{ flip?: boolean }>`
-  transform: ${({ flip }) => (flip ? 'scaleX(-1) rotate(270deg)' : 'none')};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    transform: ${({ flip }) => (flip ? 'scaleX(-1) rotate(450deg)' : 'none')};
+  }
   margin: auto;
   width: 54px;
 `;
