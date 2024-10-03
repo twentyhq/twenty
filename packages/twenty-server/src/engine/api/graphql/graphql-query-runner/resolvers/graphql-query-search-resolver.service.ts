@@ -1,4 +1,7 @@
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record as IRecord,
+  OrderByDirection,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -69,8 +72,19 @@ export class GraphqlQuerySearchResolverService {
       );
     }
 
+    const typeORMObjectRecordsParser =
+      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+
     if (!args.searchInput) {
-      return {} as IConnection<ObjectRecord>;
+      return typeORMObjectRecordsParser.createConnection(
+        [],
+        objectMetadataItem.nameSingular,
+        0,
+        0,
+        [{ id: OrderByDirection.AscNullsFirst }],
+        false,
+        false,
+      );
     }
     const searchTerms = this.formatSearchTerms(args.searchInput);
 
@@ -90,8 +104,6 @@ export class GraphqlQuerySearchResolverService {
       .getMany()) as ObjectRecord[];
 
     const objectRecords = await repository.formatResult(resultsWithTsVector);
-    const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
 
     const totalCount = await repository.count();
     const order = undefined;
