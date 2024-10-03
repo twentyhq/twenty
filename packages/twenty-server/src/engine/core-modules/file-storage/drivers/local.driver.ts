@@ -118,21 +118,24 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async copy(params: {
-    from: { folderPath: string; filename?: string };
-    to: { folderPath: string; filename?: string };
-  }): Promise<void> {
+  async copy(
+    params: {
+      from: { folderPath: string; filename?: string };
+      to: { folderPath: string; filename?: string };
+    },
+    toInMemory = false,
+  ): Promise<void> {
     if (!params.from.filename && params.to.filename) {
       throw new Error('Cannot copy folder to file');
     }
     const fromPath = join(
-      `${this.options.storagePath}/`,
+      this.options.storagePath,
       params.from.folderPath,
       params.from.filename || '',
     );
 
     const toPath = join(
-      `${this.options.storagePath}/`,
+      toInMemory ? '' : this.options.storagePath,
       params.to.folderPath,
       params.to.filename || '',
     );
@@ -157,30 +160,6 @@ export class LocalDriver implements StorageDriver {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
-    if (!params.from.filename && params.to.filename) {
-      throw new Error('Cannot copy folder to file');
-    }
-    const fromPath = join(
-      `${this.options.storagePath}/`,
-      params.from.folderPath,
-      params.from.filename || '',
-    );
-
-    const toPath = join(params.to.folderPath, params.to.filename || '');
-
-    await this.createFolder(dirname(toPath));
-
-    try {
-      await fs.cp(fromPath, toPath, { recursive: true });
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        throw new FileStorageException(
-          'File not found',
-          FileStorageExceptionCode.FILE_NOT_FOUND,
-        );
-      }
-
-      throw error;
-    }
+    await this.copy(params, true);
   }
 }
