@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsObject, IsString, IsUUID } from 'class-validator';
+import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -21,7 +22,7 @@ export class UpdateServerlessFunctionInput {
   @Field({ nullable: true })
   description?: string;
 
-  @IsString()
-  @Field()
-  code: string;
+  @Field(() => graphqlTypeJson)
+  @IsObject()
+  code: JSON;
 }
