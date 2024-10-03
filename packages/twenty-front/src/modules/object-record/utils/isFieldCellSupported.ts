@@ -47,6 +47,7 @@ export const isFieldCellSupported = (
 
     if (
       !fieldMetadataItem.relationDefinition ||
+      // Remove Many to many as it's no longer supported
       !relationObjectMetadataItem ||
       !isObjectMetadataAvailableForRelation(relationObjectMetadataItem)
     ) {
