@@ -1,6 +1,7 @@
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
@@ -152,15 +153,15 @@ export const NavigationDrawerItem = ({
   const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const setIsNavigationDrawerOpen = useSetRecoilState(
-    isNavigationDrawerOpenState,
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
+    isNavigationDrawerExpandedState,
   );
 
   const showBreadcrumb = indentationLevel === 2;
 
   const handleItemClick = () => {
     if (isMobile) {
-      setIsNavigationDrawerOpen(false);
+      setIsNavigationDrawerExpanded(false);
     }
 
     if (isDefined(onClick)) {

@@ -6,11 +6,11 @@ import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
 
+import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -68,7 +68,9 @@ export const NavigationDrawer = ({
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
   const theme = useTheme();
-  const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
   const isSettingsPage = useIsSettingsPage();
 
   const handleHover = () => {
@@ -79,11 +81,11 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const desktopWidth = !isNavigationDrawerOpen
+  const desktopWidth = !isNavigationDrawerExpanded
     ? 12
     : DESKTOP_NAV_DRAWER_WIDTHS.menu;
 
-  const mobileWidth = isNavigationDrawerOpen ? '100%' : 0;
+  const mobileWidth = isNavigationDrawerExpanded ? '100%' : 0;
 
   return (
     <StyledAnimatedContainer
@@ -91,7 +93,7 @@ export const NavigationDrawer = ({
       initial={false}
       animate={{
         width: isMobile ? mobileWidth : desktopWidth,
-        opacity: isNavigationDrawerOpen || isSettingsPage ? 1 : 0,
+        opacity: isNavigationDrawerExpanded || isSettingsPage ? 1 : 0,
       }}
       transition={{
         duration: theme.animation.duration.normal,
