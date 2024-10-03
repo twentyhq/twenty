@@ -29,6 +29,8 @@ export const EmailsFieldInput = ({ onCancel }: EmailsFieldInputProps) => {
     });
   };
 
+  const isPrimaryEmail = (index: number) => index === 0 && emails?.length > 1;
+
   return (
     <MultiItemFieldInput
       items={emails}
@@ -46,7 +48,7 @@ export const EmailsFieldInput = ({ onCancel }: EmailsFieldInputProps) => {
         <EmailsFieldMenuItem
           key={index}
           dropdownId={`${hotkeyScope}-emails-${index}`}
-          isPrimary={index === 0}
+          isPrimary={isPrimaryEmail(index)}
           email={email}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}

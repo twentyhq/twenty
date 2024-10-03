@@ -1,14 +1,27 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { RecoilState, useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
+
+type SetFunction = <T>(
+  recoilVal: RecoilState<T>,
+  valOrUpdater: T | ((currVal: T) => T),
+) => void;
 
 export const useAddNewCard = () => {
   const columnContext = useContext(RecordBoardColumnContext);
   const { createOneRecord, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
+
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   const getColumnDefinitionId = useCallback(
     (columnId?: string) => {
@@ -21,8 +34,13 @@ export const useAddNewCard = () => {
     [columnContext],
   );
 
-  const addNewCard = useCallback(
-    (set: any, columnDefinitionId: string, position: 'first' | 'last') => {
+  const addNewItem = useCallback(
+    (
+      set: SetFunction,
+      columnDefinitionId: string,
+      position: 'first' | 'last',
+      isOpportunity: boolean,
+    ) => {
       set(
         recordBoardNewRecordByColumnIdSelector({
           familyKey: columnDefinitionId,
@@ -33,6 +51,8 @@ export const useAddNewCard = () => {
           columnId: columnDefinitionId,
           isCreating: true,
           position,
+          isOpportunity,
+          company: null,
         },
       );
     },
@@ -44,12 +64,19 @@ export const useAddNewCard = () => {
       labelIdentifier: string,
       labelValue: string,
       position: 'first' | 'last',
+      isOpportunity: boolean,
+      company?: EntityForSelect,
     ) => {
-      if (labelValue !== '') {
+      if (
+        (isOpportunity && company !== null) ||
+        (!isOpportunity && labelValue !== '')
+      ) {
         createOneRecord({
           [selectFieldMetadataItem.name]: columnContext?.columnDefinition.value,
           position,
-          [labelIdentifier.toLowerCase()]: labelValue,
+          ...(isOpportunity
+            ? { companyId: company?.id, name: company?.name }
+            : { [labelIdentifier.toLowerCase()]: labelValue }),
         });
       }
     },
@@ -62,18 +89,34 @@ export const useAddNewCard = () => {
         labelIdentifier: string,
         labelValue: string,
         position: 'first' | 'last',
+        isOpportunity: boolean,
         columnId?: string,
       ): void => {
         const columnDefinitionId = getColumnDefinitionId(columnId);
-        addNewCard(set, columnDefinitionId, position);
-        createRecord(labelIdentifier, labelValue, position);
+        addNewItem(set, columnDefinitionId, position, isOpportunity);
+        if (isOpportunity) {
+          setHotkeyScopeAndMemorizePreviousScope(
+            RelationPickerHotkeyScope.RelationPicker,
+          );
+        } else {
+          createRecord(labelIdentifier, labelValue, position, isOpportunity);
+        }
       },
-    [addNewCard, createRecord, getColumnDefinitionId],
+    [
+      addNewItem,
+      createRecord,
+      getColumnDefinitionId,
+      setHotkeyScopeAndMemorizePreviousScope,
+    ],
   );
 
   const handleCreateSuccess = useRecoilCallback(
     ({ set }) =>
-      (position: 'first' | 'last', columnId?: string): void => {
+      (
+        position: 'first' | 'last',
+        columnId?: string,
+        isOpportunity = false,
+      ): void => {
         const columnDefinitionId = getColumnDefinitionId(columnId);
         set(
           recordBoardNewRecordByColumnIdSelector({
@@ -85,10 +128,15 @@ export const useAddNewCard = () => {
             columnId: columnDefinitionId,
             isCreating: false,
             position,
+            isOpportunity: Boolean(isOpportunity),
+            company: null,
           },
         );
+        if (isOpportunity === true) {
+          goBackToPreviousHotkeyScope();
+        }
       },
-    [getColumnDefinitionId],
+    [getColumnDefinitionId, goBackToPreviousHotkeyScope],
   );
 
   const handleCreate = (
@@ -98,7 +146,13 @@ export const useAddNewCard = () => {
     onCreateSuccess?: () => void,
   ) => {
     if (labelValue.trim() !== '' && position !== undefined) {
-      handleAddNewCardClick(labelIdentifier, labelValue.trim(), position);
+      handleAddNewCardClick(
+        labelIdentifier,
+        labelValue.trim(),
+        position,
+        false,
+        '',
+      );
       onCreateSuccess?.();
     }
   };
@@ -125,11 +179,25 @@ export const useAddNewCard = () => {
     handleCreate(labelIdentifier, labelValue, position, onCreateSuccess);
   };
 
+  const handleEntitySelect = useCallback(
+    (
+      position: 'first' | 'last',
+      company: EntityForSelect,
+      columnId?: string,
+    ) => {
+      const columnDefinitionId = getColumnDefinitionId(columnId);
+      createRecord('', '', position, true, company);
+      handleCreateSuccess(position, columnDefinitionId, true);
+    },
+    [createRecord, handleCreateSuccess, getColumnDefinitionId],
+  );
+
   return {
     handleAddNewCardClick,
     handleCreateSuccess,
     handleCreate,
     handleBlur,
     handleInputEnter,
+    handleEntitySelect,
   };
 };

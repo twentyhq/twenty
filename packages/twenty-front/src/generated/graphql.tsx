@@ -280,6 +280,7 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
+  TsVector = 'TS_VECTOR',
   Uuid = 'UUID'
 }
 

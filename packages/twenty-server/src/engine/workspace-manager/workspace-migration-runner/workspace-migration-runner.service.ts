@@ -26,6 +26,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
+import { isDefined } from 'src/utils/is-defined';
 
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
@@ -194,13 +195,21 @@ export class WorkspaceMigrationRunnerService {
     for (const index of indexes) {
       switch (index.action) {
         case WorkspaceMigrationIndexActionType.CREATE:
-          await queryRunner.createIndex(
-            `${schemaName}.${tableName}`,
-            new TableIndex({
-              name: index.name,
-              columnNames: index.columns,
-            }),
-          );
+          if (isDefined(index.type)) {
+            const quotedColumns = index.columns.map((column) => `"${column}"`);
+
+            await queryRunner.query(`
+              CREATE INDEX "${index.name}" ON "${schemaName}"."${tableName}" USING ${index.type} (${quotedColumns.join(', ')})
+          `);
+          } else {
+            await queryRunner.createIndex(
+              `${schemaName}.${tableName}`,
+              new TableIndex({
+                name: index.name,
+                columnNames: index.columns,
+              }),
+            );
+          }
           break;
         case WorkspaceMigrationIndexActionType.DROP:
           try {
@@ -380,6 +389,8 @@ export class WorkspaceMigrationRunnerService {
         enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
+        asExpression: migrationColumn.asExpression,
+        generatedType: migrationColumn.generatedType,
       }),
     );
   }

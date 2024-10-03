@@ -42,6 +42,8 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
     });
   };
 
+  const isPrimaryLink = (index: number) => index === 0 && links?.length > 1;
+
   return (
     <MultiItemFieldInput
       items={links}
@@ -61,7 +63,7 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
         <LinksFieldMenuItem
           key={index}
           dropdownId={`${hotkeyScope}-links-${index}`}
-          isPrimary={index === 0}
+          isPrimary={isPrimaryLink(index)}
           label={link.label}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}
