@@ -16,6 +16,7 @@ import {
   IconTool,
   IconUserCircle,
   IconUsers,
+  IconKey,
   MAIN_COLORS,
 } from 'twenty-ui';
 
@@ -188,6 +189,11 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
+        <SettingsNavigationDrawerItem
+          label="Security"
+          path={SettingsPath.Security}
+          Icon={IconKey}
+        />
       </NavigationDrawerSection>
       <AnimatePresence>
         {isAdvancedModeEnabled && (

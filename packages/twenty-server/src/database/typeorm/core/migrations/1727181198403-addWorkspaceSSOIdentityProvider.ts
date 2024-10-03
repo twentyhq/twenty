@@ -18,11 +18,10 @@ export class AddWorkspaceSSOIdentityProvider1727181198403
         "createdAt" timestamptz DEFAULT now() NOT NULL,
         "updatedAt" timestamptz DEFAULT now() NOT NULL,
         "type" "core"."idp_type_enum" DEFAULT 'OIDC' NOT NULL,
-        // OIDC
-        "issuer" varchar NULL,
+        "issuer" varchar NOT NULL,
+        "ssoURL" varchar NULL,
         "clientID" varchar NULL,
         "clientSecret" varchar NULL,
-        // SAML
         "certificate" varchar NULL,
         "fingerprint" varchar NULL
       );
@@ -37,7 +36,7 @@ export class AddWorkspaceSSOIdentityProvider1727181198403
 
     await queryRunner.query(`
       ALTER TABLE "core"."workspaceSSOIdentityProvider" ADD CONSTRAINT "CHK_OIDC" CHECK (
-        ("type" = 'OIDC' AND "authorizationURL" IS NOT NULL AND "clientID" IS NOT NULL AND "clientSecret" IS NOT NULL) OR "type" = 'SAML'
+        ("type" = 'OIDC' AND "clientID" IS NOT NULL AND "clientSecret" IS NOT NULL) OR "type" = 'SAML'
       )
     `);
     await queryRunner.query(`
