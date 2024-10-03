@@ -5,12 +5,12 @@ export class AddIndexType1725893697807 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE metadata."indexMetadata_indexType_enum" AS ENUM ('BTREE', 'GIN')`,
+      `CREATE TYPE "metadata"."indexMetadata_indextype_enum" AS ENUM('BTREE', 'GIN')`,
     );
 
     await queryRunner.query(`
       ALTER TABLE metadata."indexMetadata" 
-      ADD COLUMN "indexType" metadata."indexMetadata_indexType_enum" NOT NULL DEFAULT 'BTREE';
+      ADD COLUMN "indexType" metadata."indexMetadata_indextype_enum" NOT NULL DEFAULT 'BTREE';
     `);
   }
 
@@ -20,7 +20,7 @@ export class AddIndexType1725893697807 implements MigrationInterface {
     `);
 
     await queryRunner.query(
-      `DROP TYPE metadata."indexMetadata_indexType_enum"`,
+      `DROP TYPE metadata."indexMetadata_indextype_enum"`,
     );
   }
 }
