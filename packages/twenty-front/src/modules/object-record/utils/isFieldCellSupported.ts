@@ -2,7 +2,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 export const isFieldCellSupported = (
   fieldMetadataItem: FieldMetadataItem,
@@ -47,7 +50,9 @@ export const isFieldCellSupported = (
 
     if (
       !fieldMetadataItem.relationDefinition ||
-      // Remove Many to many as it's no longer supported
+      // TODO: Many to many relations are not supported yet.
+      fieldMetadataItem.relationDefinition.direction ===
+        RelationDefinitionType.ManyToMany ||
       !relationObjectMetadataItem ||
       !isObjectMetadataAvailableForRelation(relationObjectMetadataItem)
     ) {
