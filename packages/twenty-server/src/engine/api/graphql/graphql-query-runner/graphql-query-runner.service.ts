@@ -51,6 +51,8 @@ export class GraphqlQueryRunnerService {
     private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
+  /** QUERIES */
+
   @LogExecutionTime()
   async findOne<ObjectRecord extends IRecord, Filter extends RecordFilter>(
     args: FindOneResolverArgs<Filter>,
@@ -88,6 +90,8 @@ export class GraphqlQueryRunnerService {
       IConnection<ObjectRecord>[]
     >('findDuplicates', args, options);
   }
+
+  /** MUTATIONS */
 
   @LogExecutionTime()
   async createOne<ObjectRecord extends IRecord>(
@@ -142,31 +146,6 @@ export class GraphqlQueryRunnerService {
     }
 
     return results;
-  }
-
-  @LogExecutionTime()
-  async destroyOne<ObjectRecord extends IRecord>(
-    args: DestroyOneResolverArgs,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
-    const result = await this.executeQuery<
-      DestroyOneResolverArgs,
-      ObjectRecord
-    >('destroyOne', args, options);
-
-    await this.triggerWebhooks(
-      [result],
-      CallWebhookJobsJobOperation.destroy,
-      options,
-    );
-
-    this.apiEventEmitterService.emitDestroyEvents(
-      [result],
-      options.authContext,
-      options.objectMetadataItem,
-    );
-
-    return result;
   }
 
   @LogExecutionTime()
@@ -303,6 +282,31 @@ export class GraphqlQueryRunnerService {
 
     this.apiEventEmitterService.emitDeletedEvents(
       result,
+      options.authContext,
+      options.objectMetadataItem,
+    );
+
+    return result;
+  }
+
+  @LogExecutionTime()
+  async destroyOne<ObjectRecord extends IRecord>(
+    args: DestroyOneResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord> {
+    const result = await this.executeQuery<
+      DestroyOneResolverArgs,
+      ObjectRecord
+    >('destroyOne', args, options);
+
+    await this.triggerWebhooks(
+      [result],
+      CallWebhookJobsJobOperation.destroy,
+      options,
+    );
+
+    this.apiEventEmitterService.emitDestroyEvents(
+      [result],
       options.authContext,
       options.objectMetadataItem,
     );

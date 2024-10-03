@@ -18,10 +18,8 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { settings } from 'src/engine/constants/settings';
 import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -39,34 +37,24 @@ export class GraphqlQueryFindDuplicatesResolverService
     args: FindDuplicatesResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<ObjectRecord>[]> {
-    const { authContext, objectMetadataItem, objectMetadataCollection } =
-      options;
+    const { authContext, objectMetadataMapItem, objectMetadataMap } = options;
 
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
       );
     const repository = dataSource.getRepository(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
     const existingRecordsQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
     const duplicateRecordsQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
-    );
-
-    const objectMetadataMap = generateObjectMetadataMap(
-      objectMetadataCollection,
-    );
-
-    const objectMetadata = getObjectMetadataOrThrow(
-      objectMetadataMap,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMap[objectMetadataItem.nameSingular].fields,
+      objectMetadataMap[objectMetadataMapItem.nameSingular].fields,
       objectMetadataMap,
     );
 
@@ -82,17 +70,17 @@ export class GraphqlQueryFindDuplicatesResolverService
 
       objectRecords = formatResult(
         nonFormattedObjectRecords,
-        objectMetadata,
+        objectMetadataMapItem,
         objectMetadataMap,
       );
     } else if (args.data && !isEmpty(args.data)) {
-      objectRecords = formatData(args.data, objectMetadata);
+      objectRecords = formatData(args.data, objectMetadataMapItem);
     }
 
     const duplicateConnections: IConnection<ObjectRecord>[] = await Promise.all(
       objectRecords.map(async (record) => {
         const duplicateConditions = this.buildDuplicateConditions(
-          objectMetadataItem,
+          objectMetadataMapItem,
           [record],
           record.id,
         );
@@ -100,7 +88,7 @@ export class GraphqlQueryFindDuplicatesResolverService
         if (isEmpty(duplicateConditions)) {
           return typeORMObjectRecordsParser.createConnection(
             [],
-            objectMetadataItem.nameSingular,
+            objectMetadataMapItem.nameSingular,
             0,
             0,
             [{ id: OrderByDirection.AscNullsFirst }],
@@ -111,7 +99,7 @@ export class GraphqlQueryFindDuplicatesResolverService
 
         const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
           duplicateRecordsQueryBuilder,
-          objectMetadataItem.nameSingular,
+          objectMetadataMapItem.nameSingular,
           duplicateConditions,
         );
 
@@ -120,13 +108,13 @@ export class GraphqlQueryFindDuplicatesResolverService
 
         const duplicates = formatResult(
           nonFormattedDuplicates,
-          objectMetadata,
+          objectMetadataMapItem,
           objectMetadataMap,
         );
 
         return typeORMObjectRecordsParser.createConnection(
           duplicates,
-          objectMetadataItem.nameSingular,
+          objectMetadataMapItem.nameSingular,
           duplicates.length,
           duplicates.length,
           [{ id: OrderByDirection.AscNullsFirst }],

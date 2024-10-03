@@ -27,8 +27,6 @@ import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -48,7 +46,7 @@ export class GraphqlQueryFindManyResolverService
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<ObjectRecord>> {
-    const { authContext, objectMetadataItem, info, objectMetadataCollection } =
+    const { authContext, objectMetadataMapItem, info, objectMetadataMap } =
       options;
 
     const dataSource =
@@ -57,40 +55,32 @@ export class GraphqlQueryFindManyResolverService
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const countQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
-    const objectMetadataMap = generateObjectMetadataMap(
-      objectMetadataCollection,
-    );
-
-    const objectMetadata = getObjectMetadataOrThrow(
-      objectMetadataMap,
-      objectMetadataItem.nameSingular,
-    );
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadata.fields,
+      objectMetadataMapItem.fields,
       objectMetadataMap,
     );
 
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       args.filter ?? ({} as Filter),
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
+      objectMetadataMapItem,
       selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
@@ -120,7 +110,7 @@ export class GraphqlQueryFindManyResolverService
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
-        objectMetadata.fields,
+        objectMetadataMapItem.fields,
         isForwardPagination,
       );
 
@@ -133,14 +123,14 @@ export class GraphqlQueryFindManyResolverService
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       appliedFilters,
     );
 
     const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       withFilterQueryBuilder,
       orderByWithIdCondition,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       isForwardPagination,
     );
 
@@ -155,7 +145,7 @@ export class GraphqlQueryFindManyResolverService
 
     const objectRecords = formatResult(
       nonFormattedObjectRecords,
-      objectMetadata,
+      objectMetadataMapItem,
       objectMetadataMap,
     );
 
@@ -174,7 +164,7 @@ export class GraphqlQueryFindManyResolverService
     if (relations) {
       await processNestedRelationsHelper.processNestedRelations(
         objectMetadataMap,
-        objectMetadata,
+        objectMetadataMapItem,
         objectRecords,
         relations,
         limit,
@@ -188,7 +178,7 @@ export class GraphqlQueryFindManyResolverService
 
     const result = typeORMObjectRecordsParser.createConnection(
       objectRecords,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       limit,
       totalCount,
       orderByWithIdCondition,

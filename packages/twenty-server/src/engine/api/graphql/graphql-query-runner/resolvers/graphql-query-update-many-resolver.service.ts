@@ -10,10 +10,8 @@ import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -29,7 +27,7 @@ export class GraphqlQueryUpdateManyResolverService
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord[]> {
-    const { authContext, objectMetadataItem, objectMetadataCollection, info } =
+    const { authContext, objectMetadataMapItem, objectMetadataMap, info } =
       options;
 
     const dataSource =
@@ -38,35 +36,28 @@ export class GraphqlQueryUpdateManyResolverService
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
-    const objectMetadataMap = generateObjectMetadataMap(
-      objectMetadataCollection,
-    );
-    const objectMetadata = getObjectMetadataOrThrow(
-      objectMetadataMap,
-      objectMetadataItem.nameSingular,
-    );
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadata.fields,
+      objectMetadataMapItem.fields,
       objectMetadataMap,
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
+      objectMetadataMapItem,
       selectedFields,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       args.filter,
     );
 
@@ -78,7 +69,7 @@ export class GraphqlQueryUpdateManyResolverService
 
     const updatedRecords = formatResult(
       nonFormattedUpdatedObjectRecords,
-      objectMetadata,
+      objectMetadataMapItem,
       objectMetadataMap,
     );
 
@@ -87,7 +78,7 @@ export class GraphqlQueryUpdateManyResolverService
     if (relations) {
       await processNestedRelationsHelper.processNestedRelations(
         objectMetadataMap,
-        objectMetadata,
+        objectMetadataMapItem,
         updatedRecords,
         relations,
         QUERY_MAX_RECORDS,
@@ -103,7 +94,7 @@ export class GraphqlQueryUpdateManyResolverService
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): void {
-    assertMutationNotOnRemoteObject(options.objectMetadataItem);
+    assertMutationNotOnRemoteObject(options.objectMetadataMapItem);
     args.filter?.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
 }

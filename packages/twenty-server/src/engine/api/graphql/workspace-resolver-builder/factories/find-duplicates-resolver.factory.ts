@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   FindDuplicatesResolverArgs,
@@ -32,12 +33,14 @@ export class FindDuplicatesResolverFactory
 
     return async (_source, args, context, info) => {
       try {
-        const options = {
+        const options: WorkspaceQueryRunnerOptions = {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,
+          objectMetadataMap: internalContext.objectMetadataMap,
+          objectMetadataMapItem: internalContext.objectMetadataMapItem,
         };
 
         const isQueryRunnerTwentyORMEnabled =

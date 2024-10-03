@@ -9,7 +9,6 @@ import {
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
@@ -17,6 +16,7 @@ import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
+  ObjectMetadataMapItem,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export class GraphqlQueryParser {
@@ -104,7 +104,7 @@ export class GraphqlQueryParser {
   }
 
   public parseSelectedFields(
-    parentObjectMetadata: ObjectMetadataInterface,
+    parentObjectMetadata: ObjectMetadataMapItem,
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): { select: Record<string, any>; relations: Record<string, any> } {
     const parentFields =

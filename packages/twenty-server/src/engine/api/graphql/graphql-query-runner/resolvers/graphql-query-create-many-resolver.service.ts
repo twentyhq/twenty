@@ -12,10 +12,8 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -31,32 +29,25 @@ export class GraphqlQueryCreateManyResolverService
     args: CreateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord[]> {
-    const { authContext, objectMetadataItem, objectMetadataCollection, info } =
+    const { authContext, info, objectMetadataMap, objectMetadataMapItem } =
       options;
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
       );
     const repository = dataSource.getRepository(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
-    const objectMetadataMap = generateObjectMetadataMap(
-      objectMetadataCollection,
-    );
-    const objectMetadata = getObjectMetadataOrThrow(
-      objectMetadataMap,
-      objectMetadataItem.nameSingular,
-    );
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadata.fields,
+      objectMetadataMapItem.fields,
       objectMetadataMap,
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
+      objectMetadataMapItem,
       selectedFields,
     );
 
@@ -68,7 +59,7 @@ export class GraphqlQueryCreateManyResolverService
         });
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const nonFormattedUpsertedRecords = (await queryBuilder
@@ -80,7 +71,7 @@ export class GraphqlQueryCreateManyResolverService
 
     const upsertedRecords = formatResult(
       nonFormattedUpsertedRecords,
-      objectMetadata,
+      objectMetadataMapItem,
       objectMetadataMap,
     );
 
@@ -89,7 +80,7 @@ export class GraphqlQueryCreateManyResolverService
     if (relations) {
       await processNestedRelationsHelper.processNestedRelations(
         objectMetadataMap,
-        objectMetadata,
+        objectMetadataMapItem,
         upsertedRecords,
         relations,
         QUERY_MAX_RECORDS,
@@ -104,7 +95,7 @@ export class GraphqlQueryCreateManyResolverService
     return upsertedRecords.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord(
         record,
-        objectMetadataItem.nameSingular,
+        objectMetadataMapItem.nameSingular,
         1,
         1,
       ),

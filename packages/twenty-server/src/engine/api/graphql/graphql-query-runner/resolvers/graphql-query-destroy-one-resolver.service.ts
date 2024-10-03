@@ -9,8 +9,6 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -26,22 +24,12 @@ export class GraphqlQueryDestroyOneResolverService
     args: DestroyOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord> {
-    const { authContext, objectMetadataItem, objectMetadataCollection } =
-      options;
+    const { authContext, objectMetadataMapItem, objectMetadataMap } = options;
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
-        objectMetadataItem.nameSingular,
+        objectMetadataMapItem.nameSingular,
       );
-
-    const objectMetadataMap = generateObjectMetadataMap(
-      objectMetadataCollection,
-    );
-
-    const objectMetadata = getObjectMetadataOrThrow(
-      objectMetadataMap,
-      objectMetadataItem.nameSingular,
-    );
 
     const nonFormattedRecordBeforeDeletion = await repository.findOne({
       where: { id: args.id },
@@ -57,7 +45,7 @@ export class GraphqlQueryDestroyOneResolverService
 
     const recordBeforeDeletion = formatResult(
       [nonFormattedRecordBeforeDeletion],
-      objectMetadata,
+      objectMetadataMapItem,
       objectMetadataMap,
     )[0];
 
