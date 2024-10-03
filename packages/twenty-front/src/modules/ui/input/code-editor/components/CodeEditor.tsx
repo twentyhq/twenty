@@ -7,7 +7,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { isDefined } from '~/utils/isDefined';
-import { useCallback, useEffect, useState } from 'react';
 
 const StyledEditor = styled(Editor)`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -38,7 +37,6 @@ export const CodeEditor = ({
   options = undefined,
 }: CodeEditorProps) => {
   const theme = useTheme();
-  const [monacoInstance, setMonacoInstance] = useState<Monaco | null>();
 
   const { availablePackages } = useGetAvailablePackages();
 
@@ -49,7 +47,6 @@ export const CodeEditor = ({
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
   ) => {
-    setMonacoInstance(monaco);
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
 
@@ -79,6 +76,31 @@ export const CodeEditor = ({
         target: monaco.languages.typescript.ScriptTarget.ESNext,
       });
 
+      if (isDefined(environmentVariablesFile)) {
+        const environmentVariables = dotenv.parse(
+          environmentVariablesFile.content,
+        );
+
+        const environmentDefinition = `
+        declare namespace NodeJS {
+          interface ProcessEnv {
+            ${Object.keys(environmentVariables)
+              .map((key) => `${key}: string;`)
+              .join('\n')}
+          }
+        }
+
+        declare const process: {
+          env: NodeJS.ProcessEnv;
+        };
+      `;
+
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(
+          environmentDefinition,
+          'ts:process-env.d.ts',
+        );
+      }
+
       await AutoTypings.create(editor, {
         monaco,
         preloadPackages: true,
@@ -99,52 +121,6 @@ export const CodeEditor = ({
     setIsCodeValid?.(true);
   };
 
-  const setEnvFileLib = useCallback(
-    (value: string) => {
-      if (!isDefined(monacoInstance)) {
-        return;
-      }
-      const environmentVariables = dotenv.parse(value);
-
-      const environmentDefinition = `
-        declare namespace NodeJS {
-          interface ProcessEnv {
-            ${Object.keys(environmentVariables)
-              .map((key) => `${key}: string;`)
-              .join('\n')}
-          }
-        }
-
-        declare const process: {
-          env: NodeJS.ProcessEnv;
-        };
-      `;
-
-      monacoInstance.languages.typescript.typescriptDefaults.addExtraLib(
-        environmentDefinition,
-        'ts:process-env.d.ts',
-      );
-    },
-    [monacoInstance],
-  );
-
-  const onEnvFileChange = (value: string) => {
-    if (
-      !isDefined(currentFile) ||
-      currentFile.path !== '.env' ||
-      !isDefined(monacoInstance)
-    ) {
-      return;
-    }
-    setEnvFileLib(value);
-  };
-
-  useEffect(() => {
-    if (isDefined(environmentVariablesFile)) {
-      setEnvFileLib(environmentVariablesFile.content);
-    }
-  }, [monacoInstance, environmentVariablesFile, setEnvFileLib]);
-
   return (
     isDefined(currentFile) &&
     isDefined(availablePackages) && (
@@ -153,13 +129,7 @@ export const CodeEditor = ({
         value={currentFile.content}
         language={currentFile.language}
         onMount={handleEditorDidMount}
-        onChange={(value?: string) => {
-          if (!isDefined(value)) {
-            return;
-          }
-          onEnvFileChange(value);
-          onChange?.(value);
-        }}
+        onChange={(value?: string) => value && onChange?.(value)}
         onValidate={handleEditorValidation}
         options={{
           ...options,
