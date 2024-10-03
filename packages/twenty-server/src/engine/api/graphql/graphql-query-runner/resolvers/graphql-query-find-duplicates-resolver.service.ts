@@ -185,10 +185,10 @@ export class GraphqlQueryFindDuplicatesResolverService
     );
   }
 
-  public validate(
+  async validate(
     args: FindDuplicatesResolverArgs,
     _options: WorkspaceQueryRunnerOptions,
-  ): void {
+  ): Promise<void> {
     if (!args.data && !args.ids) {
       throw new GraphqlQueryRunnerException(
         'You have to provide either "data" or "ids" argument',

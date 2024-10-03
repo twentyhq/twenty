@@ -12,6 +12,7 @@ import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/gra
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 
 const graphqlQueryResolvers = [
   GraphqlQueryFindOneResolverService,
@@ -24,7 +25,11 @@ const graphqlQueryResolvers = [
 ];
 
 @Module({
-  imports: [WorkspaceQueryHookModule, WorkspaceQueryRunnerModule],
+  imports: [
+    WorkspaceQueryHookModule,
+    WorkspaceQueryRunnerModule,
+    FeatureFlagModule,
+  ],
   providers: [
     GraphqlQueryRunnerService,
     GraphqlQueryResolverFactory,

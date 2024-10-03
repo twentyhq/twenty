@@ -9,6 +9,7 @@ import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/gr
 import { GraphqlQueryFindDuplicatesResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-duplicates-resolver.service';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
+import { GraphqlQuerySearchResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-search-resolver.service';
 import { GraphqlQueryUpdateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-many-resolver.service';
 import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-one-resolver.service';
 
@@ -26,6 +27,8 @@ export class GraphqlQueryResolverFactory {
         return this.moduleRef.get(GraphqlQueryFindManyResolverService);
       case 'findDuplicates':
         return this.moduleRef.get(GraphqlQueryFindDuplicatesResolverService);
+      case 'search':
+        return this.moduleRef.get(GraphqlQuerySearchResolverService);
       case 'createOne':
       case 'createMany':
         return this.moduleRef.get(GraphqlQueryCreateManyResolverService);

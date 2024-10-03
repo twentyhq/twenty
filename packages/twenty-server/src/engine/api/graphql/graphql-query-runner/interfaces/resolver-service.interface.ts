@@ -5,5 +5,8 @@ export interface ResolverService<ResolverArgs, T> {
     args: ResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ) => Promise<T>;
-  validate: (args: ResolverArgs, options: WorkspaceQueryRunnerOptions) => void;
+  validate: (
+    args: ResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ) => Promise<void>;
 }

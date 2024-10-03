@@ -90,10 +90,10 @@ export class GraphqlQueryUpdateManyResolverService
     return updatedRecords as ObjectRecord[];
   }
 
-  validate<ObjectRecord extends IRecord = IRecord>(
+  async validate<ObjectRecord extends IRecord = IRecord>(
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
-  ): void {
+  ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataMapItem);
     args.filter?.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }

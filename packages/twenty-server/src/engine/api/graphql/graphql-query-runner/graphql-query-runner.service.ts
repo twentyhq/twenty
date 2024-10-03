@@ -20,6 +20,7 @@ import {
   ResolverArgs,
   ResolverArgsType,
   RestoreManyResolverArgs,
+  SearchResolverArgs,
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
   WorkspaceResolverBuilderMethodNames,
@@ -89,6 +90,18 @@ export class GraphqlQueryRunnerService {
       FindDuplicatesResolverArgs<Partial<ObjectRecord>>,
       IConnection<ObjectRecord>[]
     >('findDuplicates', args, options);
+  }
+
+  @LogExecutionTime()
+  async search<ObjectRecord extends IRecord = IRecord>(
+    args: SearchResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<IConnection<ObjectRecord>> {
+    return this.executeQuery<SearchResolverArgs, IConnection<ObjectRecord>>(
+      'search',
+      args,
+      options,
+    );
   }
 
   /** MUTATIONS */
@@ -302,7 +315,7 @@ export class GraphqlQueryRunnerService {
     const resolver =
       this.graphqlQueryResolverFactory.getResolver(operationName);
 
-    resolver.validate(args, options);
+    await resolver.validate(args, options);
 
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(

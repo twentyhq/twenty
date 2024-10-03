@@ -54,10 +54,10 @@ export class GraphqlQueryDestroyOneResolverService
     return recordBeforeDeletion as ObjectRecord;
   }
 
-  validate(
+  async validate(
     args: DestroyOneResolverArgs,
     _options: WorkspaceQueryRunnerOptions,
-  ): void {
+  ): Promise<void> {
     if (!args.id) {
       throw new GraphqlQueryRunnerException(
         'Missing id',

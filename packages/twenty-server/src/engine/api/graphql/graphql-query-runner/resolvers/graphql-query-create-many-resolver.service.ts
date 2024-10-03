@@ -102,10 +102,10 @@ export class GraphqlQueryCreateManyResolverService
     );
   }
 
-  public validate<ObjectRecord extends IRecord>(
+  async validate<ObjectRecord extends IRecord>(
     args: CreateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
-  ): void {
+  ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItem);
     args.data.forEach((record) => {
       if (record?.id) {

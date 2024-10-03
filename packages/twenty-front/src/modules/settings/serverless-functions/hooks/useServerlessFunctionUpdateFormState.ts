@@ -9,7 +9,7 @@ export type ServerlessFunctionNewFormValues = {
 };
 
 export type ServerlessFunctionFormValues = ServerlessFunctionNewFormValues & {
-  code: string;
+  code: { [filePath: string]: string } | undefined;
 };
 
 type SetServerlessFunctionFormValues = Dispatch<
@@ -26,7 +26,7 @@ export const useServerlessFunctionUpdateFormState = (
   const [formValues, setFormValues] = useState<ServerlessFunctionFormValues>({
     name: '',
     description: '',
-    code: '',
+    code: undefined,
   });
 
   const { serverlessFunction } =
@@ -37,7 +37,7 @@ export const useServerlessFunctionUpdateFormState = (
     version: 'draft',
     onCompleted: (data: FindOneServerlessFunctionSourceCodeQuery) => {
       const newState = {
-        code: data?.getServerlessFunctionSourceCode || '',
+        code: data?.getServerlessFunctionSourceCode || undefined,
         name: serverlessFunction?.name || '',
         description: serverlessFunction?.description || '',
       };

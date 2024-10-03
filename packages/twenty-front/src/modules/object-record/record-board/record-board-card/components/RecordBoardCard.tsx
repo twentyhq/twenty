@@ -86,7 +86,7 @@ export const StyledBoardCardHeader = styled.div<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 24px;
   padding-bottom: ${({ theme, showCompactView }) =>
-    theme.spacing(showCompactView ? 0 : 1)};
+    theme.spacing(showCompactView ? 2 : 1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
@@ -138,10 +138,6 @@ const StyledCompactIconContainer = styled.div`
 `;
 
 const StyledRecordInlineCellPlaceholder = styled.div`
-  height: 24px;
-`;
-
-const StyledRecordInlineCell = styled(RecordInlineCell)`
   height: 24px;
 `;
 
@@ -348,7 +344,7 @@ export const RecordBoardCard = ({
                   }}
                 >
                   {inView ? (
-                    <StyledRecordInlineCell />
+                    <RecordInlineCell />
                   ) : (
                     <StyledRecordInlineCellPlaceholder />
                   )}

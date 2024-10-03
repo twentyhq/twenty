@@ -60,6 +60,16 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IsSearchEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IsWorkspaceMigratedForSearch,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

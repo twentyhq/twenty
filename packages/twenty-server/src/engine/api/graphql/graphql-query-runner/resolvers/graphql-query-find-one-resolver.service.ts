@@ -121,10 +121,10 @@ export class GraphqlQueryFindOneResolverService
     ) as ObjectRecord;
   }
 
-  public validate<Filter extends RecordFilter>(
+  async validate<Filter extends RecordFilter>(
     args: FindOneResolverArgs<Filter>,
     _options: WorkspaceQueryRunnerOptions,
-  ): void {
+  ): Promise<void> {
     if (!args.filter || Object.keys(args.filter).length === 0) {
       throw new WorkspaceQueryRunnerException(
         'Missing filter argument',

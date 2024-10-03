@@ -189,10 +189,10 @@ export class GraphqlQueryFindManyResolverService
     return result;
   }
 
-  public validate<Filter extends RecordFilter>(
+  async validate<Filter extends RecordFilter>(
     args: FindManyResolverArgs<Filter>,
     _options: WorkspaceQueryRunnerOptions,
-  ): void {
+  ): Promise<void> {
     if (args.first && args.last) {
       throw new GraphqlQueryRunnerException(
         'Cannot provide both first and last',

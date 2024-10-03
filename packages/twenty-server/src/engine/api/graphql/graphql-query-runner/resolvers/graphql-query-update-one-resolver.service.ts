@@ -111,10 +111,10 @@ export class GraphqlQueryUpdateOneResolverService
     );
   }
 
-  validate<ObjectRecord extends IRecord = IRecord>(
+  async validate<ObjectRecord extends IRecord = IRecord>(
     args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
-  ): void {
+  ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataMapItem);
     assertIsValidUuid(args.id);
   }

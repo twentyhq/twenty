@@ -7,7 +7,7 @@ import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkf
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
+import { findStepPosition } from '@/workflow/utils/findStepPosition';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -43,10 +43,13 @@ const getStepDefinitionOrThrow = ({
     );
   }
 
-  const selectedNodePosition = findStepPositionOrThrow({
+  const selectedNodePosition = findStepPosition({
     steps: currentVersion.steps,
     stepId: stepId,
   });
+  if (!isDefined(selectedNodePosition)) {
+    return undefined;
+  }
 
   return {
     type: 'action',
@@ -76,6 +79,9 @@ export const RightDrawerWorkflowEditStepContent = ({
     stepId: workflowSelectedNode,
     workflow,
   });
+  if (!isDefined(stepDefinition)) {
+    return null;
+  }
 
   switch (stepDefinition.type) {
     case 'trigger': {
