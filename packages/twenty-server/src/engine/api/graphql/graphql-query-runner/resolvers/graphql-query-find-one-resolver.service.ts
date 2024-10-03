@@ -16,8 +16,8 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import {
   WorkspaceQueryRunnerException,
@@ -98,8 +98,6 @@ export class GraphqlQueryFindOneResolverService
       objectMetadataMap,
     );
 
-    const limit = QUERY_MAX_RECORDS;
-
     if (!objectRecord) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -117,14 +115,14 @@ export class GraphqlQueryFindOneResolverService
         objectMetadata,
         objectRecords,
         relations,
-        limit,
+        QUERY_MAX_RECORDS,
         authContext,
         dataSource,
       );
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     return typeORMObjectRecordsParser.processRecord(
       objectRecords[0],

@@ -26,7 +26,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { GraphqlQueryResolverFactory } from 'src/engine/api/graphql/graphql-query-runner/factories/graphql-query-resolver.factory';
-import { ApiEventEmitterHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/api-event-emitter.helper';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
@@ -38,7 +38,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
@@ -46,10 +45,10 @@ export class GraphqlQueryRunnerService {
   constructor(
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly graphqlQueryResolverFactory: GraphqlQueryResolverFactory,
+    private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   @LogExecutionTime()
@@ -102,9 +101,6 @@ export class GraphqlQueryRunnerService {
 
     // TODO: trigger webhooks should be a consequence of the emitCreateEvents
     // TODO: emitCreateEvents should be moved to the ORM layer
-    const workspaceEventEmitter = new ApiEventEmitterHelper(
-      this.workspaceEventEmitter,
-    );
 
     if (results) {
       await this.triggerWebhooks(
@@ -112,7 +108,7 @@ export class GraphqlQueryRunnerService {
         CallWebhookJobsJobOperation.create,
         options,
       );
-      workspaceEventEmitter.emitCreateEvents(
+      this.apiEventEmitterService.emitCreateEvents(
         results,
         options.authContext,
         options.objectMetadataItem,
@@ -132,19 +128,13 @@ export class GraphqlQueryRunnerService {
       ObjectRecord[]
     >('createMany', args, options);
 
-    // TODO: trigger webhooks should be a consequence of the emitCreateEvents
-    // TODO: emitCreateEvents should be moved to the ORM layer
-    const workspaceEventEmitter = new ApiEventEmitterHelper(
-      this.workspaceEventEmitter,
-    );
-
     if (results) {
       await this.triggerWebhooks(
         results,
         CallWebhookJobsJobOperation.create,
         options,
       );
-      workspaceEventEmitter.emitCreateEvents(
+      this.apiEventEmitterService.emitCreateEvents(
         results,
         options.authContext,
         options.objectMetadataItem,
@@ -164,17 +154,13 @@ export class GraphqlQueryRunnerService {
       ObjectRecord
     >('destroyOne', args, options);
 
-    const workspaceEventEmitter = new ApiEventEmitterHelper(
-      this.workspaceEventEmitter,
-    );
-
     await this.triggerWebhooks(
       [result],
       CallWebhookJobsJobOperation.destroy,
       options,
     );
 
-    workspaceEventEmitter.emitDestroyEvents(
+    this.apiEventEmitterService.emitDestroyEvents(
       [result],
       options.authContext,
       options.objectMetadataItem,
@@ -204,17 +190,13 @@ export class GraphqlQueryRunnerService {
       ObjectRecord
     >('updateOne', args, options);
 
-    const workspaceEventEmitter = new ApiEventEmitterHelper(
-      this.workspaceEventEmitter,
-    );
-
     await this.triggerWebhooks(
       [result],
       CallWebhookJobsJobOperation.update,
       options,
     );
 
-    workspaceEventEmitter.emitUpdateEvents(
+    this.apiEventEmitterService.emitUpdateEvents(
       [existingRecord],
       [result],
       Object.keys(args.data),
@@ -246,17 +228,13 @@ export class GraphqlQueryRunnerService {
       ObjectRecord[]
     >('updateMany', args, options);
 
-    const workspaceEventEmitter = new ApiEventEmitterHelper(
-      this.workspaceEventEmitter,
-    );
-
     await this.triggerWebhooks(
       result,
       CallWebhookJobsJobOperation.update,
       options,
     );
 
-    workspaceEventEmitter.emitUpdateEvents(
+    this.apiEventEmitterService.emitUpdateEvents(
       existingRecords.edges.map((edge) => edge.node),
       result,
       Object.keys(args.data),
@@ -284,17 +262,13 @@ export class GraphqlQueryRunnerService {
       options,
     );
 
-    const workspaceEventEmitter = new ApiEventEmitterHelper(
-      this.workspaceEventEmitter,
-    );
-
     await this.triggerWebhooks(
       [result],
       CallWebhookJobsJobOperation.delete,
       options,
     );
 
-    workspaceEventEmitter.emitDeletedEvents(
+    this.apiEventEmitterService.emitDeletedEvents(
       [result],
       options.authContext,
       options.objectMetadataItem,
@@ -321,17 +295,13 @@ export class GraphqlQueryRunnerService {
       options,
     );
 
-    const workspaceEventEmitter = new ApiEventEmitterHelper(
-      this.workspaceEventEmitter,
-    );
-
     await this.triggerWebhooks(
       result,
       CallWebhookJobsJobOperation.delete,
       options,
     );
 
-    workspaceEventEmitter.emitDeletedEvents(
+    this.apiEventEmitterService.emitDeletedEvents(
       result,
       options.authContext,
       options.objectMetadataItem,

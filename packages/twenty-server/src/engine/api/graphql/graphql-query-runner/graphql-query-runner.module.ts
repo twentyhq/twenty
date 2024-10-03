@@ -9,6 +9,7 @@ import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/grap
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { GraphqlQueryUpdateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-many-resolver.service';
 import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-one-resolver.service';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 
@@ -27,6 +28,7 @@ const graphqlQueryResolvers = [
   providers: [
     GraphqlQueryRunnerService,
     GraphqlQueryResolverFactory,
+    ApiEventEmitterService,
     ...graphqlQueryResolvers,
   ],
   exports: [GraphqlQueryRunnerService],

@@ -17,7 +17,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { settings } from 'src/engine/constants/settings';
 import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
@@ -71,7 +71,7 @@ export class GraphqlQueryFindDuplicatesResolverService
     );
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 

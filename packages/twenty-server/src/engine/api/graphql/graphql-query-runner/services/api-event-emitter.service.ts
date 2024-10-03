@@ -1,15 +1,14 @@
+import { Injectable } from '@nestjs/common';
+
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-export class ApiEventEmitterHelper {
-  private workspaceEventEmitter: WorkspaceEventEmitter;
-
-  constructor(workspaceEventEmitter: WorkspaceEventEmitter) {
-    this.workspaceEventEmitter = workspaceEventEmitter;
-  }
+@Injectable()
+export class ApiEventEmitterService {
+  constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
   public emitCreateEvents<T extends IRecord>(
     records: T[],
@@ -24,7 +23,7 @@ export class ApiEventEmitterHelper {
         objectMetadata: objectMetadataItem,
         properties: {
           before: null,
-          after: this.removeGraphQLProperties(record),
+          after: this.removeGraphQLAndNestedProperties(record),
         },
       })),
       authContext.workspace.id,
@@ -55,9 +54,11 @@ export class ApiEventEmitterHelper {
           objectMetadata: objectMetadataItem,
           properties: {
             before: mappedExistingRecords[record.id]
-              ? this.removeGraphQLProperties(mappedExistingRecords[record.id])
+              ? this.removeGraphQLAndNestedProperties(
+                  mappedExistingRecords[record.id],
+                )
               : undefined,
-            after: this.removeGraphQLProperties(record),
+            after: this.removeGraphQLAndNestedProperties(record),
             updatedFields,
           },
         };
@@ -79,7 +80,7 @@ export class ApiEventEmitterHelper {
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLProperties(record),
+            before: this.removeGraphQLAndNestedProperties(record),
             after: null,
           },
         };
@@ -101,7 +102,7 @@ export class ApiEventEmitterHelper {
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLProperties(record),
+            before: this.removeGraphQLAndNestedProperties(record),
             after: null,
           },
         };
@@ -110,7 +111,7 @@ export class ApiEventEmitterHelper {
     );
   }
 
-  private removeGraphQLProperties<ObjectRecord extends IRecord>(
+  private removeGraphQLAndNestedProperties<ObjectRecord extends IRecord>(
     record: ObjectRecord,
   ) {
     if (!record) {

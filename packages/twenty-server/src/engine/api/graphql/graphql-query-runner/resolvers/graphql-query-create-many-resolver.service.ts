@@ -8,8 +8,10 @@ import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builde
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -31,11 +33,13 @@ export class GraphqlQueryCreateManyResolverService
   ): Promise<ObjectRecord[]> {
     const { authContext, objectMetadataItem, objectMetadataCollection, info } =
       options;
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
-        objectMetadataItem.nameSingular,
       );
+    const repository = dataSource.getRepository(
+      objectMetadataItem.nameSingular,
+    );
 
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
@@ -51,7 +55,7 @@ export class GraphqlQueryCreateManyResolverService
 
     const selectedFields = graphqlFields(info);
 
-    const { select, relations } = graphqlQueryParser.parseSelectedFields(
+    const { relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
       selectedFields,
     );
@@ -63,22 +67,39 @@ export class GraphqlQueryCreateManyResolverService
           skipUpdateIfNoValuesChanged: true,
         });
 
-    const nonFormattedupsertedRecords = await repository.find({
-      where: {
+    const queryBuilder = repository.createQueryBuilder(
+      objectMetadataItem.nameSingular,
+    );
+
+    const nonFormattedUpsertedRecords = (await queryBuilder
+      .where({
         id: In(objectRecords.generatedMaps.map((record) => record.id)),
-      },
-      select,
-      relations,
-    });
+      })
+      .take(QUERY_MAX_RECORDS)
+      .getMany()) as ObjectRecord[];
 
     const upsertedRecords = formatResult(
-      nonFormattedupsertedRecords,
+      nonFormattedUpsertedRecords,
       objectMetadata,
       objectMetadataMap,
     );
 
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
+
+    if (relations) {
+      await processNestedRelationsHelper.processNestedRelations(
+        objectMetadataMap,
+        objectMetadata,
+        upsertedRecords,
+        relations,
+        QUERY_MAX_RECORDS,
+        authContext,
+        dataSource,
+      );
+    }
+
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     return upsertedRecords.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord(

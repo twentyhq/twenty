@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
+import graphqlFields from 'graphql-fields';
+
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -25,13 +29,17 @@ export class GraphqlQueryUpdateManyResolverService
     args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord[]> {
-    const { authContext, objectMetadataItem, objectMetadataCollection } =
+    const { authContext, objectMetadataItem, objectMetadataCollection, info } =
       options;
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
-        objectMetadataItem.nameSingular,
       );
+
+    const repository = dataSource.getRepository(
+      objectMetadataItem.nameSingular,
+    );
 
     const objectMetadataMap = generateObjectMetadataMap(
       objectMetadataCollection,
@@ -43,6 +51,13 @@ export class GraphqlQueryUpdateManyResolverService
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadata.fields,
       objectMetadataMap,
+    );
+
+    const selectedFields = graphqlFields(info);
+
+    const { relations } = graphqlQueryParser.parseSelectedFields(
+      objectMetadataItem,
+      selectedFields,
     );
 
     const queryBuilder = repository.createQueryBuilder(
@@ -57,14 +72,29 @@ export class GraphqlQueryUpdateManyResolverService
 
     await withFilterQueryBuilder.update().set(args.data).execute();
 
-    const nonFormattedUpdatedObjectRecords =
-      await withFilterQueryBuilder.getMany();
+    const nonFormattedUpdatedObjectRecords = await withFilterQueryBuilder
+      .take(QUERY_MAX_RECORDS)
+      .getMany();
 
     const updatedRecords = formatResult(
       nonFormattedUpdatedObjectRecords,
       objectMetadata,
       objectMetadataMap,
     );
+
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
+
+    if (relations) {
+      await processNestedRelationsHelper.processNestedRelations(
+        objectMetadataMap,
+        objectMetadata,
+        updatedRecords,
+        relations,
+        QUERY_MAX_RECORDS,
+        authContext,
+        dataSource,
+      );
+    }
 
     return updatedRecords as ObjectRecord[];
   }
