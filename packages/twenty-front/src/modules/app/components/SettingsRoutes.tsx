@@ -234,6 +234,20 @@ const SettingsCRMMigration = lazy(() =>
   ),
 );
 
+const SettingsSecurity = lazy(() =>
+  import('~/pages/settings/security/SettingsSecurity').then((module) => ({
+    default: module.SettingsSecurity,
+  })),
+);
+
+const SettingsSecurityNewSSOIdentityProvider = lazy(() =>
+  import(
+    '~/pages/settings/security/SettingsSecurityNewSSOIdentityProvider'
+  ).then((module) => ({
+    default: module.SettingsSecurityNewSSOIdentityProvider,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
@@ -357,6 +371,11 @@ export const SettingsRoutes = ({
         element={<SettingsObjectFieldEdit />}
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
+      <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
+      <Route
+        path={SettingsPath.NewSSOIdentityProvider}
+        element={<SettingsSecurityNewSSOIdentityProvider />}
+      />
     </Routes>
   </Suspense>
 );

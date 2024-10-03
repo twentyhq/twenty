@@ -1,14 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { IdpType } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 @ObjectType()
 export class FindAvailableSSOIDPOutput {
-  @Field(() => String)
+  @Field(() => IdpType)
   type: SSOConfiguration['type'];
 
   @Field(() => String)
   id: string;
+
+  @Field(() => String)
+  issuer: string;
 
   @Field(() => String)
   name: string;

@@ -1,6 +1,8 @@
 import { useSetRecoilState } from 'recoil';
-import { useSendInvitationsMutation } from '~/generated/graphql';
-import { SendInvitationsMutationVariables } from '../../../generated/graphql';
+import {
+  useSendInvitationsMutation,
+  SendInvitationsMutationVariables,
+} from '~/generated/graphql';
 import { workspaceInvitationsState } from '../states/workspaceInvitationsStates';
 
 export const useCreateWorkspaceInvitation = () => {

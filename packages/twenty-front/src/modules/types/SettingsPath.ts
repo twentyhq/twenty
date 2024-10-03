@@ -30,6 +30,8 @@ export enum SettingsPath {
   IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
   IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
+  Security = 'security',
+  NewSSOIdentityProvider = 'security/sso/new',
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
   Releases = 'releases',
