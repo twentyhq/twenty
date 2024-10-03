@@ -32,6 +32,7 @@ import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/l
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
+import deepEqual from 'deep-equal';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -143,10 +144,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
         'draft',
       );
 
-      if (
-        serverlessFunctionCreateHash(JSON.stringify(latestCode)) ===
-        serverlessFunctionCreateHash(JSON.stringify(draftCode))
-      ) {
+      if (deepEqual(latestCode, draftCode)) {
         throw new Error(
           'Cannot publish a new version when code has not changed',
         );
