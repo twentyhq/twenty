@@ -25,7 +25,7 @@ import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { AvatarChipVariant, IconEye } from 'twenty-ui';
+import { AvatarChipVariant, IconEye, IconEyeOff } from 'twenty-ui';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -201,6 +201,12 @@ export const RecordBoardCard = ({
     </StyledFieldContainer>
   );
 
+  const onMouseLeaveBoard = () => {
+    if (isCompactModeActive) {
+      setIsCardInCompactMode(true);
+    }
+  };
+
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
@@ -233,6 +239,7 @@ export const RecordBoardCard = ({
       <StyledBoardCard
         ref={cardRef}
         selected={isCurrentCardSelected}
+        onMouseLeave={onMouseLeaveBoard}
         onClick={() => {
           if (!isCreating) {
             setIsCurrentCardSelected(!isCurrentCardSelected);
@@ -278,7 +285,7 @@ export const RecordBoardCard = ({
               {isCompactModeActive && (
                 <StyledCompactIconContainer className="compact-icon-container">
                   <LightIconButton
-                    Icon={IconEye}
+                    Icon={isCardInCompactMode ? IconEye : IconEyeOff}
                     accent="tertiary"
                     onClick={(e) => {
                       e.stopPropagation();
