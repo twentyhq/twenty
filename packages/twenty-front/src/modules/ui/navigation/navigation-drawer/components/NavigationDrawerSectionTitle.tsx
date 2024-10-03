@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -42,12 +43,18 @@ export const NavigationDrawerSectionTitle = ({
     isNavigationDrawerExpandedState,
   );
 
+  const isSettingsPage = useIsSettingsPage();
+
   if (loading && isDefined(currentUser)) {
     return <NavigationDrawerSectionTitleSkeletonLoader />;
   }
   return (
-    <StyledTitle onClick={isNavigationDrawerExpanded ? onClick : undefined}>
-      {isNavigationDrawerExpanded ? label : ''}
+    <StyledTitle
+      onClick={
+        isNavigationDrawerExpanded || isSettingsPage ? onClick : undefined
+      }
+    >
+      {isNavigationDrawerExpanded || isSettingsPage ? label : ''}
     </StyledTitle>
   );
 };
