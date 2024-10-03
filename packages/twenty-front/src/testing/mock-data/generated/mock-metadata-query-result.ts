@@ -13886,7 +13886,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     __typename: 'field',
                     id: '5cdf5de5-6c7f-4787-b47d-de5e3787e670',
                     type: 'MULTI_SELECT',
-                    name: 'workPrefereance',
+                    name: 'workPreference',
                     label: 'Work Preference',
                     description: "Person's Work Preference",
                     icon: 'IconHome',

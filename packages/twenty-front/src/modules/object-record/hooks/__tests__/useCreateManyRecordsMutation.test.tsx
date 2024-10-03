@@ -1,19 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 
-import { PERSON_FRAGMENT_WiTH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
   mutation CreatePeople($data: [PersonCreateInput!]!, $upsert: Boolean) {
     createPeople(data: $data, upsert: $upsert) {
-      ${PERSON_FRAGMENT_WiTH_DEPTH_ZERO_RELATIONS}
+      ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
     }
   }
 `.replace(/\s/g, '');
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

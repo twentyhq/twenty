@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client';
 
-import { PERSON_FRAGMENT_WiTH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
+import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { Person } from '@/people/types/Person';
 
 export const query = gql`
   mutation CreatePeople($data: [PersonCreateInput!]!, $upsert: Boolean) {
     createPeople(data: $data, upsert: $upsert) {
-      ${PERSON_FRAGMENT_WiTH_DEPTH_ONE_RELATIONS}
+      ${PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS}
     }
   }
 `;

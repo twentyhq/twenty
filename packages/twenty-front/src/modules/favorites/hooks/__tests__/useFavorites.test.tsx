@@ -7,7 +7,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import {
   favoriteId,
@@ -27,7 +27,7 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

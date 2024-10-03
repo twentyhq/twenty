@@ -9,7 +9,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useFindManyRecords';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const mocks = [
@@ -26,7 +26,7 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 describe('useFindManyRecords', () => {

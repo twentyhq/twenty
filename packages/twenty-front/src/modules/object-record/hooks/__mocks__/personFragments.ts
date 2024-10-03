@@ -1,4 +1,4 @@
-export const PERSON_FRAGMENT_WiTH_DEPTH_ZERO_RELATIONS = `
+export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       __typename
       avatarUrl
       city
@@ -39,7 +39,7 @@ export const PERSON_FRAGMENT_WiTH_DEPTH_ZERO_RELATIONS = `
         primaryPhoneCountryCode
         additionalPhones
       }
-      workPrefereance
+      workPreference
       xLink {
         primaryLinkUrl
         primaryLinkLabel
@@ -47,7 +47,7 @@ export const PERSON_FRAGMENT_WiTH_DEPTH_ZERO_RELATIONS = `
       }
 `
 
-export const PERSON_FRAGMENT_WiTH_DEPTH_ONE_RELATIONS = `
+export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       __typename
       activityTargets {
         edges {
@@ -318,7 +318,7 @@ export const PERSON_FRAGMENT_WiTH_DEPTH_ONE_RELATIONS = `
         primaryPhoneCountryCode
         additionalPhones
       }
-      workPrefereance
+      workPreference
       xLink {
         primaryLinkUrl
         primaryLinkLabel

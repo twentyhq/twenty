@@ -1,19 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
 query FindOnePerson($objectRecordId: ID!) {
   person(filter: { id: { eq: $objectRecordId } }) {
-      ${PERSON_FRAGMENT}
+      ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
   }
 }
 `.replace(/\s/g, '');
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

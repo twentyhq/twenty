@@ -9,7 +9,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useCreateManyRecords';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(),
@@ -35,7 +35,7 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

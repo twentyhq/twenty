@@ -225,7 +225,7 @@ export const mocks = [
             primaryPhoneCountryCode
             additionalPhones
           }
-          workPrefereance
+          workPreference
           xLink {
             primaryLinkUrl
             primaryLinkLabel
@@ -503,7 +503,7 @@ export const mocks = [
                 primaryPhoneCountryCode
                 additionalPhones
               }
-              workPrefereance
+              workPreference
               xLink {
                 primaryLinkUrl
                 primaryLinkLabel

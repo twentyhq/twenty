@@ -1,13 +1,13 @@
 import { renderHook } from '@testing-library/react';
 
 import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),
 }));
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

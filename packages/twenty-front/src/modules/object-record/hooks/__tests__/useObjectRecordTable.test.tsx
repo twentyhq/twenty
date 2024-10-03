@@ -6,7 +6,7 @@ import { mocks } from '@/auth/hooks/__mocks__/useAuth';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
@@ -16,7 +16,7 @@ const ObjectNamePluralSetter = ({ children }: { children: ReactNode }) => {
   return <>{children}</>;
 };
 
-const HookMockWrapper = getJestHookMockWrapper({
+const HookMockWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

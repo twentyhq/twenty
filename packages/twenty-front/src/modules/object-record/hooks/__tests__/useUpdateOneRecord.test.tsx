@@ -6,7 +6,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useUpdateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const person = { id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9' };
 const update = {
@@ -35,7 +35,7 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

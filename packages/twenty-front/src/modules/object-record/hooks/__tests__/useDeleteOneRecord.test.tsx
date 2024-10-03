@@ -1,7 +1,4 @@
-import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 
 import {
   query,
@@ -9,6 +6,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const personId = 'a7286b9a-c039-4a89-9567-2dfa7953cda9';
 
@@ -26,13 +24,9 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useDeleteOneRecord', () => {
   it('works as expected', async () => {

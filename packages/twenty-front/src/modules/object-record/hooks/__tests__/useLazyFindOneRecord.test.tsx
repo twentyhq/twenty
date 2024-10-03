@@ -6,7 +6,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useFindOneRecord';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mocks = [
   {
@@ -22,7 +22,7 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 

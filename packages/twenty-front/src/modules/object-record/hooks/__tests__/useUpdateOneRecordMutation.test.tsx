@@ -3,7 +3,7 @@ import { print } from 'graphql';
 
 import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { getJestHookMockWrapper } from '~/testing/jest/getJestHookMockWrapper';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
 
 const expectedQueryTemplate = `
@@ -13,7 +13,7 @@ mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
   }
 }`;
 
-const Wrapper = getJestHookMockWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 

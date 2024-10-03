@@ -1,13 +1,12 @@
 import { gql } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
-import { act, renderHook, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { renderHook, waitFor } from '@testing-library/react';
+import { act } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 
-import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useOpenObjectRecordsSpreasheetImportDialog } from '../hooks/useOpenObjectRecordsSpreasheetImportDialog';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
@@ -26,13 +25,42 @@ const companyMocks = [
         ) {
           createCompanies(data: $data, upsert: $upsert) {
             __typename
-            updatedAt
-            domainName {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
+            accountOwner {
+              __typename
+              avatarUrl
+              colorScheme
+              createdAt
+              dateFormat
+              deletedAt
+              id
+              locale
+              name {
+                firstName
+                lastName
+              }
+              timeFormat
+              timeZone
+              updatedAt
+              userEmail
+              userId
             }
-            visaSponsorship
+            accountOwnerId
+            activityTargets {
+              edges {
+                node {
+                  __typename
+                  activityId
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  opportunityId
+                  personId
+                  rocketId
+                  updatedAt
+                }
+              }
+            }
             address {
               addressStreet1
               addressStreet2
@@ -43,20 +71,31 @@ const companyMocks = [
               addressLat
               addressLng
             }
-            position
-            employees
-            deletedAt
-            accountOwnerId
             annualRecurringRevenue {
               amountMicros
               currencyCode
             }
-            id
-            name
-            xLink {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
+            attachments {
+              edges {
+                node {
+                  __typename
+                  activityId
+                  authorId
+                  companyId
+                  createdAt
+                  deletedAt
+                  fullPath
+                  id
+                  name
+                  noteId
+                  opportunityId
+                  personId
+                  rocketId
+                  taskId
+                  type
+                  updatedAt
+                }
+              }
             }
             createdAt
             createdBy {
@@ -64,7 +103,36 @@ const companyMocks = [
               workspaceMemberId
               name
             }
-            workPolicy
+            deletedAt
+            domainName {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            employees
+            favorites {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  noteId
+                  opportunityId
+                  personId
+                  position
+                  rocketId
+                  taskId
+                  updatedAt
+                  viewId
+                  workflowId
+                  workspaceMemberId
+                }
+              }
+            }
+            id
+            idealCustomerProfile
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -75,8 +143,151 @@ const companyMocks = [
               primaryLinkLabel
               secondaryLinks
             }
+            name
+            noteTargets {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  noteId
+                  opportunityId
+                  personId
+                  rocketId
+                  updatedAt
+                }
+              }
+            }
+            opportunities {
+              edges {
+                node {
+                  __typename
+                  amount {
+                    amountMicros
+                    currencyCode
+                  }
+                  closeDate
+                  companyId
+                  createdAt
+                  createdBy {
+                    source
+                    workspaceMemberId
+                    name
+                  }
+                  deletedAt
+                  id
+                  name
+                  pointOfContactId
+                  position
+                  stage
+                  updatedAt
+                }
+              }
+            }
+            people {
+              edges {
+                node {
+                  __typename
+                  avatarUrl
+                  city
+                  companyId
+                  createdAt
+                  createdBy {
+                    source
+                    workspaceMemberId
+                    name
+                  }
+                  deletedAt
+                  emails {
+                    primaryEmail
+                    additionalEmails
+                  }
+                  id
+                  intro
+                  jobTitle
+                  linkedinLink {
+                    primaryLinkUrl
+                    primaryLinkLabel
+                    secondaryLinks
+                  }
+                  name {
+                    firstName
+                    lastName
+                  }
+                  performanceRating
+                  phones {
+                    primaryPhoneNumber
+                    primaryPhoneCountryCode
+                    additionalPhones
+                  }
+                  position
+                  updatedAt
+                  whatsapp {
+                    primaryPhoneNumber
+                    primaryPhoneCountryCode
+                    additionalPhones
+                  }
+                  workPreference
+                  xLink {
+                    primaryLinkUrl
+                    primaryLinkLabel
+                    secondaryLinks
+                  }
+                }
+              }
+            }
+            position
             tagline
-            idealCustomerProfile
+            taskTargets {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  opportunityId
+                  personId
+                  rocketId
+                  taskId
+                  updatedAt
+                }
+              }
+            }
+            timelineActivities {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  happensAt
+                  id
+                  linkedObjectMetadataId
+                  linkedRecordCachedName
+                  linkedRecordId
+                  name
+                  noteId
+                  opportunityId
+                  personId
+                  properties
+                  rocketId
+                  taskId
+                  updatedAt
+                  workspaceMemberId
+                }
+              }
+            }
+            updatedAt
+            visaSponsorship
+            workPolicy
+            xLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
           }
         }
       `,
@@ -99,6 +310,9 @@ const companyMocks = [
         createCompanies: [
           {
             id: companyId,
+            favorites: {
+              edges: [],
+            },
           },
         ],
       },
@@ -112,17 +326,9 @@ const fakeCsv = () => {
   return new File([blob], 'fakeData.csv', { type: 'text/csv' });
 };
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={companyMocks} addTypename={false}>
-      <SnackBarManagerScopeInternalContext.Provider
-        value={{ scopeId: 'snack-bar-manager' }}
-      >
-        {children}
-      </SnackBarManagerScopeInternalContext.Provider>
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: companyMocks,
+});
 
 // TODO: improve object metadata item seeds to have more field types to add tests on composite fields here
 describe('useSpreadsheetCompanyImport', () => {
