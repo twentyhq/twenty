@@ -103,15 +103,8 @@ export class GraphqlQueryRunnerService {
       ObjectRecord[]
     >('createMany', { data: [args.data], upsert: args.upsert }, options);
 
-    // TODO: trigger webhooks should be a consequence of the emitCreateEvents
     // TODO: emitCreateEvents should be moved to the ORM layer
-
     if (results) {
-      await this.triggerWebhooks(
-        results,
-        CallWebhookJobsJobOperation.create,
-        options,
-      );
       this.apiEventEmitterService.emitCreateEvents(
         results,
         options.authContext,
@@ -133,11 +126,6 @@ export class GraphqlQueryRunnerService {
     >('createMany', args, options);
 
     if (results) {
-      await this.triggerWebhooks(
-        results,
-        CallWebhookJobsJobOperation.create,
-        options,
-      );
       this.apiEventEmitterService.emitCreateEvents(
         results,
         options.authContext,
@@ -168,12 +156,6 @@ export class GraphqlQueryRunnerService {
       UpdateOneResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord
     >('updateOne', args, options);
-
-    await this.triggerWebhooks(
-      [result],
-      CallWebhookJobsJobOperation.update,
-      options,
-    );
 
     this.apiEventEmitterService.emitUpdateEvents(
       [existingRecord],
@@ -207,12 +189,6 @@ export class GraphqlQueryRunnerService {
       ObjectRecord[]
     >('updateMany', args, options);
 
-    await this.triggerWebhooks(
-      result,
-      CallWebhookJobsJobOperation.update,
-      options,
-    );
-
     this.apiEventEmitterService.emitUpdateEvents(
       existingRecords.edges.map((edge) => edge.node),
       result,
@@ -238,12 +214,6 @@ export class GraphqlQueryRunnerService {
         id: args.id,
         data: { deletedAt: new Date() } as Partial<ObjectRecord>,
       },
-      options,
-    );
-
-    await this.triggerWebhooks(
-      [result],
-      CallWebhookJobsJobOperation.delete,
       options,
     );
 
@@ -274,12 +244,6 @@ export class GraphqlQueryRunnerService {
       options,
     );
 
-    await this.triggerWebhooks(
-      result,
-      CallWebhookJobsJobOperation.delete,
-      options,
-    );
-
     this.apiEventEmitterService.emitDeletedEvents(
       result,
       options.authContext,
@@ -298,12 +262,6 @@ export class GraphqlQueryRunnerService {
       DestroyOneResolverArgs,
       ObjectRecord
     >('destroyOne', args, options);
-
-    await this.triggerWebhooks(
-      [result],
-      CallWebhookJobsJobOperation.destroy,
-      options,
-    );
 
     this.apiEventEmitterService.emitDestroyEvents(
       [result],
@@ -328,13 +286,6 @@ export class GraphqlQueryRunnerService {
         filter: args.filter,
         data: { deletedAt: null } as Partial<ObjectRecord>,
       },
-      options,
-    );
-
-    // TODO: Add restore webhook?
-    await this.triggerWebhooks(
-      [result],
-      CallWebhookJobsJobOperation.update,
       options,
     );
 
@@ -376,7 +327,34 @@ export class GraphqlQueryRunnerService {
       Array.isArray(results) ? results : [results],
     );
 
+    const jobOperation = this.operationNameToJobOperation(operationName);
+
+    if (jobOperation) {
+      await this.triggerWebhooks(results, jobOperation, options);
+    }
+
     return results;
+  }
+
+  private operationNameToJobOperation(
+    operationName: WorkspaceResolverBuilderMethodNames,
+  ): CallWebhookJobsJobOperation | undefined {
+    switch (operationName) {
+      case 'createOne':
+      case 'createMany':
+        return CallWebhookJobsJobOperation.create;
+      case 'updateOne':
+      case 'updateMany':
+      case 'restoreMany':
+        return CallWebhookJobsJobOperation.update;
+      case 'deleteOne':
+      case 'deleteMany':
+        return CallWebhookJobsJobOperation.delete;
+      case 'destroyOne':
+        return CallWebhookJobsJobOperation.destroy;
+      default:
+        return undefined;
+    }
   }
 
   private async triggerWebhooks<T>(
