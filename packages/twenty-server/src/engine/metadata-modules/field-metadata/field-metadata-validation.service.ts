@@ -14,7 +14,23 @@ export class FieldMetadataValidationService<
 > {
   constructor() {}
 
-  validateSettingsOrThrow(settings: FieldMetadataSettings<T>) {
+  validateSettingsOrThrow({
+    fieldType,
+    settings,
+  }: {
+    fieldType: FieldMetadataType;
+    settings: FieldMetadataSettings<T>;
+  }) {
+    switch (fieldType) {
+      case FieldMetadataType.NUMBER:
+        this.validateNumberSettings(settings);
+        break;
+      default:
+        break;
+    }
+  }
+
+  private validateNumberSettings(settings: FieldMetadataSettings<T>) {
     if ('decimals' in settings) {
       const { decimals } = settings;
 

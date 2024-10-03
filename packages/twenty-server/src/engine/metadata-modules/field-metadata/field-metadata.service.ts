@@ -159,6 +159,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       this.validateFieldMetadataInput<CreateFieldInput>(
+        fieldMetadataInput.type,
         fieldMetadataInput,
         objectMetadata,
       );
@@ -393,6 +394,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       this.validateFieldMetadataInput<UpdateFieldInput>(
+        existingFieldMetadata.type,
         fieldMetadataInput,
         objectMetadata,
       );
@@ -709,7 +711,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   private validateFieldMetadataInput<
     T extends UpdateFieldInput | CreateFieldInput,
-  >(fieldMetadataInput: T, objectMetadata: ObjectMetadataEntity): T {
+  >(
+    fieldMetadataType: FieldMetadataType,
+    fieldMetadataInput: T,
+    objectMetadata: ObjectMetadataEntity,
+  ): T {
     if (fieldMetadataInput.name) {
       try {
         validateFieldNameValidityOrThrow(fieldMetadataInput.name);
@@ -751,9 +757,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (fieldMetadataInput.settings) {
-      this.fieldMetadataValidationService.validateSettingsOrThrow(
-        fieldMetadataInput.settings,
-      );
+      this.fieldMetadataValidationService.validateSettingsOrThrow({
+        fieldType: fieldMetadataType,
+        settings: fieldMetadataInput.settings,
+      });
     }
 
     return fieldMetadataInput;
