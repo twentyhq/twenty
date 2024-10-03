@@ -30,7 +30,7 @@ const StyledContainer = styled.div<ContainerProps>`
 const StyledCircle = styled(motion.div)<{
   size: ToggleSize;
 }>`
-  background-color: ${({ theme }) => theme.background.secondary};
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: 50%;
   height: ${({ size }) => (size === 'small' ? 12 : 16)}px;
   width: ${({ size }) => (size === 'small' ? 12 : 16)}px;
