@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 
 import { ASSET_PATH } from 'src/constants/assets-path';
 
-type File = { name: string; path: string; content: string };
+type File = { name: string; path: string; content: Buffer };
 
 const getAllFiles = async (
   rootDir: string,
@@ -21,7 +21,7 @@ const getAllFiles = async (
       files.push({
         path: path.relative(rootDir, dir),
         name: entry.name,
-        content: (await fs.readFile(fullPath)).toString(),
+        content: await fs.readFile(fullPath),
       });
     }
   }
