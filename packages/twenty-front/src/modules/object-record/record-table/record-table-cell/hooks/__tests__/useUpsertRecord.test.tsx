@@ -5,12 +5,12 @@ import { createState } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const draftValue = 'updated Name';
 
@@ -55,8 +55,6 @@ const updateOneRecordMock = jest.fn();
   createOneRecord: createOneRecordMock,
 });
 
-const objectMetadataItems = getObjectMetadataItemsMock();
-
 const Wrapper = ({
   children,
   pendingRecordIdMockedValue,
@@ -68,7 +66,7 @@ const Wrapper = ({
 }) => (
   <RecoilRoot
     initializeState={(snapshot) => {
-      snapshot.set(objectMetadataItemsState, objectMetadataItems);
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
       snapshot.set(pendingRecordIdState, pendingRecordIdMockedValue);
       snapshot.set(draftValueState, draftValueMockedValue);
     }}

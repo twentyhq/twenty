@@ -8,6 +8,7 @@ import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-reso
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
+import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
@@ -42,6 +43,7 @@ export class WorkspaceResolverFactory {
     private readonly deleteManyResolverFactory: DeleteManyResolverFactory,
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
+    private readonly searchResolverFactory: SearchResolverFactory,
   ) {}
 
   async create(
@@ -65,6 +67,7 @@ export class WorkspaceResolverFactory {
       ['deleteMany', this.deleteManyResolverFactory],
       ['restoreMany', this.restoreManyResolverFactory],
       ['destroyMany', this.destroyManyResolverFactory],
+      ['search', this.searchResolverFactory],
     ]);
     const resolvers: IResolvers = {
       Query: {},

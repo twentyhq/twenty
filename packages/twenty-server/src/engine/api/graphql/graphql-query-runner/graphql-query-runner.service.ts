@@ -14,6 +14,7 @@ import {
   FindManyResolverArgs,
   FindOneResolverArgs,
   ResolverArgsType,
+  SearchResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
@@ -21,6 +22,7 @@ import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/gr
 import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-one-resolver.service';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
+import { GraphqlQuerySearchResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-search-resolver.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
@@ -35,6 +37,8 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -47,6 +51,7 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 export class GraphqlQueryRunnerService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -178,6 +183,20 @@ export class GraphqlQueryRunnerService {
   }
 
   @LogExecutionTime()
+  async search<ObjectRecord extends IRecord = IRecord>(
+    args: SearchResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<IConnection<ObjectRecord>> {
+    const graphqlQuerySearchResolverService =
+      new GraphqlQuerySearchResolverService(
+        this.twentyORMGlobalManager,
+        this.featureFlagService,
+      );
+
+    return graphqlQuerySearchResolverService.search(args, options);
+  }
+
+  @LogExecutionTime()
   async createMany<ObjectRecord extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
@@ -284,10 +303,94 @@ export class GraphqlQueryRunnerService {
   async destroyOne<ObjectRecord extends IRecord = IRecord>(
     args: DestroyOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
+  ): Promise<ObjectRecord | undefined> {
     const graphqlQueryDestroyOneResolverService =
       new GraphqlQueryDestroyOneResolverService(this.twentyORMGlobalManager);
 
-    return graphqlQueryDestroyOneResolverService.destroyOne(args, options);
+    const { authContext, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.id);
+
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'destroyOne',
+        args,
+      );
+
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
+      hookedArgs,
+      options,
+      ResolverArgsType.DestroyOne,
+    )) as DestroyOneResolverArgs;
+
+    const result = (await graphqlQueryDestroyOneResolverService.destroyOne(
+      computedArgs,
+      options,
+    )) as ObjectRecord;
+
+    await this.workspaceQueryHookService.executePostQueryHooks(
+      authContext,
+      objectMetadataItem.nameSingular,
+      'destroyOne',
+      [result],
+    );
+
+    await this.triggerWebhooks<IRecord>(
+      [result],
+      CallWebhookJobsJobOperation.destroy,
+      options,
+    );
+
+    this.emitDestroyEvents<IRecord>([result], authContext, objectMetadataItem);
+
+    return result;
+  }
+
+  private emitDestroyEvents<BaseRecord extends IRecord = IRecord>(
+    records: BaseRecord[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ) {
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.destroyed`,
+      records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: this.removeNestedProperties(record),
+          },
+        } satisfies ObjectRecordDeleteEvent<any>;
+      }),
+      authContext.workspace.id,
+    );
+  }
+
+  private removeNestedProperties<Record extends IRecord = IRecord>(
+    record: Record,
+  ) {
+    if (!record) {
+      return;
+    }
+
+    const sanitizedRecord = {};
+
+    for (const [key, value] of Object.entries(record)) {
+      if (value && typeof value === 'object' && value['edges']) {
+        continue;
+      }
+
+      if (key === '__typename') {
+        continue;
+      }
+
+      sanitizedRecord[key] = value;
+    }
+
+    return sanitizedRecord;
   }
 }

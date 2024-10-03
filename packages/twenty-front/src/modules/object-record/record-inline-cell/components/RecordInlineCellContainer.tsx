@@ -4,8 +4,8 @@ import { ReactElement, useContext } from 'react';
 import {
   AppTooltip,
   IconComponent,
-  TooltipDelay,
   OverflowingTextWithTooltip,
+  TooltipDelay,
 } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -55,11 +55,9 @@ const StyledInlineCellBaseContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   display: flex;
-
+  height: 24px;
   gap: ${({ theme }) => theme.spacing(1)};
-
   user-select: none;
-
   justify-content: center;
 `;
 

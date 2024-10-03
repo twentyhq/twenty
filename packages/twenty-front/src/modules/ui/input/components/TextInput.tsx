@@ -89,7 +89,6 @@ export const TextInput = ({
       onInputEnter?.();
 
       if (isDefined(inputRef) && 'current' in inputRef) {
-        inputRef.current?.blur();
         setIsFocused(false);
       }
     },

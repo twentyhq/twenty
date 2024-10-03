@@ -16,20 +16,20 @@ import {
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
+import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
-import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
-import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 
-import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
-import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
-import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
-import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
-import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
+import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
+import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
+import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
 import { CastToStringArray } from 'src/engine/core-modules/environment/decorators/cast-to-string-array.decorator';
+import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
+import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/environment/decorators/is-strictly-lower-than.decorator';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
@@ -87,6 +87,15 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   TELEMETRY_ENABLED = true;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  ANALYTICS_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
+  TINYBIRD_TOKEN: string;
 
   @CastToPositiveNumber()
   @IsNumber()
@@ -382,7 +391,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
-  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
+  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
@@ -417,7 +426,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
 
-  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Memory;
+  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Redis;
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;

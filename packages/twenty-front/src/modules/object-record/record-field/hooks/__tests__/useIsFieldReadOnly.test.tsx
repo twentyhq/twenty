@@ -4,7 +4,7 @@ import { RecoilRoot } from 'recoil';
 
 import {
   actorFieldDefinition,
-  phoneFieldDefinition,
+  phonesFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
@@ -29,7 +29,7 @@ const getWrapper =
   );
 
 const ActorWrapper = getWrapper(actorFieldDefinition);
-const PhoneWrapper = getWrapper(phoneFieldDefinition);
+const PhoneWrapper = getWrapper(phonesFieldDefinition);
 
 describe('useIsFieldReadOnly', () => {
   it('should return true', () => {

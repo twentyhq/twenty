@@ -1,14 +1,12 @@
 import { getObjectMetadataItemByNameSingular } from '@/object-metadata/utils/getObjectMetadataItemBySingularName';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 describe('getObjectMetadataItemBySingularName', () => {
   it('should work as expected', () => {
-    const firstObjectMetadataItem = mockObjectMetadataItems[0];
+    const firstObjectMetadataItem = generatedMockObjectMetadataItems[0];
 
     const foundObjectMetadataItem = getObjectMetadataItemByNameSingular({
-      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItems: generatedMockObjectMetadataItems,
       objectNameSingular: firstObjectMetadataItem.nameSingular,
     });
 

@@ -5,7 +5,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
@@ -15,8 +15,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useGetRelationMetadata', () => {
   it('should return correct properties', async () => {
-    const objectMetadataItems = getObjectMetadataItemsMock();
-    const objectMetadata = objectMetadataItems.find(
+    const objectMetadata = generatedMockObjectMetadataItems.find(
       (item) => item.nameSingular === 'person',
     )!;
     const fieldMetadataItem = objectMetadata.fields.find(
@@ -28,7 +27,7 @@ describe('useGetRelationMetadata', () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
 
         useEffect(() => {
-          setMetadataItems(objectMetadataItems);
+          setMetadataItems(generatedMockObjectMetadataItems);
         }, [setMetadataItems]);
 
         return useGetRelationMetadata();
@@ -45,9 +44,10 @@ describe('useGetRelationMetadata', () => {
       relationType,
     } = result.current({ fieldMetadataItem }) ?? {};
 
-    const expectedRelationObjectMetadataItem = objectMetadataItems.find(
-      (item) => item.nameSingular === 'opportunity',
-    );
+    const expectedRelationObjectMetadataItem =
+      generatedMockObjectMetadataItems.find(
+        (item) => item.nameSingular === 'opportunity',
+      );
     const expectedRelationFieldMetadataItem =
       expectedRelationObjectMetadataItem?.fields.find(
         (field) => field.name === 'pointOfContact',

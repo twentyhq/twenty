@@ -25,6 +25,9 @@ export abstract class BaseWorkspaceEntity {
     description: 'Creation date',
     icon: 'IconCalendar',
     defaultValue: 'now',
+    settings: {
+      displayAsRelativeDate: true,
+    },
   })
   createdAt: string;
 
@@ -35,6 +38,9 @@ export abstract class BaseWorkspaceEntity {
     description: 'Last time the record was changed',
     icon: 'IconCalendarClock',
     defaultValue: 'now',
+    settings: {
+      displayAsRelativeDate: true,
+    },
   })
   updatedAt: string;
 
@@ -44,6 +50,9 @@ export abstract class BaseWorkspaceEntity {
     label: 'Deleted at',
     description: 'Date when the record was deleted',
     icon: 'IconCalendarMinus',
+    settings: {
+      displayAsRelativeDate: true,
+    },
   })
   @WorkspaceIsNullable()
   deletedAt?: string | null;

@@ -5,7 +5,6 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import {
   query,
   responseData,
@@ -13,6 +12,7 @@ import {
 } from '@/object-record/hooks/__mocks__/useFindManyRecords';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const mocks = [
   {
@@ -65,11 +65,9 @@ describe('useFindManyRecords', () => {
           locale: 'en',
         });
 
-        const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
 
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFindManyRecords({
           objectNameSingular: 'person',
