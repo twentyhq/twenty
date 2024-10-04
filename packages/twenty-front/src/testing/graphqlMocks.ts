@@ -297,7 +297,7 @@ export const graphqlMocks = {
     graphql.query('FindManyTasks', () => {
       return HttpResponse.json({
         data: {
-          activities: {
+          tasks: {
             edges: mockedTasks.map(({ taskTargets, ...rest }) => ({
               node: {
                 ...rest,
@@ -310,6 +310,26 @@ export const graphqlMocks = {
               },
               cursor: null,
             })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('FindManyTaskTargets', () => {
+      return HttpResponse.json({
+        data: {
+          taskTargets: {
+            edges: mockedTasks.flatMap((task) =>
+              task.taskTargets.map((target) => ({
+                node: target,
+                cursor: null,
+              })),
+            ),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,
