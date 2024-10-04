@@ -77,6 +77,9 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "node dist/src/queue-worker/queue-worker.js"
+      },
+      "configurations": {
+        "sync": { "env": { "MESSAGE_QUEUE_TYPE": "sync", "CACHE_STORAGE_TYPE": "memory" } }
       }
     },
     "typeorm": {
