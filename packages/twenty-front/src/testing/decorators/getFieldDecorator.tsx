@@ -56,7 +56,7 @@ const RecordMockSetterEffect = ({
 
 export const getFieldDecorator =
   (
-    objectNameSingular: 'company' | 'person' | 'task',
+    objectNameSingular: 'company' | 'person' | 'task' | 'workflowVersions',
     fieldName: string,
     fieldValue?: any,
   ): Decorator =>

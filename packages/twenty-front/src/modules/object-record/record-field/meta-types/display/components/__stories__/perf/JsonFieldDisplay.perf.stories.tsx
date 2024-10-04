@@ -10,7 +10,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/JsonFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('company', 'testRawJson', {
+    getFieldDecorator('workflowVersions', 'steps', {
       key1: 'value1',
       key2: 'value2',
     }),
