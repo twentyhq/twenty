@@ -46,6 +46,10 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     GmailGetMessageListService,
     GmailHandleErrorService,
   ],
-  exports: [GmailGetMessagesService, GmailGetMessageListService],
+  exports: [
+    GmailGetMessagesService,
+    GmailGetMessageListService,
+    GmailClientProvider,
+  ],
 })
 export class MessagingGmailDriverModule {}

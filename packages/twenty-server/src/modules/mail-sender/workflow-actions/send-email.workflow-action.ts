@@ -2,15 +2,24 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { z } from 'zod';
 import Handlebars from 'handlebars';
-import { JSDOM } from 'jsdom';
-import DOMPurify from 'dompurify';
-import { WorkflowActionEmail } from 'twenty-emails';
-import { render } from '@react-email/components';
 
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
 import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import {
+  MailSenderException,
+  MailSenderExceptionCode,
+} from 'src/modules/mail-sender/exceptions/mail-sender.exception';
+import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 
 @Injectable()
 export class SendEmailWorkflowAction {
@@ -18,7 +27,38 @@ export class SendEmailWorkflowAction {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
+    private readonly gmailClientProvider: GmailClientProvider,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
+
+  private async getEmailClient(step: WorkflowSendEmailStep) {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new WorkflowStepExecutorException(
+        'Scoped workspace not found',
+        WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const connectedAccount =
+      await this.connectedAccountRepository.getByIdOrFail(
+        step.settings.connectedAccountId,
+        workspaceId,
+      );
+
+    switch (connectedAccount.provider) {
+      case 'google':
+        return await this.gmailClientProvider.getGmailClient(connectedAccount);
+      default:
+        throw new MailSenderException(
+          `Provider ${connectedAccount.provider} is not supported`,
+          MailSenderExceptionCode.PROVIDER_NOT_SUPPORTED,
+        );
+    }
+  }
 
   async execute({
     step,
@@ -30,6 +70,8 @@ export class SendEmailWorkflowAction {
       [key: string]: string;
     };
   }): Promise<WorkflowActionResult> {
+    const emailProvider = await this.getEmailClient(step);
+
     try {
       const emailSchema = z.string().trim().email('Invalid email');
 
@@ -43,30 +85,22 @@ export class SendEmailWorkflowAction {
 
       const mainText = Handlebars.compile(step.settings.template)(payload);
 
-      const window = new JSDOM('').window;
-      const purify = DOMPurify(window);
-      const safeHTML = purify.sanitize(mainText || '');
+      const message = [
+        `To: ${payload.email}`,
+        `Subject: ${step.settings.subject || ''}`,
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset="UTF-8"',
+        '',
+        mainText,
+      ].join('\n');
 
-      const email = WorkflowActionEmail({
-        dangerousHTML: safeHTML,
-        title: step.settings.title,
-        callToAction: step.settings.callToAction,
-      });
-      const html = render(email, {
-        pretty: true,
-      });
-      const text = render(email, {
-        plainText: true,
-      });
+      const encodedMessage = Buffer.from(message).toString('base64');
 
-      await this.emailService.send({
-        from: `${this.environmentService.get(
-          'EMAIL_FROM_NAME',
-        )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-        to: payload.email,
-        subject: step.settings.subject || '',
-        text,
-        html,
+      await emailProvider.users.messages.send({
+        userId: 'me',
+        requestBody: {
+          raw: encodedMessage,
+        },
       });
 
       return { result: { success: true } };
