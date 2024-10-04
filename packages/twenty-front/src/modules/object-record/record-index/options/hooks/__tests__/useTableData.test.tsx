@@ -278,6 +278,7 @@ describe('useTableData', () => {
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,
                 targetFieldMetadataName: '',
+                settings: {},
               },
               position: 7,
               showLabel: undefined,
