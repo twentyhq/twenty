@@ -61,13 +61,11 @@ export class GraphqlQueryUpdateOneResolverService
       objectMetadataMapItem.nameSingular,
     );
 
-    const withFilterQueryBuilder = queryBuilder.where({ id: args.id });
-
     const data = formatData(args.data, objectMetadataMapItem);
 
-    const result = await withFilterQueryBuilder
-      .update()
-      .set(data)
+    const result = await queryBuilder
+      .update(data)
+      .where({ id: args.id })
       .returning('*')
       .execute();
 

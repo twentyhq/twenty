@@ -49,8 +49,10 @@ import { generateMigrationName } from 'src/engine/metadata-modules/workspace-mig
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -103,6 +105,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {
     super(objectMetadataRepository);
   }
@@ -563,8 +566,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadataInput.primaryKeyFieldMetadataSettings,
     );
 
-    return this.workspaceMigrationService.createCustomMigration(
+    await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+      createdObjectMetadata.workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: WorkspaceMigrationTableActionType.CREATE,
+        } satisfies WorkspaceMigrationTableAction,
+      ],
+    );
+
+    for (const fieldMetadata of createdObjectMetadata.fields) {
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`create-${fieldMetadata.name}`),
+        createdObjectMetadata.workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(createdObjectMetadata),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.CREATE,
+              fieldMetadata,
+            ),
+          },
+        ] satisfies WorkspaceMigrationTableAction[],
+      );
+    }
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(
+        `create-${createdObjectMetadata.nameSingular}-relations`,
+      ),
       createdObjectMetadata.workspaceId,
       buildMigrationsForCustomObjectRelations(
         createdObjectMetadata,
@@ -611,7 +644,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+      generateMigrationName(
+        `update-${createdObjectMetadata.nameSingular}-add-searchVector`,
+      ),
       createdObjectMetadata.workspaceId,
       [
         {
