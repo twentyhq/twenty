@@ -19,6 +19,10 @@ initialize({
       return;
     }
 
+    if (request.url.startsWith('http://localhost:3000/files/data:image')) {
+      return;
+    }
+
     const requestBody = await request.json();
     // eslint-disable-next-line no-console
     console.warn(`Unhandled ${request.method} request to ${request.url} 

@@ -1,26 +1,24 @@
-import styled from '@emotion/styled';
+// const StyledContainer = styled.div`
+//   align-items: center;
+//   display: flex;
+//   flex-direction: column;
+//   height: 100vh;
+//   justify-content: center;
+// `;
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
-`;
-
-const AppInaccessible = ({ message }: { message: string }) => {
-  return (
-    <StyledContainer>
-      <img
-        src="/images/integrations/twenty-logo.svg"
-        alt="twenty-icon"
-        height={40}
-        width={40}
-      />
-      <h3>{message}</h3>
-    </StyledContainer>
-  );
-};
+// const AppInaccessible = ({ message }: { message: string }) => {
+//   return (
+//     <StyledContainer>
+//       <img
+//         src="/images/integrations/twenty-logo.svg"
+//         alt="twenty-icon"
+//         height={40}
+//         width={40}
+//       />
+//       <h3>{message}</h3>
+//     </StyledContainer>
+//   );
+// };
 
 export const ChromeExtensionSidecarProvider: React.FC<
   React.PropsWithChildren
