@@ -45,13 +45,23 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+type WorkflowEditTriggerFormProps =
+  | {
+      trigger: WorkflowTrigger | undefined;
+      readonly: true;
+      onTriggerUpdate?: undefined;
+    }
+  | {
+      trigger: WorkflowTrigger | undefined;
+      readonly?: false;
+      onTriggerUpdate: (trigger: WorkflowTrigger) => void;
+    };
+
 export const WorkflowEditTriggerForm = ({
   trigger,
+  readonly,
   onTriggerUpdate,
-}: {
-  trigger: WorkflowTrigger | undefined;
-  onTriggerUpdate: (trigger: WorkflowTrigger) => void;
-}) => {
+}: WorkflowEditTriggerFormProps) => {
   const theme = useTheme();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -102,26 +112,31 @@ export const WorkflowEditTriggerForm = ({
           dropdownId="workflow-edit-trigger-record-type"
           label="Record Type"
           fullWidth
+          disabled={readonly}
           value={triggerEvent?.objectType}
           options={availableMetadata}
-          onChange={(updatedRecordType) => {
-            onTriggerUpdate(
-              isDefined(trigger) && isDefined(triggerEvent)
-                ? {
-                    ...trigger,
-                    settings: {
-                      ...trigger.settings,
-                      eventName: `${updatedRecordType}.${triggerEvent.event}`,
-                    },
-                  }
-                : {
-                    type: 'DATABASE_EVENT',
-                    settings: {
-                      eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
-                    },
-                  },
-            );
-          }}
+          onChange={
+            readonly
+              ? undefined
+              : (updatedRecordType) => {
+                  onTriggerUpdate(
+                    isDefined(trigger) && isDefined(triggerEvent)
+                      ? {
+                          ...trigger,
+                          settings: {
+                            ...trigger.settings,
+                            eventName: `${updatedRecordType}.${triggerEvent.event}`,
+                          },
+                        }
+                      : {
+                          type: 'DATABASE_EVENT',
+                          settings: {
+                            eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
+                          },
+                        },
+                  );
+                }
+          }
         />
         <Select
           dropdownId="workflow-edit-trigger-event-type"
@@ -129,24 +144,29 @@ export const WorkflowEditTriggerForm = ({
           fullWidth
           value={triggerEvent?.event}
           options={OBJECT_EVENT_TRIGGERS}
-          onChange={(updatedEvent) => {
-            onTriggerUpdate(
-              isDefined(trigger) && isDefined(triggerEvent)
-                ? {
-                    ...trigger,
-                    settings: {
-                      ...trigger.settings,
-                      eventName: `${triggerEvent.objectType}.${updatedEvent}`,
-                    },
-                  }
-                : {
-                    type: 'DATABASE_EVENT',
-                    settings: {
-                      eventName: `${availableMetadata[0].value}.${updatedEvent}`,
-                    },
-                  },
-            );
-          }}
+          disabled={readonly}
+          onChange={
+            readonly
+              ? undefined
+              : (updatedEvent) => {
+                  onTriggerUpdate(
+                    isDefined(trigger) && isDefined(triggerEvent)
+                      ? {
+                          ...trigger,
+                          settings: {
+                            ...trigger.settings,
+                            eventName: `${triggerEvent.objectType}.${updatedEvent}`,
+                          },
+                        }
+                      : {
+                          type: 'DATABASE_EVENT',
+                          settings: {
+                            eventName: `${availableMetadata[0].value}.${updatedEvent}`,
+                          },
+                        },
+                  );
+                }
+          }
         />
       </StyledTriggerSettings>
     </>

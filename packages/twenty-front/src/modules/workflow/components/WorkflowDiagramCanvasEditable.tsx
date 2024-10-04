@@ -1,5 +1,5 @@
 import { WorkflowDiagramCanvasBase } from '@/workflow/components/WorkflowDiagramCanvasBase';
-import { WorkflowDiagramCanvasEffect } from '@/workflow/components/WorkflowDiagramCanvasEffect';
+import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/components/WorkflowDiagramCanvasEditableEffect';
 import { WorkflowDiagramCreateStepNode } from '@/workflow/components/WorkflowDiagramCreateStepNode';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/components/WorkflowDiagramStepNodeEditable';
@@ -32,7 +32,7 @@ export const WorkflowDiagramCanvasEditable = ({
         'empty-trigger': WorkflowDiagramEmptyTrigger,
       }}
     >
-      <WorkflowDiagramCanvasEffect />
+      <WorkflowDiagramCanvasEditableEffect />
 
       <StyledStatusTagContainer>
         <WorkflowVersionStatusTag

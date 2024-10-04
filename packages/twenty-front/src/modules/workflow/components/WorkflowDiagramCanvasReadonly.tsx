@@ -1,4 +1,5 @@
 import { WorkflowDiagramCanvasBase } from '@/workflow/components/WorkflowDiagramCanvasBase';
+import { WorkflowDiagramCanvasReadonlyEffect } from '@/workflow/components/WorkflowDiagramCanvasReadonlyEffect';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/components/WorkflowDiagramStepNodeReadonly';
 import { WorkflowVersionStatusTag } from '@/workflow/components/WorkflowVersionStatusTag';
@@ -29,6 +30,8 @@ export const WorkflowDiagramCanvasReadonly = ({
         'empty-trigger': WorkflowDiagramEmptyTrigger,
       }}
     >
+      <WorkflowDiagramCanvasReadonlyEffect />
+
       <StyledStatusTagContainer>
         <WorkflowVersionStatusTag versionStatus={workflowVersion.status} />
       </StyledStatusTagContainer>

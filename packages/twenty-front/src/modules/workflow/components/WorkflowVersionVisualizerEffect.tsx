@@ -1,5 +1,6 @@
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
+import { workflowVersionIdState } from '@/workflow/states/workflowVersionIdState';
 import { getWorkflowVersionDiagram } from '@/workflow/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -12,7 +13,12 @@ export const WorkflowVersionVisualizerEffect = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
+  const setWorkflowVersionId = useSetRecoilState(workflowVersionIdState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
+
+  useEffect(() => {
+    setWorkflowVersionId(workflowVersionId);
+  }, [setWorkflowVersionId, workflowVersionId]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
