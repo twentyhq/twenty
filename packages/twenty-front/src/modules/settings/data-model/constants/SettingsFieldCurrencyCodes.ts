@@ -133,7 +133,7 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   },
   DZD: {
     label: 'Algerian Dinar',
-    Icon: IconCurrencyForint,
+    Icon: IconCoins,
   },
   PLN: { label: 'Polish złoty', Icon: IconCurrencyZloty },
   VND: { label: 'Vietnamese đồng', Icon: IconCurrencyDong },
