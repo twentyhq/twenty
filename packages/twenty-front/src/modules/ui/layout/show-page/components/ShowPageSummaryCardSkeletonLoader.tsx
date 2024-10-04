@@ -1,3 +1,4 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -24,7 +25,10 @@ export const ShowPageSummaryCardSkeletonLoader = () => {
       highlightColor={theme.background.transparent.lighter}
     >
       <StyledContainer>
-        <Skeleton height={40} width={40} />
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.standard.xl}
+          width={40}
+        />
         <StyledRectangularSkeleton />
       </StyledContainer>
     </SkeletonTheme>
