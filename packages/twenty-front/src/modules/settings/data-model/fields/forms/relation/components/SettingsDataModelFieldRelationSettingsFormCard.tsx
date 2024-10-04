@@ -14,8 +14,8 @@ import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { MOBILE_VIEWPORT } from '@ui/theme/constants/MobileViewport';
 type SettingsDataModelFieldRelationSettingsFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
@@ -27,18 +27,23 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   flex: 1 1 100%;
 `;
 
-const StyledPreviewContent = styled.div`
+const StyledPreviewContent = styled.div<{ isMobile: boolean }>`
   display: flex;
   gap: 6px;
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    flex-direction: column;
-  }
+  flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')};
 `;
 
-const StyledRelationImage = styled.img<{ flip?: boolean }>`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    transform: ${({ flip }) => (flip ? 'scaleX(-1) rotate(450deg)' : 'none')};
-  }
+const StyledRelationImage = styled.img<{ flip?: boolean; isMobile: boolean }>`
+  transform: ${({ flip, isMobile }) => {
+    let transform = '';
+    if (isMobile) {
+      transform += 'rotate(90deg) ';
+    }
+    if (flip === true) {
+      transform += 'scaleX(-1)';
+    }
+    return transform.trim();
+  }};
   margin: auto;
   width: 54px;
 `;
@@ -50,7 +55,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldRelationFormValues>();
   const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
-
+  const isMobile = useIsMobile();
   const {
     initialRelationObjectMetadataItem,
     initialRelationType,
@@ -73,7 +78,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledPreviewContent>
+        <StyledPreviewContent isMobile={isMobile}>
           <StyledFieldPreviewCard
             fieldMetadataItem={fieldMetadataItem}
             shrink
@@ -84,6 +89,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
             src={relationTypeConfig.imageSrc}
             flip={relationTypeConfig.isImageFlipped}
             alt={relationTypeConfig.label}
+            isMobile={isMobile}
           />
           <StyledFieldPreviewCard
             fieldMetadataItem={{
