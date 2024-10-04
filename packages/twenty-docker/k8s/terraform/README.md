@@ -11,7 +11,7 @@ To make configuration changes to how this doc is generated, see `./.terraform-do
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.4 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.2 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.32.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.6.3 |
 
@@ -19,8 +19,8 @@ To make configuration changes to how this doc is generated, see `./.terraform-do
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.32.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.6.3 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.32.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.6.3 |
 
 ## Resources
 
@@ -62,8 +62,8 @@ To make configuration changes to how this doc is generated, see `./.terraform-do
 | <a name="input_twentycrm_docker_data_pvc_requests"></a> [twentycrm\_docker\_data\_pvc\_requests](#input\_twentycrm\_docker\_data\_pvc\_requests) | Storage capacity reservation for server persistent volume claim. | `string` | `"10Gi"` | no |
 | <a name="input_twentycrm_namespace"></a> [twentycrm\_namespace](#input\_twentycrm\_namespace) | Namespace for all TwentyCRM resources | `string` | `"twentycrm"` | no |
 | <a name="input_twentycrm_redis_image"></a> [twentycrm\_redis\_image](#input\_twentycrm\_redis\_image) | TwentyCRM image for Redis deployment. This defaults to latest. | `string` | `"redis/redis-stack-server:latest"` | no |
-| <a name="input_twentycrm_redis_replicas"></a> [twentycrm\_redis\_replicas](#input\_twentycrm\_redis\_replicas) | Number of replicas for the TwentyCRM Redis deployment. This defaults to 1. | `string` | `"1"` | no |
-| <a name="input_twentycrm_server_data_mount_path"></a> [twentycrm\_server\_data\_mount\_path](#input\_twentycrm\_server\_data\_mount\_path) | TwentyCRM mount path for servers application data. Defaults to '/app/packages/twenty-server/.local-storage. | `string` | `"/app/packages/twenty-server/.local-storage"` | no |
+| <a name="input_twentycrm_redis_replicas"></a> [twentycrm\_redis\_replicas](#input\_twentycrm\_redis\_replicas) | Number of replicas for the TwentyCRM Redis deployment. This defaults to 1. | `number` | `1` | no |
+| <a name="input_twentycrm_server_data_mount_path"></a> [twentycrm\_server\_data\_mount\_path](#input\_twentycrm\_server\_data\_mount\_path) | TwentyCRM mount path for servers application data. Defaults to '/app/packages/twenty-server/.local-storage'. | `string` | `"/app/packages/twenty-server/.local-storage"` | no |
 | <a name="input_twentycrm_server_image"></a> [twentycrm\_server\_image](#input\_twentycrm\_server\_image) | TwentyCRM server image for the server deployment. This defaults to latest. This value is also used for the workers image. | `string` | `"twentycrm/twenty:latest"` | no |
 | <a name="input_twentycrm_server_pv_capacity"></a> [twentycrm\_server\_pv\_capacity](#input\_twentycrm\_server\_pv\_capacity) | Storage capacity provisioned for server persistent volume. | `string` | `"10Gi"` | no |
 | <a name="input_twentycrm_server_pv_path"></a> [twentycrm\_server\_pv\_path](#input\_twentycrm\_server\_pv\_path) | Local path to use to store the physical volume if using local storage on nodes. | `string` | `""` | no |
