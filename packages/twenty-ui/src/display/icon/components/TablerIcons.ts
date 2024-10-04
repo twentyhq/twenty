@@ -139,10 +139,11 @@ export {
   IconPilcrow,
   IconPlayerPlay,
   IconPlayerStop,
-  IconPower,
+  IconPlaylistAdd,
   IconPlaystationSquare,
   IconPlug,
   IconPlus,
+  IconPower,
   IconPresentation,
   IconProgressCheck,
   IconPuzzle,
@@ -182,8 +183,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
-  IconPlaylistAdd,
+  IconX
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';
