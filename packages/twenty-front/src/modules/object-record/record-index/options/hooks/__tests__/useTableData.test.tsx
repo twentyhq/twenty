@@ -281,6 +281,7 @@ describe('useTableData', () => {
                 settings: {},
               },
               position: 7,
+              settings: {},
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',
