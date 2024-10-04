@@ -26,6 +26,7 @@ import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/compone
 
 import { ActionBar } from '@/action-menu/components/ActionBar';
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
+import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
 import { ActionMenuNavigationModal } from '@/action-menu/components/ActionMenuNavigationModal';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -195,6 +196,7 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
+          <ActionMenuEffect actionMenuId={recordIndexId} />
           <ActionBar actionMenuId={recordIndexId} />
           <ActionMenuDropdown actionMenuId={recordIndexId} />
           <ActionMenuNavigationModal />
