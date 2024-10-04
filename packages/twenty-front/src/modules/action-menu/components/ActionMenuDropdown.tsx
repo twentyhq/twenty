@@ -32,7 +32,15 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   z-index: 2;
 `;
 
-export const ActionMenuDropdown = () => {
+export type ActionMenuDropdownProps = {
+  actionMenuDropdownId: string;
+  onOpen: () => void;
+};
+
+export const ActionMenuDropdown = ({
+  actionMenuDropdownId,
+  onOpen,
+}: ActionMenuDropdownProps) => {
   const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
 
   const actionMenuDropdownPosition = useRecoilValue(
@@ -52,7 +60,7 @@ export const ActionMenuDropdown = () => {
       className="context-menu"
     >
       <Dropdown
-        dropdownId="action-menu-dropdown"
+        dropdownId={`action-menu-dropdown-${actionMenuDropdownId}`}
         dropdownHotkeyScope={{
           scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
         }}
@@ -67,6 +75,7 @@ export const ActionMenuDropdown = () => {
             text={item.label}
           />
         ))}
+        onOpen={onOpen}
       />
     </StyledContainerActionMenuDropdown>
   );

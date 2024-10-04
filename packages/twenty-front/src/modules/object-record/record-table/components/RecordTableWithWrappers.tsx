@@ -68,7 +68,7 @@ export const RecordTableWithWrappers = ({
   );
 
   const { closeDropdown: closeActionMenuDropdown } = useDropdown(
-    'action-menu-dropdown',
+    `action-menu-dropdown-${recordTableId}`,
   );
 
   return (

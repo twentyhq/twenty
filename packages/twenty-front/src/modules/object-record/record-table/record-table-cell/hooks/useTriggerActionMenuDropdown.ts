@@ -13,7 +13,7 @@ export const useTriggerActionMenuDropdown = ({
   recordTableId: string;
 }) => {
   const { openDropdown: openActionMenuDropdown } = useDropdown(
-    'action-menu-dropdown',
+    `action-menu-dropdown-${recordTableId}`,
   );
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>

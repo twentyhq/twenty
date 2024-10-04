@@ -5,6 +5,7 @@ import { useBottomBarInternalHotkeyScopeManagement } from '@/ui/layout/bottom-ba
 import { BottomBarScope } from '@/ui/layout/bottom-bar/scopes/BottomBarScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { useRecoilValue } from 'recoil';
 
 const StyledContainerActionBar = styled.div`
   align-items: center;
@@ -41,12 +42,13 @@ export const BottomBar = ({
   const { isBottomBarOpenState } = useBottomBarStates({
     bottomBarScopeId: scopeId,
   });
+  const isBottomBarOpen = useRecoilValue(isBottomBarOpenState);
   useBottomBarInternalHotkeyScopeManagement({
     bottomBarScopeId: scopeId,
     bottomBarHotkeyScopeFromParent,
   });
 
-  if (!isBottomBarOpenState) {
+  if (!isBottomBarOpen) {
     return null;
   }
 

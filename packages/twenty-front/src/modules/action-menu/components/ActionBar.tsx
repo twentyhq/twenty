@@ -7,26 +7,6 @@ import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useRecoilValue } from 'recoil';
 import { ActionBarItem } from './ActionBarItem';
 
-const StyledContainerActionBar = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  bottom: 38px;
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  display: flex;
-  height: 48px;
-  width: max-content;
-  left: 50%;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  top: auto;
-
-  transform: translateX(-50%);
-  z-index: 1;
-`;
-
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
@@ -35,7 +15,11 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionBar = () => {
+type ActionBarProps = {
+  actionBarId: string;
+};
+
+export const ActionBar = ({ actionBarId }: ActionBarProps) => {
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
   );
@@ -44,7 +28,7 @@ export const ActionBar = () => {
 
   return (
     <BottomBar
-      bottomBarId="action-bar"
+      bottomBarId={`action-bar-${actionBarId}`}
       bottomBarHotkeyScopeFromParent={{
         scope: ActionBarHotkeyScope.ActionBar,
       }}

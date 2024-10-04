@@ -5,7 +5,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 export const useRecordBoardSelection = (recordBoardId?: string) => {
   const { closeDropdown: closeActionMenuDropdown } = useDropdown(
-    'action-menu-dropdown',
+    `action-menu-dropdown-${recordBoardId}`,
   );
   const { selectedRecordIdsSelector, isRecordBoardCardSelectedFamilyState } =
     useRecordBoardStates(recordBoardId);
