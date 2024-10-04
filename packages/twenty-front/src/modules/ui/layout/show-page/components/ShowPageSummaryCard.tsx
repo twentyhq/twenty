@@ -1,3 +1,4 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, ReactNode, useRef } from 'react';
@@ -88,9 +89,9 @@ const StyledShowPageSummaryCardSkeletonLoader = () => {
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={40} height={40} />
+      <Skeleton width={40} height={SKELETON_LOADER_HEIGHT_SIZES.standard.xl} />
       <StyledSubSkeleton>
-        <Skeleton width={96} height={16} />
+        <Skeleton width={96} height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
       </StyledSubSkeleton>
     </SkeletonTheme>
   );

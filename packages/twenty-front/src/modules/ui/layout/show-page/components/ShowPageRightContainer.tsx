@@ -7,6 +7,7 @@ import { TimelineActivities } from '@/activities/timelineActivities/components/T
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Button } from '@/ui/input/button/components/Button';
@@ -134,6 +135,10 @@ export const ShowPageRightContainer = ({
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
   const isMobile = useIsMobile();
+
+  const isNewViewableRecordLoading = useRecoilValue(
+    isNewViewableRecordLoadingState,
+  );
 
   const tabs = [
     {
@@ -272,7 +277,7 @@ export const ShowPageRightContainer = ({
     <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
-          loading={loading}
+          loading={loading || isNewViewableRecordLoading}
           tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
           tabs={tabs}
         />

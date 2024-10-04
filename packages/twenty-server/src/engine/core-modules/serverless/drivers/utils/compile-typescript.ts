@@ -1,6 +1,11 @@
-import ts from 'typescript';
+import { join } from 'path';
 
-export const compileTypescript = (typescriptCode: string): string => {
+import ts, { createProgram } from 'typescript';
+
+import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
+
+export const compileTypescript = (folderPath: string) => {
   const options: ts.CompilerOptions = {
     module: ts.ModuleKind.CommonJS,
     target: ts.ScriptTarget.ES2017,
@@ -8,12 +13,9 @@ export const compileTypescript = (typescriptCode: string): string => {
     esModuleInterop: true,
     resolveJsonModule: true,
     allowSyntheticDefaultImports: true,
+    outDir: join(folderPath, OUTDIR_FOLDER, 'src'),
     types: ['node'],
   };
 
-  const result = ts.transpileModule(typescriptCode, {
-    compilerOptions: options,
-  });
-
-  return result.outputText;
+  createProgram([join(folderPath, 'src', INDEX_FILE_NAME)], options).emit();
 };

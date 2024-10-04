@@ -5,6 +5,7 @@ import { Chip, ChipAccent, ChipSize, useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
@@ -66,6 +67,10 @@ export const RightDrawerTopBar = () => {
     viewableRecordNameSingularState,
   );
 
+  const isNewViewableRecordLoading = useRecoilValue(
+    isNewViewableRecordLoadingState,
+  );
+
   const viewableRecordId = useRecoilValue(viewableRecordIdState);
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -95,6 +100,7 @@ export const RightDrawerTopBar = () => {
     >
       {!isRightDrawerMinimized && (
         <Chip
+          disabled={isNewViewableRecordLoading}
           label={label}
           leftComponent={<Icon size={theme.icon.size.md} />}
           size={ChipSize.Large}

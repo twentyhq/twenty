@@ -4,7 +4,7 @@ import { logError } from './logError';
 
 const DEBUG_MODE = false;
 
-export const canBeCastAsIntegerOrNull = (
+export const canBeCastAsNumberOrNull = (
   probableNumberOrNull: string | undefined | number | null,
 ): probableNumberOrNull is number | null => {
   if (probableNumberOrNull === undefined) {
@@ -16,7 +16,7 @@ export const canBeCastAsIntegerOrNull = (
   if (isNumber(probableNumberOrNull)) {
     if (DEBUG_MODE) logError('typeof probableNumberOrNull === "number"');
 
-    return Number.isInteger(probableNumberOrNull);
+    return true;
   }
 
   if (isNull(probableNumberOrNull)) {
@@ -39,8 +39,8 @@ export const canBeCastAsIntegerOrNull = (
 
       return false;
     }
-    if (Number.isInteger(stringAsNumber)) {
-      if (DEBUG_MODE) logError('Number.isInteger(stringAsNumber)');
+    if (isNumber(stringAsNumber)) {
+      if (DEBUG_MODE) logError('isNumber(stringAsNumber)');
 
       return true;
     }
@@ -49,10 +49,10 @@ export const canBeCastAsIntegerOrNull = (
   return false;
 };
 
-export const castAsIntegerOrNull = (
+export const castAsNumberOrNull = (
   probableNumberOrNull: string | undefined | number | null,
 ): number | null => {
-  if (canBeCastAsIntegerOrNull(probableNumberOrNull) === false) {
+  if (canBeCastAsNumberOrNull(probableNumberOrNull) === false) {
     throw new Error('Cannot cast to number or null');
   }
 
