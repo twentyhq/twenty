@@ -185,6 +185,26 @@ yarn
 
 ## Step 7: Running the project
 
+Start your redis server:
+<ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
+  <ArticleTab>
+    ```bash
+    sudo systemctl start redis-server
+    ```
+  </ArticleTab>
+  <ArticleTab>
+    ```bash
+    brew services start redis
+    ```
+  </ArticleTab>
+  <ArticleTab>
+    ```bash
+    redis-server.exe
+    ```
+  </ArticleTab>
+</ArticleTabs>
+
+
 Setup your database with the following command:
 ```bash
 npx nx database:reset twenty-server
