@@ -127,6 +127,7 @@ export const Chip = ({
   rightComponent,
   accent = ChipAccent.TextPrimary,
   onClick,
+  className,
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -137,6 +138,7 @@ export const Chip = ({
       size={size}
       variant={variant}
       onClick={onClick}
+      className={className}
     >
       {leftComponent}
       <OverflowingTextWithTooltip

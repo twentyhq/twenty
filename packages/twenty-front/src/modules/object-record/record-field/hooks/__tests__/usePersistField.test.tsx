@@ -1,11 +1,11 @@
 import { gql } from '@apollo/client';
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   phonesFieldDefinition,
@@ -20,11 +20,12 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const query = gql`
   mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
-      ${PERSON_FRAGMENT}
+      ${PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS}
     }
   }
 `;
@@ -72,6 +73,10 @@ const mocks: MockedResponse[] = [
 
 const recordId = 'recordId';
 
+const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
+
 const getWrapper =
   (fieldDefinition: FieldDefinition<FieldMetadata>) =>
   ({ children }: { children: ReactNode }) => {
@@ -91,7 +96,7 @@ const getWrapper =
     };
 
     return (
-      <MockedProvider mocks={mocks} addTypename={false}>
+      <JestMetadataAndApolloMocksWrapper>
         <FieldContext.Provider
           value={{
             fieldDefinition,
@@ -101,9 +106,9 @@ const getWrapper =
             useUpdateRecord: useUpdateOneRecordMutation,
           }}
         >
-          <RecoilRoot>{children}</RecoilRoot>
+          {children}
         </FieldContext.Provider>
-      </MockedProvider>
+      </JestMetadataAndApolloMocksWrapper>
     );
   };
 
