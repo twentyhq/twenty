@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: twentycrm-server
-  name: twentycrm-server
+    app: twentycrm-worker
+  name: twentycrm-worker
   namespace: twentycrm
 spec:
   progressDeadlineSeconds: 600
@@ -15,47 +15,36 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: twentycrm-server
+      app: twentycrm-worker
   template:
     metadata:
       labels:
-        app: twentycrm-server
+        app: twentycrm-worker
     spec:
       volumes:
-      - name: twentycrm-server-data
+      - name: twentycrm-worker-data
         persistentVolumeClaim:
-          claimName: twentycrm-server-pvc
-      - name: twentycrm-docker-data
-        persistentVolumeClaim:
-          claimName: twentycrm-docker-data-pvc
+          claimName: twentycrm-worker-pvc
       containers:
       - env:
-        - name: PORT
-          value: 3000
         - name: SERVER_URL
           value: "https://crm.example.com:443"
         - name: FRONT_BASE_URL
           value: "https://crm.example.com:443"
-        - name : "BACKEND_SERVER_URL"
-          value: var.twentycrm_app_hostname
-        - name: "PG_DATABASE_URL"
+        - name: PG_DATABASE_URL
           value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
-        - name: "REDIS_HOST"
-          value: "twentycrm-redis.twentycrm.svc.cluster.local"
-        - name: "REDIS_PORT"
-          value: 6379
         - name: ENABLE_DB_MIGRATIONS
-          value: "true"
-        - name: SIGN_IN_PREFILLED
-          value: "false"
+          value: "false" # it already runs on the server
         - name: STORAGE_TYPE
           value: "local"
         - name: "MESSAGE_QUEUE_TYPE"
           value: "bull-mq"
-        - name: "ACCESS_TOKEN_EXPIRES_IN"
-          value: "7d"
-        - name: "LOGIN_TOKEN_EXPIRES_IN"
-          value: "1h"
+        - name: "CACHE_STORAGE_TYPE"
+          value: "redis"
+        - name : "REDIS_HOST"
+          value: "twentycrm-redis.twentycrm.svc.cluster.local"
+        - name: "REDIS_PORT"
+          value: 6379
         - name: ACCESS_TOKEN_SECRET
           valueFrom:
             secretKeyRef:
@@ -79,11 +68,10 @@ spec:
       - image: twentycrm/twenty:latest
         imagePullPolicy: Always
         name: twentycrm
-        ports:
-        - containerPort: 3000
-          name: http-tcp
-          protocol: TCP    
-        resources: 
+        command:
+        - yarn
+        - worker:prod
+        resources:
           requests:
             memory: "256Mi"
             cpu: "250m"
@@ -92,10 +80,5 @@ spec:
             cpu: "1000m"
         stdin: true
         tty: true
-        volumeMounts:
-        - mountPath: /app/docker-data
-          name: twentycrm-docker-data
-        - mountPath: /app/packages/twenty-server/.local-storage
-          name: twentycrm-server-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always

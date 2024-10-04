@@ -1,17 +1,17 @@
-resource "kubernetes_deployment" "twentycrm_server" {
+resource "kubernetes_deployment" "twentycrm_worker" {
   metadata {
-    name      = "${local.twentycrm_app_name}-server"
+    name      = "${var.twentycrm_app_name}-worker"
     namespace = kubernetes_namespace.twentycrm.metadata.0.name
     labels = {
-      app = "${local.twentycrm_app_name}-server"
+      app = "${var.twentycrm_app_name}-worker"
     }
   }
 
   spec {
-    replicas = 1
+    replicas = var.twentycrm_worker_replicas
     selector {
       match_labels = {
-        app = "${local.twentycrm_app_name}-server"
+        app = "${var.twentycrm_app_name}-worker"
       }
     }
 
@@ -26,29 +26,21 @@ resource "kubernetes_deployment" "twentycrm_server" {
     template {
       metadata {
         labels = {
-          app = "${local.twentycrm_app_name}-server"
+          app = "${var.twentycrm_app_name}-worker"
         }
       }
 
       spec {
         container {
-          image = local.twentycrm_server_image
-          name  = local.twentycrm_app_name
-          stdin = true
-          tty   = true
-
-          env {
-            name  = "PORT"
-            value = "3000"
-          }
-          # env {
-          #   name  = "DEBUG_MODE"
-          #   value = false
-          # }
+          image   = var.twentycrm_server_image
+          name    = var.twentycrm_app_name
+          stdin   = true
+          tty     = true
+          command = ["yarn", "worker:prod"]
 
           env {
             name  = "SERVER_URL"
-            value = "https://crm.example.com:443"
+            value = var.twentycrm_app_hostname
           }
 
           env {
@@ -57,30 +49,28 @@ resource "kubernetes_deployment" "twentycrm_server" {
           }
 
           env {
-            name  = "BACKEND_SERVER_URL"
-            value = var.twentycrm_app_hostname
-          }
-
-          env {
             name  = "PG_DATABASE_URL"
             value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${kubernetes_service.twentycrm_db.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
           }
+
+          env {
+            name  = "CACHE_STORAGE_TYPE"
+            value = "redis"
+          }
+
           env {
             name  = "REDIS_HOST"
             value = "${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local"
           }
+
           env {
             name  = "REDIS_PORT"
             value = 6379
           }
-          env {
-            name  = "ENABLE_DB_MIGRATIONS"
-            value = "true"
-          }
 
           env {
-            name  = "SIGN_IN_PREFILLED"
-            value = "true"
+            name  = "ENABLE_DB_MIGRATIONS"
+            value = "false" #it already runs on the server
           }
 
           env {
@@ -91,14 +81,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
             name  = "MESSAGE_QUEUE_TYPE"
             value = "bull-mq"
           }
-          env {
-            name  = "ACCESS_TOKEN_EXPIRES_IN"
-            value = "7d"
-          }
-          env {
-            name  = "LOGIN_TOKEN_EXPIRES_IN"
-            value = "1h"
-          }
+
           env {
             name = "ACCESS_TOKEN_SECRET"
             value_from {
@@ -139,11 +122,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
             }
           }
 
-          port {
-            container_port = 3000
-            protocol       = "TCP"
-          }
-
           resources {
             requests = {
               cpu    = "250m"
@@ -153,32 +131,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
               cpu    = "1000m"
               memory = "1024Mi"
             }
-          }
-
-          volume_mount {
-            name       = "server-data"
-            mount_path = var.twentycrm_server_data_mount_path
-          }
-
-          volume_mount {
-            name       = "docker-data"
-            mount_path = var.twentycrm_docker_data_mount_path
-          }
-        }
-
-        volume {
-          name = "server-data"
-
-          persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.server.metadata.0.name
-          }
-        }
-
-        volume {
-          name = "docker-data"
-
-          persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.docker_data.metadata.0.name
           }
         }
 
@@ -190,6 +142,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
   depends_on = [
     kubernetes_deployment.twentycrm_db,
     kubernetes_deployment.twentycrm_redis,
-    kubernetes_secret.twentycrm_tokens
+    kubernetes_deployment.twentycrm_server,
+    kubernetes_secret.twentycrm_tokens,
   ]
 }
