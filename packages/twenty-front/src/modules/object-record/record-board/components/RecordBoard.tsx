@@ -70,7 +70,9 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   useListenClickOutsideByClassName({
     classNames: ['record-board-card'],
     excludeClassNames: ['bottom-bar', 'context-menu'],
-    callback: resetRecordSelection,
+    callback: () => {
+      resetRecordSelection();
+    },
   });
 
   useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);

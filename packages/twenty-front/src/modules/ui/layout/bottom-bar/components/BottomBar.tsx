@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 
+import { useBottomBarStates } from '@/ui/layout/bottom-bar/hooks/internal/useBottomBarStates';
+import { useBottomBarInternalHotkeyScopeManagement } from '@/ui/layout/bottom-bar/hooks/useBottomBarInternalHotkeyScopeManagement';
 import { BottomBarScope } from '@/ui/layout/bottom-bar/scopes/BottomBarScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 const StyledContainerActionBar = styled.div`
@@ -23,15 +26,32 @@ const StyledContainerActionBar = styled.div`
   z-index: 1;
 `;
 
+type BottomBarProps = {
+  bottomBarId: string;
+  bottomBarHotkeyScopeFromParent: HotkeyScope;
+  children: React.ReactNode;
+};
+
 export const BottomBar = ({
   bottomBarId,
+  bottomBarHotkeyScopeFromParent,
   children,
-}: {
-  bottomBarId: string;
-  children: React.ReactNode;
-}) => {
+}: BottomBarProps) => {
+  const scopeId = getScopeIdFromComponentId(bottomBarId);
+  const { isBottomBarOpenState } = useBottomBarStates({
+    bottomBarScopeId: scopeId,
+  });
+  useBottomBarInternalHotkeyScopeManagement({
+    bottomBarScopeId: scopeId,
+    bottomBarHotkeyScopeFromParent,
+  });
+
+  if (!isBottomBarOpenState) {
+    return null;
+  }
+
   return (
-    <BottomBarScope bottomBarScopeId={getScopeIdFromComponentId(bottomBarId)}>
+    <BottomBarScope bottomBarScopeId={scopeId}>
       <StyledContainerActionBar data-select-disable className="bottom-bar">
         {children}
       </StyledContainerActionBar>

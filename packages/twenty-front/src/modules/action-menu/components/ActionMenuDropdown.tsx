@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-
 import { PositionType } from '../types/PositionType';
 
 import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type StyledContainerProps = {
@@ -33,11 +32,9 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   z-index: 2;
 `;
 
-export const ActionMenuDropdown = ({
-  actionMenuEntries,
-}: {
-  actionMenuEntries: ActionMenuEntry[];
-}) => {
+export const ActionMenuDropdown = () => {
+  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
+
   const actionMenuDropdownPosition = useRecoilValue(
     actionMenuDropdownPositionState,
   );
@@ -50,22 +47,27 @@ export const ActionMenuDropdown = ({
     : undefined;
 
   return (
-    <>
-      <StyledContainerActionMenuDropdown position={actionMenuDropdownPosition}>
-        <DropdownMenu data-select-disable width={width}>
-          <DropdownMenuItemsContainer>
-            {actionMenuEntries.map((item, index) => (
-              <MenuItem
-                key={index}
-                LeftIcon={item.Icon}
-                onClick={item.onClick}
-                accent={item.accent}
-                text={item.label}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </StyledContainerActionMenuDropdown>
-    </>
+    <StyledContainerActionMenuDropdown
+      position={actionMenuDropdownPosition}
+      className="context-menu"
+    >
+      <Dropdown
+        dropdownId="action-menu-dropdown"
+        dropdownHotkeyScope={{
+          scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+        }}
+        data-select-disable
+        dropdownMenuWidth={width}
+        dropdownComponents={actionMenuEntries.map((item, index) => (
+          <MenuItem
+            key={index}
+            LeftIcon={item.Icon}
+            onClick={item.onClick}
+            accent={item.accent}
+            text={item.label}
+          />
+        ))}
+      />
+    </StyledContainerActionMenuDropdown>
   );
 };

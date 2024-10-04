@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { IconTrash } from 'twenty-ui';
 
-import { ActionMenuNavigationModal } from '@/action-menu/components/NavigationModal';
+import { ActionMenuNavigationModal } from '@/action-menu/components/ActionMenuNavigationModal';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
 const meta: Meta<typeof ActionMenuNavigationModal> = {

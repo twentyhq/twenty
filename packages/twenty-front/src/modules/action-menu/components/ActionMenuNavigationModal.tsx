@@ -1,12 +1,9 @@
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { useRecoilValue } from 'recoil';
 
-type ActionMenuNavigationModalProps = {
-  actionMenuEntries: ActionMenuEntry[];
-};
+export const ActionMenuNavigationModal = () => {
+  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
 
-export const ActionMenuNavigationModal = ({
-  actionMenuEntries,
-}: ActionMenuNavigationModalProps) => {
   return (
     <div data-select-disable>
       {actionMenuEntries.map((actionMenuEntry, index) =>

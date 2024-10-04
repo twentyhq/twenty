@@ -1,4 +1,3 @@
-import { actionMenuDropdownIsOpenState } from '@/action-menu/states/actionMenuDropdownIsOpenState';
 import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
@@ -19,6 +18,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import styled from '@emotion/styled';
@@ -181,8 +181,8 @@ export const RecordBoardCard = ({
   const setActionMenuDropdownPosition = useSetRecoilState(
     actionMenuDropdownPositionState,
   );
-  const setActionMenuDropdownOpenState = useSetRecoilState(
-    actionMenuDropdownIsOpenState,
+  const { openDropdown: openActionMenuDropdown } = useDropdown(
+    'action-menu-dropdown',
   );
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
@@ -192,7 +192,7 @@ export const RecordBoardCard = ({
       x: event.clientX,
       y: event.clientY,
     });
-    setActionMenuDropdownOpenState(true);
+    openActionMenuDropdown();
   };
 
   const PreventSelectOnClickContainer = ({

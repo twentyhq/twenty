@@ -24,7 +24,9 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
-import { ActionMenu } from '@/action-menu/components/ActionMenu';
+import { ActionBar } from '@/action-menu/components/ActionBar';
+import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
+import { ActionMenuNavigationModal } from '@/action-menu/components/ActionMenuNavigationModal';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -193,7 +195,9 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
-          <ActionMenu />
+          <ActionBar />
+          <ActionMenuDropdown />
+          <ActionMenuNavigationModal />
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>

@@ -12,7 +12,7 @@ import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerContextMenu';
+import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerActionMenuDropdown';
 import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';

@@ -15,6 +15,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
 
 const StyledTableWithHeader = styled.div`
@@ -66,6 +67,10 @@ export const RecordTableWithWrappers = ({
     [saveViewFields],
   );
 
+  const { closeDropdown: closeActionMenuDropdown } = useDropdown(
+    'action-menu-dropdown',
+  );
+
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
       <ScrollWrapper contextProviderName="recordTableWithWrappers">
@@ -81,7 +86,10 @@ export const RecordTableWithWrappers = ({
                 />
                 <DragSelect
                   dragSelectable={tableBodyRef}
-                  onDragSelectionStart={resetTableRowSelection}
+                  onDragSelectionStart={() => {
+                    closeActionMenuDropdown();
+                    resetTableRowSelection();
+                  }}
                   onDragSelectionChange={setRowSelected}
                 />
               </StyledTableInternalContainer>
