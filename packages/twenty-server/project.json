@@ -80,7 +80,10 @@
       },
       "configurations": {
         "ci": {
-          "env": { "MESSAGE_QUEUE_TYPE": "sync", "CACHE_STORAGE_TYPE": "memory" }
+          "env": { 
+            "MESSAGE_QUEUE_TYPE": "sync", 
+            "CACHE_STORAGE_TYPE": "memory" 
+          }
         }
       }
     },
