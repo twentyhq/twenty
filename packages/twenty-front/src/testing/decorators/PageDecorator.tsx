@@ -12,7 +12,7 @@ import {
 import { RecoilRoot } from 'recoil';
 
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
-import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloMetadataClientProvider';
+import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloMetadataClientMockedProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
@@ -21,6 +21,7 @@ import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
+import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { IconsProvider } from 'twenty-ui';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
@@ -64,29 +65,33 @@ const ApolloStorybookDevLogEffect = () => {
 const Providers = () => {
   return (
     <RecoilRoot>
-      <RecoilDebugObserverEffect />
-      <ApolloProvider client={mockedApolloClient}>
-        <ApolloStorybookDevLogEffect />
-        <ApolloMetadataClientMockedProvider>
-          <UserProviderEffect />
-          <UserProvider>
-            <ClientConfigProviderEffect />
-            <ClientConfigProvider>
-              <FullHeightStorybookLayout>
-                <HelmetProvider>
-                  <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                    <IconsProvider>
-                      <PrefetchDataProvider>
-                        <Outlet />
-                      </PrefetchDataProvider>
-                    </IconsProvider>
-                  </SnackBarProviderScope>
-                </HelmetProvider>
-              </FullHeightStorybookLayout>
-            </ClientConfigProvider>
-          </UserProvider>
-        </ApolloMetadataClientMockedProvider>
-      </ApolloProvider>
+      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+        <RecoilDebugObserverEffect />
+        <ApolloProvider client={mockedApolloClient}>
+          <ApolloStorybookDevLogEffect />
+          <ClientConfigProviderEffect />
+          <ClientConfigProvider>
+            <UserProviderEffect />
+            <UserProvider>
+              <ApolloMetadataClientMockedProvider>
+                <ObjectMetadataItemsProvider>
+                  <FullHeightStorybookLayout>
+                    <HelmetProvider>
+                      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                        <IconsProvider>
+                          <PrefetchDataProvider>
+                            <Outlet />
+                          </PrefetchDataProvider>
+                        </IconsProvider>
+                      </SnackBarProviderScope>
+                    </HelmetProvider>
+                  </FullHeightStorybookLayout>
+                </ObjectMetadataItemsProvider>
+              </ApolloMetadataClientMockedProvider>
+            </UserProvider>
+          </ClientConfigProvider>
+        </ApolloProvider>
+      </SnackBarProviderScope>
     </RecoilRoot>
   );
 };

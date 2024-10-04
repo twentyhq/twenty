@@ -7,6 +7,7 @@ import {
   IconCalendar,
   IconCsv,
   IconGmail,
+  IconRobot,
 } from 'twenty-ui';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
@@ -29,12 +30,15 @@ export const ActorDisplay = ({
         return IconGmail;
       case 'CALENDAR':
         return IconCalendar;
+      case 'SYSTEM':
+        return IconRobot;
       default:
         return undefined;
     }
   }, [source]);
 
-  const isIconInverted = source === 'API' || source === 'IMPORT';
+  const isIconInverted =
+    source === 'API' || source === 'IMPORT' || source === 'SYSTEM';
 
   return (
     <AvatarChip
