@@ -10,10 +10,7 @@ const jestConfig: JestConfigWithTsJest = {
   rootDir: '.',
   testEnvironment: 'node',
   testRegex: '.integration-spec.ts$',
-  modulePathIgnorePatterns: [
-    '<rootDir>/dist',
-    '<rootDir>/../twenty-emails/dist',
-  ],
+  modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/utils/teardown-test.ts',
   testTimeout: 15000,
