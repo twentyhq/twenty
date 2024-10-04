@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
+  WorkflowRunOutput,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -70,7 +71,11 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  async endWorkflowRun(workflowRunId: string, status: WorkflowRunStatus) {
+  async endWorkflowRun(
+    workflowRunId: string,
+    status: WorkflowRunStatus,
+    output: WorkflowRunOutput,
+  ) {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
@@ -96,6 +101,7 @@ export class WorkflowRunWorkspaceService {
 
     return workflowRunRepository.update(workflowRunToUpdate.id, {
       status,
+      output,
       endedAt: new Date().toISOString(),
     });
   }

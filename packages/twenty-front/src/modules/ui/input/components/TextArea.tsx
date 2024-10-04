@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FocusEventHandler } from 'react';
+import { FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -10,6 +10,7 @@ import { InputHotkeyScope } from '../types/InputHotkeyScope';
 const MAX_ROWS = 5;
 
 export type TextAreaProps = {
+  label?: string;
   disabled?: boolean;
   minRows?: number;
   onChange?: (value: string) => void;
@@ -17,6 +18,20 @@ export type TextAreaProps = {
   value?: string;
   className?: string;
 };
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const StyledLabel = styled.label`
+  color: ${({ theme }) => theme.font.color.light};
+  display: block;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
 
 const StyledTextArea = styled(TextareaAutosize)`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -48,6 +63,7 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 export const TextArea = ({
+  label,
   disabled,
   placeholder,
   minRows = 1,
@@ -56,6 +72,8 @@ export const TextArea = ({
   onChange,
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, MAX_ROWS);
+
+  const inputId = useId();
 
   const {
     goBackToPreviousHotkeyScope,
@@ -71,18 +89,23 @@ export const TextArea = ({
   };
 
   return (
-    <StyledTextArea
-      placeholder={placeholder}
-      maxRows={MAX_ROWS}
-      minRows={computedMinRows}
-      value={value}
-      onChange={(event) =>
-        onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value))
-      }
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      disabled={disabled}
-      className={className}
-    />
+    <StyledContainer>
+      {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
+
+      <StyledTextArea
+        id={inputId}
+        placeholder={placeholder}
+        maxRows={MAX_ROWS}
+        minRows={computedMinRows}
+        value={value}
+        onChange={(event) =>
+          onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value))
+        }
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        disabled={disabled}
+        className={className}
+      />
+    </StyledContainer>
   );
 };

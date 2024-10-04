@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { wrapHeadingsWithAnchor } from '@/shared-utils/wrapHeadingsWithAnchor';
@@ -17,6 +17,21 @@ const StyledContent = styled.div`
     max-width: 100%;
     line-height: 1.8;
     color: black;
+    padding: 4px;
+    border-radius: 4px;
+    background: #1414140a;
+  }
+
+  pre {
+    background: #1414140a;
+    padding: 4px;
+    border-radius: 4px;
+
+    code {
+      padding: 0;
+      border-radius: 0;
+      background: none;
+    }
   }
 
   p {

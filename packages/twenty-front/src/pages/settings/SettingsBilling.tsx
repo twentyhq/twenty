@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  H1Title,
   H2Title,
   IconCalendarEvent,
   IconCircleX,
@@ -33,10 +31,6 @@ import {
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
-`;
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;
@@ -154,7 +148,6 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
-        <StyledH1Title title="Billing" />
         <SettingsBillingCoverImage />
         {displayPaymentFailInfo && (
           <Info

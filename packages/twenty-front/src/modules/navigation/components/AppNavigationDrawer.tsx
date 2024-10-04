@@ -4,7 +4,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { SupportDropdown } from '@/support/components/SupportDropdown';
-import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 import {
   NavigationDrawer,
   NavigationDrawerProps,
@@ -16,6 +15,7 @@ import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
+import { AdvancedSettingsToggle } from '@/ui/navigation/link/components/AdvancedSettingsToggle';
 import { MainNavigationDrawerItems } from './MainNavigationDrawerItems';
 
 export type AppNavigationDrawerProps = {
@@ -44,7 +44,7 @@ export const AppNavigationDrawer = ({
         isSubMenu: true,
         title: 'Exit Settings',
         children: <SettingsNavigationDrawerItems />,
-        footer: <GithubVersionLink />,
+        footer: <AdvancedSettingsToggle />,
       }
     : {
         logo:

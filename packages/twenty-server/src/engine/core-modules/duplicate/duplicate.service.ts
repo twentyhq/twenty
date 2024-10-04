@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import {
   Record as IRecord,
   Record,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { settings } from 'src/engine/constants/settings';
+import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
 
 @Injectable()
 export class DuplicateService {
@@ -94,80 +94,4 @@ export class DuplicateService {
         duplicateCriteria.objectName === objectMetadataItem.nameSingular,
     );
   }
-
-  /**
-   * TODO: Remove this code by September 1st, 2024 if it isn't used
-   * It was build to be used by the upsertMany function, but it was not used.
-   * It's a re-implementation of the methods to findDuplicates, but done
-   * at the SQL layer instead of doing it at the GraphQL layer
-   * 
-  async findDuplicate(
-    data: Partial<Record>,
-    objectMetadata: ObjectMetadataInterface,
-    workspaceId: string,
-  ) {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const { duplicateWhereClause, duplicateWhereParameters } =
-      this.buildDuplicateConditionForUpsert(objectMetadata, data);
-
-    const results = await this.workspaceDataSourceService.executeRawQuery(
-      `
-          SELECT 
-             *
-          FROM
-              ${dataSourceSchema}."${computeObjectTargetTable(
-                objectMetadata,
-              )}" p
-          WHERE
-              ${duplicateWhereClause}
-          `,
-      duplicateWhereParameters,
-      workspaceId,
-    );
-
-    return results.length > 0 ? results[0] : null;
-  }
-
-  private buildDuplicateConditionForUpsert(
-    objectMetadata: ObjectMetadataInterface,
-    data: Partial<Record>,
-  ) {
-    const criteriaCollection = this.getApplicableDuplicateCriteriaCollection(
-      objectMetadata,
-    ).filter(
-      (duplicateCriteria) => duplicateCriteria.useAsUniqueKeyForUpsert === true,
-    );
-
-    const whereClauses: string[] = [];
-    const whereParameters: any[] = [];
-    let parameterIndex = 1;
-
-    criteriaCollection.forEach((c) => {
-      const clauseParts: string[] = [];
-
-      c.columnNames.forEach((column) => {
-        const dataKey = Object.keys(data).find(
-          (key) => key.toLowerCase() === column.toLowerCase(),
-        );
-
-        if (dataKey) {
-          clauseParts.push(`p."${column}" = $${parameterIndex}`);
-          whereParameters.push(data[dataKey]);
-          parameterIndex++;
-        }
-      });
-      if (clauseParts.length > 0) {
-        whereClauses.push(`(${clauseParts.join(' AND ')})`);
-      }
-    });
-
-    const duplicateWhereClause = whereClauses.join(' OR ');
-    const duplicateWhereParameters = whereParameters;
-
-    return { duplicateWhereClause, duplicateWhereParameters };
-  }
-  *
-  */
 }

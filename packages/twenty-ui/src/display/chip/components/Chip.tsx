@@ -111,6 +111,10 @@ const StyledContainer = withTheme(styled.div<
 
   border-radius: ${({ theme, variant }) =>
     variant === ChipVariant.Rounded ? '50px' : theme.border.radius.sm};
+
+  & > svg {
+    flex-shrink: 0;
+  }
 `);
 
 export const Chip = ({
@@ -123,6 +127,7 @@ export const Chip = ({
   rightComponent,
   accent = ChipAccent.TextPrimary,
   onClick,
+  className,
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -133,6 +138,7 @@ export const Chip = ({
       size={size}
       variant={variant}
       onClick={onClick}
+      className={className}
     >
       {leftComponent}
       <OverflowingTextWithTooltip
