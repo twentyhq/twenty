@@ -1,7 +1,5 @@
-import {
-  ObjectDropdownFilter,
-  turnObjectDropdownFilterIntoQueryFilter,
-} from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
@@ -25,7 +23,7 @@ describe('turnObjectDropdownFilterIntoQueryFilter', () => {
         (field) => field.name === 'name',
       );
 
-    const nameFilter: ObjectDropdownFilter = {
+    const nameFilter: Filter = {
       id: 'company-name-filter',
       value: companiesMock[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId?.id,
@@ -33,6 +31,9 @@ describe('turnObjectDropdownFilterIntoQueryFilter', () => {
       operand: ViewFilterOperand.Contains,
       definition: {
         type: 'TEXT',
+        fieldMetadataId: companyMockNameFieldMetadataId?.id,
+        label: 'Name',
+        iconName: 'text',
       },
     };
 
@@ -59,7 +60,7 @@ describe('turnObjectDropdownFilterIntoQueryFilter', () => {
         (field) => field.name === 'employees',
       );
 
-    const nameFilter: ObjectDropdownFilter = {
+    const nameFilter: Filter = {
       id: 'company-name-filter',
       value: companiesMock[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId?.id,
@@ -67,10 +68,13 @@ describe('turnObjectDropdownFilterIntoQueryFilter', () => {
       operand: ViewFilterOperand.Contains,
       definition: {
         type: 'TEXT',
+        fieldMetadataId: companyMockNameFieldMetadataId?.id,
+        label: 'Name',
+        iconName: 'text',
       },
     };
 
-    const employeesFilter: ObjectDropdownFilter = {
+    const employeesFilter: Filter = {
       id: 'company-employees-filter',
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
@@ -78,6 +82,9 @@ describe('turnObjectDropdownFilterIntoQueryFilter', () => {
       operand: ViewFilterOperand.GreaterThan,
       definition: {
         type: 'NUMBER',
+        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+        label: 'Employees',
+        iconName: 'number',
       },
     };
 
@@ -110,7 +117,7 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'address',
       );
 
-    const addressFilterContains: ObjectDropdownFilter = {
+    const addressFilterContains: Filter = {
       id: 'company-address-filter-contains',
       value: '123 Main St',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
@@ -118,10 +125,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.Contains,
       definition: {
         type: 'ADDRESS',
+        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
+        label: 'Address',
+        iconName: 'address',
       },
     };
 
-    const addressFilterDoesNotContain: ObjectDropdownFilter = {
+    const addressFilterDoesNotContain: Filter = {
       id: 'company-address-filter-does-not-contain',
       value: '123 Main St',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
@@ -129,10 +139,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.DoesNotContain,
       definition: {
         type: 'ADDRESS',
+        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
+        label: 'Address',
+        iconName: 'address',
       },
     };
 
-    const addressFilterIsEmpty: ObjectDropdownFilter = {
+    const addressFilterIsEmpty: Filter = {
       id: 'company-address-filter-is-empty',
       value: '',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
@@ -140,10 +153,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsEmpty,
       definition: {
         type: 'ADDRESS',
+        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
+        label: 'Address',
+        iconName: 'address',
       },
     };
 
-    const addressFilterIsNotEmpty: ObjectDropdownFilter = {
+    const addressFilterIsNotEmpty: Filter = {
       id: 'company-address-filter-is-not-empty',
       value: '',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
@@ -151,6 +167,9 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsNotEmpty,
       definition: {
         type: 'ADDRESS',
+        fieldMetadataId: companyMockAddressFieldMetadataId?.id,
+        label: 'Address',
+        iconName: 'address',
       },
     };
 
@@ -479,7 +498,7 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'phones',
       );
 
-    const phonesFilterContains: ObjectDropdownFilter = {
+    const phonesFilterContains: Filter = {
       id: 'person-phones-filter-contains',
       value: '1234567890',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
@@ -487,10 +506,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.Contains,
       definition: {
         type: 'PHONES',
+        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
+        label: 'Phones',
+        iconName: 'phone',
       },
     };
 
-    const phonesFilterDoesNotContain: ObjectDropdownFilter = {
+    const phonesFilterDoesNotContain: Filter = {
       id: 'person-phones-filter-does-not-contain',
       value: '1234567890',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
@@ -498,10 +520,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.DoesNotContain,
       definition: {
         type: 'PHONES',
+        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
+        label: 'Phones',
+        iconName: 'phone',
       },
     };
 
-    const phonesFilterIsEmpty: ObjectDropdownFilter = {
+    const phonesFilterIsEmpty: Filter = {
       id: 'person-phones-filter-is-empty',
       value: '',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
@@ -509,10 +534,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsEmpty,
       definition: {
         type: 'PHONES',
+        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
+        label: 'Phones',
+        iconName: 'phone',
       },
     };
 
-    const phonesFilterIsNotEmpty: ObjectDropdownFilter = {
+    const phonesFilterIsNotEmpty: Filter = {
       id: 'person-phones-filter-is-not-empty',
       value: '',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
@@ -520,6 +548,9 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsNotEmpty,
       definition: {
         type: 'PHONES',
+        fieldMetadataId: personMockPhonesFieldMetadataId?.id,
+        label: 'Phones',
+        iconName: 'phone',
       },
     };
 
@@ -667,7 +698,7 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'emails',
       );
 
-    const emailsFilterContains: ObjectDropdownFilter = {
+    const emailsFilterContains: Filter = {
       id: 'person-emails-filter-contains',
       value: 'test@test.com',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
@@ -675,10 +706,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.Contains,
       definition: {
         type: 'EMAILS',
+        fieldMetadataId: personMockEmailFieldMetadataId?.id,
+        iconName: 'email',
+        label: 'Emails',
       },
     };
 
-    const emailsFilterDoesNotContain: ObjectDropdownFilter = {
+    const emailsFilterDoesNotContain: Filter = {
       id: 'person-emails-filter-does-not-contain',
       value: 'test@test.com',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
@@ -686,10 +720,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.DoesNotContain,
       definition: {
         type: 'EMAILS',
+        fieldMetadataId: personMockEmailFieldMetadataId?.id,
+        label: 'Emails',
+        iconName: 'email',
       },
     };
 
-    const emailsFilterIsEmpty: ObjectDropdownFilter = {
+    const emailsFilterIsEmpty: Filter = {
       id: 'person-emails-filter-is-empty',
       value: '',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
@@ -697,10 +734,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsEmpty,
       definition: {
         type: 'EMAILS',
+        label: 'Emails',
+        iconName: 'email',
+        fieldMetadataId: personMockEmailFieldMetadataId?.id,
       },
     };
 
-    const emailsFilterIsNotEmpty: ObjectDropdownFilter = {
+    const emailsFilterIsNotEmpty: Filter = {
       id: 'person-emails-filter-is-not-empty',
       value: '',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
@@ -708,6 +748,9 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsNotEmpty,
       definition: {
         type: 'EMAILS',
+        label: 'Emails',
+        iconName: 'email',
+        fieldMetadataId: personMockEmailFieldMetadataId?.id,
       },
     };
 
@@ -795,7 +838,7 @@ describe('should work as expected for the different field types', () => {
         (field) => field.name === 'createdAt',
       );
 
-    const dateFilterIsAfter: ObjectDropdownFilter = {
+    const dateFilterIsAfter: Filter = {
       id: 'company-date-filter-is-after',
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
@@ -803,10 +846,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsAfter,
       definition: {
         type: 'DATE_TIME',
+        fieldMetadataId: companyMockDateFieldMetadataId?.id,
+        label: 'Created At',
+        iconName: 'date',
       },
     };
 
-    const dateFilterIsBefore: ObjectDropdownFilter = {
+    const dateFilterIsBefore: Filter = {
       id: 'company-date-filter-is-before',
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
@@ -814,10 +860,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsBefore,
       definition: {
         type: 'DATE_TIME',
+        fieldMetadataId: companyMockDateFieldMetadataId?.id,
+        label: 'Created At',
+        iconName: 'date',
       },
     };
 
-    const dateFilterIs: ObjectDropdownFilter = {
+    const dateFilterIs: Filter = {
       id: 'company-date-filter-is',
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
@@ -825,21 +874,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.Is,
       definition: {
         type: 'DATE_TIME',
+        fieldMetadataId: companyMockDateFieldMetadataId?.id,
+        label: 'Created At',
+        iconName: 'date',
       },
     };
 
-    const dateFilterIsRelative: ObjectDropdownFilter = {
-      id: 'company-date-filter-relative',
-      value: 'PAST_1_DAY',
-      fieldMetadataId: companyMockDateFieldMetadataId?.id,
-      displayValue: 'PAST_1_DAY',
-      operand: ViewFilterOperand.IsRelative,
-      definition: {
-        type: 'DATE_TIME',
-      },
-    };
-
-    const dateFilterIsEmpty: ObjectDropdownFilter = {
+    const dateFilterIsEmpty: Filter = {
       id: 'company-date-filter-is-empty',
       value: '',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
@@ -847,10 +888,13 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsEmpty,
       definition: {
         type: 'DATE_TIME',
+        fieldMetadataId: companyMockDateFieldMetadataId?.id,
+        label: 'Created At',
+        iconName: 'date',
       },
     };
 
-    const dateFilterIsNotEmpty: ObjectDropdownFilter = {
+    const dateFilterIsNotEmpty: Filter = {
       id: 'company-date-filter-is-not-empty',
       value: '',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
@@ -858,6 +902,9 @@ describe('should work as expected for the different field types', () => {
       operand: ViewFilterOperand.IsNotEmpty,
       definition: {
         type: 'DATE_TIME',
+        fieldMetadataId: companyMockDateFieldMetadataId?.id,
+        label: 'Created At',
+        iconName: 'date',
       },
     };
 
@@ -866,7 +913,6 @@ describe('should work as expected for the different field types', () => {
         dateFilterIsAfter,
         dateFilterIsBefore,
         dateFilterIs,
-        dateFilterIsRelative,
         dateFilterIsEmpty,
         dateFilterIsNotEmpty,
       ],
@@ -884,20 +930,6 @@ describe('should work as expected for the different field types', () => {
           createdAt: {
             lt: '2024-09-17T20:46:58.922Z',
           },
-        },
-        {
-          and: [
-            {
-              createdAt: {
-                lte: '2024-09-17T21:59:59.999Z',
-              },
-            },
-            {
-              createdAt: {
-                gte: '2024-09-16T22:00:00.000Z',
-              },
-            },
-          ],
         },
         {
           and: [
