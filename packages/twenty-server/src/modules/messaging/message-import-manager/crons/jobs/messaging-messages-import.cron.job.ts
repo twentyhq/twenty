@@ -1,74 +1,88 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
-  MessagingMessagesImportJobData,
-  MessagingMessagesImportJob,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import {
+  MessagingMessagesImportJob,
+  MessagingMessagesImportJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
+
+export const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
-  private readonly logger = new Logger(MessagingMessagesImportCronJob.name);
-
   constructor(
-    @InjectRepository(DataSourceEntity, 'metadata')
-    private readonly dataSourceRepository: Repository<DataSourceEntity>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly billingService: BillingService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(MessagingMessagesImportCronJob.name)
+  @SentryCronMonitor(
+    MessagingMessagesImportCronJob.name,
+    MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
-    const workspaceIds =
-      await this.billingService.getActiveSubscriptionWorkspaceIds();
+    console.time('MessagingMessagesImportCronJob time');
 
-    const dataSources = await this.dataSourceRepository.find({
+    const activeWorkspaces = await this.workspaceRepository.find({
       where: {
-        workspaceId: In(workspaceIds),
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
 
-    const workspaceIdsWithDataSources = new Set(
-      dataSources.map((dataSource) => dataSource.workspaceId),
-    );
+    for (const activeWorkspace of activeWorkspaces) {
+      try {
+        const messageChannelRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+            activeWorkspace.id,
+            'messageChannel',
+          );
 
-    for (const workspaceId of workspaceIdsWithDataSources) {
-      const messageChannels =
-        await this.messageChannelRepository.getAll(workspaceId);
+        const messageChannels = await messageChannelRepository.find({
+          where: {
+            isSyncEnabled: true,
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          },
+        });
 
-      for (const messageChannel of messageChannels) {
-        if (
-          messageChannel.isSyncEnabled &&
-          messageChannel.syncStage ===
-            MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
-        ) {
+        for (const messageChannel of messageChannels) {
           await this.messageQueueService.add<MessagingMessagesImportJobData>(
             MessagingMessagesImportJob.name,
             {
-              workspaceId,
+              workspaceId: activeWorkspace.id,
               messageChannelId: messageChannel.id,
             },
           );
         }
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          user: {
+            workspaceId: activeWorkspace.id,
+          },
+        });
       }
     }
+
+    console.timeEnd('MessagingMessagesImportCronJob time');
   }
 }

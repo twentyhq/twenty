@@ -12,14 +12,14 @@ export type Person = {
   avatarUrl?: string;
   jobTitle: string;
   linkedinLink: {
-    __typename?: 'Link';
-    url: string;
-    label: string;
+    __typename?: 'Links';
+    primaryLinkUrl: string;
+    primaryLinkLabel: string;
   };
   xLink: {
-    __typename?: 'Link';
-    url: string;
-    label: string;
+    __typename?: 'Links';
+    primaryLinkUrl: string;
+    primaryLinkLabel: string;
   };
   city: string;
   email: string;
@@ -30,11 +30,5 @@ export type Person = {
     __typename: 'Links';
     primaryLinkUrl: string;
     primaryLinkLabel: '';
-    secondaryLinks?:
-      | {
-          url: string;
-          label: string;
-        }[]
-      | null;
   };
 };

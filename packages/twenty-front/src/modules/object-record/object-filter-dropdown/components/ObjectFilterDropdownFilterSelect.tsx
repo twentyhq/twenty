@@ -1,15 +1,16 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { useEffect, useState } from 'react';
 
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-
-import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
+import { ObjectFilterSelectMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectMenu';
+import { ObjectFilterSelectSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterSelectSubMenu';
+import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
+import { currentSubMenuState } from '@/object-record/object-filter-dropdown/states/subMenuStates';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -39,61 +40,57 @@ export const StyledInput = styled.input`
 
 export const ObjectFilterDropdownFilterSelect = () => {
   const [searchText, setSearchText] = useState('');
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setSelectedOperandInDropdown,
-    setObjectFilterDropdownSearchInput,
-    availableFilterDefinitionsState,
-  } = useFilterDropdown();
 
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
   );
 
-  const { getIcon } = useIcons();
+  const [currentSubMenu, setCurrentSubMenu] =
+    useRecoilState(currentSubMenuState);
 
-  const setHotkeyScope = useSetHotkeyScope();
+  const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .filter((item) =>
+      item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
+    );
 
-  return (
-    <>
-      <StyledInput
-        value={searchText}
-        autoFocus
-        placeholder="Search fields"
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setSearchText(event.target.value)
-        }
-      />
-      <DropdownMenuItemsContainer>
-        {[...availableFilterDefinitions]
-          .sort((a, b) => a.label.localeCompare(b.label))
-          .filter((item) =>
-            item.label
-              .toLocaleLowerCase()
-              .includes(searchText.toLocaleLowerCase()),
-          )
-          .map((availableFilterDefinition, index) => (
-            <MenuItem
-              key={`select-filter-${index}`}
-              testId={`select-filter-${index}`}
-              onClick={() => {
-                setFilterDefinitionUsedInDropdown(availableFilterDefinition);
+  const selectableListItemIds = sortedAvailableFilterDefinitions.map(
+    (item) => item.fieldMetadataId,
+  );
 
-                if (availableFilterDefinition.type === 'RELATION') {
-                  setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
-                }
+  const { selectFilter } = useSelectFilter();
 
-                setSelectedOperandInDropdown(
-                  getOperandsForFilterType(availableFilterDefinition.type)?.[0],
-                );
+  const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
 
-                setObjectFilterDropdownSearchInput('');
-              }}
-              LeftIcon={getIcon(availableFilterDefinition.iconName)}
-              text={availableFilterDefinition.label}
-            />
-          ))}
-      </DropdownMenuItemsContainer>
-    </>
+  const handleEnter = (itemId: string) => {
+    const selectedFilterDefinition = sortedAvailableFilterDefinitions.find(
+      (item) => item.fieldMetadataId === itemId,
+    );
+
+    if (!isDefined(selectedFilterDefinition)) {
+      return;
+    }
+
+    resetSelectedItem();
+
+    selectFilter({ filterDefinition: selectedFilterDefinition });
+  };
+
+  useEffect(() => {
+    return () => {
+      setCurrentSubMenu(null);
+    };
+  }, [setCurrentSubMenu]);
+
+  return !currentSubMenu ? (
+    <ObjectFilterSelectMenu
+      searchText={searchText}
+      setSearchText={setSearchText}
+      sortedAvailableFilterDefinitions={sortedAvailableFilterDefinitions}
+      selectableListItemIds={selectableListItemIds}
+      handleEnter={handleEnter}
+    />
+  ) : (
+    <ObjectFilterSelectSubMenu />
   );
 };

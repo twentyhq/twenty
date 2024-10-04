@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Table } from '@/spreadsheet-import/components/Table';
+import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { Fields } from '@/spreadsheet-import/types';
 import { generateExampleRow } from '@/spreadsheet-import/utils/generateExampleRow';
 
@@ -16,5 +16,11 @@ export const ExampleTable = <T extends string>({
   const data = useMemo(() => generateExampleRow(fields), [fields]);
   const columns = useMemo(() => generateColumns(fields), [fields]);
 
-  return <Table rows={data} columns={columns} className={'rdg-example'} />;
+  return (
+    <SpreadsheetImportTable
+      rows={data}
+      columns={columns}
+      className={'rdg-example'}
+    />
+  );
 };

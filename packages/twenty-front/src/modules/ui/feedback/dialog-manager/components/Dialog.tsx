@@ -11,7 +11,7 @@ import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
-  background: ${({ theme }) => theme.background.overlay};
+  background: ${({ theme }) => theme.background.overlayPrimary};
   display: flex;
   height: 100dvh;
   justify-content: center;

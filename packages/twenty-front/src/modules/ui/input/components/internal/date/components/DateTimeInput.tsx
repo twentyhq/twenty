@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useIMask } from 'react-imask';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
+import { useCallback, useEffect, useState } from 'react';
+import { useIMask } from 'react-imask';
 
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
 import { DATE_MASK } from '@/ui/input/components/internal/date/constants/DateMask';
@@ -41,6 +41,7 @@ type DateTimeInputProps = {
   onChange?: (date: Date | null) => void;
   date: Date | null;
   isDateTimeInput?: boolean;
+  userTimezone?: string;
   onError?: (error: Error) => void;
 };
 
@@ -48,6 +49,7 @@ export const DateTimeInput = ({
   date,
   onChange,
   isDateTimeInput,
+  userTimezone,
 }: DateTimeInputProps) => {
   const parsingFormat = isDateTimeInput ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy';
 
@@ -55,7 +57,7 @@ export const DateTimeInput = ({
 
   const parseDateToString = useCallback(
     (date: any) => {
-      const dateParsed = DateTime.fromJSDate(date);
+      const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
 
       const dateWithoutTime = DateTime.fromJSDate(date)
         .toLocal()
@@ -70,19 +72,19 @@ export const DateTimeInput = ({
         });
 
       const formattedDate = isDateTimeInput
-        ? dateParsed.toFormat(parsingFormat)
+        ? dateParsed.setZone(userTimezone).toFormat(parsingFormat)
         : dateWithoutTime.toFormat(parsingFormat);
 
       return formattedDate;
     },
-    [parsingFormat, isDateTimeInput],
+    [parsingFormat, isDateTimeInput, userTimezone],
   );
 
   const parseStringToDate = (str: string) => {
     setHasError(false);
 
     const parsedDate = isDateTimeInput
-      ? DateTime.fromFormat(str, parsingFormat)
+      ? DateTime.fromFormat(str, parsingFormat, { zone: userTimezone })
       : DateTime.fromFormat(str, parsingFormat, { zone: 'utc' });
 
     const isValid = parsedDate.isValid;

@@ -12,7 +12,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRawJson } from '../../types/guards/isFieldRawJson';
 
 export const useJsonField = () => {
-  const { entityId, fieldDefinition, hotkeyScope, maxWidth } =
+  const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
     useContext(FieldContext);
 
   assertFieldMetadata(
@@ -25,7 +25,7 @@ export const useJsonField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldJsonValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
@@ -43,7 +43,7 @@ export const useJsonField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldJsonValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldJsonValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

@@ -1,13 +1,8 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TimelineThreadParticipant } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-
-registerEnumType(MessageChannelVisibility, {
-  name: 'MessageChannelVisibility',
-  description: 'Visibility of the message channel',
-});
 
 @ObjectType('TimelineThread')
 export class TimelineThread {

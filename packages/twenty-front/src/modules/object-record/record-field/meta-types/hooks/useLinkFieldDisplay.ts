@@ -6,11 +6,11 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { FieldLinkValue } from '../../types/FieldMetadata';
 
 export const useLinkFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
   const fieldValue = useRecordFieldValue<FieldLinkValue | undefined>(
-    entityId,
+    recordId,
     fieldName,
   );
 

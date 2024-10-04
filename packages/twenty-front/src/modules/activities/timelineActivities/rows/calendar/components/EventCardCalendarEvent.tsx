@@ -6,6 +6,8 @@ import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { UserContext } from '@/users/contexts/UserContext';
+import { useContext } from 'react';
 import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
@@ -107,6 +109,8 @@ export const EventCardCalendarEvent = ({
 
   const { openCalendarEventRightDrawer } = useOpenCalendarEventRightDrawer();
 
+  const { timeZone } = useContext(UserContext);
+
   if (isDefined(error)) {
     const shouldHideMessageContent = error.graphQLErrors.some(
       (e) => e.extensions?.code === 'FORBIDDEN',
@@ -138,12 +142,14 @@ export const EventCardCalendarEvent = ({
     throw new Error("Can't render a calendarEvent without a start date");
   }
 
-  const startsAtMonth = formatToHumanReadableMonth(startsAtDate);
+  const startsAtMonth = formatToHumanReadableMonth(startsAtDate, timeZone);
 
-  const startsAtDay = formatToHumanReadableDay(startsAtDate);
+  const startsAtDay = formatToHumanReadableDay(startsAtDate, timeZone);
 
-  const startsAtHour = formatToHumanReadableTime(startsAtDate);
-  const endsAtHour = endsAtDate ? formatToHumanReadableTime(endsAtDate) : null;
+  const startsAtHour = formatToHumanReadableTime(startsAtDate, timeZone);
+  const endsAtHour = endsAtDate
+    ? formatToHumanReadableTime(endsAtDate, timeZone)
+    : null;
 
   return (
     <StyledEventCardCalendarEventContainer

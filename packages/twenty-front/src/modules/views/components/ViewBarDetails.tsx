@@ -1,19 +1,26 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { ReactNode, useMemo } from 'react';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
+import { canPersistViewComponentFamilySelector } from '@/views/states/selectors/canPersistViewComponentFamilySelector';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { isDefined } from 'twenty-ui';
+import { VariantFilterChip } from './VariantFilterChip';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -95,31 +102,61 @@ export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
   filterDropdownId,
+  viewBarId,
 }: ViewBarDetailsProps) => {
-  const {
-    canPersistViewSelector,
-    isViewBarExpandedState,
-    availableFilterDefinitionsState,
-    availableSortDefinitionsState,
-  } = useViewStates();
-
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
-  const { hasFiltersQueryParams } = useViewFromQueryParams();
-  const canPersistView = useRecoilValue(canPersistViewSelector());
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
-  );
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
+  const viewId = currentViewWithCombinedFiltersAndSorts?.id;
+
+  const isViewBarExpanded = useRecoilComponentValueV2(
+    isViewBarExpandedComponentState,
   );
 
-  const { resetCurrentView } = useResetCurrentView();
+  const { hasFiltersQueryParams } = useViewFromQueryParams();
+
+  const canPersistView = useRecoilComponentFamilyValueV2(
+    canPersistViewComponentFamilySelector,
+    { viewId },
+  );
+
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+  );
+
+  const availableSortDefinitions = useRecoilComponentValueV2(
+    availableSortDefinitionsComponentState,
+  );
+
+  const { resetUnsavedViewStates } = useResetUnsavedViewStates();
   const canResetView = canPersistView && !hasFiltersQueryParams;
 
+  const { otherViewFilters, defaultViewFilters } = useMemo(() => {
+    if (!currentViewWithCombinedFiltersAndSorts) {
+      return {
+        otherViewFilters: [],
+        defaultViewFilters: [],
+      };
+    }
+
+    const otherViewFilters =
+      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+        (viewFilter) => viewFilter.variant && viewFilter.variant !== 'default',
+      );
+    const defaultViewFilters =
+      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+        (viewFilter) => !viewFilter.variant || viewFilter.variant === 'default',
+      );
+
+    return {
+      otherViewFilters,
+      defaultViewFilters,
+    };
+  }, [currentViewWithCombinedFiltersAndSorts]);
+
   const handleCancelClick = () => {
-    resetCurrentView();
+    if (isDefined(viewId)) {
+      resetUnsavedViewStates(viewId);
+    }
   };
 
   const shouldExpandViewBar =
@@ -136,6 +173,23 @@ export const ViewBarDetails = ({
     <StyledBar>
       <StyledFilterContainer>
         <StyledChipcontainer>
+          {otherViewFilters.map((viewFilter) => (
+            <VariantFilterChip
+              key={viewFilter.fieldMetadataId}
+              // Why do we have two types, Filter and ViewFilter?
+              // Why key defition is already present in the Filter type and added on the fly here with mapViewFiltersToFilters ?
+              // Also as filter is spread into viewFilter, definition is present
+              // FixMe: Ugly hack to make it work
+              viewFilter={viewFilter as unknown as Filter}
+              viewBarId={viewBarId}
+            />
+          ))}
+          {!!otherViewFilters.length &&
+            !!currentViewWithCombinedFiltersAndSorts?.viewSorts?.length && (
+              <StyledSeperatorContainer>
+                <StyledSeperator />
+              </StyledSeperatorContainer>
+            )}
           {mapViewSortsToSorts(
             currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [],
             availableSortDefinitions,
@@ -143,13 +197,13 @@ export const ViewBarDetails = ({
             <EditableSortChip key={sort.fieldMetadataId} viewSort={sort} />
           ))}
           {!!currentViewWithCombinedFiltersAndSorts?.viewSorts?.length &&
-            !!currentViewWithCombinedFiltersAndSorts?.viewFilters?.length && (
+            !!defaultViewFilters.length && (
               <StyledSeperatorContainer>
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
           {mapViewFiltersToFilters(
-            currentViewWithCombinedFiltersAndSorts?.viewFilters ?? [],
+            defaultViewFilters,
             availableFilterDefinitions,
           ).map((viewFilter) => (
             <ObjectFilterDropdownScope

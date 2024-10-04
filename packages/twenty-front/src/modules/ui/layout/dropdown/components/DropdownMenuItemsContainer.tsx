@@ -45,7 +45,7 @@ export const DropdownMenuItemsContainer = ({
   return (
     <StyledDropdownMenuItemsExternalContainer hasMaxHeight={hasMaxHeight}>
       {hasMaxHeight ? (
-        <StyledScrollWrapper>
+        <StyledScrollWrapper contextProviderName="dropdownMenuItemsContainer">
           <StyledDropdownMenuItemsInternalContainer>
             {children}
           </StyledDropdownMenuItemsInternalContainer>

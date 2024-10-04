@@ -1,12 +1,11 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
-import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from '~/utils/isDefined';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isMatchingLocation = useIsMatchingLocation();
@@ -100,14 +99,21 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.Completed &&
+    subscriptionStatus === SubscriptionStatus.Canceled &&
+    isMatchingLocation(AppPath.PlanRequired)
+  ) {
+    return;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.Completed &&
     isMatchingOnboardingRoute &&
-    subscriptionStatus !== SubscriptionStatus.Canceled &&
-    (isDefined(subscriptionStatus) || !isMatchingLocation(AppPath.PlanRequired))
+    isLoggedIn
   ) {
     return defaultHomePagePath;
   }
 
-  if (isMatchingLocation(AppPath.Index)) {
+  if (isMatchingLocation(AppPath.Index) && isLoggedIn) {
     return defaultHomePagePath;
   }
 

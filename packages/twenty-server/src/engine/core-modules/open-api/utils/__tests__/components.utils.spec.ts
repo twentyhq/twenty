@@ -1,15 +1,17 @@
-import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import {
   fields,
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
-  it('should test all field types', () => {
+  it('should test all non-deprecated field types', () => {
     expect(fields.map((field) => field.type)).toEqual(
-      Object.keys(FieldMetadataType),
+      Object.keys(FieldMetadataType).filter(
+        (key) => key !== FieldMetadataType.LINK,
+      ),
     );
   });
   it('should compute schema components', () => {
@@ -20,9 +22,6 @@ describe('computeSchemaComponents', () => {
     ).toEqual({
       ObjectName: {
         type: 'object',
-        description: undefined,
-        required: ['fieldNumber'],
-        example: { fieldNumber: '' },
         properties: {
           fieldUuid: {
             type: 'string',
@@ -34,17 +33,48 @@ describe('computeSchemaComponents', () => {
           fieldPhone: {
             type: 'string',
           },
+          fieldPhones: {
+            properties: {
+              additionalPhones: {
+                type: 'object',
+              },
+              primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneNumber: {
+                type: 'string',
+              },
+            },
+            type: 'object',
+          },
           fieldEmail: {
             type: 'string',
             format: 'email',
           },
+          fieldEmails: {
+            type: 'object',
+            properties: {
+              primaryEmail: {
+                type: 'string',
+              },
+              additionalEmails: {
+                type: 'object',
+              },
+            },
+          },
           fieldDateTime: {
             type: 'string',
-            format: 'date',
+            format: 'date-time',
           },
           fieldDate: {
             type: 'string',
             format: 'date',
+          },
+          fieldArray: {
+            items: {
+              type: 'string',
+            },
+            type: 'array',
           },
           fieldBoolean: {
             type: 'boolean',
@@ -55,29 +85,45 @@ describe('computeSchemaComponents', () => {
           fieldNumeric: {
             type: 'number',
           },
-          fieldLink: {
-            properties: {
-              label: { type: 'string' },
-              url: { type: 'string' },
-            },
-            type: 'object',
-          },
           fieldLinks: {
-            properties: {
-              primaryLinkLabel: { type: 'string' },
-              primaryLinkUrl: { type: 'string' },
-              secondaryLinks: { type: 'object' },
-            },
             type: 'object',
+            properties: {
+              primaryLinkLabel: {
+                type: 'string',
+              },
+              primaryLinkUrl: {
+                type: 'string',
+              },
+              secondaryLinks: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  description: 'A secondary link',
+                  properties: {
+                    url: {
+                      type: 'string',
+                    },
+                    label: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
           },
           fieldCurrency: {
-            properties: {
-              amountMicros: { type: 'number' },
-              currencyCode: { type: 'string' },
-            },
             type: 'object',
+            properties: {
+              amountMicros: {
+                type: 'number',
+              },
+              currencyCode: {
+                type: 'string',
+              },
+            },
           },
           fieldFullName: {
+            type: 'object',
             properties: {
               firstName: {
                 type: 'string',
@@ -86,10 +132,10 @@ describe('computeSchemaComponents', () => {
                 type: 'string',
               },
             },
-            type: 'object',
           },
           fieldRating: {
-            type: 'number',
+            type: 'string',
+            enum: ['RATING_1', 'RATING_2'],
           },
           fieldSelect: {
             type: 'string',
@@ -103,8 +149,21 @@ describe('computeSchemaComponents', () => {
             type: 'number',
           },
           fieldAddress: {
+            type: 'object',
             properties: {
+              addressStreet1: {
+                type: 'string',
+              },
+              addressStreet2: {
+                type: 'string',
+              },
               addressCity: {
+                type: 'string',
+              },
+              addressPostcode: {
+                type: 'string',
+              },
+              addressState: {
                 type: 'string',
               },
               addressCountry: {
@@ -116,48 +175,407 @@ describe('computeSchemaComponents', () => {
               addressLng: {
                 type: 'number',
               },
-              addressPostcode: {
+            },
+          },
+          fieldRawJson: {
+            type: 'object',
+          },
+          fieldRichText: {
+            type: 'string',
+          },
+          fieldActor: {
+            type: 'object',
+            properties: {
+              source: {
+                type: 'string',
+                enum: [
+                  'EMAIL',
+                  'CALENDAR',
+                  'WORKFLOW',
+                  'API',
+                  'IMPORT',
+                  'MANUAL',
+                ],
+              },
+            },
+          },
+        },
+        required: ['fieldNumber'],
+      },
+      'ObjectName for Update': {
+        type: 'object',
+        properties: {
+          fieldUuid: {
+            type: 'string',
+            format: 'uuid',
+          },
+          fieldText: {
+            type: 'string',
+          },
+          fieldPhone: {
+            type: 'string',
+          },
+          fieldPhones: {
+            properties: {
+              additionalPhones: {
+                type: 'object',
+              },
+              primaryPhoneCountryCode: {
                 type: 'string',
               },
-              addressState: {
+              primaryPhoneNumber: {
                 type: 'string',
               },
+            },
+            type: 'object',
+          },
+          fieldEmail: {
+            type: 'string',
+            format: 'email',
+          },
+          fieldEmails: {
+            type: 'object',
+            properties: {
+              primaryEmail: {
+                type: 'string',
+              },
+              additionalEmails: {
+                type: 'object',
+              },
+            },
+          },
+          fieldDateTime: {
+            type: 'string',
+            format: 'date-time',
+          },
+          fieldDate: {
+            type: 'string',
+            format: 'date',
+          },
+          fieldArray: {
+            items: {
+              type: 'string',
+            },
+            type: 'array',
+          },
+          fieldBoolean: {
+            type: 'boolean',
+          },
+          fieldNumber: {
+            type: 'integer',
+          },
+          fieldNumeric: {
+            type: 'number',
+          },
+          fieldLinks: {
+            type: 'object',
+            properties: {
+              primaryLinkLabel: {
+                type: 'string',
+              },
+              primaryLinkUrl: {
+                type: 'string',
+              },
+              secondaryLinks: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  description: 'A secondary link',
+                  properties: {
+                    url: {
+                      type: 'string',
+                    },
+                    label: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          fieldCurrency: {
+            type: 'object',
+            properties: {
+              amountMicros: {
+                type: 'number',
+              },
+              currencyCode: {
+                type: 'string',
+              },
+            },
+          },
+          fieldFullName: {
+            type: 'object',
+            properties: {
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+            },
+          },
+          fieldRating: {
+            type: 'string',
+            enum: ['RATING_1', 'RATING_2'],
+          },
+          fieldSelect: {
+            type: 'string',
+            enum: ['OPTION_1', 'OPTION_2'],
+          },
+          fieldMultiSelect: {
+            type: 'string',
+            enum: ['OPTION_1', 'OPTION_2'],
+          },
+          fieldPosition: {
+            type: 'number',
+          },
+          fieldAddress: {
+            type: 'object',
+            properties: {
               addressStreet1: {
                 type: 'string',
               },
               addressStreet2: {
                 type: 'string',
               },
+              addressCity: {
+                type: 'string',
+              },
+              addressPostcode: {
+                type: 'string',
+              },
+              addressState: {
+                type: 'string',
+              },
+              addressCountry: {
+                type: 'string',
+              },
+              addressLat: {
+                type: 'number',
+              },
+              addressLng: {
+                type: 'number',
+              },
             },
-            type: 'object',
           },
           fieldRawJson: {
             type: 'object',
           },
+          fieldRichText: {
+            type: 'string',
+          },
+          fieldActor: {
+            type: 'object',
+            properties: {
+              source: {
+                type: 'string',
+                enum: [
+                  'EMAIL',
+                  'CALENDAR',
+                  'WORKFLOW',
+                  'API',
+                  'IMPORT',
+                  'MANUAL',
+                ],
+              },
+            },
+          },
         },
       },
-      'ObjectName with Relations': {
-        allOf: [
-          {
-            $ref: '#/components/schemas/ObjectName',
+      'ObjectName for Response': {
+        type: 'object',
+        properties: {
+          fieldUuid: {
+            type: 'string',
+            format: 'uuid',
           },
-          {
+          fieldText: {
+            type: 'string',
+          },
+          fieldPhone: {
+            type: 'string',
+          },
+          fieldPhones: {
             properties: {
-              fieldRelation: {
-                type: 'array',
-                items: {
-                  $ref: '#/components/schemas/ToObjectMetadataName',
-                },
+              additionalPhones: {
+                type: 'object',
+              },
+              primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneNumber: {
+                type: 'string',
               },
             },
             type: 'object',
           },
-        ],
-        description: undefined,
-        example: {
-          fieldNumber: '',
+          fieldEmail: {
+            type: 'string',
+            format: 'email',
+          },
+          fieldEmails: {
+            type: 'object',
+            properties: {
+              primaryEmail: {
+                type: 'string',
+              },
+              additionalEmails: {
+                type: 'object',
+              },
+            },
+          },
+          fieldDateTime: {
+            type: 'string',
+            format: 'date-time',
+          },
+          fieldDate: {
+            type: 'string',
+            format: 'date',
+          },
+          fieldArray: {
+            items: {
+              type: 'string',
+            },
+            type: 'array',
+          },
+          fieldBoolean: {
+            type: 'boolean',
+          },
+          fieldNumber: {
+            type: 'integer',
+          },
+          fieldNumeric: {
+            type: 'number',
+          },
+          fieldLinks: {
+            type: 'object',
+            properties: {
+              primaryLinkLabel: {
+                type: 'string',
+              },
+              primaryLinkUrl: {
+                type: 'string',
+              },
+              secondaryLinks: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  description: 'A secondary link',
+                  properties: {
+                    url: {
+                      type: 'string',
+                    },
+                    label: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          fieldCurrency: {
+            type: 'object',
+            properties: {
+              amountMicros: {
+                type: 'number',
+              },
+              currencyCode: {
+                type: 'string',
+              },
+            },
+          },
+          fieldFullName: {
+            type: 'object',
+            properties: {
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+            },
+          },
+          fieldRating: {
+            type: 'string',
+            enum: ['RATING_1', 'RATING_2'],
+          },
+          fieldSelect: {
+            type: 'string',
+            enum: ['OPTION_1', 'OPTION_2'],
+          },
+          fieldMultiSelect: {
+            type: 'string',
+            enum: ['OPTION_1', 'OPTION_2'],
+          },
+          fieldPosition: {
+            type: 'number',
+          },
+          fieldAddress: {
+            type: 'object',
+            properties: {
+              addressStreet1: {
+                type: 'string',
+              },
+              addressStreet2: {
+                type: 'string',
+              },
+              addressCity: {
+                type: 'string',
+              },
+              addressPostcode: {
+                type: 'string',
+              },
+              addressState: {
+                type: 'string',
+              },
+              addressCountry: {
+                type: 'string',
+              },
+              addressLat: {
+                type: 'number',
+              },
+              addressLng: {
+                type: 'number',
+              },
+            },
+          },
+          fieldRawJson: {
+            type: 'object',
+          },
+          fieldRichText: {
+            type: 'string',
+          },
+          fieldActor: {
+            type: 'object',
+            properties: {
+              source: {
+                type: 'string',
+                enum: [
+                  'EMAIL',
+                  'CALENDAR',
+                  'WORKFLOW',
+                  'API',
+                  'IMPORT',
+                  'MANUAL',
+                ],
+              },
+              workspaceMemberId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              name: {
+                type: 'string',
+              },
+            },
+          },
+          fieldRelation: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/ToObjectMetadataName for Response',
+            },
+          },
         },
-        required: ['fieldNumber'],
       },
     });
   });

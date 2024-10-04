@@ -2,7 +2,13 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperationSignatureFactory =
-  ({ messageThreadId }: { messageThreadId: string }) => ({
+  ({
+    messageThreadId,
+    isSubscribersEnabled,
+  }: {
+    messageThreadId: string;
+    isSubscribersEnabled: boolean;
+  }) => ({
     objectNameSingular: CoreObjectNameSingular.Message,
     variables: {
       filter: {
@@ -25,6 +31,25 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
       subject: true,
       text: true,
       receivedAt: true,
-      messageParticipants: true,
+      messageThread: {
+        id: true,
+        subscribers: isSubscribersEnabled
+          ? {
+              workspaceMember: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+              },
+            }
+          : undefined,
+      },
+      messageParticipants: {
+        id: true,
+        role: true,
+        displayName: true,
+        handle: true,
+        person: true,
+        workspaceMember: true,
+      },
     },
   });

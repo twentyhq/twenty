@@ -6,7 +6,9 @@ import {
   IsNumber,
   IsNumberString,
   IsObject,
+  IsOptional,
   IsString,
+  IsUUID,
   Matches,
   ValidateIf,
 } from 'class-validator';
@@ -33,6 +35,11 @@ export class FieldMetadataDefaultValueRawJson {
   value: object | null;
 }
 
+export class FieldMetadataDefaultValueRichText {
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  value: string | null;
+}
 export class FieldMetadataDefaultValueNumber {
   @ValidateIf((object, value) => value !== null)
   @IsNumber()
@@ -105,6 +112,7 @@ export class FieldMetadataDefaultValueNowFunction {
   @IsNotEmpty()
   value: typeof fieldMetadataDefaultValueFunctionName.NOW;
 }
+
 export class FieldMetadataDefaultValueAddress {
   @ValidateIf((_object, value) => value !== null)
   @IsString()
@@ -151,4 +159,43 @@ export class FieldMetadataDefaultValueLinks {
   @ValidateIf((_object, value) => value !== null)
   @IsObject()
   secondaryLinks: object | null;
+}
+
+export class FieldMetadataDefaultActor {
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  source: string;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsOptional()
+  @IsUUID()
+  workspaceMemberId?: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  name: string;
+}
+
+export class FieldMetadataDefaultValueEmails {
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryEmail: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsObject()
+  additionalEmails: object | null;
+}
+
+export class FieldMetadataDefaultValuePhones {
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryPhoneNumber: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryPhoneCountryCode: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsObject()
+  additionalPhones: object | null;
 }

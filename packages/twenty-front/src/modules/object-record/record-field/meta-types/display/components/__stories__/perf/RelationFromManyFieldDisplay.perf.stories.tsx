@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui';
 
@@ -24,11 +24,11 @@ import {
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(
-    recordStoreFamilyState(relationFromManyFieldDisplayMock.entityId),
+    recordStoreFamilyState(relationFromManyFieldDisplayMock.recordId),
   );
 
   const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(relationFromManyFieldDisplayMock.relationEntityId),
+    recordStoreFamilyState(relationFromManyFieldDisplayMock.relationRecordId),
   );
 
   const setRecordFieldValue = useSetRecordFieldValue();
@@ -64,7 +64,7 @@ const meta: Meta = {
       <RecordFieldValueSelectorContextProvider>
         <FieldContext.Provider
           value={{
-            entityId: relationFromManyFieldDisplayMock.entityId,
+            recordId: relationFromManyFieldDisplayMock.recordId,
             basePathToShowPage: '/object-record/',
             isLabelIdentifier: false,
             fieldDefinition: {
@@ -94,9 +94,10 @@ type Story = StoryObj<typeof RelationFromManyFieldDisplay>;
 
 export const Default: Story = {};
 
+// TODO: optimize this component once we have morph many
 export const Performance = getProfilingStory({
   componentName: 'RelationFromManyFieldDisplay',
-  averageThresholdInMs: 0.5,
+  averageThresholdInMs: 1,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

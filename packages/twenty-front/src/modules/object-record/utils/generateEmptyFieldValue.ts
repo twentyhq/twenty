@@ -1,16 +1,20 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 export const generateEmptyFieldValue = (
-  fieldMetadataItem: FieldMetadataItem,
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>,
 ) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.Email:
     case FieldMetadataType.Phone:
     case FieldMetadataType.Text: {
       return '';
+    }
+    case FieldMetadataType.Emails: {
+      return { primaryEmail: '', additionalEmails: null };
     }
     case FieldMetadataType.Link: {
       return {
@@ -59,10 +63,8 @@ export const generateEmptyFieldValue = (
     }
     case FieldMetadataType.Relation: {
       if (
-        !isNonEmptyString(
-          fieldMetadataItem.fromRelationMetadata?.toObjectMetadata
-            ?.nameSingular,
-        )
+        fieldMetadataItem.relationDefinition?.direction ===
+        RelationDefinitionType.ManyToOne
       ) {
         return null;
       }
@@ -81,8 +83,28 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.MultiSelect: {
       return null;
     }
+    case FieldMetadataType.Array: {
+      return null;
+    }
     case FieldMetadataType.RawJson: {
       return null;
+    }
+    case FieldMetadataType.RichText: {
+      return null;
+    }
+    case FieldMetadataType.Actor: {
+      return {
+        source: 'MANUAL',
+        workspaceMemberId: null,
+        name: '',
+      };
+    }
+    case FieldMetadataType.Phones: {
+      return {
+        primaryPhoneNumber: '',
+        primaryPhoneCountryCode: '',
+        additionalPhones: null,
+      };
     }
     default: {
       throw new Error('Unhandled FieldMetadataType');

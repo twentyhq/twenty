@@ -1,9 +1,8 @@
 import { isString } from '@sniptt/guards';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isFieldRelationToOneValue } from '@/object-record/record-field/types/guards/isFieldRelationToOneValue';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
@@ -30,30 +29,42 @@ export const sanitizeRecordInput = ({
 
         if (
           fieldMetadataItem.type === FieldMetadataType.Relation &&
-          isFieldRelationToOneValue(fieldValue)
+          fieldMetadataItem.relationDefinition?.direction ===
+            RelationDefinitionType.ManyToOne
         ) {
           const relationIdFieldName = `${fieldMetadataItem.name}Id`;
           const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
             (field) => field.name === relationIdFieldName,
           );
 
-          return relationIdFieldMetadataItem
+          return relationIdFieldMetadataItem && fieldValue?.id
             ? [relationIdFieldName, fieldValue?.id ?? null]
             : undefined;
         }
 
+        if (
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.relationDefinition?.direction ===
+            RelationDefinitionType.OneToMany
+        ) {
+          return undefined;
+        }
+
+        // Todo: we should check that the fieldValue is a valid value
+        // (e.g. a string for a string field, following the right composite structure for composite fields)
         return [fieldName, fieldValue];
       })
       .filter(isDefined),
   );
   if (
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Company ||
-    !isString(filteredResultRecord.domainName)
+    !(
+      isDefined(filteredResultRecord.domainName) &&
+      isString(filteredResultRecord.domainName)
+    )
   )
     return filteredResultRecord;
-
   return {
     ...filteredResultRecord,
-    domainName: getUrlHostName(filteredResultRecord.domainName),
+    domainName: getUrlHostName(filteredResultRecord.domainName as string),
   };
 };

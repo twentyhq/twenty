@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
+import { useDeleteCombinedViewSorts } from '@/views/hooks/useDeleteCombinedViewSorts';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 
 export const RecordIndexRemoveSortingModal = ({
@@ -21,11 +21,11 @@ export const RecordIndexRemoveSortingModal = ({
     isRemoveSortingModalOpenState,
   );
 
-  const { removeCombinedViewSort } = useCombinedViewSorts(recordTableId);
+  const { deleteCombinedViewSort } = useDeleteCombinedViewSorts(recordTableId);
 
   const handleRemoveClick = () => {
     fieldMetadataIds.forEach((id) => {
-      removeCombinedViewSort(id);
+      deleteCombinedViewSort(id);
     });
   };
 

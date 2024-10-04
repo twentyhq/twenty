@@ -13,7 +13,13 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
+import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
+import {
+  RecordInlineCellContext,
+  RecordInlineCellContextProps,
+} from './RecordInlineCellContext';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
@@ -21,18 +27,21 @@ type RecordInlineCellProps = {
   isCentered?: boolean;
 };
 
-// TODO: refactor props drilling with a RecordInlineCellContext
 export const RecordInlineCell = ({
   readonly,
   loading,
   isCentered,
 }: RecordInlineCellProps) => {
-  const { fieldDefinition, entityId } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
+  const isFieldReadOnly = useIsFieldReadOnly();
+
   const { closeInlineCell } = useInlineCell();
+
+  const cellIsReadOnly = readonly || isFieldReadOnly;
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -69,45 +78,46 @@ export const RecordInlineCell = ({
 
   const { getIcon } = useIcons();
 
+  const RecordInlineCellContextValue: RecordInlineCellContextProps = {
+    readonly: cellIsReadOnly,
+    buttonIcon: buttonIcon,
+    customEditHotkeyScope: isFieldRelation(fieldDefinition)
+      ? { scope: RelationPickerHotkeyScope.RelationPicker }
+      : undefined,
+    IconLabel: fieldDefinition.iconName
+      ? getIcon(fieldDefinition.iconName)
+      : undefined,
+    label: fieldDefinition.label,
+    labelWidth: fieldDefinition.labelWidth,
+    showLabel: fieldDefinition.showLabel,
+    isCentered: isCentered,
+    editModeContent: (
+      <FieldInput
+        recordFieldInputdId={getRecordFieldInputId(
+          recordId,
+          fieldDefinition?.metadata?.fieldName,
+        )}
+        onEnter={handleEnter}
+        onCancel={handleCancel}
+        onEscape={handleEscape}
+        onSubmit={handleSubmit}
+        onTab={handleTab}
+        onShiftTab={handleShiftTab}
+        onClickOutside={handleClickOutside}
+        isReadOnly={cellIsReadOnly}
+      />
+    ),
+    displayModeContent: <FieldDisplay />,
+    isDisplayModeFixHeight: undefined,
+    editModeContentOnly: isFieldInputOnly,
+    loading: loading,
+  };
+
   return (
     <FieldFocusContextProvider>
-      <RecordInlineCellContainer
-        readonly={readonly}
-        buttonIcon={buttonIcon}
-        customEditHotkeyScope={
-          isFieldRelation(fieldDefinition)
-            ? {
-                scope: RelationPickerHotkeyScope.RelationPicker,
-              }
-            : undefined
-        }
-        IconLabel={
-          fieldDefinition.iconName
-            ? getIcon(fieldDefinition.iconName)
-            : undefined
-        }
-        label={fieldDefinition.label}
-        labelWidth={fieldDefinition.labelWidth}
-        showLabel={fieldDefinition.showLabel}
-        isCentered={isCentered}
-        editModeContent={
-          <FieldInput
-            recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
-            onEnter={handleEnter}
-            onCancel={handleCancel}
-            onEscape={handleEscape}
-            onSubmit={handleSubmit}
-            onTab={handleTab}
-            onShiftTab={handleShiftTab}
-            onClickOutside={handleClickOutside}
-            isReadOnly={readonly}
-          />
-        }
-        displayModeContent={<FieldDisplay />}
-        isDisplayModeFixHeight
-        editModeContentOnly={isFieldInputOnly}
-        loading={loading}
-      />
+      <RecordInlineCellContext.Provider value={RecordInlineCellContextValue}>
+        <RecordInlineCellContainer />
+      </RecordInlineCellContext.Provider>
     </FieldFocusContextProvider>
   );
 };

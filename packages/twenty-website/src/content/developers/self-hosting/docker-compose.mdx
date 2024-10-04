@@ -1,58 +1,231 @@
 ---
-title: 1-Click Docker Compose 
+title: 1-Click Docker Compose
 icon: TbBrandDocker
 image: /images/user-guide/objects/objects.png
 ---
 
+## Overview
+
+This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
+
+**Important:** Only modify settings explicitly mentioned in this guide. Altering other configurations may lead to issues.
+
+See docs [Setup Environment Variables](https://twenty.com/developers/section/self-hosting/self-hosting-var) for advanced configuration.
+
+
+## System Requirements
+
+- RAM: Ensure your environment has at least 2GB of RAM. Insufficient memory can cause processes to crash.
+- Docker & Docker Compose: Make sure both are installed and up-to-date.
+
 ## Option 1: One-line script
 
-Install the project with the command below.
-It will install the latest stable version.
+Install the latest stable version of Twenty with a single command:
 ```bash
 bash <(curl -sL https://git.new/20)
 ```
 
-If you want to install a specific version, you can do so by adding the version number. `VERSION=x.y.z BRANCH=branch-name bash <(curl -sL https://git.new/20)`
+To install a specific version or branch:
+```bash
+VERSION=x.y.z BRANCH=branch-name bash <(curl -sL https://git.new/20)
+```
+- Replace x.y.z with the desired version number.
+- Replace branch-name with the name of the branch you want to install.
 
 ## Option 2: Manual steps
+Follow these steps for a manual setup.
 
-1. Copy the [.env.example](https://github.com/twentyhq/twenty/blob/main/packages/twenty-docker/.env.example) into a `.env` in the same directory where your `docker-compose.yml` file will be
-2. Run the command `openssl rand -base64 32` four times, make note of the string for each
-3. In your .env file, replace the three "replace_me_with_a_random_string_access" with the four random strings you just generated.
+### Step 1: Set Up the Environment File
 
+1. **Create the .env File**
+
+    Copy the example environment file to a new .env file in your working directory:
+    ```bash
+    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/.env.example
+    ```
+
+2. **Generate Secret Tokens**
+
+    Run the following command four times to generate four unique random strings:
+    ```bash
+    openssl rand -base64 32
+    ```
+    **Important:** Keep these tokens secure and do not share them.
+
+3. **Update the `.env`**
+
+    Replace the placeholder values in your .env file with the generated tokens:
+
+    ```ini
+    ACCESS_TOKEN_SECRET=first_random_string
+    LOGIN_TOKEN_SECRET=second_random_string
+    REFRESH_TOKEN_SECRET=third_random_string
+    FILE_TOKEN_SECRET=fourth_random_string
+    ```
+    **Note:** Only modify these lines unless instructed otherwise.
+
+4. **Set the Postgres Password**
+
+    Update the `POSTGRES_ADMIN_PASSWORD` value in the .env file with a strong password.
+
+    ```ini
+    POSTGRES_ADMIN_PASSWORD=my_strong_password
+    ```
+
+### Step 2: Obtain the Docker Compose File
+
+Download the `docker-compose.yml` file to your working directory:
+
+```bash
+curl -O https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml
 ```
-ACCESS_TOKEN_SECRET=replace_me_with_a_random_string_access
-LOGIN_TOKEN_SECRET=replace_me_with_a_random_string_login
-REFRESH_TOKEN_SECRET=replace_me_with_a_random_string_refresh
-FILE_TOKEN_SECRET=replace_me_with_a_random_string_refresh
+
+### Step 3: Launch the Application
+
+Start the Docker containers:
+```bash
+docker-compose up -d
 ```
 
-4. Copy the [docker-compose.yml](https://github.com/twentyhq/twenty/blob/main/packages/twenty-docker/docker-compose.yml) in the same directory as your `.env` file.
-5. Run the command `docker-compose up -d`
-6. Go to http://localhost:3000 and see your docker instance.
+### Step 4: Access the Application
 
-## System requirements 
+Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
 
-Please use an environment with at least 2GB or RAM or one of the processes could crash due to memory issues.
+## Configuration
+
+### Expose Twenty to External Access
+
+By default, Twenty runs on `localhost` at port `3000`. To access it via an external domain or IP address, you need to configure the `SERVER_URL` in your `.env` file.
+
+#### Understanding `SERVER_URL`
+
+- **Protocol:** Use `http` or `https` depending on your setup.
+    - Use `http` if you haven't set up SSL.
+    - Use `https` if you have SSL configured.
+- **Domain/IP:** This is the domain name or IP address where your application is accessible.
+- **Port:** Include the port number if you're not using the default ports (`80` for `http`, `443` for `https`).
+
+#### Configuring `SERVER_URL`
+
+1. **Determine Your Access URL**
+    - **Without Reverse Proxy (Direct Access):**
+
+        If you're accessing the application directly without a reverse proxy:
+        ```ini
+        SERVER_URL=http://your-domain-or-ip:3000
+        ```
+
+    - **With Reverse Proxy (Standard Ports):**
+
+        If you're using a reverse proxy like Nginx or Traefik and have SSL configured:
+        ```ini
+        SERVER_URL=https://your-domain-or-ip
+        ```
+
+    - **With Reverse Proxy (Custom Ports):**
+
+        If you're using non-standard ports:
+        ```ini
+        SERVER_URL=https://your-domain-or-ip:custom-port
+        ````
+
+2. **Update the `.env` File**
+
+    Open your `.env` file and update the `SERVER_URL`:
+
+    ```ini
+    SERVER_URL=http(s)://your-domain-or-ip:your-port
+    ```
+
+    **Examples:**
+    - Direct access without SSL:
+        ```ini
+        SERVER_URL=http://123.45.67.89:3000
+        ```
+    - Access via domain with SSL:
+        ```ini
+        SERVER_URL=https://mytwentyapp.com
+        ```
+
+3. **Restart the Application**
+
+    For changes to take effect, restart the Docker containers:
+    ```bash
+        docker-compose down
+        docker-compose up -d
+    ```
+
+#### Considerations
+
+- **Reverse Proxy Configuration:**
+
+    Ensure your reverse proxy forwards requests to the correct internal port (`3000` by default). Configure SSL termination and any necessary headers.
+
+- **Firewall Settings:**
+
+    Open necessary ports in your firewall to allow external access.
+
+- **Consistency:**
+
+    The `SERVER_URL` must match how users access your application in their browsers.
 
 ## Troubleshooting
 
-#### Not able to login
+### Unable to Log In
 
-If you encounter errors, (not able to log into the application after inputting an email) after the inital setup, try running the following commands and see if that solves your issue.
-```
-docker exec -it twenty-server-1 yarn
-docker exec -it twenty-server-1 npx nx database:reset
-```
+If you can't log in after setup:
+1. Run the following commands:
+    ```bash
+    docker exec -it twenty-server-1 yarn
+    docker exec -it twenty-server-1 npx nx database:reset
+    ```
+2. Restart the Docker containers:
+    ```bash
+    docker-compose down
+    docker-compose up -d
+    ```
 
-#### Cannot connect to server, running behind a reverse proxy
 
-Complete step three and four with:
+### Connection Issues Behind a Reverse Proxy
 
-3. Update `SERVER_URL=https://<your-api-url.com>` in your `.env`
+If you're running Twenty behind a reverse proxy and experiencing connection issues:
 
-#### Persistence
+1. **Verify SERVER_URL:**
 
-By default the docker-compose will create volumes for the Database and local storage of the Server. Note that the containers will not persist data if your server is not configured to be stateful (for example Heroku). You probably want to configure a special stateful resource for this purpose.
+    Ensure `SERVER_URL` in your `.env` file matches your external access URL, including `https` if SSL is enabled.
+
+2. **Check Reverse Proxy Settings:**
+
+    - Confirm that your reverse proxy is correctly forwarding requests to the Twenty server.
+    - Ensure headers like `X-Forwarded-For` and `X-Forwarded-Proto` are properly set.
+
+3. **Restart Services:**
+
+    After making changes, restart both the reverse proxy and Twenty containers.
+
+## Persistence
+
+- **Data Volumes:**
+
+    The Docker Compose configuration uses volumes to persist data for the database and server storage.
+
+- **Stateless Environments:**
+
+    If deploying to a stateless environment (e.g., certain cloud services), configure external storage to persist data.
+
+## Getting Help
+
+If you encounter issues not covered in this guide:
+
+- Check Logs:
+
+    View container logs for error messages:
+    ```bash
+    docker-compose logs
+    ```
+
+- Community Support:
+
+    Reach out to the Twenty community or support channels for assistance.
 
 <ArticleEditContent></ArticleEditContent>

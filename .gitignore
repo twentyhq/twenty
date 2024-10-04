@@ -26,5 +26,6 @@ dist
 storybook-static
 *.tsbuildinfo
 .eslintcache
-.cache
 .nyc_output
+test-results/
+dump.rdb

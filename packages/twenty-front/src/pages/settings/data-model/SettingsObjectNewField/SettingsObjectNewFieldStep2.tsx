@@ -1,13 +1,3 @@
-import { useApolloClient } from '@apollo/client';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
-import pick from 'lodash.pick';
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconSettings } from 'twenty-ui';
-import { z } from 'zod';
-
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -15,10 +5,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
-import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
+import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
+import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -28,9 +19,17 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useApolloClient } from '@apollo/client';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import pick from 'lodash.pick';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { H1Title, H1TitleFontColor, H2Title, IconHierarchy2 } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -39,17 +38,18 @@ type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 >;
 
-const StyledSettingsObjectFieldTypeSelect = styled(
-  SettingsDataModelFieldTypeSelect,
-)`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+const StyledH1Title = styled(H1Title)`
+  margin-bottom: 0;
+  padding-top: ${({ theme }) => theme.spacing(3)};
 `;
-
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
+  const [searchParams] = useSearchParams();
+  const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
 
+  const [isConfigureStep, setIsConfigureStep] = useState(false);
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
 
@@ -161,13 +161,12 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const excludedFieldTypes: SettingsSupportedFieldType[] = (
     [
-      // FieldMetadataType.Email,
-      // FieldMetadataType.FullName,
       FieldMetadataType.Link,
       FieldMetadataType.Numeric,
-      // FieldMetadataType.Probability,
-      // FieldMetadataType.Uuid,
-      // FieldMetadataType.Phone,
+      FieldMetadataType.RichText,
+      FieldMetadataType.Actor,
+      FieldMetadataType.Email,
+      FieldMetadataType.Phone,
     ] as const
   ).filter(isDefined);
 
@@ -176,54 +175,97 @@ export const SettingsObjectNewFieldStep2 = () => {
       <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
         {...formConfig}
       >
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-          <SettingsPageContainer>
-            <SettingsHeaderContainer>
-              <Breadcrumb
-                links={[
-                  { children: 'Objects', href: '/settings/objects' },
-                  {
-                    children: activeObjectMetadataItem.labelPlural,
-                    href: `/settings/objects/${objectSlug}`,
-                  },
-                  { children: 'New Field' },
-                ]}
-              />
-              {!activeObjectMetadataItem.isRemote && (
-                <SaveAndCancelButtons
-                  isSaveDisabled={!canSave}
-                  isCancelDisabled={isSubmitting}
-                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                  onSave={formConfig.handleSubmit(handleSave)}
+        <SubMenuTopBarContainer
+          Icon={IconHierarchy2}
+          links={[
+            {
+              children: 'Objects',
+              href: '/settings/objects',
+            },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            {
+              children: (
+                <SettingsDataModelNewFieldBreadcrumbDropDown
+                  isConfigureStep={isConfigureStep}
+                  onBreadcrumbClick={setIsConfigureStep}
                 />
-              )}
-            </SettingsHeaderContainer>
-            <Section>
-              <H2Title
-                title="Name and description"
-                description="The name and description of this field"
-              />
-              <SettingsDataModelFieldAboutForm
-                maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title="Type and values"
-                description="The field's type and values."
-              />
-              <StyledSettingsObjectFieldTypeSelect
-                excludedFieldTypes={excludedFieldTypes}
-              />
-              <SettingsDataModelFieldSettingsFormCard
-                fieldMetadataItem={{
-                  icon: formConfig.watch('icon'),
-                  label: formConfig.watch('label') || 'Employees',
-                  type: formConfig.watch('type'),
+              ),
+            },
+          ]}
+          actionButton={
+            !activeObjectMetadataItem.isRemote && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                isCancelDisabled={isSubmitting}
+                onCancel={() => {
+                  if (!isConfigureStep) {
+                    navigate(`/settings/objects/${objectSlug}`);
+                  } else {
+                    setIsConfigureStep(false);
+                  }
                 }}
-                objectMetadataItem={activeObjectMetadataItem}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
-            </Section>
+            )
+          }
+        >
+          <SettingsPageContainer>
+            <StyledH1Title
+              title={
+                !isConfigureStep
+                  ? '1. Select a field type'
+                  : '2. Configure field'
+              }
+              fontColor={H1TitleFontColor.Primary}
+            />
+
+            {!isConfigureStep ? (
+              <SettingsDataModelFieldTypeSelect
+                excludedFieldTypes={excludedFieldTypes}
+                fieldMetadataItem={{
+                  type: fieldType,
+                }}
+                onFieldTypeSelect={() => setIsConfigureStep(true)}
+              />
+            ) : (
+              <>
+                <Section>
+                  <H2Title
+                    title="Icon and Name"
+                    description="The name and icon of this field"
+                  />
+                  <SettingsDataModelFieldIconLabelForm
+                    maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+                  />
+                </Section>
+                <Section>
+                  <H2Title
+                    title="Values"
+                    description="The values of this field"
+                  />
+
+                  <SettingsDataModelFieldSettingsFormCard
+                    isCreatingField
+                    fieldMetadataItem={{
+                      icon: formConfig.watch('icon'),
+                      label: formConfig.watch('label') || 'Employees',
+                      type: formConfig.watch('type'),
+                    }}
+                    objectMetadataItem={activeObjectMetadataItem}
+                  />
+                </Section>
+                <Section>
+                  <H2Title
+                    title="Description"
+                    description="The description of this field"
+                  />
+                  <SettingsDataModelFieldDescriptionForm />
+                </Section>
+              </>
+            )}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>

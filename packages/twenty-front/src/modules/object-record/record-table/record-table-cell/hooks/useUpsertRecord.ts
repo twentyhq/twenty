@@ -1,5 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
@@ -22,10 +24,25 @@ export const useUpsertRecord = ({
     ({ snapshot }) =>
       (
         persistField: () => void,
-        entityId: string,
+        recordId: string,
         fieldName: string,
         recordTableId: string,
       ) => {
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
+
+        const foundObjectMetadataItem = objectMetadataItems.find(
+          (item) => item.nameSingular === objectNameSingular,
+        );
+
+        if (!foundObjectMetadataItem) {
+          throw new Error('Object metadata item cannot be found');
+        }
+
+        const labelIdentifierFieldMetadataItem =
+          getLabelIdentifierFieldMetadataItem(foundObjectMetadataItem);
+
         const tableScopeId = getScopeIdFromComponentId(recordTableId);
 
         const recordTablePendingRecordIdState = extractComponentState(
@@ -38,7 +55,7 @@ export const useUpsertRecord = ({
           recordTablePendingRecordIdState,
         );
         const fieldScopeId = getScopeIdFromComponentId(
-          `${entityId}-${fieldName}`,
+          `${recordId}-${fieldName}`,
         );
 
         const draftValueSelector = extractComponentSelector(
@@ -51,14 +68,14 @@ export const useUpsertRecord = ({
         if (isDefined(recordTablePendingRecordId) && isDefined(draftValue)) {
           createOneRecord({
             id: recordTablePendingRecordId,
-            name: draftValue,
+            [labelIdentifierFieldMetadataItem?.name ?? 'name']: draftValue,
             position: 'first',
           });
         } else if (!recordTablePendingRecordId) {
           persistField();
         }
       },
-    [createOneRecord],
+    [createOneRecord, objectNameSingular],
   );
 
   return { upsertRecord };

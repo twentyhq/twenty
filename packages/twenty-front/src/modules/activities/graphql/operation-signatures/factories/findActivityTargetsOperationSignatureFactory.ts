@@ -1,11 +1,18 @@
 import { generateActivityTargetMorphFieldKeys } from '@/activities/utils/generateActivityTargetMorphFieldKeys';
+import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSignatureFactory =
-  ({ objectMetadataItems }: { objectMetadataItems: ObjectMetadataItem[] }) => ({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+  ({
+    objectNameSingular,
+    objectMetadataItems,
+  }: {
+    objectNameSingular: CoreObjectNameSingular;
+    objectMetadataItems: ObjectMetadataItem[];
+  }) => ({
+    objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
     variables: {},
     fields: {
       id: true,

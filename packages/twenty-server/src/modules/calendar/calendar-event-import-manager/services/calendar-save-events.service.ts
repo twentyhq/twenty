@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Any } from 'typeorm';
 
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -26,12 +25,10 @@ import {
 export class CalendarSaveEventsService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   public async saveCalendarEventsAndEnqueueContactCreationJob(
@@ -119,7 +116,9 @@ export class CalendarSaveEventsService {
     const savedCalendarEventParticipantsToEmit: CalendarEventParticipantWorkspaceEntity[] =
       [];
 
-    await this.workspaceDataSource?.transaction(async (transactionManager) => {
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+
+    await workspaceDataSource?.transaction(async (transactionManager) => {
       await calendarEventRepository.save(eventsToSave, {}, transactionManager);
 
       await calendarEventRepository.save(
@@ -141,12 +140,6 @@ export class CalendarSaveEventsService {
       );
     });
 
-    this.eventEmitter.emit(`calendarEventParticipant.matched`, {
-      workspaceId,
-      workspaceMemberId: connectedAccount.accountOwnerId,
-      calendarEventParticipants: savedCalendarEventParticipantsToEmit,
-    });
-
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
         CreateCompanyAndContactJob.name,
@@ -154,6 +147,7 @@ export class CalendarSaveEventsService {
           workspaceId,
           connectedAccount,
           contactsToCreate: participantsToSave,
+          source: FieldActorSource.CALENDAR,
         },
       );
     }

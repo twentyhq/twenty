@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
+import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
+import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
-import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import {
   WorkspaceMigrationException,
   WorkspaceMigrationExceptionCode,
@@ -29,7 +29,8 @@ export type BasicFieldMetadataType =
   | FieldMetadataType.POSITION
   | FieldMetadataType.DATE_TIME
   | FieldMetadataType.DATE
-  | FieldMetadataType.POSITION;
+  | FieldMetadataType.POSITION
+  | FieldMetadataType.ARRAY;
 
 @Injectable()
 export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicFieldMetadataType> {
@@ -48,7 +49,8 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         action: WorkspaceMigrationColumnActionType.CREATE,
         columnName,
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
-        isNullable: fieldMetadata.isNullable,
+        isArray: fieldMetadata.type === FieldMetadataType.ARRAY,
+        isNullable: fieldMetadata.isNullable ?? true,
         defaultValue: serializedDefaultValue,
       },
     ];
@@ -81,7 +83,8 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         currentColumnDefinition: {
           columnName: currentColumnName,
           columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
-          isNullable: currentFieldMetadata.isNullable,
+          isArray: currentFieldMetadata.type === FieldMetadataType.ARRAY,
+          isNullable: currentFieldMetadata.isNullable ?? true,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue,
           ),
@@ -89,7 +92,8 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         alteredColumnDefinition: {
           columnName: alteredColumnName,
           columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
-          isNullable: alteredFieldMetadata.isNullable,
+          isArray: alteredFieldMetadata.type === FieldMetadataType.ARRAY,
+          isNullable: alteredFieldMetadata.isNullable ?? true,
           defaultValue: serializedDefaultValue,
         },
       },

@@ -66,7 +66,7 @@ export const useFieldContext = ({
               basePathToShowPage: isLabelIdentifier
                 ? basePathToShowPage
                 : undefined,
-              entityId: objectRecordId,
+              recordId: objectRecordId,
               recoilScopeId: objectRecordId + fieldMetadataItem.id,
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({

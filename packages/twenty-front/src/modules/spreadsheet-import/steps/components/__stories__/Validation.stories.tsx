@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react';
 
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
-import { Providers } from '@/spreadsheet-import/components/Providers';
+import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { ValidationStep } from '@/spreadsheet-import/steps/components/ValidationStep/ValidationStep';
 import {
   editableTableInitialData,
@@ -24,15 +24,16 @@ const file = new File([''], 'file.csv');
 
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
-    <Providers values={mockRsiValues}>
+    <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
         <ValidationStep
           initialData={editableTableInitialData}
           file={file}
           importedColumns={importedColums}
           onBack={() => Promise.resolve()}
+          setCurrentStepState={() => null}
         />
       </ModalWrapper>
-    </Providers>
+    </ReactSpreadsheetImportContextProvider>
   </DialogManagerScope>
 );

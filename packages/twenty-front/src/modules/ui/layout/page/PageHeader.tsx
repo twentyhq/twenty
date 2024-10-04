@@ -1,7 +1,6 @@
-import { ComponentProps, ReactNode } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   IconChevronDown,
@@ -19,7 +18,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const StyledTopBarContainer = styled.div`
+const StyledTopBarContainer = styled.div<{ width?: number }>`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -31,10 +30,12 @@ const StyledTopBarContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
-  z-index: 20;
+  width: ${({ width }) => width + 'px' || '100%'};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${({ theme }) => theme.spacing(3)};
+    width: 100%;
+    box-sizing: border-box;
+    padding: ${({ theme }) => theme.spacing(3)};
   }
 `;
 
@@ -56,7 +57,7 @@ const StyledTitleContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  max-width: 50%;
+  width: 100%;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
@@ -65,6 +66,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
   flex: 1 0 auto;
   gap: ${({ theme }) => theme.spacing(1)};
   flex-direction: row;
+  width: 100%;
 `;
 
 const StyledPageActionContainer = styled.div`
@@ -77,21 +79,8 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledSkeletonLoader = () => {
-  const theme = useTheme();
-  return (
-    <SkeletonTheme
-      baseColor={theme.background.quaternary}
-      highlightColor={theme.background.transparent.light}
-      borderRadius={50}
-    >
-      <Skeleton height={24} width={108} />
-    </SkeletonTheme>
-  );
-};
-
-type PageHeaderProps = ComponentProps<'div'> & {
-  title: string;
+type PageHeaderProps = {
+  title: ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
   hasPaginationButtons?: boolean;
@@ -99,9 +88,9 @@ type PageHeaderProps = ComponentProps<'div'> & {
   hasNextRecord?: boolean;
   navigateToPreviousRecord?: () => void;
   navigateToNextRecord?: () => void;
-  Icon: IconComponent;
+  Icon?: IconComponent;
   children?: ReactNode;
-  loading?: boolean;
+  width?: number;
 };
 
 export const PageHeader = ({
@@ -115,14 +104,14 @@ export const PageHeader = ({
   navigateToNextRecord,
   Icon,
   children,
-  loading,
+  width,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
   const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
 
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer width={width}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerOpen && (
           <StyledTopBarButtonContainer>
@@ -137,34 +126,35 @@ export const PageHeader = ({
             onClick={() => onClosePage?.()}
           />
         )}
-        {loading ? (
-          <StyledSkeletonLoader />
-        ) : (
-          <StyledTopBarIconStyledTitleContainer>
-            {hasPaginationButtons && (
-              <>
-                <IconButton
-                  Icon={IconChevronUp}
-                  size="small"
-                  variant="secondary"
-                  disabled={!hasPreviousRecord}
-                  onClick={() => navigateToPreviousRecord?.()}
-                />
-                <IconButton
-                  Icon={IconChevronDown}
-                  size="small"
-                  variant="secondary"
-                  disabled={!hasNextRecord}
-                  onClick={() => navigateToNextRecord?.()}
-                />
-              </>
-            )}
-            {Icon && <Icon size={theme.icon.size.md} />}
-            <StyledTitleContainer data-testid="top-bar-title">
+
+        <StyledTopBarIconStyledTitleContainer>
+          {hasPaginationButtons && (
+            <>
+              <IconButton
+                Icon={IconChevronUp}
+                size="small"
+                variant="secondary"
+                disabled={!hasPreviousRecord}
+                onClick={() => navigateToPreviousRecord?.()}
+              />
+              <IconButton
+                Icon={IconChevronDown}
+                size="small"
+                variant="secondary"
+                disabled={!hasNextRecord}
+                onClick={() => navigateToNextRecord?.()}
+              />
+            </>
+          )}
+          {Icon && <Icon size={theme.icon.size.md} />}
+          <StyledTitleContainer data-testid="top-bar-title">
+            {typeof title === 'string' ? (
               <OverflowingTextWithTooltip text={title} />
-            </StyledTitleContainer>
-          </StyledTopBarIconStyledTitleContainer>
-        )}
+            ) : (
+              title
+            )}
+          </StyledTitleContainer>
+        </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
       <StyledPageActionContainer>{children}</StyledPageActionContainer>
     </StyledTopBarContainer>

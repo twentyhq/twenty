@@ -1,5 +1,8 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -9,6 +12,7 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -24,8 +28,34 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { MessageThreadSubscriberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-subscriber.workspace-entity';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+
+export enum WorkspaceMemberDateFormatEnum {
+  SYSTEM = 'SYSTEM',
+  MONTH_FIRST = 'MONTH_FIRST',
+  DAY_FIRST = 'DAY_FIRST',
+  YEAR_FIRST = 'YEAR_FIRST',
+}
+
+export enum WorkspaceMemberTimeFormatEnum {
+  SYSTEM = 'SYSTEM',
+  HOUR_12 = 'HOUR_12',
+  HOUR_24 = 'HOUR_24',
+}
+
+registerEnumType(WorkspaceMemberTimeFormatEnum, {
+  name: 'WorkspaceMemberTimeFormatEnum',
+  description: 'Time time as Military, Standard or system as default',
+});
+
+registerEnumType(WorkspaceMemberDateFormatEnum, {
+  name: 'WorkspaceMemberDateFormatEnum',
+  description:
+    'Date format as Month first, Day first, Year first or system as default',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
@@ -121,6 +151,18 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   assignedActivities: Relation<ActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Assigned tasks',
+    description: 'Tasks assigned to the workspace member',
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskWorkspaceEntity,
+    inverseSideFieldKey: 'assignee',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  assignedTasks: Relation<TaskWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
@@ -130,6 +172,20 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   favorites: Relation<FavoriteWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageThreadSubscribers,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Message thread subscribers',
+    description: 'Message thread subscribers for this workspace member',
+    icon: 'IconMessage',
+    inverseSideTarget: () => MessageThreadSubscriberWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
+  })
+  messageThreadSubscribers: Relation<MessageThreadSubscriberWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
@@ -242,4 +298,80 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   auditLogs: Relation<AuditLogWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
+    type: FieldMetadataType.TEXT,
+    label: 'Time zone',
+    defaultValue: "'system'",
+    description: 'User time zone',
+    icon: 'IconTimezone',
+  })
+  timeZone: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
+    type: FieldMetadataType.SELECT,
+    label: 'Date format',
+    description: "User's preferred date format",
+    icon: 'IconCalendarEvent',
+    options: [
+      {
+        value: WorkspaceMemberDateFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'turquoise',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.MONTH_FIRST,
+        label: 'Month First',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.DAY_FIRST,
+        label: 'Day First',
+        position: 2,
+        color: 'purple',
+      },
+      {
+        value: WorkspaceMemberDateFormatEnum.YEAR_FIRST,
+        label: 'Year First',
+        position: 3,
+        color: 'sky',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
+  })
+  dateFormat: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
+    type: FieldMetadataType.SELECT,
+    label: 'Time format',
+    description: "User's preferred time format",
+    icon: 'IconClock2',
+    options: [
+      {
+        value: WorkspaceMemberTimeFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'sky',
+      },
+      {
+        value: WorkspaceMemberTimeFormatEnum.HOUR_24,
+        label: '24HRS',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: WorkspaceMemberTimeFormatEnum.HOUR_12,
+        label: '12HRS',
+        position: 2,
+        color: 'purple',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
+  })
+  timeFormat: string;
 }

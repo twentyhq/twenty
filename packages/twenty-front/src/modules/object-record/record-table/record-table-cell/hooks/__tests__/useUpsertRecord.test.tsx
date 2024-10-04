@@ -3,12 +3,14 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 import { createState } from 'twenty-ui';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const draftValue = 'updated Name';
 
@@ -64,13 +66,14 @@ const Wrapper = ({
 }) => (
   <RecoilRoot
     initializeState={(snapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
       snapshot.set(pendingRecordIdState, pendingRecordIdMockedValue);
       snapshot.set(draftValueState, draftValueMockedValue);
     }}
   >
     <FieldContext.Provider
       value={{
-        entityId: 'entityId',
+        recordId: 'recordId',
         fieldDefinition: {
           ...textfieldDefinition,
           metadata: {
@@ -109,7 +112,7 @@ describe('useUpsertRecord', () => {
     await act(async () => {
       await result.current.upsertRecord(
         updateOneRecordMock,
-        'entityId',
+        'recordId',
         'name',
         'recordTableId',
       );
@@ -135,7 +138,7 @@ describe('useUpsertRecord', () => {
     await act(async () => {
       await result.current.upsertRecord(
         updateOneRecordMock,
-        'entityId',
+        'recordId',
         'name',
         'recordTableId',
       );

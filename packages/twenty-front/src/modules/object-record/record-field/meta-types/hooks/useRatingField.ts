@@ -10,20 +10,20 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRating } from '../../types/guards/isFieldRating';
 
 export const useRatingField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.Rating, isFieldRating, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRatingValue | null>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldRatingValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
 
-  const rating = fieldValue ?? 'RATING_1';
+  const rating = fieldValue ?? null;
 
   return {
     fieldDefinition,

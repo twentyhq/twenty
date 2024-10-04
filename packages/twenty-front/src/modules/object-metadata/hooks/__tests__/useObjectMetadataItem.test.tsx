@@ -1,9 +1,10 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
@@ -13,6 +14,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 // Split into tests for each new hook
 describe('useObjectMetadataItem', () => {
+  const opportunityObjectMetadata = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'opportunity',
+  );
   it('should return correct properties', async () => {
     const { result } = renderHook(
       () => useObjectMetadataItem({ objectNameSingular: 'opportunity' }),
@@ -23,6 +27,6 @@ describe('useObjectMetadataItem', () => {
 
     const { objectMetadataItem } = result.current;
 
-    expect(objectMetadataItem.id).toBe('20202020-cae9-4ff4-9579-f7d9fe44c937');
+    expect(objectMetadataItem.id).toBe(opportunityObjectMetadata?.id);
   });
 });

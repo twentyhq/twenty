@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
@@ -15,6 +15,7 @@ import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -118,6 +119,7 @@ export const PasswordReset = () => {
     useUpdatePasswordViaResetTokenMutation();
 
   const { signInWithCredentials } = useAuth();
+  const { readCaptchaToken } = useReadCaptchaToken();
 
   const onSubmit = async (formData: Form) => {
     try {
@@ -143,7 +145,9 @@ export const PasswordReset = () => {
         return;
       }
 
-      await signInWithCredentials(email || '', formData.newPassword);
+      const token = await readCaptchaToken();
+
+      await signInWithCredentials(email || '', formData.newPassword, token);
       navigate(AppPath.Index);
     } catch (err) {
       logError(err);

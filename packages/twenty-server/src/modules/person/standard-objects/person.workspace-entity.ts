@@ -1,8 +1,16 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
+import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -10,20 +18,29 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
+import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+
+const NAME_FIELD_NAME = 'name';
+const EMAILS_FIELD_NAME = 'emails';
+const JOB_TITLE_FIELD_NAME = 'jobTitle';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
@@ -33,6 +50,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   description: 'A person',
   icon: 'IconUser',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
+  imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
 })
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -43,7 +61,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
-  name: FullNameMetadata | null;
+  [NAME_FIELD_NAME]: FullNameMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.email,
@@ -52,27 +70,37 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s Email',
     icon: 'IconMail',
   })
+  @WorkspaceIsDeprecated()
   email: string;
 
   @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.emails,
+    type: FieldMetadataType.EMAILS,
+    label: 'Emails',
+    description: 'Contact’s Emails',
+    icon: 'IconMail',
+  })
+  [EMAILS_FIELD_NAME]: EmailsMetadata;
+
+  @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'Linkedin',
     description: 'Contact’s Linkedin account',
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
-  linkedinLink: LinkMetadata | null;
+  linkedinLink: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.xLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'X',
     description: 'Contact’s X/Twitter account',
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
-  xLink: LinkMetadata | null;
+  xLink: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.jobTitle,
@@ -81,7 +109,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s job title',
     icon: 'IconBriefcase',
   })
-  jobTitle: string;
+  [JOB_TITLE_FIELD_NAME]: string;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phone,
@@ -90,7 +118,17 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
+  @WorkspaceIsDeprecated()
   phone: string;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.phones,
+    type: FieldMetadataType.PHONES,
+    label: 'Phones',
+    description: 'Contact’s phone numbers',
+    icon: 'IconPhone',
+  })
+  phones: PhonesMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.city,
@@ -120,7 +158,20 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({
@@ -141,8 +192,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'POC for Opportunities',
-    description: 'Point of Contact for Opportunities',
+    label: 'Linked Opportunities',
+    description:
+      'List of opportunities for which that person is the point of contact',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContact',
@@ -159,7 +211,30 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.taskTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Tasks',
+    description: 'Tasks tied to the contact',
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.noteTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Notes',
+    description: 'Notes tied to the contact',
+    icon: 'IconNotes',
+    inverseSideTarget: () => NoteTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.favorites,
@@ -215,7 +290,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Events',
-    description: 'Events linked to the company',
+    description: 'Events linked to the person',
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -223,4 +298,22 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields([
+      { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
+      { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
+      { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
+    ]),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceIndex({ indexType: IndexType.GIN })
+  [SEARCH_VECTOR_FIELD.name]: any;
 }

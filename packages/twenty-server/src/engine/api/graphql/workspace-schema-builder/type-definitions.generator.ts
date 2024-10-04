@@ -1,26 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
+import { CompositeEnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-enum-type-definition.factory';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
+import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
+import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
-import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
-import {
-  ObjectTypeDefinitionFactory,
-  ObjectTypeDefinitionKind,
-} from './factories/object-type-definition.factory';
+import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
+import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
+import { ExtendObjectTypeDefinitionFactory } from './factories/extend-object-type-definition.factory';
 import {
   InputTypeDefinitionFactory,
   InputTypeDefinitionKind,
 } from './factories/input-type-definition.factory';
+import {
+  ObjectTypeDefinitionFactory,
+  ObjectTypeDefinitionKind,
+} from './factories/object-type-definition.factory';
 import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-optionts.interface';
-import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
-import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
-import { ExtendObjectTypeDefinitionFactory } from './factories/extend-object-type-definition.factory';
+import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import { objectContainsRelationField } from './utils/object-contains-relation-field';
 
 @Injectable()
@@ -32,6 +33,7 @@ export class TypeDefinitionsGenerator {
     private readonly objectTypeDefinitionFactory: ObjectTypeDefinitionFactory,
     private readonly compositeObjectTypeDefinitionFactory: CompositeObjectTypeDefinitionFactory,
     private readonly enumTypeDefinitionFactory: EnumTypeDefinitionFactory,
+    private readonly compositeEnumTypeDefinitionFactory: CompositeEnumTypeDefinitionFactory,
     private readonly inputTypeDefinitionFactory: InputTypeDefinitionFactory,
     private readonly compositeInputTypeDefinitionFactory: CompositeInputTypeDefinitionFactory,
     private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
@@ -53,7 +55,7 @@ export class TypeDefinitionsGenerator {
    * GENERATE COMPOSITE TYPE OBJECTS
    */
   private generateCompositeTypeDefs(options: WorkspaceBuildSchemaOptions) {
-    const compositeTypeCollection = [...compositeTypeDefintions.values()];
+    const compositeTypeCollection = [...compositeTypeDefinitions.values()];
 
     this.logger.log(
       `Generating composite type objects: [${compositeTypeCollection
@@ -62,8 +64,22 @@ export class TypeDefinitionsGenerator {
     );
 
     // Generate composite types first because they can be used in metadata objects
+    this.generateCompositeEnumTypeDefs(compositeTypeCollection, options);
     this.generateCompositeObjectTypeDefs(compositeTypeCollection, options);
     this.generateCompositeInputTypeDefs(compositeTypeCollection, options);
+  }
+
+  private generateCompositeEnumTypeDefs(
+    compositeTypes: CompositeType[],
+    options: WorkspaceBuildSchemaOptions,
+  ) {
+    const enumTypeDefs = compositeTypes
+      .map((compositeType) =>
+        this.compositeEnumTypeDefinitionFactory.create(compositeType, options),
+      )
+      .flat();
+
+    this.typeDefinitionsStorage.addEnumTypes(enumTypeDefs);
   }
 
   private generateCompositeObjectTypeDefs(

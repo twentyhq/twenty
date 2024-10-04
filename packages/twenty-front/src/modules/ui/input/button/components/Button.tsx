@@ -336,6 +336,7 @@ const StyledButton = styled('button', {
   flex-direction: row;
   font-family: ${({ theme }) => theme.font.family};
   font-weight: 500;
+  font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify};

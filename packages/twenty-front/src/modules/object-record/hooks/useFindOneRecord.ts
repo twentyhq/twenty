@@ -17,11 +17,13 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   recordGqlFields,
   onCompleted,
   skip,
+  withSoftDeleted = false,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   onCompleted?: (data: T) => void;
   skip?: boolean;
+  withSoftDeleted?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -33,6 +35,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
     recordGqlFields: computedRecordGqlFields,
+    withSoftDeleted,
   });
 
   const { data, loading, error } = useQuery<{

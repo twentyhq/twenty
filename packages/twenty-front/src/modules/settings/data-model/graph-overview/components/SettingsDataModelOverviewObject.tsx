@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { NodeProps } from 'reactflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown, useIcons } from 'twenty-ui';
+import { Link } from 'react-router-dom';
+import { NodeProps } from 'reactflow';
+import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
@@ -13,7 +13,9 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { FieldMetadataType } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
+import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
 import '@reactflow/node-resizer/dist/style.css';
+import { useState } from 'react';
 
 type SettingsDataModelOverviewObjectProps = NodeProps<ObjectMetadataItem>;
 
@@ -66,10 +68,15 @@ const StyledCardRow = styled.div`
 
 const StyledCardRowOther = styled.div`
   align-items: center;
+  cursor: pointer;
   display: flex;
   height: 24px;
   padding: 0 ${({ theme }) => theme.spacing(2)};
   gap: ${({ theme }) => theme.spacing(2)};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.tertiary};
+  }
 `;
 
 const StyledCardRowText = styled.div``;
@@ -95,6 +102,7 @@ export const SettingsDataModelOverviewObject = ({
 }: SettingsDataModelOverviewObjectProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
 
   const { totalCount } = useFindManyRecords({
     objectNameSingular: data.nameSingular,
@@ -128,14 +136,30 @@ export const SettingsDataModelOverviewObject = ({
           .filter((x) => x.type === FieldMetadataType.Relation)
           .map((field) => (
             <StyledCardRow>
-              <ObjectFieldRow field={field}></ObjectFieldRow>
+              <ObjectFieldRow field={field} />
             </StyledCardRow>
           ))}
         {countNonRelation > 0 && (
-          <StyledCardRowOther>
-            <IconChevronDown size={theme.icon.size.md} />
-            <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
-          </StyledCardRowOther>
+          <>
+            <StyledCardRowOther
+              onClick={() => setOtherFieldsExpanded(!otherFieldsExpanded)}
+            >
+              {otherFieldsExpanded ? (
+                <IconChevronUp size={theme.icon.size.md} />
+              ) : (
+                <IconChevronDown size={theme.icon.size.md} />
+              )}
+              <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
+            </StyledCardRowOther>
+            {otherFieldsExpanded &&
+              fields
+                .filter((x) => x.type !== FieldMetadataType.Relation)
+                .map((field) => (
+                  <StyledCardRow>
+                    <ObjectFieldRowWithoutRelation field={field} />
+                  </StyledCardRow>
+                ))}
+          </>
         )}
       </StyledInnerCard>
     </StyledNode>

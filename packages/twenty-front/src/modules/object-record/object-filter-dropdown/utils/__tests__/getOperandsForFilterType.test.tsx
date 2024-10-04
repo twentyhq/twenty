@@ -19,6 +19,16 @@ describe('getOperandsForFilterType', () => {
     ViewFilterOperand.LessThan,
   ];
 
+  const dateOperands = [
+    ViewFilterOperand.Is,
+    ViewFilterOperand.IsRelative,
+    ViewFilterOperand.IsInPast,
+    ViewFilterOperand.IsInFuture,
+    ViewFilterOperand.IsToday,
+    ViewFilterOperand.IsBefore,
+    ViewFilterOperand.IsAfter,
+  ];
+
   const relationOperand = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
 
   const testCases = [
@@ -28,9 +38,11 @@ describe('getOperandsForFilterType', () => {
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
     ['LINK', [...containsOperands, ...emptyOperands]],
     ['LINKS', [...containsOperands, ...emptyOperands]],
+    ['ACTOR', [...containsOperands, ...emptyOperands]],
     ['CURRENCY', [...numberOperands, ...emptyOperands]],
     ['NUMBER', [...numberOperands, ...emptyOperands]],
-    ['DATE_TIME', [...numberOperands, ...emptyOperands]],
+    ['DATE', [...dateOperands, ...emptyOperands]],
+    ['DATE_TIME', [...dateOperands, ...emptyOperands]],
     ['RELATION', [...relationOperand, ...emptyOperands]],
     [undefined, []],
     [null, []],

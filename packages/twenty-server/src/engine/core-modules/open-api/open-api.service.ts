@@ -3,18 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
-import {
-  computeBatchPath,
-  computeManyResultPath,
-  computeSingleResultPath,
-} from 'src/engine/core-modules/open-api/utils/path.utils';
-import {
-  get400ErrorResponses,
-  get401ErrorResponses,
-} from 'src/engine/core-modules/open-api/utils/get-error-responses.utils';
 import {
   computeMetadataSchemaComponents,
   computeParameterComponents,
@@ -22,16 +13,29 @@ import {
 } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { computeSchemaTags } from 'src/engine/core-modules/open-api/utils/compute-schema-tags.utils';
 import { computeWebhooks } from 'src/engine/core-modules/open-api/utils/computeWebhooks.utils';
-import { capitalize } from 'src/utils/capitalize';
 import {
+  get400ErrorResponses,
+  get401ErrorResponses,
+} from 'src/engine/core-modules/open-api/utils/get-error-responses.utils';
+import {
+  computeBatchPath,
+  computeDuplicatesResultPath,
+  computeManyResultPath,
+  computeSingleResultPath,
+} from 'src/engine/core-modules/open-api/utils/path.utils';
+import {
+  getRequestBody,
+  getUpdateRequestBody,
+} from 'src/engine/core-modules/open-api/utils/request-body.utils';
+import {
+  getCreateOneResponse201,
   getDeleteResponse200,
   getFindManyResponse200,
-  getCreateOneResponse201,
   getFindOneResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
-import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
@@ -68,6 +72,8 @@ export class OpenApiService {
       paths[`/${item.namePlural}`] = computeManyResultPath(item);
       paths[`/batch/${item.namePlural}`] = computeBatchPath(item);
       paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
+      paths[`/${item.namePlural}/duplicates`] =
+        computeDuplicatesResultPath(item);
 
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
@@ -162,7 +168,7 @@ export class OpenApiService {
           summary: `Find One ${item.nameSingular}`,
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           responses: {
-            '200': getFindOneResponse200(item, true),
+            '200': getFindOneResponse200(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -184,7 +190,7 @@ export class OpenApiService {
             summary: `Update One ${item.nameSingular}`,
             operationId: `updateOne${capitalize(item.nameSingular)}`,
             parameters: [{ $ref: '#/components/parameters/idPath' }],
-            requestBody: getRequestBody(capitalize(item.nameSingular)),
+            requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
             responses: {
               '200': getUpdateOneResponse200(item, true),
               '400': { $ref: '#/components/responses/400' },

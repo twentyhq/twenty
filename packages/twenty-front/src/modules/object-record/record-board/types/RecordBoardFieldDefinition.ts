@@ -6,4 +6,5 @@ export type RecordBoardFieldDefinition<T extends FieldMetadata> =
     viewFieldId?: string;
     position: number;
     isVisible?: boolean;
+    isLabelIdentifier?: boolean;
   };

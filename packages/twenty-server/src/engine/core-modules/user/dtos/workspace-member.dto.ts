@@ -3,6 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @ObjectType('FullName')
 export class FullName {
@@ -27,6 +31,15 @@ export class WorkspaceMember {
   @Field({ nullable: true })
   avatarUrl: string;
 
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   locale: string;
+
+  @Field({ nullable: true })
+  timeZone: string;
+
+  @Field(() => WorkspaceMemberDateFormatEnum, { nullable: true })
+  dateFormat: WorkspaceMemberDateFormatEnum;
+
+  @Field(() => WorkspaceMemberTimeFormatEnum, { nullable: true })
+  timeFormat: WorkspaceMemberTimeFormatEnum;
 }

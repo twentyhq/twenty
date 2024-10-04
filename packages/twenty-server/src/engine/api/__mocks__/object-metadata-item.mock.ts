@@ -1,5 +1,13 @@
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+
+export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';
+export const FIELD_CURRENCY_MOCK_NAME = 'fieldCurrency';
+export const FIELD_ADDRESS_MOCK_NAME = 'fieldAddress';
+export const FIELD_ACTOR_MOCK_NAME = 'fieldActor';
+export const FIELD_FULL_NAME_MOCK_NAME = 'fieldFullName';
+export const FIELD_PHONES_MOCK_NAME = 'fieldPhones';
 
 export const fieldNumberMock = {
   name: 'fieldNumber',
@@ -15,15 +23,8 @@ export const fieldTextMock = {
   defaultValue: null,
 };
 
-export const fieldLinkMock = {
-  name: 'fieldLink',
-  type: FieldMetadataType.LINK,
-  isNullable: false,
-  defaultValue: { label: '', url: '' },
-};
-
 export const fieldCurrencyMock = {
-  name: 'fieldCurrency',
+  name: FIELD_CURRENCY_MOCK_NAME,
   type: FieldMetadataType.CURRENCY,
   isNullable: true,
   defaultValue: { amountMicros: null, currencyCode: "''" },
@@ -88,7 +89,7 @@ export const fieldRelationMock = {
 };
 
 const fieldLinksMock = {
-  name: 'fieldLinks',
+  name: FIELD_LINKS_MOCK_NAME,
   type: FieldMetadataType.LINKS,
   isNullable: false,
   defaultValue: [
@@ -146,7 +147,7 @@ const fieldNumericMock = {
 };
 
 const fieldFullNameMock = {
-  name: 'fieldFullName',
+  name: FIELD_FULL_NAME_MOCK_NAME,
   type: FieldMetadataType.FULL_NAME,
   isNullable: true,
   defaultValue: { firstName: '', lastName: '' },
@@ -156,7 +157,23 @@ const fieldRatingMock = {
   name: 'fieldRating',
   type: FieldMetadataType.RATING,
   isNullable: true,
-  defaultValue: null,
+  defaultValue: 'RATING_1',
+  options: [
+    {
+      id: '9a519a86-422b-4598-88ae-78751353f683',
+      color: 'red',
+      label: 'Opt 1',
+      value: 'RATING_1',
+      position: 0,
+    },
+    {
+      id: '33f28d51-bc82-4e1d-ae4b-d9e4c0ed0ab4',
+      color: 'purple',
+      label: 'Opt 2',
+      value: 'RATING_2',
+      position: 1,
+    },
+  ],
 };
 
 const fieldPositionMock = {
@@ -167,7 +184,7 @@ const fieldPositionMock = {
 };
 
 const fieldAddressMock = {
-  name: 'fieldAddress',
+  name: FIELD_ADDRESS_MOCK_NAME,
   type: FieldMetadataType.ADDRESS,
   isNullable: true,
   defaultValue: {
@@ -189,17 +206,62 @@ const fieldRawJsonMock = {
   defaultValue: null,
 };
 
+const fieldRichTextMock = {
+  name: 'fieldRichText',
+  type: FieldMetadataType.RICH_TEXT,
+  isNullable: true,
+  defaultValue: null,
+};
+
+const fieldActorMock = {
+  name: FIELD_ACTOR_MOCK_NAME,
+  type: FieldMetadataType.ACTOR,
+  isNullable: true,
+  defaultValue: {
+    source: FieldActorSource.MANUAL,
+    name: '',
+  },
+};
+
+const fieldEmailsMock = {
+  name: 'fieldEmails',
+  type: FieldMetadataType.EMAILS,
+  isNullable: false,
+  defaultValue: [{ primaryEmail: '', additionalEmails: {} }],
+};
+
+const fieldArrayMock = {
+  name: 'fieldArray',
+  type: FieldMetadataType.ARRAY,
+  isNullable: true,
+  defaultValue: null,
+};
+
+const fieldPhonesMock = {
+  name: FIELD_PHONES_MOCK_NAME,
+  type: FieldMetadataType.PHONES,
+  isNullable: false,
+  defaultValue: [
+    {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: {},
+    },
+  ],
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
   fieldPhoneMock,
+  fieldPhonesMock,
   fieldEmailMock,
+  fieldEmailsMock,
   fieldDateTimeMock,
   fieldDateMock,
   fieldBooleanMock,
   fieldNumberMock,
   fieldNumericMock,
-  fieldLinkMock,
   fieldLinksMock,
   fieldCurrencyMock,
   fieldFullNameMock,
@@ -210,6 +272,9 @@ export const fields = [
   fieldPositionMock,
   fieldAddressMock,
   fieldRawJsonMock,
+  fieldRichTextMock,
+  fieldActorMock,
+  fieldArrayMock,
 ];
 
 export const objectMetadataItemMock = {

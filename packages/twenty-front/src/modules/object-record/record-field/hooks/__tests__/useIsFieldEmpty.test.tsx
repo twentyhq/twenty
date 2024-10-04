@@ -1,19 +1,19 @@
-import { ReactNode } from 'react';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
-import { phoneFieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
+import { phonesFieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
-const entityId = 'entityId';
+const recordId = 'recordId';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <FieldContext.Provider
     value={{
-      fieldDefinition: phoneFieldDefinition,
-      entityId,
+      fieldDefinition: phonesFieldDefinition,
+      recordId,
       hotkeyScope: 'hotkeyScope',
       isLabelIdentifier: false,
     }}
@@ -27,7 +27,7 @@ describe('useIsFieldEmpty', () => {
     const { result } = renderHook(
       () => {
         const setFieldState = useSetRecoilState(
-          recordStoreFamilyState(entityId),
+          recordStoreFamilyState(recordId),
         );
         return {
           setFieldState,

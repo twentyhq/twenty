@@ -1,71 +1,94 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLSchema, printSchema } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
-import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
-
+import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 @Injectable()
 export class WorkspaceSchemaFactory {
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
     private readonly workspaceGraphQLSchemaFactory: WorkspaceGraphQLSchemaFactory,
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
-  async createGraphQLSchema(
-    workspaceId: string | undefined,
-    userId: string | undefined,
-  ): Promise<GraphQLSchema> {
-    if (!workspaceId) {
+  async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
+    if (!authContext.workspace?.id) {
       return new GraphQLSchema({});
     }
 
     const dataSourcesMetadata =
       await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
+        authContext.workspace.id,
       );
 
-    // Can'f find any data sources for this workspace
     if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
       return new GraphQLSchema({});
     }
 
-    // Validate cache version
-    await this.workspaceCacheStorageService.validateCacheVersion(workspaceId);
-
-    // Get object metadata from cache
-    let objectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
-        workspaceId,
+    const currentCacheVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(
+        authContext.workspace.id,
       );
 
-    // If object metadata is not cached, get it from the database
-    if (!objectMetadataCollection) {
-      objectMetadataCollection =
-        await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
-
-      await this.workspaceCacheStorageService.setObjectMetadataCollection(
-        workspaceId,
-        objectMetadataCollection,
+    if (currentCacheVersion === undefined) {
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+        workspaceId: authContext.workspace.id,
+      });
+      throw new GraphqlQueryRunnerException(
+        'Metadata cache version not found',
+        GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
       );
     }
 
+    const objectMetadataMap =
+      await this.workspaceCacheStorageService.getObjectMetadataMap(
+        authContext.workspace.id,
+        currentCacheVersion,
+      );
+
+    if (!objectMetadataMap) {
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+        workspaceId: authContext.workspace.id,
+      });
+      throw new GraphqlQueryRunnerException(
+        'Object metadata collection not found',
+        GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
+      );
+    }
+
+    const objectMetadataCollection = Object.values(objectMetadataMap).map(
+      (objectMetadataItem) => ({
+        ...objectMetadataItem,
+        fields: Object.values(objectMetadataItem.fields),
+      }),
+    );
+
     // Get typeDefs from cache
-    let typeDefs =
-      await this.workspaceCacheStorageService.getTypeDefs(workspaceId);
+    let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
+      authContext.workspace.id,
+      currentCacheVersion,
+    );
     let usedScalarNames =
-      await this.workspaceCacheStorageService.getUsedScalarNames(workspaceId);
+      await this.workspaceCacheStorageService.getGraphQLUsedScalarNames(
+        authContext.workspace.id,
+        currentCacheVersion,
+      );
 
     // If typeDefs are not cached, generate them
     if (!typeDefs || !usedScalarNames) {
@@ -79,19 +102,20 @@ export class WorkspaceSchemaFactory {
         this.scalarsExplorerService.getUsedScalarNames(autoGeneratedSchema);
       typeDefs = printSchema(autoGeneratedSchema);
 
-      await this.workspaceCacheStorageService.setTypeDefs(
-        workspaceId,
+      await this.workspaceCacheStorageService.setGraphQLTypeDefs(
+        authContext.workspace.id,
+        currentCacheVersion,
         typeDefs,
       );
-      await this.workspaceCacheStorageService.setUsedScalarNames(
-        workspaceId,
+      await this.workspaceCacheStorageService.setGraphQLUsedScalarNames(
+        authContext.workspace.id,
+        currentCacheVersion,
         usedScalarNames,
       );
     }
 
     const autoGeneratedResolvers = await this.workspaceResolverFactory.create(
-      workspaceId,
-      userId,
+      authContext,
       objectMetadataCollection,
       workspaceResolverBuilderMethodNames,
     );

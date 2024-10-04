@@ -3,5 +3,6 @@ export const MODAL = {
     sm: '300px',
     md: '400px',
     lg: '53%',
+    fullscreen: `100dvh`,
   },
 };

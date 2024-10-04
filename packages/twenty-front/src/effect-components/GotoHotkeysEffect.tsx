@@ -5,7 +5,7 @@ export const GotoHotkeysEffect = () => {
   useGoToHotkeys('c', '/objects/companies');
   useGoToHotkeys('o', '/objects/opportunities');
   useGoToHotkeys('s', '/settings/profile');
-  useGoToHotkeys('t', '/tasks');
+  useGoToHotkeys('t', '/objects/tasks');
 
   return <></>;
 };

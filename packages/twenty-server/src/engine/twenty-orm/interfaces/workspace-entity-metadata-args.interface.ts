@@ -54,12 +54,10 @@ export interface WorkspaceEntityMetadataArgs {
   /**
    * Label identifier.
    */
-
   readonly labelIdentifierStandardId: string | null;
 
   /**
    * Image identifier.
    */
-
   readonly imageIdentifierStandardId: string | null;
 }

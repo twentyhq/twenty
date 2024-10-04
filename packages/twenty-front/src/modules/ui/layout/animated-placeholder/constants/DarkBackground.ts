@@ -11,4 +11,7 @@ export const DARK_BACKGROUND: Record<string, string> = {
   error500: '/images/placeholders/dark-background/500_bg.png',
   loadingMessages: '/images/placeholders/background/loading_messages_bg.png',
   loadingAccounts: '/images/placeholders/background/loading_accounts_bg.png',
+  emptyFunctions: '/images/placeholders/dark-background/empty_functions_bg.png',
+  noDeletedRecord:
+    '/images/placeholders/dark-background/no_deleted_record_bg.png',
 };

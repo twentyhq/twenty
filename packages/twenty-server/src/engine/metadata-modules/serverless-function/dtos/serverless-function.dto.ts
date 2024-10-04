@@ -26,31 +26,38 @@ registerEnumType(ServerlessFunctionSyncStatus, {
   description: 'SyncStatus of the serverlessFunction',
 });
 
-@ObjectType('serverlessFunction')
+@ObjectType('ServerlessFunction')
 @Authorize({
   authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
+    workspaceId: { eq: context?.req?.workspace?.id },
   }),
 })
 @QueryOptions({
   defaultResultSize: 10,
   maxResultsSize: 1000,
 })
-export class ServerlessFunctionDto {
+export class ServerlessFunctionDTO {
   @IsUUID()
   @IsNotEmpty()
   @IDField(() => UUIDScalarType)
   id: string;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   name: string;
 
   @IsString()
+  @Field({ nullable: true })
+  description: string;
+
+  @IsString()
   @IsNotEmpty()
   @Field()
-  sourceCodeHash: string;
+  runtime: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  latestVersion: string;
 
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()

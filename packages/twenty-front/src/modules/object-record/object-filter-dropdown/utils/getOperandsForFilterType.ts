@@ -15,11 +15,15 @@ export const getOperandsForFilterType = (
   switch (filterType) {
     case 'TEXT':
     case 'EMAIL':
+    case 'EMAILS':
     case 'FULL_NAME':
     case 'ADDRESS':
     case 'PHONE':
     case 'LINK':
     case 'LINKS':
+    case 'ACTOR':
+    case 'ARRAY':
+    case 'PHONES':
       return [
         ViewFilterOperand.Contains,
         ViewFilterOperand.DoesNotContain,
@@ -27,11 +31,21 @@ export const getOperandsForFilterType = (
       ];
     case 'CURRENCY':
     case 'NUMBER':
-    case 'DATE_TIME':
-    case 'DATE':
       return [
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
+    case 'DATE_TIME':
+    case 'DATE':
+      return [
+        ViewFilterOperand.Is,
+        ViewFilterOperand.IsRelative,
+        ViewFilterOperand.IsInPast,
+        ViewFilterOperand.IsInFuture,
+        ViewFilterOperand.IsToday,
+        ViewFilterOperand.IsBefore,
+        ViewFilterOperand.IsAfter,
         ...emptyOperands,
       ];
     case 'RATING':
@@ -43,6 +57,8 @@ export const getOperandsForFilterType = (
       ];
     case 'RELATION':
       return [...relationOperands, ...emptyOperands];
+    case 'SOURCE':
+      return [...relationOperands];
     case 'SELECT':
       return [...relationOperands];
     default:

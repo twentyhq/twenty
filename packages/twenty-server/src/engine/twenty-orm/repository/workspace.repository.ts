@@ -16,19 +16,16 @@ import {
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { isPlainObject } from 'src/utils/is-plain-object';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
@@ -233,6 +230,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities,
       options,
     );
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -421,11 +419,16 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
+
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
-    const formattedResult = await this.formatResult(result);
+    const formattedResult = await this.formatResult(result.generatedMaps);
 
-    return formattedResult;
+    return {
+      raw: result.raw,
+      generatedMaps: formattedResult,
+      identifiers: result.identifiers,
+    };
   }
 
   /**
@@ -465,11 +468,19 @@ export class WorkspaceRepository<
 
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
 
-    return manager.upsert(
+    const result = await manager.upsert(
       this.target,
       formattedEntityOrEntities,
       conflictPathsOrOptions,
     );
+
+    const formattedResult = await this.formatResult(result.generatedMaps);
+
+    return {
+      raw: result.raw,
+      generatedMaps: formattedResult,
+      identifiers: result.identifiers,
+    };
   }
 
   /**
@@ -607,35 +618,30 @@ export class WorkspaceRepository<
    * PRIVATE METHODS
    */
   private async getObjectMetadataFromTarget() {
-    const objectMetadataName = WorkspaceEntitiesStorage.getObjectMetadataName(
-      this.internalContext.workspaceId,
-      this.target as EntitySchema,
-    );
+    const objectMetadataName =
+      typeof this.target === 'string'
+        ? this.target
+        : WorkspaceEntitiesStorage.getObjectMetadataName(
+            this.internalContext.workspaceId,
+            this.target as EntitySchema,
+          );
 
     if (!objectMetadataName) {
       throw new Error('Object metadata name is missing');
     }
 
-    return this.internalContext.workspaceCacheStorage.getObjectMetadata(
-      this.internalContext.workspaceId,
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
-  }
-
-  private async getCompositeFieldMetadata(
-    objectMetadata?: ObjectMetadataEntity,
-  ) {
-    objectMetadata ??= await this.getObjectMetadataFromTarget();
+    const objectMetadata =
+      this.internalContext.objectMetadataMap[objectMetadataName];
 
     if (!objectMetadata) {
-      throw new Error('Object metadata entity is missing');
+      throw new Error(
+        `Object metadata for object "${objectMetadataName}" is missing ` +
+          `in workspace "${this.internalContext.workspaceId}" ` +
+          `with object metadata collection length: ${this.internalContext.objectMetadataMap.length}`,
+      );
     }
 
-    const compositeFieldMetadataCollection = objectMetadata.fields.filter(
-      (fieldMetadata) => isCompositeFieldMetadataType(fieldMetadata.type),
-    );
-
-    return compositeFieldMetadataCollection;
+    return objectMetadata;
   }
 
   private async transformOptions<
@@ -653,161 +659,19 @@ export class WorkspaceRepository<
   }
 
   private async formatData<T>(data: T): Promise<T> {
-    if (!data) {
-      return data;
-    }
+    const objectMetadata = await this.getObjectMetadataFromTarget();
 
-    if (Array.isArray(data)) {
-      return Promise.all(
-        data.map((item) => this.formatData(item)),
-      ) as Promise<T>;
-    }
-    const compositeFieldMetadataCollection =
-      await this.getCompositeFieldMetadata();
-    const compositeFieldMetadataMap = new Map(
-      compositeFieldMetadataCollection.map((fieldMetadata) => [
-        fieldMetadata.name,
-        fieldMetadata,
-      ]),
-    );
-    const newData: object = {};
-
-    for (const [key, value] of Object.entries(data)) {
-      const fieldMetadata = compositeFieldMetadataMap.get(key);
-
-      if (!fieldMetadata) {
-        if (isPlainObject(value)) {
-          newData[key] = await this.formatData(value);
-        } else {
-          newData[key] = value;
-        }
-        continue;
-      }
-
-      const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
-
-      if (!compositeType) {
-        continue;
-      }
-
-      for (const compositeProperty of compositeType.properties) {
-        const compositeKey = computeCompositeColumnName(
-          fieldMetadata.name,
-          compositeProperty,
-        );
-        const value = data?.[key]?.[compositeProperty.name];
-
-        if (value === undefined || value === null) {
-          continue;
-        }
-
-        newData[compositeKey] = data[key][compositeProperty.name];
-      }
-    }
-
-    return newData as T;
+    return formatData(data, objectMetadata) as T;
   }
 
-  private async formatResult<T>(
+  async formatResult<T>(
     data: T,
-    objectMetadata?: ObjectMetadataEntity,
+    objectMetadata?: ObjectMetadataMapItem,
   ): Promise<T> {
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
-    if (!data) {
-      return data;
-    }
+    const objectMetadataMap = this.internalContext.objectMetadataMap;
 
-    if (Array.isArray(data)) {
-      // If the data is an array, map each item in the array, format result is a promise
-      return Promise.all(
-        data.map((item) => this.formatResult(item, objectMetadata)),
-      ) as Promise<T>;
-    }
-
-    if (!isPlainObject(data)) {
-      return data;
-    }
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata is missing');
-    }
-
-    const compositeFieldMetadataCollection =
-      await this.getCompositeFieldMetadata(objectMetadata);
-    const compositeFieldMetadataMap = new Map(
-      compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
-        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
-
-        if (!compositeType) return [];
-
-        // Map each composite property to a [key, value] pair
-        return compositeType.properties.map((compositeProperty) => [
-          computeCompositeColumnName(fieldMetadata.name, compositeProperty),
-          {
-            parentField: fieldMetadata.name,
-            ...compositeProperty,
-          },
-        ]);
-      }),
-    );
-    const relationMetadataMap = new Map(
-      objectMetadata.fields
-        .filter(({ type }) => isRelationFieldMetadataType(type))
-        .map((fieldMetadata) => [
-          fieldMetadata.name,
-          fieldMetadata.fromRelationMetadata ??
-            fieldMetadata.toRelationMetadata,
-        ]),
-    );
-    const newData: object = {};
-
-    for (const [key, value] of Object.entries(data)) {
-      const compositePropertyArgs = compositeFieldMetadataMap.get(key);
-      const relationMetadata = relationMetadataMap.get(key);
-
-      if (!compositePropertyArgs && !relationMetadata) {
-        if (isPlainObject(value)) {
-          newData[key] = await this.formatResult(value);
-        } else {
-          newData[key] = value;
-        }
-        continue;
-      }
-
-      if (relationMetadata) {
-        const inverseSideObjectName =
-          relationMetadata.toObjectMetadata.nameSingular;
-        const objectMetadata =
-          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-            this.internalContext.workspaceId,
-            (objectMetadata) =>
-              objectMetadata.nameSingular === inverseSideObjectName,
-          );
-
-        if (!objectMetadata) {
-          throw new Error(
-            `Object metadata for object metadata "${inverseSideObjectName}" is missing`,
-          );
-        }
-
-        newData[key] = await this.formatResult(value, objectMetadata);
-        continue;
-      }
-
-      if (!compositePropertyArgs) {
-        continue;
-      }
-
-      const { parentField, ...compositeProperty } = compositePropertyArgs;
-
-      if (!newData[parentField]) {
-        newData[parentField] = {};
-      }
-
-      newData[parentField][compositeProperty.name] = value;
-    }
-
-    return newData as T;
+    return formatResult(data, objectMetadata, objectMetadataMap) as T;
   }
 }

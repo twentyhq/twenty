@@ -29,11 +29,11 @@ const AddressValueSetterEffect = ({
 
 type AddressInputWithContextProps = AddressInputProps & {
   value: string;
-  entityId?: string;
+  recordId?: string;
 };
 
 const AddressInputWithContext = ({
-  entityId,
+  recordId,
   value,
   onEnter,
   onEscape,
@@ -61,7 +61,7 @@ const AddressInputWithContext = ({
             objectMetadataNameSingular: 'person',
           },
         }}
-        entityId={entityId}
+        recordId={recordId}
       >
         <AddressValueSetterEffect value={value} />
         <AddressInput

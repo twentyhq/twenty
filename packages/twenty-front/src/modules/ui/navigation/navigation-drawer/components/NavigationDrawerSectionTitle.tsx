@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-ui';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type NavigationDrawerSectionTitleProps = {
@@ -32,9 +35,10 @@ export const NavigationDrawerSectionTitle = ({
   onClick,
   label,
 }: NavigationDrawerSectionTitleProps) => {
+  const currentUser = useRecoilValue(currentUserState);
   const loading = useIsPrefetchLoading();
 
-  if (loading) {
+  if (loading && isDefined(currentUser)) {
     return <NavigationDrawerSectionTitleSkeletonLoader />;
   }
   return <StyledTitle onClick={onClick}>{label}</StyledTitle>;

@@ -1,17 +1,17 @@
 resource "kubernetes_deployment" "twentycrm_db" {
   metadata {
-    name      = "${local.twentycrm_app_name}-db"
+    name      = "${var.twentycrm_app_name}-db"
     namespace = kubernetes_namespace.twentycrm.metadata.0.name
     labels = {
-      app = "${local.twentycrm_app_name}-db"
+      app = "${var.twentycrm_app_name}-db"
     }
   }
 
   spec {
-    replicas = 1
+    replicas = var.twentycrm_db_replicas
     selector {
       match_labels = {
-        app = "${local.twentycrm_app_name}-db"
+        app = "${var.twentycrm_app_name}-db"
       }
     }
 
@@ -26,17 +26,14 @@ resource "kubernetes_deployment" "twentycrm_db" {
     template {
       metadata {
         labels = {
-          app = "${local.twentycrm_app_name}-db"
+          app = "${var.twentycrm_app_name}-db"
         }
       }
 
       spec {
-        # security_context {
-        #   fs_group = 0
-        # }
         container {
-          image = local.twentycrm_db_image
-          name  = local.twentycrm_app_name
+          image = var.twentycrm_db_image
+          name  = var.twentycrm_app_name
           stdin = true
           tty   = true
           security_context {
@@ -45,7 +42,7 @@ resource "kubernetes_deployment" "twentycrm_db" {
 
           env {
             name  = "POSTGRES_PASSWORD"
-            value = "twenty"
+            value = var.twentycrm_pgdb_admin_password
           }
           env {
             name  = "BITNAMI_DEBUG"
@@ -69,16 +66,16 @@ resource "kubernetes_deployment" "twentycrm_db" {
           }
 
           volume_mount {
-            name       = "nfs-twentycrm-db-data"
+            name       = "db-data"
             mount_path = "/bitnami/postgresql"
           }
         }
 
         volume {
-          name = "nfs-twentycrm-db-data"
+          name = "db-data"
 
           persistent_volume_claim {
-            claim_name = "nfs-twentycrm-db-data-pvc"
+            claim_name = kubernetes_persistent_volume_claim.db.metadata.0.name
           }
         }
 

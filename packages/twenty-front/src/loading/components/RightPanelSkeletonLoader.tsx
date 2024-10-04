@@ -1,5 +1,5 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import styled from '@emotion/styled';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import {
   BACKGROUND_LIGHT,
   BORDER_COMMON,
@@ -45,8 +45,11 @@ const StyledRightPanelContainer = styled.div`
 
 const StyledRightPanelFlexContainer = styled.div`
   display: flex;
-  margin-top: 12px;
-  margin-bottom: 14px;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  height: 32px;
+  margin-bottom: 12px;
 `;
 
 const StyledSkeletonHeaderLoader = () => {

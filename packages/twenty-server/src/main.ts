@@ -1,20 +1,19 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import * as Sentry from '@sentry/node';
-import { graphqlUploadExpress } from 'graphql-upload';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
-import '@sentry/tracing';
+import { graphqlUploadExpress } from 'graphql-upload';
 
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
 
 import { AppModule } from './app.module';
+import './instrument';
 
-import { generateFrontConfig } from './utils/generate-front-config';
 import { settings } from './engine/constants/settings';
-import { LoggerService } from './engine/integrations/logger/logger.service';
+import { generateFrontConfig } from './utils/generate-front-config';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -34,11 +33,6 @@ const bootstrap = async () => {
 
   // Use our logger
   app.useLogger(logger);
-
-  if (Sentry.isInitialized()) {
-    app.use(Sentry.Handlers.requestHandler());
-    app.use(Sentry.Handlers.tracingHandler());
-  }
 
   app.useGlobalFilters(new ApplyCorsToExceptions());
 

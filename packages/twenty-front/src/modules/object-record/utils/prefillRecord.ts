@@ -2,7 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
+import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
 import { isDefined } from '~/utils/isDefined';
 
 export const prefillRecord = <T extends ObjectRecord>({
@@ -20,7 +20,7 @@ export const prefillRecord = <T extends ObjectRecord>({
         return [
           fieldMetadataItem.name,
           isUndefined(inputValue)
-            ? generateEmptyFieldValue(fieldMetadataItem)
+            ? generateDefaultFieldValue(fieldMetadataItem)
             : inputValue,
         ];
       })

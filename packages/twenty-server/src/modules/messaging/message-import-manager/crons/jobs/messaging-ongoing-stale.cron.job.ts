@@ -1,51 +1,62 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
-  MessagingOngoingStaleJobData,
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
+import {
   MessagingOngoingStaleJob,
+  MessagingOngoingStaleJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+
+export const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingOngoingStaleCronJob {
   constructor(
-    @InjectRepository(DataSourceEntity, 'metadata')
-    private readonly dataSourceRepository: Repository<DataSourceEntity>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly billingService: BillingService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(MessagingOngoingStaleCronJob.name)
+  @SentryCronMonitor(
+    MessagingOngoingStaleCronJob.name,
+    MESSAGING_ONGOING_STALE_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
-    const workspaceIds =
-      await this.billingService.getActiveSubscriptionWorkspaceIds();
-
-    const dataSources = await this.dataSourceRepository.find({
+    const activeWorkspaces = await this.workspaceRepository.find({
       where: {
-        workspaceId: In(workspaceIds),
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
 
-    const workspaceIdsWithDataSources = new Set(
-      dataSources.map((dataSource) => dataSource.workspaceId),
-    );
-
-    for (const workspaceId of workspaceIdsWithDataSources) {
-      await this.messageQueueService.add<MessagingOngoingStaleJobData>(
-        MessagingOngoingStaleJob.name,
-        {
-          workspaceId,
-        },
-      );
+    for (const activeWorkspace of activeWorkspaces) {
+      try {
+        await this.messageQueueService.add<MessagingOngoingStaleJobData>(
+          MessagingOngoingStaleJob.name,
+          {
+            workspaceId: activeWorkspace.id,
+          },
+        );
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          user: {
+            workspaceId: activeWorkspace.id,
+          },
+        });
+      }
     }
   }
 }

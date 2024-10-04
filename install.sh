@@ -112,8 +112,10 @@ if command -v nc &> /dev/null; then
     read -p "Enter a new port number: " new_port
     if [[ $(uname) == "Darwin" ]]; then
       sed -i '' "s/$port:$port/$new_port:$port/g" docker-compose.yml
+      sed -E -i '' "s|^SERVER_URL=http://localhost:[0-9]+|SERVER_URL=http://localhost:$new_port|g" .env
     else
       sed -i'' "s/$port:$port/$new_port:$port/g" docker-compose.yml
+      sed -E -i'' "s|^SERVER_URL=http://localhost:[0-9]+|SERVER_URL=http://localhost:$new_port|g" .env
     fi
     port=$new_port
   done

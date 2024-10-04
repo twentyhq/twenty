@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { EntityManager, Repository } from 'typeorm';
+import { Any, EntityManager, Repository } from 'typeorm';
 
-import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
@@ -18,7 +23,6 @@ import { Contact } from 'src/modules/contact-creation-manager/types/contact.type
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
-import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -29,24 +33,39 @@ export class CreateCompanyAndContactService {
   constructor(
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    @InjectObjectMetadataRepository(PersonWorkspaceEntity)
-    private readonly personRepository: PersonRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   private async createCompaniesAndPeople(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
+    source: FieldActorSource,
     transactionManager?: EntityManager,
-  ): Promise<PersonWorkspaceEntity[]> {
+  ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
       return [];
     }
+
+    const emailsFieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: {
+        workspaceId: workspaceId,
+        standardId: PERSON_STANDARD_FIELD_IDS.emails,
+      },
+    });
+
+    const personRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        PersonWorkspaceEntity,
+      );
 
     const workspaceMembers =
       await this.workspaceMemberRepository.getAllByWorkspaceId(
@@ -69,15 +88,17 @@ export class CreateCompanyAndContactService {
       return [];
     }
 
-    const alreadyCreatedContacts = await this.personRepository.getByEmails(
-      uniqueHandles,
-      workspaceId,
-      transactionManager,
-    );
+    const alreadyCreatedContacts = await personRepository.find({
+      where: isDefined(emailsFieldMetadata)
+        ? {
+            emails: { primaryEmail: Any(uniqueHandles) },
+          }
+        : { email: Any(uniqueHandles) },
+    });
 
-    const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ email }) => email,
-    );
+    const alreadyCreatedContactEmails: string[] = isDefined(emailsFieldMetadata)
+      ? alreadyCreatedContacts?.map(({ emails }) => emails?.primaryEmail)
+      : alreadyCreatedContacts?.map(({ email }) => email);
 
     const filteredContactsToCreate = uniqueContacts.filter(
       (participant) =>
@@ -95,9 +116,13 @@ export class CreateCompanyAndContactService {
       }));
 
     const domainNamesToCreate = compact(
-      filteredContactsToCreateWithCompanyDomainNames.map(
-        (participant) => participant.companyDomainName,
-      ),
+      filteredContactsToCreateWithCompanyDomainNames
+        .filter((participant) => participant.companyDomainName)
+        .map((participant) => ({
+          domainName: participant.companyDomainName,
+          createdBySource: source,
+          createdByWorkspaceMember: connectedAccount.accountOwner,
+        })),
     );
 
     const companiesObject = await this.createCompaniesService.createCompanies(
@@ -114,9 +139,11 @@ export class CreateCompanyAndContactService {
           contact.companyDomainName && contact.companyDomainName !== ''
             ? companiesObject[contact.companyDomainName]
             : undefined,
+        createdBySource: source,
+        createdByWorkspaceMember: connectedAccount.accountOwner,
       }));
 
-    return await this.createContactService.createPeople(
+    return this.createContactService.createPeople(
       formattedContactsToCreate,
       workspaceId,
       transactionManager,
@@ -127,6 +154,7 @@ export class CreateCompanyAndContactService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
+    source: FieldActorSource,
   ) {
     const contactsBatches = chunk(
       contactsToCreate,
@@ -146,24 +174,52 @@ export class CreateCompanyAndContactService {
       throw new Error('Object metadata not found');
     }
 
+    // In some jobs the accountOwner is not populated
+    if (!connectedAccount.accountOwner) {
+      const workspaceMemberRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          WorkspaceMemberWorkspaceEntity,
+        );
+
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: {
+          id: connectedAccount.accountOwnerId,
+        },
+      });
+
+      if (!workspaceMember) {
+        throw new Error(
+          `Workspace member with id ${connectedAccount.accountOwnerId} not found in workspace ${workspaceId}`,
+        );
+      }
+
+      connectedAccount.accountOwner = workspaceMember;
+    }
+
     for (const contactsBatch of contactsBatches) {
       const createdPeople = await this.createCompaniesAndPeople(
         connectedAccount,
         contactsBatch,
         workspaceId,
+        source,
       );
 
-      for (const createdPerson of createdPeople) {
-        this.eventEmitter.emit('person.created', {
-          name: 'person.created',
-          workspaceId,
-          recordId: createdPerson.id,
-          objectMetadata,
-          properties: {
-            after: createdPerson,
-          },
-        } satisfies ObjectRecordCreateEvent<any>);
-      }
+      this.workspaceEventEmitter.emit(
+        'person.created',
+        createdPeople.map(
+          (createdPerson) =>
+            ({
+              // FixMe: TypeORM typing issue... id is always returned when using save
+              recordId: createdPerson.id as string,
+              objectMetadata,
+              properties: {
+                after: createdPerson,
+              },
+            }) satisfies ObjectRecordCreateEvent<any>,
+        ),
+        workspaceId,
+      );
     }
   }
 }

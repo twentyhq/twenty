@@ -4,6 +4,7 @@ module.exports = {
     '!./src/modules/databases/**',
     '!./src/modules/object-metadata/**',
     '!./src/modules/object-record/**',
+    '!./src/modules/settings/serverless-functions/**',
     './src/modules/**/*.tsx',
     './src/modules/**/*.ts',
     '!./src/**/*.test.tsx',

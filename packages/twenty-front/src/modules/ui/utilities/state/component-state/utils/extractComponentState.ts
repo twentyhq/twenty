@@ -1,10 +1,10 @@
 import { RecoilState } from 'recoil';
 
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
 export const extractComponentState = <StateType>(
   componentState: (
-    componentStateKey: ComponentStateKey,
+    componentStateKey: RecoilComponentStateKey,
   ) => RecoilState<StateType>,
   scopeId: string,
 ) => {

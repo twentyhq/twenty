@@ -1,9 +1,9 @@
 import { RecoilState, useRecoilState } from 'recoil';
 
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
 export const useRecoilScopedStateV2 = <StateType>(
-  recoilState: (scopedKey: ComponentStateKey) => RecoilState<StateType>,
+  recoilState: (scopedKey: RecoilComponentStateKey) => RecoilState<StateType>,
   scopeId: string,
 ) => {
   return useRecoilState<StateType>(

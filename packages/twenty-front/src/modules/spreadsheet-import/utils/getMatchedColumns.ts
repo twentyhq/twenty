@@ -14,7 +14,7 @@ import { setColumn } from './setColumn';
 export const getMatchedColumns = <T extends string>(
   columns: Columns<T>,
   fields: Fields<T>,
-  data: MatchColumnsStepProps<T>['data'],
+  data: MatchColumnsStepProps['data'],
   autoMapDistance: number,
 ) =>
   columns.reduce<Column<T>[]>((arr, column) => {

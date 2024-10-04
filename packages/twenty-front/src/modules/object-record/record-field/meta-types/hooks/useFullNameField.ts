@@ -13,7 +13,7 @@ import { isFieldFullName } from '../../types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '../../types/guards/isFieldFullNameValue';
 
 export const useFullNameField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.FullName,
@@ -25,7 +25,7 @@ export const useFullNameField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldFullNameValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
@@ -41,7 +41,7 @@ export const useFullNameField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldFullNameValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldFullNameValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

@@ -41,20 +41,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   headerMessageId: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
-    type: FieldMetadataType.SELECT,
-    label: 'Direction',
-    description: 'Message Direction',
-    icon: 'IconDirection',
-    options: [
-      { value: 'incoming', label: 'Incoming', position: 0, color: 'green' },
-      { value: 'outgoing', label: 'Outgoing', position: 1, color: 'blue' },
-    ],
-    defaultValue: "'incoming'",
-  })
-  direction: string;
-
-  @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
     label: 'Subject',
@@ -80,7 +66,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()
-  receivedAt: string | null;
+  receivedAt: Date | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,

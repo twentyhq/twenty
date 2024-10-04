@@ -14,7 +14,7 @@ export const useUpdateRelationFromManyFieldInput = ({
 }: {
   scopeId: string;
 }) => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.Relation,
@@ -71,18 +71,18 @@ export const useUpdateRelationFromManyFieldInput = ({
 
         if (isNewlySelected) {
           await updateOneRecordAndAttachRelations({
-            recordId: entityId,
+            recordId,
             relatedRecordId: objectRecordId,
           });
         } else {
           await updateOneRecordAndDetachRelations({
-            recordId: entityId,
+            recordId,
             relatedRecordId: objectRecordId,
           });
         }
       },
     [
-      entityId,
+      recordId,
       scopeId,
       updateOneRecordAndAttachRelations,
       updateOneRecordAndDetachRelations,

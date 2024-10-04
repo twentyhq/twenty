@@ -6,12 +6,12 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { FieldAddressValue } from '../../types/FieldMetadata';
 
 export const useAddressFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const fieldValue = useRecordFieldValue<FieldAddressValue | undefined>(
-    entityId,
+    recordId,
     fieldName,
   );
 

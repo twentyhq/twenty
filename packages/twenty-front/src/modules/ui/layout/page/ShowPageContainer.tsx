@@ -1,12 +1,11 @@
-import { ReactElement } from 'react';
 import styled from '@emotion/styled';
+import { ReactElement } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledOuterContainer = styled.div`
   display: flex;
-
   gap: ${({ theme }) => (useIsMobile() ? theme.spacing(3) : '0')};
   height: 100%;
   width: 100%;
@@ -16,6 +15,7 @@ const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
   width: 100%;
+  height: 100%;
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
@@ -31,7 +31,7 @@ export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
   const isMobile = useIsMobile();
   return isMobile ? (
     <StyledOuterContainer>
-      <StyledScrollWrapper>
+      <StyledScrollWrapper contextProviderName="showPageContainer">
         <StyledInnerContainer>{children}</StyledInnerContainer>
       </StyledScrollWrapper>
     </StyledOuterContainer>

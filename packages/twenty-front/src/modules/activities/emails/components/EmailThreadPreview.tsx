@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Avatar, GRAY_SCALE } from 'twenty-ui';
 
@@ -10,7 +10,6 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledCardContent = styled(CardContent)<{
   visibility: MessageChannelVisibility;
@@ -154,24 +153,28 @@ export const EmailThreadPreview = ({
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={getImageAbsoluteURIOrBase64(
-              thread?.firstParticipant?.avatarUrl,
-            )}
+            avatarUrl={thread?.firstParticipant?.avatarUrl}
             placeholder={thread.firstParticipant.displayName}
+            placeholderColorSeed={
+              thread.firstParticipant.workspaceMemberId ||
+              thread.firstParticipant.personId
+            }
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
             <StyledAvatar
-              avatarUrl={getImageAbsoluteURIOrBase64(
-                thread.lastTwoParticipants[0].avatarUrl,
-              )}
+              avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
               placeholder={thread.lastTwoParticipants[0].displayName}
+              placeholderColorSeed={
+                thread.lastTwoParticipants[0].workspaceMemberId ||
+                thread.lastTwoParticipants[0].personId
+              }
               type="rounded"
             />
           )}
           {finalDisplayedName && (
             <StyledAvatar
-              avatarUrl={getImageAbsoluteURIOrBase64(finalAvatarUrl)}
+              avatarUrl={finalAvatarUrl}
               placeholder={finalDisplayedName}
               type="rounded"
               color={isCountIcon ? GRAY_SCALE.gray50 : undefined}

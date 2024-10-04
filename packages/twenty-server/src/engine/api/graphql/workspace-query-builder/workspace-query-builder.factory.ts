@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import {
@@ -34,8 +34,6 @@ import { FindDuplicatesQueryFactory } from './factories/find-duplicates-query.fa
 
 @Injectable()
 export class WorkspaceQueryBuilderFactory {
-  private readonly logger = new Logger(WorkspaceQueryBuilderFactory.name);
-
   constructor(
     private readonly findManyQueryFactory: FindManyQueryFactory,
     private readonly findOneQueryFactory: FindOneQueryFactory,

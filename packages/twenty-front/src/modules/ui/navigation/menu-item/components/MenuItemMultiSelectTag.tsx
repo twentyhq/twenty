@@ -14,6 +14,7 @@ import {
 type MenuItemMultiSelectTagProps = {
   selected: boolean;
   className?: string;
+  isKeySelected?: boolean;
   onClick?: () => void;
   color: ThemeColor;
   text: string;
@@ -24,10 +25,15 @@ export const MenuItemMultiSelectTag = ({
   selected,
   className,
   onClick,
+  isKeySelected,
   text,
 }: MenuItemMultiSelectTagProps) => {
   return (
-    <StyledMenuItemBase onClick={onClick} className={className}>
+    <StyledMenuItemBase
+      isKeySelected={isKeySelected}
+      onClick={onClick}
+      className={className}
+    >
       <Checkbox
         size={CheckboxSize.Small}
         shape={CheckboxShape.Squared}

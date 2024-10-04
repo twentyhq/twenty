@@ -1,8 +1,8 @@
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -94,6 +94,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
     }
   };
 
+  // TODO: move breadcrumb to header?
   return (
     <>
       <FormProvider

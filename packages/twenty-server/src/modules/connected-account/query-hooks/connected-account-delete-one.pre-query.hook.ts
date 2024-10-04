@@ -1,27 +1,27 @@
-import { EventEmitter2 } from '@nestjs/event-emitter';
-
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-@WorkspaceQueryHook(`connectedAccount.deleteOne`)
+@WorkspaceQueryHook(`connectedAccount.destroyOne`)
 export class ConnectedAccountDeleteOnePreQueryHook
   implements WorkspaceQueryHookInstance
 {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private eventEmitter: EventEmitter2,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async execute(
-    _userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: DeleteOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<DeleteOneResolverArgs> {
     const connectedAccountId = payload.id;
 
     const messageChannelRepository =
@@ -33,14 +33,20 @@ export class ConnectedAccountDeleteOnePreQueryHook
       connectedAccountId,
     });
 
-    messageChannels.forEach((messageChannel) => {
-      this.eventEmitter.emit('messageChannel.deleted', {
-        workspaceId,
-        recordId: messageChannel.id,
-      } satisfies Pick<
-        ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>,
-        'workspaceId' | 'recordId'
-      >);
-    });
+    this.workspaceEventEmitter.emit(
+      'messageChannel.destroyed',
+      messageChannels.map(
+        (messageChannel) =>
+          ({
+            recordId: messageChannel.id,
+          }) satisfies Pick<
+            ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>,
+            'recordId'
+          >,
+      ),
+      authContext.workspace.id,
+    );
+
+    return payload;
   }
 }

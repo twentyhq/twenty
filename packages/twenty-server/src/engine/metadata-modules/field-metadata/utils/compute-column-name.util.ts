@@ -11,6 +11,11 @@ import { pascalCase } from 'src/utils/pascal-case';
 
 type ComputeColumnNameOptions = { isForeignKey?: boolean };
 
+export type FieldTypeAndNameMetadata = {
+  name: string;
+  type: FieldMetadataType;
+};
+
 export function computeColumnName(
   fieldName: string,
   options?: ComputeColumnNameOptions,
@@ -48,13 +53,16 @@ export function computeCompositeColumnName(
 export function computeCompositeColumnName<
   T extends FieldMetadataType | 'default',
 >(
-  fieldMetadata: FieldMetadataInterface<T>,
+  fieldMetadata: FieldTypeAndNameMetadata | FieldMetadataInterface<T>,
   compositeProperty: CompositeProperty,
 ): string;
 export function computeCompositeColumnName<
   T extends FieldMetadataType | 'default',
 >(
-  fieldMetadataOrFieldName: FieldMetadataInterface<T> | string,
+  fieldMetadataOrFieldName:
+    | FieldTypeAndNameMetadata
+    | FieldMetadataInterface<T>
+    | string,
   compositeProperty: CompositeProperty,
 ): string {
   const generateName = (name: string) => {

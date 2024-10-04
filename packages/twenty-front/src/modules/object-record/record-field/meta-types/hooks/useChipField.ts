@@ -9,7 +9,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useChipField = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const objectNameSingular =
     isFieldText(fieldDefinition) ||
@@ -18,7 +18,7 @@ export const useChipField = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const record = useRecoilValue(recordStoreFamilyState(entityId));
+  const record = useRecoilValue(recordStoreFamilyState(recordId));
 
   return {
     objectNameSingular,

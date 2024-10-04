@@ -13,6 +13,7 @@ import { isDefined } from '~/utils/isDefined';
 export type TextInputProps = TextInputV2ComponentProps & {
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
+  dataTestId?: string;
   focused?: boolean;
 };
 
@@ -22,6 +23,7 @@ export const TextInput = ({
   onInputEnter,
   disableHotkeys = false,
   focused,
+  dataTestId,
   ...props
 }: TextInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -87,7 +89,6 @@ export const TextInput = ({
       onInputEnter?.();
 
       if (isDefined(inputRef) && 'current' in inputRef) {
-        inputRef.current?.blur();
         setIsFocused(false);
       }
     },
@@ -103,6 +104,7 @@ export const TextInput = ({
       ref={inputRef}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
+      dataTestId={dataTestId}
       onFocus={handleFocus}
       onBlur={handleBlur}
     />

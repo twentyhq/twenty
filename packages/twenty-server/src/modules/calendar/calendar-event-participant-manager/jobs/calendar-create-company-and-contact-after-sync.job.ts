@@ -2,13 +2,14 @@ import { Logger, Scope } from '@nestjs/common';
 
 import { IsNull } from 'typeorm';
 
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -96,6 +97,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
       connectedAccount,
       calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
+      FieldActorSource.CALENDAR,
     );
 
     this.logger.log(

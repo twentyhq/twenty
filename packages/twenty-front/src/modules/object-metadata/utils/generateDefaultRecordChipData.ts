@@ -4,7 +4,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 export const generateDefaultRecordChipData = (record: ObjectRecord) => {
   const name = isFieldFullNameValue(record.name)
     ? record.name.firstName + ' ' + record.name.lastName
-    : record.name ?? '';
+    : (record.name ?? '');
 
   return {
     name,

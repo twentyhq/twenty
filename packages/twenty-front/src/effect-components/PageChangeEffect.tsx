@@ -4,17 +4,22 @@ import { useRecoilValue } from 'recoil';
 import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { useEventTracker } from '@/analytics/hooks/useEventTracker';
+import {
+  setSessionId,
+  useEventTracker,
+} from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { isDefined } from '~/utils/isDefined';
@@ -34,11 +39,19 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
+  const { cleanRecoilState } = useCleanRecoilState();
+
   const eventTracker = useEventTracker();
 
   const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const openCreateActivity = useOpenCreateActivityDrawer({
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
+  });
+
+  useEffect(() => {
+    cleanRecoilState();
+  }, [cleanRecoilState]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -144,17 +157,23 @@ export const PageChangeEffect = () => {
         type: CommandType.Create,
         Icon: IconCheckbox,
         onCommandClick: () =>
-          openCreateActivity({ type: 'Task', targetableObjects: [] }),
+          openCreateActivity({
+            targetableObjects: [],
+          }),
       },
     ]);
   }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);
 
   useEffect(() => {
     setTimeout(() => {
+      setSessionId();
       eventTracker('pageview', {
-        location: {
-          pathname: location.pathname,
-        },
+        pathname: location.pathname,
+        locale: navigator.language,
+        userAgent: window.navigator.userAgent,
+        href: window.location.href,
+        referrer: document.referrer,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }, 500);
   }, [eventTracker, location.pathname]);
@@ -165,7 +184,9 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     if (
       isCaptchaScriptLoaded &&
-      isMatchingLocation(AppPath.SignInUp || AppPath.Invite)
+      (isMatchingLocation(AppPath.SignInUp) ||
+        isMatchingLocation(AppPath.Invite) ||
+        isMatchingLocation(AppPath.ResetPassword))
     ) {
       requestFreshCaptchaToken();
     }

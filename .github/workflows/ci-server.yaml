@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  server-test:
+  server-setup:
     runs-on: ubuntu-latest
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -29,6 +29,10 @@ jobs:
           POSTGRES_USER: postgres
         ports:
           - 5432:5432
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -36,7 +40,7 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
-      - name: Server / Restore Tasks Cache
+      - name: Server / Restore Task Cache
         uses: ./.github/workflows/actions/task-cache
         with:
           tag: scope:backend
@@ -45,14 +49,71 @@ jobs:
         with:
           tag: scope:backend
           tasks: lint,typecheck
-      - name: Server / Run tests
-        uses: ./.github/workflows/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: test
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Server / Write .env
         run: npx nx reset:env twenty-server
       - name: Worker / Run
         run: MESSAGE_QUEUE_TYPE=sync npx nx worker twenty-server
+
+  server-test:
+    runs-on: ubuntu-latest
+    needs: server-setup
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Server / Restore Task Cache
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:backend
+      - name:  Server / Run Tests
+        uses: ./.github/workflows/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: test
+
+  server-integration-test:
+    runs-on: ubuntu-latest
+    needs: server-setup
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Server / Restore Task Cache
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:backend
+      - name: Server / Run Integration Tests
+        uses: ./.github/workflows/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: "test:integration"
+      - name: Server / Upload reset-logs file
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reset-logs
+          path: reset-logs.log

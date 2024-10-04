@@ -2,6 +2,7 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useCallback } from 'react';
 
 import { MultipleFiltersButton } from './MultipleFiltersButton';
 import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent';
@@ -13,12 +14,18 @@ type MultipleFiltersDropdownButtonProps = {
 export const MultipleFiltersDropdownButton = ({
   hotkeyScope,
 }: MultipleFiltersDropdownButtonProps) => {
-  const { resetFilter } = useFilterDropdown();
+  const { resetFilter, setIsObjectFilterDropdownOperandSelectUnfolded } =
+    useFilterDropdown();
+
+  const handleDropdownClose = useCallback(() => {
+    resetFilter();
+    setIsObjectFilterDropdownOperandSelectUnfolded(false);
+  }, [resetFilter, setIsObjectFilterDropdownOperandSelectUnfolded]);
 
   return (
     <Dropdown
       dropdownId={OBJECT_FILTER_DROPDOWN_ID}
-      onClose={resetFilter}
+      onClose={handleDropdownClose}
       clickableComponent={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent />}
       dropdownHotkeyScope={hotkeyScope}

@@ -22,11 +22,11 @@ const PhoneFieldValueSetterEffect = ({ value }: { value: string }) => {
 
 type PhoneFieldInputWithContextProps = PhoneFieldInputProps & {
   value: string;
-  entityId?: string;
+  recordId?: string;
 };
 
 const PhoneFieldInputWithContext = ({
-  entityId,
+  recordId,
   value,
   onEnter,
   onEscape,
@@ -54,7 +54,7 @@ const PhoneFieldInputWithContext = ({
             objectMetadataNameSingular: 'person',
           },
         }}
-        entityId={entityId}
+        recordId={recordId}
       >
         <PhoneFieldValueSetterEffect value={value} />
         <PhoneFieldInput

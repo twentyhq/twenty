@@ -1,52 +1,43 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { Repository } from 'typeorm';
 import { render } from '@react-email/components';
-import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
+import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import { Repository } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
-import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
-import { assert } from 'src/utils/assert';
+import {
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
+import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
+import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
+import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
+import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import { UserExists } from 'src/engine/core-modules/auth/dto/user-exists.entity';
+import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { EmailService } from 'src/engine/integrations/email/email.service';
-import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
-import {
-  AppToken,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
-
-import { TokenService } from './token.service';
-
-export type UserPayload = {
-  firstName: string;
-  lastName: string;
-  email: string;
-};
 
 @Injectable()
 export class AuthService {
@@ -69,15 +60,31 @@ export class AuthService {
       email: challengeInput.email,
     });
 
-    assert(user, "This user doesn't exist", NotFoundException);
-    assert(user.passwordHash, 'Incorrect login method', ForbiddenException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    if (!user.passwordHash) {
+      throw new AuthException(
+        'Incorrect login method',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const isValid = await compareHash(
       challengeInput.password,
       user.passwordHash,
     );
 
-    assert(isValid, 'Wrong password', ForbiddenException);
+    if (!isValid) {
+      throw new AuthException(
+        'Wrong password',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     return user;
   }
@@ -86,6 +93,7 @@ export class AuthService {
     email,
     password,
     workspaceInviteHash,
+    workspacePersonalInviteToken,
     firstName,
     lastName,
     picture,
@@ -96,6 +104,7 @@ export class AuthService {
     firstName?: string | null;
     lastName?: string | null;
     workspaceInviteHash?: string | null;
+    workspacePersonalInviteToken?: string | null;
     picture?: string | null;
     fromSSO: boolean;
   }) {
@@ -105,12 +114,20 @@ export class AuthService {
       firstName,
       lastName,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       picture,
       fromSSO,
     });
   }
 
   async verify(email: string): Promise<Verify> {
+    if (!email) {
+      throw new AuthException(
+        'Email is required',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: {
         email,
@@ -118,21 +135,22 @@ export class AuthService {
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
-    assert(user, "This user doesn't exist", NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
 
-    assert(
-      user.defaultWorkspace,
-      'User has no default workspace',
-      NotFoundException,
-    );
+    if (!user.defaultWorkspace) {
+      throw new AuthException(
+        'User has no default workspace',
+        AuthExceptionCode.INVALID_DATA,
+      );
+    }
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
-
-    if (workspaceMember) {
-      user.workspaceMember = workspaceMember;
-    }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);
@@ -164,18 +182,33 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async impersonate(userId: string) {
+  async impersonate(userIdToImpersonate: string, userImpersonating: User) {
+    if (!userImpersonating.canImpersonate) {
+      throw new AuthException(
+        'User cannot impersonate',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: {
-        id: userId,
+        id: userIdToImpersonate,
       },
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
-    assert(user, "This user doesn't exist", NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
 
     if (!user.defaultWorkspace.allowImpersonation) {
-      throw new ForbiddenException('Impersonation not allowed');
+      throw new AuthException(
+        'Impersonation not allowed',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
@@ -214,15 +247,24 @@ export class AuthService {
     const client = apps.find((app) => app.id === clientId);
 
     if (!client) {
-      throw new NotFoundException(`Invalid client '${clientId}'`);
+      throw new AuthException(
+        `Client not found for '${clientId}'`,
+        AuthExceptionCode.CLIENT_NOT_FOUND,
+      );
     }
 
     if (!client.redirectUrl || !authorizeAppInput.redirectUrl) {
-      throw new NotFoundException(`redirectUrl not found for '${clientId}'`);
+      throw new AuthException(
+        `redirectUrl not found for '${clientId}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     if (client.redirectUrl !== authorizeAppInput.redirectUrl) {
-      throw new ForbiddenException(`redirectUrl mismatch for '${clientId}'`);
+      throw new AuthException(
+        `redirectUrl mismatch for '${clientId}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     const authorizationCode = crypto.randomBytes(42).toString('hex');
@@ -271,13 +313,30 @@ export class AuthService {
     userId: string,
     newPassword: string,
   ): Promise<UpdatePassword> {
+    if (!userId) {
+      throw new AuthException(
+        'User ID is required',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const user = await this.userRepository.findOneBy({ id: userId });
 
-    assert(user, 'User not found', NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
 
     const isPasswordValid = PASSWORD_REGEX.test(newPassword);
 
-    assert(isPasswordValid, 'Password too weak', BadRequestException);
+    if (!isPasswordValid) {
+      throw new AuthException(
+        'Password is too weak',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const newPasswordHash = await hashPassword(newPassword);
 
@@ -309,5 +368,22 @@ export class AuthService {
     });
 
     return { success: true };
+  }
+
+  async findWorkspaceFromInviteHashOrFail(
+    inviteHash: string,
+  ): Promise<Workspace> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      inviteHash,
+    });
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace does not exist',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return workspace;
   }
 }

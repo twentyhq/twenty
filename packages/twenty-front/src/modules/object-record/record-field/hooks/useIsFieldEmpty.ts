@@ -7,11 +7,11 @@ import { isDefined } from '~/utils/isDefined';
 import { FieldContext } from '../contexts/FieldContext';
 
 export const useIsFieldEmpty = () => {
-  const { entityId, fieldDefinition, overridenIsFieldEmpty } =
+  const { recordId, fieldDefinition, overridenIsFieldEmpty } =
     useContext(FieldContext);
 
   const fieldValue = useRecordFieldValue(
-    entityId,
+    recordId,
     fieldDefinition?.metadata?.fieldName ?? '',
   );
 

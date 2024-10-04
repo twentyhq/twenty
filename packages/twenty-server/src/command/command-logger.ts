@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 import { Injectable } from '@nestjs/common';
 
 import { existsSync } from 'fs';
 import fs from 'fs/promises';
+import { join as joinPath } from 'path';
 
 import { kebabCase } from 'src/utils/kebab-case';
 
@@ -23,7 +25,7 @@ export class CommandLogger {
     fileName: string,
     data: unknown,
     append = false,
-  ): Promise<void> {
+  ): Promise<string> {
     const path = `./logs/${kebabCase(this.className)}`;
 
     if (existsSync(path) === false) {
@@ -31,17 +33,20 @@ export class CommandLogger {
     }
 
     try {
-      await fs.writeFile(
-        `${path}/${fileName}.json`,
-        JSON.stringify(data, null, 2),
-        {
-          flag: append ? 'a' : 'w',
-        },
-      );
+      const logFilePath = `${path}/${fileName}.json`;
+
+      await fs.writeFile(logFilePath, JSON.stringify(data, null, 2), {
+        flag: append ? 'a' : 'w',
+      });
+
+      const absoluteLogFilePath = joinPath(process.cwd(), logFilePath);
+
+      return absoluteLogFilePath;
     } catch (err) {
       console.error(
         `Error writing to file ${path}/${fileName}.json: ${err?.message}`,
       );
+
       throw err;
     }
   }

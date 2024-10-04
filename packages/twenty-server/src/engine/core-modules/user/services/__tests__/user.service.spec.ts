@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 describe('UserService', () => {
   let service: UserService;
@@ -33,11 +34,15 @@ describe('UserService', () => {
           useValue: {},
         },
         {
-          provide: EventEmitter2,
+          provide: WorkspaceEventEmitter,
           useValue: {},
         },
         {
           provide: WorkspaceService,
+          useValue: {},
+        },
+        {
+          provide: TwentyORMGlobalManager,
           useValue: {},
         },
       ],

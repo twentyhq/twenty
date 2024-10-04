@@ -1,11 +1,13 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
-import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
+
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
+import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
@@ -37,7 +39,7 @@ const setupMockIsLogged = (isLogged: boolean) => {
 
 const defaultHomePagePath = '/objects/companies';
 
-jest.mock('~/hooks/useDefaultHomePagePath');
+jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mocked(useDefaultHomePagePath).mockReturnValue({
   defaultHomePagePath,
 });
@@ -296,7 +298,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
         SubscriptionStatus.Trialing,
       ];
       expect(testCases.length).toEqual(
-        Object.keys(AppPath).length *
+        (Object.keys(AppPath).length - UNTESTED_APP_PATHS.length) *
           (Object.keys(OnboardingStatus).length +
             (Object.keys(SubscriptionStatus).length -
               untestedSubscriptionStatus.length)),

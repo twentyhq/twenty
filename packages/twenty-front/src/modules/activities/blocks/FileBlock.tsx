@@ -1,7 +1,7 @@
-import { ChangeEvent, useRef } from 'react';
 import { createReactBlockSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { ChangeEvent, useRef } from 'react';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
@@ -64,6 +64,10 @@ export const FileBlock = createReactBlockSpec(
           return '';
         }
         const fileUrl = await editor.uploadFile?.(file);
+
+        if (!isNonEmptyString(fileUrl)) {
+          return '';
+        }
 
         editor.updateBlock(block.id, {
           props: {

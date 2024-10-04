@@ -1,11 +1,18 @@
-import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
+import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
+
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { WorkBook } from 'xlsx-ugnis';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -26,26 +33,72 @@ const StyledRadioContainer = styled.div`
 
 type SelectSheetStepProps = {
   sheetNames: string[];
-  onContinue: (sheetName: string) => Promise<void>;
   onBack: () => void;
+  setCurrentStepState: (data: SpreadsheetImportStep) => void;
+  onError: (message: string) => void;
+  setPreviousStepState: (data: SpreadsheetImportStep) => void;
+  currentStepState: {
+    type: SpreadsheetImportStepType.selectSheet;
+    workbook: WorkBook;
+  };
 };
 
 export const SelectSheetStep = ({
   sheetNames,
-  onContinue,
+  setCurrentStepState,
+  onError,
+  setPreviousStepState,
   onBack,
+  currentStepState,
 }: SelectSheetStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [value, setValue] = useState(sheetNames[0]);
 
+  const { maxRecords, uploadStepHook } = useSpreadsheetImportInternal();
+
+  const handleContinue = useCallback(
+    async (sheetName: string) => {
+      if (
+        maxRecords > 0 &&
+        exceedsMaxRecords(
+          currentStepState.workbook.Sheets[sheetName],
+          maxRecords,
+        )
+      ) {
+        onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
+        return;
+      }
+      try {
+        const mappedWorkbook = await uploadStepHook(
+          mapWorkbook(currentStepState.workbook, sheetName),
+        );
+        setCurrentStepState({
+          type: SpreadsheetImportStepType.selectHeader,
+          data: mappedWorkbook,
+        });
+        setPreviousStepState(currentStepState);
+      } catch (e) {
+        onError((e as Error).message);
+      }
+    },
+    [
+      onError,
+      maxRecords,
+      currentStepState,
+      setPreviousStepState,
+      setCurrentStepState,
+      uploadStepHook,
+    ],
+  );
+
   const handleOnContinue = useCallback(
     async (data: typeof value) => {
       setIsLoading(true);
-      await onContinue(data);
+      await handleContinue(data);
       setIsLoading(false);
     },
-    [onContinue],
+    [handleContinue],
   );
 
   return (
@@ -64,7 +117,7 @@ export const SelectSheetStep = ({
         onClick={() => handleOnContinue(value)}
         onBack={onBack}
         isLoading={isLoading}
-        title="Continue"
+        title="Next Step"
       />
     </>
   );

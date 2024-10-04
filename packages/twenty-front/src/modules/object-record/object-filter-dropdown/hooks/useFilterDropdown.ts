@@ -18,10 +18,8 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
   );
 
   const {
-    availableFilterDefinitionsState,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
-    objectFilterDropdownSelectedEntityIdState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
     isObjectFilterDropdownOperandSelectUnfoldedState,
@@ -46,13 +44,11 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     ({ set }) =>
       () => {
         set(objectFilterDropdownSearchInputState, '');
-        set(objectFilterDropdownSelectedEntityIdState, null);
         set(objectFilterDropdownSelectedRecordIdsState, []);
         set(selectedFilterState, undefined);
       },
     [
       objectFilterDropdownSearchInputState,
-      objectFilterDropdownSelectedEntityIdState,
       objectFilterDropdownSelectedRecordIdsState,
       selectedFilterState,
     ],
@@ -62,7 +58,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     ({ set }) =>
       () => {
         set(objectFilterDropdownSearchInputState, '');
-        set(objectFilterDropdownSelectedEntityIdState, null);
         set(objectFilterDropdownSelectedRecordIdsState, []);
         set(selectedFilterState, undefined);
         set(filterDefinitionUsedInDropdownState, null);
@@ -71,16 +66,12 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     [
       filterDefinitionUsedInDropdownState,
       objectFilterDropdownSearchInputState,
-      objectFilterDropdownSelectedEntityIdState,
       objectFilterDropdownSelectedRecordIdsState,
       selectedFilterState,
       selectedOperandInDropdownState,
     ],
   );
 
-  const setAvailableFilterDefinitions = useSetRecoilState(
-    availableFilterDefinitionsState,
-  );
   const setSelectedFilter = useSetRecoilState(selectedFilterState);
   const setSelectedOperandInDropdown = useSetRecoilState(
     selectedOperandInDropdownState,
@@ -90,9 +81,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
   );
   const setObjectFilterDropdownSearchInput = useSetRecoilState(
     objectFilterDropdownSearchInputState,
-  );
-  const setObjectFilterDropdownSelectedEntityId = useSetRecoilState(
-    objectFilterDropdownSelectedEntityIdState,
   );
   const setObjectFilterDropdownSelectedRecordIds = useSetRecoilState(
     objectFilterDropdownSelectedRecordIdsState,
@@ -114,20 +102,18 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     resetFilter,
     setSelectedFilter,
     setSelectedOperandInDropdown,
-    setAvailableFilterDefinitions,
     setFilterDefinitionUsedInDropdown,
     setObjectFilterDropdownSearchInput,
-    setObjectFilterDropdownSelectedEntityId,
+    // setObjectFilterDropdownSelectedEntityId,
     setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
     setIsObjectFilterDropdownOperandSelectUnfolded,
     setIsObjectFilterDropdownUnfolded,
     setOnFilterSelect,
     emptyFilterButKeepDefinition,
-    availableFilterDefinitionsState,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
-    objectFilterDropdownSelectedEntityIdState,
+    // objectFilterDropdownSelectedEntityIdState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
     isObjectFilterDropdownOperandSelectUnfoldedState,

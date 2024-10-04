@@ -2,7 +2,6 @@ import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
@@ -18,9 +17,15 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
   const setPrefetchDataIsLoaded = useSetRecoilState(
     prefetchIsLoadedFamilyState(prefetchKey),
   );
+
+  const { operationSignatureFactory, objectNameSingular } =
+    PREFETCH_CONFIG[prefetchKey];
+
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: PREFETCH_CONFIG[prefetchKey].objectNameSingular,
+    objectNameSingular,
   });
+
+  const operationSignature = operationSignatureFactory({ objectMetadataItem });
 
   const { upsertFindManyRecordsQueryInCache } =
     useUpsertFindManyRecordsQueryInCache({
@@ -30,10 +35,8 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
   const upsertRecordsInCache = (records: T[]) => {
     setPrefetchDataIsLoaded(false);
     upsertFindManyRecordsQueryInCache({
-      queryVariables: PREFETCH_CONFIG[prefetchKey].variables,
-      recordGqlFields:
-        PREFETCH_CONFIG[prefetchKey].fields ??
-        generateDepthOneRecordGqlFields({ objectMetadataItem }),
+      queryVariables: operationSignature.variables,
+      recordGqlFields: operationSignature.fields,
       objectRecordsToOverwrite: records,
       computeReferences: false,
     });

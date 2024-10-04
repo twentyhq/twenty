@@ -1,23 +1,26 @@
 import { Logger } from '@nestjs/common';
 
+import { Like } from 'typeorm';
+
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 
 export enum CallWebhookJobsJobOperation {
   create = 'create',
   update = 'update',
   delete = 'delete',
+  destroy = 'destroy',
 }
 
 export type CallWebhookJobsJobData = {
@@ -32,42 +35,38 @@ export class CallWebhookJobsJob {
   private readonly logger = new Logger(CallWebhookJobsJob.name);
 
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly dataSourceService: DataSourceService,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
   async handle(data: CallWebhookJobsJobData): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const webhookRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(
         data.workspaceId,
+        'webhook',
       );
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        data.workspaceId,
-      );
+
     const nameSingular = data.objectMetadataItem.nameSingular;
     const operation = data.operation;
-    const eventType = `${operation}.${nameSingular}`;
-    const webhooks: { id: string; targetUrl: string }[] =
-      await workspaceDataSource?.query(
-        `
-            SELECT * FROM ${dataSourceMetadata.schema}."webhook" 
-            WHERE operation LIKE '%${eventType}%' 
-            OR operation LIKE '%*.${nameSingular}%' 
-            OR operation LIKE '%${operation}.*%'
-            OR operation LIKE '%*.*%'
-          `,
-      );
+    const eventName = `${nameSingular}.${operation}`;
+
+    const webhooks = await webhookRepository.find({
+      where: [
+        { operation: Like(`%${eventName}%`) },
+        { operation: Like(`%*.${operation}%`) },
+        { operation: Like(`%${nameSingular}.*%`) },
+        { operation: Like('%*.*%') },
+      ],
+    });
 
     webhooks.forEach((webhook) => {
       this.messageQueueService.add<CallWebhookJobData>(
         CallWebhookJob.name,
         {
           targetUrl: webhook.targetUrl,
-          eventType,
+          eventName,
           objectMetadata: {
             id: data.objectMetadataItem.id,
             nameSingular: data.objectMetadataItem.nameSingular,
@@ -83,7 +82,7 @@ export class CallWebhookJobsJob {
 
     if (webhooks.length) {
       this.logger.log(
-        `CallWebhookJobsJob on eventType '${eventType}' called on webhooks ids [\n"${webhooks
+        `CallWebhookJobsJob on eventName '${eventName}' called on webhooks ids [\n"${webhooks
           .map((webhook) => webhook.id)
           .join('",\n"')}"\n]`,
       );

@@ -11,7 +11,7 @@ import { RemoteTableSchemaUpdateModule } from 'src/engine/metadata-modules/remot
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { RemoteTableResolver } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.resolver';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
@@ -24,7 +24,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     DataSourceModule,
     ObjectMetadataModule,
     FieldMetadataModule,
-    WorkspaceCacheVersionModule,
+    WorkspaceMetadataVersionModule,
     WorkspaceDataSourceModule,
     ForeignTableModule,
     RemoteTableSchemaUpdateModule,

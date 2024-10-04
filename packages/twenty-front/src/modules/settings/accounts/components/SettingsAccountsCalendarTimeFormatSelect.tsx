@@ -1,6 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { TimeFormat } from '@/settings/accounts/constants/TimeFormat';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { Select } from '@/ui/input/components/Select';
 
 type SettingsAccountsCalendarTimeFormatSelectProps = {
@@ -24,17 +24,17 @@ export const SettingsAccountsCalendarTimeFormatSelect = ({
         label: `24h (${formatInTimeZone(
           Date.now(),
           timeZone,
-          TimeFormat['24h'],
+          TimeFormat.HOUR_24,
         )})`,
-        value: TimeFormat['24h'],
+        value: TimeFormat.HOUR_24,
       },
       {
         label: `12h (${formatInTimeZone(
           Date.now(),
           timeZone,
-          TimeFormat['12h'],
+          TimeFormat.HOUR_12,
         )})`,
-        value: TimeFormat['12h'],
+        value: TimeFormat.HOUR_12,
       },
     ]}
     onChange={onChange}

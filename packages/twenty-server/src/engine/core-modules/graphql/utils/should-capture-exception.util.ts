@@ -3,7 +3,7 @@ import {
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-export const graphQLErrorCodesToFilter = [
+export const graphQLErrorCodesToFilterOut = [
   ErrorCode.GRAPHQL_VALIDATION_FAILED,
   ErrorCode.UNAUTHENTICATED,
   ErrorCode.FORBIDDEN,
@@ -15,12 +15,13 @@ export const graphQLErrorCodesToFilter = [
 ];
 
 export const shouldCaptureException = (exception: Error): boolean => {
-  if (
-    exception instanceof BaseGraphQLError &&
-    graphQLErrorCodesToFilter.includes(exception?.extensions?.code)
-  ) {
+  if (!(exception instanceof BaseGraphQLError)) {
     return true;
   }
 
-  return false;
+  if (graphQLErrorCodesToFilterOut.includes(exception?.extensions?.code)) {
+    return false;
+  }
+
+  return true;
 };

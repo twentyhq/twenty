@@ -1,8 +1,8 @@
 import { CommandFactory } from 'nest-commander';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
-import { LoggerService } from 'src/engine/integrations/logger/logger.service';
 
 import { CommandModule } from './command.module';
 
@@ -18,6 +18,7 @@ async function bootstrap() {
   };
 
   const app = await CommandFactory.createWithoutRunning(CommandModule, {
+    logger: ['error', 'warn', 'log'],
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     errorHandler,
     serviceErrorHandler: errorHandler,

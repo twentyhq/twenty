@@ -1,26 +1,29 @@
 import {
-  IconCalendarEvent,
-  IconCalendarTime,
-  IconCheck,
-  IconCoins,
   IconComponent,
-  IconJson,
-  IconKey,
-  IconLink,
-  IconMail,
-  IconMap,
-  IconNumbers,
-  IconPhone,
-  IconRelationManyToMany,
-  IconTag,
-  IconTags,
-  IconTextSize,
-  IconTwentyStar,
-  IconUser,
+  IllustrationIconArray,
+  IllustrationIconCalendarEvent,
+  IllustrationIconCalendarTime,
+  IllustrationIconCurrency,
+  IllustrationIconJson,
+  IllustrationIconLink,
+  IllustrationIconMail,
+  IllustrationIconMap,
+  IllustrationIconNumbers,
+  IllustrationIconOneToMany,
+  IllustrationIconPhone,
+  IllustrationIconSetting,
+  IllustrationIconStar,
+  IllustrationIconTag,
+  IllustrationIconTags,
+  IllustrationIconText,
+  IllustrationIconToggle,
+  IllustrationIconUid,
+  IllustrationIconUser,
 } from 'twenty-ui';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
+import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -29,93 +32,129 @@ DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
 export type SettingsFieldTypeConfig = {
   label: string;
   Icon: IconComponent;
-  defaultValue?: unknown;
+  exampleValue?: unknown;
+  category: SettingsFieldTypeCategoryType;
 };
 
 export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Uuid]: {
     label: 'Unique ID',
-    Icon: IconKey,
-    defaultValue: '00000000-0000-0000-0000-000000000000',
+    Icon: IllustrationIconUid,
+    exampleValue: '00000000-0000-0000-0000-000000000000',
+    category: 'Advanced',
   },
   [FieldMetadataType.Text]: {
     label: 'Text',
-    Icon: IconTextSize,
-    defaultValue:
+    Icon: IllustrationIconText,
+    exampleValue:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+    category: 'Basic',
   },
   [FieldMetadataType.Numeric]: {
     label: 'Numeric',
-    Icon: IconNumbers,
-    defaultValue: 2000,
+    Icon: IllustrationIconNumbers,
+    exampleValue: 2000,
+    category: 'Basic',
   },
   [FieldMetadataType.Number]: {
     label: 'Number',
-    Icon: IconNumbers,
-    defaultValue: 2000,
+    Icon: IllustrationIconNumbers,
+    exampleValue: 2000,
+    category: 'Basic',
   },
   [FieldMetadataType.Link]: {
     label: 'Link',
-    Icon: IconLink,
-    defaultValue: { url: 'www.twenty.com', label: '' },
+    Icon: IllustrationIconLink,
+    exampleValue: { url: 'www.twenty.com', label: '' },
+    category: 'Basic',
   },
   [FieldMetadataType.Links]: {
     label: 'Links',
-    Icon: IconLink,
-    defaultValue: { primaryLinkUrl: 'twenty.com', primaryLinkLabel: '' },
+    Icon: IllustrationIconLink,
+    exampleValue: { primaryLinkUrl: 'twenty.com', primaryLinkLabel: '' },
+    category: 'Basic',
   },
   [FieldMetadataType.Boolean]: {
     label: 'True/False',
-    Icon: IconCheck,
-    defaultValue: true,
+    Icon: IllustrationIconToggle,
+    exampleValue: true,
+    category: 'Basic',
   },
   [FieldMetadataType.DateTime]: {
     label: 'Date and Time',
-    Icon: IconCalendarTime,
-    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+    Icon: IllustrationIconCalendarTime,
+    exampleValue: DEFAULT_DATE_VALUE.toISOString(),
+    category: 'Basic',
   },
   [FieldMetadataType.Date]: {
     label: 'Date',
-    Icon: IconCalendarEvent,
-    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+    Icon: IllustrationIconCalendarEvent,
+    exampleValue: DEFAULT_DATE_VALUE.toISOString(),
+    category: 'Basic',
   },
   [FieldMetadataType.Select]: {
     label: 'Select',
-    Icon: IconTag,
+    Icon: IllustrationIconTag,
+    category: 'Basic',
   },
   [FieldMetadataType.MultiSelect]: {
     label: 'Multi-select',
-    Icon: IconTags,
+    Icon: IllustrationIconTags,
+    category: 'Basic',
   },
   [FieldMetadataType.Currency]: {
     label: 'Currency',
-    Icon: IconCoins,
-    defaultValue: { amountMicros: 2000000000, currencyCode: CurrencyCode.USD },
+    Icon: IllustrationIconCurrency,
+    exampleValue: { amountMicros: 2000000000, currencyCode: CurrencyCode.USD },
+    category: 'Basic',
   },
   [FieldMetadataType.Relation]: {
     label: 'Relation',
-    Icon: IconRelationManyToMany,
+    Icon: IllustrationIconOneToMany,
+    category: 'Relation',
   },
-  [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
+  [FieldMetadataType.Email]: {
+    label: 'Email',
+    Icon: IllustrationIconMail,
+    category: 'Basic',
+  },
+  [FieldMetadataType.Emails]: {
+    label: 'Emails',
+    Icon: IllustrationIconMail,
+    exampleValue: { primaryEmail: 'john@twenty.com' },
+    category: 'Basic',
+  },
   [FieldMetadataType.Phone]: {
     label: 'Phone',
-    Icon: IconPhone,
-    defaultValue: '+1234-567-890',
+    Icon: IllustrationIconPhone,
+    exampleValue: '+1234-567-890',
+    category: 'Basic',
+  },
+  [FieldMetadataType.Phones]: {
+    label: 'Phones',
+    Icon: IllustrationIconPhone,
+    exampleValue: {
+      primaryPhoneNumber: '234-567-890',
+      primaryPhoneCountryCode: '+1',
+    },
+    category: 'Basic',
   },
   [FieldMetadataType.Rating]: {
     label: 'Rating',
-    Icon: IconTwentyStar,
-    defaultValue: '3',
+    Icon: IllustrationIconStar,
+    exampleValue: '3',
+    category: 'Basic',
   },
   [FieldMetadataType.FullName]: {
     label: 'Full Name',
-    Icon: IconUser,
-    defaultValue: { firstName: 'John', lastName: 'Doe' },
+    Icon: IllustrationIconUser,
+    exampleValue: { firstName: 'John', lastName: 'Doe' },
+    category: 'Advanced',
   },
   [FieldMetadataType.Address]: {
     label: 'Address',
-    Icon: IconMap,
-    defaultValue: {
+    Icon: IllustrationIconMap,
+    exampleValue: {
       addressStreet1: '456 Oak Street',
       addressStreet2: 'Unit 3B',
       addressCity: 'Springfield',
@@ -125,11 +164,31 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
       addressLat: 34.0522,
       addressLng: -118.2437,
     },
+    category: 'Basic',
   },
   [FieldMetadataType.RawJson]: {
     label: 'JSON',
-    Icon: IconJson,
-    defaultValue: { key: 'value' },
+    Icon: IllustrationIconJson,
+    exampleValue: { key: 'value' },
+
+    category: 'Basic',
+  },
+  [FieldMetadataType.RichText]: {
+    label: 'System',
+    Icon: IllustrationIconSetting,
+    exampleValue: { key: 'value' },
+    category: 'Basic',
+  },
+  [FieldMetadataType.Actor]: {
+    label: 'System',
+    Icon: IllustrationIconSetting,
+    category: 'Basic',
+  },
+  [FieldMetadataType.Array]: {
+    label: 'Array',
+    Icon: IllustrationIconArray,
+    category: 'Basic',
+    exampleValue: ['value1', 'value2'],
   },
 } as const satisfies Record<
   SettingsSupportedFieldType,

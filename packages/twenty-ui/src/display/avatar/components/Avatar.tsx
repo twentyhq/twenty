@@ -1,14 +1,15 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { Nullable, stringToHslColor } from '@ui/utilities';
+import { Nullable, getImageAbsoluteURI, stringToHslColor } from '@ui/utilities';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -17,13 +18,16 @@ const StyledAvatar = styled.div<{
   color: string;
   backgroundColor: string;
   backgroundTransparentLight: string;
+  type?: Nullable<AvatarType>;
 }>`
   align-items: center;
   flex-shrink: 0;
   overflow: hidden;
   user-select: none;
 
-  border-radius: ${({ rounded }) => (rounded ? '50%' : '2px')};
+  border-radius: ${({ rounded, type }) => {
+    return rounded ? '50%' : type === 'icon' ? '4px' : '2px';
+  }};
   display: flex;
   font-size: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].fontSize};
   height: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
@@ -51,6 +55,8 @@ export type AvatarProps = {
   size?: AvatarSize;
   placeholder: string | undefined;
   placeholderColorSeed?: string;
+  Icon?: IconComponent;
+  iconColor?: string;
   type?: Nullable<AvatarType>;
   color?: string;
   backgroundColor?: string;
@@ -63,6 +69,8 @@ export const Avatar = ({
   size = 'md',
   placeholder,
   placeholderColorSeed = placeholder,
+  Icon,
+  iconColor,
   onClick,
   type = 'squared',
   color,
@@ -73,15 +81,21 @@ export const Avatar = ({
     invalidAvatarUrlsState,
   );
 
-  const noAvatarUrl = !isNonEmptyString(avatarUrl);
+  const avatarImageURI = useMemo(
+    () => getImageAbsoluteURI(avatarUrl),
+    [avatarUrl],
+  );
+
+  const noAvatarUrl = !isNonEmptyString(avatarImageURI);
 
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
 
-  const showPlaceholder = noAvatarUrl || invalidAvatarUrls.includes(avatarUrl);
+  const showPlaceholder =
+    noAvatarUrl || invalidAvatarUrls.includes(avatarImageURI);
 
   const handleImageError = () => {
-    if (isNonEmptyString(avatarUrl)) {
-      setInvalidAvatarUrls((prev) => [...prev, avatarUrl]);
+    if (isNonEmptyString(avatarImageURI)) {
+      setInvalidAvatarUrls((prev) => [...prev, avatarImageURI]);
     }
   };
 
@@ -95,17 +109,29 @@ export const Avatar = ({
   return (
     <StyledAvatar
       size={size}
-      backgroundColor={showBackgroundColor ? fixedBackgroundColor : 'none'}
+      backgroundColor={
+        Icon
+          ? theme.background.tertiary
+          : showBackgroundColor
+            ? fixedBackgroundColor
+            : 'none'
+      }
       color={fixedColor}
       clickable={!isUndefined(onClick)}
       rounded={type === 'rounded'}
+      type={type}
       onClick={onClick}
       backgroundTransparentLight={theme.background.transparent.light}
     >
-      {showPlaceholder ? (
+      {Icon ? (
+        <Icon
+          color={iconColor ? iconColor : 'currentColor'}
+          size={theme.icon.size.xl}
+        />
+      ) : showPlaceholder ? (
         placeholderChar
       ) : (
-        <StyledImage src={avatarUrl} onError={handleImageError} alt="" />
+        <StyledImage src={avatarImageURI} onError={handleImageError} alt="" />
       )}
     </StyledAvatar>
   );

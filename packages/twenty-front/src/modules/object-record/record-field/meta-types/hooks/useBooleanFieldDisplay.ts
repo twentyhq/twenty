@@ -5,12 +5,12 @@ import { useRecordFieldValue } from '@/object-record/record-store/contexts/Recor
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useBooleanFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const fieldValue = useRecordFieldValue<boolean | undefined>(
-    entityId,
+    recordId,
     fieldName,
   );
 

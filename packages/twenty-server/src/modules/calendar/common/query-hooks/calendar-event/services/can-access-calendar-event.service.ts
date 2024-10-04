@@ -1,15 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
-import { Any } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import {
-  CalendarChannelVisibility,
-  CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
@@ -30,20 +26,9 @@ export class CanAccessCalendarEventService {
     workspaceId: string,
     calendarChannelCalendarEventAssociations: CalendarChannelEventAssociationWorkspaceEntity[],
   ) {
-    const calendarRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
-        'calendarChannel',
-      );
-
-    const calendarChannels = await calendarRepository.find({
-      where: {
-        id: Any(
-          calendarChannelCalendarEventAssociations.map(
-            (association) => association.calendarChannel.id,
-          ),
-        ),
-      },
-    });
+    const calendarChannels = calendarChannelCalendarEventAssociations.map(
+      (association) => association.calendarChannel,
+    );
 
     const calendarChannelsGroupByVisibility = groupBy(
       calendarChannels,

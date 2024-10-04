@@ -1,5 +1,5 @@
-import * as React from 'react';
 import styled from '@emotion/styled';
+import * as React from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconComponent } from 'twenty-ui';
 
@@ -22,6 +22,7 @@ type TabListProps = {
   tabListId: string;
   tabs: SingleTabProps[];
   loading?: boolean;
+  className?: string;
 };
 
 const StyledContainer = styled.div`
@@ -34,7 +35,12 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
-export const TabList = ({ tabs, tabListId, loading }: TabListProps) => {
+export const TabList = ({
+  tabs,
+  tabListId,
+  loading,
+  className,
+}: TabListProps) => {
   const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || '';
 
   const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
@@ -47,8 +53,8 @@ export const TabList = ({ tabs, tabListId, loading }: TabListProps) => {
 
   return (
     <TabListScope tabListScopeId={tabListId}>
-      <ScrollWrapper hideY>
-        <StyledContainer>
+      <ScrollWrapper hideY contextProviderName="tabList">
+        <StyledContainer className={className}>
           {tabs
             .filter((tab) => !tab.hide)
             .map((tab) => (

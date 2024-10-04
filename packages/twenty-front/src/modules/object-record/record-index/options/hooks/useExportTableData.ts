@@ -1,13 +1,16 @@
-import { useMemo } from 'react';
 import { json2csv } from 'json-2-csv';
+import { useMemo } from 'react';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
+import { useProcessRecordsForCSVExport } from '@/object-record/record-index/options/hooks/useProcessRecordsForCSVExport';
 import {
   useTableData,
   UseTableDataOptions,
 } from '@/object-record/record-index/options/hooks/useTableData';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -42,7 +45,7 @@ export const generateCsv: GenerateExport = ({
   const columnsToExport = columns.filter(
     (col) =>
       !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === 'TO_ONE_OBJECT',
+      col.metadata.relationType === RelationDefinitionType.ManyToOne,
   );
 
   const objectIdColumn: ColumnDefinition<FieldMetadata> = {
@@ -66,12 +69,15 @@ export const generateCsv: GenerateExport = ({
         .filter(isDefined)
         .join(' '),
     };
+
     const fieldsWithSubFields = rows.find((row) => {
       const fieldValue = (row as any)[column.field];
+
       const hasSubFields =
         fieldValue &&
         typeof fieldValue === 'object' &&
         !Array.isArray(fieldValue);
+
       return hasSubFields;
     });
 
@@ -84,8 +90,10 @@ export const generateCsv: GenerateExport = ({
           field: `${column.field}.${key}`,
           title: `${column.title} ${key[0].toUpperCase() + key.slice(1)}`,
         }));
+
       return nestedFieldsWithoutTypename;
     }
+
     return [column];
   });
 
@@ -135,15 +143,21 @@ export const useExportTableData = ({
   filename,
   maximumRequests = 100,
   objectNameSingular,
-  pageSize = 30,
+  pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
+  viewType,
 }: UseExportTableDataOptions) => {
+  const { processRecordsForCSVExport } =
+    useProcessRecordsForCSVExport(objectNameSingular);
+
   const downloadCsv = useMemo(
     () =>
-      (rows: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
-        csvDownloader(filename, { rows, columns });
+      (records: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
+        const recordsProcessedForExport = processRecordsForCSVExport(records);
+
+        csvDownloader(filename, { rows: recordsProcessedForExport, columns });
       },
-    [filename],
+    [filename, processRecordsForCSVExport],
   );
 
   const { getTableData: download, progress } = useTableData({
@@ -153,6 +167,7 @@ export const useExportTableData = ({
     pageSize,
     recordIndexId,
     callback: downloadCsv,
+    viewType,
   });
 
   return { progress, download };

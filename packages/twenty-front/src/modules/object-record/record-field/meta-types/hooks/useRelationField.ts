@@ -15,7 +15,7 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 export const useRelationField = <
   T extends EntityForSelect | EntityForSelect[],
 >() => {
-  const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
   const button = useGetButtonIcon();
 
   assertFieldMetadata(
@@ -27,11 +27,11 @@ export const useRelationField = <
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue<T>>(
-    recordStoreFamilySelector({ recordId: entityId, fieldName }),
+    recordStoreFamilySelector({ recordId, fieldName }),
   );
 
   const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue<T>>(
-    `${entityId}-${fieldName}`,
+    `${recordId}-${fieldName}`,
   );
   const draftValue = useRecoilValue(getDraftValueSelector());
 
@@ -43,6 +43,6 @@ export const useRelationField = <
     initialSearchValue,
     setFieldValue,
     maxWidth: button && maxWidth ? maxWidth - 28 : maxWidth,
-    entityId,
+    recordId,
   };
 };

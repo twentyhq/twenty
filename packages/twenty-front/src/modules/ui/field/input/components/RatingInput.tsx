@@ -1,7 +1,8 @@
-import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 import { IconTwentyStarFilled, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
+import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 
@@ -31,16 +32,29 @@ export const RatingInput = ({
   readonly,
 }: RatingInputProps) => {
   const { theme } = useContext(ThemeContext);
+  const clearField = useClearField();
 
   const activeColor = theme.font.color.secondary;
   const inactiveColor = theme.background.quaternary;
 
-  const [hoveredValue, setHoveredValue] = useState<FieldRatingValue | null>(
-    null,
-  );
+  const [hoveredValue, setHoveredValue] = useState<FieldRatingValue>(null);
+
   const currentValue = hoveredValue ?? value;
 
-  const selectedIndex = RATING_VALUES.indexOf(currentValue);
+  const selectedIndex =
+    currentValue !== null ? RATING_VALUES.indexOf(currentValue) : -1;
+
+  const canClick = !readonly;
+
+  const handleClick = (newValue: FieldRatingValue) => {
+    if (!canClick) return;
+    if (newValue === value) {
+      setHoveredValue(null);
+      clearField();
+    } else {
+      onChange?.(newValue);
+    }
+  };
 
   return (
     <StyledContainer
@@ -48,7 +62,7 @@ export const RatingInput = ({
       aria-label="Rating"
       aria-valuemax={RATING_VALUES.length}
       aria-valuemin={1}
-      aria-valuenow={RATING_VALUES.indexOf(currentValue) + 1}
+      aria-valuenow={selectedIndex + 1}
       tabIndex={0}
     >
       {RATING_VALUES.map((value, index) => {
@@ -58,7 +72,7 @@ export const RatingInput = ({
           <StyledRatingIconContainer
             key={index}
             color={isActive ? activeColor : inactiveColor}
-            onClick={readonly ? undefined : () => onChange?.(value)}
+            onClick={() => handleClick(value)}
             onMouseEnter={readonly ? undefined : () => setHoveredValue(value)}
             onMouseLeave={readonly ? undefined : () => setHoveredValue(null)}
           >

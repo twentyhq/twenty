@@ -1,8 +1,10 @@
 import { v4 } from 'uuid';
 
-import { Activity } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { Note } from '@/activities/types/Note';
+import { NoteTarget } from '@/activities/types/NoteTarget';
+import { Task } from '@/activities/types/Task';
+import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -12,9 +14,9 @@ export const makeActivityTargetsToCreateFromTargetableObjects = ({
   targetObjectRecords,
 }: {
   targetableObjects: ActivityTargetableObject[];
-  activity: Activity;
+  activity: Task | Note;
   targetObjectRecords: ObjectRecord[];
-}): Partial<ActivityTarget>[] => {
+}): Partial<NoteTarget | TaskTarget>[] => {
   const activityTargetsToCreate = targetableObjects.map((targetableObject) => {
     const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
       nameSingular: targetableObject.targetObjectNameSingular,
@@ -32,7 +34,7 @@ export const makeActivityTargetsToCreateFromTargetableObjects = ({
       id: v4(),
       updatedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
-    } as Partial<ActivityTarget>;
+    } as Partial<NoteTarget | TaskTarget>;
 
     return activityTarget;
   });

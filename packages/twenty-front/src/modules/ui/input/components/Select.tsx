@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useMemo, useRef, useState } from 'react';
 import { IconChevronDown, IconComponent } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -68,7 +68,9 @@ const StyledControlLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
+const StyledIconChevronDown = styled(IconChevronDown)<{
+  disabled?: boolean;
+}>`
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
 `;

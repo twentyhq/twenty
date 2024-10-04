@@ -1,6 +1,6 @@
-import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import React from 'react';
 import { IconComponent } from 'twenty-ui';
 
 export type FloatingIconButtonSize = 'small' | 'medium';
@@ -22,8 +22,17 @@ export type FloatingIconButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   isActive?: boolean;
 };
+const shouldForwardProp = (prop: string) =>
+  ![
+    'applyBlur',
+    'applyShadow',
+    'isActive',
+    'focus',
+    'position',
+    'size',
+  ].includes(prop);
 
-const StyledButton = styled.button<
+const StyledButton = styled('button', { shouldForwardProp })<
   Pick<
     FloatingIconButtonProps,
     'size' | 'position' | 'applyShadow' | 'applyBlur' | 'focus' | 'isActive'

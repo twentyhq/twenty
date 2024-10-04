@@ -11,7 +11,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldDateTime } from '../../types/guards/isFieldDateTime';
 
 export const useDateTimeField = () => {
-  const { entityId, fieldDefinition, hotkeyScope, clearable } =
+  const { recordId, fieldDefinition, hotkeyScope, clearable } =
     useContext(FieldContext);
 
   assertFieldMetadata(
@@ -24,13 +24,13 @@ export const useDateTimeField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
 
   const { setDraftValue } = useRecordFieldInput<FieldDateTimeValue>(
-    `${entityId}-${fieldName}`,
+    `${recordId}-${fieldName}`,
   );
 
   return {

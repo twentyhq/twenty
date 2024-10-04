@@ -44,4 +44,10 @@ export class RestApiCoreService {
 
     return await this.restApiService.call(GraphqlApiType.CORE, request, data);
   }
+
+  async findDuplicates(request: Request) {
+    const data = await this.coreQueryBuilderFactory.findDuplicates(request);
+
+    return await this.restApiService.call(GraphqlApiType.CORE, request, data);
+  }
 }

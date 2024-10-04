@@ -6,6 +6,8 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 const filterDropdownId = 'filterDropdownId';
@@ -35,11 +37,13 @@ describe('useFilterDropdown', () => {
   it('should set availableFilterDefinitions', async () => {
     const { result } = renderHook(() => {
       useFilterDropdown({ filterDropdownId });
-      const { availableFilterDefinitionsState } =
-        useFilterDropdownStates(filterDropdownId);
 
       const [availableFilterDefinitions, setAvailableFilterDefinitions] =
-        useRecoilState(availableFilterDefinitionsState);
+        useRecoilComponentStateV2(
+          availableFilterDefinitionsComponentState,
+          filterDropdownId,
+        );
+
       return { availableFilterDefinitions, setAvailableFilterDefinitions };
     }, renderHookConfig);
 
@@ -178,31 +182,33 @@ describe('useFilterDropdown', () => {
     });
   });
 
-  it('should set objectFilterDropdownSelectedEntityId', async () => {
-    const mockResult = 'value';
+  it('should set objectFilterDropdownSelectedRecordId', async () => {
+    const mockResult = ['value'];
     const { result } = renderHook(() => {
       useFilterDropdown({ filterDropdownId });
-      const { objectFilterDropdownSelectedEntityIdState } =
+      const { objectFilterDropdownSelectedRecordIdsState } =
         useFilterDropdownStates(filterDropdownId);
 
       const [
-        objectFilterDropdownSelectedEntityId,
-        setObjectFilterDropdownSelectedEntityId,
-      ] = useRecoilState(objectFilterDropdownSelectedEntityIdState);
+        objectFilterDropdownSelectedRecordIds,
+        setObjectFilterDropdownSelectedRecordIds,
+      ] = useRecoilState(objectFilterDropdownSelectedRecordIdsState);
       return {
-        objectFilterDropdownSelectedEntityId,
-        setObjectFilterDropdownSelectedEntityId,
+        objectFilterDropdownSelectedRecordIds,
+        setObjectFilterDropdownSelectedRecordIds,
       };
     }, renderHookConfig);
 
-    expect(result.current.objectFilterDropdownSelectedEntityId).toBeNull();
+    expect(
+      JSON.stringify(result.current.objectFilterDropdownSelectedRecordIds),
+    ).toBe(JSON.stringify([]));
 
     act(() => {
-      result.current.setObjectFilterDropdownSelectedEntityId(mockResult);
+      result.current.setObjectFilterDropdownSelectedRecordIds(mockResult);
     });
 
     await waitFor(() => {
-      expect(result.current.objectFilterDropdownSelectedEntityId).toBe(
+      expect(result.current.objectFilterDropdownSelectedRecordIds).toBe(
         mockResult,
       );
     });

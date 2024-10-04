@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 
 import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThreadMessageBody';
 import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/EmailThreadMessageBodyPreview';
@@ -30,6 +30,7 @@ const StyledThreadMessageBody = styled.div`
 type EmailThreadMessageProps = {
   body: string;
   sentAt: string;
+  sender: EmailThreadMessageParticipant;
   participants: EmailThreadMessageParticipant[];
   isExpanded?: boolean;
 };
@@ -37,17 +38,17 @@ type EmailThreadMessageProps = {
 export const EmailThreadMessage = ({
   body,
   sentAt,
+  sender,
   participants,
   isExpanded = false,
 }: EmailThreadMessageProps) => {
   const [isOpen, setIsOpen] = useState(isExpanded);
 
-  const from = participants.find((participant) => participant.role === 'from');
   const receivers = participants.filter(
     (participant) => participant.role !== 'from',
   );
 
-  if (!from || receivers.length === 0) {
+  if (!sender || receivers.length === 0) {
     return null;
   }
 
@@ -57,7 +58,7 @@ export const EmailThreadMessage = ({
       style={{ cursor: isOpen ? 'auto' : 'pointer' }}
     >
       <StyledThreadMessageHeader onClick={() => isOpen && setIsOpen(false)}>
-        <EmailThreadMessageSender sender={from} sentAt={sentAt} />
+        <EmailThreadMessageSender sender={sender} sentAt={sentAt} />
         {isOpen && <EmailThreadMessageReceivers receivers={receivers} />}
       </StyledThreadMessageHeader>
       <StyledThreadMessageBody>

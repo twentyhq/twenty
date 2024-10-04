@@ -1,7 +1,10 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
   [
@@ -10,7 +13,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
       label: 'Domain Name',
       size: 100,
-      type: FieldMetadataType.Text,
+      type: FieldMetadataType.Links,
       metadata: {
         fieldName: 'domainName',
         placeHolder: 'Domain Name',
@@ -41,7 +44,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     },
     {
       position: 2,
-      fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
+      fieldMetadataId: 'REPLACE_ME',
       label: 'Name',
       size: 100,
       type: FieldMetadataType.Text,
@@ -64,7 +67,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'favorites',
-        relationType: 'FROM_MANY_OBJECTS',
+        relationType: RelationDefinitionType.OneToMany,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -98,7 +101,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'accountOwner',
-        relationType: 'TO_ONE_OBJECT',
+        relationType: RelationDefinitionType.ManyToOne,
         relationObjectMetadataNameSingular: 'workspaceMember',
         relationObjectMetadataNamePlural: 'workspaceMembers',
         objectMetadataNameSingular: 'company',
@@ -115,7 +118,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'people',
-        relationType: 'FROM_MANY_OBJECTS',
+        relationType: RelationDefinitionType.OneToMany,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -132,7 +135,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'attachments',
-        relationType: 'FROM_MANY_OBJECTS',
+        relationType: RelationDefinitionType.OneToMany,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -180,7 +183,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-a61d-4b78-b998-3fd88b4f73a1',
       label: 'Linkedin',
       size: 100,
-      type: FieldMetadataType.Link,
+      type: FieldMetadataType.Links,
       metadata: {
         fieldName: 'linkedinLink',
         placeHolder: 'Linkedin',
@@ -200,7 +203,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'opportunities',
-        relationType: 'FROM_MANY_OBJECTS',
+        relationType: RelationDefinitionType.OneToMany,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -214,7 +217,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-46e3-479a-b8f4-77137c74daa6',
       label: 'X',
       size: 100,
-      type: FieldMetadataType.Link,
+      type: FieldMetadataType.Links,
       metadata: {
         fieldName: 'xLink',
         placeHolder: 'X',
@@ -234,7 +237,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'activityTargets',
-        relationType: 'FROM_MANY_OBJECTS',
+        relationType: RelationDefinitionType.OneToMany,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',

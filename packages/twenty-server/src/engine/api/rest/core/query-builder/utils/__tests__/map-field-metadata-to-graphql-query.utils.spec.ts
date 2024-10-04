@@ -1,6 +1,5 @@
 import {
   fieldCurrencyMock,
-  fieldLinkMock,
   fieldNumberMock,
   fieldTextMock,
   objectMetadataItemMock,
@@ -17,15 +16,6 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     expect(
       mapFieldMetadataToGraphqlQuery([objectMetadataItemMock], fieldTextMock),
     ).toEqual('fieldText');
-    expect(
-      mapFieldMetadataToGraphqlQuery([objectMetadataItemMock], fieldLinkMock),
-    ).toEqual(`
-      fieldLink
-      {
-        label
-        url
-      }
-    `);
     expect(
       mapFieldMetadataToGraphqlQuery(
         [objectMetadataItemMock],

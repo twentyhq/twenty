@@ -56,7 +56,7 @@ const RelationManyFieldInputWithContext = () => {
             relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
           },
         }}
-        entityId={'entityId'}
+        recordId={'recordId'}
       >
         <RelationWorkspaceSetterEffect />
         <RelationFromManyFieldInput />

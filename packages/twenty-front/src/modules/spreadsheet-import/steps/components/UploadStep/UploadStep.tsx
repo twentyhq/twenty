@@ -1,9 +1,14 @@
-import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useState } from 'react';
 import { WorkBook } from 'xlsx-ugnis';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
+import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { DropZone } from './components/DropZone';
 
 const StyledContent = styled(Modal.Content)`
@@ -11,19 +16,92 @@ const StyledContent = styled(Modal.Content)`
 `;
 
 type UploadStepProps = {
-  onContinue: (data: WorkBook, file: File) => Promise<void>;
+  setUploadedFile: (file: File) => void;
+  setCurrentStepState: (data: any) => void;
+  onError: (message: string) => void;
+  nextStep: () => void;
+  setPreviousStepState: (data: any) => void;
+  currentStepState: SpreadsheetImportStep;
 };
 
-export const UploadStep = ({ onContinue }: UploadStepProps) => {
+export const UploadStep = ({
+  setUploadedFile,
+  setCurrentStepState,
+  onError,
+  nextStep,
+  setPreviousStepState,
+  currentStepState,
+}: UploadStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { maxRecords, uploadStepHook, selectHeaderStepHook, selectHeader } =
+    useSpreadsheetImportInternal();
+
+  const handleContinue = useCallback(
+    async (workbook: WorkBook, file: File) => {
+      setUploadedFile(file);
+      const isSingleSheet = workbook.SheetNames.length === 1;
+      if (isSingleSheet) {
+        if (
+          maxRecords > 0 &&
+          exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
+        ) {
+          onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
+          return;
+        }
+        try {
+          const mappedWorkbook = await uploadStepHook(mapWorkbook(workbook));
+
+          if (selectHeader) {
+            setCurrentStepState({
+              type: SpreadsheetImportStepType.selectHeader,
+              data: mappedWorkbook,
+            });
+          } else {
+            // Automatically select first row as header
+            const trimmedData = mappedWorkbook.slice(1);
+
+            const { importedRows: data, headerRow: headerValues } =
+              await selectHeaderStepHook(mappedWorkbook[0], trimmedData);
+
+            setCurrentStepState({
+              type: SpreadsheetImportStepType.matchColumns,
+              data,
+              headerValues,
+            });
+          }
+        } catch (e) {
+          onError((e as Error).message);
+        }
+      } else {
+        setCurrentStepState({
+          type: SpreadsheetImportStepType.selectSheet,
+          workbook,
+        });
+      }
+      setPreviousStepState(currentStepState);
+      nextStep();
+    },
+    [
+      onError,
+      maxRecords,
+      nextStep,
+      selectHeader,
+      selectHeaderStepHook,
+      setPreviousStepState,
+      setCurrentStepState,
+      setUploadedFile,
+      currentStepState,
+      uploadStepHook,
+    ],
+  );
 
   const handleOnContinue = useCallback(
     async (data: WorkBook, file: File) => {
       setIsLoading(true);
-      await onContinue(data, file);
+      await handleContinue(data, file);
       setIsLoading(false);
     },
-    [onContinue],
+    [handleContinue],
   );
 
   return (

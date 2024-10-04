@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import styled from '@emotion/styled';
 import * as XLSX from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -79,11 +79,7 @@ const StyledText = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   text-align: center;
-`;
-
-const StyledButton = styled(MainButton)`
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  width: 200px;
+  padding: 16px;
 `;
 
 type DropZoneProps = {
@@ -151,7 +147,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       ) : (
         <>
           <StyledText>Upload .xlsx, .xls or .csv file</StyledText>
-          <StyledButton onClick={open} title="Select file" />
+          <MainButton onClick={open} title="Select file" />
         </>
       )}
     </StyledContainer>

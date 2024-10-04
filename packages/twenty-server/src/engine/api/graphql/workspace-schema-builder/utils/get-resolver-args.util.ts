@@ -1,4 +1,4 @@
-import { GraphQLString, GraphQLInt, GraphQLID, GraphQLBoolean } from 'graphql';
+import { GraphQLBoolean, GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
@@ -105,7 +105,7 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
-    case 'executeQuickActionOnOne':
+    case 'destroyOne':
       return {
         id: {
           type: GraphQLID,
@@ -121,6 +121,31 @@ export const getResolverArgs = (
         filter: {
           kind: InputTypeDefinitionKind.Filter,
           isNullable: false,
+        },
+      };
+    case 'restoreMany':
+      return {
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: false,
+        },
+      };
+    case 'destroyMany':
+      return {
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: false,
+        },
+      };
+    case 'search':
+      return {
+        searchInput: {
+          type: GraphQLString,
+          isNullable: true,
+        },
+        limit: {
+          type: GraphQLInt,
+          isNullable: true,
         },
       };
     default:

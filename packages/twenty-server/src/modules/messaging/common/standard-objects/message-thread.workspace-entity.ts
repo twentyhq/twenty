@@ -1,18 +1,20 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { MESSAGE_THREAD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MESSAGE_THREAD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { MessageThreadSubscriberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-subscriber.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 @WorkspaceEntity({
@@ -39,17 +41,16 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
   messages: Relation<MessageWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId:
-      MESSAGE_THREAD_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
+    standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messageThreadSubscribers,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channel Association',
-    description: 'Messages from the channel',
+    label: 'Message Thread Subscribers',
+    description: 'Message Thread Subscribers',
     icon: 'IconMessage',
-    inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.RESTRICT,
+    inverseSideTarget: () => MessageThreadSubscriberWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @WorkspaceIsNullable()
-  messageChannelMessageAssociations: Relation<
-    MessageChannelMessageAssociationWorkspaceEntity[]
-  >;
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
+  })
+  subscribers: Relation<MessageThreadSubscriberWorkspaceEntity[]>;
 }

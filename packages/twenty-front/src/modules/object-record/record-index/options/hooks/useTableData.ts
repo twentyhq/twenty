@@ -8,6 +8,10 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
+import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { ViewType } from '@/views/types/ViewType';
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
 export const sleep = (ms: number) =>
@@ -27,6 +31,7 @@ export type UseTableDataOptions = {
     rows: ObjectRecord[],
     columns: ColumnDefinition<FieldMetadata>[],
   ) => void | Promise<void>;
+  viewType?: ViewType;
 };
 
 type ExportProgress = {
@@ -39,9 +44,10 @@ export const useTableData = ({
   delayMs,
   maximumRequests = 100,
   objectNameSingular,
-  pageSize = 30,
+  pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   callback,
+  viewType = ViewType.Table,
 }: UseTableDataOptions) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [inflight, setInflight] = useState(false);
@@ -58,6 +64,17 @@ export const useTableData = ({
     hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordIndexId);
 
+  const { hiddenBoardFields } = useRecordIndexOptionsForBoard({
+    objectNameSingular,
+    recordBoardId: recordIndexId,
+    viewBarId: recordIndexId,
+  });
+
+  const { kanbanFieldMetadataNameState } = useRecordBoardStates(recordIndexId);
+  const kanbanFieldMetadataName = useRecoilValue(kanbanFieldMetadataNameState);
+  const hiddenKanbanFieldColumn = hiddenBoardFields.find(
+    (column) => column.metadata.fieldName === kanbanFieldMetadataName,
+  );
   const columns = useRecoilValue(visibleTableColumnsSelector());
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
@@ -126,10 +143,6 @@ export const useTableData = ({
   });
 
   useEffect(() => {
-    const MAXIMUM_REQUESTS = isDefined(totalCount)
-      ? Math.min(maximumRequests, totalCount / pageSize)
-      : maximumRequests;
-
     const fetchNextPage = async () => {
       setInflight(true);
       setPreviousRecordCount(records.length);
@@ -151,8 +164,8 @@ export const useTableData = ({
     }
 
     if (
-      pageCount >= MAXIMUM_REQUESTS ||
-      (isDefined(totalCount) && records.length === totalCount)
+      pageCount >= maximumRequests ||
+      (isDefined(totalCount) && records.length >= totalCount)
     ) {
       setPageCount(0);
 
@@ -165,7 +178,14 @@ export const useTableData = ({
         });
       };
 
-      const res = callback(records, columns);
+      const finalColumns = [
+        ...columns,
+        ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
+          ? [hiddenKanbanFieldColumn]
+          : []),
+      ];
+
+      const res = callback(records, finalColumns);
 
       if (res instanceof Promise) {
         res.then(complete);
@@ -189,6 +209,8 @@ export const useTableData = ({
     loading,
     callback,
     previousRecordCount,
+    hiddenKanbanFieldColumn,
+    viewType,
   ]);
 
   return {

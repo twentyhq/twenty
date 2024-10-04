@@ -22,11 +22,11 @@ const EmailFieldValueSetterEffect = ({ value }: { value: string }) => {
 
 type EmailFieldInputWithContextProps = EmailFieldInputProps & {
   value: string;
-  entityId?: string;
+  recordId?: string;
 };
 
 const EmailFieldInputWithContext = ({
-  entityId,
+  recordId,
   value,
   onEnter,
   onEscape,
@@ -54,7 +54,7 @@ const EmailFieldInputWithContext = ({
             objectMetadataNameSingular: 'person',
           },
         }}
-        entityId={entityId}
+        recordId={recordId}
       >
         <EmailFieldValueSetterEffect value={value} />
         <EmailFieldInput

@@ -6,11 +6,11 @@ import { useRecordFieldValue } from '@/object-record/record-store/contexts/Recor
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useRatingFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
+  const fieldValue = useRecordFieldValue(recordId, fieldName) as
     | FieldRatingValue
     | undefined;
 

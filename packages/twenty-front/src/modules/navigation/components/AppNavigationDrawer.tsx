@@ -3,19 +3,19 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
-import { SupportChat } from '@/support/components/SupportChat';
-import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
+import { SupportDropdown } from '@/support/components/SupportDropdown';
 import {
   NavigationDrawer,
   NavigationDrawerProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
+import { AdvancedSettingsToggle } from '@/ui/navigation/link/components/AdvancedSettingsToggle';
 import { MainNavigationDrawerItems } from './MainNavigationDrawerItems';
 
 export type AppNavigationDrawerProps = {
@@ -42,18 +42,18 @@ export const AppNavigationDrawer = ({
   const drawerProps: NavigationDrawerProps = isSettingsDrawer
     ? {
         isSubMenu: true,
-        title: 'Settings',
+        title: 'Exit Settings',
         children: <SettingsNavigationDrawerItems />,
-        footer: <GithubVersionLink />,
+        footer: <AdvancedSettingsToggle />,
       }
     : {
         logo:
           (currentWorkspace?.logo &&
-            getImageAbsoluteURIOrBase64(currentWorkspace.logo)) ??
+            getImageAbsoluteURI(currentWorkspace.logo)) ??
           undefined,
         title: currentWorkspace?.displayName ?? undefined,
         children: <MainNavigationDrawerItems />,
-        footer: <SupportChat />,
+        footer: <SupportDropdown />,
       };
 
   useEffect(() => {

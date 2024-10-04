@@ -13,7 +13,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const useLinksField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.Links, isFieldLinks, fieldDefinition);
 
@@ -21,13 +21,13 @@ export const useLinksField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldLinksValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldLinksValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldLinksValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

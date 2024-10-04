@@ -43,6 +43,7 @@ export const RecordIndexBoardDataLoader = ({
           boardFieldSelectValue={option.value}
           recordBoardId={recordBoardId}
           columnId={columnIds[index]}
+          key={index}
         />
       ))}
       {recordIndexKanbanFieldMetadataItem?.isNullable && (

@@ -1,22 +1,29 @@
-import styled from '@emotion/styled';
-import { H1Title, H2Title, IconSettings } from 'twenty-ui';
+import { H2Title, IconSettings } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
-`;
+import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 
 export const SettingsWorkspace = () => (
-  <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+  <SubMenuTopBarContainer
+    Icon={IconSettings}
+    title="General"
+    links={[
+      {
+        children: 'Workspace',
+        href: getSettingsPagePath(SettingsPath.Workspace),
+      },
+      { children: 'General' },
+    ]}
+  >
     <SettingsPageContainer>
-      <StyledH1Title title="General" />
       <Section>
         <H2Title title="Picture" />
         <WorkspaceLogoUploader />
@@ -34,6 +41,9 @@ export const SettingsWorkspace = () => (
       </Section>
       <Section>
         <DeleteWorkspace />
+      </Section>
+      <Section>
+        <GithubVersionLink />
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>

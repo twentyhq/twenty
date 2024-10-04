@@ -20,7 +20,7 @@ const validateEmail = (email: string) => {
 };
 
 type EmailDisplayProps = {
-  value: string | null;
+  value: string | null | undefined;
 };
 
 export const EmailDisplay = ({ value }: EmailDisplayProps) => {

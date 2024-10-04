@@ -4,9 +4,12 @@ import { getDisplayNameFromParticipant } from '../getDisplayNameFromParticipant'
 
 describe('getDisplayNameFromParticipant', () => {
   const participantWithName: EmailThreadMessageParticipant = {
+    id: '2cac0ba7-0e60-46c6-86e7-e5b0bc55b7cf',
+    __typename: 'EmailThreadMessageParticipant',
     displayName: '',
     handle: '',
     role: 'from',
+    messageId: '638f52d1-fd55-4a2b-b0f3-9858ea3b2e91',
     person: {
       __typename: 'Person',
       id: '1',
@@ -20,12 +23,12 @@ describe('getDisplayNameFromParticipant', () => {
       avatarUrl: '',
       jobTitle: '',
       linkedinLink: {
-        url: '',
-        label: '',
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
       },
       xLink: {
-        url: '',
-        label: '',
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
       },
       city: '',
       email: '',

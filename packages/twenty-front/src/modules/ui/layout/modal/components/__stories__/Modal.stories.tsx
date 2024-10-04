@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { Modal } from '../Modal';
-import { ModalHotkeyScope } from '../types/ModalHotkeyScope';
 
 const meta: Meta<typeof Modal> = {
   title: 'UI/Layout/Modal/Modal',
@@ -14,10 +13,8 @@ type Story = StoryObj<typeof Modal>;
 
 export const Default: Story = {
   args: {
-    isOpen: true,
     size: 'medium',
     padding: 'medium',
-    hotkeyScope: ModalHotkeyScope.Default,
     children: (
       <>
         <Modal.Header>Stay in touch</Modal.Header>

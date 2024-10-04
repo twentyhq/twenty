@@ -1,12 +1,13 @@
-import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
+import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log.repository';
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
@@ -18,33 +19,37 @@ export class CreateAuditLogFromInternalEvent {
   ) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
-  async handle(data: ObjectRecordBaseEvent): Promise<void> {
-    let workspaceMemberId: string | null = null;
+  async handle(
+    data: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+  ): Promise<void> {
+    for (const eventData of data.events) {
+      let workspaceMemberId: string | null = null;
 
-    if (data.userId) {
-      const workspaceMember = await this.workspaceMemberService.getByIdOrFail(
-        data.userId,
+      if (eventData.userId) {
+        const workspaceMember = await this.workspaceMemberService.getByIdOrFail(
+          eventData.userId,
+          data.workspaceId,
+        );
+
+        workspaceMemberId = workspaceMember.id;
+      }
+
+      if (eventData.properties.diff) {
+        // we remove "before" and "after" property for a cleaner/slimmer event payload
+        eventData.properties = {
+          diff: eventData.properties.diff,
+        };
+      }
+
+      await this.auditLogRepository.insert(
+        data.name,
+        eventData.properties,
+        workspaceMemberId,
+        data.name.split('.')[0],
+        eventData.objectMetadata.id,
+        eventData.recordId,
         data.workspaceId,
       );
-
-      workspaceMemberId = workspaceMember.id;
     }
-
-    if (data.properties.diff) {
-      // we remove "before" and "after" property for a cleaner/slimmer event payload
-      data.properties = {
-        diff: data.properties.diff,
-      };
-    }
-
-    await this.auditLogRepository.insert(
-      data.name,
-      data.properties,
-      workspaceMemberId,
-      data.name.split('.')[0],
-      data.objectMetadata.id,
-      data.recordId,
-      data.workspaceId,
-    );
   }
 }

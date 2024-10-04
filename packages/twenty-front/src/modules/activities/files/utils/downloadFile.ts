@@ -1,7 +1,7 @@
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 export const downloadFile = (fullPath: string, fileName: string) => {
-  fetch(REACT_APP_SERVER_BASE_URL + '/files/' + fullPath)
+  fetch(getFileAbsoluteURI(fullPath))
     .then((resp) =>
       resp.status === 200
         ? resp.blob()

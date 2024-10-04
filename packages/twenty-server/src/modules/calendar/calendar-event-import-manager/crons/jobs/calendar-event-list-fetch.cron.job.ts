@@ -1,78 +1,90 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Any, In, Repository } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   CalendarEventListFetchJob,
   CalendarEventsImportJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import {
-  CalendarChannelSyncStage,
-  CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+
+export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
 })
 export class CalendarEventListFetchCronJob {
   constructor(
-    @InjectRepository(DataSourceEntity, 'metadata')
-    private readonly dataSourceRepository: Repository<DataSourceEntity>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly billingService: BillingService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(CalendarEventListFetchCronJob.name)
+  @SentryCronMonitor(
+    CalendarEventListFetchCronJob.name,
+    CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
-    const workspaceIds =
-      await this.billingService.getActiveSubscriptionWorkspaceIds();
+    console.time('CalendarEventListFetchCronJob time');
 
-    const dataSources = await this.dataSourceRepository.find({
+    const activeWorkspaces = await this.workspaceRepository.find({
       where: {
-        workspaceId: In(workspaceIds),
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
 
-    const workspaceIdsWithDataSources = new Set(
-      dataSources.map((dataSource) => dataSource.workspaceId),
-    );
+    for (const activeWorkspace of activeWorkspaces) {
+      try {
+        const calendarChannelRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+            activeWorkspace.id,
+            'calendarChannel',
+          );
 
-    for (const workspaceId of workspaceIdsWithDataSources) {
-      const calendarChannelRepository =
-        await this.twentyORMManager.getRepositoryForWorkspace(
-          workspaceId,
-          CalendarChannelWorkspaceEntity,
-        );
-
-      const calendarChannels = await calendarChannelRepository.find({
-        where: {
-          isSyncEnabled: true,
-          syncStage: Any([
-            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-            CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-          ]),
-        },
-      });
-
-      for (const calendarChannel of calendarChannels) {
-        await this.messageQueueService.add<CalendarEventsImportJobData>(
-          CalendarEventListFetchJob.name,
-          {
-            calendarChannelId: calendarChannel.id,
-            workspaceId,
+        const calendarChannels = await calendarChannelRepository.find({
+          where: {
+            isSyncEnabled: true,
+            syncStage: Any([
+              CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+              CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+            ]),
           },
-        );
+        });
+
+        for (const calendarChannel of calendarChannels) {
+          await this.messageQueueService.add<CalendarEventsImportJobData>(
+            CalendarEventListFetchJob.name,
+            {
+              calendarChannelId: calendarChannel.id,
+              workspaceId: activeWorkspace.id,
+            },
+          );
+        }
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          user: {
+            workspaceId: activeWorkspace.id,
+          },
+        });
       }
     }
+
+    console.timeEnd('CalendarEventListFetchCronJob time');
   }
 }

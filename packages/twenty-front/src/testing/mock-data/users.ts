@@ -5,6 +5,9 @@ import {
   SubscriptionStatus,
   User,
   Workspace,
+  WorkspaceActivationStatus,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 type MockedUser = Pick<
@@ -17,6 +20,7 @@ type MockedUser = Pick<
   | '__typename'
   | 'supportUserHash'
   | 'onboardingStatus'
+  | 'userVars'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -36,7 +40,7 @@ export const mockDefaultWorkspace: Workspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   allowImpersonation: true,
-  activationStatus: 'active',
+  activationStatus: WorkspaceActivationStatus.Active,
   featureFlags: [
     {
       id: '1492de61-5018-4368-8923-4f1eeaf988c4',
@@ -59,7 +63,7 @@ export const mockDefaultWorkspace: Workspace = {
   ],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
-  currentCacheVersion: '1',
+  metadataVersion: 1,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
@@ -67,6 +71,8 @@ export const mockDefaultWorkspace: Workspace = {
     status: SubscriptionStatus.Active,
   },
   workspaceMembersCount: 1,
+  databaseSchema: '',
+  databaseUrl: '',
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {
@@ -83,6 +89,9 @@ export const mockedWorkspaceMemberData: WorkspaceMember = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: '2603c1f9-0172-4ea6-986c-eeaccdf7f4cf',
   userEmail: 'charles@test.com',
+  dateFormat: WorkspaceMemberDateFormatEnum.DayFirst,
+  timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,
+  timeZone: 'America/New_York',
 };
 
 export const mockedUserData: MockedUser = {
@@ -99,6 +108,7 @@ export const mockedUserData: MockedUser = {
   locale: 'en',
   workspaces: [{ workspace: mockDefaultWorkspace }],
   onboardingStatus: OnboardingStatus.Completed,
+  userVars: {},
 };
 
 export const mockedOnboardingUserData = (

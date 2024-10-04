@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
 import { FileService } from './file.service';
 
@@ -18,6 +19,10 @@ describe('FileService', () => {
         },
         {
           provide: EnvironmentService,
+          useValue: {},
+        },
+        {
+          provide: JwtWrapperService,
           useValue: {},
         },
       ],

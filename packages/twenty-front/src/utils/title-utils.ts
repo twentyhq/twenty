@@ -10,6 +10,7 @@ export enum SettingsPageTitles {
   Members = 'Members - Settings',
   Developers = 'Developers - Settings',
   Integration = 'Integrations - Settings',
+  ServerlessFunctions = 'Functions - Settings',
   General = 'General - Settings',
   Default = 'Settings',
 }
@@ -21,6 +22,7 @@ enum SettingsPathPrefixes {
   Objects = `${AppBasePath.Settings}/${SettingsPath.Objects}`,
   Members = `${AppBasePath.Settings}/${SettingsPath.WorkspaceMembersPage}`,
   Developers = `${AppBasePath.Settings}/${SettingsPath.Developers}`,
+  ServerlessFunctions = `${AppBasePath.Settings}/${SettingsPath.ServerlessFunctions}`,
   Integration = `${AppBasePath.Settings}/${SettingsPath.Integrations}`,
   General = `${AppBasePath.Settings}/${SettingsPath.Workspace}`,
 }
@@ -47,10 +49,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return 'Create Workspace';
     case AppPath.CreateProfile:
       return 'Create Profile';
-    case AppPath.TasksPage:
-      return 'Tasks';
-    case AppPath.OpportunitiesPage:
-      return 'Opportunities';
     case SettingsPathPrefixes.Appearance:
       return SettingsPageTitles.Appearance;
     case SettingsPathPrefixes.Accounts:
@@ -63,6 +61,8 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return SettingsPageTitles.Objects;
     case SettingsPathPrefixes.Developers:
       return SettingsPageTitles.Developers;
+    case SettingsPathPrefixes.ServerlessFunctions:
+      return SettingsPageTitles.ServerlessFunctions;
     case SettingsPathPrefixes.Integration:
       return SettingsPageTitles.Integration;
     case SettingsPathPrefixes.General:

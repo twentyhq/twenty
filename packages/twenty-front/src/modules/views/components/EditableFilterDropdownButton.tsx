@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { MultipleFiltersDropdownContent } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownContent';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -8,8 +7,12 @@ import { FilterOperand } from '@/object-record/object-filter-dropdown/types/Filt
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+
+import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
 
 type EditableFilterDropdownButtonProps = {
@@ -24,21 +27,23 @@ export const EditableFilterDropdownButton = ({
   hotkeyScope,
 }: EditableFilterDropdownButtonProps) => {
   const {
-    availableFilterDefinitionsState,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setSelectedFilter,
+    setIsObjectFilterDropdownOperandSelectUnfolded,
   } = useFilterDropdown({
     filterDropdownId: viewFilterDropdownId,
   });
 
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
+  // TODO: verify this instance id works
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+    viewFilterDropdownId,
   );
 
   const { closeDropdown } = useDropdown(viewFilterDropdownId);
 
-  const { removeCombinedViewFilter } = useCombinedViewFilters();
+  const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
 
   useEffect(() => {
     const filterDefinition = availableFilterDefinitions.find(
@@ -63,18 +68,28 @@ export const EditableFilterDropdownButton = ({
   const handleRemove = () => {
     closeDropdown();
 
-    removeCombinedViewFilter(viewFilter.id);
+    deleteCombinedViewFilter(viewFilter.id);
   };
 
   const handleDropdownClickOutside = useCallback(() => {
     const { id: fieldId, value, operand } = viewFilter;
     if (
       !value &&
-      ![FilterOperand.IsEmpty, FilterOperand.IsNotEmpty].includes(operand)
+      ![
+        FilterOperand.IsEmpty,
+        FilterOperand.IsNotEmpty,
+        ViewFilterOperand.IsInPast,
+        ViewFilterOperand.IsInFuture,
+        ViewFilterOperand.IsToday,
+      ].includes(operand)
     ) {
-      removeCombinedViewFilter(fieldId);
+      deleteCombinedViewFilter(fieldId);
     }
-  }, [viewFilter, removeCombinedViewFilter]);
+  }, [viewFilter, deleteCombinedViewFilter]);
+
+  const handleDropdownClose = useCallback(() => {
+    setIsObjectFilterDropdownOperandSelectUnfolded(false);
+  }, [setIsObjectFilterDropdownOperandSelectUnfolded]);
 
   return (
     <Dropdown
@@ -91,6 +106,7 @@ export const EditableFilterDropdownButton = ({
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
       onClickOutside={handleDropdownClickOutside}
+      onClose={handleDropdownClose}
     />
   );
 };

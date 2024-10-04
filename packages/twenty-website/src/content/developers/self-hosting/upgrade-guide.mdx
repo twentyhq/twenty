@@ -34,4 +34,50 @@ The `yarn database:migrate:prod` command will apply the migrations to the Databa
 The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.  
 The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
 
+## v0.22.0 to v0.23.0
+
+Run the following commands:
+
+```
+yarn database:migrate:prod 
+yarn command:prod upgrade-0.23
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the Database.  
+The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
+
+## v0.23.0 to v0.24.0
+
+Run the following commands:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
+
+# v0.24.0 to v0.30.0
+
+Upgrade your Twenty instance to use v0.30.0 image
+
+**Breaking change**: 
+To enhance performances, Twenty now requires redis cache to be configured. We have updated our [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) to reflect this.
+Make sure to update your configuration and to update your environment variables accordingly:
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**Schema and data migration**: 
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-30` takes care of the data migration of all workspaces.
+
 <ArticleEditContent></ArticleEditContent>

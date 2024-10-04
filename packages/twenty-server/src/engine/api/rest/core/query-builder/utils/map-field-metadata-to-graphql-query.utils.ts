@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
-const DEFAULT_DEPTH_VALUE = 2;
+const DEFAULT_DEPTH_VALUE = 1;
 
 // TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
@@ -30,6 +30,8 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
+    FieldMetadataType.RICH_TEXT,
+    FieldMetadataType.ARRAY,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
@@ -132,6 +134,32 @@ export const mapFieldMetadataToGraphqlQuery = (
         addressCountry
         addressLat
         addressLng
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.ACTOR) {
+    return `
+      ${field.name}
+      {
+        source
+        workspaceMemberId
+        name
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.EMAILS) {
+    return `
+      ${field.name}
+      {
+        primaryEmail
+        additionalEmails
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.PHONES) {
+    return `
+      ${field.name}
+      {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        additionalPhones
       }
     `;
   }

@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import {
   IconChevronDown,
   IconList,
@@ -11,17 +10,18 @@ import {
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
-import { ViewPickerCreateOrEditContent } from '@/views/view-picker/components/ViewPickerCreateOrEditContent';
-import { ViewPickerCreateOrEditContentEffect } from '@/views/view-picker/components/ViewPickerCreateOrEditContentEffect';
+import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
+import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
+import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
+import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
 import { isDefined } from '~/utils/isDefined';
-
-import { useViewStates } from '../../hooks/internal/useViewStates';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
@@ -50,14 +50,12 @@ const StyledViewName = styled.span`
 export const ViewPickerDropdown = () => {
   const theme = useTheme();
 
-  const { entityCountInCurrentViewState } = useViewStates();
-
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const { handleUpdate } = useViewPickerPersistView();
+  const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
-  const entityCountInCurrentView = useRecoilValue(
-    entityCountInCurrentViewState,
+  const entityCountInCurrentView = useRecoilComponentValueV2(
+    entityCountInCurrentViewComponentState,
   );
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(
@@ -71,7 +69,7 @@ export const ViewPickerDropdown = () => {
 
   const handleClickOutside = async () => {
     if (isViewsListDropdownOpen && viewPickerMode === 'edit') {
-      await handleUpdate();
+      await updateViewFromCurrentState();
     }
     setViewPickerMode('list');
   };
@@ -106,8 +104,13 @@ export const ViewPickerDropdown = () => {
           <ViewPickerListContent />
         ) : (
           <>
-            <ViewPickerCreateOrEditContent />
-            <ViewPickerCreateOrEditContentEffect />
+            {viewPickerMode === 'create-empty' ||
+            viewPickerMode === 'create-from-current' ? (
+              <ViewPickerContentCreateMode />
+            ) : (
+              <ViewPickerContentEditMode />
+            )}
+            <ViewPickerContentEffect />
           </>
         )
       }

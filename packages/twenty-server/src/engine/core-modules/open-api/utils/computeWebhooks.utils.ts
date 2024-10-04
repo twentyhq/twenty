@@ -22,6 +22,10 @@ export const computeWebhooks = (
                   type: 'string',
                   example: 'https://example.com/incomingWebhook',
                 },
+                description: {
+                  type: 'string',
+                  example: 'A sample description',
+                },
                 eventType: {
                   type: 'string',
                   enum: [

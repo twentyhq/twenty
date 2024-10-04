@@ -21,7 +21,7 @@ export const DUPLICATE_CRITERIA_COLLECTION: RecordDuplicateCriteria[] = [
   },
   {
     objectName: 'person',
-    columnNames: ['linkedinLinkUrl'],
+    columnNames: ['linkedinLinkPrimaryLinkUrl'],
   },
   {
     objectName: 'person',

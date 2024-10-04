@@ -1,9 +1,10 @@
-import { CaptchaDriverType } from '~/generated/graphql';
 import { ClientConfig } from '~/generated-metadata/graphql';
+import { CaptchaDriverType } from '~/generated/graphql';
 
 export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
   signUpDisabled: false,
+  chromeExtensionId: 'MOCKED_EXTENSION_ID',
   debugMode: false,
   authProviders: {
     google: true,
@@ -11,10 +12,6 @@ export const mockedClientConfig: ClientConfig = {
     magicLink: false,
     microsoft: false,
     __typename: 'AuthProviders',
-  },
-  telemetry: {
-    enabled: false,
-    __typename: 'Telemetry',
   },
   support: {
     supportDriver: 'front',

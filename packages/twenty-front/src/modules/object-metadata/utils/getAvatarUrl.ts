@@ -2,9 +2,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getLogoUrlFromDomainName } from '~/utils';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { isDefined } from '~/utils/isDefined';
 
+import { Company } from '@/companies/types/Company';
+import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { getImageIdentifierFieldValue } from './getImageIdentifierFieldValue';
 
 export const getAvatarUrl = (
@@ -17,11 +19,13 @@ export const getAvatarUrl = (
   }
 
   if (objectNameSingular === CoreObjectNameSingular.Company) {
-    return getLogoUrlFromDomainName(record.domainName ?? '');
+    return getLogoUrlFromDomainName(
+      getCompanyDomainName(record as Company) ?? '',
+    );
   }
 
   if (objectNameSingular === CoreObjectNameSingular.Person) {
-    return getImageAbsoluteURIOrBase64(record.avatarUrl) ?? '';
+    return getImageAbsoluteURI(record.avatarUrl) ?? '';
   }
 
   const imageIdentifierFieldValue = getImageIdentifierFieldValue(

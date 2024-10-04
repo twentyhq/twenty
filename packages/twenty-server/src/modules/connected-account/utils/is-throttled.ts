@@ -1,4 +1,4 @@
-import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/common/constants/messaging-throttle-duration';
+import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-duration';
 
 export const isThrottled = (
   syncStageStartedAt: string | null,

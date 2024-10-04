@@ -1,17 +1,17 @@
+import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
-import styled from '@emotion/styled';
 import { AppTooltip } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
-import { Data, Fields } from '@/spreadsheet-import/types';
+import { Fields, ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { isDefined } from '~/utils/isDefined';
 
-import { Meta } from '../types';
+import { ImportedStructuredRowMetadata } from '../types';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -63,7 +63,7 @@ const SELECT_COLUMN_KEY = 'select-row';
 
 export const generateColumns = <T extends string>(
   fields: Fields<T>,
-): Column<Data<T> & Meta>[] => [
+): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata>[] => [
   {
     key: SELECT_COLUMN_KEY,
     name: '',
@@ -96,7 +96,9 @@ export const generateColumns = <T extends string>(
     },
   },
   ...fields.map(
-    (column): Column<Data<T> & Meta> => ({
+    (
+      column,
+    ): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata> => ({
       key: column.key,
       name: column.label,
       minWidth: 150,
@@ -120,7 +122,8 @@ export const generateColumns = <T extends string>(
       editable: column.fieldType.type !== 'checkbox',
       // Todo: remove usage of react-data-grid
       editor: ({ row, onRowChange, onClose }: any) => {
-        const columnKey = column.key as keyof (Data<T> & Meta);
+        const columnKey = column.key as keyof (ImportedStructuredRow<T> &
+          ImportedStructuredRowMetadata);
         let component;
 
         switch (column.fieldType.type) {
@@ -167,7 +170,8 @@ export const generateColumns = <T extends string>(
       },
       // Todo: remove usage of react-data-grid
       formatter: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
-        const columnKey = column.key as keyof (Data<T> & Meta);
+        const columnKey = column.key as keyof (ImportedStructuredRow<T> &
+          ImportedStructuredRowMetadata);
         let component;
 
         switch (column.fieldType.type) {
@@ -226,7 +230,7 @@ export const generateColumns = <T extends string>(
 
         return component;
       },
-      cellClass: (row: Meta) => {
+      cellClass: (row: ImportedStructuredRowMetadata) => {
         switch (row.__errors?.[column.key]?.level) {
           case 'error':
             return 'rdg-cell-error';

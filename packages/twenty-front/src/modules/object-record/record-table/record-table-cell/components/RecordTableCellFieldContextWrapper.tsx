@@ -38,7 +38,7 @@ export const RecordTableCellFieldContextWrapper = ({
     <FieldContext.Provider
       value={{
         recoilScopeId: recordId + columnDefinition.label,
-        entityId: recordId,
+        recordId,
         fieldDefinition: columnDefinition,
         useUpdateRecord: () => [updateRecord, {}],
         hotkeyScope: customHotkeyScope,

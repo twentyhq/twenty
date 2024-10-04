@@ -22,11 +22,11 @@ const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
 
 type TextFieldInputWithContextProps = TextFieldInputProps & {
   value: string;
-  entityId?: string;
+  recordId?: string;
 };
 
 const TextFieldInputWithContext = ({
-  entityId,
+  recordId,
   value,
   onEnter,
   onEscape,
@@ -54,7 +54,7 @@ const TextFieldInputWithContext = ({
             objectMetadataNameSingular: 'person',
           },
         }}
-        entityId={entityId}
+        recordId={recordId}
       >
         <TextFieldValueSetterEffect value={value} />
         <TextFieldInput

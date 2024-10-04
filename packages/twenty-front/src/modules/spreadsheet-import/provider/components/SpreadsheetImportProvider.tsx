@@ -1,8 +1,9 @@
 import React from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 
+import { matchColumnsState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { SpreadsheetImport } from './SpreadsheetImport';
 
 type SpreadsheetImportProviderProps = React.PropsWithChildren;
@@ -10,26 +11,30 @@ type SpreadsheetImportProviderProps = React.PropsWithChildren;
 export const SpreadsheetImportProvider = (
   props: SpreadsheetImportProviderProps,
 ) => {
-  const [spreadsheetImport, setSpreadsheetImport] = useRecoilState(
-    spreadsheetImportState,
+  const [spreadsheetImportDialog, setSpreadsheetImportDialog] = useRecoilState(
+    spreadsheetImportDialogState,
   );
 
+  const setMatchColumnsState = useSetRecoilState(matchColumnsState);
+
   const handleClose = () => {
-    setSpreadsheetImport({
+    setSpreadsheetImportDialog({
       isOpen: false,
       options: null,
     });
+
+    setMatchColumnsState([]);
   };
 
   return (
     <>
       {props.children}
-      {spreadsheetImport.isOpen && spreadsheetImport.options && (
+      {spreadsheetImportDialog.isOpen && spreadsheetImportDialog.options && (
         <SpreadsheetImport
           isOpen={true}
           onClose={handleClose}
           // eslint-disable-next-line react/jsx-props-no-spreading
-          {...spreadsheetImport.options}
+          {...spreadsheetImportDialog.options}
         />
       )}
     </>

@@ -2,9 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { AvailableProduct } from 'src/engine/core-modules/billing/interfaces/available-product.interface';
+
+import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class StripeService {
@@ -30,10 +33,28 @@ export class StripeService {
     );
   }
 
-  async getProductPrices(stripeProductId: string) {
-    return this.stripe.prices.search({
+  async getStripePrices(product: AvailableProduct) {
+    const stripeProductId = this.getStripeProductId(product);
+
+    const prices = await this.stripe.prices.search({
       query: `product: '${stripeProductId}'`,
     });
+
+    return this.formatProductPrices(prices.data);
+  }
+
+  async getStripePrice(product: AvailableProduct, recurringInterval: string) {
+    const productPrices = await this.getStripePrices(product);
+
+    return productPrices.find(
+      (price) => price.recurringInterval === recurringInterval,
+    );
+  }
+
+  getStripeProductId(product: AvailableProduct) {
+    if (product === AvailableProduct.BasePlan) {
+      return this.environmentService.get('BILLING_STRIPE_BASE_PLAN_PRODUCT_ID');
+    }
   }
 
   async updateSubscriptionItem(stripeItemId: string, quantity: number) {
@@ -72,7 +93,7 @@ export class StripeService {
       mode: 'subscription',
       subscription_data: {
         metadata: {
-          workspaceId: user.defaultWorkspace.id,
+          workspaceId: user.defaultWorkspaceId,
         },
         trial_period_days: this.environmentService.get(
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
@@ -118,5 +139,32 @@ export class StripeService {
         quantity: stripeSubscriptionItem.quantity,
       },
     );
+  }
+
+  formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {
+    const productPrices: ProductPriceEntity[] = Object.values(
+      prices
+        .filter((item) => item.recurring?.interval && item.unit_amount)
+        .reduce((acc, item: Stripe.Price) => {
+          const interval = item.recurring?.interval;
+
+          if (!interval || !item.unit_amount) {
+            return acc;
+          }
+
+          if (!acc[interval] || item.created > acc[interval].created) {
+            acc[interval] = {
+              unitAmount: item.unit_amount,
+              recurringInterval: interval,
+              created: item.created,
+              stripePriceId: item.id,
+            };
+          }
+
+          return acc satisfies Record<string, ProductPriceEntity>;
+        }, {}),
+    );
+
+    return productPrices.sort((a, b) => a.unitAmount - b.unitAmount);
   }
 }

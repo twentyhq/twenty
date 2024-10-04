@@ -11,7 +11,7 @@ import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 type GraphQLErrorHandlerHookOptions = {
   /**
@@ -64,12 +64,16 @@ export const useGraphQLErrorHandlerHook = <
             setResult,
           }) => {
             if (result.errors && result.errors.length > 0) {
-              const errorsToCapture = result.errors.reduce<BaseGraphQLError[]>(
-                (acc, error) => {
-                  if (!(error instanceof BaseGraphQLError)) {
-                    error = generateGraphQLErrorFromError(error);
-                  }
+              const originalErrors = result.errors.map((error) => {
+                const originalError = error.originalError;
 
+                return originalError instanceof BaseGraphQLError
+                  ? error.originalError
+                  : generateGraphQLErrorFromError(error);
+              });
+
+              const errorsToCapture = originalErrors.reduce<BaseGraphQLError[]>(
+                (acc, error) => {
                   if (shouldCaptureException(error)) {
                     acc.push(error);
                   }
@@ -95,7 +99,7 @@ export const useGraphQLErrorHandlerHook = <
                 errorsToCapture.map((err, i) => addEventId(err, eventIds?.[i]));
               }
 
-              const nonCapturedErrors = result.errors.filter(
+              const nonCapturedErrors = originalErrors.filter(
                 (error) => !errorsToCapture.includes(error),
               );
 
@@ -115,13 +119,13 @@ export const useGraphQLErrorHandlerHook = <
 
       if (Array.isArray(errors) && errors.length > 0) {
         const headers = context.req.headers;
-        const currentSchemaVersion = context.req.cacheVersion;
+        const currentMetadataVersion = context.req.workspaceMetadataVersion;
 
-        const requestSchemaVersion = headers['x-schema-version'];
+        const requestMetadataVersion = headers['x-schema-version'];
 
         if (
-          requestSchemaVersion &&
-          requestSchemaVersion !== currentSchemaVersion
+          requestMetadataVersion &&
+          requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
           throw new GraphQLError(
             `Schema version mismatch, please refresh the page.`,

@@ -1,14 +1,16 @@
-import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
 
-import { AnalyticsService } from './analytics.service';
 import { AnalyticsResolver } from './analytics.resolver';
+import { AnalyticsService } from './analytics.service';
+
+const TINYBIRD_BASE_URL = 'https://api.eu-central-1.aws.tinybird.co/v0';
 
 @Module({
   providers: [AnalyticsResolver, AnalyticsService],
   imports: [
     HttpModule.register({
-      baseURL: 'https://t.twenty.com/api/v1/s2s',
+      baseURL: TINYBIRD_BASE_URL,
     }),
   ],
   exports: [AnalyticsService],

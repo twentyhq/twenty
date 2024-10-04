@@ -4,7 +4,6 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 import {
   GraphQLBoolean,
   GraphQLEnumType,
-  GraphQLFloat,
   GraphQLID,
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -17,25 +16,26 @@ import {
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
-  StringFilterType,
+  ArrayFilterType,
+  BigFloatFilterType,
+  BooleanFilterType,
   DateFilterType,
   FloatFilterType,
-  BooleanFilterType,
-  BigFloatFilterType,
   RawJsonFilterType,
+  StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
-import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
+import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import {
   BigFloatScalarType,
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
 import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
-import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
 import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -45,6 +45,8 @@ export interface TypeOptions<T = any> {
   settings?: FieldMetadataSettings<FieldMetadataType | 'default'>;
   isIdField?: boolean;
 }
+
+const StringArrayScalarType = new GraphQLList(GraphQLString);
 
 @Injectable()
 export class TypeMapperService {
@@ -56,7 +58,6 @@ export class TypeMapperService {
     if (isIdField || settings?.isForeignKey) {
       return GraphQLID;
     }
-
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
       [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
@@ -75,6 +76,11 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
       [FieldMetadataType.RAW_JSON, RawJSONScalar],
+      [
+        FieldMetadataType.ARRAY,
+        StringArrayScalarType as unknown as GraphQLScalarType,
+      ],
+      [FieldMetadataType.RICH_TEXT, GraphQLString],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -110,6 +116,8 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
+      [FieldMetadataType.RICH_TEXT, StringFilterType],
+      [FieldMetadataType.ARRAY, ArrayFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -133,6 +141,8 @@ export class TypeMapperService {
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
+      [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
+      [FieldMetadataType.ARRAY, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

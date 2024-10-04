@@ -9,6 +9,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
+// Note: This is probably not the right way to do this.
+export const computePathWithoutToken = (attachmentPath: string): string => {
+  return attachmentPath.replace(/\?token=[^&]*$/, '');
+};
+
 export const useUploadAttachmentFile = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const [uploadFile] = useUploadFileMutation();
@@ -29,9 +34,9 @@ export const useUploadAttachmentFile = () => {
       },
     });
 
-    const attachmentUrl = result?.data?.uploadFile;
+    const attachmentPath = result?.data?.uploadFile;
 
-    if (!attachmentUrl) {
+    if (!attachmentPath) {
       return;
     }
 
@@ -42,7 +47,7 @@ export const useUploadAttachmentFile = () => {
     const attachmentToCreate = {
       authorId: currentWorkspaceMember?.id,
       name: file.name,
-      fullPath: attachmentUrl,
+      fullPath: computePathWithoutToken(attachmentPath),
       type: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
       createdAt: new Date().toISOString(),

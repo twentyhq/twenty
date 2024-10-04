@@ -6,7 +6,7 @@ export const SettingsReadDocumentationButton = () => {
   return (
     <Button
       title="Read documentation"
-      variant="primary"
+      variant="secondary"
       accent="default"
       size="small"
       Icon={IconBook2}

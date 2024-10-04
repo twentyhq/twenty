@@ -5,7 +5,7 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import {
   RecordFieldValueSelectorContextProvider,
@@ -21,17 +21,16 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { mockPerformance } from './mock';
-
-const objectMetadataItems = getObjectMetadataItemsMock();
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.entityId),
+    recordStoreFamilyState(mockPerformance.recordId),
   );
 
   const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.relationEntityId),
+    recordStoreFamilyState(mockPerformance.relationRecordId),
   );
 
   const setRecordValue = useSetRecordValue();
@@ -48,7 +47,7 @@ const RelationFieldValueSetterEffect = () => {
       mockPerformance.relationFieldValue,
     );
 
-    setObjectMetadataItems(objectMetadataItems);
+    setObjectMetadataItems(generatedMockObjectMetadataItems);
   }, [setEntity, setRelationEntity, setRecordValue, setObjectMetadataItems]);
 
   return null;
@@ -64,7 +63,7 @@ const meta: Meta = {
         <RecordFieldValueSelectorContextProvider>
           <RecordTableContext.Provider
             value={{
-              viewBarId: mockPerformance.entityId,
+              viewBarId: mockPerformance.recordId,
               objectMetadataItem: mockPerformance.objectMetadataItem as any,
               onUpsertRecord: () => {},
               onOpenTableCell: () => {},
@@ -87,13 +86,13 @@ const meta: Meta = {
                 value={{
                   objectNameSingular:
                     mockPerformance.entityValue.__typename.toLocaleLowerCase(),
-                  recordId: mockPerformance.entityId,
+                  recordId: mockPerformance.recordId,
                   rowIndex: 0,
                   pathToShowPage:
                     getBasePathToShowPage({
                       objectNameSingular:
                         mockPerformance.entityValue.__typename.toLocaleLowerCase(),
-                    }) + mockPerformance.entityId,
+                    }) + mockPerformance.recordId,
                   isSelected: false,
                   isReadOnly: false,
                   isDragging: false,
@@ -113,7 +112,7 @@ const meta: Meta = {
                 >
                   <FieldContext.Provider
                     value={{
-                      entityId: mockPerformance.entityId,
+                      recordId: mockPerformance.recordId,
                       basePathToShowPage: '/object-record/',
                       isLabelIdentifier: false,
                       fieldDefinition: {

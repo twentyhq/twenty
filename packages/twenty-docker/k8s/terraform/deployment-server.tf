@@ -1,17 +1,17 @@
 resource "kubernetes_deployment" "twentycrm_server" {
   metadata {
-    name      = "${local.twentycrm_app_name}-server"
+    name      = "${var.twentycrm_app_name}-server"
     namespace = kubernetes_namespace.twentycrm.metadata.0.name
     labels = {
-      app = "${local.twentycrm_app_name}-server"
+      app = "${var.twentycrm_app_name}-server"
     }
   }
 
   spec {
-    replicas = 1
+    replicas = var.twentycrm_server_replicas
     selector {
       match_labels = {
-        app = "${local.twentycrm_app_name}-server"
+        app = "${var.twentycrm_app_name}-server"
       }
     }
 
@@ -26,14 +26,14 @@ resource "kubernetes_deployment" "twentycrm_server" {
     template {
       metadata {
         labels = {
-          app = "${local.twentycrm_app_name}-server"
+          app = "${var.twentycrm_app_name}-server"
         }
       }
 
       spec {
         container {
-          image = local.twentycrm_server_image
-          name  = local.twentycrm_app_name
+          image = var.twentycrm_server_image
+          name  = var.twentycrm_app_name
           stdin = true
           tty   = true
 
@@ -48,7 +48,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
 
           env {
             name  = "SERVER_URL"
-            value = "https://crm.example.com:443"
+            value = var.twentycrm_app_hostname
           }
 
           env {

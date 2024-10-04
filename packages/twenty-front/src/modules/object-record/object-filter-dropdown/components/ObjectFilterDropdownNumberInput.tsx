@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -12,6 +12,7 @@ export const ObjectFilterDropdownNumberInput = () => {
     selectedFilterState,
     selectFilter,
   } = useFilterDropdown();
+  const [hasFocused, setHasFocused] = useState(false);
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
@@ -22,20 +23,38 @@ export const ObjectFilterDropdownNumberInput = () => {
 
   const selectedFilter = useRecoilValue(selectedFilterState);
 
+  const [inputValue, setInputValue] = useState(
+    () => selectedFilter?.value || '',
+  );
+
+  const handleInputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      if (Boolean(node) && !hasFocused) {
+        node?.focus();
+        node?.select();
+        setHasFocused(true);
+      }
+    },
+    [hasFocused],
+  );
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
       <DropdownMenuInput
+        ref={handleInputRef}
+        value={inputValue}
         autoFocus
         type="number"
         placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          const newValue = event.target.value;
+          setInputValue(newValue);
           selectFilter?.({
             id: selectedFilter?.id ? selectedFilter.id : v4(),
             fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-            value: event.target.value,
+            value: newValue,
             operand: selectedOperandInDropdown,
-            displayValue: event.target.value,
+            displayValue: newValue,
             definition: filterDefinitionUsedInDropdown,
           });
         }}

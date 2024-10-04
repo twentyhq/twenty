@@ -10,14 +10,10 @@ export const USER_QUERY_FRAGMENT = gql`
     supportUserHash
     onboardingStatus
     workspaceMember {
-      id
-      name {
-        firstName
-        lastName
-      }
-      colorScheme
-      avatarUrl
-      locale
+      ...WorkspaceMemberQueryFragment
+    }
+    workspaceMembers {
+      ...WorkspaceMemberQueryFragment
     }
     defaultWorkspace {
       id
@@ -33,7 +29,7 @@ export const USER_QUERY_FRAGMENT = gql`
         value
         workspaceId
       }
-      currentCacheVersion
+      metadataVersion
       currentBillingSubscription {
         id
         status
@@ -49,5 +45,6 @@ export const USER_QUERY_FRAGMENT = gql`
         domainName
       }
     }
+    userVars
   }
 `;

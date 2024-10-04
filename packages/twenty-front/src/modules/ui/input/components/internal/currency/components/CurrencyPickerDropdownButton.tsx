@@ -14,7 +14,7 @@ type StyledDropdownButtonProps = {
   isUnfolded: boolean;
 };
 
-export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
+const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;

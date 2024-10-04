@@ -1,5 +1,5 @@
-import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { useFormContext } from 'react-hook-form';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -29,11 +29,13 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 
 const StyledPreviewContent = styled.div`
   display: flex;
+  flex-direction: column;
   gap: 6px;
 `;
 
 const StyledRelationImage = styled.img<{ flip?: boolean }>`
-  transform: ${({ flip }) => (flip ? 'scaleX(-1)' : 'none')};
+  transform: ${({ flip }) => (flip ? 'scaleX(-1) rotate(270deg)' : 'none')};
+  margin: auto;
   width: 54px;
 `;
 

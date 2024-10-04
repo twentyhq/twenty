@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
+import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { FeatureFlagFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/feature-flags.factory';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
@@ -27,14 +27,14 @@ export class WorkspaceSyncMetadataService {
   constructor(
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
-    private readonly featureFlagFactory: FeatureFlagFactory,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {}
 
   /**
@@ -42,8 +42,8 @@ export class WorkspaceSyncMetadataService {
    * Sync all standard objects and fields metadata for a given workspace and data source
    * This will update the metadata if it has changed and generate migrations based on the diff.
    *
-   * @param dataSourceId
-   * @param workspaceId
+   * @param context
+   * @param options
    */
   public async synchronize(
     context: WorkspaceSyncContext,
@@ -70,7 +70,9 @@ export class WorkspaceSyncMetadataService {
 
       // Retrieve feature flags
       const workspaceFeatureFlagsMap =
-        await this.featureFlagFactory.create(context);
+        await this.featureFlagService.getWorkspaceFeatureFlags(
+          context.workspaceId,
+        );
 
       this.logger.log('Syncing standard objects and fields metadata');
 
@@ -83,7 +85,7 @@ export class WorkspaceSyncMetadataService {
           workspaceFeatureFlagsMap,
         );
 
-      // 2 - Sync standard fields on custom objects
+      // 2 - Sync standard fields on standard and custom objects
       const workspaceFieldMigrations =
         await this.workspaceSyncFieldMetadataService.synchronize(
           context,
@@ -143,15 +145,20 @@ export class WorkspaceSyncMetadataService {
       await queryRunner.commitTransaction();
 
       // Execute migrations
+      this.logger.log('Executing pending migrations');
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
         context.workspaceId,
       );
     } catch (error) {
       this.logger.error('Sync of standard objects failed with:', error);
+
+      if (error instanceof QueryFailedError && (error as any).detail) {
+        this.logger.error((error as any).detail);
+      }
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
-      await this.workspaceCacheVersionService.incrementVersion(
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         context.workspaceId,
       );
     }

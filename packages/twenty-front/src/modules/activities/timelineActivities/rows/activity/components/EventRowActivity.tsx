@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import {
@@ -7,44 +6,66 @@ import {
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { isNonEmptyString } from '@sniptt/guards';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
 const StyledLinkedActivity = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   text-decoration: underline;
+`;
+
+export const StyledEventRowItemText = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 export const EventRowActivity = ({
   event,
   authorFullName,
-}: EventRowActivityProps) => {
-  const [, eventAction] = event.name.split('.');
+  objectNameSingular,
+}: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
+  const [eventLinkedObject, eventAction] = event.name.split('.');
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const eventObject = eventLinkedObject.replace('linked-', '');
 
   if (!event.linkedRecordId) {
     throw new Error('Could not find linked record id for event');
   }
 
-  const [activityInStore] = useRecoilState(
-    recordStoreFamilyState(event.linkedRecordId),
-  );
+  const getActivityFromCache = useGetRecordFromCache({
+    objectNameSingular,
+    recordGqlFields: {
+      id: true,
+      title: true,
+    },
+  });
+
+  const activityInStore = getActivityFromCache(event.linkedRecordId);
+
+  const activityTitle = isNonEmptyString(activityInStore?.title)
+    ? activityInStore?.title
+    : isNonEmptyString(event.linkedRecordCachedName)
+      ? event.linkedRecordCachedName
+      : 'Untitled';
+
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular,
+  });
 
   return (
     <>
       <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-      <StyledEventRowItemAction>{eventAction}</StyledEventRowItemAction>
-      {activityInStore ? (
-        <StyledLinkedActivity
-          onClick={() => openActivityRightDrawer(event.linkedRecordId)}
-        >
-          {event.linkedRecordCachedName}
-        </StyledLinkedActivity>
-      ) : (
-        <span>{event.linkedRecordCachedName}</span>
-      )}
+      <StyledEventRowItemAction>
+        {`${eventAction} a related ${eventObject}`}
+      </StyledEventRowItemAction>
+      <StyledLinkedActivity
+        onClick={() => openActivityRightDrawer(event.linkedRecordId)}
+      >
+        {activityTitle}
+      </StyledLinkedActivity>
     </>
   );
 };

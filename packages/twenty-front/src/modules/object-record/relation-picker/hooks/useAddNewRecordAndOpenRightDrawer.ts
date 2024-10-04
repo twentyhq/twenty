@@ -20,13 +20,13 @@ type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
   relationObjectMetadataItem: ObjectMetadataItem;
   relationFieldMetadataItem?: FieldMetadataItem;
-  entityId: string;
+  recordId: string;
 };
 export const useAddNewRecordAndOpenRightDrawer = ({
   relationObjectMetadataNameSingular,
   relationObjectMetadataItem,
   relationFieldMetadataItem,
-  entityId,
+  recordId,
 }: RecordDetailRelationSectionProps) => {
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
   const setViewableRecordNameSingular = useSetRecoilState(
@@ -89,7 +89,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
       ) {
         createRecordPayload[
           `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
-        ] = entityId;
+        ] = recordId;
       }
 
       await createOneRecord(createRecordPayload);
@@ -99,7 +99,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
         RelationDefinitionType.OneToMany
       ) {
         await updateOneRecord({
-          idToUpdate: entityId,
+          idToUpdate: recordId,
           updateOneRecordInput: {
             [`${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`]:
               newRecordId,

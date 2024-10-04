@@ -49,21 +49,4 @@ export class BlocklistRepository {
       transactionManager,
     );
   }
-
-  public async getByWorkspaceMemberIdAndHandle(
-    workspaceMemberId: string,
-    handle: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<BlocklistWorkspaceEntity[]> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."blocklist" WHERE "workspaceMemberId" = $1 AND "handle" = $2`,
-      [workspaceMemberId, handle],
-      workspaceId,
-      transactionManager,
-    );
-  }
 }

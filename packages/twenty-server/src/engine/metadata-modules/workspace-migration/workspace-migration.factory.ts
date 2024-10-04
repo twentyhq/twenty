@@ -1,17 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
+import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
+import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
-import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
-import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import {
   WorkspaceMigrationException,
   WorkspaceMigrationExceptionCode,
@@ -30,6 +31,7 @@ export class WorkspaceMigrationFactory {
 
   constructor(
     private readonly basicColumnActionFactory: BasicColumnActionFactory,
+    private readonly tsVectorColumnActionFactory: TsVectorColumnActionFactory,
     private readonly enumColumnActionFactory: EnumColumnActionFactory,
     private readonly compositeColumnActionFactory: CompositeColumnActionFactory,
   ) {
@@ -72,6 +74,7 @@ export class WorkspaceMigrationFactory {
       [FieldMetadataType.NUMBER, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.POSITION, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.RAW_JSON, { factory: this.basicColumnActionFactory }],
+      [FieldMetadataType.RICH_TEXT, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.BOOLEAN, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.DATE_TIME, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.DATE, { factory: this.basicColumnActionFactory }],
@@ -95,6 +98,20 @@ export class WorkspaceMigrationFactory {
         { factory: this.compositeColumnActionFactory },
       ],
       [FieldMetadataType.LINKS, { factory: this.compositeColumnActionFactory }],
+      [FieldMetadataType.ACTOR, { factory: this.compositeColumnActionFactory }],
+      [FieldMetadataType.ARRAY, { factory: this.basicColumnActionFactory }],
+      [
+        FieldMetadataType.EMAILS,
+        { factory: this.compositeColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.PHONES,
+        { factory: this.compositeColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.TS_VECTOR,
+        { factory: this.tsVectorColumnActionFactory },
+      ],
     ]);
   }
 

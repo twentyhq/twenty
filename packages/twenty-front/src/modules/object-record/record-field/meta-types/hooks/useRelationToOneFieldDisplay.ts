@@ -14,7 +14,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
 export const useRelationToOneFieldDisplay = () => {
-  const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
@@ -35,7 +35,7 @@ export const useRelationToOneFieldDisplay = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const fieldValue = useRecordFieldValue<ObjectRecord | undefined>(
-    entityId,
+    recordId,
     fieldName,
   );
 
@@ -57,7 +57,7 @@ export const useRelationToOneFieldDisplay = () => {
     fieldDefinition,
     fieldValue,
     maxWidth: maxWidthForField,
-    entityId,
+    recordId,
     generateRecordChipData,
   };
 };

@@ -5,12 +5,12 @@ import { useInView } from 'react-intersection-observer';
 import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -24,18 +24,20 @@ export const RecordTableRowWrapper = ({
   children: ReactNode;
 }) => {
   const { objectMetadataItem } = useContext(RecordTableContext);
-  const { onIndexRecordsLoaded } = useContext(RecordIndexEventContext);
+  const { onIndexRecordsLoaded } = useContext(RecordIndexRootPropsContext);
 
   const theme = useTheme();
 
   const { isRowSelectedFamilyState } = useRecordTableStates();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
 
-  const scrollWrapperRef = useContext(ScrollWrapperContext);
+  const scrollWrapperRef = useContext(
+    RecordTableWithWrappersScrollWrapperContext,
+  );
 
   const { ref: elementRef, inView } = useInView({
-    root: scrollWrapperRef.current?.querySelector(
-      '[data-overlayscrollbars-viewport="scrollbarHidden"]',
+    root: scrollWrapperRef.ref.current?.querySelector(
+      '[data-overlayscrollbars-viewport]',
     ),
     rootMargin: '1000px',
   });

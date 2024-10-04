@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
@@ -21,17 +22,21 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   excludedObjectRecordIds,
   searchFilterValue,
   limit,
+  excludedObjects,
 }: {
   selectedObjectRecordIds: SelectedObjectRecordId[];
   excludedObjectRecordIds: SelectedObjectRecordId[];
   searchFilterValue: string;
   limit?: number;
+  excludedObjects?: CoreObjectNameSingular[];
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const selectableObjectMetadataItems = objectMetadataItems.filter(
-    ({ isSystem, isRemote }) => !isSystem && !isRemote,
-  );
+  const selectableObjectMetadataItems = objectMetadataItems
+    .filter(({ isSystem, isRemote }) => !isSystem && !isRemote)
+    .filter(({ nameSingular }) => {
+      return !excludedObjects?.includes(nameSingular as CoreObjectNameSingular);
+    });
 
   const { searchFilterPerMetadataItemNameSingular } =
     useSearchFilterPerMetadataItem({

@@ -1,15 +1,24 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
 import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/microsoft-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 
 @Controller('auth/microsoft')
+@UseFilters(AuthRestApiExceptionFilter)
 export class MicrosoftAuthController {
   constructor(
     private readonly tokenService: TokenService,
@@ -30,8 +39,14 @@ export class MicrosoftAuthController {
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
   ) {
-    const { firstName, lastName, email, picture, workspaceInviteHash } =
-      req.user;
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    } = req.user;
 
     const user = await this.authService.signInUp({
       email,
@@ -39,6 +54,7 @@ export class MicrosoftAuthController {
       lastName,
       picture,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       fromSSO: true,
     });
 

@@ -18,18 +18,34 @@ export class WorkspaceMigrationService {
   /**
    * Get all pending migrations for a given workspaceId
    *
-   * @param workspaceId: string
    * @returns Promise<WorkspaceMigration[]>
+   * @param workspaceId
    */
   public async getPendingMigrations(
     workspaceId: string,
   ): Promise<WorkspaceMigrationEntity[]> {
-    return await this.workspaceMigrationRepository.find({
+    const pendingMigrations = await this.workspaceMigrationRepository.find({
       order: { createdAt: 'ASC', name: 'ASC' },
       where: {
         appliedAt: IsNull(),
         workspaceId,
       },
+    });
+
+    const typeOrder = { delete: 1, update: 2, create: 3 };
+
+    const getType = (name: string) =>
+      name.split('-')[1] as keyof typeof typeOrder;
+
+    return pendingMigrations.sort((a, b) => {
+      if (a.createdAt.getTime() !== b.createdAt.getTime()) {
+        return a.createdAt.getTime() - b.createdAt.getTime();
+      }
+
+      return (
+        (typeOrder[getType(a.name)] || 4) - (typeOrder[getType(b.name)] || 4) ||
+        a.name.localeCompare(b.name)
+      );
     });
   }
 
@@ -37,22 +53,23 @@ export class WorkspaceMigrationService {
    * Set appliedAt as current date for a given migration.
    * Should be called once the migration has been applied
    *
-   * @param workspaceId: string
-   * @param migration: WorkspaceMigration
+   * @param workspaceId
+   * @param migration
    */
   public async setAppliedAtForMigration(
     workspaceId: string,
     migration: WorkspaceMigrationEntity,
   ) {
-    await this.workspaceMigrationRepository.save({
-      id: migration.id,
-      appliedAt: new Date(),
-    });
+    await this.workspaceMigrationRepository.update(
+      { id: migration.id, workspaceId },
+      { appliedAt: new Date() },
+    );
   }
 
   /**
    * Create a new pending migration for a given workspaceId and expected changes
    *
+   * @param name
    * @param workspaceId
    * @param migrations
    */

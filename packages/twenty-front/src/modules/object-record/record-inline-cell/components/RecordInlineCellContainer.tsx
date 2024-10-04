@@ -1,13 +1,20 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement, useContext } from 'react';
-import { AppTooltip, IconComponent, TooltipDelay } from 'twenty-ui';
+import {
+  AppTooltip,
+  IconComponent,
+  OverflowingTextWithTooltip,
+  TooltipDelay,
+} from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+
+import { useRecordInlineCellContext } from './RecordInlineCellContext';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -48,11 +55,9 @@ const StyledInlineCellBaseContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   display: flex;
-
+  height: 24px;
   gap: ${({ theme }) => theme.spacing(1)};
-
   user-select: none;
-
   justify-content: center;
 `;
 
@@ -77,24 +82,11 @@ export type RecordInlineCellContainerProps = {
   isCentered?: boolean;
 };
 
-// TODO: refactor props drilling with a RecordInlineCellContext
-export const RecordInlineCellContainer = ({
-  readonly,
-  IconLabel,
-  label,
-  labelWidth,
-  showLabel,
-  buttonIcon,
-  editModeContent,
-  displayModeContent,
-  customEditHotkeyScope,
-  editModeContentOnly,
-  isDisplayModeFixHeight,
-  disableHoverEffect,
-  loading = false,
-  isCentered,
-}: RecordInlineCellContainerProps) => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+export const RecordInlineCellContainer = () => {
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
+
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { setIsFocused } = useFieldFocus();
 
@@ -111,7 +103,10 @@ export const RecordInlineCellContainer = ({
   };
 
   const theme = useTheme();
-  const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
+  const labelId = `label-${getRecordFieldInputId(
+    recordId,
+    fieldDefinition?.metadata?.fieldName,
+  )}`;
 
   return (
     <StyledInlineCellBaseContainer
@@ -127,7 +122,7 @@ export const RecordInlineCellContainer = ({
           )}
           {showLabel && label && (
             <StyledLabelContainer width={labelWidth}>
-              <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
+              <OverflowingTextWithTooltip text={label} />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
@@ -145,22 +140,7 @@ export const RecordInlineCellContainer = ({
         </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer>
-        <RecordInlineCellValue
-          {...{
-            displayModeContent,
-            customEditHotkeyScope,
-            disableHoverEffect,
-            editModeContent,
-            editModeContentOnly,
-            isDisplayModeFixHeight,
-            buttonIcon,
-            label,
-            loading,
-            readonly,
-            showLabel,
-            isCentered,
-          }}
-        />
+        <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );

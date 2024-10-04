@@ -1,5 +1,4 @@
-import styled from '@emotion/styled';
-import { H1Title, H2Title, IconSettings } from 'twenty-ui';
+import { H2Title, IconUserCircle } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ChangePassword } from '@/settings/profile/components/ChangePassword';
@@ -7,17 +6,24 @@ import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
-`;
-
 export const SettingsProfile = () => (
-  <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+  <SubMenuTopBarContainer
+    Icon={IconUserCircle}
+    title="Profile"
+    links={[
+      {
+        children: 'User',
+        href: getSettingsPagePath(SettingsPath.ProfilePage),
+      },
+      { children: 'Profile' },
+    ]}
+  >
     <SettingsPageContainer>
-      <StyledH1Title title="Profile" />
       <Section>
         <H2Title title="Picture" />
         <ProfilePictureUploader />

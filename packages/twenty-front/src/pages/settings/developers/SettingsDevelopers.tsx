@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
-import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconCode, IconPlus } from 'twenty-ui';
 
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -19,12 +19,19 @@ const StyledButtonContainer = styled.div`
 
 export const SettingsDevelopers = () => {
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconCode}
+      title="Developers"
+      actionButton={<SettingsReadDocumentationButton />}
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Developers' },
+      ]}
+    >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb links={[{ children: 'Developers' }]} />
-          <SettingsReadDocumentationButton />
-        </SettingsHeaderContainer>
         <Section>
           <H2Title
             title="API keys"

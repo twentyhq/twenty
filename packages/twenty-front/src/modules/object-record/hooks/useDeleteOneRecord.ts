@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
+import { useCallback } from 'react';
 
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -11,7 +11,6 @@ import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
   objectNameSingular: string;
-  refetchFindManyQuery?: boolean;
 };
 
 export const useDeleteOneRecord = ({
@@ -38,13 +37,18 @@ export const useDeleteOneRecord = ({
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
+      const currentTimestamp = new Date().toISOString();
+
       const deletedRecord = await apolloClient.mutate({
         mutation: deleteOneRecordMutation,
-        variables: { idToDelete },
+        variables: {
+          idToDelete: idToDelete,
+        },
         optimisticResponse: {
           [mutationResponseField]: {
             __typename: capitalize(objectNameSingular),
             id: idToDelete,
+            deletedAt: currentTimestamp,
           },
         },
         update: (cache, { data }) => {

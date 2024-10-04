@@ -7,6 +7,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -15,8 +16,9 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -29,8 +31,9 @@ import { WorkspaceService } from './services/workspace.service';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         BillingModule,
+        FileModule,
         FileUploadModule,
-        WorkspaceCacheVersionModule,
+        WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
           [User, Workspace, UserWorkspace, FeatureFlagEntity],
           'core',
@@ -40,6 +43,7 @@ import { WorkspaceService } from './services/workspace.service';
         DataSourceModule,
         OnboardingModule,
         TypeORMModule,
+        WorkspaceInvitationModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

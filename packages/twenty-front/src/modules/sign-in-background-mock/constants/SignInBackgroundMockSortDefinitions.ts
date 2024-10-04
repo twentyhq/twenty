@@ -12,7 +12,7 @@ export const SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS = [
     iconName: 'IconUsers',
   },
   {
-    fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
+    fieldMetadataId: 'REPLACE_ME',
     label: 'Name',
     iconName: 'IconBuildingSkyscraper',
   },

@@ -2527,6 +2527,7 @@ export enum FieldMetadataType {
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
+  Phones = 'PHONES',
   Position = 'POSITION',
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
@@ -3077,8 +3078,8 @@ export type MessageChannelSyncStageEnumFilter = {
 
 /** Sync status */
 export enum MessageChannelSyncStatusEnum {
-  /** Completed */
-  Completed = 'COMPLETED',
+  /** Active */
+  Active = 'ACTIVE',
   /** Failed */
   Failed = 'FAILED',
   /** Failed Insufficient Permissions */
@@ -7455,7 +7456,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
-  currentCacheVersion?: Maybe<Scalars['String']>;
+  metadataVersion?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;

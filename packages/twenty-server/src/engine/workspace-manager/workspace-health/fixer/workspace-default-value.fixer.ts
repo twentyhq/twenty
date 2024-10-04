@@ -112,13 +112,12 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
 
     for (const issue of issues) {
       const currentDefaultValue:
-        | FieldMetadataDefaultValue<'default'>
+        | FieldMetadataDefaultValue
         // Old format for default values
         // TODO: Remove this after all workspaces are migrated
         | { type: FieldMetadataDefaultValueFunctionNames }
         | null = issue.fieldMetadata.defaultValue;
-      let alteredDefaultValue: FieldMetadataDefaultValue<'default'> | null =
-        null;
+      let alteredDefaultValue: FieldMetadataDefaultValue | null = null;
 
       // Check if it's an old function default value
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -189,7 +188,7 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
 
   private computeFieldMetadataDefaultValueFromColumnDefault(
     columnDefault: string | undefined,
-  ): FieldMetadataDefaultValue<'default'> {
+  ): FieldMetadataDefaultValue {
     if (
       columnDefault === undefined ||
       columnDefault === null ||

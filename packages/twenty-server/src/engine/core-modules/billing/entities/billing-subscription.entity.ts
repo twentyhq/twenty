@@ -1,5 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
+import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -11,12 +13,10 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import Stripe from 'stripe';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum SubscriptionStatus {
   Active = 'active',
@@ -76,7 +76,7 @@ export class BillingSubscription {
     enum: Object.values(SubscriptionStatus),
     nullable: false,
   })
-  status: Stripe.Subscription.Status;
+  status: SubscriptionStatus;
 
   @Field(() => SubscriptionInterval, { nullable: true })
   @Column({

@@ -1,6 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import {
   csvDownloader,
   displayedExportProgress,
@@ -35,7 +36,10 @@ describe('generateCsv', () => {
       { label: 'Nested', metadata: { fieldName: 'nested' } },
       {
         label: 'Relation',
-        metadata: { fieldName: 'relation', relationType: 'TO_ONE_OBJECT' },
+        metadata: {
+          fieldName: 'relation',
+          relationType: RelationDefinitionType.ManyToOne,
+        },
       },
     ] as ColumnDefinition<FieldMetadata>[];
     const rows = [

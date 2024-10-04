@@ -1,36 +1,40 @@
 import { Injectable } from '@nestjs/common';
 
+import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
-import { JSDOM } from 'jsdom';
-import DOMPurify from 'dompurify';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { getCropSize } from 'src/utils/image';
 import { settings } from 'src/engine/constants/settings';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { getCropSize } from 'src/utils/image';
 
 @Injectable()
 export class FileUploadService {
-  constructor(private readonly fileStorage: FileStorageService) {}
+  constructor(
+    private readonly fileStorage: FileStorageService,
+    private readonly fileService: FileService,
+  ) {}
 
   private async _uploadFile({
     file,
     filename,
     mimeType,
-    fileFolder,
+    folder,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
-    fileFolder: FileFolder;
+    folder: string;
   }) {
     await this.fileStorage.write({
       file,
       name: filename,
       mimeType,
-      folder: fileFolder,
+      folder,
     });
   }
 
@@ -58,27 +62,34 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
+    workspaceId,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
+    workspaceId: string;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
     const name = `${id}${ext ? `.${ext}` : ''}`;
+    const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
     await this._uploadFile({
       file: this._sanitizeFile({ file, ext, mimeType }),
       filename: name,
       mimeType,
-      fileFolder,
+      folder,
+    });
+
+    const signedPayload = await this.fileService.encodeFileToken({
+      workspace_id: workspaceId,
     });
 
     return {
       id,
       mimeType,
-      path: `${fileFolder}/${name}`,
+      path: `${fileFolder}/${name}?token=${signedPayload}`,
     };
   }
 
@@ -87,11 +98,13 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
+    workspaceId,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
+    workspaceId: string;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
@@ -117,6 +130,7 @@ export class FileUploadService {
     await Promise.all(
       images.map(async (image, index) => {
         const buffer = await image.toBuffer();
+        const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
         paths.push(`${fileFolder}/${cropSizes[index]}/${name}`);
 
@@ -124,7 +138,7 @@ export class FileUploadService {
           file: buffer,
           filename: `${cropSizes[index]}/${name}`,
           mimeType,
-          fileFolder,
+          folder,
         });
       }),
     );
@@ -134,5 +148,9 @@ export class FileUploadService {
       mimeType,
       paths,
     };
+  }
+
+  private getWorkspaceFolderName(workspaceId: string, fileFolder: FileFolder) {
+    return `workspace-${workspaceId}/${fileFolder}`;
   }
 }

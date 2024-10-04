@@ -129,12 +129,12 @@ export class QueryRunnerArgsFactory {
                   isCustom: options.objectMetadataItem.isCustom,
                   nameSingular: options.objectMetadataItem.nameSingular,
                 },
-                options.workspaceId,
+                options.authContext.workspace.id,
                 argPositionBackfillInput.argIndex,
               ),
             ];
           case FieldMetadataType.NUMBER:
-            return [key, await Promise.resolve(Number(value))];
+            return [key, Number(value)];
           default:
             return [key, await Promise.resolve(value)];
         }
@@ -157,7 +157,7 @@ export class QueryRunnerArgsFactory {
               isCustom: options.objectMetadataItem.isCustom,
               nameSingular: options.objectMetadataItem.nameSingular,
             },
-            options.workspaceId,
+            options.authContext.workspace.id,
             argPositionBackfillInput.argIndex,
           ),
         ],

@@ -11,7 +11,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
 
 export const useUuidField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.Uuid, isFieldUuid, fieldDefinition);
 
@@ -19,7 +19,7 @@ export const useUuidField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldUUidValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );

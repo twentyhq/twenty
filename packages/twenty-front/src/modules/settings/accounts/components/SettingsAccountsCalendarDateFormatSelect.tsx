@@ -1,6 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { DateFormat } from '@/settings/accounts/constants/DateFormat';
+import { DateFormat } from '@/localization/constants/DateFormat';
 import { Select } from '@/ui/input/components/Select';
 
 type SettingsAccountsCalendarDateFormatSelectProps = {
@@ -21,12 +21,12 @@ export const SettingsAccountsCalendarDateFormatSelect = ({
     value={value}
     options={[
       {
-        label: formatInTimeZone(Date.now(), timeZone, DateFormat.US),
-        value: DateFormat.US,
+        label: formatInTimeZone(Date.now(), timeZone, DateFormat.MONTH_FIRST),
+        value: DateFormat.MONTH_FIRST,
       },
       {
-        label: formatInTimeZone(Date.now(), timeZone, DateFormat.UK),
-        value: DateFormat.UK,
+        label: formatInTimeZone(Date.now(), timeZone, DateFormat.DAY_FIRST),
+        value: DateFormat.DAY_FIRST,
       },
     ]}
     onChange={onChange}

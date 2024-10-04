@@ -12,14 +12,14 @@ import {
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 @Injectable()
-export class BeforeDeleteOneObject implements BeforeDeleteOneHook<any> {
+export class BeforeDeleteOneObject implements BeforeDeleteOneHook {
   constructor(readonly objectMetadataService: ObjectMetadataService) {}
 
   async run(
     instance: DeleteOneInputType,
     context: any,
   ): Promise<DeleteOneInputType> {
-    const workspaceId = context?.req?.user?.workspace?.id;
+    const workspaceId = context?.req?.workspace?.id;
 
     if (!workspaceId) {
       throw new UnauthorizedException();

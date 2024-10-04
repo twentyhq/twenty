@@ -2,27 +2,28 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
-import { OrderBy } from '@/object-metadata/types/OrderBy';
+
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
+import { OrderBy } from '@/types/OrderBy';
 
 export const useRecordsForSelect = ({
   searchFilterText,
   sortOrder = 'AscNullsLast',
   selectedIds,
   limit,
-  excludeEntityIds = [],
+  excludeRecordIds = [],
   objectNameSingular,
 }: {
   searchFilterText: string;
   sortOrder?: OrderBy;
   selectedIds: string[];
   limit?: number;
-  excludeEntityIds?: string[];
+  excludeRecordIds?: string[];
   objectNameSingular: string;
 }) => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
@@ -90,7 +91,7 @@ export const useRecordsForSelect = ({
     skip: !selectedIds.length,
   });
 
-  const notFilterIds = [...selectedIds, ...excludeEntityIds];
+  const notFilterIds = [...selectedIds, ...excludeRecordIds];
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;
@@ -108,19 +109,19 @@ export const useRecordsForSelect = ({
       .map((record) => ({
         ...record,
         isSelected: true,
-      })) as SelectableRecord[],
+      })) as SelectableItem[],
     filteredSelectedRecords: filteredSelectedRecordsData
       .map(mapToObjectRecordIdentifier)
       .map((record) => ({
         ...record,
         isSelected: true,
-      })) as SelectableRecord[],
+      })) as SelectableItem[],
     recordsToSelect: recordsToSelectData
       .map(mapToObjectRecordIdentifier)
       .map((record) => ({
         ...record,
         isSelected: false,
-      })) as SelectableRecord[],
+      })) as SelectableItem[],
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

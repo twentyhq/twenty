@@ -1,14 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsIntegrationDatabaseConnectionForm,
@@ -24,7 +23,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
 
 const createRemoteServerInputPostgresSchema =
@@ -132,34 +130,39 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconSettings}
+      title="New"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Integrations',
+          href: settingsIntegrationsPagePath,
+        },
+        {
+          children: integration.text,
+          href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+        },
+        { children: 'New' },
+      ]}
+      actionButton={
+        <SaveAndCancelButtons
+          isSaveDisabled={!canSave}
+          onCancel={() =>
+            navigate(`${settingsIntegrationsPagePath}/${databaseKey}`)
+          }
+          onSave={handleSave}
+        />
+      }
+    >
       <SettingsPageContainer>
         <FormProvider
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...formConfig}
         >
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Integrations',
-                  href: settingsIntegrationsPagePath,
-                },
-                {
-                  children: integration.text,
-                  href: `${settingsIntegrationsPagePath}/${databaseKey}`,
-                },
-                { children: 'New' },
-              ]}
-            />
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              onCancel={() =>
-                navigate(`${settingsIntegrationsPagePath}/${databaseKey}`)
-              }
-              onSave={handleSave}
-            />
-          </SettingsHeaderContainer>
           <Section>
             <H2Title
               title="Connect a new database"

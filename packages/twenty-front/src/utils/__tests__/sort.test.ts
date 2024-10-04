@@ -3,6 +3,7 @@ import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '../sort';
 describe('sort', () => {
   describe('sortNullsFirst', () => {
     it('should sort nulls first', () => {
+      expect(sortNullsFirst(null, null)).toBe(0);
       expect(sortNullsFirst(null, 'a')).toBe(-1);
       expect(sortNullsFirst('a', null)).toBe(1);
       expect(sortNullsFirst('a', 'a')).toBe(0);
@@ -11,6 +12,7 @@ describe('sort', () => {
 
   describe('sortNullsLast', () => {
     it('should sort nulls last', () => {
+      expect(sortNullsFirst(null, null)).toBe(0);
       expect(sortNullsLast(null, 'a')).toBe(1);
       expect(sortNullsLast('a', null)).toBe(-1);
       expect(sortNullsLast('a', 'a')).toBe(0);

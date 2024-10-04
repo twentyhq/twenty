@@ -1,11 +1,11 @@
 import {
   IconComponent,
-  IconLayersLinked,
-  IconRelationOneToOne,
+  IllustrationIconManyToMany,
+  IllustrationIconOneToMany,
+  IllustrationIconOneToOne,
 } from 'twenty-ui';
 
-import { RelationMetadataType } from '~/generated-metadata/graphql';
-
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import OneToManySvg from '../assets/OneToMany.svg';
 import OneToOneSvg from '../assets/OneToOne.svg';
 import { RelationType } from '../types/RelationType';
@@ -19,19 +19,26 @@ export const RELATION_TYPES: Record<
     isImageFlipped?: boolean;
   }
 > = {
-  [RelationMetadataType.OneToMany]: {
+  [RelationDefinitionType.OneToMany]: {
     label: 'Has many',
-    Icon: IconLayersLinked,
+    Icon: IllustrationIconOneToMany,
     imageSrc: OneToManySvg,
   },
-  [RelationMetadataType.OneToOne]: {
+  [RelationDefinitionType.OneToOne]: {
     label: 'Has one',
-    Icon: IconRelationOneToOne,
+    Icon: IllustrationIconOneToOne,
     imageSrc: OneToOneSvg,
   },
-  MANY_TO_ONE: {
+  [RelationDefinitionType.ManyToOne]: {
     label: 'Belongs to one',
-    Icon: IconLayersLinked,
+    Icon: IllustrationIconOneToMany,
+    imageSrc: OneToManySvg,
+    isImageFlipped: true,
+  },
+  // Not supported yet
+  [RelationDefinitionType.ManyToMany]: {
+    label: 'Belongs to many',
+    Icon: IllustrationIconManyToMany,
     imageSrc: OneToManySvg,
     isImageFlipped: true,
   },

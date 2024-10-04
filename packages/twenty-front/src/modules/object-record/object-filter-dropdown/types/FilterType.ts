@@ -1,7 +1,9 @@
 export type FilterType =
   | 'TEXT'
   | 'PHONE'
+  | 'PHONES'
   | 'EMAIL'
+  | 'EMAILS'
   | 'DATE_TIME'
   | 'DATE'
   | 'NUMBER'
@@ -13,4 +15,7 @@ export type FilterType =
   | 'ADDRESS'
   | 'SELECT'
   | 'RATING'
-  | 'MULTI_SELECT';
+  | 'MULTI_SELECT'
+  | 'ACTOR'
+  | 'ARRAY'
+  | 'SOURCE';

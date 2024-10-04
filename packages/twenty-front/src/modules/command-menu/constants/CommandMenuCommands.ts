@@ -47,7 +47,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
   },
   {
     id: 'go-to-tasks',
-    to: '/tasks',
+    to: '/objects/tasks',
     label: 'Go to Tasks',
     type: CommandType.Navigate,
     firstHotKey: 'G',

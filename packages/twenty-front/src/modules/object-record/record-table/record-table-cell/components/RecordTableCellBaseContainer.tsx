@@ -1,5 +1,5 @@
-import { ReactNode, useContext } from 'react';
 import { styled } from '@linaria/react';
+import { ReactNode, useContext } from 'react';
 import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -79,7 +79,7 @@ export const RecordTableCellBaseContainer = ({
 
   const { hotkeyScope } = useContext(FieldContext);
 
-  const editHotkeyScope = { scope: hotkeyScope } ?? DEFAULT_CELL_SCOPE;
+  const editHotkeyScope = { scope: hotkeyScope ?? DEFAULT_CELL_SCOPE };
 
   return (
     <CellHotkeyScopeContext.Provider value={editHotkeyScope}>

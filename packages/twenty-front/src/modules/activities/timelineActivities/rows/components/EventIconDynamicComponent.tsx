@@ -1,4 +1,4 @@
-import { IconCirclePlus, IconEditCircle, useIcons } from 'twenty-ui';
+import { IconCirclePlus, IconEditCircle, IconTrash, useIcons } from 'twenty-ui';
 
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -18,6 +18,9 @@ export const EventIconDynamicComponent = ({
   }
   if (eventAction === 'updated') {
     return <IconEditCircle />;
+  }
+  if (eventAction === 'deleted') {
+    return <IconTrash />;
   }
 
   const IconComponent = getIcon(linkedObjectMetadataItem?.icon);

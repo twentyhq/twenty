@@ -3,6 +3,7 @@ import { IconPlus } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Button } from '@/ui/input/button/components/Button';
 
 export const AddTaskButton = ({
@@ -10,7 +11,9 @@ export const AddTaskButton = ({
 }: {
   activityTargetableObjects?: ActivityTargetableObject[];
 }) => {
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const openCreateActivity = useOpenCreateActivityDrawer({
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
+  });
 
   if (!isNonEmptyArray(activityTargetableObjects)) {
     return <></>;
@@ -24,7 +27,6 @@ export const AddTaskButton = ({
       title="Add task"
       onClick={() =>
         openCreateActivity({
-          type: 'Task',
           targetableObjects: activityTargetableObjects,
         })
       }

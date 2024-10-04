@@ -3,7 +3,14 @@ import { Maybe } from '~/generated/graphql';
 export const sortNullsFirst = (
   fieldValueA: Maybe<unknown>,
   fieldValueB: Maybe<unknown>,
-) => (fieldValueA === null ? -1 : fieldValueB === null ? 1 : 0);
+) =>
+  fieldValueA === null && fieldValueB === null
+    ? 0
+    : fieldValueA === null
+      ? -1
+      : fieldValueB === null
+        ? 1
+        : 0;
 
 export const sortNullsLast = (
   fieldValueA: Maybe<unknown>,

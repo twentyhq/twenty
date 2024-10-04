@@ -40,14 +40,14 @@ export const RecordTableContextProvider = ({
 
   const handleUpsertRecord = ({
     persistField,
-    entityId,
+    recordId,
     fieldName,
   }: {
     persistField: () => void;
-    entityId: string;
+    recordId: string;
     fieldName: string;
   }) => {
-    upsertRecord(persistField, entityId, fieldName, recordTableId);
+    upsertRecord(persistField, recordId, fieldName, recordTableId);
   };
 
   const { openTableCell } = useOpenRecordTableCellV2(recordTableId);

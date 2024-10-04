@@ -1,18 +1,19 @@
-import { Args, Query, Resolver, Int, ArgsType, Field } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
 
 import { Max } from 'class-validator';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { TimelineMessagingService } from 'src/engine/core-modules/messaging/timeline-messaging.service';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {
@@ -40,30 +41,32 @@ class GetTimelineThreadsFromCompanyIdArgs {
   pageSize: number;
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @Resolver(() => TimelineThreadsWithTotal)
 export class TimelineMessagingResolver {
   constructor(
-    private readonly timelineMessagingService: TimelineMessagingService,
+    private readonly getMessagesFromPersonIdsService: GetMessagesService,
     private readonly userService: UserService,
   ) {}
 
   @Query(() => TimelineThreadsWithTotal)
   async getTimelineThreadsFromPersonId(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
 
     if (!workspaceMember) {
       return;
     }
 
     const timelineThreads =
-      await this.timelineMessagingService.getMessagesFromPersonIds(
+      await this.getMessagesFromPersonIdsService.getMessagesFromPersonIds(
         workspaceMember.id,
-        workspaceId,
         [personId],
         page,
         pageSize,
@@ -74,20 +77,22 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotal)
   async getTimelineThreadsFromCompanyId(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
 
     if (!workspaceMember) {
       return;
     }
 
     const timelineThreads =
-      await this.timelineMessagingService.getMessagesFromCompanyId(
+      await this.getMessagesFromPersonIdsService.getMessagesFromCompanyId(
         workspaceMember.id,
-        workspaceId,
         companyId,
         page,
         pageSize,

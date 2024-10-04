@@ -1,41 +1,44 @@
 import { useMemo } from 'react';
 
-import { Table } from '@/spreadsheet-import/components/Table';
-import { RawData } from '@/spreadsheet-import/types';
+import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
+import { ImportedRow } from '@/spreadsheet-import/types';
 
 import { generateSelectionColumns } from './SelectColumn';
 
-interface SelectHeaderTableProps {
-  data: RawData[];
-  selectedRows: ReadonlySet<number>;
-  setSelectedRows: (rows: ReadonlySet<number>) => void;
-}
+type SelectHeaderTableProps = {
+  importedRows: ImportedRow[];
+  selectedRowIndexes: ReadonlySet<number>;
+  setSelectedRowIndexes: (rowIndexes: ReadonlySet<number>) => void;
+};
 
 export const SelectHeaderTable = ({
-  data,
-  selectedRows,
-  setSelectedRows,
+  importedRows,
+  selectedRowIndexes,
+  setSelectedRowIndexes,
 }: SelectHeaderTableProps) => {
-  const columns = useMemo(() => generateSelectionColumns(data), [data]);
+  const columns = useMemo(
+    () => generateSelectionColumns(importedRows),
+    [importedRows],
+  );
 
   return (
-    <Table
+    <SpreadsheetImportTable
       // Todo: remove usage of react-data-grid
-      rowKeyGetter={(row: any) => data.indexOf(row)}
-      rows={data}
+      rowKeyGetter={(row: any) => importedRows.indexOf(row)}
+      rows={importedRows}
       columns={columns}
-      selectedRows={selectedRows}
-      onSelectedRowsChange={(newRows: any) => {
+      selectedRowIndexes={selectedRowIndexes}
+      onSelectedRowIndexesChange={(newRowIndexes: number[]) => {
         // allow selecting only one row
-        newRows.forEach((value: any) => {
-          if (!selectedRows.has(value as number)) {
-            setSelectedRows(new Set([value as number]));
+        newRowIndexes.forEach((value: any) => {
+          if (!selectedRowIndexes.has(value as number)) {
+            setSelectedRowIndexes(new Set([value as number]));
             return;
           }
         });
       }}
       onRowClick={(row: any) => {
-        setSelectedRows(new Set([data.indexOf(row)]));
+        setSelectedRowIndexes(new Set([importedRows.indexOf(row)]));
       }}
       headerRowHeight={0}
     />

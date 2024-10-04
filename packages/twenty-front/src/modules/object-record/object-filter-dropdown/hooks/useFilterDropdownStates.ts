@@ -2,21 +2,14 @@ import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/ob
 import { isObjectFilterDropdownOperandSelectUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownOperandSelectUnfoldedComponentState';
 import { isObjectFilterDropdownUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownUnfoldedComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { objectFilterDropdownSelectedEntityIdComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedEntityIdComponentState';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { onFilterSelectComponentState } from '@/object-record/object-filter-dropdown/states/onFilterSelectComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 
 export const useFilterDropdownStates = (scopeId: string) => {
-  const availableFilterDefinitionsState = extractComponentState(
-    availableFilterDefinitionsComponentState,
-    scopeId,
-  );
-
   const filterDefinitionUsedInDropdownState = extractComponentState(
     filterDefinitionUsedInDropdownComponentState,
     scopeId,
@@ -24,11 +17,6 @@ export const useFilterDropdownStates = (scopeId: string) => {
 
   const objectFilterDropdownSearchInputState = extractComponentState(
     objectFilterDropdownSearchInputComponentState,
-    scopeId,
-  );
-
-  const objectFilterDropdownSelectedEntityIdState = extractComponentState(
-    objectFilterDropdownSelectedEntityIdComponentState,
     scopeId,
   );
 
@@ -69,10 +57,8 @@ export const useFilterDropdownStates = (scopeId: string) => {
   );
 
   return {
-    availableFilterDefinitionsState,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
-    objectFilterDropdownSelectedEntityIdState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
     isObjectFilterDropdownOperandSelectUnfoldedState,

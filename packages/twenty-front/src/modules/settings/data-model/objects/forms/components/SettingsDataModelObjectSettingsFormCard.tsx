@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -78,6 +78,9 @@ export const SettingsDataModelObjectSettingsFormCard = ({
       <CardContent>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
+          defaultLabelIdentifierFieldMetadataId={
+            labelIdentifierFieldMetadataItem?.id
+          }
         />
       </CardContent>
     </Card>

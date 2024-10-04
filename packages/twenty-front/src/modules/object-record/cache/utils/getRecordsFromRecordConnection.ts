@@ -7,7 +7,7 @@ export const getRecordsFromRecordConnection = <T extends ObjectRecord>({
 }: {
   recordConnection: RecordGqlConnection;
 }): T[] => {
-  return recordConnection.edges.map((edge) =>
+  return recordConnection?.edges?.map((edge) =>
     getRecordFromRecordNode<T>({ recordNode: edge.node }),
   );
 };

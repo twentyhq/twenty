@@ -6,5 +6,5 @@ export const prefetchIsLoadedFamilyState = createFamilyState<
   PrefetchKey
 >({
   key: 'prefetchIsLoadedFamilyState',
-  defaultValue: true,
+  defaultValue: false,
 });

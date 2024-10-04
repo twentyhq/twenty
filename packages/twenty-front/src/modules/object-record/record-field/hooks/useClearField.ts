@@ -10,7 +10,7 @@ import { FieldContext } from '../contexts/FieldContext';
 
 export const useClearField = () => {
   const {
-    entityId,
+    recordId,
     fieldDefinition,
     useUpdateRecord = () => [],
   } = useContext(FieldContext);
@@ -45,22 +45,22 @@ export const useClearField = () => {
         const emptyFieldValue = generateEmptyFieldValue(foundFieldMetadataItem);
 
         set(
-          recordStoreFamilySelector({ recordId: entityId, fieldName }),
+          recordStoreFamilySelector({ recordId, fieldName }),
           emptyFieldValue,
         );
 
-        setRecordFieldValue(entityId, fieldName, emptyFieldValue);
+        setRecordFieldValue(recordId, fieldName, emptyFieldValue);
 
         updateRecord?.({
           variables: {
-            where: { id: entityId },
+            where: { id: recordId },
             updateOneRecordInput: {
               [fieldName]: emptyFieldValue,
             },
           },
         });
       },
-    [entityId, fieldDefinition, updateRecord, setRecordFieldValue],
+    [recordId, fieldDefinition, updateRecord, setRecordFieldValue],
   );
 
   return clearField;

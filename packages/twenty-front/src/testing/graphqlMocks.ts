@@ -6,19 +6,20 @@ import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConf
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { mockedActivities } from '~/testing/mock-data/activities';
 import {
   getCompaniesMock,
   getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedObjectMetadataItemsQueryResult } from '~/testing/mock-data/metadata';
+import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
+import { mockedTasks } from '~/testing/mock-data/tasks';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
@@ -113,6 +114,16 @@ export const graphqlMocks = {
     graphql.query('CombinedFindManyRecords', () => {
       return HttpResponse.json({
         data: {
+          favorites: {
+            edges: [],
+            totalCount: 0,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
           views: {
             edges: mockedViewsData.map((view) => ({
               node: {
@@ -147,16 +158,6 @@ export const graphqlMocks = {
               totalCount: mockedViewsData.length,
             },
             totalCount: mockedViewsData.length,
-          },
-        },
-        favorites: {
-          edges: [],
-          totalCount: 0,
-          pageInfo: {
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: null,
-            endCursor: null,
           },
         },
       });
@@ -267,15 +268,41 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('FindManyActivities', () => {
+    graphql.query('FindManyNotes', () => {
       return HttpResponse.json({
         data: {
           activities: {
-            edges: mockedActivities.map(({ activityTargets, ...rest }) => ({
+            edges: mockedNotes.map(({ noteTargets, ...rest }) => ({
               node: {
                 ...rest,
-                activityTargets: {
-                  edges: activityTargets.map((t) => ({ node: t })),
+                noteTargets: {
+                  edges: noteTargets?.map((t) => ({ node: t })),
+                },
+                attachments: {
+                  edges: [],
+                },
+              },
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('FindManyTasks', () => {
+      return HttpResponse.json({
+        data: {
+          activities: {
+            edges: mockedTasks.map(({ taskTargets, ...rest }) => ({
+              node: {
+                ...rest,
+                taskTargets: {
+                  edges: taskTargets?.map((t) => ({ node: t })),
                 },
                 attachments: {
                   edges: [],
@@ -386,6 +413,133 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           findDistantTablesWithStatus: mockedRemoteTables,
+        },
+      });
+    }),
+    graphql.query('FindManyWorkflows', () => {
+      return HttpResponse.json({
+        data: {
+          workflows: {
+            __typename: 'WorkflowConnection',
+            totalCount: 1,
+            pageInfo: {
+              __typename: 'PageInfo',
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor:
+                'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
+              endCursor:
+                'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
+            },
+            edges: [
+              {
+                __typename: 'WorkflowEdge',
+                cursor:
+                  'eyJpZCI6IjIwMGMxNTA4LWYxMDItNGJiOS1hZjMyLWVkYTU1MjM5YWU2MSJ9',
+                node: {
+                  __typename: 'Workflow',
+                  id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                },
+              },
+            ],
+          },
+        },
+      });
+    }),
+    graphql.query('FindOneWorkflow', () => {
+      return HttpResponse.json({
+        data: {
+          workflow: {
+            __typename: 'Workflow',
+            id: '200c1508-f102-4bb9-af32-eda55239ae61',
+            name: '1231 qqerrt',
+            statuses: null,
+            lastPublishedVersionId: '',
+            deletedAt: null,
+            updatedAt: '2024-09-19T10:10:04.505Z',
+            position: 0,
+            createdAt: '2024-09-19T10:10:04.505Z',
+            favorites: {
+              __typename: 'FavoriteConnection',
+              edges: [],
+            },
+            eventListeners: {
+              __typename: 'WorkflowEventListenerConnection',
+              edges: [],
+            },
+            runs: {
+              __typename: 'WorkflowRunConnection',
+              edges: [],
+            },
+            versions: {
+              __typename: 'WorkflowVersionConnection',
+              edges: [
+                {
+                  __typename: 'WorkflowVersionEdge',
+                  node: {
+                    __typename: 'WorkflowVersion',
+                    updatedAt: '2024-09-19T10:13:12.075Z',
+                    steps: null,
+                    createdAt: '2024-09-19T10:10:04.725Z',
+                    status: 'DRAFT',
+                    name: 'v1',
+                    id: 'f618843a-26be-4a54-a60f-f4ce88a594f0',
+                    trigger: {
+                      type: 'DATABASE_EVENT',
+                      settings: {
+                        eventName: 'note.created',
+                      },
+                    },
+                    deletedAt: null,
+                    workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('FindManyWorkflowVersions', () => {
+      return HttpResponse.json({
+        data: {
+          workflowVersions: {
+            __typename: 'WorkflowVersionConnection',
+            totalCount: 1,
+            pageInfo: {
+              __typename: 'PageInfo',
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor:
+                'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
+              endCursor:
+                'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
+            },
+            edges: [
+              {
+                __typename: 'WorkflowVersionEdge',
+                cursor:
+                  'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
+                node: {
+                  __typename: 'WorkflowVersion',
+                  updatedAt: '2024-09-19T10:13:12.075Z',
+                  steps: null,
+                  createdAt: '2024-09-19T10:10:04.725Z',
+                  status: 'DRAFT',
+                  name: 'v1',
+                  id: 'f618843a-26be-4a54-a60f-f4ce88a594f0',
+                  trigger: {
+                    type: 'DATABASE_EVENT',
+                    settings: {
+                      eventName: 'note.created',
+                    },
+                  },
+                  deletedAt: null,
+                  workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                },
+              },
+            ],
+          },
         },
       });
     }),

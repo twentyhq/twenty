@@ -1,36 +1,74 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   HandleWorkspaceMemberDeletedJob,
   HandleWorkspaceMemberDeletedJobData,
 } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
   constructor(
+    private readonly onboardingService: OnboardingService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
+  @OnEvent('workspaceMember.updated')
+  async handleUpdateEvent(
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
+    >,
+  ) {
+    await Promise.all(
+      payload.events.map((eventPayload) => {
+        const { firstName: firstNameAfter, lastName: lastNameAfter } =
+          eventPayload.properties.after.name;
+
+        if (firstNameAfter === '' && lastNameAfter === '') {
+          return;
+        }
+
+        if (!eventPayload.userId) {
+          return;
+        }
+
+        return this.onboardingService.setOnboardingCreateProfilePending({
+          userId: eventPayload.userId,
+          workspaceId: payload.workspaceId,
+          value: false,
+        });
+      }),
+    );
+  }
+
   @OnEvent('workspaceMember.deleted')
   async handleDeleteEvent(
-    payload: ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>,
+    payload: WorkspaceEventBatch<
+      ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>
+    >,
   ) {
-    const userId = payload.properties.before.userId;
+    await Promise.all(
+      payload.events.map((eventPayload) => {
+        const userId = eventPayload.properties.before.userId;
 
-    if (!userId) {
-      return;
-    }
+        if (!userId) {
+          return;
+        }
 
-    await this.messageQueueService.add<HandleWorkspaceMemberDeletedJobData>(
-      HandleWorkspaceMemberDeletedJob.name,
-      { workspaceId: payload.workspaceId, userId },
+        return this.messageQueueService.add<HandleWorkspaceMemberDeletedJobData>(
+          HandleWorkspaceMemberDeletedJob.name,
+          { workspaceId: payload.workspaceId, userId },
+        );
+      }),
     );
   }
 }

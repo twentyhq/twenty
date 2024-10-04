@@ -17,13 +17,10 @@ export const useDeleteTableData = ({
     objectNameSingular,
   });
 
-  const {
-    resetTableRowSelection,
-    selectedRowIdsSelector,
-    hasUserSelectedAllRowsState,
-  } = useRecordTable({
-    recordTableId: recordIndexId,
-  });
+  const { resetTableRowSelection, hasUserSelectedAllRowsState } =
+    useRecordTable({
+      recordTableId: recordIndexId,
+    });
 
   const tableRowIds = useRecoilValue(
     tableRowIdsComponentState({
@@ -36,18 +33,14 @@ export const useDeleteTableData = ({
   });
   const { favorites, deleteFavorite } = useFavorites();
 
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
-
   const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
 
-  const deleteRecords = async () => {
-    let recordIdsToDelete = selectedRowIds;
-
+  const deleteRecords = async (recordIdsToDelete: string[]) => {
     if (hasUserSelectedAllRows) {
       const allRecordIds = await fetchAllRecordIds();
 
       const unselectedRecordIds = tableRowIds.filter(
-        (recordId) => !selectedRowIds.includes(recordId),
+        (recordId) => !recordIdsToDelete.includes(recordId),
       );
 
       recordIdsToDelete = allRecordIds.filter(

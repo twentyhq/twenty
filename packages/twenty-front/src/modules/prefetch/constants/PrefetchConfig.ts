@@ -1,10 +1,22 @@
-import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
-import { FIND_ALL_FAVORITES_OPERATION_SIGNATURE } from '@/prefetch/query-keys/FindAllFavoritesOperationSignature';
-import { FIND_ALL_VIEWS_OPERATION_SIGNATURE } from '@/prefetch/query-keys/FindAllViewsOperationSignature';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
+import { findAllFavoritesOperationSignatureFactory } from '@/prefetch/operation-signatures/factories/findAllFavoritesOperationSignatureFactory';
+import { findAllViewsOperationSignatureFactory } from '@/prefetch/operation-signatures/factories/findAllViewsOperationSignatureFactory';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 
-export const PREFETCH_CONFIG: Record<PrefetchKey, RecordGqlOperationSignature> =
+export const PREFETCH_CONFIG: Record<
+  PrefetchKey,
   {
-    ALL_VIEWS: FIND_ALL_VIEWS_OPERATION_SIGNATURE,
-    ALL_FAVORITES: FIND_ALL_FAVORITES_OPERATION_SIGNATURE,
-  };
+    objectNameSingular: CoreObjectNameSingular;
+    operationSignatureFactory: RecordGqlOperationSignatureFactory;
+  }
+> = {
+  ALL_VIEWS: {
+    objectNameSingular: CoreObjectNameSingular.View,
+    operationSignatureFactory: findAllViewsOperationSignatureFactory,
+  },
+  ALL_FAVORITES: {
+    objectNameSingular: CoreObjectNameSingular.Favorite,
+    operationSignatureFactory: findAllFavoritesOperationSignatureFactory,
+  },
+};

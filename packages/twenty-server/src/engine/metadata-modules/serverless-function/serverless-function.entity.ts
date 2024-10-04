@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -12,8 +11,11 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY',
 }
 
+export enum ServerlessFunctionRuntime {
+  NODE18 = 'nodejs18.x',
+}
+
 @Entity('serverlessFunction')
-@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'workspaceId'])
 export class ServerlessFunctionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -21,8 +23,17 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false })
-  sourceCodeHash: string;
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ nullable: true })
+  latestVersion: string;
+
+  @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
+  runtime: ServerlessFunctionRuntime;
+
+  @Column({ nullable: true })
+  layerVersion: number;
 
   @Column({
     nullable: false,

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
@@ -15,26 +15,28 @@ import { RelationFieldAliasFactory } from './relation-field-alias.factory';
 
 @Injectable()
 export class FieldsStringFactory {
-  private readonly logger = new Logger(FieldsStringFactory.name);
-
   constructor(
     private readonly fieldAliasFactory: FieldAliasFactory,
     private readonly relationFieldAliasFactory: RelationFieldAliasFactory,
   ) {}
 
-  create(
+  async create(
     info: GraphQLResolveInfo,
     fieldMetadataCollection: FieldMetadataInterface[],
     objectMetadataCollection: ObjectMetadataInterface[],
+    withSoftDeleted?: boolean,
   ): Promise<string> {
     const selectedFields: Partial<Record> = graphqlFields(info);
 
-    return this.createFieldsStringRecursive(
+    const res = await this.createFieldsStringRecursive(
       info,
       selectedFields,
       fieldMetadataCollection,
       objectMetadataCollection,
+      withSoftDeleted ?? false,
     );
+
+    return res;
   }
 
   async createFieldsStringRecursive(
@@ -42,6 +44,7 @@ export class FieldsStringFactory {
     selectedFields: Partial<Record>,
     fieldMetadataCollection: FieldMetadataInterface[],
     objectMetadataCollection: ObjectMetadataInterface[],
+    withSoftDeleted: boolean,
     accumulator = '',
   ): Promise<string> {
     const fieldMetadataMap = new Map(
@@ -65,6 +68,7 @@ export class FieldsStringFactory {
             fieldMetadata,
             objectMetadataCollection,
             info,
+            withSoftDeleted,
           );
 
           fieldAlias = alias;
@@ -91,6 +95,7 @@ export class FieldsStringFactory {
           fieldValue,
           fieldMetadataCollection,
           objectMetadataCollection,
+          withSoftDeleted,
           accumulator,
         );
         accumulator += `}\n`;

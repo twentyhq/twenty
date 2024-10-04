@@ -6,7 +6,6 @@ import {
   useUpdateWorkspaceMutation,
   useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const WorkspaceLogoUploader = () => {
@@ -57,7 +56,7 @@ export const WorkspaceLogoUploader = () => {
 
   return (
     <ImageInput
-      picture={getImageAbsoluteURIOrBase64(currentWorkspace?.logo)}
+      picture={currentWorkspace?.logo}
       onUpload={onUpload}
       onRemove={onRemove}
     />

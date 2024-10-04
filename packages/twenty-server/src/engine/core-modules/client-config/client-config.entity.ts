@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
+import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 
 @ObjectType()
 class AuthProviders {
@@ -75,9 +75,6 @@ class ApiConfig {
 export class ClientConfig {
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
-
-  @Field(() => Telemetry, { nullable: false })
-  telemetry: Telemetry;
 
   @Field(() => Billing, { nullable: false })
   billing: Billing;

@@ -11,11 +11,11 @@ const StyledUpdatedFieldContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 const StyledUpdatedFieldIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   flex-direction: row;
   height: 14px;

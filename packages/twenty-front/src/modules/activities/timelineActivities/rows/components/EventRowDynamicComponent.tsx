@@ -5,6 +5,7 @@ import { EventRowCalendarEvent } from '@/activities/timelineActivities/rows/cale
 import { EventRowMainObject } from '@/activities/timelineActivities/rows/main-object/components/EventRowMainObject';
 import { EventRowMessage } from '@/activities/timelineActivities/rows/message/components/EventRowMessage';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export interface EventRowDynamicComponentProps {
@@ -57,8 +58,7 @@ export const EventRowDynamicComponent = ({
           authorFullName={authorFullName}
         />
       );
-    case 'task':
-    case 'note':
+    case 'linked-task':
       return (
         <EventRowActivity
           labelIdentifierValue={labelIdentifierValue}
@@ -66,6 +66,18 @@ export const EventRowDynamicComponent = ({
           mainObjectMetadataItem={mainObjectMetadataItem}
           linkedObjectMetadataItem={linkedObjectMetadataItem}
           authorFullName={authorFullName}
+          objectNameSingular={CoreObjectNameSingular.Task}
+        />
+      );
+    case 'linked-note':
+      return (
+        <EventRowActivity
+          labelIdentifierValue={labelIdentifierValue}
+          event={event}
+          mainObjectMetadataItem={mainObjectMetadataItem}
+          linkedObjectMetadataItem={linkedObjectMetadataItem}
+          authorFullName={authorFullName}
+          objectNameSingular={CoreObjectNameSingular.Note}
         />
       );
     case mainObjectMetadataItem?.nameSingular:

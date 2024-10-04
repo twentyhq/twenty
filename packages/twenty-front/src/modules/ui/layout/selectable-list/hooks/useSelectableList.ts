@@ -1,6 +1,8 @@
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { isDefined } from '~/utils/isDefined';
 
 export const useSelectableList = (selectableListId?: string) => {
   const {
@@ -18,15 +20,21 @@ export const useSelectableList = (selectableListId?: string) => {
     selectableListOnEnterState,
   );
 
-  const resetSelectedItemIdState = useResetRecoilState(selectedItemIdState);
+  const resetSelectedItem = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
 
-  const resetSelectedItem = () => {
-    resetSelectedItemIdState();
-  };
+        if (isDefined(selectedItemId)) {
+          set(selectedItemIdState, null);
+          set(isSelectedItemIdSelector(selectedItemId), false);
+        }
+      },
+    [selectedItemIdState, isSelectedItemIdSelector],
+  );
 
   return {
     selectableListId: scopeId,
-
     setSelectableItemIds,
     isSelectedItemIdSelector,
     setSelectableListOnEnter,

@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
-import { LoggerService } from 'src/engine/integrations/logger/logger.service';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
+import 'src/instrument';
 
 async function bootstrap() {
   let exceptionHandlerService: ExceptionHandlerService | undefined;
@@ -18,7 +19,7 @@ async function bootstrap() {
     exceptionHandlerService = app.get(ExceptionHandlerService);
 
     // Inject our logger
-    app.useLogger(loggerService!);
+    app.useLogger(loggerService ?? false);
   } catch (err) {
     loggerService?.error(err?.message, err?.name);
 

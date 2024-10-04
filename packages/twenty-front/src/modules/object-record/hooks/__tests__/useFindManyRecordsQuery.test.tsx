@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 import { RecoilRoot } from 'recoil';
 
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 
 const expectedQueryTemplate = `
@@ -9,28 +10,7 @@ const expectedQueryTemplate = `
     people(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
       edges {
         node {
-          __typename
-          xLink {
-            label
-            url
-          }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
+      ${PERSON_FRAGMENT}
         }
         cursor
       }

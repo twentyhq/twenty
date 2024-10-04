@@ -10,6 +10,12 @@
         "outputPath": "{projectRoot}/build"
       }
     },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx serve -s {projectRoot}/build"
+      }
+    },
     "start": {
       "executor": "@nx/vite:dev-server",
       "options": {
@@ -61,7 +67,7 @@
     "test": {},
     "storybook:build": {
       "options": {
-        "env": { "NODE_OPTIONS": "--max_old_space_size=5000" }
+        "env": { "NODE_OPTIONS": "--max_old_space_size=6000" }
       }
     },
     "storybook:serve:dev": {

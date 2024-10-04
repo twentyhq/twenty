@@ -1,34 +1,44 @@
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import {
-  IconCalendarEvent,
-  IconCheckbox,
-  IconHome,
-  IconMail,
-  IconNotes,
-  IconPaperclip,
-  IconTimelineEvent,
-} from 'twenty-ui';
-
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
-import { TimelineActivitiesQueryEffect } from '@/activities/timelineActivities/components/TimelineActivitiesQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { Button } from '@/ui/input/button/components/Button';
+import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { Workflow } from '@/workflow/components/Workflow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+import { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  IconCalendarEvent,
+  IconCheckbox,
+  IconList,
+  IconMail,
+  IconNotes,
+  IconPaperclip,
+  IconSettings,
+  IconTimelineEvent,
+  IconTrash,
+} from 'twenty-ui';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
+  height: 100%;
   justify-content: start;
   width: 100%;
+  position: relative;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -38,6 +48,39 @@ const StyledTabListContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
+`;
+
+const StyledGreyBox = styled.div<{ isInRightDrawer: boolean }>`
+  background: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.background.secondary : ''};
+  border: ${({ isInRightDrawer, theme }) =>
+    isInRightDrawer ? `1px solid ${theme.border.color.medium}` : ''};
+  border-radius: ${({ isInRightDrawer, theme }) =>
+    isInRightDrawer ? theme.border.radius.md : ''};
+  height: ${({ isInRightDrawer }) => (isInRightDrawer ? 'auto' : '100%')};
+
+  margin: ${({ isInRightDrawer, theme }) =>
+    isInRightDrawer ? theme.spacing(4) : ''};
+`;
+
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  bottom: 0;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  justify-content: flex-end;
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+`;
+
+const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.spacing(16) : 0};
 `;
 
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
@@ -51,8 +94,9 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
-  summary?: JSX.Element;
-  isRightDrawer?: boolean;
+  fieldsBox?: JSX.Element;
+  summaryCard?: JSX.Element;
+  isInRightDrawer?: boolean;
   loading: boolean;
 };
 
@@ -63,10 +107,13 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
   loading,
-  summary,
-  isRightDrawer = false,
+  fieldsBox,
+  summaryCard,
+  isInRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const targetObjectNameSingular =
@@ -77,27 +124,71 @@ export const ShowPageRightContainer = ({
     CoreObjectNameSingular.Person,
   ].includes(targetObjectNameSingular);
 
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isWorkflow =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.Workflow;
+
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
-  const isMobile = useIsMobile() || isRightDrawer;
+  const isMobile = useIsMobile();
 
   const tabs = [
     {
-      id: 'summary',
-      title: 'Summary',
-      Icon: IconHome,
-      hide: !isMobile,
+      id: 'richText',
+      title: 'Note',
+      Icon: IconNotes,
+      hide:
+        loading ||
+        (targetableObject.targetObjectNameSingular !==
+          CoreObjectNameSingular.Note &&
+          targetableObject.targetObjectNameSingular !==
+            CoreObjectNameSingular.Task),
+    },
+    {
+      id: 'fields',
+      title: 'Fields',
+      Icon: IconList,
+      hide: !(isMobile || isInRightDrawer),
     },
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isRightDrawer,
+      hide: !timeline || isInRightDrawer || isWorkflow,
     },
-    { id: 'tasks', title: 'Tasks', Icon: IconCheckbox, hide: !tasks },
-    { id: 'notes', title: 'Notes', Icon: IconNotes, hide: !notes },
-    { id: 'files', title: 'Files', Icon: IconPaperclip, hide: !notes },
+    {
+      id: 'tasks',
+      title: 'Tasks',
+      Icon: IconCheckbox,
+      hide:
+        !tasks ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task ||
+        isWorkflow,
+    },
+    {
+      id: 'notes',
+      title: 'Notes',
+      Icon: IconNotes,
+      hide:
+        !notes ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task ||
+        isWorkflow,
+    },
+    {
+      id: 'files',
+      title: 'Files',
+      Icon: IconPaperclip,
+      hide: !notes || isWorkflow,
+    },
     {
       id: 'emails',
       title: 'Emails',
@@ -110,21 +201,40 @@ export const ShowPageRightContainer = ({
       Icon: IconCalendarEvent,
       hide: !shouldDisplayCalendarTab,
     },
+    {
+      id: 'workflow',
+      title: 'Workflow',
+      Icon: IconSettings,
+      hide: !isWorkflow,
+    },
   ];
-
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'timeline':
         return (
           <>
-            <TimelineActivitiesQueryEffect
+            <TimelineActivities
               targetableObject={targetableObject}
+              isInRightDrawer={isInRightDrawer}
             />
-            <TimelineActivities targetableObject={targetableObject} />
           </>
         );
-      case 'summary':
-        return summary;
+      case 'richText':
+        return (
+          (targetableObject.targetObjectNameSingular ===
+            CoreObjectNameSingular.Note ||
+            targetableObject.targetObjectNameSingular ===
+              CoreObjectNameSingular.Task) && (
+            <ShowPageActivityContainer targetableObject={targetableObject} />
+          )
+        );
+      case 'fields':
+        return (
+          <StyledGreyBox isInRightDrawer={isInRightDrawer}>
+            {fieldsBox}
+          </StyledGreyBox>
+        );
+
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -135,21 +245,52 @@ export const ShowPageRightContainer = ({
         return <EmailThreads targetableObject={targetableObject} />;
       case 'calendar':
         return <Calendar targetableObject={targetableObject} />;
+      case 'workflow':
+        return <Workflow targetableObject={targetableObject} />;
       default:
         return <></>;
     }
   };
+
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+  });
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    await deleteOneRecord(targetableObject.id);
+    setIsDeleting(false);
+  };
+
+  const [recordFromStore] = useRecoilState<ObjectRecord | null>(
+    recordStoreFamilyState(targetableObject.id),
+  );
 
   return (
     <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID}
+          tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
           tabs={tabs}
         />
       </StyledTabListContainer>
-      {renderActiveTabContent()}
+      {summaryCard}
+      <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+        {renderActiveTabContent()}
+      </StyledContentContainer>
+      {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
+        <StyledButtonContainer>
+          <Button
+            Icon={IconTrash}
+            onClick={handleDelete}
+            disabled={isDeleting}
+            title={isDeleting ? 'Deleting...' : 'Delete'}
+          ></Button>
+        </StyledButtonContainer>
+      )}
     </StyledShowPageRightContainer>
   );
 };

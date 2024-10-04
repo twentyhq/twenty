@@ -23,6 +23,10 @@ const StyledEventFieldDiffContainer = styled.div`
   width: 380px;
 `;
 
+const StyledEmptyValue = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
 export const EventFieldDiff = ({
   diffRecord,
   mainObjectMetadataItem,
@@ -33,21 +37,39 @@ export const EventFieldDiff = ({
     throw new Error('fieldMetadataItem is required');
   }
 
+  const isValueEmpty = (value: unknown): boolean =>
+    value === null || value === undefined || value === '';
+
+  const isObjectEmpty = (obj: Record<string, unknown>): boolean =>
+    Object.values(obj).every(isValueEmpty);
+
+  const isUpdatedToEmpty =
+    isValueEmpty(diffRecord) ||
+    (typeof diffRecord === 'object' &&
+      diffRecord !== null &&
+      isObjectEmpty(diffRecord));
+
   return (
     <RecordFieldValueSelectorContextProvider>
       <StyledEventFieldDiffContainer>
         <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
-        <EventFieldDiffValueEffect
-          diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-          mainObjectMetadataItem={mainObjectMetadataItem}
-          fieldMetadataItem={fieldMetadataItem}
-          diffRecord={diffRecord}
-        />
-        <EventFieldDiffValue
-          diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-          mainObjectMetadataItem={mainObjectMetadataItem}
-          fieldMetadataItem={fieldMetadataItem}
-        />
+        {isUpdatedToEmpty ? (
+          <StyledEmptyValue>Empty</StyledEmptyValue>
+        ) : (
+          <>
+            <EventFieldDiffValueEffect
+              diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              fieldMetadataItem={fieldMetadataItem}
+              diffRecord={diffRecord}
+            />
+            <EventFieldDiffValue
+              diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              fieldMetadataItem={fieldMetadataItem}
+            />
+          </>
+        )}
       </StyledEventFieldDiffContainer>
     </RecordFieldValueSelectorContextProvider>
   );

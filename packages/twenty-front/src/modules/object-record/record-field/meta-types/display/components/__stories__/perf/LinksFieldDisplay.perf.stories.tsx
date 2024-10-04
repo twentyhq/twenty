@@ -1,5 +1,5 @@
-import { useContext, useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useContext, useEffect } from 'react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldFocusContext } from '@/object-record/record-field/contexts/FieldFocusContext';
@@ -23,7 +23,11 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/LinksFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'testLinks'),
+    getFieldDecorator('company', 'domainName', {
+      primaryLinkUrl: 'https://www.google.com',
+      primaryLinkLabel: 'Google',
+      secondaryLinks: ['https://www.toto.com'],
+    }),
     ComponentDecorator,
   ],
   component: LinksFieldDisplay,

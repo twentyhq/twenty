@@ -7,9 +7,9 @@ import {
 import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
-import { FieldsStringFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/fields-string.factory';
 import { ArgsAliasFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/args-alias.factory';
+import { FieldsStringFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/fields-string.factory';
+import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export interface UpdateManyQueryFactoryOptions
@@ -37,13 +37,13 @@ export class UpdateManyQueryFactory {
       options.objectMetadataCollection,
     );
 
-    const computedArgs = this.argsAliasFactory.create(
-      args,
+    const computedArgsData = this.argsAliasFactory.create(
+      args.data,
       options.fieldMetadataCollection,
     );
 
     const argsData = {
-      ...computedArgs.data,
+      ...computedArgsData,
       updatedAt: new Date().toISOString(),
     };
 

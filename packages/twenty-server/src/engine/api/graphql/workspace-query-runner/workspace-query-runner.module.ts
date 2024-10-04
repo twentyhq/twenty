@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceQueryBuilderModule } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.module';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
-import { workspaceQueryRunnerFactories } from 'src/engine/api/graphql/workspace-query-runner/factories';
-import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
-import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
-import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 import { RecordPositionBackfillCommand } from 'src/engine/api/graphql/workspace-query-runner/commands/0-20-record-position-backfill.command';
+import { workspaceQueryRunnerFactories } from 'src/engine/api/graphql/workspace-query-runner/factories';
+import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
+import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
+import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { DuplicateModule } from 'src/engine/core-modules/duplicate/duplicate.module';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 
@@ -23,8 +28,12 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceDataSourceModule,
     WorkspaceQueryHookModule,
     ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     AnalyticsModule,
+    TelemetryModule,
     DuplicateModule,
+    FileModule,
+    FeatureFlagModule,
   ],
   providers: [
     WorkspaceQueryRunnerService,
@@ -33,6 +42,6 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     TelemetryListener,
     RecordPositionBackfillCommand,
   ],
-  exports: [WorkspaceQueryRunnerService],
+  exports: [WorkspaceQueryRunnerService, ...workspaceQueryRunnerFactories],
 })
 export class WorkspaceQueryRunnerModule {}

@@ -1,15 +1,16 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { OnboardingStepSuccess } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @Resolver()
 export class OnboardingResolver {
   constructor(private readonly onboardingService: OnboardingService) {}
@@ -19,10 +20,11 @@ export class OnboardingResolver {
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<OnboardingStepSuccess> {
-    await this.onboardingService.skipSyncEmailOnboardingStep(
-      user.id,
-      workspace.id,
-    );
+    await this.onboardingService.setOnboardingConnectAccountPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: false,
+    });
 
     return { success: true };
   }

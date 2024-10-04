@@ -1,6 +1,6 @@
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import React from 'react';
 import { IconComponent } from 'twenty-ui';
 
 export type MainButtonVariant = 'primary' | 'secondary';
@@ -79,7 +79,7 @@ const StyledButton = styled.button<
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
   width: ${({ fullWidth, width }) =>
     fullWidth ? '100%' : width ? `${width}px` : 'auto'};
-  ${({ theme, variant }) => {
+  ${({ theme, variant, disabled }) => {
     switch (variant) {
       case 'secondary':
         return `
@@ -90,7 +90,11 @@ const StyledButton = styled.button<
       default:
         return `
           &:hover {
-            background: ${theme.background.primaryInvertedHover}};
+            background: ${
+              !disabled
+                ? theme.background.primaryInvertedHover
+                : theme.background.secondary
+            };};
           }
         `;
     }

@@ -19,7 +19,6 @@ const StyledPlusIconHeaderCell = styled.th<{
   &:hover {
     background: ${theme.background.transparent.light};
   };
-  padding-left: ${theme.spacing(3)};
   `;
   }};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -28,12 +27,12 @@ const StyledPlusIconHeaderCell = styled.th<{
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
   min-width: 32px;
+  width: 32px;
   border-right: none !important;
 
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen
       ? `
-    width: 32px;
     background-color: ${theme.background.primary};
     `
       : ''};
@@ -45,7 +44,7 @@ const StyledPlusIconContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 32px;
+  width: 100%;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
@@ -54,11 +53,11 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
 export const RecordTableHeaderLastColumn = () => {
   const { theme } = useContext(ThemeContext);
 
-  const scrollWrapper = useScrollWrapperScopedRef();
+  const scrollWrapper = useScrollWrapperScopedRef('recordTableWithWrappers');
 
   const isTableWiderThanScreen =
-    (scrollWrapper.current?.clientWidth ?? 0) <
-    (scrollWrapper.current?.scrollWidth ?? 0);
+    (scrollWrapper.ref.current?.clientWidth ?? 0) <
+    (scrollWrapper.ref.current?.scrollWidth ?? 0);
 
   const { hiddenTableColumnsSelector } = useRecordTableStates();
 

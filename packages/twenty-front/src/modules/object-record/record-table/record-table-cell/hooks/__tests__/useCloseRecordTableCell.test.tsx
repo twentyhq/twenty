@@ -33,7 +33,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <FieldContext.Provider
         value={{
           fieldDefinition: textfieldDefinition,
-          entityId: 'entityId',
+          recordId: 'recordId',
           hotkeyScope: TableHotkeyScope.Table,
           isLabelIdentifier: false,
         }}

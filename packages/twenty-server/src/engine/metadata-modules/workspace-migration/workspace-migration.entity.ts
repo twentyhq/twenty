@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export enum WorkspaceMigrationColumnActionType {
@@ -28,14 +29,17 @@ export interface WorkspaceMigrationColumnDefinition {
   columnType: string;
   enum?: WorkspaceMigrationEnum[];
   isArray?: boolean;
-  isNullable?: boolean;
-  defaultValue?: any;
+  isNullable: boolean;
+  defaultValue: any;
+  generatedType?: 'STORED' | 'VIRTUAL';
+  asExpression?: string;
 }
 
 export interface WorkspaceMigrationIndexAction {
   action: WorkspaceMigrationIndexActionType;
   name: string;
   columns: string[];
+  type?: IndexType;
 }
 
 export interface WorkspaceMigrationColumnCreate

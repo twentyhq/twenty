@@ -26,7 +26,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
     (Story) => (
       <FieldContext.Provider
         value={{
-          entityId: companiesMock[0].id,
+          recordId: companiesMock[0].id,
           basePathToShowPage: '/object-record/',
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
