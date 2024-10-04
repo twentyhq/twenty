@@ -35,8 +35,6 @@ resource "kubernetes_deployment" "twentycrm_redis" {
         container {
           image = var.twentycrm_redis_image
           name  = "redis"
-          stdin = true
-          tty   = true
 
           port {
             container_port = 6379

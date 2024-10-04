@@ -22,25 +22,23 @@ spec:
         app: twentycrm-redis
     spec:
       containers:
-      - env:
-        - name: PORT
-          value: 6379
-      - image: redis/redis-stack-server:latest
-        imagePullPolicy: Always
-        name: redis
-        ports:
-        - containerPort: 6379
+        - env:
+            - name: PORT
+              value: 6379
+        - image: redis/redis-stack-server:latest
+          imagePullPolicy: Always
           name: redis
-          protocol: TCP
-        resources:
-          requests:
-            memory: "1024Mi"
-            cpu: "250m"
-          limits:
-            memory: "2048Mi"
-            cpu: "500m"
-        stdin: true
-        tty: true
+          ports:
+            - containerPort: 6379
+              name: redis
+              protocol: TCP
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "250m"
+            limits:
+              memory: "2048Mi"
+              cpu: "500m"
 
       dnsPolicy: ClusterFirst
       restartPolicy: Always

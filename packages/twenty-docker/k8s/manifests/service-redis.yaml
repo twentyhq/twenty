@@ -6,9 +6,9 @@ metadata:
 spec:
   internalTrafficPolicy: Cluster
   ports:
-  - port: 6379
-    protocol: TCP
-    targetPort: 6379
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
   selector:
     app: twentycrm-redis
   sessionAffinity: ClientIP
