@@ -47,7 +47,7 @@ spec:
         - name: ENABLE_DB_MIGRATIONS
           value: "true"
         - name: SIGN_IN_PREFILLED
-          value: "false"
+          value: "true"
         - name: STORAGE_TYPE
           value: "local"
         - name: "MESSAGE_QUEUE_TYPE"
