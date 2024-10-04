@@ -1,7 +1,8 @@
 import path from 'path';
 
-console.log('__dirname', __dirname);
-console.log('__dirname.endsWith', __dirname.endsWith('dist'));
-export const ASSET_PATH = __dirname.endsWith('dist')
-  ? path.resolve(__dirname, `../../assets`)
-  : path.resolve(__dirname, `../../dist/assets`);
+// If the code is built through the testing module, assets are not output to the dist/assets directory.
+const IS_BUILT_THROUGH_TESTING_MODULE = !__dirname.includes('/dist/');
+
+export const ASSET_PATH = IS_BUILT_THROUGH_TESTING_MODULE
+  ? path.resolve(__dirname, `../`)
+  : path.resolve(__dirname, `../../assets`);
