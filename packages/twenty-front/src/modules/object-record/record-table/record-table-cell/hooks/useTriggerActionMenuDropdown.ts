@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
@@ -12,9 +12,7 @@ export const useTriggerActionMenuDropdown = ({
 }: {
   recordTableId: string;
 }) => {
-  const { openDropdown: openActionMenuDropdown } = useDropdown(
-    `action-menu-dropdown-${recordTableId}`,
-  );
+  const { openActionMenuDropdown } = useActionMenu(recordTableId);
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
       (event: React.MouseEvent, recordId: string) => {

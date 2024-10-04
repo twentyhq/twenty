@@ -1,12 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-export const useRecordBoardSelection = (recordBoardId?: string) => {
-  const { closeDropdown: closeActionMenuDropdown } = useDropdown(
-    `action-menu-dropdown-${recordBoardId}`,
-  );
+export const useRecordBoardSelection = (recordBoardId: string) => {
+  const { closeActionMenuDropdown } = useActionMenu(recordBoardId);
   const { selectedRecordIdsSelector, isRecordBoardCardSelectedFamilyState } =
     useRecordBoardStates(recordBoardId);
 

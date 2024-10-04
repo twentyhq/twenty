@@ -1,3 +1,4 @@
+import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
@@ -19,7 +20,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
@@ -186,9 +186,7 @@ export const RecordBoardCard = ({
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
   );
-  const { openDropdown: openActionMenuDropdown } = useDropdown(
-    `action-menu-dropdown-${recordBoardId}`,
-  );
+  const { openActionMenuDropdown } = useActionMenu(recordBoardId);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();

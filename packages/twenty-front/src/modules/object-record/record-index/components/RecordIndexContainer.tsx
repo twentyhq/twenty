@@ -27,7 +27,6 @@ import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/compone
 import { ActionBar } from '@/action-menu/components/ActionBar';
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { ActionMenuNavigationModal } from '@/action-menu/components/ActionMenuNavigationModal';
-import { useBottomBar } from '@/ui/layout/bottom-bar/hooks/useBottomBar';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -109,8 +108,6 @@ export const RecordIndexContainer = () => {
       },
     [columnDefinitions, setTableColumns],
   );
-
-  const { closeBottomBar } = useBottomBar();
 
   return (
     <StyledContainer>
@@ -198,11 +195,8 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
-          <ActionBar actionBarId={recordIndexId} />
-          <ActionMenuDropdown
-            actionMenuDropdownId={recordIndexId}
-            onOpen={() => closeBottomBar(`action-bar-${recordIndexId}`)}
-          />
+          <ActionBar actionMenuId={recordIndexId} />
+          <ActionMenuDropdown actionMenuId={recordIndexId} />
           <ActionMenuNavigationModal />
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>

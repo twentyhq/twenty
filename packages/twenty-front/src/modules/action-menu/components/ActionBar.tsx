@@ -16,10 +16,10 @@ const StyledLabel = styled.div`
 `;
 
 type ActionBarProps = {
-  actionBarId: string;
+  actionMenuId: string;
 };
 
-export const ActionBar = ({ actionBarId }: ActionBarProps) => {
+export const ActionBar = ({ actionMenuId }: ActionBarProps) => {
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
   );
@@ -28,7 +28,7 @@ export const ActionBar = ({ actionBarId }: ActionBarProps) => {
 
   return (
     <BottomBar
-      bottomBarId={`action-bar-${actionBarId}`}
+      bottomBarId={`action-bar-${actionMenuId}`}
       bottomBarHotkeyScopeFromParent={{
         scope: ActionBarHotkeyScope.ActionBar,
       }}
