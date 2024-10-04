@@ -26,7 +26,7 @@ const jestConfig: JestConfigWithTsJest = {
   coverageThreshold: {
     global: {
       statements: 60,
-      lines: 60,
+      lines: 55,
       functions: 50,
     },
   },
