@@ -342,6 +342,8 @@ export const mocks = [
       query: gql`
         mutation DeleteOneFavorite($idToDelete: ID!) {
           deleteFavorite(id: $idToDelete) {
+            __typename
+            deletedAt
             id
           }
         }

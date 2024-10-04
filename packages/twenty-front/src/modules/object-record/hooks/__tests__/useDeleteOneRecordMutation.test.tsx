@@ -7,6 +7,8 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const expectedQueryTemplate = `
   mutation DeleteOnePerson($idToDelete: ID!) {
     deletePerson(id: $idToDelete) {
+      __typename
+      deletedAt
       id
     }
   }
