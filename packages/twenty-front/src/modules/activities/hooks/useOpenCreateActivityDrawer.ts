@@ -15,6 +15,7 @@ import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
@@ -52,7 +53,9 @@ export const useOpenCreateActivityDrawer = ({
   const setViewableRecordNameSingular = useSetRecoilState(
     viewableRecordNameSingularState,
   );
-
+  const setIsNewViewableRecordLoading = useSetRecoilState(
+    isNewViewableRecordLoadingState,
+  );
   const setIsUpsertingActivityInDB = useSetRecoilState(
     isUpsertingActivityInDBState,
   );
@@ -64,6 +67,11 @@ export const useOpenCreateActivityDrawer = ({
     targetableObjects: ActivityTargetableObject[];
     customAssignee?: WorkspaceMember;
   }) => {
+    openRightDrawer(RightDrawerPages.ViewRecord);
+    setIsNewViewableRecordLoading(true);
+    setViewableRecordId(null);
+    setViewableRecordNameSingular(activityObjectNameSingular);
+
     const activity = await createOneActivity({
       assigneeId: customAssignee?.id,
     });
@@ -101,10 +109,9 @@ export const useOpenCreateActivityDrawer = ({
 
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableRecordId(activity.id);
-    setViewableRecordNameSingular(activityObjectNameSingular);
 
-    openRightDrawer(RightDrawerPages.ViewRecord);
     setIsUpsertingActivityInDB(false);
+    setIsNewViewableRecordLoading(false);
   };
 
   return openCreateActivityDrawer;

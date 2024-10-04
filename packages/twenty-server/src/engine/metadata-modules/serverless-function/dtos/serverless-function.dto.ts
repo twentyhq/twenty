@@ -53,11 +53,6 @@ export class ServerlessFunctionDTO {
   @IsString()
   @IsNotEmpty()
   @Field()
-  sourceCodeHash: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Field()
   runtime: string;
 
   @IsString()

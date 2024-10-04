@@ -1,5 +1,6 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 export const SupportButtonSkeletonLoader = () => {
   const theme = useTheme();
@@ -9,7 +10,7 @@ export const SupportButtonSkeletonLoader = () => {
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={84} height={24} />
+      <Skeleton width={84} height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
     </SkeletonTheme>
   );
 };

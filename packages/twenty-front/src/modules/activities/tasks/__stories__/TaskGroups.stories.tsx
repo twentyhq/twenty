@@ -42,5 +42,8 @@ export const WithTasks: Story = {
   },
   parameters: {
     msw: graphqlMocks,
+    container: {
+      width: '500px',
+    },
   },
 };

@@ -1,15 +1,12 @@
-import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 
 import {
   query,
-  responseData,
   variables,
 } from '@/object-record/hooks/__mocks__/useFindOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mocks = [
   {
@@ -19,21 +16,19 @@ const mocks = [
     },
     result: jest.fn(() => ({
       data: {
-        person: responseData,
+        person: generateEmptyJestRecordNode({
+          objectNameSingular: 'person',
+          input: { id: '6205681e-7c11-40b4-9e32-f523dbe54590' },
+          withDepthOneRelation: true,
+        }),
       },
     })),
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-      <MockedProvider mocks={mocks} addTypename={false}>
-        {children}
-      </MockedProvider>
-    </SnackBarProviderScope>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 const objectRecordId = '6205681e-7c11-40b4-9e32-f523dbe54590';
 

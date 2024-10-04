@@ -35,6 +35,7 @@ const StyledContainer = styled.div`
   flex-direction: row;
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
+  margin-left: ${({ theme }) => theme.spacing(5)};
 `;
 
 export const NavigationDrawerBackButton = ({

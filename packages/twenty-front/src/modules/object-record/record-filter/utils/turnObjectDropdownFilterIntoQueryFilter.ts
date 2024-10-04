@@ -10,7 +10,6 @@ import {
   RecordGqlOperationFilter,
   RelationFilter,
   StringFilter,
-  URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
@@ -30,12 +29,6 @@ import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
-export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
-  definition: {
-    type: Filter['definition']['type'];
-  };
-};
-
 const applyEmptyFilters = (
   operand: ViewFilterOperand,
   correspondingField: Pick<Field, 'id' | 'name'>,
@@ -46,8 +39,6 @@ const applyEmptyFilters = (
 
   switch (filterType) {
     case 'TEXT':
-    case 'EMAIL':
-    case 'PHONE':
       emptyRecordFilter = {
         or: [
           { [correspondingField.name]: { ilike: '' } as StringFilter },
@@ -92,16 +83,6 @@ const applyEmptyFilters = (
       };
       break;
     }
-    case 'LINK':
-      emptyRecordFilter = {
-        or: [
-          { [correspondingField.name]: { url: { ilike: '' } } as URLFilter },
-          {
-            [correspondingField.name]: { url: { is: 'NULL' } } as URLFilter,
-          },
-        ],
-      };
-      break;
     case 'LINKS': {
       const linksFilters = generateILikeFiltersForCompositeFields(
         '',
@@ -282,7 +263,7 @@ const applyEmptyFilters = (
 };
 
 export const turnObjectDropdownFilterIntoQueryFilter = (
-  rawUIFilters: ObjectDropdownFilter[],
+  rawUIFilters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
 ): RecordGqlOperationFilter | undefined => {
   const objectRecordFilters: RecordGqlOperationFilter[] = [];
@@ -311,8 +292,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
 
     switch (rawUIFilter.definition.type) {
-      case 'EMAIL':
-      case 'PHONE':
       case 'TEXT':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
@@ -633,43 +612,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
-      case 'LINK':
-        switch (rawUIFilter.operand) {
-          case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              [correspondingField.name]: {
-                url: {
-                  ilike: `%${rawUIFilter.value}%`,
-                },
-              } as URLFilter,
-            });
-            break;
-          case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              not: {
-                [correspondingField.name]: {
-                  url: {
-                    ilike: `%${rawUIFilter.value}%`,
-                  },
-                } as URLFilter,
-              },
-            });
-            break;
-          case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
-            applyEmptyFilters(
-              rawUIFilter.operand,
-              correspondingField,
-              objectRecordFilters,
-              rawUIFilter.definition.type,
-            );
-            break;
-          default:
-            throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-            );
-        }
-        break;
       case 'LINKS': {
         const linksFilters = generateILikeFiltersForCompositeFields(
           rawUIFilter.value,
@@ -894,48 +836,87 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         break;
       }
       case 'ACTOR':
-        switch (rawUIFilter.operand) {
-          case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              or: [
-                {
-                  [correspondingField.name]: {
-                    name: {
-                      ilike: `%${rawUIFilter.value}%`,
+        if (rawUIFilter.definition.subFieldType !== undefined) {
+          const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
+          switch (rawUIFilter.definition.subFieldType) {
+            case 'SOURCE':
+              switch (rawUIFilter.operand) {
+                case ViewFilterOperand.Is:
+                  objectRecordFilters.push({
+                    [correspondingField.name]: {
+                      source: {
+                        in: parsedRecordIds,
+                      } as RelationFilter,
                     },
-                  } as ActorFilter,
-                },
-              ],
-            });
-            break;
-          case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              and: [
-                {
-                  not: {
+                  });
+
+                  break;
+                case ViewFilterOperand.IsNot:
+                  if (parsedRecordIds.length > 0) {
+                    objectRecordFilters.push({
+                      not: {
+                        [correspondingField.name]: {
+                          [rawUIFilter.definition.subFieldType.toLowerCase()]: {
+                            in: parsedRecordIds,
+                          } as RelationFilter,
+                        },
+                      },
+                    });
+                  }
+
+                  break;
+
+                default:
+                  throw new Error(
+                    `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.subFieldType} filter`,
+                  );
+              }
+          }
+        } else {
+          switch (rawUIFilter.operand) {
+            case ViewFilterOperand.Contains:
+              objectRecordFilters.push({
+                or: [
+                  {
                     [correspondingField.name]: {
                       name: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as ActorFilter,
                   },
-                },
-              ],
-            });
-            break;
-          case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
-            applyEmptyFilters(
-              rawUIFilter.operand,
-              correspondingField,
-              objectRecordFilters,
-              rawUIFilter.definition.type,
-            );
-            break;
-          default:
-            throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-            );
+                ],
+              });
+              break;
+            case ViewFilterOperand.DoesNotContain:
+              objectRecordFilters.push({
+                and: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        name: {
+                          ilike: `%${rawUIFilter.value}%`,
+                        },
+                      } as ActorFilter,
+                    },
+                  },
+                ],
+              });
+              break;
+            case ViewFilterOperand.IsEmpty:
+            case ViewFilterOperand.IsNotEmpty:
+              applyEmptyFilters(
+                rawUIFilter.operand,
+                correspondingField,
+                objectRecordFilters,
+                rawUIFilter.definition.type,
+              );
+              break;
+            default:
+              throw new Error(
+                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              );
+          }
+          break;
         }
         break;
       case 'EMAILS':
