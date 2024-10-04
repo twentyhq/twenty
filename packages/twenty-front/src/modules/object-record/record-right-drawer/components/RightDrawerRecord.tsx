@@ -19,15 +19,6 @@ export const RightDrawerRecord = () => {
     viewableRecordNameSingularState,
   );
   const viewableRecordId = useRecoilValue(viewableRecordIdState);
-
-  if (!viewableRecordNameSingular) {
-    throw new Error(`Object name is not defined`);
-  }
-
-  if (!viewableRecordId) {
-    throw new Error(`Record id is not defined`);
-  }
-
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
     viewableRecordNameSingular ?? '',
     viewableRecordId ?? '',
