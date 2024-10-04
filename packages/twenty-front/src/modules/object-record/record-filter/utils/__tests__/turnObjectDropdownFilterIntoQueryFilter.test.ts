@@ -935,12 +935,12 @@ describe('should work as expected for the different field types', () => {
           and: [
             {
               createdAt: {
-                gte: '2019-12-31T00:00:00.000Z',
+                lte: '2024-09-17T21:59:59.999Z',
               },
             },
             {
               createdAt: {
-                lte: '2020-01-01T00:00:00.000Z',
+                gte: '2024-09-16T22:00:00.000Z',
               },
             },
           ],
