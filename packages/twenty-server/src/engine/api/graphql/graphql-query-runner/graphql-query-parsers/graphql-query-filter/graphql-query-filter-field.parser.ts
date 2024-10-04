@@ -58,7 +58,6 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     const { sql, params } = this.computeWhereConditionParts(
-      fieldMetadata,
       operator,
       objectNameSingular,
       key,
@@ -73,7 +72,6 @@ export class GraphqlQueryFilterFieldParser {
   }
 
   private computeWhereConditionParts(
-    fieldMetadata: FieldMetadataInterface,
     operator: string,
     objectNameSingular: string,
     key: string,
@@ -185,7 +183,6 @@ export class GraphqlQueryFilterFieldParser {
       );
 
       const { sql, params } = this.computeWhereConditionParts(
-        fieldMetadata,
         operator,
         objectNameSingular,
         fullFieldName,
