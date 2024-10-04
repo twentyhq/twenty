@@ -1,6 +1,7 @@
 import path from 'path';
 
-export const ASSET_PATH =
-  process.env.NODE_ENV === 'test'
-    ? path.resolve(__dirname, `../../dist/assets`)
-    : path.resolve(__dirname, `../../assets`);
+console.log('__dirname', __dirname);
+console.log('__dirname.endsWith', __dirname.endsWith('dist'));
+export const ASSET_PATH = __dirname.endsWith('dist')
+  ? path.resolve(__dirname, `../../assets`)
+  : path.resolve(__dirname, `../../dist/assets`);

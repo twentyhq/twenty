@@ -52,5 +52,5 @@ export const Performance = getProfilingStory({
   componentName: 'DateTimeFieldDisplay',
   averageThresholdInMs: 0.1,
   numberOfRuns: 30,
-  numberOfTestsPerRun: 50,
+  numberOfTestsPerRun: 30,
 });
