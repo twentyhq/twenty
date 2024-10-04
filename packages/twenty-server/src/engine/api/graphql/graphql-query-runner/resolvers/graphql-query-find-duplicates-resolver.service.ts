@@ -7,6 +7,7 @@ import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/int
 import {
   Record as IRecord,
   OrderByDirection,
+  RecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -132,7 +133,7 @@ export class GraphqlQueryFindDuplicatesResolverService
     objectMetadataMapItem: ObjectMetadataMapItem,
     records?: Partial<IRecord>[] | undefined,
     filteringByExistingRecordId?: string,
-  ) {
+  ): Partial<RecordFilter> {
     if (!records || records.length === 0) {
       return {};
     }
@@ -163,7 +164,7 @@ export class GraphqlQueryFindDuplicatesResolverService
       });
     });
 
-    const filter: any = {};
+    const filter: Partial<RecordFilter> = {};
 
     if (conditions && !isEmpty(conditions)) {
       filter.or = conditions;

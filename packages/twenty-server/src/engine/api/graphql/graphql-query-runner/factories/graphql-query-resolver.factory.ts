@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
-import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import {
+  ResolverArgs,
+  WorkspaceResolverBuilderMethodNames,
+} from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
 import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-one-resolver.service';
@@ -19,7 +22,7 @@ export class GraphqlQueryResolverFactory {
 
   public getResolver(
     operationName: WorkspaceResolverBuilderMethodNames,
-  ): ResolverService<any, any> {
+  ): ResolverService<ResolverArgs, any> {
     switch (operationName) {
       case 'findOne':
         return this.moduleRef.get(GraphqlQueryFindOneResolverService);

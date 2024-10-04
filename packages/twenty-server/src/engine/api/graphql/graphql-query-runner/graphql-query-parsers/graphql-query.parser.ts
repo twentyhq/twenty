@@ -42,7 +42,7 @@ export class GraphqlQueryParser {
   public applyFilterToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
-    recordFilter: RecordFilter,
+    recordFilter: Partial<RecordFilter>,
   ): SelectQueryBuilder<any> {
     return this.filterConditionParser.parse(
       queryBuilder,

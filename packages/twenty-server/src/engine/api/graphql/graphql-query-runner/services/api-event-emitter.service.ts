@@ -115,7 +115,7 @@ export class ApiEventEmitterService {
     record: ObjectRecord,
   ) {
     if (!record) {
-      return;
+      return {};
     }
 
     const sanitizedRecord = {};

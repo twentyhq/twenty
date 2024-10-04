@@ -9,10 +9,12 @@ import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -61,11 +63,15 @@ export class GraphqlQueryUpdateManyResolverService
       args.filter,
     );
 
-    await withFilterQueryBuilder.update().set(args.data).execute();
+    const data = formatData(args.data, objectMetadataMapItem);
 
-    const nonFormattedUpdatedObjectRecords = await withFilterQueryBuilder
-      .take(QUERY_MAX_RECORDS)
-      .getMany();
+    const result = await withFilterQueryBuilder
+      .update()
+      .set(data)
+      .returning('*')
+      .execute();
+
+    const nonFormattedUpdatedObjectRecords = result.raw;
 
     const updatedRecords = formatResult(
       nonFormattedUpdatedObjectRecords,
@@ -87,7 +93,17 @@ export class GraphqlQueryUpdateManyResolverService
       );
     }
 
-    return updatedRecords as ObjectRecord[];
+    const typeORMObjectRecordsParser =
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+
+    return updatedRecords.map((record: ObjectRecord) =>
+      typeORMObjectRecordsParser.processRecord(
+        record,
+        objectMetadataMapItem.nameSingular,
+        1,
+        1,
+      ),
+    );
   }
 
   async validate<ObjectRecord extends IRecord = IRecord>(

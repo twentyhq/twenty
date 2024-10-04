@@ -243,7 +243,7 @@ export class ProcessNestedRelationsHelper {
         (item as any)[`${relationName}Id`] = null;
       }
       (item as any)[relationName] =
-        relationResults.find((rel) => rel.id === item[`${relationName}Id`]) ||
+        relationResults.find((rel) => rel.id === item[`${relationName}Id`]) ??
         null;
     });
   }
