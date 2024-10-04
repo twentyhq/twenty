@@ -25,8 +25,10 @@ export const StyledPill = styled(Pill)`
 export const AdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
+  // const { setAdvancedFilterOpen } = useFilterDropdown();
+
   const editAdvancedFilter = () => {
-    // TODO: Add advanced filter if it doesn't exist and open the dropdown
+    // TODO: Open advanced filter dropdown
   };
 
   return (
