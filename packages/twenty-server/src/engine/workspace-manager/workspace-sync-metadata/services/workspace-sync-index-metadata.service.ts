@@ -1,22 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { Any, EntityManager } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
-import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
+import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
+import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
-import { StandardIndexFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-index.factory';
+import {
+  IndexMetadataEntity,
+  IndexType,
+} from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { WorkspaceIndexComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-index.comparator';
-import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
+import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationIndexFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-index.factory';
+import { WorkspaceIndexComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-index.comparator';
+import { StandardIndexFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-index.factory';
+import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
+import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
+import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
 
 @Injectable()
 export class WorkspaceSyncIndexMetadataService {
@@ -47,35 +50,60 @@ export class WorkspaceSyncIndexMetadataService {
           workspaceId: context.workspaceId,
           // We're only interested in standard fields
           fields: { isCustom: false },
-          isCustom: false,
         },
         relations: ['dataSource', 'fields', 'indexes'],
       });
 
     // Create map of object metadata & field metadata by unique identifier
-    const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
-      originalObjectMetadataCollection,
-      // Relation are based on the singular name
+    const originalStandardObjectMetadataMap =
+      mapObjectMetadataByUniqueIdentifier(
+        originalObjectMetadataCollection.filter(
+          (objectMetadata) => !objectMetadata.isCustom,
+        ),
+        // Relation are based on the singular name
+        (objectMetadata) => objectMetadata.nameSingular,
+      );
+
+    const originalCustomObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
+      originalObjectMetadataCollection.filter(
+        (objectMetadata) => objectMetadata.isCustom,
+      ),
       (objectMetadata) => objectMetadata.nameSingular,
     );
 
     const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
 
-    const originalIndexMetadataCollection = await indexMetadataRepository.find({
+    let originalIndexMetadataCollection = await indexMetadataRepository.find({
       where: {
         workspaceId: context.workspaceId,
+        objectMetadataId: Any(
+          Object.values(originalObjectMetadataCollection).map(
+            (object) => object.id,
+          ),
+        ),
+        isCustom: false,
       },
       relations: ['indexFieldMetadatas.fieldMetadata'],
     });
 
     // Generate index metadata from models
-    const standardIndexMetadataCollection = this.standardIndexFactory.create(
+    let standardIndexMetadataCollection = this.standardIndexFactory.create(
       standardObjectMetadataDefinitions,
       context,
-      originalObjectMetadataMap,
+      originalStandardObjectMetadataMap,
+      originalCustomObjectMetadataMap,
       workspaceFeatureFlagsMap,
     );
 
+    if (!workspaceFeatureFlagsMap.IS_SEARCH_ENABLED) {
+      originalIndexMetadataCollection = originalIndexMetadataCollection.filter(
+        (index) => index.indexType !== IndexType.GIN,
+      );
+
+      standardIndexMetadataCollection = standardIndexMetadataCollection.filter(
+        (index) => index.indexType !== IndexType.GIN,
+      );
+    }
     const indexComparatorResults = this.workspaceIndexComparator.compare(
       originalIndexMetadataCollection,
       standardIndexMetadataCollection,

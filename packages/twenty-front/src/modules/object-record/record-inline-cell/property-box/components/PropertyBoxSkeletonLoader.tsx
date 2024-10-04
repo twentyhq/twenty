@@ -1,6 +1,7 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledSkeletonDiv = styled.div`
   align-items: center;
@@ -22,8 +23,14 @@ export const PropertyBoxSkeletonLoader = () => {
     >
       {skeletonItems.map(({ id }) => (
         <StyledSkeletonDiv key={id}>
-          <Skeleton width={92} height={16} />
-          <Skeleton width={154} height={16} />
+          <Skeleton
+            width={92}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
+          <Skeleton
+            width={154}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
         </StyledSkeletonDiv>
       ))}
     </SkeletonTheme>

@@ -51,6 +51,7 @@ export const queries = {
         ${baseFields}
         defaultValue
         options
+        settings
       }
     }
   `,
