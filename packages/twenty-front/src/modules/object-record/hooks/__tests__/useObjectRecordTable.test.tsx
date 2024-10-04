@@ -1,13 +1,12 @@
-import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { ReactNode } from 'react';
 
+import { mocks } from '@/auth/hooks/__mocks__/useAuth';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
@@ -17,20 +16,22 @@ const ObjectNamePluralSetter = ({ children }: { children: ReactNode }) => {
   return <>{children}</>;
 };
 
+const HookMockWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
+
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
-    <RecoilRoot>
+    <HookMockWrapper>
       <ObjectNamePluralSetter>
         <RecordTableScope
           recordTableScopeId={getScopeIdFromComponentId(recordTableId)}
           onColumnsChange={onColumnsChange}
         >
-          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-            <MockedProvider addTypename={false}>{children}</MockedProvider>
-          </SnackBarProviderScope>
+          {children}
         </RecordTableScope>
       </ObjectNamePluralSetter>
-    </RecoilRoot>
+    </HookMockWrapper>
   );
 };
 

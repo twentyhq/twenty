@@ -12,6 +12,7 @@ type TaskListProps = {
 
 const StyledContainer = styled.div`
   align-items: flex-start;
+  width: 100%;
   align-self: stretch;
   display: flex;
   flex-direction: column;

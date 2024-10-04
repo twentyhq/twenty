@@ -1,11 +1,10 @@
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { Task } from '@/activities/types/Task';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const task: Task = {
   id: '123',
@@ -28,21 +27,123 @@ const mocks: MockedResponse[] = [
         mutation UpdateOneTask($idToUpdate: ID!, $input: TaskUpdateInput!) {
           updateTask(id: $idToUpdate, data: $input) {
             __typename
-            updatedAt
-            createdAt
-            deletedAt
-            dueAt
-            id
-            status
+            assignee {
+              __typename
+              avatarUrl
+              colorScheme
+              createdAt
+              dateFormat
+              deletedAt
+              id
+              locale
+              name {
+                firstName
+                lastName
+              }
+              timeFormat
+              timeZone
+              updatedAt
+              userEmail
+              userId
+            }
+            assigneeId
+            attachments {
+              edges {
+                node {
+                  __typename
+                  activityId
+                  authorId
+                  companyId
+                  createdAt
+                  deletedAt
+                  fullPath
+                  id
+                  name
+                  noteId
+                  opportunityId
+                  personId
+                  rocketId
+                  taskId
+                  type
+                  updatedAt
+                }
+              }
+            }
             body
+            createdAt
             createdBy {
               source
               workspaceMemberId
               name
             }
-            assigneeId
+            deletedAt
+            dueAt
+            favorites {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  noteId
+                  opportunityId
+                  personId
+                  position
+                  rocketId
+                  taskId
+                  updatedAt
+                  viewId
+                  workflowId
+                  workspaceMemberId
+                }
+              }
+            }
+            id
             position
+            status
+            taskTargets {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  opportunityId
+                  personId
+                  rocketId
+                  taskId
+                  updatedAt
+                }
+              }
+            }
+            timelineActivities {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  happensAt
+                  id
+                  linkedObjectMetadataId
+                  linkedRecordCachedName
+                  linkedRecordId
+                  name
+                  noteId
+                  opportunityId
+                  personId
+                  properties
+                  rocketId
+                  taskId
+                  updatedAt
+                  workspaceMemberId
+                }
+              }
+            }
             title
+            updatedAt
           }
         }
       `,
@@ -72,13 +173,9 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useCompleteTask', () => {
   it('should complete task', async () => {

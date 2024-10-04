@@ -1,22 +1,19 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { JsonFieldDisplay } from '@/object-record/record-field/meta-types/display/components/JsonFieldDisplay';
+import { PhonesFieldDisplay } from '@/object-record/record-field/meta-types/display/components/PhonesFieldDisplay';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Display/JsonFieldDisplay',
+  title: 'UI/Data/Field/Display/PhonesFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('company', 'testRawJson', {
-      key1: 'value1',
-      key2: 'value2',
-    }),
+    getFieldDecorator('person', 'phones'),
     ComponentDecorator,
   ],
-  component: JsonFieldDisplay,
+  component: PhonesFieldDisplay,
   args: {},
   parameters: {
     chromatic: { disableSnapshot: true },
@@ -25,7 +22,7 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof JsonFieldDisplay>;
+type Story = StoryObj<typeof PhonesFieldDisplay>;
 
 export const Default: Story = {};
 
@@ -35,9 +32,19 @@ export const Elipsis: Story = {
   },
 };
 
+export const WrongNumber: Story = {
+  decorators: [
+    getFieldDecorator('person', 'phones', {
+      primaryPhoneNumber: '123-456-7890',
+      primaryPhoneCountryCode: '+1',
+      additionalPhones: null,
+    }),
+  ],
+};
+
 export const Performance = getProfilingStory({
-  componentName: 'JsonFieldDisplay',
-  averageThresholdInMs: 0.1,
-  numberOfRuns: 50,
+  componentName: 'PhonesFieldDisplay',
+  averageThresholdInMs: 0.5,
+  numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });
