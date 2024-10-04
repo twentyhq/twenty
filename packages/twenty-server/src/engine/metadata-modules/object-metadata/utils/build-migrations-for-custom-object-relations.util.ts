@@ -21,6 +21,15 @@ export const buildMigrationsForCustomObjectRelations = (
   {
     name: computeObjectTargetTable(createdObjectMetadata),
     action: WorkspaceMigrationTableActionType.CREATE,
+    columns: [
+      {
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        columnName: 'name',
+        columnType: 'text',
+        isNullable: false,
+        defaultValue: "'Untitled'",
+      } satisfies WorkspaceMigrationColumnCreate,
+    ],
   } satisfies WorkspaceMigrationTableAction,
   // Add activity target relation
   {

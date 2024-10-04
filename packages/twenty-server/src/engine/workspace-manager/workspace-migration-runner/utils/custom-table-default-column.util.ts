@@ -32,12 +32,6 @@ export const customTableDefaultColumns = (
     isNullable: true,
   },
   {
-    name: 'name',
-    type: 'text',
-    isNullable: false,
-    default: "'Untitled'",
-  },
-  {
     name: 'createdBySource',
     type: 'enum',
     enumName: `${tableName}_createdBySource_enum`,
