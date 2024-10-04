@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragments';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
@@ -9,7 +9,7 @@ import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
 const expectedQueryTemplate = `
 mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
   updatePerson(id: $idToUpdate, data: $input) {
-      ${PERSON_FRAGMENT}
+      ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
   }
 }`;
 

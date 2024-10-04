@@ -66,7 +66,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      skip: skip || !objectMetadataItem || !currentWorkspaceMember,
+      skip: skip || !objectMetadataItem,
       variables: {
         filter,
         orderBy,
