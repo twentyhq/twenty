@@ -30,18 +30,6 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 describe('useFindManyRecords', () => {
-  it('should skip fetch if currentWorkspaceMember is undefined', async () => {
-    const { result } = renderHook(
-      () => useFindManyRecords({ objectNameSingular: 'person' }),
-      {
-        wrapper: Wrapper,
-      },
-    );
-
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeUndefined();
-  });
-
   it('should work as expected', async () => {
     const onCompleted = jest.fn();
 

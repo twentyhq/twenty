@@ -4,7 +4,8 @@ import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMeta
 
 import { Company } from '@/companies/types/Company';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
-import { isRecordMatchingFilter } from './isRecordMatchingFilter';
+import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
+import { expect } from '@storybook/test';
 
 const companiesMock = getCompaniesMock();
 
