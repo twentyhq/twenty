@@ -1,7 +1,11 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Button } from '@/ui/input/button/components/Button';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
+import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
+import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { IconPencil, IconPlayerStop, IconPower, isDefined } from 'twenty-ui';
 
 export const RecordShowPageWorkflowVersionHeader = ({
@@ -11,24 +15,53 @@ export const RecordShowPageWorkflowVersionHeader = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
+  const {
+    records: draftWorkflowVersions,
+    loading: loadingDraftWorkflowVersions,
+  } = useFindManyRecords<WorkflowVersion>({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    filter: {
+      workflowId: {
+        eq: workflowVersion?.workflow.id,
+      },
+      status: {
+        eq: 'DRAFT',
+      },
+    },
+    skip: !isDefined(workflowVersion),
+    limit: 1,
+  });
+
+  const showUseAsDraftButton =
+    !loadingDraftWorkflowVersions &&
+    isDefined(workflowVersion) &&
+    workflowVersion.status !== 'DRAFT';
+
   const hasAlreadyDraftVersion =
-    workflowVersion?.workflow.statuses?.includes('DRAFT') ?? false;
+    !loadingDraftWorkflowVersions && draftWorkflowVersions.length > 0;
 
   const isWaitingForWorkflowVersion = !isDefined(workflowVersion);
 
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
+  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
   return (
     <>
-      {workflowVersion?.status !== 'DRAFT' ? (
+      {showUseAsDraftButton ? (
         <Button
           title={`Use as Draft${hasAlreadyDraftVersion ? ' (override)' : ''}`}
           variant="secondary"
           Icon={IconPencil}
           disabled={isWaitingForWorkflowVersion}
           onClick={() => {
-            // return activateWorkflowVersion(workflowVersion.id);
+            return createNewWorkflowVersion({
+              workflowId: workflowVersion.workflow.id,
+              name: `v${workflowVersion.workflow.versions.length + 1}`,
+              status: 'DRAFT',
+              trigger: workflowVersion.trigger,
+              steps: workflowVersion.steps,
+            });
           }}
         />
       ) : null}

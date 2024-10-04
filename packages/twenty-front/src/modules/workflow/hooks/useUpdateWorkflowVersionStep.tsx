@@ -21,9 +21,7 @@ export const useUpdateWorkflowVersionStep = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion({
-    workflowId: workflow.id,
-  });
+  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
   const updateStep = async <T extends WorkflowStep>(updatedStep: T) => {
     if (!isDefined(workflow.currentVersion)) {
@@ -48,6 +46,7 @@ export const useUpdateWorkflowVersionStep = ({
     }
 
     await createNewWorkflowVersion({
+      workflowId: workflow.id,
       name: `v${workflow.versions.length + 1}`,
       status: 'DRAFT',
       trigger: workflow.currentVersion.trigger,
