@@ -12,7 +12,10 @@ import { RefreshAccessTokenExceptionCode } from 'src/modules/connected-account/r
 import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
@@ -52,6 +55,13 @@ export class MessagingMessagesImportService {
     let messageIdsToFetch: string[] = [];
 
     try {
+      if (
+        messageChannel.syncStage !==
+        MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
+      ) {
+        return;
+      }
+
       await this.messagingTelemetryService.track({
         eventName: 'messages_import.started',
         workspaceId,
