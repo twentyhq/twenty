@@ -29,7 +29,10 @@ spec:
           persistentVolumeClaim:
             claimName: twentycrm-docker-data-pvc
       containers:
-        - env:
+        - name: twentycrm
+          image: twentycrm/twenty:latest
+          imagePullPolicy: Always
+          env:
             - name: PORT
               value: 3000
             - name: SERVER_URL
@@ -76,9 +79,6 @@ spec:
                 secretKeyRef:
                   name: tokens
                   key: fileToken
-        - image: twentycrm/twenty:latest
-          imagePullPolicy: Always
-          name: twentycrm
           ports:
             - containerPort: 3000
               name: http-tcp

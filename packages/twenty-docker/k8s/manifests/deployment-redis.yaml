@@ -22,12 +22,12 @@ spec:
         app: twentycrm-redis
     spec:
       containers:
-        - env:
+        - name: redis
+          image: redis/redis-stack-server:latest
+          imagePullPolicy: Always
+          env:
             - name: PORT
               value: 6379
-        - image: redis/redis-stack-server:latest
-          imagePullPolicy: Always
-          name: redis
           ports:
             - containerPort: 6379
               name: redis

@@ -26,14 +26,14 @@ spec:
           persistentVolumeClaim:
             claimName: twentycrm-db-pvc
       containers:
-        - env:
+        - name: twentycrm
+          image: twentycrm/twenty-postgres:latest
+          imagePullPolicy: Always
+          env:
             - name: POSTGRES_PASSWORD
               value: "twenty"
             - name: BITNAMI_DEBUG
               value: "true"
-        - image: twentycrm/twenty-postgres:latest
-          imagePullPolicy: Always
-          name: twentycrm
           ports:
             - containerPort: 5432
               name: tcp

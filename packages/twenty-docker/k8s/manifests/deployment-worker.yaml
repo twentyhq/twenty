@@ -22,7 +22,10 @@ spec:
         app: twentycrm-worker
     spec:
       containers:
-        - env:
+        - name: twentycrm
+          image: twentycrm/twenty:latest
+          imagePullPolicy: Always
+          env:
             - name: SERVER_URL
               value: "https://crm.example.com:443"
             - name: FRONT_BASE_URL
@@ -61,9 +64,6 @@ spec:
                 secretKeyRef:
                   name: tokens
                   key: fileToken
-        - image: twentycrm/twenty:latest
-          imagePullPolicy: Always
-          name: twentycrm
           command:
             - yarn
             - worker:prod
