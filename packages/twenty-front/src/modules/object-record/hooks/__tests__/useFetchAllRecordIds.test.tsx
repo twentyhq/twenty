@@ -16,7 +16,7 @@ import {
 } from '@/object-record/hooks/__mocks__/useFetchAllRecordIds';
 import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const mocks = [
   {

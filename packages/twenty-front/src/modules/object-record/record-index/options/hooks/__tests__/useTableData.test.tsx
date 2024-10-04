@@ -12,7 +12,7 @@ import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const defaultResponseData = {
   pageInfo: {

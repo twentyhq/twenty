@@ -2,7 +2,7 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const companiesMock = getCompaniesMock();
 
