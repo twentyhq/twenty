@@ -21,10 +21,6 @@ export class LocalDriver implements StorageDriver {
   }
 
   async createFolder(path: string) {
-    if (existsSync(path)) {
-      return;
-    }
-
     return fs.mkdir(path, { recursive: true });
   }
 
@@ -122,21 +118,24 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async copy(params: {
-    from: { folderPath: string; filename?: string };
-    to: { folderPath: string; filename?: string };
-  }): Promise<void> {
+  async copy(
+    params: {
+      from: { folderPath: string; filename?: string };
+      to: { folderPath: string; filename?: string };
+    },
+    toInMemory = false,
+  ): Promise<void> {
     if (!params.from.filename && params.to.filename) {
       throw new Error('Cannot copy folder to file');
     }
     const fromPath = join(
-      `${this.options.storagePath}/`,
+      this.options.storagePath,
       params.from.folderPath,
       params.from.filename || '',
     );
 
     const toPath = join(
-      `${this.options.storagePath}/`,
+      toInMemory ? '' : this.options.storagePath,
       params.to.folderPath,
       params.to.filename || '',
     );
@@ -155,5 +154,12 @@ export class LocalDriver implements StorageDriver {
 
       throw error;
     }
+  }
+
+  async download(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    await this.copy(params, true);
   }
 }

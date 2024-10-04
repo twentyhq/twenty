@@ -4,9 +4,12 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelObjectAboutForm } from '../SettingsDataModelObjectAboutForm';
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+);
 
 const StyledContainer = styled.div`
   flex: 1;

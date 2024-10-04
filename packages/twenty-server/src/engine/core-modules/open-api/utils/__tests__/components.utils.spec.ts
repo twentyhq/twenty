@@ -10,7 +10,8 @@ describe('computeSchemaComponents', () => {
   it('should test all non-deprecated field types', () => {
     expect(fields.map((field) => field.type)).toEqual(
       Object.keys(FieldMetadataType).filter(
-        (key) => key !== FieldMetadataType.LINK,
+        (key) =>
+          key !== FieldMetadataType.LINK && key !== FieldMetadataType.TS_VECTOR,
       ),
     );
   });
@@ -21,6 +22,7 @@ describe('computeSchemaComponents', () => {
       ] as ObjectMetadataEntity[]),
     ).toEqual({
       ObjectName: {
+        description: undefined,
         type: 'object',
         properties: {
           fieldUuid: {
@@ -195,6 +197,7 @@ describe('computeSchemaComponents', () => {
                   'API',
                   'IMPORT',
                   'MANUAL',
+                  'SYSTEM',
                 ],
               },
             },
@@ -203,6 +206,7 @@ describe('computeSchemaComponents', () => {
         required: ['fieldNumber'],
       },
       'ObjectName for Update': {
+        description: undefined,
         type: 'object',
         properties: {
           fieldUuid: {
@@ -377,6 +381,7 @@ describe('computeSchemaComponents', () => {
                   'API',
                   'IMPORT',
                   'MANUAL',
+                  'SYSTEM',
                 ],
               },
             },
@@ -384,6 +389,7 @@ describe('computeSchemaComponents', () => {
         },
       },
       'ObjectName for Response': {
+        description: undefined,
         type: 'object',
         properties: {
           fieldUuid: {
@@ -558,6 +564,7 @@ describe('computeSchemaComponents', () => {
                   'API',
                   'IMPORT',
                   'MANUAL',
+                  'SYSTEM',
                 ],
               },
               workspaceMemberId: {

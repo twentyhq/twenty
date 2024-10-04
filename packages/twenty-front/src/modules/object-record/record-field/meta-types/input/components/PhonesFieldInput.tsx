@@ -78,6 +78,8 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
     });
   };
 
+  const isPrimaryPhone = (index: number) => index === 0 && phones?.length > 1;
+
   return (
     <MultiItemFieldInput
       items={phones}
@@ -108,7 +110,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
         <PhonesFieldMenuItem
           key={index}
           dropdownId={`${hotkeyScope}-phones-${index}`}
-          isPrimary={index === 0}
+          isPrimary={isPrimaryPhone(index)}
           phone={phone}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}

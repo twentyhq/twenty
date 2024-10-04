@@ -16,4 +16,7 @@ export type FieldDefinition<T extends FieldMetadata> = {
   infoTooltipContent?: string;
   defaultValue?: any;
   editButtonIcon?: IconComponent;
+  settings?: {
+    decimals?: number;
+  };
 };

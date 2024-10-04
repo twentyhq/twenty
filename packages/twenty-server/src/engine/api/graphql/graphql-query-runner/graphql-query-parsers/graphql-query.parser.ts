@@ -9,7 +9,6 @@ import {
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
@@ -17,6 +16,7 @@ import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
+  ObjectMetadataMapItem,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export class GraphqlQueryParser {
@@ -39,10 +39,10 @@ export class GraphqlQueryParser {
     );
   }
 
-  applyFilterToBuilder(
+  public applyFilterToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
-    recordFilter: RecordFilter,
+    recordFilter: Partial<RecordFilter>,
   ): SelectQueryBuilder<any> {
     return this.filterConditionParser.parse(
       queryBuilder,
@@ -51,7 +51,7 @@ export class GraphqlQueryParser {
     );
   }
 
-  applyDeletedAtToBuilder(
+  public applyDeletedAtToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     recordFilter: RecordFilter,
   ): SelectQueryBuilder<any> {
@@ -88,7 +88,7 @@ export class GraphqlQueryParser {
     return false;
   };
 
-  applyOrderToBuilder(
+  public applyOrderToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     orderBy: RecordOrderBy,
     objectNameSingular: string,
@@ -103,8 +103,8 @@ export class GraphqlQueryParser {
     return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
   }
 
-  parseSelectedFields(
-    parentObjectMetadata: ObjectMetadataInterface,
+  public parseSelectedFields(
+    parentObjectMetadata: ObjectMetadataMapItem,
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): { select: Record<string, any>; relations: Record<string, any> } {
     const parentFields =
