@@ -5,6 +5,7 @@ export type CalendarEvent = Omit<
   CalendarEventWorkspaceEntity,
   | 'createdAt'
   | 'updatedAt'
+  | 'deletedAt'
   | 'calendarChannelEventAssociations'
   | 'calendarEventParticipants'
   | 'conferenceLink'
@@ -19,6 +20,7 @@ export type CalendarEventParticipant = Omit<
   | 'id'
   | 'createdAt'
   | 'updatedAt'
+  | 'deletedAt'
   | 'personId'
   | 'workspaceMemberId'
   | 'person'

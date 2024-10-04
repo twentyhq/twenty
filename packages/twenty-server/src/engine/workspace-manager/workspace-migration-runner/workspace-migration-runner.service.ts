@@ -26,7 +26,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
-import { customTableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/custom-table-default-column.util';
+import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
@@ -255,7 +255,7 @@ export class WorkspaceMigrationRunnerService {
       new Table({
         name: tableName,
         schema: schemaName,
-        columns: customTableDefaultColumns(tableName),
+        columns: tableDefaultColumns(),
       }),
       true,
     );
