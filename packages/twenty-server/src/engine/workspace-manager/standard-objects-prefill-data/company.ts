@@ -45,7 +45,7 @@ export const companyPrefillData = async (
         position: 1,
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: null,
-        createdByName: 'System',
+        createdByName: 'Twenty (Sample data)',
       },
       {
         id: QONTO_ID,
