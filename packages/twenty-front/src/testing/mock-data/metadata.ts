@@ -42,6 +42,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: 'ea83af89-be10-49af-a605-10c3392ae007',
             type: 'RELATION',
             name: 'companies',
@@ -68,6 +69,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
               },
               sourceFieldMetadata: {
                 __typename: 'field',
+                settings: null,
                 id: 'ea83af89-be10-49af-a605-10c3392ae007',
                 name: 'companies',
               },
@@ -79,6 +81,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
               },
               targetFieldMetadata: {
                 __typename: 'field',
+                settings: null,
                 id: 'c9607ed7-168d-4743-a56a-689ffcfffe98',
                 name: 'myCustom',
               },
@@ -89,6 +92,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: 'c5384d2a-9ec3-4e1b-b93f-86f53f122169',
             type: 'UUID',
             name: 'objectMetadataId',
@@ -110,6 +114,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: 'bb4d96be-e4d9-47a9-812d-fcdfb063ebf3',
             type: 'POSITION',
             name: 'position',
@@ -131,6 +136,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: 'f20c68aa-3930-41c4-9f79-45dceda506df',
             type: 'TEXT',
             name: 'name',
@@ -152,6 +158,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: 'a3ef848d-660a-4aef-9cd4-5baf25ce36ed',
             type: 'DATE_TIME',
             name: 'createdAt',
@@ -173,6 +180,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: '92f3e27c-041d-45b2-b2bd-46db2b1aec3f',
             type: 'DATE_TIME',
             name: 'updatedAt',
@@ -194,6 +202,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: '8d7987eb-99e8-4e54-a86c-86b3bd07d2be',
             type: 'UUID',
             name: 'id',
@@ -215,6 +224,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
+            settings: null,
             id: 'e07fcc3f-beec-4d91-8488-9d1d2cfa5f99',
             type: FieldMetadataType.Select,
             name: 'priority',

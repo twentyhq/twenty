@@ -11,6 +11,7 @@ export const mockedViewFieldsData = [
     size: 180,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -22,6 +23,7 @@ export const mockedViewFieldsData = [
     size: 100,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -33,6 +35,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -44,6 +47,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -55,6 +59,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -66,6 +71,7 @@ export const mockedViewFieldsData = [
     size: 170,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -77,6 +83,7 @@ export const mockedViewFieldsData = [
     size: 170,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
 
@@ -90,6 +97,7 @@ export const mockedViewFieldsData = [
     size: 210,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -101,6 +109,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -112,6 +121,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -123,6 +133,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -134,6 +145,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -145,6 +157,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -156,6 +169,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -167,6 +181,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -178,6 +193,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
 
@@ -191,6 +207,7 @@ export const mockedViewFieldsData = [
     size: 180,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -202,6 +219,7 @@ export const mockedViewFieldsData = [
     size: 100,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -213,6 +231,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -224,6 +243,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
   {
@@ -235,6 +255,7 @@ export const mockedViewFieldsData = [
     size: 150,
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
+    deletedAt: null,
     __typename: 'ViewField',
   },
 ];
