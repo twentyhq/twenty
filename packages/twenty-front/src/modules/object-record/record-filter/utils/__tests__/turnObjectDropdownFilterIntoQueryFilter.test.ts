@@ -935,12 +935,12 @@ describe('should work as expected for the different field types', () => {
           and: [
             {
               createdAt: {
-                lte: '2024-09-17T21:59:59.999Z',
+                lte: '2024-09-17T23:59:59.999Z',
               },
             },
             {
               createdAt: {
-                gte: '2024-09-16T22:00:00.000Z',
+                gte: '2024-09-17T00:00:00.000Z',
               },
             },
           ],
@@ -953,6 +953,106 @@ describe('should work as expected for the different field types', () => {
         {
           not: {
             createdAt: {
+              is: 'NULL',
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('number field type', () => {
+    const companyMockEmployeesFieldMetadataId =
+      companyMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'employees',
+      );
+
+    const employeesFilterIsGreaterThan: Filter = {
+      id: 'company-employees-filter-is-greater-than',
+      value: '1000',
+      fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: ViewFilterOperand.GreaterThan,
+      definition: {
+        type: 'NUMBER',
+        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+        label: 'Employees',
+        iconName: 'number',
+      },
+    };
+
+    const employeesFilterIsLessThan: Filter = {
+      id: 'company-employees-filter-is-less-than',
+      value: '1000',
+      fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+      displayValue: '1000',
+      operand: ViewFilterOperand.LessThan,
+      definition: {
+        type: 'NUMBER',
+        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+        label: 'Employees',
+        iconName: 'number',
+      },
+    };
+
+    const employeesFilterIsEmpty: Filter = {
+      id: 'company-employees-filter-is-empty',
+      value: '',
+      fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+      displayValue: '',
+      operand: ViewFilterOperand.IsEmpty,
+      definition: {
+        type: 'NUMBER',
+        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+        label: 'Employees',
+        iconName: 'number',
+      },
+    };
+
+    const employeesFilterIsNotEmpty: Filter = {
+      id: 'company-employees-filter-is-not-empty',
+      value: '',
+      fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+      displayValue: '',
+      operand: ViewFilterOperand.IsNotEmpty,
+      definition: {
+        type: 'NUMBER',
+        fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
+        label: 'Employees',
+        iconName: 'number',
+      },
+    };
+
+    const result = turnObjectDropdownFilterIntoQueryFilter(
+      [
+        employeesFilterIsGreaterThan,
+        employeesFilterIsLessThan,
+        employeesFilterIsEmpty,
+        employeesFilterIsNotEmpty,
+      ],
+      companyMockObjectMetadataItem.fields,
+    );
+
+    expect(result).toEqual({
+      and: [
+        {
+          employees: {
+            gte: 1000,
+          },
+        },
+        {
+          employees: {
+            lte: 1000,
+          },
+        },
+        {
+          employees: {
+            is: 'NULL',
+          },
+        },
+        {
+          not: {
+            employees: {
               is: 'NULL',
             },
           },
