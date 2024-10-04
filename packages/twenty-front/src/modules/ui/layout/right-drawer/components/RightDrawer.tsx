@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   useRecoilCallback,
   useRecoilState,
@@ -18,7 +18,6 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { isDefined } from '~/utils/isDefined';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -28,19 +27,18 @@ import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { RightDrawerRouter } from './RightDrawerRouter';
 
-const StyledContainer = styled(motion.div)`
+const StyledContainer = styled(motion.div)<{ isTabClosed: boolean }>`
   background: ${({ theme }) => theme.background.primary};
-  border-top-left-radius: 8px;
-  border-left: 1px solid #d6d6d6;
-  border-top: 1px solid #d6d6d6;
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  border-top-left-radius: ${({ theme, isTabClosed }) =>
+    isTabClosed ? theme.border.radius.md : '0'};
+  border-left: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border-top: ${({ theme, isTabClosed }) =>
+    isTabClosed ? `1px solid ${theme.border.color.medium}` : 'none'};
+  box-shadow: ${({ theme, isTabClosed }) =>
+    isTabClosed ? theme.boxShadow.light : 'none'};
   height: 100dvh;
   overflow-x: hidden;
   position: fixed;
-  backdrop-filter: blur(40px);
-  box-shadow: 0px 2px 4px 0px #0000000A,
-              0px 0px 4px 0px #00000014;
-
 
   right: 0;
   top: 0;
@@ -92,6 +90,8 @@ export const RightDrawer = () => {
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
     isRightDrawerOpenState,
   );
+
+  const [isTabClosed, setIsTabClosed] = useState(false);
 
   const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
 
@@ -157,12 +157,17 @@ export const RightDrawer = () => {
     setIsRightDrawerAnimationCompleted(isRightDrawerOpen);
   };
 
-  if (!isDefined(rightDrawerPage)) {
-    return <></>;
+  useEffect(() => {
+    setIsTabClosed(isRightDrawerMinimized);
+  }, [isRightDrawerMinimized]);
+
+  if (!rightDrawerPage) {
+    return null;
   }
 
   return (
     <StyledContainer
+      isTabClosed={isTabClosed}
       animate={targetVariantForAnimation}
       variants={animationVariants}
       transition={{
