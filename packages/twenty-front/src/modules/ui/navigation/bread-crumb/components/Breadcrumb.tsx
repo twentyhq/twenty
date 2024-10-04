@@ -49,9 +49,12 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
   if (isMobile && links.length > 0) {
     const currentPage = links[links.length - 1].children;
     const previousLink = links[links.length - 2];
-    const shouldRedirectToApp = PAGES_REDIRECT_TO_APP.includes(
-      currentPage as string,
-    );
+    const shouldRedirectToApp =
+      typeof currentPage === 'string' &&
+      PAGES_REDIRECT_TO_APP.includes(currentPage);
+
+    const text =
+      typeof previousLink.children === 'string' ? previousLink.children : '';
 
     return (
       <StyledWrapper className={className}>
@@ -65,12 +68,12 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
         ) : previousLink?.href ? (
           <Fragment>
             <IconChevronLeft size={theme.icon.size.md} />
-            <StyledLink title="Back to previous" to={previousLink.href}>
+            <StyledLink title={text} to={previousLink.href}>
               Back to {previousLink.children}
             </StyledLink>
           </Fragment>
         ) : (
-          <StyledText title={''}>{previousLink?.children}</StyledText>
+          <StyledText title={text}>{previousLink?.children}</StyledText>
         )}
       </StyledWrapper>
     );
