@@ -5,7 +5,7 @@ import { MutableSnapshot, RecoilRoot } from 'recoil';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
-export const getJestHookWrapper = ({
+export const getJestMetadataAndApolloMocksWrapper = ({
   apolloMocks,
   onInitializeRecoilSnapshot,
 }: {

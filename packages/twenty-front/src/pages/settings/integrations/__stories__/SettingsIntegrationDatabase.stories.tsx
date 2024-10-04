@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
@@ -33,6 +34,6 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     sleep(1000);
 
-    await canvas.findByText('PostgreSQL database');
+    expect(await canvas.findByText('PostgreSQL database')).toBeInTheDocument();
   },
 };
