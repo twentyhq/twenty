@@ -664,7 +664,7 @@ export class WorkspaceRepository<
     return formatData(data, objectMetadata) as T;
   }
 
-  private async formatResult<T>(
+  async formatResult<T>(
     data: T,
     objectMetadata?: ObjectMetadataMapItem,
   ): Promise<T> {

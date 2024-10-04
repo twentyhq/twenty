@@ -1,8 +1,7 @@
 import { gql } from '@apollo/client';
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { act, renderHook, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
+import { MockedResponse } from '@apollo/client/testing';
+import { renderHook, waitFor } from '@testing-library/react';
+import { ReactNode, act } from 'react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -13,6 +12,8 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const recordId = 'recordId';
 
@@ -26,13 +27,42 @@ const mocks: MockedResponse[] = [
         ) {
           updateCompany(id: $idToUpdate, data: $input) {
             __typename
-            updatedAt
-            domainName {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
+            accountOwner {
+              __typename
+              avatarUrl
+              colorScheme
+              createdAt
+              dateFormat
+              deletedAt
+              id
+              locale
+              name {
+                firstName
+                lastName
+              }
+              timeFormat
+              timeZone
+              updatedAt
+              userEmail
+              userId
             }
-            visaSponsorship
+            accountOwnerId
+            activityTargets {
+              edges {
+                node {
+                  __typename
+                  activityId
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  opportunityId
+                  personId
+                  rocketId
+                  updatedAt
+                }
+              }
+            }
             address {
               addressStreet1
               addressStreet2
@@ -43,20 +73,31 @@ const mocks: MockedResponse[] = [
               addressLat
               addressLng
             }
-            position
-            employees
-            deletedAt
-            accountOwnerId
             annualRecurringRevenue {
               amountMicros
               currencyCode
             }
-            id
-            name
-            xLink {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
+            attachments {
+              edges {
+                node {
+                  __typename
+                  activityId
+                  authorId
+                  companyId
+                  createdAt
+                  deletedAt
+                  fullPath
+                  id
+                  name
+                  noteId
+                  opportunityId
+                  personId
+                  rocketId
+                  taskId
+                  type
+                  updatedAt
+                }
+              }
             }
             createdAt
             createdBy {
@@ -64,7 +105,36 @@ const mocks: MockedResponse[] = [
               workspaceMemberId
               name
             }
-            workPolicy
+            deletedAt
+            domainName {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            employees
+            favorites {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  noteId
+                  opportunityId
+                  personId
+                  position
+                  rocketId
+                  taskId
+                  updatedAt
+                  viewId
+                  workflowId
+                  workspaceMemberId
+                }
+              }
+            }
+            id
+            idealCustomerProfile
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -75,8 +145,151 @@ const mocks: MockedResponse[] = [
               primaryLinkLabel
               secondaryLinks
             }
+            name
+            noteTargets {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  noteId
+                  opportunityId
+                  personId
+                  rocketId
+                  updatedAt
+                }
+              }
+            }
+            opportunities {
+              edges {
+                node {
+                  __typename
+                  amount {
+                    amountMicros
+                    currencyCode
+                  }
+                  closeDate
+                  companyId
+                  createdAt
+                  createdBy {
+                    source
+                    workspaceMemberId
+                    name
+                  }
+                  deletedAt
+                  id
+                  name
+                  pointOfContactId
+                  position
+                  stage
+                  updatedAt
+                }
+              }
+            }
+            people {
+              edges {
+                node {
+                  __typename
+                  avatarUrl
+                  city
+                  companyId
+                  createdAt
+                  createdBy {
+                    source
+                    workspaceMemberId
+                    name
+                  }
+                  deletedAt
+                  emails {
+                    primaryEmail
+                    additionalEmails
+                  }
+                  id
+                  intro
+                  jobTitle
+                  linkedinLink {
+                    primaryLinkUrl
+                    primaryLinkLabel
+                    secondaryLinks
+                  }
+                  name {
+                    firstName
+                    lastName
+                  }
+                  performanceRating
+                  phones {
+                    primaryPhoneNumber
+                    primaryPhoneCountryCode
+                    additionalPhones
+                  }
+                  position
+                  updatedAt
+                  whatsapp {
+                    primaryPhoneNumber
+                    primaryPhoneCountryCode
+                    additionalPhones
+                  }
+                  workPreference
+                  xLink {
+                    primaryLinkUrl
+                    primaryLinkLabel
+                    secondaryLinks
+                  }
+                }
+              }
+            }
+            position
             tagline
-            idealCustomerProfile
+            taskTargets {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  id
+                  opportunityId
+                  personId
+                  rocketId
+                  taskId
+                  updatedAt
+                }
+              }
+            }
+            timelineActivities {
+              edges {
+                node {
+                  __typename
+                  companyId
+                  createdAt
+                  deletedAt
+                  happensAt
+                  id
+                  linkedObjectMetadataId
+                  linkedRecordCachedName
+                  linkedRecordId
+                  name
+                  noteId
+                  opportunityId
+                  personId
+                  properties
+                  rocketId
+                  taskId
+                  updatedAt
+                  workspaceMemberId
+                }
+              }
+            }
+            updatedAt
+            visaSponsorship
+            workPolicy
+            xLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
           }
         }
       `,
@@ -87,8 +300,12 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        updateWorkspaceMember: {
-          id: 'recordId',
+        updateCompany: {
+          ...generateEmptyJestRecordNode({
+            objectNameSingular: CoreObjectNameSingular.Company,
+            input: { id: recordId },
+            withDepthOneRelation: true,
+          }),
         },
       },
     })),
@@ -111,8 +328,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     return [updateEntity, { loading: false }];
   };
 
+  const JestMetadataAndApolloMocksWrapper =
+    getJestMetadataAndApolloMocksWrapper({
+      apolloMocks: mocks,
+    });
+
   return (
-    <MockedProvider mocks={mocks} addTypename={false}>
+    <JestMetadataAndApolloMocksWrapper>
       <FieldContext.Provider
         value={{
           fieldDefinition: booleanFieldDefinition,
@@ -122,9 +344,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
           useUpdateRecord: useUpdateOneRecordMutation,
         }}
       >
-        <RecoilRoot>{children}</RecoilRoot>
+        {children}
       </FieldContext.Provider>
-    </MockedProvider>
+    </JestMetadataAndApolloMocksWrapper>
   );
 };
 

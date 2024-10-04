@@ -141,10 +141,6 @@ const StyledRecordInlineCellPlaceholder = styled.div`
   height: 24px;
 `;
 
-const StyledRecordInlineCell = styled(RecordInlineCell)`
-  height: 24px;
-`;
-
 export const RecordBoardCard = ({
   isCreating = false,
   onCreateSuccess,
@@ -342,13 +338,14 @@ export const RecordBoardCard = ({
                         metadata: fieldDefinition.metadata,
                         type: fieldDefinition.type,
                       }),
+                      settings: fieldDefinition.settings,
                     },
                     useUpdateRecord: useUpdateOneRecordHook,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
                   {inView ? (
-                    <StyledRecordInlineCell />
+                    <RecordInlineCell />
                   ) : (
                     <StyledRecordInlineCellPlaceholder />
                   )}

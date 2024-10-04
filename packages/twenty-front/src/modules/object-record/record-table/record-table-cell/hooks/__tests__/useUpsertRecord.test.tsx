@@ -10,7 +10,7 @@ import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fiel
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const draftValue = 'updated Name';
 
