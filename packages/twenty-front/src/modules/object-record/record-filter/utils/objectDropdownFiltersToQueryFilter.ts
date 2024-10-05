@@ -10,7 +10,6 @@ import {
   RecordGqlOperationFilter,
   RelationFilter,
   StringFilter,
-  URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
@@ -49,8 +48,6 @@ const getEmptyFilter = (
 
   switch (filterType) {
     case 'TEXT':
-    case 'EMAIL':
-    case 'PHONE':
       emptyRecordFilter = {
         or: [
           { [correspondingField.name]: { ilike: '' } as StringFilter },
@@ -95,16 +92,6 @@ const getEmptyFilter = (
       };
       break;
     }
-    case 'LINK':
-      emptyRecordFilter = {
-        or: [
-          { [correspondingField.name]: { url: { ilike: '' } } as URLFilter },
-          {
-            [correspondingField.name]: { url: { is: 'NULL' } } as URLFilter,
-          },
-        ],
-      };
-      break;
     case 'LINKS': {
       const linksFilters = generateILikeFiltersForCompositeFields(
         '',
@@ -305,8 +292,6 @@ export const objectDropdownFilterToQueryFilter = (
   }
 
   switch (rawUIFilter.definition.type) {
-    case 'EMAIL':
-    case 'PHONE':
     case 'TEXT':
       switch (rawUIFilter.operand) {
         case ViewFilterOperand.Contains:
@@ -579,38 +564,6 @@ export const objectDropdownFilterToQueryFilter = (
             [correspondingField.name]: {
               amountMicros: { lte: parseFloat(rawUIFilter.value) * 1000000 },
             } as CurrencyFilter,
-          };
-        case ViewFilterOperand.IsEmpty:
-        case ViewFilterOperand.IsNotEmpty:
-          return getEmptyFilter(
-            rawUIFilter.operand,
-            correspondingField,
-            rawUIFilter.definition.type,
-          );
-        default:
-          throw new Error(
-            `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-          );
-      }
-    case 'LINK':
-      switch (rawUIFilter.operand) {
-        case ViewFilterOperand.Contains:
-          return {
-            [correspondingField.name]: {
-              url: {
-                ilike: `%${rawUIFilter.value}%`,
-              },
-            } as URLFilter,
-          };
-        case ViewFilterOperand.DoesNotContain:
-          return {
-            not: {
-              [correspondingField.name]: {
-                url: {
-                  ilike: `%${rawUIFilter.value}%`,
-                },
-              } as URLFilter,
-            },
           };
         case ViewFilterOperand.IsEmpty:
         case ViewFilterOperand.IsNotEmpty:
@@ -980,15 +933,6 @@ export const objectDropdownFilterToQueryFilter = (
             `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
           );
       }
-    }
-    case 'ADVANCED': {
-      throw new Error('Advanced filter not implemented');
-
-      /* const value = resolveFilterValue(rawUIFilter);
-        if (!value) {
-          console.log('Advanced filter value is null');
-          break;
-        } */
     }
     default:
       throw new Error('Unknown filter type');
