@@ -1,0 +1,72 @@
+{
+  "folders": [ { "name": "ROOT", "path": "/ },  { "name": 
+"packages/twenty-chrome-extension","path":
+"/packages/twenty-chrome-extension"},
+    { "name": "packages/twenty-docker",
+      "path": "/packages/twenty-docker"},
+    { "name": "packages/twenty-front", 
+"path": "/packages/twenty-front" },
+{ "name": "packages/twenty-ui","path":
+"/packages/twenty-ui" },
+{"name":"packages/twenty-emails",
+      "path": 
+"/packages/twenty-emails"},
+    { "name": "packages/twenty-postgres",
+      "path":
+"/packages/twenty-postgres"},
+    { "name": 
+"packages/twenty-server",
+      "path":
+"/packages/twenty-server"},
+    { "name": 
+"packages/twenty-utils",
+  "path":
+"/packages/twenty-utils"},  
+{"name":
+"packages/twenty-zapier",
+      "path": 
+" /packages/twenty-zapier"},{ "name": 
+"tools/eslint-rules",   
+"path": "/" tools/eslint-rules"}],
+"settings": {  "editor.formatOnSave": 
+false,"files.eol": "auto" 
+"[typescript]": 
+{"editor.formatOnSave":
+false,"editor.codeActions
+OnSave":{"source.fixAll.eslint": 
+"explicit","source.addMissing Imports": "always
+}},"[javascript]": {"editor.formatOnSave":
+false,"editor.code
+ActionsOnSave": 
+{"source.fixAll.eslint": "explicit",    
+"source.add
+MissingImports": 
+"always"}},"[typescriptreact]": {"editor.format
+OnSave": false, "editor.code
+ActionsOnSave": {"source.fixAll.eslint":
+"explicit","source.add
+MissingImports": 
+"always" }}, 
+"[json]": { "editor.formatOnSave": true }, 
+"javascript.format.enable": 
+false,"typescript.format.enable": 
+false, "cSpell.enable
+Filetypes": 
+["!javascript","!json","!typescript",    
+"!typescriptreact","md","mdx" ],
+"cSpell.words": [ "twentyhq" ],
+"typescript.preferences.import
+ModuleSpecifier":
+"non-relative","[javascript]
+[typescript]
+[typescriptreact]":
+{ "editor.codeActionsOnSave": 
+{"source.fixAll.eslint":
+"explicit","source.add
+MissingImports":" "}
+}, "search.exclude": {"**/.yarn": },  "files.exclude": { "packages/":},
+"jest.Mode": 
+ "on-demand","jest.disabled
+ Folders":[ROOT","packages/twenty-zapier","packages/twenty-docker","packages/twenty-utils                 
+   "packages/twenty-postgres" ]}
+              }
