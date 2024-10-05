@@ -59,82 +59,25 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   CurrencyCode,
   { label: string; Icon: IconComponent }
 > = {
-  USD: {
-    label: 'United States dollar',
-    Icon: IconCurrencyDollar,
-  },
-  EUR: {
-    label: 'Euro',
-    Icon: IconCurrencyEuro,
-  },
-  JPY: {
-    label: 'Japanese yen',
-    Icon: IconCurrencyYen,
-  },
-  GBP: {
-    label: 'British pound',
-    Icon: IconCurrencyPound,
-  },
-  CAD: {
-    label: 'Canadian dollar',
-    Icon: IconCurrencyDollarCanadian,
-  },
-  CHF: {
-    label: 'Swiss franc',
-    Icon: IconCurrencyFrank,
-  },
-  CNY: {
-    label: 'Chinese yuan',
-    Icon: IconCurrencyYuan,
-  },
-  CZK: {
-    label: 'Czech koruna',
-    Icon: IconCurrencyKroneCzech,
-  },
-  HKD: {
-    label: 'Hong Kong dollar',
-    Icon: IconCurrencyRenminbi,
-  },
-  NOK: {
-    label: 'Norwegian krone',
-    Icon: IconCurrencyKroneSwedish,
-  },
-  SEK: {
-    label: 'Swedish krona',
-    Icon: IconCurrencyKroneSwedish,
-  },
-  THB: {
-    label: 'Thai Baht',
-    Icon: IconCurrencyBaht,
-  },
-  MAD: {
-    label: 'Moroccan dirham',
-    Icon: IconCurrencyDirham,
-  },
-  QAR: {
-    label: 'Qatari riyal',
-    Icon: IconCurrencyRiyal,
-  },
-  AED: {
-    label: 'UAE dirham',
-    Icon: IconCurrencyDirham,
-  },
-  KRW: {
-    label: 'South Korean won',
-    Icon: IconCurrencyWon,
-  },
-  BRL: {
-    label: 'Brazilian real',
-    Icon: IconCurrencyReal,
-  },
-  AUD: {
-    label: 'Australian dollar',
-    Icon: IconCurrencyDollarAustralian,
-  },
-  DZD: {
-    label: 'Algerian Dinar',
-    Icon: IconCoins,
-  },
+  USD: { label: 'United States dollar', Icon: IconCurrencyDollar },
+  EUR: { label: 'Euro', Icon: IconCurrencyEuro },
+  JPY: { label: 'Japanese yen', Icon: IconCurrencyYen },
+  GBP: { label: 'British pound', Icon: IconCurrencyPound },
+  CAD: { label: 'Canadian dollar', Icon: IconCurrencyDollarCanadian },
+  CHF: { label: 'Swiss franc', Icon: IconCurrencyFrank },
+  CNY: { label: 'Chinese yuan', Icon: IconCurrencyYuan },
+  CZK: { label: 'Czech koruna', Icon: IconCurrencyKroneCzech },
+  HKD: { label: 'Hong Kong dollar', Icon: IconCurrencyRenminbi },
+  NOK: { label: 'Norwegian krone', Icon: IconCurrencyKroneSwedish },
+  SEK: { label: 'Swedish krona', Icon: IconCurrencyKroneSwedish },
+  THB: { label: 'Thai Baht', Icon: IconCurrencyBaht },
+  MAD: { label: 'Moroccan dirham', Icon: IconCurrencyDirham },
+  QAR: { label: 'Qatari riyal', Icon: IconCurrencyRiyal },
+  AED: { label: 'UAE dirham', Icon: IconCurrencyDirham },
+  KRW: { label: 'South Korean won', Icon: IconCurrencyWon },
+  BRL: { label: 'Brazilian real', Icon: IconCurrencyReal },
+  AUD: { label: 'Australian dollar', Icon: IconCurrencyDollarAustralian },
+  DZD: { label: 'Algerian Dinar', Icon: IconCoins },
   PLN: { label: 'Polish złoty', Icon: IconCurrencyZloty },
   VND: { label: 'Vietnamese đồng', Icon: IconCurrencyDong },
   RUB: { label: 'Russian ruble', Icon: IconCurrencyRubel },
