@@ -88,6 +88,11 @@ const StyledScrollableTextContainer = styled.div`
   white-space: nowrap;
 `;
 
+const StyledTextContainer = styled.div`
+  position: absolute;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
 const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
 `;
@@ -218,10 +223,12 @@ export const SettingsWorkspaceMembers = () => {
                     />
                   </TableCell>
                   <TableCell align={'center'}>
-                    <StyledText
-                      text={workspaceMember.userEmail}
-                      color={theme.font.color.secondary}
-                    />
+                    <StyledTextContainer>
+                      <StyledText
+                        text={workspaceMember.userEmail}
+                        color={theme.font.color.secondary}
+                      />
+                    </StyledTextContainer>
                   </TableCell>
                   <TableCell align={'right'}>
                     {currentWorkspaceMember?.id !== workspaceMember.id && (
