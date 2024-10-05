@@ -12,6 +12,7 @@ import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/r
 import { RecordBoardColumnNewButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewButton';
 import { RecordBoardColumnNewOpportunityButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunityButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 
@@ -64,6 +65,8 @@ export const RecordBoardColumnCardsContainer = ({
   const numberOfFields = visibleFieldDefinitions.length;
 
   const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
+  const { isOpportunitiesCompanyFieldDisabled } =
+    useIsOpportunitiesCompanyFieldDisabled();
 
   return (
     <StyledColumnCardsContainer
@@ -107,8 +110,11 @@ export const RecordBoardColumnCardsContainer = ({
           >
             <StyledNewButtonContainer>
               {objectMetadataItem.nameSingular ===
-              CoreObjectNameSingular.Opportunity ? (
-                <RecordBoardColumnNewOpportunityButton />
+                CoreObjectNameSingular.Opportunity &&
+              !isOpportunitiesCompanyFieldDisabled ? (
+                <RecordBoardColumnNewOpportunityButton
+                  columnId={columnDefinition.id}
+                />
               ) : (
                 <RecordBoardColumnNewButton columnId={columnDefinition.id} />
               )}

@@ -1,4 +1,4 @@
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { gql } from '@apollo/client';
 import { getPeopleMock } from '~/testing/mock-data/people';
 
@@ -9,7 +9,7 @@ export const query = gql`
     personDuplicates(ids: $ids) {
       edges {
         node {
-          ${PERSON_FRAGMENT}
+          ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
         }
         cursor
       }

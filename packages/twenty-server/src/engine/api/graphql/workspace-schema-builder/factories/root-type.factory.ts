@@ -74,9 +74,7 @@ export class RootTypeFactory {
         const args = getResolverArgs(methodName);
         const objectType = this.typeDefinitionsStorage.getObjectTypeByKey(
           objectMetadata.id,
-          ['findMany', 'findDuplicates'].includes(methodName)
-            ? ObjectTypeDefinitionKind.Connection
-            : ObjectTypeDefinitionKind.Plain,
+          this.getObjectTypeDefinitionKindByMethodName(methodName),
         );
         const argsType = this.argsFactory.create(
           {
@@ -123,5 +121,18 @@ export class RootTypeFactory {
     }
 
     return fieldConfigMap;
+  }
+
+  private getObjectTypeDefinitionKindByMethodName(
+    methodName: WorkspaceResolverBuilderMethodNames,
+  ): ObjectTypeDefinitionKind {
+    switch (methodName) {
+      case 'findMany':
+      case 'findDuplicates':
+      case 'search':
+        return ObjectTypeDefinitionKind.Connection;
+      default:
+        return ObjectTypeDefinitionKind.Plain;
+    }
   }
 }

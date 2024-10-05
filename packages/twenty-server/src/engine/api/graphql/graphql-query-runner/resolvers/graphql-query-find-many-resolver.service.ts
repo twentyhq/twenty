@@ -1,6 +1,9 @@
+import { Injectable } from '@nestjs/common';
+
 import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
 
+import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
   Record as IRecord,
   OrderByDirection,
@@ -17,26 +20,25 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
 import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
-import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
 import {
-  ObjectMetadataMapItem,
-  generateObjectMetadataMap,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+  getCursor,
+  getPaginationInfo,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
-export class GraphqlQueryFindManyResolverService {
-  private twentyORMGlobalManager: TwentyORMGlobalManager;
+@Injectable()
+export class GraphqlQueryFindManyResolverService
+  implements ResolverService<FindManyResolverArgs, IConnection<IRecord>>
+{
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
-  constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
-    this.twentyORMGlobalManager = twentyORMGlobalManager;
-  }
-
-  async findMany<
+  async resolve<
     ObjectRecord extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
     OrderBy extends RecordOrderBy = RecordOrderBy,
@@ -44,10 +46,8 @@ export class GraphqlQueryFindManyResolverService {
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<ObjectRecord>> {
-    const { authContext, objectMetadataItem, info, objectMetadataCollection } =
+    const { authContext, objectMetadataMapItem, info, objectMetadataMap } =
       options;
-
-    this.validateArgsOrThrow(args);
 
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
@@ -55,40 +55,32 @@ export class GraphqlQueryFindManyResolverService {
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const countQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
-    const objectMetadataMap = generateObjectMetadataMap(
-      objectMetadataCollection,
-    );
-
-    const objectMetadata = getObjectMetadataOrThrow(
-      objectMetadataMap,
-      objectMetadataItem.nameSingular,
-    );
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadata.fields,
+      objectMetadataMapItem.fields,
       objectMetadataMap,
     );
 
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       args.filter ?? ({} as Filter),
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
+      objectMetadataMapItem,
       selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
@@ -105,7 +97,7 @@ export class GraphqlQueryFindManyResolverService {
       ? await withDeletedCountQueryBuilder.getCount()
       : 0;
 
-    const cursor = this.getCursor(args);
+    const cursor = getCursor(args);
 
     let appliedFilters = args.filter ?? ({} as Filter);
 
@@ -118,7 +110,7 @@ export class GraphqlQueryFindManyResolverService {
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
-        objectMetadata.fields,
+        objectMetadataMapItem.fields,
         isForwardPagination,
       );
 
@@ -131,14 +123,14 @@ export class GraphqlQueryFindManyResolverService {
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       appliedFilters,
     );
 
     const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       withFilterQueryBuilder,
       orderByWithIdCondition,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       isForwardPagination,
     );
 
@@ -153,11 +145,11 @@ export class GraphqlQueryFindManyResolverService {
 
     const objectRecords = formatResult(
       nonFormattedObjectRecords,
-      objectMetadata,
+      objectMetadataMapItem,
       objectMetadataMap,
     );
 
-    const { hasNextPage, hasPreviousPage } = this.getPaginationInfo(
+    const { hasNextPage, hasPreviousPage } = getPaginationInfo(
       objectRecords,
       limit,
       isForwardPagination,
@@ -167,14 +159,12 @@ export class GraphqlQueryFindManyResolverService {
       objectRecords.pop();
     }
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper(
-      this.twentyORMGlobalManager,
-    );
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     if (relations) {
       await processNestedRelationsHelper.processNestedRelations(
         objectMetadataMap,
-        objectMetadata,
+        objectMetadataMapItem,
         objectRecords,
         relations,
         limit,
@@ -184,20 +174,25 @@ export class GraphqlQueryFindManyResolverService {
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
-    return typeORMObjectRecordsParser.createConnection(
+    const result = typeORMObjectRecordsParser.createConnection(
       objectRecords,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       limit,
       totalCount,
       orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
     );
+
+    return result;
   }
 
-  private validateArgsOrThrow(args: FindManyResolverArgs<any, any>) {
+  async validate<Filter extends RecordFilter>(
+    args: FindManyResolverArgs<Filter>,
+    _options: WorkspaceQueryRunnerOptions,
+  ): Promise<void> {
     if (args.first && args.last) {
       throw new GraphqlQueryRunnerException(
         'Cannot provide both first and last',
@@ -234,50 +229,5 @@ export class GraphqlQueryFindManyResolverService {
         GraphqlQueryRunnerExceptionCode.INVALID_ARGS_LAST,
       );
     }
-  }
-
-  private getCursor(
-    args: FindManyResolverArgs<any, any>,
-  ): Record<string, any> | undefined {
-    if (args.after) return decodeCursor(args.after);
-    if (args.before) return decodeCursor(args.before);
-
-    return undefined;
-  }
-
-  private addOrderByColumnsToSelect(
-    order: Record<string, any>,
-    select: Record<string, boolean>,
-  ) {
-    for (const column of Object.keys(order || {})) {
-      if (!select[column]) {
-        select[column] = true;
-      }
-    }
-  }
-
-  private addForeingKeyColumnsToSelect(
-    relations: Record<string, any>,
-    select: Record<string, boolean>,
-    objectMetadata: ObjectMetadataMapItem,
-  ) {
-    for (const column of Object.keys(relations || {})) {
-      if (!select[`${column}Id`] && objectMetadata.fields[`${column}Id`]) {
-        select[`${column}Id`] = true;
-      }
-    }
-  }
-
-  private getPaginationInfo(
-    objectRecords: any[],
-    limit: number,
-    isForwardPagination: boolean,
-  ) {
-    const hasMoreRecords = objectRecords.length > limit;
-
-    return {
-      hasNextPage: isForwardPagination && hasMoreRecords,
-      hasPreviousPage: !isForwardPagination && hasMoreRecords,
-    };
   }
 }

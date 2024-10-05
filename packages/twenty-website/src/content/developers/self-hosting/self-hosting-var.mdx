@@ -41,7 +41,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
     ['PORT', '3000', 'Port'],
-    ['CACHE_STORAGE_TYPE', 'memory', 'Cache type (memory, redis...)'],
+    ['CACHE_STORAGE_TYPE', 'redis', 'Cache type (memory, redis...)'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>
 
@@ -162,7 +162,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Message Queue
 
 <ArticleTable options={[
-    ['MESSAGE_QUEUE_TYPE', 'pg-boss', "Queue driver: 'pg-boss' or 'bull-mq'"],
+    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'pg-boss' or 'bull-mq'"],
     ]}></ArticleTable>
 
 ### Logging

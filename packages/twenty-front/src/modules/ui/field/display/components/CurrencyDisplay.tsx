@@ -29,7 +29,10 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
     ? SETTINGS_FIELD_CURRENCY_CODES[currencyValue?.currencyCode]?.Icon
     : null;
 
-  const amountToDisplay = (currencyValue?.amountMicros ?? 0) / 1000000;
+  const amountToDisplay =
+    currencyValue?.amountMicros != null
+      ? currencyValue?.amountMicros / 1000000
+      : null;
 
   if (!shouldDisplayCurrency) {
     return <StyledEllipsisDisplay>{0}</StyledEllipsisDisplay>;
@@ -46,7 +49,7 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
           />{' '}
         </>
       )}
-      {amountToDisplay !== 0 ? formatAmount(amountToDisplay) : ''}
+      {amountToDisplay !== null ? formatAmount(amountToDisplay) : ''}
     </StyledEllipsisDisplay>
   );
 };
