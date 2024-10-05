@@ -1,5 +1,5 @@
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('getObjectSlug', () => {
   it('should work as expected', () => {

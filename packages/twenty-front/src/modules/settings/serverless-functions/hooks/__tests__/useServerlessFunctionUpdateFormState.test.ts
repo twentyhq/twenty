@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 jest.mock(
@@ -44,6 +44,6 @@ describe('useServerlessFunctionUpdateFormState', () => {
 
     const { formValues } = result.current;
 
-    expect(formValues).toEqual({ name: '', description: '', code: '' });
+    expect(formValues).toEqual({ name: '', description: '', code: undefined });
   });
 });
