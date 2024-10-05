@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ColorSample,
   IconCheck,
@@ -69,6 +69,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   option,
   focused,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
+  const [hasFocused, setHasFocused] = useState(false);
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
@@ -87,6 +88,17 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   const handleInputEnter = () => {
     onInputEnter?.();
   };
+
+  const handleInputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      if (Boolean(node) && !hasFocused && Boolean(focused)) {
+        node?.focus();
+        node?.select();
+        setHasFocused(true);
+      }
+    },
+    [hasFocused, focused],
+  );
 
   return (
     <StyledRow className={className}>
@@ -121,6 +133,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
+        ref={handleInputRef}
         value={option.label}
         onChange={(label) =>
           onChange({
