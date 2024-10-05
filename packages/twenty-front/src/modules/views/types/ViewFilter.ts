@@ -12,5 +12,6 @@ export type ViewFilter = {
   createdAt?: string;
   updatedAt?: string;
   viewId?: string;
+  viewFilterGroupId?: string;
   definition?: FilterDefinition;
 };

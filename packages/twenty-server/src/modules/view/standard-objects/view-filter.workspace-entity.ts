@@ -72,4 +72,13 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('view')
   viewId: string | null;
+
+  @WorkspaceField({
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.viewFilterGroupId,
+    type: FieldMetadataType.UUID,
+    label: 'View Filter Group Id',
+    description: 'View Filter Group',
+  })
+  @WorkspaceIsNullable()
+  viewFilterGroupId: string | null;
 }
