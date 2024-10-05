@@ -62,15 +62,12 @@ const StyledTableRow = styled(TableRow)`
 `;
 const StyledTableCell = styled(TableCell)`
   padding: ${({ theme }) => theme.spacing(1)};
-  text-align: left;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     &:first-child {
       max-width: 100%;
       white-space: nowrap;
       overflow: scroll;
-      text-overflow: ellipsis;
       scroll-behavior: smooth;
-      scroll-snap-align: start;
     }
   }
 `;
