@@ -3,10 +3,12 @@ import { ReactNode, useMemo } from 'react';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { isDraftingAdvancedFilterComponentState } from '@/object-record/object-filter-dropdown/states/isDraftingAdvancedFilterComponentState';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
@@ -112,6 +114,10 @@ export const ViewBarDetails = ({
     isViewBarExpandedComponentState,
   );
 
+  const isDraftingAdvancedFilter = useRecoilComponentValueV2(
+    isDraftingAdvancedFilterComponentState,
+  );
+
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
   const canPersistView = useRecoilComponentFamilyValueV2(
@@ -163,7 +169,8 @@ export const ViewBarDetails = ({
     canPersistView ||
     ((currentViewWithCombinedFiltersAndSorts?.viewSorts?.length ||
       currentViewWithCombinedFiltersAndSorts?.viewFilters?.length) &&
-      isViewBarExpanded);
+      isViewBarExpanded) ||
+    isDraftingAdvancedFilter;
 
   if (!shouldExpandViewBar) {
     return null;
@@ -202,6 +209,7 @@ export const ViewBarDetails = ({
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
+          <AdvancedFilterDropdownButton />
           {mapViewFiltersToFilters(
             defaultViewFilters,
             availableFilterDefinitions,

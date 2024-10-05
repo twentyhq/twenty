@@ -126,6 +126,7 @@ export {
   IconFileZip,
   IconFilter,
   IconFilterOff,
+  IconFilterCog,
   IconFocusCentered,
   IconForbid,
   IconFunction,

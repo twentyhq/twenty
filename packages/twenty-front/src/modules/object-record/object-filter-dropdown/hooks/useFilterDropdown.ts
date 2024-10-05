@@ -4,6 +4,8 @@ import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
+import { isDraftingAdvancedFilterComponentState } from '@/object-record/object-filter-dropdown/states/isDraftingAdvancedFilterComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ObjectFilterDropdownScopeInternalContext } from '../scopes/scope-internal-context/ObjectFilterDropdownScopeInternalContext';
 import { Filter } from '../types/Filter';
 
@@ -27,6 +29,7 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
+    isDraftingAdvancedFilterState,
   } = useFilterDropdownStates(scopeId);
 
   const selectFilter = useRecoilCallback(
@@ -95,6 +98,9 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     isObjectFilterDropdownUnfoldedState,
   );
   const setOnFilterSelect = useSetRecoilState(onFilterSelectState);
+  const setIsDraftingAdvancedFilter = useSetRecoilComponentStateV2(
+    isDraftingAdvancedFilterComponentState,
+  );
 
   return {
     scopeId,
@@ -110,6 +116,7 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setIsObjectFilterDropdownOperandSelectUnfolded,
     setIsObjectFilterDropdownUnfolded,
     setOnFilterSelect,
+    setIsDraftingAdvancedFilter,
     emptyFilterButKeepDefinition,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,

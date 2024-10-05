@@ -1,3 +1,4 @@
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import styled from '@emotion/styled';
@@ -25,15 +26,15 @@ export const StyledPill = styled(Pill)`
 export const AdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
-  // const { setAdvancedFilterOpen } = useFilterDropdown();
+  const { setIsDraftingAdvancedFilter } = useFilterDropdown();
 
-  const editAdvancedFilter = () => {
-    // TODO: Open advanced filter dropdown
+  const handleClick = () => {
+    setIsDraftingAdvancedFilter(true);
   };
 
   return (
     <StyledContainer>
-      <StyledMenuItemSelect onClick={editAdvancedFilter}>
+      <StyledMenuItemSelect onClick={handleClick}>
         <MenuItemLeftContent LeftIcon={IconFilter} text="Advanced filter" />
         {advancedFilterQuerySubFilterCount > 0 && (
           <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
