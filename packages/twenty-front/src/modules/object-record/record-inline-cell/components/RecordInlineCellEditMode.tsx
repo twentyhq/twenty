@@ -11,7 +11,7 @@ const StyledInlineCellEditModeContainer = styled.div`
   display: flex;
   height: 24px;
 
-  margin-left: -${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledInlineCellInput = styled.div`
