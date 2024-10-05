@@ -4,8 +4,8 @@ import { ReactElement, useContext } from 'react';
 import {
   AppTooltip,
   IconComponent,
-  TooltipDelay,
   OverflowingTextWithTooltip,
+  TooltipDelay,
 } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -42,6 +42,7 @@ const StyledValueContainer = styled.div`
   display: flex;
   flex-grow: 1;
   min-width: 0;
+  position: relative;
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -81,7 +82,6 @@ export type RecordInlineCellContainerProps = {
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
-  isCentered?: boolean;
 };
 
 export const RecordInlineCellContainer = () => {
