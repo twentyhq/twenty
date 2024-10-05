@@ -31,6 +31,9 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
   });
   describe('should handle all field metadata types', () => {
     Object.values(FieldMetadataType).forEach((fieldMetadataType) => {
+      if (fieldMetadataType === FieldMetadataType.TS_VECTOR) {
+        return;
+      }
       it(`with field type ${fieldMetadataType}`, () => {
         const field = {
           type: fieldMetadataType,

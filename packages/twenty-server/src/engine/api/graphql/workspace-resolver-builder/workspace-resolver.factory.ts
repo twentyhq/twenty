@@ -11,6 +11,7 @@ import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-res
 import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
 import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
@@ -49,6 +50,7 @@ export class WorkspaceResolverFactory {
   async create(
     authContext: AuthContext,
     objectMetadataCollection: ObjectMetadataInterface[],
+    objectMetadataMap: ObjectMetadataMap,
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
   ): Promise<IResolvers> {
     const factories = new Map<
@@ -94,7 +96,9 @@ export class WorkspaceResolverFactory {
           authContext,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
-          objectMetadataCollection: objectMetadataCollection,
+          objectMetadataCollection,
+          objectMetadataMap,
+          objectMetadataMapItem: objectMetadataMap[objectMetadata.nameSingular],
         });
       }
 
@@ -117,7 +121,9 @@ export class WorkspaceResolverFactory {
           authContext,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
-          objectMetadataCollection: objectMetadataCollection,
+          objectMetadataCollection,
+          objectMetadataMap,
+          objectMetadataMapItem: objectMetadataMap[objectMetadata.nameSingular],
         });
       }
     }

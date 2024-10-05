@@ -20,7 +20,7 @@ import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspac
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isPlainObject } from 'src/utils/is-plain-object';
 
-export class ObjectRecordsToGraphqlConnectionMapper {
+export class ObjectRecordsToGraphqlConnectionHelper {
   private objectMetadataMap: ObjectMetadataMap;
 
   constructor(objectMetadataMap: ObjectMetadataMap) {

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   Resolver,
@@ -25,13 +26,17 @@ export class SearchResolverFactory
 
     return async (_source, args, _context, info) => {
       try {
-        return await this.graphqlQueryRunnerService.search(args, {
+        const options: WorkspaceQueryRunnerOptions = {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,
-        });
+          objectMetadataMap: internalContext.objectMetadataMap,
+          objectMetadataMapItem: internalContext.objectMetadataMapItem,
+        };
+
+        return await this.graphqlQueryRunnerService.search(args, options);
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error);
       }

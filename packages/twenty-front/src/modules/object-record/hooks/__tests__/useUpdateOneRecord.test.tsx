@@ -1,7 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import {
   query,
@@ -9,6 +6,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useUpdateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const person = { id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9' };
 const update = {
@@ -37,13 +35,9 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 const idToUpdate = '36abbb63-34ed-4a16-89f5-f549ac55d0f9';
 

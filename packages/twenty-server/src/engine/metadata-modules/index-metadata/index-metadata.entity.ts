@@ -60,8 +60,8 @@ export class IndexMetadataEntity {
   @Column({
     type: 'enum',
     enum: IndexType,
-    nullable: true,
     default: IndexType.BTREE,
+    nullable: false,
   })
   indexType?: IndexType;
 }

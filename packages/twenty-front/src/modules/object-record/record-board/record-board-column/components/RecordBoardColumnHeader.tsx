@@ -93,7 +93,6 @@ export const RecordBoardColumnHeader = () => {
     newRecord,
     handleNewButtonClick,
     handleCreateSuccess,
-
     handleEntitySelect,
   } = useColumnNewCardActions(columnDefinition.id);
   const { isOpportunitiesCompanyFieldDisabled } =

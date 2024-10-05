@@ -26,6 +26,7 @@ type MockedUser = Pick<
   locale: string;
   defaultWorkspace: Workspace;
   workspaces: Array<{ workspace: Workspace }>;
+  workspaceMembers: WorkspaceMember[];
 };
 
 export const avatarUrl =
@@ -107,6 +108,7 @@ export const mockedUserData: MockedUser = {
   defaultWorkspace: mockDefaultWorkspace,
   locale: 'en',
   workspaces: [{ workspace: mockDefaultWorkspace }],
+  workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.Completed,
   userVars: {},
 };
