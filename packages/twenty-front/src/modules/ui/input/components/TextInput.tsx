@@ -26,7 +26,6 @@ export const TextInput = ({
   dataTestId,
   ...props
 }: TextInputProps) => {
-  // eslint-disable-next-line no-console
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [isFocused, setIsFocused] = useState(false);
