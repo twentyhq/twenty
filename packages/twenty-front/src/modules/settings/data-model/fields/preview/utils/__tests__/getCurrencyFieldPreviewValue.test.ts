@@ -1,16 +1,22 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedOpportunityObjectMetadataItem,
-} from '~/testing/mock-data/metadata';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getCurrencyFieldPreviewValue } from '../getCurrencyFieldPreviewValue';
+
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+);
+
+const mockedOpportunityObjectMetadataItem =
+  generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'opportunity',
+  );
 
 describe('getCurrencyFieldPreviewValue', () => {
   it('returns null if the field is not a Currency field', () => {
     // Given
-    const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+    const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
       ({ type }) => type !== FieldMetadataType.Currency,
     );
 
@@ -26,7 +32,7 @@ describe('getCurrencyFieldPreviewValue', () => {
   });
 
   const fieldName = 'amount';
-  const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+  const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
     ({ name, type }) =>
       name === fieldName && type === FieldMetadataType.Currency,
   );

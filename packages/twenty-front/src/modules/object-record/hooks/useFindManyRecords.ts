@@ -1,7 +1,5 @@
 import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
@@ -36,7 +34,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
   cursorFilter,
 }: UseFindManyRecordsParams<T>) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -66,7 +63,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      skip: skip || !objectMetadataItem || !currentWorkspaceMember,
+      skip: skip || !objectMetadataItem,
       variables: {
         filter,
         orderBy,

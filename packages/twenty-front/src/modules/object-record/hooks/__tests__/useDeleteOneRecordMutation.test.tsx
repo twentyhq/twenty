@@ -1,16 +1,22 @@
 import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
-import { RecoilRoot } from 'recoil';
 
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
   mutation DeleteOnePerson($idToDelete: ID!) {
     deletePerson(id: $idToDelete) {
+      __typename
+      deletedAt
       id
     }
   }
 `.replace(/\s/g, '');
+
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useDeleteOneRecordMutation', () => {
   it('should return a valid deleteOneRecordMutation', () => {
@@ -22,7 +28,7 @@ describe('useDeleteOneRecordMutation', () => {
           objectNameSingular,
         }),
       {
-        wrapper: RecoilRoot,
+        wrapper: Wrapper,
       },
     );
 

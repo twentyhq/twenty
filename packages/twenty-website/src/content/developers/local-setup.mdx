@@ -185,6 +185,24 @@ yarn
 
 ## Step 7: Running the project
 
+Start your redis server:
+<ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
+  <ArticleTab>
+    Depending on your Linux distribution, Redis server might be started automatically.
+    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+  </ArticleTab>
+  <ArticleTab>
+    ```bash
+    brew services start redis
+    ```
+  </ArticleTab>
+  <ArticleTab>
+    Depending on your Linux distribution, Redis server might be started automatically.
+    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+  </ArticleTab>
+</ArticleTabs>
+
+
 Setup your database with the following command:
 ```bash
 npx nx database:reset twenty-server

@@ -7,16 +7,20 @@
     "typeCheck": true,
     "assets": [
       {
+        "include": "**/serverless/drivers/constants/base-typescript-project/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "**/serverless/drivers/layers/*/package.json",
-        "outDir": "dist/src"
+        "outDir": "dist/assets"
       },
       {
         "include": "**/serverless/drivers/layers/*/yarn.lock",
-        "outDir": "dist/src"
+        "outDir": "dist/assets"
       },
       {
         "include": "**/serverless/drivers/layers/engine/**",
-        "outDir": "dist/src"
+        "outDir": "dist/assets"
       }
     ],
     "watchAssets": true

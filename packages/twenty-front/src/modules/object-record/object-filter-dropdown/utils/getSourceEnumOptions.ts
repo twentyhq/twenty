@@ -4,6 +4,7 @@ import {
   IconCsv,
   IconGmail,
   IconGoogleCalendar,
+  IconRobot,
   IconSettingsAutomation,
   IconUserCircle,
 } from 'twenty-ui';
@@ -50,6 +51,13 @@ export const getSourceEnumOptions = (
       name: 'Workflow',
       isSelected: selectedItemIds.includes('WORKFLOW'),
       AvatarIcon: IconSettingsAutomation,
+      isIconInverted: true,
+    },
+    {
+      id: 'SYSTEM',
+      name: 'System',
+      isSelected: selectedItemIds.includes('SYSTEM'),
+      AvatarIcon: IconRobot,
       isIconInverted: true,
     },
   ];

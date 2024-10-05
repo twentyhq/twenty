@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import { join } from 'path';
 
+import dotenv from 'dotenv';
 import {
   CreateFunctionCommand,
   DeleteFunctionCommand,
@@ -18,6 +19,8 @@ import {
   waitUntilFunctionUpdatedV2,
   ListLayerVersionsCommandInput,
   ListLayerVersionsCommand,
+  UpdateFunctionConfigurationCommand,
+  UpdateFunctionConfigurationCommandInput,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
@@ -36,7 +39,6 @@ import {
   NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { BaseServerlessDriver } from 'src/engine/core-modules/serverless/drivers/base-serverless.driver';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import {
@@ -46,6 +48,11 @@ import {
 import { isDefined } from 'src/utils/is-defined';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
+import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
+import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/utils/compile-typescript';
+import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
+import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -53,16 +60,12 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   role: string;
 }
 
-export class LambdaDriver
-  extends BaseServerlessDriver
-  implements ServerlessDriver
-{
+export class LambdaDriver implements ServerlessDriver {
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
   private readonly fileStorageService: FileStorageService;
 
   constructor(options: LambdaDriverOptions) {
-    super();
     const { region, role, ...lambdaOptions } = options;
 
     this.lambdaClient = new Lambda({ ...lambdaOptions, region });
@@ -165,24 +168,50 @@ export class LambdaDriver
     }
   }
 
-  async build(serverlessFunction: ServerlessFunctionEntity) {
-    const javascriptCode = await this.getCompiledCode(
+  private getInMemoryServerlessFunctionFolderPath = (
+    serverlessFunction: ServerlessFunctionEntity,
+    version: string,
+  ) => {
+    return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
+  };
+
+  async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
+    const computedVersion =
+      version === 'latest' ? serverlessFunction.latestVersion : version;
+
+    const inMemoryServerlessFunctionFolderPath =
+      this.getInMemoryServerlessFunctionFolderPath(
+        serverlessFunction,
+        computedVersion,
+      );
+
+    const folderPath = getServerlessFolder({
       serverlessFunction,
-      this.fileStorageService,
+      version,
+    });
+
+    await this.fileStorageService.download({
+      from: { folderPath },
+      to: { folderPath: inMemoryServerlessFunctionFolderPath },
+    });
+
+    compileTypescript(inMemoryServerlessFunctionFolderPath);
+
+    const lambdaZipPath = join(
+      inMemoryServerlessFunctionFolderPath,
+      'lambda.zip',
     );
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
-
-    const {
-      sourceTemporaryDir,
+    await createZipFile(
+      join(inMemoryServerlessFunctionFolderPath, OUTDIR_FOLDER),
       lambdaZipPath,
-      javascriptFilePath,
-      lambdaHandler,
-    } = await lambdaBuildDirectoryManager.init();
+    );
 
-    await fs.writeFile(javascriptFilePath, javascriptCode);
+    const envFileContent = await fs.readFile(
+      join(inMemoryServerlessFunctionFolderPath, ENV_FILE_NAME),
+    );
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+    const envVariables = dotenv.parse(envFileContent);
 
     const functionExists = await this.checkFunctionExists(
       serverlessFunction.id,
@@ -198,8 +227,11 @@ export class LambdaDriver
           ZipFile: await fs.readFile(lambdaZipPath),
         },
         FunctionName: serverlessFunction.id,
-        Handler: lambdaHandler,
+        Handler: 'src/index.handler',
         Layers: [layerArn],
+        Environment: {
+          Variables: envVariables,
+        },
         Role: this.lambdaRole,
         Runtime: serverlessFunction.runtime,
         Description: 'Lambda function to run user script',
@@ -210,23 +242,37 @@ export class LambdaDriver
 
       await this.lambdaClient.send(command);
     } else {
-      const params: UpdateFunctionCodeCommandInput = {
+      const updateCodeParams: UpdateFunctionCodeCommandInput = {
         ZipFile: await fs.readFile(lambdaZipPath),
         FunctionName: serverlessFunction.id,
       };
 
-      const command = new UpdateFunctionCodeCommand(params);
+      const updateCodeCommand = new UpdateFunctionCodeCommand(updateCodeParams);
 
-      await this.lambdaClient.send(command);
+      await this.lambdaClient.send(updateCodeCommand);
+
+      const updateConfigurationParams: UpdateFunctionConfigurationCommandInput =
+        {
+          Environment: {
+            Variables: envVariables,
+          },
+          FunctionName: serverlessFunction.id,
+        };
+
+      const updateConfigurationCommand = new UpdateFunctionConfigurationCommand(
+        updateConfigurationParams,
+      );
+
+      await this.waitFunctionUpdates(serverlessFunction.id, 10);
+
+      await this.lambdaClient.send(updateConfigurationCommand);
     }
 
     await this.waitFunctionUpdates(serverlessFunction.id, 10);
-
-    await lambdaBuildDirectoryManager.clean();
   }
 
   async publish(serverlessFunction: ServerlessFunctionEntity) {
-    await this.build(serverlessFunction);
+    await this.build(serverlessFunction, 'draft');
     const params: PublishVersionCommandInput = {
       FunctionName: serverlessFunction.id,
     };
@@ -239,6 +285,20 @@ export class LambdaDriver
     if (!newVersion) {
       throw new Error('New published version is undefined');
     }
+
+    const draftFolderPath = getServerlessFolder({
+      serverlessFunction: serverlessFunction,
+      version: 'draft',
+    });
+    const newFolderPath = getServerlessFolder({
+      serverlessFunction: serverlessFunction,
+      version: newVersion,
+    });
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftFolderPath },
+      to: { folderPath: newFolderPath },
+    });
 
     return newVersion;
   }
