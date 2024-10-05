@@ -1,4 +1,3 @@
-import { COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 
 export const SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS = [
@@ -13,7 +12,7 @@ export const SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS = [
     iconName: 'IconUsers',
   },
   {
-    fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
+    fieldMetadataId: 'REPLACE_ME',
     label: 'Name',
     iconName: 'IconBuildingSkyscraper',
   },

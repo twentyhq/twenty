@@ -1,7 +1,6 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useNavigate } from 'react-router-dom';
 
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
@@ -10,7 +9,6 @@ import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -32,7 +30,6 @@ export const SettingsServerlessFunctionsNew = () => {
     const newServerlessFunction = await createOneServerlessFunction({
       name: formValues.name,
       description: formValues.description,
-      code: DEFAULT_CODE,
     });
 
     if (!isDefined(newServerlessFunction?.data)) {
@@ -46,7 +43,7 @@ export const SettingsServerlessFunctionsNew = () => {
   };
 
   const onChange = (key: string) => {
-    return (value: string | undefined) => {
+    return (value: string) => {
       setFormValues((prevState) => ({
         ...prevState,
         [key]: value,
@@ -81,14 +78,18 @@ export const SettingsServerlessFunctionsNew = () => {
   return (
     <SubMenuTopBarContainer
       Icon={IconFunction}
-      title={
-        <Breadcrumb
-          links={[
-            { children: 'Functions', href: '/settings/functions' },
-            { children: 'New' },
-          ]}
-        />
-      }
+      title="New Function"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Functions',
+          href: getSettingsPagePath(SettingsPath.ServerlessFunctions),
+        },
+        { children: 'New' },
+      ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}

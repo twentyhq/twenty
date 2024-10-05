@@ -12,7 +12,6 @@ import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilled
 import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -24,7 +23,6 @@ export const ClientConfigProviderEffect = () => {
   const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
 
   const setBilling = useSetRecoilState(billingState);
-  const setTelemetry = useSetRecoilState(telemetryState);
   const setSupportChat = useSetRecoilState(supportChatState);
 
   const setSentryConfig = useSetRecoilState(sentryConfigState);
@@ -56,7 +54,6 @@ export const ClientConfigProviderEffect = () => {
       setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
 
       setBilling(data?.clientConfig.billing);
-      setTelemetry(data?.clientConfig.telemetry);
       setSupportChat(data?.clientConfig.support);
 
       setSentryConfig({
@@ -79,7 +76,6 @@ export const ClientConfigProviderEffect = () => {
     setIsDebugMode,
     setIsSignInPrefilled,
     setIsSignUpDisabled,
-    setTelemetry,
     setSupportChat,
     setBilling,
     setSentryConfig,

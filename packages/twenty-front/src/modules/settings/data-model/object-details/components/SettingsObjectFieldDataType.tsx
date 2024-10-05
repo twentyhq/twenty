@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 import { IconComponent, IconTwentyStar } from 'twenty-ui';
 
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
@@ -23,10 +23,9 @@ const StyledDataType = styled.div<{
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
   height: 20px;
   overflow: hidden;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
   text-decoration: none;
 
   ${({ to }) =>
@@ -36,11 +35,11 @@ const StyledDataType = styled.div<{
         `
       : ''}
 
-  ${({ theme, value }) =>
+  ${({ value, theme }) =>
     value === FieldMetadataType.Relation
       ? css`
-          border-color: ${theme.tag.background.purple};
-          color: ${theme.color.purple};
+          color: ${theme.font.color.secondary};
+          text-decoration: underline;
         `
       : ''}
 `;

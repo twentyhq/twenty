@@ -1,22 +1,26 @@
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
 export const QueryParamsViewIdEffect = () => {
   const { getFiltersFromQueryParams, viewIdQueryParam } =
     useViewFromQueryParams();
-  const { currentViewIdState, componentId: objectNamePlural } = useViewStates();
 
-  const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
+  // TODO: fix this implicit hack
+  const { instanceId: objectNamePlural } = useGetCurrentView();
+
+  const [currentViewId, setCurrentViewId] = useRecoilComponentStateV2(
+    currentViewIdComponentState,
+  );
+
   const { viewsOnCurrentObject } = useGetCurrentView();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -34,13 +38,14 @@ export const QueryParamsViewIdEffect = () => {
     lastVisitedObjectMetadataItemId,
   );
 
-  const { resetCurrentView } = useResetCurrentView();
+  // // TODO: scope view bar per view id if possible
+  // const { resetCurrentView } = useResetCurrentView();
 
-  useEffect(() => {
-    if (isDefined(currentViewId)) {
-      resetCurrentView();
-    }
-  }, [resetCurrentView, currentViewId]);
+  // useEffect(() => {
+  //   if (isDefined(currentViewId)) {
+  //     resetCurrentView();
+  //   }
+  // }, [resetCurrentView, currentViewId]);
 
   useEffect(() => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');

@@ -92,7 +92,7 @@ export const getDevSeedPeopleCustomFields = (
     },
     {
       workspaceId,
-      type: FieldMetadataType.PHONE,
+      type: FieldMetadataType.PHONES,
       name: 'whatsapp',
       label: 'Whatsapp',
       description: "Contact's Whatsapp Number",
@@ -104,7 +104,7 @@ export const getDevSeedPeopleCustomFields = (
     {
       workspaceId,
       type: FieldMetadataType.MULTI_SELECT,
-      name: 'workPrefereance',
+      name: 'workPreference',
       label: 'Work Preference',
       description: "Person's Work Preference",
       icon: 'IconHome',

@@ -1,16 +1,16 @@
 import { useParams } from 'react-router-dom';
 
 import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
-import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
-import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
+import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 
 export const RecordShowPage = () => {
@@ -46,22 +46,21 @@ export const RecordShowPage = () => {
           headerIcon={headerIcon}
         >
           <>
-            <PageFavoriteButton
-              isFavorite={isFavorite}
-              onClick={handleFavoriteButtonClick}
-            />
-            <ShowPageAddButton
-              key="add"
-              activityTargetObject={{
-                id: record?.id ?? '0',
-                targetObjectNameSingular: objectMetadataItem?.nameSingular,
-              }}
-            />
-            <ShowPageMoreButton
-              key="more"
-              recordId={record?.id ?? '0'}
-              objectNameSingular={objectNameSingular}
-            />
+            {objectNameSingular === CoreObjectNameSingular.Workflow ? (
+              <RecordShowPageWorkflowHeader
+                workflowId={parameters.objectRecordId}
+              />
+            ) : (
+              <RecordShowPageBaseHeader
+                {...{
+                  isFavorite,
+                  handleFavoriteButtonClick,
+                  record,
+                  objectMetadataItem,
+                  objectNameSingular,
+                }}
+              />
+            )}
           </>
         </RecordShowPageHeader>
         <PageBody>

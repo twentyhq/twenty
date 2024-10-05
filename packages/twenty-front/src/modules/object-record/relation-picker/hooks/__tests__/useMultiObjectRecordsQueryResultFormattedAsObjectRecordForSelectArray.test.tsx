@@ -2,9 +2,9 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const scopeId = 'scopeId';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -12,8 +12,6 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <RecoilRoot>{children}</RecoilRoot>
   </RelationPickerScopeInternalContext.Provider>
 );
-
-const objectMetadataItemsMock = getObjectMetadataItemsMock();
 
 const opportunityId = 'cb702502-4b1d-488e-9461-df3fb096ebf6';
 const personId = 'ab091fd9-1b81-4dfd-bfdb-564ffee032a2';
@@ -70,7 +68,7 @@ describe('useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray'
       },
     );
     act(() => {
-      result.current.setObjectMetadata(objectMetadataItemsMock);
+      result.current.setObjectMetadata(generatedMockObjectMetadataItems);
     });
 
     expect(

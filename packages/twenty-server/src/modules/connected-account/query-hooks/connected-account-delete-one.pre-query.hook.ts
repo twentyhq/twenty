@@ -8,7 +8,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-@WorkspaceQueryHook(`connectedAccount.deleteOne`)
+@WorkspaceQueryHook(`connectedAccount.destroyOne`)
 export class ConnectedAccountDeleteOnePreQueryHook
   implements WorkspaceQueryHookInstance
 {
@@ -34,7 +34,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
     });
 
     this.workspaceEventEmitter.emit(
-      'messageChannel.deleted',
+      'messageChannel.destroyed',
       messageChannels.map(
         (messageChannel) =>
           ({

@@ -58,43 +58,41 @@ const ProvidersThatNeedRouterContext = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <>
-      <ApolloProvider>
-        <ClientConfigProviderEffect />
-        <ClientConfigProvider>
-          <ChromeExtensionSidecarEffect />
-          <ChromeExtensionSidecarProvider>
-            <UserProviderEffect />
-            <UserProvider>
-              <AuthProvider>
-                <ApolloMetadataClientProvider>
-                  <ObjectMetadataItemsProvider>
-                    <PrefetchDataProvider>
-                      <AppThemeProvider>
-                        <SnackBarProvider>
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <CommandMenuEffect />
-                                <GotoHotkeysEffect />
-                                <PageTitle title={pageTitle} />
-                                <Outlet />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogManagerScope>
-                        </SnackBarProvider>
-                      </AppThemeProvider>
-                    </PrefetchDataProvider>
-                    <PageChangeEffect />
-                  </ObjectMetadataItemsProvider>
-                </ApolloMetadataClientProvider>
-              </AuthProvider>
-            </UserProvider>
-          </ChromeExtensionSidecarProvider>
-        </ClientConfigProvider>
-      </ApolloProvider>
-    </>
+    <ApolloProvider>
+      <ClientConfigProviderEffect />
+      <ClientConfigProvider>
+        <ChromeExtensionSidecarEffect />
+        <ChromeExtensionSidecarProvider>
+          <UserProviderEffect />
+          <UserProvider>
+            <AuthProvider>
+              <ApolloMetadataClientProvider>
+                <ObjectMetadataItemsProvider>
+                  <PrefetchDataProvider>
+                    <AppThemeProvider>
+                      <SnackBarProvider>
+                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogManager>
+                            <StrictMode>
+                              <PromiseRejectionEffect />
+                              <CommandMenuEffect />
+                              <GotoHotkeysEffect />
+                              <PageTitle title={pageTitle} />
+                              <Outlet />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogManagerScope>
+                      </SnackBarProvider>
+                    </AppThemeProvider>
+                  </PrefetchDataProvider>
+                  <PageChangeEffect />
+                </ObjectMetadataItemsProvider>
+              </ApolloMetadataClientProvider>
+            </AuthProvider>
+          </UserProvider>
+        </ChromeExtensionSidecarProvider>
+      </ClientConfigProvider>
+    </ApolloProvider>
   );
 };
 

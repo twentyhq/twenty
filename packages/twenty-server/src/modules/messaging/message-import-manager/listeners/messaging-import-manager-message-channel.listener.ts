@@ -19,8 +19,8 @@ export class MessagingMessageImportManagerMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('messageChannel.deleted')
-  async handleDeletedEvent(
+  @OnEvent('messageChannel.destroyed')
+  async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>
     >,

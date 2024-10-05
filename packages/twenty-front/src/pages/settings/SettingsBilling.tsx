@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  H1Title,
   H2Title,
   IconCalendarEvent,
   IconCircleX,
@@ -14,7 +12,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -31,10 +31,6 @@ import {
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
-`;
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;
@@ -140,9 +136,18 @@ export const SettingsBilling = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
+    <SubMenuTopBarContainer
+      Icon={IconCurrencyDollar}
+      title="Billing"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Billing' },
+      ]}
+    >
       <SettingsPageContainer>
-        <StyledH1Title title="Billing" />
         <SettingsBillingCoverImage />
         {displayPaymentFailInfo && (
           <Info

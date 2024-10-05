@@ -1,6 +1,6 @@
 import {
-  IconBracketsContain,
   IconComponent,
+  IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,
   IllustrationIconCurrency,
@@ -174,19 +174,19 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   },
   [FieldMetadataType.RichText]: {
-    label: 'Rich Text',
+    label: 'System',
     Icon: IllustrationIconSetting,
     exampleValue: { key: 'value' },
     category: 'Basic',
   },
   [FieldMetadataType.Actor]: {
-    label: 'Actor',
+    label: 'System',
     Icon: IllustrationIconSetting,
     category: 'Basic',
   },
   [FieldMetadataType.Array]: {
     label: 'Array',
-    Icon: IconBracketsContain,
+    Icon: IllustrationIconArray,
     category: 'Basic',
     exampleValue: ['value1', 'value2'],
   },

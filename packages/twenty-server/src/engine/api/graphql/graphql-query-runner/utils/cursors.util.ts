@@ -1,6 +1,8 @@
-import { FindOptionsOrderValue } from 'typeorm';
-
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record as IRecord,
+  RecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -24,11 +26,15 @@ export const decodeCursor = (cursor: string): CursorData => {
 
 export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
   objectRecord: ObjectRecord,
-  order: Record<string, FindOptionsOrderValue> | undefined,
+  order: RecordOrderBy | undefined,
 ): string => {
   const orderByValues: Record<string, any> = {};
 
-  Object.keys(order ?? {}).forEach((key) => {
+  const orderBy = order?.reduce((acc, orderBy) => ({ ...acc, ...orderBy }), {});
+
+  const orderByKeys = Object.keys(orderBy ?? {});
+
+  orderByKeys?.forEach((key) => {
     orderByValues[key] = objectRecord[key];
   });
 
@@ -38,4 +44,26 @@ export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
   };
 
   return Buffer.from(JSON.stringify(cursorData)).toString('base64');
+};
+
+export const getCursor = (
+  args: FindManyResolverArgs<any, any>,
+): Record<string, any> | undefined => {
+  if (args.after) return decodeCursor(args.after);
+  if (args.before) return decodeCursor(args.before);
+
+  return undefined;
+};
+
+export const getPaginationInfo = (
+  objectRecords: any[],
+  limit: number,
+  isForwardPagination: boolean,
+) => {
+  const hasMoreRecords = objectRecords.length > limit;
+
+  return {
+    hasNextPage: isForwardPagination && hasMoreRecords,
+    hasPreviousPage: !isForwardPagination && hasMoreRecords,
+  };
 };

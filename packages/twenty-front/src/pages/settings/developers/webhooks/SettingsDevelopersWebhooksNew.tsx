@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconCode } from 'twenty-ui';
+import { H2Title, IconCode, isDefined } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
@@ -44,24 +45,43 @@ export const SettingsDevelopersWebhooksNew = () => {
   };
 
   const canSave =
-    !!formValues.targetUrl && isTargetUrlValid && createOneWebhook;
+    !!formValues.targetUrl && isTargetUrlValid && isDefined(createOneWebhook);
+
+  // TODO: refactor use useScopedHotkeys
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && canSave) {
+      handleSave();
+    }
+  };
+
+  const handleChange = (value: string) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      targetUrl: value,
+    }));
+    handleValidate(value);
+  };
 
   return (
     <SubMenuTopBarContainer
       Icon={IconCode}
-      title={
-        <Breadcrumb
-          links={[
-            { children: 'Developers', href: '/settings/developers' },
-            { children: 'New webhook' },
-          ]}
-        />
-      }
+      title="New Webhook"
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        {
+          children: 'Developers',
+          href: getSettingsPagePath(SettingsPath.Developers),
+        },
+        { children: 'New Webhook' },
+      ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigate('/settings/developers');
+            navigate(getSettingsPagePath(SettingsPath.Developers));
           }}
           onSave={handleSave}
         />
@@ -77,18 +97,8 @@ export const SettingsDevelopersWebhooksNew = () => {
             placeholder="URL"
             value={formValues.targetUrl}
             error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSave();
-              }
-            }}
-            onChange={(value) => {
-              setFormValues((prevState) => ({
-                ...prevState,
-                targetUrl: value,
-              }));
-              handleValidate(value);
-            }}
+            onKeyDown={handleKeyDown}
+            onChange={handleChange}
             fullWidth
           />
         </Section>

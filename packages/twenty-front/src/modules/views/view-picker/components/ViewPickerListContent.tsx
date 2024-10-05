@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { MouseEvent, useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -11,11 +10,13 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useHandleViews } from '@/views/hooks/useHandleViews';
+import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDefined } from '~/utils/isDefined';
 
@@ -24,29 +25,27 @@ const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 `;
 
 export const ViewPickerListContent = () => {
-  const { selectView } = useHandleViews();
-
   const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
     useGetCurrentView();
-  const { viewPickerReferenceViewIdState } = useViewPickerStates();
-  const setViewPickerReferenceViewId = useSetRecoilState(
-    viewPickerReferenceViewIdState,
+  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
+    viewPickerReferenceViewIdComponentState,
   );
 
   const { setViewPickerMode } = useViewPickerMode();
 
   const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
-  const { updateView } = useHandleViews();
+  const { updateView } = useUpdateView();
+  const { changeView } = useChangeView();
 
   const handleViewSelect = (viewId: string) => {
-    selectView(viewId);
+    changeView(viewId);
     closeDropdown();
   };
 
   const handleAddViewButtonClick = () => {
     if (isDefined(currentViewWithCombinedFiltersAndSorts?.id)) {
       setViewPickerReferenceViewId(currentViewWithCombinedFiltersAndSorts.id);
-      setViewPickerMode('create');
+      setViewPickerMode('create-empty');
     }
   };
 

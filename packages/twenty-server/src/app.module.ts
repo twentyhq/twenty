@@ -12,6 +12,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { SentryModule } from '@sentry/nestjs/setup';
 
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
@@ -29,20 +30,14 @@ import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 
 @Module({
   imports: [
-    // Nest.js devtools, use devtools.nestjs.com to debug
-    // DevtoolsModule.registerAsync({
-    //   useFactory: (environmentService: EnvironmentService) => ({
-    //     http: environmentService.get('DEBUG_MODE'),
-    //     port: environmentService.get('DEBUG_PORT'),
-    //   }),
-    //   inject: [EnvironmentService],
-    // }),
+    SentryModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [CoreEngineModule, GraphQLConfigModule],
+      imports: [GraphQLConfigModule],
       useClass: GraphQLConfigService,
     }),
     TwentyORMModule,

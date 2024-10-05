@@ -7,7 +7,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
-enum WorkspaceCacheKeys {
+export enum WorkspaceCacheKeys {
   GraphQLTypeDefs = 'graphql:type-defs',
   GraphQLUsedScalarNames = 'graphql:used-scalar-names',
   GraphQLOperations = 'graphql:operations',

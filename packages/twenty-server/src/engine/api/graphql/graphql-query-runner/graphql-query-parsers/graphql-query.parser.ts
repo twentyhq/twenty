@@ -1,27 +1,29 @@
 import {
-  FindOptionsOrderValue,
   FindOptionsWhere,
-  IsNull,
   ObjectLiteral,
+  OrderByCondition,
+  SelectQueryBuilder,
 } from 'typeorm';
 
 import {
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { GraphqlQueryFilterConditionParser as GraphqlQueryFilterParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
-import { GraphqlQueryOrderFieldParser as GraphqlQueryOrderParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import {
   FieldMetadataMap,
   ObjectMetadataMap,
+  ObjectMetadataMapItem,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export class GraphqlQueryParser {
   private fieldMetadataMap: FieldMetadataMap;
   private objectMetadataMap: ObjectMetadataMap;
+  private filterConditionParser: GraphqlQueryFilterConditionParser;
+  private orderFieldParser: GraphqlQueryOrderFieldParser;
 
   constructor(
     fieldMetadataMap: FieldMetadataMap,
@@ -29,59 +31,80 @@ export class GraphqlQueryParser {
   ) {
     this.objectMetadataMap = objectMetadataMap;
     this.fieldMetadataMap = fieldMetadataMap;
-  }
-
-  parseFilter(
-    recordFilter: RecordFilter,
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
-    const graphqlQueryFilterParser = new GraphqlQueryFilterParser(
+    this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMap,
     );
-
-    const parsedFilter = graphqlQueryFilterParser.parse(recordFilter);
-
-    if (!('deletedAt' in this.fieldMetadataMap)) {
-      return parsedFilter;
-    }
-
-    return this.addDefaultSoftDeleteCondition(parsedFilter);
+    this.orderFieldParser = new GraphqlQueryOrderFieldParser(
+      this.fieldMetadataMap,
+    );
   }
 
-  private addDefaultSoftDeleteCondition(
+  public applyFilterToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    objectNameSingular: string,
+    recordFilter: Partial<RecordFilter>,
+  ): SelectQueryBuilder<any> {
+    return this.filterConditionParser.parse(
+      queryBuilder,
+      objectNameSingular,
+      recordFilter,
+    );
+  }
+
+  public applyDeletedAtToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    recordFilter: RecordFilter,
+  ): SelectQueryBuilder<any> {
+    if (this.checkForDeletedAtFilter(recordFilter)) {
+      queryBuilder.withDeleted();
+    }
+
+    return queryBuilder;
+  }
+
+  private checkForDeletedAtFilter = (
     filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
-  ): FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[] {
+  ): boolean => {
     if (Array.isArray(filter)) {
-      return filter.map((condition) =>
-        this.addSoftDeleteToCondition(condition),
+      return filter.some((subFilter) =>
+        this.checkForDeletedAtFilter(subFilter),
       );
     }
 
-    return this.addSoftDeleteToCondition(filter);
-  }
+    for (const [key, value] of Object.entries(filter)) {
+      if (key === 'deletedAt') {
+        return true;
+      }
 
-  private addSoftDeleteToCondition(
-    condition: FindOptionsWhere<ObjectLiteral>,
-  ): FindOptionsWhere<ObjectLiteral> {
-    if (!('deletedAt' in condition)) {
-      return { ...condition, deletedAt: IsNull() };
+      if (typeof value === 'object' && value !== null) {
+        if (
+          this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
+        ) {
+          return true;
+        }
+      }
     }
 
-    return condition;
-  }
+    return false;
+  };
 
-  parseOrder(
+  public applyOrderToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
     orderBy: RecordOrderBy,
+    objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, FindOptionsOrderValue> {
-    const graphqlQueryOrderParser = new GraphqlQueryOrderParser(
-      this.fieldMetadataMap,
+  ): SelectQueryBuilder<any> {
+    const parsedOrderBys = this.orderFieldParser.parse(
+      orderBy,
+      objectNameSingular,
+      isForwardPagination,
     );
 
-    return graphqlQueryOrderParser.parse(orderBy, isForwardPagination);
+    return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
   }
 
-  parseSelectedFields(
-    parentObjectMetadata: ObjectMetadataInterface,
+  public parseSelectedFields(
+    parentObjectMetadata: ObjectMetadataMapItem,
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): { select: Record<string, any>; relations: Record<string, any> } {
     const parentFields =

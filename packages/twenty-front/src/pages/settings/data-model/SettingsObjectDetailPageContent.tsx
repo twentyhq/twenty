@@ -8,7 +8,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -49,14 +48,15 @@ export const SettingsObjectDetailPageContent = ({
   return (
     <SubMenuTopBarContainer
       Icon={IconHierarchy2}
-      title={
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            { children: objectMetadataItem.labelPlural },
-          ]}
-        />
-      }
+      title={objectMetadataItem.labelPlural}
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Objects', href: '/settings/objects' },
+        { children: objectMetadataItem.labelPlural },
+      ]}
     >
       <SettingsPageContainer>
         <Section>
