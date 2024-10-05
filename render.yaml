@@ -22,7 +22,7 @@ services:
       generateValue: true
     - key: LOGIN_TOKEN_SECRET
       generateValue: true
-    - key: REFRESH_TOKEN_SECRET
+ - key: REFRESH_TOKEN_SECRET
       generateValue: true
     - key: FILE_TOKEN_SECRET
       generateValue: true
@@ -31,7 +31,7 @@ services:
         name: twenty_postgres
         type: pserv
         property: host
-    - key: PG_DATABASE_PORT
+  - key: PG_DATABASE_PORT
       fromService:
         name: twenty_postgres
         type: pserv
@@ -67,31 +67,31 @@ services:
       fromService:
         name: twenty_postgres
         type: pserv
-        property: host
-    - key: PG_DATABASE_PORT
-      fromService:
-        name: twenty_postgres
-        type: pserv
-        property: port
-  disk:
-    name: twenty-disk
-    mountPath: /.local-storage
-    sizeGB: 5
-- type: pserv
-  name: twenty_postgres
-  plan: starter
-  runtime: image
+    property: host
+- key: PG_DATABASE_PORT
+fromService:
+name: twenty_postgres
+type: pserv
+property: port
+diskname: Twenty-Disk 
+ mountPath: /.local-storage
+size: 5GB    
+  - type: pserv
+name: twenty_postgres 
+plan: starter
+    runtime: image
   image:
-    url: twentycrm/twenty-postgres:latest
+  url: twentycrm/twenty-postgres:latest
   autoDeploy: false
   disk:
-    name: data
-    mountPath: /var/lib/postgresql/data
-    sizeGB: 10
-  envVars:
+  name: data
+mountPath: /var/lib/postgresql/data
+Size: 
+- "10GB"
+envVars:
   - key: POSTGRES_USER
-    value: postgres
-  - key: POSTGRES_PASSWORD
-    value: postgres
-  - key: POSTGRES_DB
-    value: default
+value: postgres
+- key: POSTGRES_PASSWORD
+value: postgres
+- key: POSTGRES_DB
+ value: default
