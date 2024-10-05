@@ -56,11 +56,9 @@ const StyledInlineCellBaseContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   display: flex;
-
+  height: 24px;
   gap: ${({ theme }) => theme.spacing(1)};
-
   user-select: none;
-
   justify-content: center;
 `;
 

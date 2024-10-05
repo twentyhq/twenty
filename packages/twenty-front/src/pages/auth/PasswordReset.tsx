@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -174,7 +175,7 @@ export const PasswordReset = () => {
               highlightColor={theme.background.secondary}
             >
               <Skeleton
-                height={32}
+                height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
                 count={2}
                 style={{
                   marginBottom: theme.spacing(2),

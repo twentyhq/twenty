@@ -10,6 +10,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -143,12 +144,26 @@ export class WorkspaceSyncFieldMetadataService {
     ] of standardObjectStandardFieldMetadataMap) {
       const originalObjectMetadata =
         originalObjectMetadataMap[standardObjectId];
-      const computedStandardFieldMetadataCollection = computeStandardFields(
+
+      let computedStandardFieldMetadataCollection = computeStandardFields(
         standardFieldMetadataCollection,
         originalObjectMetadata,
         // We need to provide this for generated relations with custom objects
         customObjectMetadataCollection,
       );
+
+      let originalObjectMetadataFields = originalObjectMetadata.fields;
+
+      if (!workspaceFeatureFlagsMap.IS_SEARCH_ENABLED) {
+        computedStandardFieldMetadataCollection =
+          computedStandardFieldMetadataCollection.filter(
+            (field) => field.type !== FieldMetadataType.TS_VECTOR,
+          );
+
+        originalObjectMetadataFields = originalObjectMetadataFields.filter(
+          (field) => field.type !== FieldMetadataType.TS_VECTOR,
+        );
+      }
 
       const fieldComparatorResults = this.workspaceFieldComparator.compare(
         originalObjectMetadata.id,
@@ -177,10 +192,23 @@ export class WorkspaceSyncFieldMetadataService {
     // Loop over all custom objects from the DB and compare their fields with standard fields
     for (const customObjectMetadata of customObjectMetadataCollection) {
       // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
-      const standardFieldMetadataCollection = computeStandardFields(
+      let standardFieldMetadataCollection = computeStandardFields(
         customObjectStandardFieldMetadataCollection,
         customObjectMetadata,
       );
+
+      let customObjectMetadataFields = customObjectMetadata.fields;
+
+      if (!workspaceFeatureFlagsMap.IS_SEARCH_ENABLED) {
+        standardFieldMetadataCollection =
+          standardFieldMetadataCollection.filter(
+            (field) => field.type !== FieldMetadataType.TS_VECTOR,
+          );
+
+        customObjectMetadataFields = customObjectMetadataFields.filter(
+          (field) => field.type !== FieldMetadataType.TS_VECTOR,
+        );
+      }
 
       /**
        * COMPARE FIELD METADATA

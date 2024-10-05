@@ -1,21 +1,12 @@
 import Editor, { Monaco, EditorProps } from '@monaco-editor/react';
+import dotenv from 'dotenv';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { editor, MarkerSeverity } from 'monaco-editor';
 import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { isDefined } from '~/utils/isDefined';
-
-export const DEFAULT_CODE = `export const handler = async (
-  event: object,
-  context: object
-): Promise<object> => {
-  // Your code here
-  return {};
-}
-`;
 
 const StyledEditor = styled(Editor)`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -24,24 +15,33 @@ const StyledEditor = styled(Editor)`
     ${({ theme }) => theme.border.radius.sm};
 `;
 
+export type File = {
+  language: string;
+  content: string;
+  path: string;
+};
+
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
-  header: React.ReactNode;
+  currentFilePath: string;
+  files: File[];
   onChange?: (value: string) => void;
   setIsCodeValid?: (isCodeValid: boolean) => void;
 };
 
 export const CodeEditor = ({
-  value = DEFAULT_CODE,
+  currentFilePath,
+  files,
   onChange,
   setIsCodeValid,
-  language = 'typescript',
   height = 450,
   options = undefined,
-  header,
 }: CodeEditorProps) => {
   const theme = useTheme();
 
   const { availablePackages } = useGetAvailablePackages();
+
+  const currentFile = files.find((file) => file.path === currentFilePath);
+  const environmentVariablesFile = files.find((file) => file.path === '.env');
 
   const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
@@ -50,7 +50,57 @@ export const CodeEditor = ({
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
 
-    if (language === 'typescript') {
+    if (files.length > 1) {
+      files.forEach((file) => {
+        const model = monaco.editor.getModel(monaco.Uri.file(file.path));
+        if (!isDefined(model)) {
+          monaco.editor.createModel(
+            file.content,
+            file.language,
+            monaco.Uri.file(file.path),
+          );
+        }
+      });
+
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
+        moduleResolution:
+          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        baseUrl: 'file:///src',
+        paths: {
+          'src/*': ['file:///src/*'],
+        },
+        allowSyntheticDefaultImports: true,
+        esModuleInterop: true,
+        noEmit: true,
+        target: monaco.languages.typescript.ScriptTarget.ESNext,
+      });
+
+      if (isDefined(environmentVariablesFile)) {
+        const environmentVariables = dotenv.parse(
+          environmentVariablesFile.content,
+        );
+
+        const environmentDefinition = `
+        declare namespace NodeJS {
+          interface ProcessEnv {
+            ${Object.keys(environmentVariables)
+              .map((key) => `${key}: string;`)
+              .join('\n')}
+          }
+        }
+
+        declare const process: {
+          env: NodeJS.ProcessEnv;
+        };
+      `;
+
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(
+          environmentDefinition,
+          'ts:process-env.d.ts',
+        );
+      }
+
       await AutoTypings.create(editor, {
         monaco,
         preloadPackages: true,
@@ -71,43 +121,28 @@ export const CodeEditor = ({
     setIsCodeValid?.(true);
   };
 
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .monaco-editor .margin .line-numbers {
-        font-weight: bold;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
   return (
+    isDefined(currentFile) &&
     isDefined(availablePackages) && (
-      <>
-        {header}
-        <StyledEditor
-          height={height}
-          language={language}
-          value={value}
-          onMount={handleEditorDidMount}
-          onChange={(value?: string) => value && onChange?.(value)}
-          onValidate={handleEditorValidation}
-          options={{
-            ...options,
-            overviewRulerLanes: 0,
-            scrollbar: {
-              vertical: 'hidden',
-              horizontal: 'hidden',
-            },
-            minimap: {
-              enabled: false,
-            },
-          }}
-        />
-      </>
+      <StyledEditor
+        height={height}
+        value={currentFile.content}
+        language={currentFile.language}
+        onMount={handleEditorDidMount}
+        onChange={(value?: string) => value && onChange?.(value)}
+        onValidate={handleEditorValidation}
+        options={{
+          ...options,
+          overviewRulerLanes: 0,
+          scrollbar: {
+            vertical: 'hidden',
+            horizontal: 'hidden',
+          },
+          minimap: {
+            enabled: false,
+          },
+        }}
+      />
     )
   );
 };
