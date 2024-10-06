@@ -29,6 +29,7 @@ import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/wo
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 
 import { isDefined } from 'class-validator';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
 @Injectable()
@@ -200,7 +201,7 @@ export class WorkspaceMigrationRunnerService {
     for (const index of indexes) {
       switch (index.action) {
         case WorkspaceMigrationIndexActionType.CREATE:
-          if (isDefined(index.type)) {
+          if (isDefined(index.type) && index.type !== IndexType.BTREE) {
             const quotedColumns = index.columns.map((column) => `"${column}"`);
 
             await queryRunner.query(`
@@ -213,6 +214,7 @@ export class WorkspaceMigrationRunnerService {
                 name: index.name,
                 columnNames: index.columns,
                 isUnique: index.isUnique,
+                where: index.where ?? undefined,
               }),
             );
           }
