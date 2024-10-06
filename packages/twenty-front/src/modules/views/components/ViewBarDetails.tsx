@@ -176,6 +176,8 @@ export const ViewBarDetails = ({
     return null;
   }
 
+  const showAdvancedFilterDropdownButton = isDraftingAdvancedFilter; // TODO: || viewFilterGroups.length > 1;
+
   return (
     <StyledBar>
       <StyledFilterContainer>
@@ -209,7 +211,7 @@ export const ViewBarDetails = ({
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
-          <AdvancedFilterDropdownButton />
+          {showAdvancedFilterDropdownButton && <AdvancedFilterDropdownButton />}
           {mapViewFiltersToFilters(
             defaultViewFilters,
             availableFilterDefinitions,

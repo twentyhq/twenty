@@ -370,7 +370,7 @@ export const VIEW_FILTER_STANDARD_FIELD_IDS = {
 };
 
 export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {
-  viewId: '20202020-ff7a-4b54-8be5-aa0249047b74',
+  view: '20202020-ff7a-4b54-8be5-aa0249047b74',
   parentViewFilterGroupId: '20202020-edbf-4929-8ede-64f48d6bf2a7',
   logicalOperator: '20202020-64d9-4bc5-85ba-c250796ce9aa',
 };
@@ -392,6 +392,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
+  viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
   favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
 };

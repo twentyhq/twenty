@@ -104,6 +104,11 @@ export const useGetCurrentView = (viewBarInstanceId?: string) => {
       unsavedToUpsertViewFilters,
       unsavedToDeleteViewFilterIds,
     ),
+    /* viewFilterGroups: getCombinedViewFilterGroups(
+      currentView.viewFilterGroups,
+      unsavedToUpsertViewFilterGroups,
+      unsavedToDeleteViewFilterGroupIds,
+    ), */
     viewSorts: getCombinedViewSorts(
       currentView.viewSorts,
       unsavedToUpsertViewSorts,
