@@ -4,6 +4,6 @@ export type ViewFilterGroup = {
   __typename: 'ViewFilterGroup';
   id: string;
   viewId: string;
-  parentViewFilterGroupId: string;
+  parentViewFilterGroupId?: string | null;
   logicalOperator: ViewFilterGroupLogicalOperator;
 };

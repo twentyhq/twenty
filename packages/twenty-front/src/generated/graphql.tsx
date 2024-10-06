@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -160,13 +160,7 @@ export type ClientConfig = {
   support: Support;
 };
 
-export type CreateServerlessFunctionFromFileInput = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-};
-
 export type CreateServerlessFunctionInput = {
-  code: Scalars['String'];
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
 };
@@ -347,7 +341,6 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneObject: Object;
   createOneServerlessFunction: ServerlessFunction;
-  createOneServerlessFunctionFromFile: ServerlessFunction;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
@@ -426,12 +419,6 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
-};
-
-
-export type MutationCreateOneServerlessFunctionFromFileArgs = {
-  file: Scalars['Upload'];
-  input: CreateServerlessFunctionFromFileInput;
 };
 
 
@@ -523,9 +510,8 @@ export type MutationSignUpArgs = {
 
 
 export type MutationTrackArgs = {
-  data: Scalars['JSON'];
-  sessionId: Scalars['String'];
-  type: Scalars['String'];
+  action: Scalars['String'];
+  payload: Scalars['JSON'];
 };
 
 
@@ -661,7 +647,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
-  getServerlessFunctionSourceCode?: Maybe<Scalars['String']>;
+  getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -834,7 +820,6 @@ export type ServerlessFunction = {
   latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   runtime: Scalars['String'];
-  sourceCodeHash: Scalars['String'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime'];
 };
@@ -1031,7 +1016,7 @@ export type UpdateOneObjectInput = {
 };
 
 export type UpdateServerlessFunctionInput = {
-  code: Scalars['String'];
+  code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
@@ -1965,7 +1950,7 @@ export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutati
  * @example
  * const [trackMutation, { data, loading, error }] = useTrackMutation({
  *   variables: {
- *      action: // value for 'type'
+ *      action: // value for 'action'
  *      payload: // value for 'payload'
  *   },
  * });
