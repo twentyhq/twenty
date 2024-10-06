@@ -131,6 +131,6 @@ variable "twentycrm_docker_data_pv_capacity" {
 
 variable "twentycrm_docker_data_pvc_requests" {
   type        = string
-  default     = "10Gi"
+  default     = "100Mi"
   description = "Storage capacity reservation for server persistent volume claim."
 }
