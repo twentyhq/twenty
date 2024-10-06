@@ -39,8 +39,6 @@ spec:
               value: "https://crm.example.com:443"
             - name: FRONT_BASE_URL
               value: "https://crm.example.com:443"
-            - name: "BACKEND_SERVER_URL"
-              value: "https://crm.example.com:443"
             - name: "PG_DATABASE_URL"
               value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
             - name: "REDIS_HOST"

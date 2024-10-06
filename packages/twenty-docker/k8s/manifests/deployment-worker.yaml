@@ -69,10 +69,10 @@ spec:
             - worker:prod
           resources:
             requests:
-              memory: "256Mi"
+              memory: "1024Mi"
               cpu: "250m"
             limits:
-              memory: "1024Mi"
+              memory: "2028Mi"
               cpu: "1000m"
           stdin: true
           tty: true

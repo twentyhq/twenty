@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: default
   capacity:
-    storage: 10Gi
+    storage: 100Mi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
