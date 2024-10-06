@@ -12,7 +12,7 @@ import {
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import { isDefined } from '~/utils/isDefined';
@@ -56,7 +56,7 @@ const RecordMockSetterEffect = ({
 
 export const getFieldDecorator =
   (
-    objectNameSingular: 'company' | 'person' | 'task',
+    objectNameSingular: 'company' | 'person' | 'task' | 'workflowVersions',
     fieldName: string,
     fieldValue?: any,
   ): Decorator =>

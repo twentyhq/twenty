@@ -11,4 +11,9 @@ export const ACTIONS: Array<{
     type: 'CODE',
     icon: IconSettingsAutomation,
   },
+  {
+    label: 'Send Email',
+    type: 'SEND_EMAIL',
+    icon: IconSettingsAutomation,
+  },
 ];

@@ -106,6 +106,8 @@ export class WorkspaceMigrationIndexFactory {
 
             return indexFieldMetadata.compositeColumn;
           }),
+        type: indexMetadata.indexType,
+        where: indexMetadata.indexWhereClause
       }));
 
       workspaceMigrations.push({
@@ -146,7 +148,6 @@ export class WorkspaceMigrationIndexFactory {
         action: WorkspaceMigrationIndexActionType.DROP,
         columns: [],
         isUnique: indexMetadata.isUnique,
-        where: indexMetadata.where,
       }));
 
       workspaceMigrations.push({

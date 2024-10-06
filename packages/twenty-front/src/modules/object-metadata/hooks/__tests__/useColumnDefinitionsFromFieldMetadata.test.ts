@@ -3,7 +3,7 @@ import { Nullable } from 'twenty-ui';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('useColumnDefinitionsFromFieldMetadata', () => {
   it('should return empty definitions if no object is passed', () => {

@@ -31,6 +31,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
+      - name: Diagnostic disk space issue
+        run: df -h
       - name: Front / Restore Storybook Task Cache
         uses: ./.github/workflows/actions/task-cache
         with:

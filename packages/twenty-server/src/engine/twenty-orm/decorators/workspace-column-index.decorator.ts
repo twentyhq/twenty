@@ -1,6 +1,7 @@
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { WorkspaceIndexOptions } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { getColumnsForIndex } from 'src/engine/twenty-orm/utils/get-default-columns-for-index.util';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -20,16 +21,26 @@ export function WorkspaceColumnIndex(
 
     // TODO: handle composite field metadata types
 
+    const additionalDefaultColumnsForIndex = getColumnsForIndex(
+      options?.indexType,
+    );
+
+    const columns = [
+      propertyKey.toString(),
+      ...additionalDefaultColumnsForIndex,
+    ];
+
     metadataArgsStorage.addIndexes({
       name: `IDX_${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.constructor.name),
-        ...[propertyKey.toString(), 'deletedAt'],
+        ...columns,
       ])}`,
-      columns: [propertyKey.toString(), 'deletedAt'],
+      columns,
       target: target.constructor,
       gate,
       isUnique: options?.isUnique ?? false,
-      where: options?.where ?? null,
+      whereClause: options?.indexWhereClause ?? null,
+      type: options?.indexType,
     });
   };
 }

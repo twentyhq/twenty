@@ -38,6 +38,6 @@ export const Default: Story = {
     await canvas.findByText('Tasks');
     await canvas.findByText('People');
     await canvas.findByText('Opportunities');
-    await canvas.findByText('My Customs');
+    await canvas.findByText('Rockets');
   },
 };

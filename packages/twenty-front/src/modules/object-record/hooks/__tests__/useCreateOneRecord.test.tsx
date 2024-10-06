@@ -1,7 +1,4 @@
-import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
@@ -9,6 +6,7 @@ import {
   responseData,
 } from '@/object-record/hooks/__mocks__/useCreateOneRecord';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const personId = 'a7286b9a-c039-4a89-9567-2dfa7953cda9';
 const input = { name: { firstName: 'John', lastName: 'Doe' } };
@@ -31,13 +29,9 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useCreateOneRecord', () => {
   it('works as expected', async () => {

@@ -1,11 +1,13 @@
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export type WorkspaceIndexOptions = {
-  isUnique: boolean;
-  where: string;
+  isUnique?: boolean;
+  indexWhereClause?: string;
+  indexType?: IndexType;
 };
 
 export function WorkspaceIndex(
@@ -31,7 +33,8 @@ export function WorkspaceIndex(
       target: target,
       gate,
       isUnique: options?.isUnique ?? false,
-      where: options?.where ?? null,
+      whereClause: options?.indexWhereClause ?? null,
+      type: options?.indexType,
     });
   };
 }

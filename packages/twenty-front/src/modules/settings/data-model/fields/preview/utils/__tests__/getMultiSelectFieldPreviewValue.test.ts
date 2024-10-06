@@ -1,15 +1,20 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedCustomObjectMetadataItem,
-} from '~/testing/mock-data/metadata';
-
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getMultiSelectFieldPreviewValue } from '../getMultiSelectFieldPreviewValue';
+
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+);
+
+const mockedOpportunityObjectMetadataItem =
+  generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'opportunity',
+  );
 
 describe('getMultiSelectFieldPreviewValue', () => {
   it('returns null if the field is not a Multi-Select field', () => {
     // Given
-    const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+    const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
       ({ type }) => type !== FieldMetadataType.MultiSelect,
     );
 
@@ -24,10 +29,11 @@ describe('getMultiSelectFieldPreviewValue', () => {
     expect(previewValue).toBeNull();
   });
 
-  const fieldName = 'priority';
-  const selectFieldMetadataItem = mockedCustomObjectMetadataItem.fields.find(
-    ({ name, type }) => name === fieldName && type === FieldMetadataType.Select,
-  );
+  const fieldName = 'stage';
+  const selectFieldMetadataItem =
+    mockedOpportunityObjectMetadataItem?.fields.find(
+      ({ name }) => name === fieldName,
+    );
 
   if (!selectFieldMetadataItem) {
     throw new Error(`Field '${fieldName}' not found`);
@@ -52,7 +58,13 @@ describe('getMultiSelectFieldPreviewValue', () => {
     });
 
     // Then
-    expect(previewValue).toEqual(['MEDIUM', 'LOW']);
+    expect(previewValue).toEqual([
+      'NEW',
+      'SCREENING',
+      'MEETING',
+      'PROPOSAL',
+      'CUSTOMER',
+    ]);
   });
 
   it("returns all option values if no defaultValue was found in the field's metadata", () => {
@@ -69,7 +81,13 @@ describe('getMultiSelectFieldPreviewValue', () => {
     });
 
     // Then
-    expect(previewValue).toEqual(['LOW', 'MEDIUM', 'HIGH']);
+    expect(previewValue).toEqual([
+      'NEW',
+      'SCREENING',
+      'MEETING',
+      'PROPOSAL',
+      'CUSTOMER',
+    ]);
     expect(previewValue).toEqual(
       fieldMetadataItemWithDefaultValue.options?.map(({ value }) => value),
     );
@@ -89,7 +107,13 @@ describe('getMultiSelectFieldPreviewValue', () => {
     });
 
     // Then
-    expect(previewValue).toEqual(['LOW', 'MEDIUM', 'HIGH']);
+    expect(previewValue).toEqual([
+      'NEW',
+      'SCREENING',
+      'MEETING',
+      'PROPOSAL',
+      'CUSTOMER',
+    ]);
     expect(previewValue).toEqual(
       fieldMetadataItemWithDefaultValue.options?.map(({ value }) => value),
     );
