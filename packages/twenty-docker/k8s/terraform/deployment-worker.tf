@@ -125,11 +125,11 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           resources {
             requests = {
               cpu    = "250m"
-              memory = "256Mi"
+              memory = "1024Mi"
             }
             limits = {
               cpu    = "1000m"
-              memory = "1024Mi"
+              memory = "2048Mi"
             }
           }
         }

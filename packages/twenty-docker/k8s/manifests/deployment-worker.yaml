@@ -72,7 +72,7 @@ spec:
               memory: "1024Mi"
               cpu: "250m"
             limits:
-              memory: "2028Mi"
+              memory: "2048Mi"
               cpu: "1000m"
           stdin: true
           tty: true

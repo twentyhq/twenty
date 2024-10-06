@@ -125,7 +125,7 @@ variable "twentycrm_docker_data_pv_path" {
 
 variable "twentycrm_docker_data_pv_capacity" {
   type        = string
-  default     = "10Gi"
+  default     = "100Mi"
   description = "Storage capacity provisioned for server persistent volume."
 }
 
