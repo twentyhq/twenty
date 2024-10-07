@@ -13,7 +13,7 @@ export const useTriggerGoogleApisOAuth = () => {
 
   const triggerGoogleApisOAuth = useCallback(
     async (
-      redirectLocation?: AppPath,
+      redirectLocation?: AppPath | string,
       messageVisibility?: MessageChannelVisibility,
       calendarVisibility?: CalendarChannelVisibility,
     ) => {

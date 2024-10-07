@@ -4,15 +4,17 @@ import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditAc
 import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { IconMail } from 'twenty-ui';
+import { IconMail, IconPlus } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { useFindManyRecords } from 'packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords';
-import { ConnectedAccount } from 'packages/twenty-front/src/modules/accounts/types/ConnectedAccount';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useRecoilValue } from 'recoil';
-import { currentWorkspaceMemberState } from 'packages/twenty-front/src/modules/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 
 const StyledTriggerSettings = styled.div`
   padding: ${({ theme }) => theme.spacing(6)};
@@ -36,6 +38,9 @@ export const WorkflowEditActionFormSendEmail = ({
 }) => {
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const workflowId = useRecoilValue(workflowIdState);
+  const redirectUrl = `/object/workflow/${workflowId}`;
 
   const form = useForm<SendEmailFormData>({
     defaultValues: {
@@ -133,6 +138,11 @@ export const WorkflowEditActionFormSendEmail = ({
                 emptyOption={emptyOption}
                 value={field.value}
                 options={connectedAccountOptions}
+                callToActionButton={{
+                  onClick: () => triggerGoogleApisOAuth(redirectUrl),
+                  Icon: IconPlus,
+                  text: 'Add account',
+                }}
                 onChange={(connectedAccountId) => {
                   field.onChange(connectedAccountId);
 
