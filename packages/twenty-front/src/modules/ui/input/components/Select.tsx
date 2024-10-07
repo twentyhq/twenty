@@ -97,8 +97,8 @@ export const Select = <Value extends string | number | null>({
 
   const selectedOption =
     options.find(({ value: key }) => key === value) ||
-    options[0] ||
-    emptyOption;
+    emptyOption ||
+    options[0];
   const filteredOptions = useMemo(
     () =>
       searchInputValue

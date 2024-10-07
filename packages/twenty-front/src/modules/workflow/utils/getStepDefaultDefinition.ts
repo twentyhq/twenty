@@ -33,6 +33,7 @@ export const getStepDefaultDefinition = (
         type: 'SEND_EMAIL',
         valid: false,
         settings: {
+          connectedAccountId: '',
           subject: 'hello',
           title: 'hello',
           template: '{{title}}',

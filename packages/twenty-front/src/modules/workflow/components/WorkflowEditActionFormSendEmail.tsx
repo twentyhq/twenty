@@ -8,6 +8,11 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { IconMail } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { Select } from '@/ui/input/components/Select';
+import { useFindManyRecords } from 'packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords';
+import { ConnectedAccount } from 'packages/twenty-front/src/modules/accounts/types/ConnectedAccount';
+import { useRecoilValue } from 'recoil';
+import { currentWorkspaceMemberState } from 'packages/twenty-front/src/modules/auth/states/currentWorkspaceMemberState';
 
 const StyledTriggerSettings = styled.div`
   padding: ${({ theme }) => theme.spacing(6)};
@@ -17,6 +22,7 @@ const StyledTriggerSettings = styled.div`
 `;
 
 type SendEmailFormData = {
+  connectedAccountId: string;
   subject: string;
   body: string;
 };
@@ -29,24 +35,36 @@ export const WorkflowEditActionFormSendEmail = ({
   onActionUpdate: (action: WorkflowSendEmailStep) => void;
 }) => {
   const theme = useTheme();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const form = useForm<SendEmailFormData>({
     defaultValues: {
+      connectedAccountId: '',
       subject: '',
       body: '',
     },
   });
 
   useEffect(() => {
+    form.setValue(
+      'connectedAccountId',
+      action.settings.connectedAccountId ?? '',
+    );
     form.setValue('subject', action.settings.subject ?? '');
     form.setValue('body', action.settings.template ?? '');
-  }, [action.settings.subject, action.settings.template, form]);
+  }, [
+    action.settings.connectedAccountId,
+    action.settings.subject,
+    action.settings.template,
+    form,
+  ]);
 
   const saveAction = useDebouncedCallback((formData: SendEmailFormData) => {
     onActionUpdate({
       ...action,
       settings: {
         ...action.settings,
+        connectedAccountId: formData.connectedAccountId,
         title: formData.subject,
         subject: formData.subject,
         template: formData.body,
@@ -62,48 +80,87 @@ export const WorkflowEditActionFormSendEmail = ({
 
   const handleSave = form.handleSubmit(saveAction);
 
+  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
+    objectNameSingular: 'connectedAccount',
+    filter: {
+      accountOwnerId: {
+        eq: currentWorkspaceMember?.id,
+      },
+    },
+  });
+
+  const emptyOption = { label: 'None', value: null };
+
+  const connectedAccountOptions = accounts.map((account) => {
+    return {
+      label: account.handle,
+      value: account.id,
+    };
+  });
+
   return (
-    <WorkflowEditActionFormBase
-      ActionIcon={<IconMail color={theme.color.blue} />}
-      actionTitle="Send Email"
-      actionType="Email"
-    >
-      <StyledTriggerSettings>
-        <Controller
-          name="subject"
-          control={form.control}
-          render={({ field }) => (
-            <TextInput
-              label="Subject"
-              placeholder="Thank you for building such an awesome CRM!"
-              value={field.value}
-              onChange={(email) => {
-                field.onChange(email);
+    !loading && (
+      <WorkflowEditActionFormBase
+        ActionIcon={<IconMail color={theme.color.blue} />}
+        actionTitle="Send Email"
+        actionType="Email"
+      >
+        <StyledTriggerSettings>
+          <Controller
+            name="connectedAccountId"
+            control={form.control}
+            render={({ field }) => (
+              <Select
+                dropdownId="select-connected-account-id"
+                label="Account"
+                fullWidth
+                emptyOption={emptyOption}
+                value={field.value}
+                options={connectedAccountOptions}
+                onChange={(connectedAccountId) => {
+                  field.onChange(connectedAccountId);
 
-                handleSave();
-              }}
-            />
-          )}
-        />
+                  handleSave();
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="subject"
+            control={form.control}
+            render={({ field }) => (
+              <TextInput
+                label="Subject"
+                placeholder="Thank you for building such an awesome CRM!"
+                value={field.value}
+                onChange={(email) => {
+                  field.onChange(email);
 
-        <Controller
-          name="body"
-          control={form.control}
-          render={({ field }) => (
-            <TextArea
-              label="Body"
-              placeholder="Thank you so much!"
-              value={field.value}
-              minRows={4}
-              onChange={(email) => {
-                field.onChange(email);
+                  handleSave();
+                }}
+              />
+            )}
+          />
 
-                handleSave();
-              }}
-            />
-          )}
-        />
-      </StyledTriggerSettings>
-    </WorkflowEditActionFormBase>
+          <Controller
+            name="body"
+            control={form.control}
+            render={({ field }) => (
+              <TextArea
+                label="Body"
+                placeholder="Thank you so much!"
+                value={field.value}
+                minRows={4}
+                onChange={(email) => {
+                  field.onChange(email);
+
+                  handleSave();
+                }}
+              />
+            )}
+          />
+        </StyledTriggerSettings>
+      </WorkflowEditActionFormBase>
+    )
   );
 };
