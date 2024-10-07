@@ -4,6 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { GOOGLE_APIS_OAUTH_SCOPES } from 'src/engine/core-modules/auth/constants/google-apis-oauth-scopes';
 
 @Injectable()
 export class ConnectedAccountRepository {
@@ -90,6 +91,7 @@ export class ConnectedAccountRepository {
       | 'accessToken'
       | 'refreshToken'
       | 'accountOwnerId'
+      | 'scopes'
     >,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -123,8 +125,8 @@ export class ConnectedAccountRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2, "authFailedAt" = NULL WHERE "id" = $3`,
-      [accessToken, refreshToken, connectedAccountId],
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2, "authFailedAt" = NULL, "scopes" = $3 WHERE "id" = $4`,
+      [accessToken, refreshToken, GOOGLE_APIS_OAUTH_SCOPES, connectedAccountId],
       workspaceId,
       transactionManager,
     );

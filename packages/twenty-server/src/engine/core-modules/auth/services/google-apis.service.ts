@@ -35,6 +35,7 @@ import {
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { GOOGLE_APIS_OAUTH_SCOPES } from 'src/engine/core-modules/auth/constants/google-apis-oauth-scopes';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -106,6 +107,7 @@ export class GoogleAPIsService {
             accessToken: input.accessToken,
             refreshToken: input.refreshToken,
             accountOwnerId: workspaceMemberId,
+            scopes: GOOGLE_APIS_OAUTH_SCOPES,
           },
           workspaceId,
           manager,
