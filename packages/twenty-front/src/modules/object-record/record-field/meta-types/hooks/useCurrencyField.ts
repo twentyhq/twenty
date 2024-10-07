@@ -40,7 +40,9 @@ export const useCurrencyField = () => {
     amountText: string;
     currencyCode: string;
   }) => {
-    const amount = parseFloat(amountText);
+    const cleanedAmountText = amountText.replace(/[^\d.]/g, '');
+
+    const amount = parseFloat(cleanedAmountText);
 
     const newCurrencyValue = {
       amountMicros: isNaN(amount)
