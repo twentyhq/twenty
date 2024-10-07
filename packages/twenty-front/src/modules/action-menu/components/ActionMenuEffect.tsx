@@ -14,8 +14,7 @@ export const ActionMenuEffect = ({ actionMenuId }: ActionMenuEffectProps) => {
     contextStoreTargetedRecordIdsState,
   );
 
-  const { openActionBar, closeActionMenuDropdown, closeActionBar } =
-    useActionMenu(actionMenuId);
+  const { openActionBar, closeActionBar } = useActionMenu(actionMenuId);
 
   const isDropdownOpen = useRecoilValue(
     extractComponentState(
