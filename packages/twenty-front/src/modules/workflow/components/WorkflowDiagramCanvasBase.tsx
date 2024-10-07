@@ -1,4 +1,6 @@
+import { WorkflowVersionStatusTag } from '@/workflow/components/WorkflowVersionStatusTag';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
+import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
@@ -42,6 +44,13 @@ const StyledResetReactflowStyles = styled.div`
   --xy-node-boxshadow-selected: none;
 `;
 
+const StyledStatusTagContainer = styled.div`
+  left: 0;
+  top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 const defaultFitViewOptions: FitViewOptions = {
   minZoom: 1.3,
   maxZoom: 1.3,
@@ -49,10 +58,12 @@ const defaultFitViewOptions: FitViewOptions = {
 
 export const WorkflowDiagramCanvasBase = ({
   diagram,
+  status,
   nodeTypes,
   children,
 }: {
   diagram: WorkflowDiagram;
+  status: WorkflowVersionStatus;
   nodeTypes: Partial<
     Record<
       WorkflowDiagramNodeType,
@@ -123,6 +134,10 @@ export const WorkflowDiagramCanvasBase = ({
         <Background color={GRAY_SCALE.gray25} size={2} />
 
         {children}
+
+        <StyledStatusTagContainer>
+          <WorkflowVersionStatusTag versionStatus={status} />
+        </StyledStatusTagContainer>
       </ReactFlow>
     </StyledResetReactflowStyles>
   );
