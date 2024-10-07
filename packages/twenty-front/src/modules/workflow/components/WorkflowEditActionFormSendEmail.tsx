@@ -6,7 +6,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { IconMail, IconPlus } from 'twenty-ui';
+import { IconMail, IconPlus, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -15,6 +15,7 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 
 const StyledTriggerSettings = styled.div`
   padding: ${({ theme }) => theme.spacing(6)};
@@ -50,6 +51,24 @@ export const WorkflowEditActionFormSendEmail = ({
     },
   });
 
+  const checkConnectedAccountScopes = async (
+    connectedAccountId: string | null,
+  ) => {
+    const connectedAccount = accounts.find(
+      (account) => account.id === connectedAccountId,
+    );
+    if (!isDefined(connectedAccount)) {
+      return;
+    }
+    const scopes = connectedAccount.scopes;
+    if (
+      !isDefined(scopes) ||
+      !isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))
+    ) {
+      await triggerGoogleApisOAuth(redirectUrl);
+    }
+  };
+
   useEffect(() => {
     form.setValue(
       'connectedAccountId',
@@ -64,17 +83,21 @@ export const WorkflowEditActionFormSendEmail = ({
     form,
   ]);
 
-  const saveAction = useDebouncedCallback((formData: SendEmailFormData) => {
-    onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        connectedAccountId: formData.connectedAccountId,
-        subject: formData.subject,
-        body: formData.body,
-      },
-    });
-  }, 1_000);
+  const saveAction = useDebouncedCallback(
+    async (formData: SendEmailFormData) => {
+      onActionUpdate({
+        ...action,
+        settings: {
+          ...action.settings,
+          connectedAccountId: formData.connectedAccountId,
+          subject: formData.subject,
+          body: formData.body,
+        },
+      });
+      await checkConnectedAccountScopes(formData.connectedAccountId);
+    },
+    1_000,
+  );
 
   useEffect(() => {
     return () => {
@@ -84,22 +107,30 @@ export const WorkflowEditActionFormSendEmail = ({
 
   const handleSave = form.handleSubmit(saveAction);
 
+  const filter: { or: object[] } = {
+    or: [
+      {
+        accountOwnerId: {
+          eq: currentWorkspaceMember?.id,
+        },
+      },
+    ],
+  };
+
+  if (
+    isDefined(action.settings.connectedAccountId) &&
+    action.settings.connectedAccountId !== ''
+  ) {
+    filter.or.push({
+      id: {
+        eq: action.settings.connectedAccountId,
+      },
+    });
+  }
+
   const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: 'connectedAccount',
-    filter: {
-      or: [
-        {
-          accountOwnerId: {
-            eq: currentWorkspaceMember?.id,
-          },
-        },
-        {
-          id: {
-            eq: action.settings.connectedAccountId,
-          },
-        },
-      ],
-    },
+    filter,
   });
 
   let emptyOption: SelectOption<string | null> = { label: 'None', value: null };
@@ -145,7 +176,6 @@ export const WorkflowEditActionFormSendEmail = ({
                 }}
                 onChange={(connectedAccountId) => {
                   field.onChange(connectedAccountId);
-
                   handleSave();
                 }}
               />
@@ -161,7 +191,6 @@ export const WorkflowEditActionFormSendEmail = ({
                 value={field.value}
                 onChange={(email) => {
                   field.onChange(email);
-
                   handleSave();
                 }}
               />
@@ -179,7 +208,6 @@ export const WorkflowEditActionFormSendEmail = ({
                 minRows={4}
                 onChange={(email) => {
                   field.onChange(email);
-
                   handleSave();
                 }}
               />
