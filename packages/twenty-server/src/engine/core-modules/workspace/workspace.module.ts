@@ -5,7 +5,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -36,7 +35,7 @@ import { WorkspaceService } from './services/workspace.service';
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [User, Workspace, UserWorkspace, FeatureFlagEntity],
+          [User, Workspace, UserWorkspace],
           'core',
         ),
         UserWorkspaceModule,
