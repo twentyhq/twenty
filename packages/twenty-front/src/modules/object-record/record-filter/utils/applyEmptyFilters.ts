@@ -41,6 +41,37 @@ export const applyEmptyFilters = (
         ],
       };
       break;
+    case 'PHONES': {
+      if (!isCompositeField) {
+        const phonesFilter = generateILikeFiltersForCompositeFields(
+          '',
+          correspondingField.name,
+          ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
+          true,
+        );
+
+        emptyRecordFilter = {
+          and: phonesFilter,
+        };
+        break;
+      } else {
+        emptyRecordFilter = {
+          or: [
+            {
+              [correspondingField.name]: {
+                [compositeFieldName]: { ilike: '' },
+              } as StringFilter,
+            },
+            {
+              [correspondingField.name]: {
+                [compositeFieldName]: { is: 'NULL' },
+              } as StringFilter,
+            },
+          ],
+        };
+        break;
+      }
+    }
     case 'CURRENCY':
       emptyRecordFilter = {
         or: [
@@ -239,6 +270,7 @@ export const applyEmptyFilters = (
         [correspondingField.name]: { is: 'NULL' } as StringFilter,
       };
       break;
+    case 'DATE':
     case 'DATE_TIME':
       emptyRecordFilter = {
         [correspondingField.name]: { is: 'NULL' } as DateFilter,

@@ -22,4 +22,4 @@ export type FilterableFieldType = PickLiteral<
   | 'MULTI_SELECT'
   | 'ACTOR'
   | 'ARRAY'
-  | 'SOURCE';
+>;
