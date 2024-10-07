@@ -46,4 +46,17 @@ export class FeatureFlagService {
 
     return workspaceFeatureFlagsMap;
   }
+
+  public async enableFeatureFlags(
+    keys: FeatureFlagKey[],
+    workspaceId: string,
+  ): Promise<void> {
+    await this.featureFlagRepository.upsert(
+      keys.map((key) => ({ workspaceId, key, value: true })),
+      {
+        conflictPaths: ['workspaceId', 'key'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+  }
 }
