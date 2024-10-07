@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
-import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { IconPlus } from 'twenty-ui';
 import { z } from 'zod';
@@ -79,7 +78,6 @@ const StyledButton = styled(LightButton)`
 export const SettingsDataModelFieldSelectForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldSelectFormProps) => {
-  const [focusedOptionId, setFocusedOptionId] = useState('');
   const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({ fieldMetadataItem });
 
@@ -190,10 +188,6 @@ export const SettingsDataModelFieldSelectForm = ({
     const newOptions = getOptionsWithNewOption();
 
     setFormValue('options', newOptions);
-
-    const lastOptionId = newOptions[newOptions.length - 1].id;
-
-    setFocusedOptionId(lastOptionId);
   };
 
   return (
@@ -227,7 +221,7 @@ export const SettingsDataModelFieldSelectForm = ({
                           <SettingsDataModelFieldSelectFormOptionRow
                             key={option.id}
                             option={option}
-                            focused={focusedOptionId === option.id}
+                            isNewRow={index === options.length - 1}
                             onChange={(nextOption) => {
                               const nextOptions = toSpliced(
                                 options,
