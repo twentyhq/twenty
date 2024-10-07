@@ -7,7 +7,6 @@ import {
   IconUsers,
   IconReload,
   IconMail,
-  StyledText,
   Avatar,
   MOBILE_VIEWPORT,
 } from 'twenty-ui';
@@ -75,20 +74,22 @@ const StyledIconWrapper = styled.div`
   left: 2px;
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
-  top: 2px;
 `;
 
 const StyledScrollableTextContainer = styled.div`
-  display: inline-block;
   max-width: 100%;
   overflow-x: auto;
-  white-space: nowrap;
 `;
 
 const StyledTextContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  max-width: max-content;
+  overflow-x: auto;
   position: absolute;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @media (min-width: 360px) and (max-width: 420px) {
+    max-width: 150px;
+    margin-top: ${({ theme }) => theme.spacing(1)};
+  }
 `;
 const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
@@ -202,29 +203,24 @@ export const SettingsWorkspaceMembers = () => {
               <StyledTable key={workspaceMember.id}>
                 <TableRow>
                   <TableCell>
-                    <StyledText
-                      PrefixComponent={
-                        <Avatar
-                          avatarUrl={workspaceMember.avatarUrl}
-                          placeholderColorSeed={workspaceMember.id}
-                          placeholder={workspaceMember.name.firstName ?? ''}
-                          type="rounded"
-                          size="sm"
-                        />
-                      }
-                      text={
-                        workspaceMember.name.firstName +
-                        ' ' +
-                        workspaceMember.name.lastName
-                      }
-                    />
-                  </TableCell>
-                  <TableCell align={'center'}>
-                    <StyledTextContainer>
-                      <StyledText
-                        text={workspaceMember.userEmail}
-                        color={theme.font.color.secondary}
+                    <StyledIconWrapper>
+                      <Avatar
+                        avatarUrl={workspaceMember.avatarUrl}
+                        placeholderColorSeed={workspaceMember.id}
+                        placeholder={workspaceMember.name.firstName ?? ''}
+                        type="rounded"
+                        size="sm"
                       />
+                    </StyledIconWrapper>
+                    <StyledScrollableTextContainer>
+                      {workspaceMember.name.firstName +
+                        ' ' +
+                        workspaceMember.name.lastName}
+                    </StyledScrollableTextContainer>
+                  </TableCell>
+                  <TableCell>
+                    <StyledTextContainer>
+                      {workspaceMember.userEmail}
                     </StyledTextContainer>
                   </TableCell>
                   <TableCell align={'right'}>
