@@ -34,7 +34,6 @@ export const ActionMenuEffect = ({ actionMenuId }: ActionMenuEffectProps) => {
   }, [
     contextStoreTargetedRecordIds,
     openActionBar,
-    closeActionMenuDropdown,
     closeActionBar,
     isDropdownOpen,
   ]);
