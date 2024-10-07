@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddColumnNameToIndexFieldMetadata1726762935841
+export class AddCompositeColumnToIndexFieldMetadata1726762935841
   implements MigrationInterface
 {
-  name = 'AddColumnNameToIndexFieldMetadata1726762935841';
+  name = 'AddCompositeColumnToIndexFieldMetadata1726762935841';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
