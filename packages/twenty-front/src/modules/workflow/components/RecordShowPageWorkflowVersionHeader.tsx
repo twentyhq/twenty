@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Button } from '@/ui/input/button/components/Button';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
@@ -46,6 +47,11 @@ export const RecordShowPageWorkflowVersionHeader = ({
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
+  const { updateOneRecord: updateOneWorkflowVersion } =
+    useUpdateOneRecord<WorkflowVersion>({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    });
+
   return (
     <>
       {showUseAsDraftButton ? (
@@ -54,14 +60,24 @@ export const RecordShowPageWorkflowVersionHeader = ({
           variant="secondary"
           Icon={IconPencil}
           disabled={isWaitingForWorkflowVersion}
-          onClick={() => {
-            return createNewWorkflowVersion({
-              workflowId: workflowVersion.workflow.id,
-              name: `v${workflowVersion.workflow.versions.length + 1}`,
-              status: 'DRAFT',
-              trigger: workflowVersion.trigger,
-              steps: workflowVersion.steps,
-            });
+          onClick={async () => {
+            if (hasAlreadyDraftVersion) {
+              await updateOneWorkflowVersion({
+                idToUpdate: draftWorkflowVersions[0].id,
+                updateOneRecordInput: {
+                  trigger: workflowVersion.trigger,
+                  steps: workflowVersion.steps,
+                },
+              });
+            } else {
+              await createNewWorkflowVersion({
+                workflowId: workflowVersion.workflow.id,
+                name: `v${workflowVersion.workflow.versions.length + 1}`,
+                status: 'DRAFT',
+                trigger: workflowVersion.trigger,
+                steps: workflowVersion.steps,
+              });
+            }
           }}
         />
       ) : null}
