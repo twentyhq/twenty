@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import {
   QueryRunner,
   Table,
@@ -9,6 +10,7 @@ import {
   TableUnique,
 } from 'typeorm';
 
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
@@ -28,8 +30,6 @@ import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/work
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 
-import { isDefined } from 'class-validator';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
 @Injectable()

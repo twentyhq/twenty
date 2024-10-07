@@ -1,3 +1,7 @@
+import { QueryFailedError } from 'typeorm';
+
+import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
+
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -16,7 +20,43 @@ import {
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,
+  context: WorkspaceSchemaBuilderContext,
 ) => {
+  if (error instanceof QueryFailedError) {
+    if (
+      error.message.includes('duplicate key value violates unique constraint')
+    ) {
+      const indexNameMatch = error.message.match(/"([^"]+)"/);
+
+      if (indexNameMatch) {
+        const indexName = indexNameMatch[1];
+
+        const affectedColumns = context.objectMetadataItem.indexes
+          .find((index) => index.name === indexName)
+          ?.indexFieldMetadatas?.map((field) => field.fieldMetadata.name)
+          .filter((name) => name !== 'deletedAt');
+
+        const columnNames = affectedColumns?.join(', ');
+
+        if (affectedColumns?.length === 1) {
+          throw new UserInputError(
+            `Duplicate ${columnNames}. Please set a unique one.`,
+          );
+        }
+
+        throw new UserInputError(
+          `A duplicate entry was detected. The combination of ${columnNames} must be unique.`,
+        );
+      }
+    }
+
+    // If it's not a duplicate key error, or we couldn't parse the index name,
+    // we'll throw a generic error
+    throw new UserInputError(
+      'An error occurred while processing your request. Please check your input and try again.',
+    );
+  }
+
   if (error instanceof WorkspaceQueryRunnerException) {
     switch (error.code) {
       case WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND:

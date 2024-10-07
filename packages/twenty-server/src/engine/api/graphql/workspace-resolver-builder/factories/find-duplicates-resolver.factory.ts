@@ -61,7 +61,7 @@ export class FindDuplicatesResolverFactory
           options,
         );
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, context);
       }
     };
   }

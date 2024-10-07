@@ -55,7 +55,7 @@ export class DeleteManyResolverFactory
 
         return await this.workspaceQueryRunnerService.deleteMany(args, options);
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, context);
       }
     };
   }

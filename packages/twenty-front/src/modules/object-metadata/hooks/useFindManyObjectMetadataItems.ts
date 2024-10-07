@@ -41,12 +41,9 @@ export const useFindManyObjectMetadataItems = ({
     skip: skip || !apolloMetadataClient,
     onError: (error) => {
       logError('useFindManyObjectMetadataItems error : ' + error);
-      enqueueSnackBar(
-        `${error.message}`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueSnackBar(`${error.message}`, {
+        variant: SnackBarVariant.Error,
+      });
     },
   });
 

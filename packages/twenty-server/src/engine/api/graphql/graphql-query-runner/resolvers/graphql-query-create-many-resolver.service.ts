@@ -107,6 +107,61 @@ export class GraphqlQueryCreateManyResolverService
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItem);
+
+    /*
+    const uniqueIndexes = options.objectMetadataItem.indexes.filter(
+      (index) => index.isUnique,
+    );
+
+    uniqueIndexes.forEach((index) => {
+      const recordMap = new Map<string, Set<string>>();
+
+      args.data.forEach((record, index) => {
+        index.fields.forEach((fieldName) => {
+          const value = record[fieldName];
+        });
+      });
+    });
+
+    if (uniqueIndexes.length > 0) {
+      const recordMap = new Map<string, Set<string>>();
+
+      args.data.forEach((record, index) => {
+        uniqueIndexes.forEach((fieldName) => {
+          const value = record[fieldName];
+
+          if (value !== undefined && value !== null) {
+            const key = `${fieldName}:${value}`;
+
+            if (!recordMap.has(key)) {
+              recordMap.set(key, new Set());
+            }
+            recordMap.get(key)?.add(index.toString());
+          }
+        });
+      });
+
+      const violations = Array.from(recordMap.entries())
+        .filter(([, indexes]) => indexes.size > 1)
+        .map(([key, indexes]) => {
+          const [fieldName, value] = key.split(':');
+
+          return {
+            field: fieldName,
+            value: value,
+            indexes: Array.from(indexes).map(Number),
+          };
+        });
+
+      if (violations.length > 0) {
+        throw new Error(
+          `Unique constraint violation(s) detected: ${JSON.stringify(
+            violations,
+          )}`,
+        );
+      }
+    }
+    */
     args.data.forEach((record) => {
       if (record?.id) {
         assertIsValidUuid(record.id);
