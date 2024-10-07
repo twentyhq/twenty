@@ -81,6 +81,7 @@ const StyledIconWrapper = styled.div`
 const StyledScrollableTextContainer = styled.div`
   max-width: 100%;
   overflow-x: auto;
+  white-space: pre-line;
 `;
 
 const StyledTextContainer = styled.div`
