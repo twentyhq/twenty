@@ -25,7 +25,7 @@ export const SettingsServerlessFunctionNewForm = ({
         <TextInput
           placeholder="Name"
           fullWidth
-          autoFocus
+          autoFocusOnMount
           value={formValues.name}
           onChange={onChange('name')}
         />
