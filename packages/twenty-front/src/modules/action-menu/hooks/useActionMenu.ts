@@ -23,15 +23,9 @@ export const useActionMenu = (actionMenuId: string) => {
     closeBottomBar(`action-bar-${actionMenuId}`);
   };
 
-  const closeActionMenu = () => {
-    closeActionMenuDropdown();
-    closeActionBar();
-  };
-
   return {
     openActionMenuDropdown,
     openActionBar,
-    closeActionMenu,
     closeActionBar,
     closeActionMenuDropdown,
   };

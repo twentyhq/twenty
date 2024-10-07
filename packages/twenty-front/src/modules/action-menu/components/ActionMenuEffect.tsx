@@ -1,5 +1,7 @@
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -12,15 +14,30 @@ export const ActionMenuEffect = ({ actionMenuId }: ActionMenuEffectProps) => {
     contextStoreTargetedRecordIdsState,
   );
 
-  const { openActionBar, closeActionMenu } = useActionMenu(actionMenuId);
+  const { openActionBar, closeActionMenuDropdown, closeActionBar } =
+    useActionMenu(actionMenuId);
+
+  const isDropdownOpen = useRecoilValue(
+    extractComponentState(
+      isDropdownOpenComponentState,
+      `action-menu-dropdown-${actionMenuId}`,
+    ),
+  );
 
   useEffect(() => {
-    if (contextStoreTargetedRecordIds.length > 0) {
+    if (contextStoreTargetedRecordIds.length > 0 && !isDropdownOpen) {
       openActionBar();
-    } else {
-      closeActionMenu();
     }
-  }, [contextStoreTargetedRecordIds, openActionBar, closeActionMenu]);
+    if (contextStoreTargetedRecordIds.length === 0) {
+      closeActionBar();
+    }
+  }, [
+    contextStoreTargetedRecordIds,
+    openActionBar,
+    closeActionMenuDropdown,
+    closeActionBar,
+    isDropdownOpen,
+  ]);
 
   return null;
 };

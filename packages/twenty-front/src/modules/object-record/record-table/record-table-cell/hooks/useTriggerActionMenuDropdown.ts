@@ -1,18 +1,19 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { isBottomBarOpenComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenComponentState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
 }: {
   recordTableId: string;
 }) => {
-  const { openActionMenuDropdown } = useActionMenu(recordTableId);
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
       (event: React.MouseEvent, recordId: string) => {
@@ -24,7 +25,6 @@ export const useTriggerActionMenuDropdown = ({
           x: event.clientX,
           y: event.clientY,
         });
-        openActionMenuDropdown();
 
         const isRowSelectedFamilyState = extractComponentFamilyState(
           isRowSelectedComponentFamilyState,
@@ -39,8 +39,21 @@ export const useTriggerActionMenuDropdown = ({
         if (isRowSelected !== true) {
           set(isRowSelectedFamilyState(recordId), true);
         }
+
+        const isActionMenuDropdownOpenState = extractComponentState(
+          isDropdownOpenComponentState,
+          `action-menu-dropdown-${recordTableId}`,
+        );
+
+        const isActionBarOpenState = extractComponentState(
+          isBottomBarOpenComponentState,
+          `action-bar-${recordTableId}`,
+        );
+
+        set(isActionBarOpenState, false);
+        set(isActionMenuDropdownOpenState, true);
       },
-    [openActionMenuDropdown, recordTableId],
+    [recordTableId],
   );
 
   return { triggerActionMenuDropdown };
