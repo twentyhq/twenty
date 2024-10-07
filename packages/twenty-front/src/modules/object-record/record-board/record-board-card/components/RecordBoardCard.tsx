@@ -1,5 +1,5 @@
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
-import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
+import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -23,6 +23,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -176,12 +177,17 @@ export const RecordBoardCard = ({
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const setActionMenuDropdownPosition = useSetRecoilState(
-    actionMenuDropdownPositionState,
-  );
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
   );
+
+  const setActionMenuDropdownPosition = useSetRecoilState(
+    extractComponentState(
+      actionMenuDropdownPositionComponentState,
+      `action-menu-dropdown-${recordBoardId}`,
+    ),
+  );
+
   const { openActionMenuDropdown } = useActionMenu(recordBoardId);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {

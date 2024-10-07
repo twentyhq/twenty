@@ -4,7 +4,7 @@ import { userEvent, within } from '@storybook/testing-library';
 import { RecoilRoot } from 'recoil';
 
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
-import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
+import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -21,7 +21,13 @@ const meta: Meta<typeof ActionMenuDropdown> = {
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
-          set(actionMenuDropdownPositionState, { x: 10, y: 10 });
+          set(
+            extractComponentState(
+              actionMenuDropdownPositionComponentState,
+              'action-menu-dropdown-story',
+            ),
+            { x: 10, y: 10 },
+          );
           set(actionMenuEntriesState, [
             {
               label: 'Delete',

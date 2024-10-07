@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
+import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isBottomBarOpenComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -21,10 +21,16 @@ export const useTriggerActionMenuDropdown = ({
 
         const tableScopeId = getScopeIdFromComponentId(recordTableId);
 
-        set(actionMenuDropdownPositionState, {
-          x: event.clientX,
-          y: event.clientY,
-        });
+        set(
+          extractComponentState(
+            actionMenuDropdownPositionComponentState,
+            recordTableId,
+          ),
+          {
+            x: event.clientX,
+            y: event.clientY,
+          },
+        );
 
         const isRowSelectedFamilyState = extractComponentFamilyState(
           isRowSelectedComponentFamilyState,

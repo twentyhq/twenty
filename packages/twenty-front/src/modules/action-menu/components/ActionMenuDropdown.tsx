@@ -3,11 +3,12 @@ import { useRecoilValue } from 'recoil';
 
 import { PositionType } from '../types/PositionType';
 
-import { actionMenuDropdownPositionState } from '@/action-menu/states/actionMenuDropdownPositionState';
+import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type StyledContainerProps = {
   position: PositionType;
@@ -42,7 +43,10 @@ export const ActionMenuDropdown = ({
   const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
 
   const actionMenuDropdownPosition = useRecoilValue(
-    actionMenuDropdownPositionState,
+    extractComponentState(
+      actionMenuDropdownPositionComponentState,
+      `action-menu-dropdown-${actionMenuId}`,
+    ),
   );
 
   //TODO: remove this
