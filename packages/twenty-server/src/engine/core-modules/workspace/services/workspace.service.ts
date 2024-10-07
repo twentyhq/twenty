@@ -160,12 +160,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   private async enableDefaultFeatureFlags(workspaceId: string) {
-    DEFAULT_FEATURE_FLAGS.forEach(async (featureFlagKey) => {
-      await this.featureFlagRepository.save({
-        key: featureFlagKey,
-        value: true,
-        workspaceId,
-      });
-    });
+    await this.featureFlagRepository.save(
+      DEFAULT_FEATURE_FLAGS.map((featureFlagKey) => {
+        return {
+          key: featureFlagKey,
+          value: true,
+          workspaceId,
+        };
+      }),
+    );
   }
 }
