@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -98,16 +101,19 @@ export class WorkspaceMigrationIndexFactory {
               return fieldMetadata.name;
             }
 
-            if (!indexFieldMetadata.compositeColumn) {
-              throw new Error(
-                `No composite column for index field metadata with id ${indexFieldMetadata.id} in object metadata with id ${objectMetadata.id}`,
-              );
-            }
+            const compositeType = compositeTypeDefinitions.get(
+              fieldMetadata.type,
+            ) as CompositeType;
 
-            return indexFieldMetadata.compositeColumn;
-          }),
+            return compositeType.properties
+              .filter((property) => property.isIncludedInUniqueConstraint)
+              .map((property) =>
+                computeCompositeColumnName(fieldMetadata, property),
+              );
+          })
+          .flat(),
         type: indexMetadata.indexType,
-        where: indexMetadata.indexWhereClause
+        where: indexMetadata.indexWhereClause,
       }));
 
       workspaceMigrations.push({

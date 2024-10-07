@@ -53,7 +53,7 @@ const JOB_TITLE_FIELD_NAME = 'jobTitle';
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
 })
-@WorkspaceIndex(['emailsPrimaryEmail'], {
+@WorkspaceIndex(['emails'], {
   isUnique: true,
   indexWhereClause: '"deletedAt" IS NULL AND  "emailsPrimaryEmail" != \'\'',
 })

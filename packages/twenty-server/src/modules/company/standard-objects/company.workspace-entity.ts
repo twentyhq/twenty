@@ -49,10 +49,10 @@ const DOMAIN_NAME_FIELD_NAME = 'domainName';
   icon: 'IconBuildingSkyscraper',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
-@WorkspaceIndex(['domainNamePrimaryLinkUrl'], {
+@WorkspaceIndex([DOMAIN_NAME_FIELD_NAME], {
   isUnique: true,
   indexWhereClause:
-    '"deletedAt" IS NULL AND  "domainNamePrimaryLinkUrl" != \'\'',
+    '"deletedAt" IS NULL AND "domainNamePrimaryLinkUrl" != \'\'',
 })
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

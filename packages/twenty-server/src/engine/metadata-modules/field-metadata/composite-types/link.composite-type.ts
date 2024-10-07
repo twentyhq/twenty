@@ -16,6 +16,7 @@ export const linkCompositeType: CompositeType = {
       type: FieldMetadataType.TEXT,
       hidden: false,
       isRequired: false,
+      isIncludedInUniqueConstraint: true,
     },
   ],
 };

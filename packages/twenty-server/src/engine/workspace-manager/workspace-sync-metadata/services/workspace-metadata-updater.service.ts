@@ -291,9 +291,6 @@ export class WorkspaceMetadataUpdaterService {
 
         return {
           fieldMetadataId: fieldMetadata.id,
-          compositeColumn: isCompositeFieldMetadataType(fieldMetadata.type)
-            ? column
-            : undefined,
           order,
         };
       };
