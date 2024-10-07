@@ -31,12 +31,22 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       if (indexNameMatch) {
         const indexName = indexNameMatch[1];
 
+        const deletedAtFieldMetadata = context.objectMetadataItem.fields.find(
+          (field) => field.name === 'deletedAt',
+        );
+
         const affectedColumns = context.objectMetadataItem.indexes
           .find((index) => index.name === indexName)
           ?.indexFieldMetadatas?.filter(
-            (field) => field.fieldMetadata.name !== 'deletedAt',
+            (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,
           )
-          .map((field) => field.fieldMetadata.label);
+          .map((field) => {
+            const fieldMetadata = context.objectMetadataItem.fields.find(
+              (objectField) => field.id === objectField.id,
+            );
+
+            return fieldMetadata?.label;
+          });
 
         const columnNames = affectedColumns?.join(', ');
 
@@ -52,11 +62,7 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       }
     }
 
-    // If it's not a duplicate key error, or we couldn't parse the index name,
-    // we'll throw a generic error
-    throw new UserInputError(
-      'An error occurred while processing your request. Please check your input and try again.',
-    );
+    throw error;
   }
 
   if (error instanceof WorkspaceQueryRunnerException) {
