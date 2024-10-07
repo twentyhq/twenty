@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   ColorSample,
   IconCheck,
@@ -33,7 +33,6 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onRemoveAsDefault?: () => void;
   onInputEnter?: () => void;
   option: FieldMetadataItemOption;
-  focused?: boolean;
 };
 
 const StyledRow = styled.div`
@@ -67,9 +66,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   onRemoveAsDefault,
   onInputEnter,
   option,
-  focused,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
-  const [hasFocused, setHasFocused] = useState(false);
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
@@ -88,17 +85,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   const handleInputEnter = () => {
     onInputEnter?.();
   };
-
-  const handleInputRef = useCallback(
-    (node: HTMLInputElement | null) => {
-      if (Boolean(node) && !hasFocused && Boolean(focused)) {
-        node?.focus();
-        node?.select();
-        setHasFocused(true);
-      }
-    },
-    [hasFocused, focused],
-  );
 
   return (
     <StyledRow className={className}>
@@ -133,7 +119,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
-        ref={handleInputRef}
         value={option.label}
         onChange={(label) =>
           onChange({
@@ -142,7 +127,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             value: getOptionValueFromLabel(label),
           })
         }
-        focused={focused}
         RightIcon={isDefault ? IconCheck : undefined}
         maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
         onInputEnter={handleInputEnter}

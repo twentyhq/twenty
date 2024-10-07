@@ -1,10 +1,4 @@
-import {
-  FocusEventHandler,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FocusEventHandler, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
@@ -14,112 +8,113 @@ import {
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { isDefined } from '~/utils/isDefined';
 
 export type TextInputProps = TextInputV2ComponentProps & {
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
   dataTestId?: string;
-  focused?: boolean;
+  autoFocus?: boolean;
+  autoSelect?: boolean;
 };
 
-export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
-  (
-    {
-      onFocus,
-      onBlur,
-      onInputEnter,
-      disableHotkeys = false,
-      focused,
-      dataTestId,
-      ...props
-    }: TextInputProps,
-    ref,
-  ) => {
-    const inputRef = useRef<HTMLInputElement>(null);
-    const combinedRef = useCombinedRefs(ref, inputRef);
+export const TextInput = ({
+  onFocus,
+  onBlur,
+  onInputEnter,
+  disableHotkeys = false,
+  autoFocus,
+  autoSelect,
+  dataTestId,
+  ...props
+}: TextInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
 
-    const [isFocused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
-    useEffect(() => {
-      if (focused === true) {
-        inputRef.current?.focus();
-        setIsFocused(true);
-      }
-    }, [focused]);
-
-    const {
-      goBackToPreviousHotkeyScope,
-      setHotkeyScopeAndMemorizePreviousScope,
-    } = usePreviousHotkeyScope();
-
-    const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
-      onFocus?.(e);
+  useEffect(() => {
+    if (autoFocus === true) {
+      inputRef.current?.focus();
       setIsFocused(true);
+    }
+  }, [autoFocus]);
 
-      if (!disableHotkeys) {
-        setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+  useEffect(() => {
+    if (autoSelect === true) {
+      inputRef.current?.select();
+    }
+  }, [autoSelect]);
+
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
+
+  const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
+    onFocus?.(e);
+    setIsFocused(true);
+
+    if (!disableHotkeys) {
+      setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+    }
+  };
+
+  const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
+    onBlur?.(e);
+    setIsFocused(false);
+
+    if (!disableHotkeys) {
+      goBackToPreviousHotkeyScope();
+    }
+  };
+
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      if (!isFocused) {
+        return;
       }
-    };
 
-    const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
-      onBlur?.(e);
-      setIsFocused(false);
-
-      if (!disableHotkeys) {
-        goBackToPreviousHotkeyScope();
+      if (isDefined(inputRef) && 'current' in inputRef) {
+        inputRef.current?.blur();
+        setIsFocused(false);
       }
-    };
+    },
+    InputHotkeyScope.TextInput,
+    [inputRef, isFocused],
+    {
+      preventDefault: false,
+    },
+  );
 
-    useScopedHotkeys(
-      [Key.Escape],
-      () => {
-        if (!isFocused) {
-          return;
-        }
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      if (!isFocused) {
+        return;
+      }
 
-        if (isDefined(inputRef) && 'current' in inputRef) {
-          inputRef.current?.blur();
-          setIsFocused(false);
-        }
-      },
-      InputHotkeyScope.TextInput,
-      [inputRef, isFocused],
-      {
-        preventDefault: false,
-      },
-    );
+      onInputEnter?.();
 
-    useScopedHotkeys(
-      [Key.Enter],
-      () => {
-        if (!isFocused) {
-          return;
-        }
+      if (isDefined(inputRef) && 'current' in inputRef) {
+        setIsFocused(false);
+      }
+    },
+    InputHotkeyScope.TextInput,
+    [inputRef, isFocused, onInputEnter],
+    {
+      preventDefault: false,
+    },
+  );
 
-        onInputEnter?.();
-
-        if (isDefined(inputRef) && 'current' in inputRef) {
-          setIsFocused(false);
-        }
-      },
-      InputHotkeyScope.TextInput,
-      [inputRef, isFocused, onInputEnter],
-      {
-        preventDefault: false,
-      },
-    );
-
-    return (
-      <TextInputV2
-        ref={combinedRef}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
-        dataTestId={dataTestId}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-    );
-  },
-);
+  return (
+    <TextInputV2
+      ref={inputRef}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
+      dataTestId={dataTestId}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    />
+  );
+};

@@ -227,7 +227,7 @@ export const SettingsDataModelFieldSelectForm = ({
                           <SettingsDataModelFieldSelectFormOptionRow
                             key={option.id}
                             option={option}
-                            focused={focusedOptionId === option.id}
+                            // autoFocus={focusedOptionId === option.id}
                             onChange={(nextOption) => {
                               const nextOptions = toSpliced(
                                 options,
