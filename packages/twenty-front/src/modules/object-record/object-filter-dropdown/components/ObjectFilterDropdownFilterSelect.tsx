@@ -19,9 +19,10 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
+import { currentSubMenuState } from '@/object-record/object-filter-dropdown/states/subMenuStates';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -70,6 +71,9 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
   );
+
+  const [currentSubMenu, setCurrentSubMenu] =
+    useRecoilState(currentSubMenuState);
 
   const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
     .sort((a, b) => a.label.localeCompare(b.label))

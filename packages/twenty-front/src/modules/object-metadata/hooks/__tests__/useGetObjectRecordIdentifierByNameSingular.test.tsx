@@ -3,9 +3,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('useGetObjectRecordIdentifierByNameSingular', () => {
   it('should work as expected', async () => {
@@ -19,7 +17,7 @@ describe('useGetObjectRecordIdentifierByNameSingular', () => {
       }) => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
 
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useGetObjectRecordIdentifierByNameSingular()(
           record,

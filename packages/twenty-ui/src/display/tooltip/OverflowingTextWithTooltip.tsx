@@ -1,6 +1,6 @@
+import { styled } from '@linaria/react';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { styled } from '@linaria/react';
 
 import { THEME_COMMON } from '@ui/theme';
 

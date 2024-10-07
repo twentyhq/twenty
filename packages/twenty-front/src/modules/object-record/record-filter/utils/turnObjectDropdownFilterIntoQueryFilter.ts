@@ -25,7 +25,11 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
+import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
+import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
+import { z } from 'zod';
 
 // TODO: break this down into smaller functions and make the whole thing immutable
 // Especially applyEmptyFilters
@@ -47,6 +51,9 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     const isEmptyOperand = [
       ViewFilterOperand.IsEmpty,
       ViewFilterOperand.IsNotEmpty,
+      ViewFilterOperand.IsInPast,
+      ViewFilterOperand.IsInFuture,
+      ViewFilterOperand.IsToday,
     ].includes(rawUIFilter.operand);
 
     if (!correspondingField) {
@@ -60,8 +67,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
 
     switch (rawUIFilter.definition.type) {
-      case 'EMAIL':
-      case 'PHONE':
       case 'TEXT':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
@@ -96,24 +101,31 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'DATE':
-      case 'DATE_TIME':
+      case 'DATE_TIME': {
+        const resolvedFilterValue = resolveFilterValue(rawUIFilter);
+        const now = roundToNearestMinutes(new Date());
+        const date =
+          resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
+
         switch (rawUIFilter.operand) {
-          case ViewFilterOperand.GreaterThan:
+          case ViewFilterOperand.IsAfter: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: rawUIFilter.value,
+                gt: date.toISOString(),
               } as DateFilter,
             });
             break;
-          case ViewFilterOperand.LessThan:
+          }
+          case ViewFilterOperand.IsBefore: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: rawUIFilter.value,
+                lt: date.toISOString(),
               } as DateFilter,
             });
             break;
+          }
           case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
+          case ViewFilterOperand.IsNotEmpty: {
             applyEmptyFilters(
               rawUIFilter.operand,
               correspondingField,
@@ -121,12 +133,100 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.definition,
             );
             break;
+          }
+          case ViewFilterOperand.IsRelative: {
+            const dateRange = z
+              .object({ start: z.date(), end: z.date() })
+              .safeParse(resolvedFilterValue).data;
+
+            const defaultDateRange = resolveFilterValue({
+              value: 'PAST_1_DAY',
+              definition: {
+                type: 'DATE',
+              },
+              operand: ViewFilterOperand.IsRelative,
+            });
+
+            if (!defaultDateRange) {
+              throw new Error('Failed to resolve default date range');
+            }
+
+            const { start, end } = dateRange ?? defaultDateRange;
+
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    gte: start.toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    lte: end.toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
+          case ViewFilterOperand.Is: {
+            const isValid = resolvedFilterValue instanceof Date;
+            const date = isValid ? resolvedFilterValue : now;
+
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
+          case ViewFilterOperand.IsInPast:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                lte: now.toISOString(),
+              } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsInFuture:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                gte: now.toISOString(),
+              } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsToday: {
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
           default:
             throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`, //
             );
         }
         break;
+      }
       case 'RATING':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Is:
@@ -616,48 +716,81 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         break;
       }
       case 'ACTOR':
-        switch (rawUIFilter.operand) {
-          case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              or: [
-                {
-                  [correspondingField.name]: {
-                    name: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as ActorFilter,
+        if (
+          rawUIFilter.definition.compositeFieldName ===
+          ('source' satisfies keyof FieldActorValue)
+        ) {
+          const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
+
+          switch (rawUIFilter.operand) {
+            case ViewFilterOperand.Is:
+              objectRecordFilters.push({
+                [correspondingField.name]: {
+                  source: {
+                    in: parsedRecordIds,
+                  } as RelationFilter,
                 },
-              ],
-            });
-            break;
-          case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              and: [
-                {
+              });
+
+              break;
+            case ViewFilterOperand.IsNot:
+              if (parsedRecordIds.length > 0) {
+                objectRecordFilters.push({
                   not: {
+                    [correspondingField.name]: {
+                      source: {
+                        in: parsedRecordIds,
+                      } as RelationFilter,
+                    },
+                  },
+                });
+              }
+              break;
+          }
+        } else {
+          switch (rawUIFilter.operand) {
+            case ViewFilterOperand.Contains:
+              objectRecordFilters.push({
+                or: [
+                  {
                     [correspondingField.name]: {
                       name: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as ActorFilter,
                   },
-                },
-              ],
-            });
-            break;
-          case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
-            applyEmptyFilters(
-              rawUIFilter.operand,
-              correspondingField,
-              objectRecordFilters,
-              rawUIFilter.definition,
-            );
-            break;
-          default:
-            throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-            );
+                ],
+              });
+              break;
+            case ViewFilterOperand.DoesNotContain:
+              objectRecordFilters.push({
+                and: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        name: {
+                          ilike: `%${rawUIFilter.value}%`,
+                        },
+                      } as ActorFilter,
+                    },
+                  },
+                ],
+              });
+              break;
+            case ViewFilterOperand.IsEmpty:
+            case ViewFilterOperand.IsNotEmpty:
+              applyEmptyFilters(
+                rawUIFilter.operand,
+                correspondingField,
+                objectRecordFilters,
+                rawUIFilter.definition,
+              );
+              break;
+            default:
+              throw new Error(
+                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              );
+          }
         }
         break;
       case 'EMAILS':

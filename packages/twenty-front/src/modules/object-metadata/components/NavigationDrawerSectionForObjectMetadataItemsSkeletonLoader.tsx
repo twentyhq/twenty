@@ -1,3 +1,4 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -20,9 +21,18 @@ export const NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader: React.
         borderRadius={4}
       >
         <StyledSkeletonColumn>
-          <Skeleton width={196} height={16} />
-          <Skeleton width={196} height={16} />
-          <Skeleton width={196} height={16} />
+          <Skeleton
+            width={196}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
+          <Skeleton
+            width={196}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
+          <Skeleton
+            width={196}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
         </StyledSkeletonColumn>
       </SkeletonTheme>
     );

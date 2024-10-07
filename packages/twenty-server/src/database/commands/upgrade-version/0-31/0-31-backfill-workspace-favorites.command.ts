@@ -51,6 +51,7 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
         await this.createViewWorkspaceFavorites(
           workspaceId,
           activeWorkspaceIndexViews.map((view) => view.id),
+          _options.dryRun ?? false,
         );
 
         this.logger.log(
@@ -117,6 +118,7 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
   private async createViewWorkspaceFavorites(
     workspaceId: string,
     viewIds: string[],
+    dryRun: boolean,
   ) {
     const favoriteRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
@@ -125,6 +127,7 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
       );
 
     let nextFavoritePosition = await favoriteRepository.count();
+    let createdFavorites = 0;
 
     for (const viewId of viewIds) {
       const existingFavorites = await favoriteRepository.find({
@@ -137,14 +140,23 @@ export class BackfillWorkspaceFavoritesCommand extends ActiveWorkspacesCommandRu
         continue;
       }
 
-      await favoriteRepository.insert(
-        favoriteRepository.create({
-          viewId,
-          position: nextFavoritePosition,
-        }),
-      );
+      if (!dryRun) {
+        await favoriteRepository.insert(
+          favoriteRepository.create({
+            viewId,
+            position: nextFavoritePosition,
+          }),
+        );
+      }
 
+      createdFavorites++;
       nextFavoritePosition++;
     }
+
+    this.logger.log(
+      chalk.green(
+        `Found ${createdFavorites} favorites to backfill in workspace ${workspaceId}.`,
+      ),
+    );
   }
 }

@@ -27,6 +27,7 @@ const StyledCard = styled(Card)<{
   width: 100%;
   & :hover {
     background-color: ${({ theme }) => theme.background.quaternary};
+    cursor: pointer;
   }
 `;
 

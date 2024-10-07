@@ -2,6 +2,7 @@ import { DataSource, EntityManager } from 'typeorm';
 
 import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { companyPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/company';
 import { opportunityPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/opportunity';
 import { personPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/person';
@@ -42,7 +43,7 @@ export const demoObjectsPrefillData = async (
 
       await seedWorkspaceFavorites(
         viewDefinitionsWithId
-          .filter((view) => view.key === 'INDEX')
+          .filter((view) => view.key === 'INDEX' && shouldSeedWorkspaceFavorite(view.objectMetadataId, objectMetadataMap))
           .map((view) => view.id),
         entityManager,
         schemaName,

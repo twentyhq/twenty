@@ -16,7 +16,7 @@ type ContainerProps = {
 const StyledContainer = styled.div<ContainerProps>`
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
-    isOn ? (color ?? theme.color.blue) : theme.background.quaternary};
+    isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};
   border-radius: 10px;
   cursor: pointer;
   display: flex;

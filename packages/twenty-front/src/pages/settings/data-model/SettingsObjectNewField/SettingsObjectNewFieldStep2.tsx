@@ -250,6 +250,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   />
 
                   <SettingsDataModelFieldSettingsFormCard
+                    isCreatingField
                     fieldMetadataItem={{
                       icon: formConfig.watch('icon'),
                       label: formConfig.watch('label') || 'Employees',

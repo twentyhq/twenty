@@ -1,39 +1,34 @@
-import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated/graphql';
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedOpportunityObjectMetadataItem,
-  mockedPersonObjectMetadataItem,
-} from '~/testing/mock-data/metadata';
 
-import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useFieldPreviewValue } from '../useFieldPreviewValue';
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <SnackBarManagerScopeInternalContext.Provider
-    value={{
-      scopeId: 'snack-bar-manager',
-    }}
-  >
-    <RecoilRoot>
-      <MockedProvider>
-        <ObjectMetadataItemsProvider>{children}</ObjectMetadataItemsProvider>
-      </MockedProvider>
-    </RecoilRoot>
-  </SnackBarManagerScopeInternalContext.Provider>
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
 );
+
+const mockedOpportunityObjectMetadataItem =
+  generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'opportunity',
+  );
+
+const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'person',
+);
+
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useFieldPreviewValue', () => {
   it('returns null if skip is true', () => {
     // Given
     const fieldName = 'amount';
-    const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+    const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
       ({ name, type }) =>
         name === fieldName && type === FieldMetadataType.Currency,
     );
@@ -56,7 +51,7 @@ describe('useFieldPreviewValue', () => {
   it("returns the field's preview value for a Currency field", () => {
     // Given
     const fieldName = 'amount';
-    const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+    const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
       ({ name, type }) =>
         name === fieldName && type === FieldMetadataType.Currency,
     );
@@ -110,7 +105,7 @@ describe('useFieldPreviewValue', () => {
   it("returns the field's preview value for a Select field", () => {
     // Given
     const fieldName = 'stage';
-    const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+    const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
       ({ name, type }) =>
         name === fieldName && type === FieldMetadataType.Select,
     );
@@ -173,7 +168,7 @@ describe('useFieldPreviewValue', () => {
   it("returns the field's preview value for other field types", () => {
     // Given
     const fieldName = 'employees';
-    const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+    const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
       ({ name }) => name === fieldName,
     );
 

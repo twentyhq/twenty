@@ -21,7 +21,6 @@ import { isClientConfigLoadedState } from '@/client-config/states/isClientConfig
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { telemetryState } from '@/client-config/states/telemetryState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -224,7 +223,6 @@ export const useAuth = () => {
           .getLoadable(isSignInPrefilledState)
           .getValue();
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
-        const telemetry = snapshot.getLoadable(telemetryState).getValue();
         const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
         const captchaProvider = snapshot
           .getLoadable(captchaProviderState)
@@ -242,7 +240,6 @@ export const useAuth = () => {
           set(billingState, billing);
           set(isSignInPrefilledState, isSignInPrefilled);
           set(supportChatState, supportChat);
-          set(telemetryState, telemetry);
           set(isDebugModeState, isDebugMode);
           set(captchaProviderState, captchaProvider);
           set(isClientConfigLoadedState, isClientConfigLoaded);

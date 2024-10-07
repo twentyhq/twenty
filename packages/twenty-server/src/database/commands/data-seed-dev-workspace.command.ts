@@ -12,6 +12,7 @@ import {
   getDevSeedCompanyCustomFields,
   getDevSeedPeopleCustomFields,
 } from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
+import { getDevSeedCustomObjects } from 'src/database/typeorm-seeds/metadata/objectsMetadata';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
@@ -39,6 +40,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -150,6 +152,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           objectMetadataMap[STANDARD_OBJECT_IDS.person],
           workspaceId,
         );
+        await this.seedCustomObjects(workspaceId, dataSourceMetadata.id);
 
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
@@ -217,7 +220,14 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
             await seedWorkspaceFavorites(
               viewDefinitionsWithId
-                .filter((view) => view.key === 'INDEX')
+                .filter(
+                  (view) =>
+                    view.key === 'INDEX' &&
+                    shouldSeedWorkspaceFavorite(
+                      view.objectMetadataId,
+                      objectMetadataMap,
+                    ),
+                )
                 .map((view) => view.id),
               entityManager,
               dataSourceMetadata.schema,
@@ -280,6 +290,17 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         ...customField,
         isCustom: true,
       });
+    }
+  }
+
+  async seedCustomObjects(workspaceId: string, dataSourceId: string) {
+    const devSeedCustomObjects = getDevSeedCustomObjects(
+      workspaceId,
+      dataSourceId,
+    );
+
+    for (const customObject of devSeedCustomObjects) {
+      await this.objectMetadataService.createOne(customObject);
     }
   }
 }

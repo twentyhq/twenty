@@ -14,6 +14,7 @@ export type AvatarChipProps = {
   avatarType?: Nullable<AvatarType>;
   variant?: AvatarChipVariant;
   LeftIcon?: IconComponent;
+  LeftIconColor?: string;
   isIconInverted?: boolean;
   className?: string;
   placeholderColorSeed?: string;
@@ -41,6 +42,7 @@ export const AvatarChip = ({
   avatarType = 'rounded',
   variant = AvatarChipVariant.Regular,
   LeftIcon,
+  LeftIconColor,
   isIconInverted,
   className,
   placeholderColorSeed,
@@ -71,7 +73,11 @@ export const AvatarChip = ({
               />
             </StyledInvertedIconContainer>
           ) : (
-            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+            <LeftIcon
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={LeftIconColor || 'currentColor'}
+            />
           )
         ) : (
           <Avatar

@@ -13,6 +13,8 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
+import { splitFullName } from '~/utils/format/spiltFullName';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
 
 const StyledContainer = styled.div`
@@ -167,9 +169,12 @@ export const DoubleTextInput = ({
 
     const name = event.clipboardData.getData('Text');
 
-    const splittedName = name.split(' ');
+    const splittedName = splitFullName(name);
 
-    onPaste?.({ firstValue: splittedName[0], secondValue: splittedName[1] });
+    onPaste?.({
+      firstValue: splittedName[0],
+      secondValue: splittedName[1],
+    });
   };
 
   const handleClickToPreventParentClickEvents = (
@@ -189,7 +194,10 @@ export const DoubleTextInput = ({
         placeholder={firstValuePlaceholder}
         value={firstInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleChange(event.target.value, secondInternalValue);
+          handleChange(
+            turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+            secondInternalValue,
+          );
         }}
         onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
           handleOnPaste(event)
@@ -203,7 +211,10 @@ export const DoubleTextInput = ({
         placeholder={secondValuePlaceholder}
         value={secondInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleChange(firstInternalValue, event.target.value);
+          handleChange(
+            firstInternalValue,
+            turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+          );
         }}
         onClick={handleClickToPreventParentClickEvents}
       />

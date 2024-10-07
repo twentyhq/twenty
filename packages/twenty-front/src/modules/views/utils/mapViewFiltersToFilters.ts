@@ -2,26 +2,8 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { isDefined } from '~/utils/isDefined';
 
-import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { getFilterDefinitionForViewFilter } from '@/views/utils/getFilterDefinitionForViewFilter';
 import { ViewFilter } from '../types/ViewFilter';
-
-const getDefinitionForFilter = (
-  viewFilter: ViewFilter,
-  filterDefinition: FilterDefinition,
-) => {
-  if (
-    viewFilter.definition !== undefined &&
-    isCompositeField(viewFilter.definition.type) === true
-  ) {
-    return {
-      ...filterDefinition,
-      label: viewFilter.definition.label,
-      compositeFieldName: viewFilter.definition.compositeFieldName,
-    };
-  } else {
-    return filterDefinition;
-  }
-};
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[],
@@ -42,7 +24,7 @@ export const mapViewFiltersToFilters = (
         value: viewFilter.value,
         displayValue: viewFilter.displayValue,
         operand: viewFilter.operand,
-        definition: getDefinitionForFilter(
+        definition: getFilterDefinitionForViewFilter(
           viewFilter,
           availableFilterDefinition,
         ),

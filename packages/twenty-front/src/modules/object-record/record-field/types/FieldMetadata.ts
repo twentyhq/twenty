@@ -27,12 +27,18 @@ export type FieldDateTimeMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: {
+    displayAsRelativeDate?: boolean;
+  };
 };
 
 export type FieldDateMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: {
+    displayAsRelativeDate?: boolean;
+  };
 };
 
 export type FieldNumberMetadata = {
