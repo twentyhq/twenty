@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -33,10 +33,6 @@ describe('WorkspaceService', () => {
         },
         {
           provide: getRepositoryToken(User, 'core'),
-          useValue: {},
-        },
-        {
-          provide: getRepositoryToken(FeatureFlagEntity, 'core'),
           useValue: {},
         },
         {
@@ -69,6 +65,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: WorkspaceInvitationService,
+          useValue: {},
+        },
+        {
+          provide: FeatureFlagService,
           useValue: {},
         },
       ],
