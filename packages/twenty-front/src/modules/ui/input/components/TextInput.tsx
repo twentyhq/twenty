@@ -14,8 +14,8 @@ export type TextInputProps = TextInputV2ComponentProps & {
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
   dataTestId?: string;
-  autoFocus?: boolean;
-  autoSelect?: boolean;
+  autoFocusOnMount?: boolean;
+  autoSelectOnMount?: boolean;
 };
 
 export const TextInput = ({
@@ -23,8 +23,8 @@ export const TextInput = ({
   onBlur,
   onInputEnter,
   disableHotkeys = false,
-  autoFocus,
-  autoSelect,
+  autoFocusOnMount,
+  autoSelectOnMount,
   dataTestId,
   ...props
 }: TextInputProps) => {
@@ -33,17 +33,17 @@ export const TextInput = ({
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    if (autoFocus === true) {
+    if (autoFocusOnMount === true) {
       inputRef.current?.focus();
       setIsFocused(true);
     }
-  }, [autoFocus]);
+  }, [autoFocusOnMount]);
 
   useEffect(() => {
-    if (autoSelect === true) {
+    if (autoSelectOnMount === true) {
       inputRef.current?.select();
     }
-  }, [autoSelect]);
+  }, [autoSelectOnMount]);
 
   const {
     goBackToPreviousHotkeyScope,

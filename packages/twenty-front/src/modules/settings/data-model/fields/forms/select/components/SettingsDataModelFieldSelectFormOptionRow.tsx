@@ -33,6 +33,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onRemoveAsDefault?: () => void;
   onInputEnter?: () => void;
   option: FieldMetadataItemOption;
+  isNewRow?: boolean;
 };
 
 const StyledRow = styled.div`
@@ -66,6 +67,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   onRemoveAsDefault,
   onInputEnter,
   option,
+  isNewRow,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
 
@@ -130,6 +132,8 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         RightIcon={isDefault ? IconCheck : undefined}
         maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
         onInputEnter={handleInputEnter}
+        autoFocusOnMount={isNewRow}
+        autoSelectOnMount={isNewRow}
       />
       <Dropdown
         dropdownId={dropdownIds.actions}
