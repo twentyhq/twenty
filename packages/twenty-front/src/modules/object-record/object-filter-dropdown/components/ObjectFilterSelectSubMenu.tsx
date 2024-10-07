@@ -4,11 +4,12 @@ import {
   currentParentFilterDefinitionState,
   currentSubMenuState,
 } from '@/object-record/object-filter-dropdown/states/subMenuStates';
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { getHeaderTitle } from '@/object-record/object-filter-dropdown/utils/getHeaderTitle';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { getSubMenuOptions } from '@/object-record/object-filter-dropdown/utils/getSubMenuOptions';
+import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -40,7 +41,8 @@ export const ObjectFilterSelectSubMenu = () => {
   const handleSelectFilter = (definition: FilterDefinition | null) => {
     if (definition !== null) {
       setFilterDefinitionUsedInDropdown(definition);
-      if (definition.type === 'SOURCE') {
+
+      if (isActorSourceCompositeFilter(definition)) {
         setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
       }
 
@@ -87,7 +89,7 @@ export const ObjectFilterSelectSubMenu = () => {
                   handleSelectFilter({
                     ...currentParentFilterDefinition,
                     label: menuOption.name,
-                    type: menuOption.type as FilterType,
+                    type: menuOption.type as FilterableFieldType,
                   });
               }}
               text={menuOption.name}

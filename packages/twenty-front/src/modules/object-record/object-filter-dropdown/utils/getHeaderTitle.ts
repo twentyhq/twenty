@@ -1,13 +1,11 @@
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 
 export const getHeaderTitle = (
-  subMenu: FilterType | null,
+  subMenu: FilterableFieldType | null,
 ): string | undefined => {
   switch (subMenu) {
     case 'ACTOR':
       return 'Actor';
-    case 'SOURCE':
-      return 'Creation Source';
     default:
       return undefined;
   }

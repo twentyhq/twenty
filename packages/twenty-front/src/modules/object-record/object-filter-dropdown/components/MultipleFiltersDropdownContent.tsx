@@ -6,6 +6,7 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
 import { ObjectFilterDropdownTextSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
+import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -116,7 +117,7 @@ export const MultipleFiltersDropdownContent = ({
                   <ObjectFilterDropdownRecordSelect />
                 </>
               )}
-              {filterDefinitionUsedInDropdown.type === 'SOURCE' && (
+              {isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
                 <>
                   <DropdownMenuSeparator />
                   <ObjectFilterDropdownSourceSelect />
