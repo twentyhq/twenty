@@ -141,14 +141,18 @@ export const TaskRow = ({ task }: { task: Task }) => {
             />
           </TaskTargetsContextProvider>
         )}
-        <StyledDueDate
-          isPast={
-            !!task.dueAt && hasDatePassed(task.dueAt) && task.status === 'TODO'
-          }
-        >
-          <IconCalendar size={theme.icon.size.md} />
-          {task.dueAt && beautifyExactDate(task.dueAt)}
-        </StyledDueDate>
+        {task.dueAt && (
+          <StyledDueDate
+            isPast={
+              !!task.dueAt &&
+              hasDatePassed(task.dueAt) &&
+              task.status === 'TODO'
+            }
+          >
+            <IconCalendar size={theme.icon.size.md} />
+            {task.dueAt && beautifyExactDate(task.dueAt)}
+          </StyledDueDate>
+        )}
       </StyledRightSideContainer>
     </StyledContainer>
   );
