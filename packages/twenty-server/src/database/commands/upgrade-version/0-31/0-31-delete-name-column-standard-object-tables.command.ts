@@ -54,20 +54,36 @@ export class DeleteNameColumnStandardObjectTablesCommand extends ActiveWorkspace
             workspaceId,
           );
 
-        for (const standardObject of standardObjects) {
-          if (options.dryRun) {
-            this.logger.log(
-              chalk.yellow(
-                `Dry run mode enabled. Skipping deletion of name column for workspace ${workspaceId} and table ${standardObject.nameSingular}.`,
-              ),
-            );
-            continue;
-          }
+        dataSource.transaction(async (entityManager) => {
+          const queryRunner = entityManager.queryRunner;
 
-          await dataSource.query(
-            `ALTER TABLE "${standardObject.nameSingular}" DROP COLUMN IF EXISTS "name"`,
-          );
-        }
+          for (const standardObject of standardObjects) {
+            if (options.dryRun) {
+              this.logger.log(
+                chalk.yellow(
+                  `Dry run mode enabled. Skipping deletion of name column for workspace ${workspaceId} and table ${standardObject.nameSingular}.`,
+                ),
+              );
+              continue;
+            }
+
+            const nameColumnExists = await queryRunner?.hasColumn(
+              standardObject.nameSingular,
+              'name',
+            );
+
+            if (!nameColumnExists) {
+              this.logger.log(
+                chalk.yellow(
+                  `Name column does not exist for workspace ${workspaceId} and table ${standardObject.nameSingular}. Skipping deletion.`,
+                ),
+              );
+              continue;
+            }
+
+            await queryRunner?.dropColumn(standardObject.nameSingular, 'name');
+          }
+        });
       } catch (error) {
         this.logger.log(
           chalk.red(
@@ -78,6 +94,10 @@ export class DeleteNameColumnStandardObjectTablesCommand extends ActiveWorkspace
       } finally {
         this.logger.log(
           chalk.green(`Finished running command for workspace ${workspaceId}.`),
+        );
+
+        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+          workspaceId,
         );
       }
     }
