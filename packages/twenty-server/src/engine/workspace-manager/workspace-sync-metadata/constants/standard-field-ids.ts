@@ -78,6 +78,7 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   syncStatus: '20202020-7116-41da-8b4b-035975c4eb6a',
   syncStage: '20202020-6246-42e6-b5cd-003bd921782c',
   syncStageStartedAt: '20202020-a934-46f1-a8e7-9568b1e3a53e',
+  syncedAt: '20202020-2ff5-4f70-953a-3d0d36357576',
 };
 
 export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
