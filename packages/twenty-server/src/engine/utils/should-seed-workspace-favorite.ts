@@ -5,5 +5,5 @@ export const shouldSeedWorkspaceFavorite = (
   objectMetadataMap,
 ): boolean =>
   objectMetadataId !==
-    objectMetadataMap[STANDARD_OBJECT_IDS.workflowVersion].id &&
-  objectMetadataId !== objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun].id;
+    objectMetadataMap[STANDARD_OBJECT_IDS.workflowVersion]?.id &&
+  objectMetadataId !== objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun]?.id;
