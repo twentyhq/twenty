@@ -150,7 +150,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
             }
           >
             <IconCalendar size={theme.icon.size.md} />
-            {task.dueAt && beautifyExactDate(task.dueAt)}
+            {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}
       </StyledRightSideContainer>
