@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { IconMail } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { Select } from '@/ui/input/components/Select';
+import { Select, SelectOption } from '@/ui/input/components/Select';
 import { useFindManyRecords } from 'packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords';
 import { ConnectedAccount } from 'packages/twenty-front/src/modules/accounts/types/ConnectedAccount';
 import { useRecoilValue } from 'recoil';
@@ -82,19 +82,36 @@ export const WorkflowEditActionFormSendEmail = ({
   const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: 'connectedAccount',
     filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
-      },
+      or: [
+        {
+          accountOwnerId: {
+            eq: currentWorkspaceMember?.id,
+          },
+        },
+        {
+          id: {
+            eq: action.settings.connectedAccountId,
+          },
+        },
+      ],
     },
   });
 
-  const emptyOption = { label: 'None', value: null };
+  let emptyOption: SelectOption<string | null> = { label: 'None', value: null };
+  const connectedAccountOptions: SelectOption<string | null>[] = [];
 
-  const connectedAccountOptions = accounts.map((account) => {
-    return {
+  accounts.forEach((account) => {
+    const selectOption = {
       label: account.handle,
       value: account.id,
     };
+    if (account.accountOwnerId === currentWorkspaceMember?.id) {
+      connectedAccountOptions.push(selectOption);
+    } else {
+      // This handle the case when the current connected account does not belong to the currentWorkspaceMember
+      // In that case, current connected account email is displayed, but cannot be selected
+      emptyOption = selectOption;
+    }
   });
 
   return (
