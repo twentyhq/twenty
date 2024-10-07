@@ -115,28 +115,28 @@ export const WorkflowEditTriggerForm = ({
           disabled={readonly}
           value={triggerEvent?.objectType}
           options={availableMetadata}
-          onChange={
-            readonly
-              ? undefined
-              : (updatedRecordType) => {
-                  onTriggerUpdate(
-                    isDefined(trigger) && isDefined(triggerEvent)
-                      ? {
-                          ...trigger,
-                          settings: {
-                            ...trigger.settings,
-                            eventName: `${updatedRecordType}.${triggerEvent.event}`,
-                          },
-                        }
-                      : {
-                          type: 'DATABASE_EVENT',
-                          settings: {
-                            eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
-                          },
-                        },
-                  );
-                }
-          }
+          onChange={(updatedRecordType) => {
+            if (readonly === true) {
+              return;
+            }
+
+            onTriggerUpdate(
+              isDefined(trigger) && isDefined(triggerEvent)
+                ? {
+                    ...trigger,
+                    settings: {
+                      ...trigger.settings,
+                      eventName: `${updatedRecordType}.${triggerEvent.event}`,
+                    },
+                  }
+                : {
+                    type: 'DATABASE_EVENT',
+                    settings: {
+                      eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
+                    },
+                  },
+            );
+          }}
         />
         <Select
           dropdownId="workflow-edit-trigger-event-type"
@@ -145,28 +145,28 @@ export const WorkflowEditTriggerForm = ({
           value={triggerEvent?.event}
           options={OBJECT_EVENT_TRIGGERS}
           disabled={readonly}
-          onChange={
-            readonly
-              ? undefined
-              : (updatedEvent) => {
-                  onTriggerUpdate(
-                    isDefined(trigger) && isDefined(triggerEvent)
-                      ? {
-                          ...trigger,
-                          settings: {
-                            ...trigger.settings,
-                            eventName: `${triggerEvent.objectType}.${updatedEvent}`,
-                          },
-                        }
-                      : {
-                          type: 'DATABASE_EVENT',
-                          settings: {
-                            eventName: `${availableMetadata[0].value}.${updatedEvent}`,
-                          },
-                        },
-                  );
-                }
-          }
+          onChange={(updatedEvent) => {
+            if (readonly === true) {
+              return;
+            }
+
+            onTriggerUpdate(
+              isDefined(trigger) && isDefined(triggerEvent)
+                ? {
+                    ...trigger,
+                    settings: {
+                      ...trigger.settings,
+                      eventName: `${triggerEvent.objectType}.${updatedEvent}`,
+                    },
+                  }
+                : {
+                    type: 'DATABASE_EVENT',
+                    settings: {
+                      eventName: `${availableMetadata[0].value}.${updatedEvent}`,
+                    },
+                  },
+            );
+          }}
         />
       </StyledTriggerSettings>
     </>

@@ -57,19 +57,19 @@ export const WorkflowEditActionFormServerlessFunction = (
           value={props.action.settings.serverlessFunctionId}
           options={availableFunctions}
           disabled={props.readonly}
-          onChange={
-            props.readonly
-              ? undefined
-              : (updatedFunction) => {
-                  props.onActionUpdate({
-                    ...props.action,
-                    settings: {
-                      ...props.action.settings,
-                      serverlessFunctionId: updatedFunction,
-                    },
-                  });
-                }
-          }
+          onChange={(updatedFunction) => {
+            if (props.readonly === true) {
+              return;
+            }
+
+            props.onActionUpdate({
+              ...props.action,
+              settings: {
+                ...props.action.settings,
+                serverlessFunctionId: updatedFunction,
+              },
+            });
+          }}
         />
       </StyledTriggerSettings>
     </WorkflowEditActionFormBase>
