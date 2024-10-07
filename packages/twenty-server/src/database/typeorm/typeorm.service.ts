@@ -37,7 +37,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingSubscriptionItem,
         PostgresCredentials,
       ],
-      metadataTableName: '_typeorm_generated_columns',
+      metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {
             rejectUnauthorized: false,
