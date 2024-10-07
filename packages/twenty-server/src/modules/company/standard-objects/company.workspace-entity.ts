@@ -49,9 +49,6 @@ const DOMAIN_NAME_FIELD_NAME = 'domainName';
   icon: 'IconBuildingSkyscraper',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
-/*
-TODO: Uncomment this in a followup PR, after testing
-*/
 @WorkspaceIndex(['domainNamePrimaryLinkUrl'], {
   isUnique: true,
   indexWhereClause:

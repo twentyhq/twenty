@@ -40,9 +40,9 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
           ?.indexFieldMetadatas?.filter(
             (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,
           )
-          .map((field) => {
+          .map((indexField) => {
             const fieldMetadata = context.objectMetadataItem.fields.find(
-              (objectField) => field.id === objectField.id,
+              (objectField) => indexField.fieldMetadataId === objectField.id,
             );
 
             return fieldMetadata?.label;

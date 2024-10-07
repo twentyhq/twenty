@@ -43,7 +43,7 @@ export class DestroyManyResolverFactory
           options,
         );
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error, context);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }
     };
   }
