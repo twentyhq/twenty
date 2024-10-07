@@ -12,6 +12,7 @@ const StyledCardsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(6)};
+  flex-direction: column;
 `;
 
 export const SettingsAccountsSettingsSection = () => {
