@@ -1,12 +1,13 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Button } from '@/ui/input/button/components/Button';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { IconPencil, IconPlayerStop, IconPower, isDefined } from 'twenty-ui';
 
 export const RecordShowPageWorkflowVersionHeader = ({
@@ -15,6 +16,18 @@ export const RecordShowPageWorkflowVersionHeader = ({
   workflowVersionId: string;
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
+
+  const workflowVersionRelatedWorkflowQuery = useFindOneRecord<
+    Pick<Workflow, '__typename' | 'id' | 'lastPublishedVersionId'>
+  >({
+    objectNameSingular: CoreObjectNameSingular.Workflow,
+    objectRecordId: workflowVersion?.workflowId,
+    recordGqlFields: {
+      id: true,
+      lastPublishedVersionId: true,
+    },
+    skip: !isDefined(workflowVersion),
+  });
 
   const {
     records: draftWorkflowVersions,
@@ -36,7 +49,11 @@ export const RecordShowPageWorkflowVersionHeader = ({
   const showUseAsDraftButton =
     !loadingDraftWorkflowVersions &&
     isDefined(workflowVersion) &&
-    workflowVersion.status !== 'DRAFT';
+    !workflowVersionRelatedWorkflowQuery.loading &&
+    isDefined(workflowVersionRelatedWorkflowQuery.record) &&
+    workflowVersion.status !== 'DRAFT' &&
+    workflowVersion.id !==
+      workflowVersionRelatedWorkflowQuery.record.lastPublishedVersionId;
 
   const hasAlreadyDraftVersion =
     !loadingDraftWorkflowVersions && draftWorkflowVersions.length > 0;
