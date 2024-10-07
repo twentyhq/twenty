@@ -8,7 +8,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -28,11 +28,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private moduleRef: ModuleRef,
   ) {
@@ -73,7 +72,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
-    await this.enableDefaultFeatureFlags(user.defaultWorkspaceId);
+    await this.featureFlagService.enableFeatureFlags(
+      DEFAULT_FEATURE_FLAGS,
+      user.defaultWorkspaceId,
+    );
 
     await this.workspaceManagerService.init(user.defaultWorkspaceId);
     await this.userWorkspaceService.createWorkspaceMember(
@@ -157,17 +159,5 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         },
       );
     }
-  }
-
-  private async enableDefaultFeatureFlags(workspaceId: string) {
-    await this.featureFlagRepository.save(
-      DEFAULT_FEATURE_FLAGS.map((featureFlagKey) => {
-        return {
-          key: featureFlagKey,
-          value: true,
-          workspaceId,
-        };
-      }),
-    );
   }
 }

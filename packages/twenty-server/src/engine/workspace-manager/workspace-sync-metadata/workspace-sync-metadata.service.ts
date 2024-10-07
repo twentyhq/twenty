@@ -154,12 +154,9 @@ export class WorkspaceSyncMetadataService {
         context.workspaceId,
       );
 
-      if (
-        workspaceFeatureFlagsMap.IS_SEARCH_ENABLED &&
-        !workspaceFeatureFlagsMap.IS_WORKSPACE_MIGRATED_FOR_SEARCH
-      ) {
-        await this.enableFeatureFlag(
-          FeatureFlagKey.IsWorkspaceMigratedForSearch,
+      if (workspaceFeatureFlagsMap.IS_SEARCH_ENABLED) {
+        await this.featureFlagService.enableFeatureFlags(
+          [FeatureFlagKey.IsWorkspaceMigratedForSearch],
           context.workspaceId,
         );
       }
@@ -181,16 +178,5 @@ export class WorkspaceSyncMetadataService {
       workspaceMigrations,
       storage,
     };
-  }
-
-  private async enableFeatureFlag(
-    featureFlagKey: FeatureFlagKey,
-    workspaceId: string,
-  ) {
-    await this.featureFlagRepository.save({
-      key: featureFlagKey,
-      workspaceId,
-      value: true,
-    });
   }
 }
