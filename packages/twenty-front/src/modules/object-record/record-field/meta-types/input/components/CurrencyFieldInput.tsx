@@ -7,9 +7,10 @@ import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
-export type CurrencyFieldInputProps = {
+type CurrencyFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -108,7 +109,7 @@ export const CurrencyFieldInput = ({
 
   const handleSelect = (newValue: string) => {
     setDraftValue({
-      amount: draftValue?.amount ?? '',
+      amount: isUndefinedOrNull(draftValue?.amount) ? '' : draftValue?.amount,
       currencyCode: newValue as CurrencyCode,
     });
   };

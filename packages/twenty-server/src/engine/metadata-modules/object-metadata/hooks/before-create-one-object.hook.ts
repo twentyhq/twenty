@@ -9,13 +9,13 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 
 @Injectable()
 export class BeforeCreateOneObject<T extends CreateObjectInput>
-  implements BeforeCreateOneHook<T, any>
+  implements BeforeCreateOneHook<T>
 {
   async run(
     instance: CreateOneInputType<T>,
     context: any,
   ): Promise<CreateOneInputType<T>> {
-    const workspaceId = context?.req?.user?.workspace?.id;
+    const workspaceId = context?.req?.workspace?.id;
 
     if (!workspaceId) {
       throw new UnauthorizedException();

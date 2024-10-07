@@ -4,27 +4,27 @@ import { ColumnType } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
 import {
-  WorkspaceTableStructure,
-  WorkspaceTableStructureResult,
-} from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
-import {
   FieldMetadataDefaultValue,
   FieldMetadataFunctionDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import {
+  WorkspaceTableStructure,
+  WorkspaceTableStructureResult,
+} from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
-import { FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
+import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -151,24 +151,6 @@ export class DatabaseStructureService {
     }));
   }
 
-  async workspaceColumnExist(
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-  ): Promise<boolean> {
-    const mainDataSource = this.typeORMService.getMainDataSource();
-    const results = await mainDataSource.query(
-      `SELECT column_name
-        FROM information_schema.columns
-        WHERE table_schema = $1
-        AND table_name = $2
-        AND column_name = $3`,
-      [schemaName, tableName, columnName],
-    );
-
-    return results.length >= 1;
-  }
-
   getPostgresDataTypes(fieldMetadata: FieldMetadataEntity): string[] {
     const mainDataSource = this.typeORMService.getMainDataSource();
 
@@ -192,7 +174,7 @@ export class DatabaseStructureService {
     };
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+      const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
       if (!compositeType) {
         throw new Error(
@@ -310,7 +292,7 @@ export class DatabaseStructureService {
     };
 
     if (isCompositeFieldMetadataType(fieldMetadataType)) {
-      const compositeType = compositeTypeDefintions.get(fieldMetadataType);
+      const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
       if (!compositeType) {
         throw new Error(

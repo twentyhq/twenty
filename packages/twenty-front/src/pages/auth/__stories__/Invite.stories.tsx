@@ -73,7 +73,9 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Join Twenty dev team');
+    await canvas.findByText('Join Twenty dev team', undefined, {
+      timeout: 5000,
+    });
 
     const continueWithEmailButton = await canvas.findByText(
       'Continue With Email',

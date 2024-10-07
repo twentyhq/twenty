@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ANIMATION, BACKGROUND_LIGHT, GRAY_SCALE } from 'twenty-ui';
 
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
@@ -17,7 +18,7 @@ const StyledItemsContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   height: calc(100dvh - 32px);
   margin-bottom: auto;
   max-width: 204px;
@@ -67,7 +68,10 @@ export const LeftPanelSkeletonLoader = () => {
             highlightColor={BACKGROUND_LIGHT.transparent.lighter}
             borderRadius={4}
           >
-            <Skeleton width={96} height={16} />
+            <Skeleton
+              width={96}
+              height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+            />
           </SkeletonTheme>
         </StyledSkeletonTitleContainer>
         <StyledSkeletonContainer>

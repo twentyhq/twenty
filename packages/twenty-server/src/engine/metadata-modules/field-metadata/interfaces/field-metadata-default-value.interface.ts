@@ -4,11 +4,13 @@ import {
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValueFullName,
   FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueLinks,
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValuePhones,
   FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
@@ -26,7 +28,9 @@ type FieldMetadataDefaultValueMapping = {
     | FieldMetadataDefaultValueUuidFunction;
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.PHONES]: FieldMetadataDefaultValuePhones;
   [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.EMAILS]: FieldMetadataDefaultValueEmails;
   [FieldMetadataType.DATE_TIME]:
     | FieldMetadataDefaultValueDateTime
     | FieldMetadataDefaultValueNowFunction;

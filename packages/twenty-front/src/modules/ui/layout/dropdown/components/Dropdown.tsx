@@ -6,13 +6,11 @@ import {
   Placement,
   useFloating,
 } from '@floating-ui/react';
-import { useRef } from 'react';
+import { MouseEvent, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
-import { SINGLE_ENTITY_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleEntitySelectBaseList';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -69,9 +67,6 @@ export const Dropdown = ({
   const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
     useDropdown(dropdownId);
 
-  const { handleResetSelectedPosition } = useSelectableList(
-    SINGLE_ENTITY_SELECT_BASE_LIST,
-  );
   const offsetMiddlewares = [];
 
   if (isDefined(dropdownOffset.x)) {
@@ -93,6 +88,14 @@ export const Dropdown = ({
     toggleDropdown();
   };
 
+  const handleClickableComponentClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    toggleDropdown();
+    onClickOutside?.();
+  };
+
   useListenClickOutside({
     refs: [refs.floating],
     callback: () => {
@@ -100,7 +103,6 @@ export const Dropdown = ({
 
       if (isDropdownOpen) {
         closeDropdown();
-        handleResetSelectedPosition();
       }
     },
   });
@@ -114,10 +116,9 @@ export const Dropdown = ({
     [Key.Escape],
     () => {
       closeDropdown();
-      handleResetSelectedPosition();
     },
     dropdownHotkeyScope.scope,
-    [closeDropdown, handleResetSelectedPosition],
+    [closeDropdown],
   );
 
   return (
@@ -126,10 +127,7 @@ export const Dropdown = ({
         {clickableComponent && (
           <div
             ref={refs.setReference}
-            onClick={() => {
-              toggleDropdown();
-              onClickOutside?.();
-            }}
+            onClick={handleClickableComponentClick}
             className={className}
           >
             {clickableComponent}

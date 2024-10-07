@@ -10,6 +10,11 @@ export function generateDefaultValue(
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
       return "''";
+    case FieldMetadataType.EMAILS:
+      return {
+        primaryEmail: "''",
+        additionalEmails: null,
+      };
     case FieldMetadataType.FULL_NAME:
       return {
         firstName: "''",
@@ -41,6 +46,12 @@ export function generateDefaultValue(
         primaryLinkLabel: "''",
         primaryLinkUrl: "''",
         secondaryLinks: null,
+      };
+    case FieldMetadataType.PHONES:
+      return {
+        primaryPhoneNumber: "''",
+        primaryPhoneCountryCode: "''",
+        additionalPhones: null,
       };
     default:
       return null;

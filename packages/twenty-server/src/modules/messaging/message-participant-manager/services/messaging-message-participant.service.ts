@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
-import { ParticipantWithMessageId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { ParticipantWithMessageId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 
 @Injectable()
 export class MessagingMessageParticipantService {

@@ -8,11 +8,13 @@ import {
   BooleanFilter,
   CurrencyFilter,
   DateFilter,
+  EmailsFilter,
   FloatFilter,
   FullNameFilter,
   LinksFilter,
   NotObjectRecordFilter,
   OrObjectRecordFilter,
+  PhonesFilter,
   RecordGqlOperationFilter,
   StringFilter,
   URLFilter,
@@ -226,6 +228,7 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
+      case FieldMetadataType.Date:
       case FieldMetadataType.DateTime: {
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
@@ -267,6 +270,38 @@ export const isRecordMatchingFilter = ({
             value: record[filterKey].name,
           })
         );
+      }
+      case FieldMetadataType.Emails: {
+        const emailsFilter = filterValue as EmailsFilter;
+
+        if (emailsFilter.primaryEmail === undefined) {
+          return false;
+        }
+
+        return isMatchingStringFilter({
+          stringFilter: emailsFilter.primaryEmail,
+          value: record[filterKey].primaryEmail,
+        });
+      }
+      case FieldMetadataType.Phones: {
+        const phonesFilter = filterValue as PhonesFilter;
+
+        const keys: (keyof PhonesFilter)[] = [
+          'primaryPhoneNumber',
+          'primaryPhoneCountryCode',
+        ];
+
+        return keys.some((key) => {
+          const value = phonesFilter[key];
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
+        });
       }
       case FieldMetadataType.Relation: {
         throw new Error(

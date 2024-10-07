@@ -6,6 +6,10 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { ImportedRow } from '@/spreadsheet-import/types';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
+
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
 const StyledHeading = styled(Heading)`
@@ -20,17 +24,22 @@ const StyledTableContainer = styled.div`
 
 type SelectHeaderStepProps = {
   importedRows: ImportedRow[];
-  onContinue: (
-    headerValues: ImportedRow,
-    importedRows: ImportedRow[],
-  ) => Promise<void>;
+  setCurrentStepState: (currentStepState: SpreadsheetImportStep) => void;
+  nextStep: () => void;
+  setPreviousStepState: (currentStepState: SpreadsheetImportStep) => void;
+  onError: (message: string) => void;
   onBack: () => void;
+  currentStepState: SpreadsheetImportStep;
 };
 
 export const SelectHeaderStep = ({
   importedRows,
-  onContinue,
+  setCurrentStepState,
+  nextStep,
+  setPreviousStepState,
+  onError,
   onBack,
+  currentStepState,
 }: SelectHeaderStepProps) => {
   const [selectedRowIndexes, setSelectedRowIndexes] = useState<
     ReadonlySet<number>
@@ -38,17 +47,45 @@ export const SelectHeaderStep = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleContinue = useCallback(async () => {
+  const { selectHeaderStepHook } = useSpreadsheetImportInternal();
+
+  const handleContinue = useCallback(
+    async (...args: Parameters<typeof selectHeaderStepHook>) => {
+      try {
+        const { importedRows: data, headerRow: headerValues } =
+          await selectHeaderStepHook(...args);
+        setCurrentStepState({
+          type: SpreadsheetImportStepType.matchColumns,
+          data,
+          headerValues,
+        });
+        setPreviousStepState(currentStepState);
+        nextStep();
+      } catch (e) {
+        onError((e as Error).message);
+      }
+    },
+    [
+      onError,
+      nextStep,
+      selectHeaderStepHook,
+      setPreviousStepState,
+      setCurrentStepState,
+      currentStepState,
+    ],
+  );
+
+  const handleOnContinue = useCallback(async () => {
     const [selectedRowIndex] = Array.from(new Set(selectedRowIndexes));
     // We consider data above header to be redundant
     const trimmedData = importedRows.slice(selectedRowIndex + 1);
 
     setIsLoading(true);
 
-    await onContinue(importedRows[selectedRowIndex], trimmedData);
+    await handleContinue(importedRows[selectedRowIndex], trimmedData);
 
     setIsLoading(false);
-  }, [onContinue, importedRows, selectedRowIndexes]);
+  }, [handleContinue, importedRows, selectedRowIndexes]);
 
   return (
     <>
@@ -63,7 +100,7 @@ export const SelectHeaderStep = ({
         </StyledTableContainer>
       </Modal.Content>
       <StepNavigationButton
-        onClick={handleContinue}
+        onClick={handleOnContinue}
         onBack={onBack}
         title="Continue"
         isLoading={isLoading}

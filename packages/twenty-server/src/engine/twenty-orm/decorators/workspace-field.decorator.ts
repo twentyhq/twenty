@@ -19,6 +19,9 @@ export interface WorkspaceFieldOptions<
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
   settings?: FieldMetadataSettings<T>;
+  isActive?: boolean;
+  generatedType?: 'STORED' | 'VIRTUAL';
+  asExpression?: string;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(
@@ -56,9 +59,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       ) ?? false;
 
     const defaultValue = (options.defaultValue ??
-      generateDefaultValue(
-        options.type,
-      )) as FieldMetadataDefaultValue<'default'> | null;
+      generateDefaultValue(options.type)) as FieldMetadataDefaultValue | null;
 
     metadataArgsStorage.addFields({
       target: object.constructor,
@@ -70,11 +71,15 @@ export function WorkspaceField<T extends FieldMetadataType>(
       icon: options.icon,
       defaultValue,
       options: options.options,
+      settings: options.settings,
       isPrimary,
       isNullable,
       isSystem,
       gate,
       isDeprecated,
+      isActive: options.isActive,
+      asExpression: options.asExpression,
+      generatedType: options.generatedType,
     });
   };
 }

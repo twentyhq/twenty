@@ -31,6 +31,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
     FieldMetadataType.RICH_TEXT,
+    FieldMetadataType.ARRAY,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
@@ -142,6 +143,23 @@ export const mapFieldMetadataToGraphqlQuery = (
         source
         workspaceMemberId
         name
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.EMAILS) {
+    return `
+      ${field.name}
+      {
+        primaryEmail
+        additionalEmails
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.PHONES) {
+    return `
+      ${field.name}
+      {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        additionalPhones
       }
     `;
   }

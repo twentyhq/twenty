@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "vite.config.ts",
+    "jest.config.ts",
+    "setupTests.ts",
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.stories.tsx",
+    "src/**/*.tsx",
+    "src/**/*.ts",
+    "vite.config.ts"
+]
+}

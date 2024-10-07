@@ -1,6 +1,7 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledDropdownMenuSkeletonContainer = styled.div`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
@@ -21,7 +22,7 @@ export const DropdownMenuSkeletonItem = () => {
         baseColor={theme.background.quaternary}
         highlightColor={theme.background.secondary}
       >
-        <Skeleton height={16} />
+        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
       </SkeletonTheme>
     </StyledDropdownMenuSkeletonContainer>
   );

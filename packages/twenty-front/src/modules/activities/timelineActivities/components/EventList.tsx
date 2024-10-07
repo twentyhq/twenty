@@ -46,7 +46,7 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
   const groupedEvents = groupEventsByMonth(filteredEvents);
 
   return (
-    <ScrollWrapper>
+    <ScrollWrapper contextProviderName="eventList">
       <StyledTimelineContainer>
         {groupedEvents.map((group, index) => (
           <EventsGroup

@@ -17,6 +17,7 @@ const baseFields = `
   isNullable
   createdAt
   updatedAt
+  settings
 `;
 
 export const queries = {
@@ -47,7 +48,18 @@ export const queries = {
   createMetadataField: gql`
     mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
       createOneField(input: $input) {
-        ${baseFields}
+        id
+        type
+        name
+        label
+        description
+        icon
+        isCustom
+        isActive
+        isNullable
+        createdAt
+        updatedAt
+        settings
         defaultValue
         options
       }
@@ -73,6 +85,7 @@ export const variables = {
         label: 'fieldLabel',
         name: 'fieldLabel',
         options: undefined,
+        settings: undefined,
         objectMetadataId,
         type: 'TEXT',
       },
@@ -96,6 +109,7 @@ const defaultResponseData = {
   isNullable: false,
   createdAt: '1977-09-28T13:56:55.157Z',
   updatedAt: '1996-10-10T08:27:57.117Z',
+  settings: undefined,
 };
 
 const fieldRelationResponseData = {

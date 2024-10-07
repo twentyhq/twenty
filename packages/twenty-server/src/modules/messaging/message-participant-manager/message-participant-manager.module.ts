@@ -6,9 +6,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ContactCreationManagerModule } from 'src/modules/contact-creation-manager/contact-creation-manager.module';
 import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
@@ -31,7 +29,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
       TimelineActivityWorkspaceEntity,
     ]),
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
-    TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity]),
     MessagingCommonModule,
     MatchParticipantModule,
   ],

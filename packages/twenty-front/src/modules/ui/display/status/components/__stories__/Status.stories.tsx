@@ -15,6 +15,7 @@ const meta: Meta<typeof Status> = {
   component: Status,
   args: {
     text: 'Urgent',
+    weight: 'medium',
   },
 };
 

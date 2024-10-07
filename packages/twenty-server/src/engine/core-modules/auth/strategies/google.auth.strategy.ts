@@ -1,14 +1,14 @@
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
 
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Request } from 'express';
+import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 export type GoogleRequest = Omit<
   Request,
-  'user' | 'workspace' | 'cacheVersion'
+  'user' | 'workspace' | 'workspaceMetadataVersion'
 > & {
   user: {
     firstName?: string | null;
@@ -16,6 +16,7 @@ export type GoogleRequest = Omit<
     email: string;
     picture: string | null;
     workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
   };
 };
 
@@ -36,6 +37,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       ...options,
       state: JSON.stringify({
         workspaceInviteHash: req.params.workspaceInviteHash,
+        ...(req.params.workspacePersonalInviteToken
+          ? {
+              workspacePersonalInviteToken:
+                req.params.workspacePersonalInviteToken,
+            }
+          : {}),
       }),
     };
 
@@ -61,6 +68,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastName: name.familyName,
       picture: photos?.[0]?.value,
       workspaceInviteHash: state.workspaceInviteHash,
+      workspacePersonalInviteToken: state.workspacePersonalInviteToken,
     };
 
     done(null, user);

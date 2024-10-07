@@ -11,7 +11,7 @@ export const generateNewSelectOption = (
   const newOptionLabel = generateNewSelectOptionLabel(options);
 
   return {
-    color: getNextThemeColor(options[options.length - 1].color),
+    color: getNextThemeColor(options[options.length - 1]?.color),
     id: v4(),
     label: newOptionLabel,
     position: options.length,

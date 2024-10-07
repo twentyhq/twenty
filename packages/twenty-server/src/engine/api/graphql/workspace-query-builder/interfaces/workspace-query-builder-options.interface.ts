@@ -8,4 +8,5 @@ export interface WorkspaceQueryBuilderOptions {
   info: GraphQLResolveInfo;
   fieldMetadataCollection: FieldMetadataInterface[];
   objectMetadataCollection: ObjectMetadataInterface[];
+  withSoftDeleted?: boolean;
 }

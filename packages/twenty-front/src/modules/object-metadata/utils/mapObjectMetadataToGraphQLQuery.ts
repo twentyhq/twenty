@@ -18,6 +18,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   const fieldsThatShouldBeQueried =
     objectMetadataItem?.fields
       .filter((field) => field.isActive)
+      .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name))
       .filter((field) =>
         shouldFieldBeQueried({
           field,

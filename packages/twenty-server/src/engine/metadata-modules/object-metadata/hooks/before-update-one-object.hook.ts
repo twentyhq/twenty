@@ -18,7 +18,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 
 @Injectable()
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
-  implements BeforeUpdateOneHook<T, any>
+  implements BeforeUpdateOneHook<T>
 {
   constructor(
     readonly objectMetadataService: ObjectMetadataService,

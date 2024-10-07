@@ -117,4 +117,16 @@ export class Workspace {
     (postgresCredentials) => postgresCredentials.workspace,
   )
   allPostgresCredentials: Relation<PostgresCredentials[]>;
+
+  @Field()
+  @Column({ default: 1 })
+  metadataVersion: number;
+
+  @Field()
+  @Column({ default: '' })
+  databaseUrl: string;
+
+  @Field()
+  @Column({ default: '' })
+  databaseSchema: string;
 }

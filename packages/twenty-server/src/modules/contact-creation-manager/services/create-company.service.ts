@@ -157,7 +157,7 @@ export class CreateCompanyService {
     };
   }
 
-  private async createCompanyMap(companies: CompanyWorkspaceEntity[]) {
+  private createCompanyMap(companies: CompanyWorkspaceEntity[]) {
     return companies.reduce(
       (acc, company) => {
         if (!company.domainName) {

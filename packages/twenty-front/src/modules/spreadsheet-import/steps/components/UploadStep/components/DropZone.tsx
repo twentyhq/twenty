@@ -79,7 +79,7 @@ const StyledText = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   text-align: center;
-  padding: 15px;
+  padding: 16px;
 `;
 
 type DropZoneProps = {

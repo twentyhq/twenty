@@ -68,7 +68,9 @@ const StyledControlLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
+const StyledIconChevronDown = styled(IconChevronDown)<{
+  disabled?: boolean;
+}>`
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
 `;

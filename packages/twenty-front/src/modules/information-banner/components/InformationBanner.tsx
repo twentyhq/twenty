@@ -1,6 +1,6 @@
 import { Button } from '@/ui/input/button/components/Button';
 import styled from '@emotion/styled';
-import { Banner, IconComponent } from 'twenty-ui';
+import { Banner, BannerVariant, IconComponent } from 'twenty-ui';
 
 const StyledBanner = styled(Banner)`
   position: absolute;
@@ -14,26 +14,30 @@ const StyledText = styled.div`
 
 export const InformationBanner = ({
   message,
+  variant = 'default',
   buttonTitle,
   buttonIcon,
   buttonOnClick,
 }: {
   message: string;
-  buttonTitle: string;
+  variant?: BannerVariant;
+  buttonTitle?: string;
   buttonIcon?: IconComponent;
-  buttonOnClick: () => void;
+  buttonOnClick?: () => void;
 }) => {
   return (
-    <StyledBanner>
+    <StyledBanner variant={variant}>
       <StyledText>{message}</StyledText>
-      <Button
-        variant="secondary"
-        title={buttonTitle}
-        Icon={buttonIcon}
-        size="small"
-        inverted
-        onClick={buttonOnClick}
-      />
+      {buttonTitle && buttonOnClick && (
+        <Button
+          variant="secondary"
+          title={buttonTitle}
+          Icon={buttonIcon}
+          size="small"
+          inverted
+          onClick={buttonOnClick}
+        />
+      )}
     </StyledBanner>
   );
 };

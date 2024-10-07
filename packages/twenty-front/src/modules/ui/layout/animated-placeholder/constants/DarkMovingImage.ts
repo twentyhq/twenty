@@ -12,4 +12,6 @@ export const DARK_MOVING_IMAGE: Record<string, string> = {
   loadingMessages: '/images/placeholders/moving-image/loading_messages.png',
   loadingAccounts: '/images/placeholders/moving-image/loading_accounts.png',
   emptyFunctions: '/images/placeholders/dark-moving-image/empty_functions.png',
+  noDeletedRecord:
+    '/images/placeholders/dark-moving-image/no_deleted_record.png',
 };

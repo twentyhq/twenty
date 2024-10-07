@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
-import { isDefined } from '~/utils/isDefined';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
+import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -9,7 +9,7 @@ export type ServerlessFunctionNewFormValues = {
 };
 
 export type ServerlessFunctionFormValues = ServerlessFunctionNewFormValues & {
-  code: string;
+  code: { [filePath: string]: string } | undefined;
 };
 
 type SetServerlessFunctionFormValues = Dispatch<
@@ -18,40 +18,35 @@ type SetServerlessFunctionFormValues = Dispatch<
 
 export const useServerlessFunctionUpdateFormState = (
   serverlessFunctionId: string,
-): [ServerlessFunctionFormValues, SetServerlessFunctionFormValues] => {
+): {
+  formValues: ServerlessFunctionFormValues;
+  setFormValues: SetServerlessFunctionFormValues;
+  loading: boolean;
+} => {
   const [formValues, setFormValues] = useState<ServerlessFunctionFormValues>({
     name: '',
     description: '',
-    code: '',
+    code: undefined,
   });
 
   const { serverlessFunction } =
     useGetOneServerlessFunction(serverlessFunctionId);
 
-  useEffect(() => {
-    const getFileContent = async () => {
-      const resp = await fetch(
-        getFileAbsoluteURI(serverlessFunction?.sourceCodeFullPath),
-      );
-      if (resp.status !== 200) {
-        throw new Error('Network response was not ok');
-      } else {
-        const result = await resp.text();
-        const newState = {
-          code: result,
-          name: serverlessFunction?.name || '',
-          description: serverlessFunction?.description || '',
-        };
-        setFormValues((prevState) => ({
-          ...prevState,
-          ...newState,
-        }));
-      }
-    };
-    if (isDefined(serverlessFunction?.sourceCodeFullPath)) {
-      getFileContent();
-    }
-  }, [serverlessFunction, setFormValues]);
+  const { loading } = useGetOneServerlessFunctionSourceCode({
+    id: serverlessFunctionId,
+    version: 'draft',
+    onCompleted: (data: FindOneServerlessFunctionSourceCodeQuery) => {
+      const newState = {
+        code: data?.getServerlessFunctionSourceCode || undefined,
+        name: serverlessFunction?.name || '',
+        description: serverlessFunction?.description || '',
+      };
+      setFormValues((prevState) => ({
+        ...prevState,
+        ...newState,
+      }));
+    },
+  });
 
-  return [formValues, setFormValues];
+  return { formValues, setFormValues, loading };
 };

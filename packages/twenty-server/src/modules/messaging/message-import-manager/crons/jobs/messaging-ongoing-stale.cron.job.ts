@@ -2,19 +2,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
   MessagingOngoingStaleJob,
   MessagingOngoingStaleJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
+
+export const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingOngoingStaleCronJob {
@@ -23,9 +27,14 @@ export class MessagingOngoingStaleCronJob {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(MessagingOngoingStaleCronJob.name)
+  @SentryCronMonitor(
+    MessagingOngoingStaleCronJob.name,
+    MESSAGING_ONGOING_STALE_CRON_PATTERN,
+  )
   async handle(): Promise<void> {
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
@@ -34,12 +43,20 @@ export class MessagingOngoingStaleCronJob {
     });
 
     for (const activeWorkspace of activeWorkspaces) {
-      await this.messageQueueService.add<MessagingOngoingStaleJobData>(
-        MessagingOngoingStaleJob.name,
-        {
-          workspaceId: activeWorkspace.id,
-        },
-      );
+      try {
+        await this.messageQueueService.add<MessagingOngoingStaleJobData>(
+          MessagingOngoingStaleJob.name,
+          {
+            workspaceId: activeWorkspace.id,
+          },
+        );
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          user: {
+            workspaceId: activeWorkspace.id,
+          },
+        });
+      }
     }
   }
 }

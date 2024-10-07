@@ -1,13 +1,13 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
-import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
 import { DELETE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/deleteOneServerlessFunction';
 import {
   DeleteServerlessFunctionInput,
   DeleteOneServerlessFunctionMutation,
   DeleteOneServerlessFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
+import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 
 export const useDeleteOneServerlessFunction = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -26,7 +26,9 @@ export const useDeleteOneServerlessFunction = () => {
         input,
       },
       awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_SERVERLESS_FUNCTIONS) ?? ''],
+      refetchQueries: [
+        getOperationName(FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE) ?? '',
+      ],
     });
   };
 

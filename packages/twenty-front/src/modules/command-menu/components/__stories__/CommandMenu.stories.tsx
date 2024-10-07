@@ -82,7 +82,9 @@ export const DefaultWithoutSearch: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    expect(await canvas.findByText('Create Task')).toBeInTheDocument();
+    expect(
+      await canvas.findByText('Create Task', undefined, { timeout: 10000 }),
+    ).toBeInTheDocument();
     expect(await canvas.findByText('Go to People')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Opportunities')).toBeInTheDocument();

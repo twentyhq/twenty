@@ -13,7 +13,7 @@ import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';
 import { capitalize } from '~/utils/string/capitalize';
 
-type useDeleteOneRecordProps = {
+type useDeleteManyRecordProps = {
   objectNameSingular: string;
   refetchFindManyQuery?: boolean;
 };
@@ -25,7 +25,7 @@ type DeleteManyRecordsOptions = {
 
 export const useDeleteManyRecords = ({
   objectNameSingular,
-}: useDeleteOneRecordProps) => {
+}: useDeleteManyRecordProps) => {
   const apiConfig = useRecoilValue(apiConfigState);
 
   const mutationPageSize =

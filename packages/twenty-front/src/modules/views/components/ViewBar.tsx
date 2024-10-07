@@ -13,12 +13,12 @@ import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
-import { ViewScope } from '@/views/scopes/ViewScope';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
+import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
 
@@ -41,15 +41,13 @@ export const ViewBar = ({
   const sortDropdownId = 'view-sort';
 
   const loading = useIsPrefetchLoading();
+
   if (!objectNamePlural) {
     return;
   }
 
   return (
-    <ViewScope
-      viewScopeId={viewBarId}
-      onCurrentViewChange={onCurrentViewChange}
-    >
+    <ViewEventContext.Provider value={{ onCurrentViewChange }}>
       <ViewBarEffect viewBarId={viewBarId} />
       <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
       <ViewBarSortEffect sortDropdownId={sortDropdownId} />
@@ -95,6 +93,6 @@ export const ViewBar = ({
           />
         }
       />
-    </ViewScope>
+    </ViewEventContext.Provider>
   );
 };

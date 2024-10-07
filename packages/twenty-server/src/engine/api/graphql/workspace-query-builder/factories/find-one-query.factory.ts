@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -11,8 +11,6 @@ import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
 export class FindOneQueryFactory {
-  private readonly logger = new Logger(FindOneQueryFactory.name);
-
   constructor(
     private readonly fieldsStringFactory: FieldsStringFactory,
     private readonly argsStringFactory: ArgsStringFactory,
@@ -26,10 +24,12 @@ export class FindOneQueryFactory {
       options.info,
       options.fieldMetadataCollection,
       options.objectMetadataCollection,
+      options.withSoftDeleted,
     );
     const argsString = this.argsStringFactory.create(
       args,
       options.fieldMetadataCollection,
+      !options.withSoftDeleted,
     );
 
     return `

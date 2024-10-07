@@ -43,8 +43,8 @@ const StyledTd = styled.td<{
   ${({ freezeFirstColumns }) =>
     freezeFirstColumns
       ? `@media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: 35px;
-      max-width: 35px;
+      width: 32px;
+      max-width: 32px;
     }`
       : ''}
 `;

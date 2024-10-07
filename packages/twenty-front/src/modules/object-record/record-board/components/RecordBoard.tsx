@@ -148,7 +148,7 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
     >
       <StyledWrapper>
         <StyledBoardHeader />
-        <ScrollWrapper>
+        <ScrollWrapper contextProviderName="recordBoard">
           <StyledContainer ref={boardRef}>
             <DragDropContext onDragEnd={onDragEnd}>
               {columnIds.map((columnId) => (

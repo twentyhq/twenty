@@ -66,7 +66,7 @@ const StyledContainer = withTheme(styled.div<
   display: inline-flex;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${({ theme }) => theme.spacing(3)};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
@@ -111,6 +111,10 @@ const StyledContainer = withTheme(styled.div<
 
   border-radius: ${({ theme, variant }) =>
     variant === ChipVariant.Rounded ? '50px' : theme.border.radius.sm};
+
+  & > svg {
+    flex-shrink: 0;
+  }
 `);
 
 export const Chip = ({
@@ -123,6 +127,7 @@ export const Chip = ({
   rightComponent,
   accent = ChipAccent.TextPrimary,
   onClick,
+  className,
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -133,6 +138,7 @@ export const Chip = ({
       size={size}
       variant={variant}
       onClick={onClick}
+      className={className}
     >
       {leftComponent}
       <OverflowingTextWithTooltip

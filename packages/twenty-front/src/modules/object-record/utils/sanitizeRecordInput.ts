@@ -1,8 +1,8 @@
 import { isString } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isFieldRelationToOneValue } from '@/object-record/record-field/types/guards/isFieldRelationToOneValue';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
@@ -29,7 +29,8 @@ export const sanitizeRecordInput = ({
 
         if (
           fieldMetadataItem.type === FieldMetadataType.Relation &&
-          isFieldRelationToOneValue(fieldValue)
+          fieldMetadataItem.relationDefinition?.direction ===
+            RelationDefinitionType.ManyToOne
         ) {
           const relationIdFieldName = `${fieldMetadataItem.name}Id`;
           const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
@@ -41,6 +42,16 @@ export const sanitizeRecordInput = ({
             : undefined;
         }
 
+        if (
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.relationDefinition?.direction ===
+            RelationDefinitionType.OneToMany
+        ) {
+          return undefined;
+        }
+
+        // Todo: we should check that the fieldValue is a valid value
+        // (e.g. a string for a string field, following the right composite structure for composite fields)
         return [fieldName, fieldValue];
       })
       .filter(isDefined),

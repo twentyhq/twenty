@@ -6,11 +6,13 @@ import {
   IconEyeOff,
   IconFileExport,
   IconFileImport,
+  IconRotate2,
   IconSettings,
   IconTag,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
+import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import {
   displayedExportProgress,
@@ -88,6 +90,12 @@ export const RecordIndexOptionsDropdownContent = ({
     hiddenTableColumns,
   } = useRecordIndexOptionsForTable(recordIndexId);
 
+  const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
+    useHandleToggleTrashColumnFilter({
+      objectNameSingular,
+      viewBarId: recordIndexId,
+    });
+
   const {
     visibleBoardFields,
     hiddenBoardFields,
@@ -153,6 +161,15 @@ export const RecordIndexOptionsDropdownContent = ({
             LeftIcon={IconFileExport}
             text={displayedExportProgress(progress)}
           />
+          <MenuItem
+            onClick={() => {
+              handleToggleTrashColumnFilter();
+              toggleSoftDeleteFilterState(true);
+              closeDropdown();
+            }}
+            LeftIcon={IconRotate2}
+            text={`Deleted ${objectNamePlural}`}
+          />
         </DropdownMenuItemsContainer>
       )}
       {currentMenu === 'fields' && (
@@ -167,6 +184,7 @@ export const RecordIndexOptionsDropdownContent = ({
             onDragEnd={handleReorderFields}
             onVisibilityChange={handleChangeFieldVisibility}
             showSubheader={false}
+            showDragGrip={true}
           />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
@@ -194,6 +212,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 isDraggable={false}
                 onVisibilityChange={handleChangeFieldVisibility}
                 showSubheader={false}
+                showDragGrip={false}
               />
             </>
           )}
@@ -203,6 +222,7 @@ export const RecordIndexOptionsDropdownContent = ({
             to={settingsUrl}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
+              closeDropdown();
             }}
           >
             <DropdownMenuItemsContainer>

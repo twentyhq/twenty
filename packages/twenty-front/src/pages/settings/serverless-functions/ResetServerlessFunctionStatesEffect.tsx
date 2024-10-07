@@ -1,7 +1,8 @@
-import { useResetRecoilState } from 'recoil';
+import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
-import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
+import { useResetRecoilState } from 'recoil';
+import { useEffect } from 'react';
 
 export const ResetServerlessFunctionStatesEffect = () => {
   const resetSettingsServerlessFunctionInput = useResetRecoilState(
@@ -13,8 +14,14 @@ export const ResetServerlessFunctionStatesEffect = () => {
   const resetSettingsServerlessFunctionCodeEditorOutputParamsState =
     useResetRecoilState(settingsServerlessFunctionCodeEditorOutputParamsState);
 
-  resetSettingsServerlessFunctionInput();
-  resetSettingsServerlessFunctionOutput();
-  resetSettingsServerlessFunctionCodeEditorOutputParamsState();
+  useEffect(() => {
+    resetSettingsServerlessFunctionInput();
+    resetSettingsServerlessFunctionOutput();
+    resetSettingsServerlessFunctionCodeEditorOutputParamsState();
+  }, [
+    resetSettingsServerlessFunctionInput,
+    resetSettingsServerlessFunctionOutput,
+    resetSettingsServerlessFunctionCodeEditorOutputParamsState,
+  ]);
   return <></>;
 };

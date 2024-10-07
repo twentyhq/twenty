@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -20,10 +20,10 @@ type EntitySchemaColumnMap = {
 
 @Injectable()
 export class EntitySchemaColumnFactory {
-  create(
-    fieldMetadataCollection: FieldMetadataEntity[],
-  ): EntitySchemaColumnMap {
+  create(fieldMetadataMap: FieldMetadataMap): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
+
+    const fieldMetadataCollection = Object.values(fieldMetadataMap);
 
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;
@@ -79,6 +79,7 @@ export class EntitySchemaColumnFactory {
         nullable: fieldMetadata.isNullable,
         createDate: key === 'createdAt',
         updateDate: key === 'updatedAt',
+        deleteDate: key === 'deletedAt',
         array: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
         default: defaultValue,
       };
@@ -96,14 +97,14 @@ export class EntitySchemaColumnFactory {
   }
 
   private createCompositeColumns(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FieldMetadataInterface,
   ): EntitySchemaColumnMap {
     const entitySchemaColumnMap: EntitySchemaColumnMap = {};
-    const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
     if (!compositeType) {
       throw new Error(
-        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefintions`,
+        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefinitions`,
       );
     }
 

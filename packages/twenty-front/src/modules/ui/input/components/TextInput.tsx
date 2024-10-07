@@ -13,7 +13,9 @@ import { isDefined } from '~/utils/isDefined';
 export type TextInputProps = TextInputV2ComponentProps & {
   disableHotkeys?: boolean;
   onInputEnter?: () => void;
-  focused?: boolean;
+  dataTestId?: string;
+  autoFocusOnMount?: boolean;
+  autoSelectOnMount?: boolean;
 };
 
 export const TextInput = ({
@@ -21,7 +23,9 @@ export const TextInput = ({
   onBlur,
   onInputEnter,
   disableHotkeys = false,
-  focused,
+  autoFocusOnMount,
+  autoSelectOnMount,
+  dataTestId,
   ...props
 }: TextInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,11 +33,17 @@ export const TextInput = ({
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    if (focused === true) {
+    if (autoFocusOnMount === true) {
       inputRef.current?.focus();
       setIsFocused(true);
     }
-  }, [focused]);
+  }, [autoFocusOnMount]);
+
+  useEffect(() => {
+    if (autoSelectOnMount === true) {
+      inputRef.current?.select();
+    }
+  }, [autoSelectOnMount]);
 
   const {
     goBackToPreviousHotkeyScope,
@@ -87,7 +97,6 @@ export const TextInput = ({
       onInputEnter?.();
 
       if (isDefined(inputRef) && 'current' in inputRef) {
-        inputRef.current?.blur();
         setIsFocused(false);
       }
     },
@@ -103,6 +112,7 @@ export const TextInput = ({
       ref={inputRef}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
+      dataTestId={dataTestId}
       onFocus={handleFocus}
       onBlur={handleBlur}
     />

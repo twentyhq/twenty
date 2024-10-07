@@ -66,7 +66,7 @@ const StyledIconContainer = styled.div`
 
 type TagWeight = 'regular' | 'medium';
 type TagVariant = 'solid' | 'outline';
-type TagColor = ThemeColor | 'transparent';
+export type TagColor = ThemeColor | 'transparent';
 
 type TagProps = {
   className?: string;

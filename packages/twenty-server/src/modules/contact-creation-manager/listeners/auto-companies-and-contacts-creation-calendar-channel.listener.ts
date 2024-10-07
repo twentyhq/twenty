@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { objectRecordChangedProperties } from 'src/engine/integrations/event-emitter/utils/object-record-changed-properties.util';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { objectRecordChangedProperties } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-properties.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import {
-  CalendarCreateCompanyAndContactAfterSyncJobData,
   CalendarCreateCompanyAndContactAfterSyncJob,
+  CalendarCreateCompanyAndContactAfterSyncJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-create-company-and-contact-after-sync.job';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -21,22 +22,28 @@ export class AutoCompaniesAndContactsCreationCalendarChannelListener {
 
   @OnEvent('calendarChannel.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>,
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>
+    >,
   ) {
-    if (
-      objectRecordChangedProperties(
-        payload.properties.before,
-        payload.properties.after,
-      ).includes('isContactAutoCreationEnabled') &&
-      payload.properties.after.isContactAutoCreationEnabled
-    ) {
-      await this.messageQueueService.add<CalendarCreateCompanyAndContactAfterSyncJobData>(
-        CalendarCreateCompanyAndContactAfterSyncJob.name,
-        {
-          workspaceId: payload.workspaceId,
-          calendarChannelId: payload.recordId,
-        },
-      );
-    }
+    await Promise.all(
+      payload.events.map((eventPayload) => {
+        if (
+          objectRecordChangedProperties(
+            eventPayload.properties.before,
+            eventPayload.properties.after,
+          ).includes('isContactAutoCreationEnabled') &&
+          eventPayload.properties.after.isContactAutoCreationEnabled
+        ) {
+          return this.messageQueueService.add<CalendarCreateCompanyAndContactAfterSyncJobData>(
+            CalendarCreateCompanyAndContactAfterSyncJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              calendarChannelId: eventPayload.recordId,
+            },
+          );
+        }
+      }),
+    );
   }
 }

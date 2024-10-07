@@ -3,9 +3,9 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
 import { useJsonField } from '../../hooks/useJsonField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
-export type RawJsonFieldInputProps = {
+type RawJsonFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

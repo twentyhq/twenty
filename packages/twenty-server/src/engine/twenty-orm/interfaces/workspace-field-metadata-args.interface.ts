@@ -1,5 +1,6 @@
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -55,6 +56,11 @@ export interface WorkspaceFieldMetadataArgs {
   readonly options?: FieldMetadataOptions;
 
   /**
+   * Field settings.
+   */
+  readonly settings?: FieldMetadataSettings;
+
+  /**
    * Is primary field.
    */
   readonly isPrimary: boolean;
@@ -78,4 +84,19 @@ export interface WorkspaceFieldMetadataArgs {
    * Is deprecated field.
    */
   readonly isDeprecated?: boolean;
+
+  /**
+   * Is active field.
+   */
+  readonly isActive?: boolean;
+
+  /**
+   * Is active field.
+   */
+  readonly generatedType?: 'STORED' | 'VIRTUAL';
+
+  /**
+   * Is active field.
+   */
+  readonly asExpression?: string;
 }

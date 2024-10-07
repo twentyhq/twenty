@@ -1,6 +1,6 @@
+import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -49,8 +49,8 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         },
       }),
       headers: {
-        ...(currentWorkspace?.currentCacheVersion && {
-          'X-Schema-Version': currentWorkspace.currentCacheVersion,
+        ...(currentWorkspace?.metadataVersion && {
+          'X-Schema-Version': `${currentWorkspace.metadataVersion}`,
         }),
       },
       defaultOptions: {
@@ -95,7 +95,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     setCurrentWorkspace,
     setWorkspaces,
     isDebugMode,
-    currentWorkspace?.currentCacheVersion,
+    currentWorkspace?.metadataVersion,
     setPreviousUrl,
   ]);
 

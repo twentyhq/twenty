@@ -37,20 +37,14 @@ resource "kubernetes_deployment" "twentycrm_server" {
           stdin = true
           tty   = true
 
-          security_context {
-            allow_privilege_escalation = true
-            privileged                 = true
-            run_as_user                = 1000
-          }
-
           env {
             name  = "PORT"
             value = "3000"
           }
-          env {
-            name  = "DEBUG_MODE"
-            value = false
-          }
+          # env {
+          #   name  = "DEBUG_MODE"
+          #   value = false
+          # }
 
           env {
             name  = "SERVER_URL"
@@ -64,9 +58,16 @@ resource "kubernetes_deployment" "twentycrm_server" {
 
           env {
             name  = "PG_DATABASE_URL"
-            value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${var.twentycrm_app_name}-db.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
+            value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${kubernetes_service.twentycrm_db.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
           }
-
+          env {
+            name  = "REDIS_HOST"
+            value = "${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local"
+          }
+          env {
+            name  = "REDIS_PORT"
+            value = 6379
+          }
           env {
             name  = "ENABLE_DB_MIGRATIONS"
             value = "true"
@@ -83,7 +84,15 @@ resource "kubernetes_deployment" "twentycrm_server" {
           }
           env {
             name  = "MESSAGE_QUEUE_TYPE"
-            value = "pg-boss"
+            value = "bull-mq"
+          }
+          env {
+            name  = "ACCESS_TOKEN_EXPIRES_IN"
+            value = "7d"
+          }
+          env {
+            name  = "LOGIN_TOKEN_EXPIRES_IN"
+            value = "1h"
           }
           env {
             name = "ACCESS_TOKEN_SECRET"
@@ -145,6 +154,11 @@ resource "kubernetes_deployment" "twentycrm_server" {
             name       = "server-data"
             mount_path = var.twentycrm_server_data_mount_path
           }
+
+          volume_mount {
+            name       = "docker-data"
+            mount_path = var.twentycrm_docker_data_mount_path
+          }
         }
 
         volume {
@@ -155,6 +169,14 @@ resource "kubernetes_deployment" "twentycrm_server" {
           }
         }
 
+        volume {
+          name = "docker-data"
+
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.docker_data.metadata.0.name
+          }
+        }
+
         dns_policy     = "ClusterFirst"
         restart_policy = "Always"
       }
@@ -162,6 +184,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
   }
   depends_on = [
     kubernetes_deployment.twentycrm_db,
+    kubernetes_deployment.twentycrm_redis,
     kubernetes_secret.twentycrm_tokens
   ]
 }

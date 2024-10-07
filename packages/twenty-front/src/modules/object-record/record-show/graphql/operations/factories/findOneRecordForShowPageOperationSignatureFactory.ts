@@ -29,7 +29,7 @@ export const buildFindOneRecordForShowPageOperationSignature: RecordGqlOperation
             },
           }
         : {}),
-      ...(objectMetadataItem.nameSingular === 'Note'
+      ...(objectMetadataItem.nameSingular === CoreObjectNameSingular.Note
         ? {
             noteTargets: {
               id: true,

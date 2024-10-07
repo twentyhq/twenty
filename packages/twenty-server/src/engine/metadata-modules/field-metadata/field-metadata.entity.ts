@@ -17,7 +17,7 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-field-metadata/index-field-metadata.entity';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
@@ -25,7 +25,9 @@ export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
   PHONE = 'PHONE',
+  PHONES = 'PHONES',
   EMAIL = 'EMAIL',
+  EMAILS = 'EMAILS',
   DATE_TIME = 'DATE_TIME',
   DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
@@ -44,6 +46,8 @@ export enum FieldMetadataType {
   RAW_JSON = 'RAW_JSON',
   RICH_TEXT = 'RICH_TEXT',
   ACTOR = 'ACTOR',
+  ARRAY = 'ARRAY',
+  TS_VECTOR = 'TS_VECTOR',
 }
 
 @Entity('fieldMetadata')

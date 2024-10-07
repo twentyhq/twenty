@@ -1,8 +1,8 @@
 import { Scope } from '@nestjs/common';
 
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
@@ -33,6 +33,8 @@ export class CalendarEventListFetchJob {
 
   @Process(CalendarEventListFetchJob.name)
   async handle(data: CalendarEventsImportJobData): Promise<void> {
+    console.time('CalendarEventListFetchJob time');
+
     const { workspaceId, calendarChannelId } = data;
 
     const calendarChannelRepository =
@@ -91,5 +93,6 @@ export class CalendarEventListFetchJob {
       default:
         break;
     }
+    console.timeEnd('CalendarEventListFetchJob time');
   }
 }

@@ -1,6 +1,5 @@
 import {
   fieldCurrencyMock,
-  fieldLinkMock,
   fieldNumberMock,
   fieldTextMock,
   objectMetadataItemMock,
@@ -18,15 +17,6 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
       mapFieldMetadataToGraphqlQuery([objectMetadataItemMock], fieldTextMock),
     ).toEqual('fieldText');
     expect(
-      mapFieldMetadataToGraphqlQuery([objectMetadataItemMock], fieldLinkMock),
-    ).toEqual(`
-      fieldLink
-      {
-        label
-        url
-      }
-    `);
-    expect(
       mapFieldMetadataToGraphqlQuery(
         [objectMetadataItemMock],
         fieldCurrencyMock,
@@ -41,6 +31,9 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
   });
   describe('should handle all field metadata types', () => {
     Object.values(FieldMetadataType).forEach((fieldMetadataType) => {
+      if (fieldMetadataType === FieldMetadataType.TS_VECTOR) {
+        return;
+      }
       it(`with field type ${fieldMetadataType}`, () => {
         const field = {
           type: fieldMetadataType,

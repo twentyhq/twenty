@@ -8,7 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsAccountsCalendarChannelsGeneral } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral';
-import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
+import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -45,6 +45,7 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
         in: accounts.map((account) => account.id),
       },
     },
+    skip: !accounts.length,
   });
 
   const tabs = [
@@ -55,7 +56,7 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
   ];
 
   if (!calendarChannels.length) {
-    return <SettingsAccountsListEmptyStateCard />;
+    return <SettingsNewAccountSection />;
   }
 
   return (

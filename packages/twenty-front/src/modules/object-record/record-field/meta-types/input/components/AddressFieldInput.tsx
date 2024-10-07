@@ -4,7 +4,7 @@ import { AddressInput } from '@/ui/field/input/components/AddressInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type AddressFieldInputProps = {
   onClickOutside?: FieldInputEvent;

@@ -16,7 +16,7 @@ export const getDisplayValueByUrlType = ({
       /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company|school)\/(.*)/,
     );
     if (isDefined(matches?.[1])) {
-      return matches?.[1];
+      return decodeURIComponent(matches?.[1]);
     } else {
       return 'LinkedIn';
     }

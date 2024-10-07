@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
 import { IconChevronDown, IconWorld } from 'twenty-ui';
 
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
@@ -19,7 +19,7 @@ type StyledDropdownButtonProps = {
   isUnfolded: boolean;
 };
 
-export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
+const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
   background: none;
   border-radius: ${({ theme }) => theme.border.radius.xs} 0 0

@@ -1,6 +1,10 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const viewPickerInputNameComponentState = createComponentState<string>({
-  key: 'viewPickerInputNameComponentState',
-  defaultValue: '',
-});
+export const viewPickerInputNameComponentState = createComponentStateV2<string>(
+  {
+    key: 'viewPickerInputNameComponentState',
+    defaultValue: '',
+    componentInstanceContext: ViewComponentInstanceContext,
+  },
+);

@@ -6,12 +6,16 @@ import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldA
 import { isFieldActorValue } from '@/object-record/record-field/types/guards/isFieldActorValue';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
+import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
+import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
+import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
+import { isFieldEmailsValue } from '@/object-record/record-field/types/guards/isFieldEmailsValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
@@ -22,6 +26,8 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldPhone } from '@/object-record/record-field/types/guards/isFieldPhone';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
+import { isFieldPhonesValue } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { isFieldPosition } from '@/object-record/record-field/types/guards/isFieldPosition';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
@@ -72,8 +78,9 @@ export const isFieldValueEmpty = ({
     );
   }
 
-  if (isFieldMultiSelect(fieldDefinition)) {
+  if (isFieldMultiSelect(fieldDefinition) || isFieldArray(fieldDefinition)) {
     return (
+      !isFieldArrayValue(fieldValue) ||
       !isFieldMultiSelectValue(fieldValue, selectOptionValues) ||
       !isDefined(fieldValue)
     );
@@ -118,6 +125,19 @@ export const isFieldValueEmpty = ({
 
   if (isFieldActor(fieldDefinition)) {
     return !isFieldActorValue(fieldValue) || isValueEmpty(fieldValue.name);
+  }
+
+  if (isFieldEmails(fieldDefinition)) {
+    return (
+      !isFieldEmailsValue(fieldValue) || isValueEmpty(fieldValue.primaryEmail)
+    );
+  }
+
+  if (isFieldPhones(fieldDefinition)) {
+    return (
+      !isFieldPhonesValue(fieldValue) ||
+      isValueEmpty(fieldValue.primaryPhoneNumber)
+    );
   }
 
   throw new Error(

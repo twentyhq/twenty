@@ -12,14 +12,14 @@ import {
 import { RelationMetadataService } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.service';
 
 @Injectable()
-export class BeforeDeleteOneRelation implements BeforeDeleteOneHook<any> {
+export class BeforeDeleteOneRelation implements BeforeDeleteOneHook {
   constructor(readonly relationMetadataService: RelationMetadataService) {}
 
   async run(
     instance: DeleteOneInputType,
     context: any,
   ): Promise<DeleteOneInputType> {
-    const workspaceId = context?.req?.user?.workspace?.id;
+    const workspaceId = context?.req?.workspace?.id;
 
     if (!workspaceId) {
       throw new UnauthorizedException();

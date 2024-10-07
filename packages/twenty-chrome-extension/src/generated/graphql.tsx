@@ -2527,6 +2527,7 @@ export enum FieldMetadataType {
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
+  Phones = 'PHONES',
   Position = 'POSITION',
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
@@ -7455,7 +7456,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
-  currentCacheVersion?: Maybe<Scalars['String']>;
+  metadataVersion?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;

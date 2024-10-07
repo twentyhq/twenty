@@ -1,7 +1,9 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   FieldAddressValue,
+  FieldEmailsValue,
   FieldLinksValue,
+  FieldPhonesValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
@@ -31,6 +33,8 @@ export const buildRecordFromImportedStructuredRow = (
     CURRENCY: { amountMicrosLabel, currencyCodeLabel },
     FULL_NAME: { firstNameLabel, lastNameLabel },
     LINKS: { primaryLinkLabelLabel, primaryLinkUrlLabel },
+    EMAILS: { primaryEmailLabel },
+    PHONES: { primaryPhoneNumberLabel, primaryPhoneCountryCodeLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
 
   for (const field of fields) {
@@ -129,14 +133,48 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       }
-      case FieldMetadataType.Link:
-        if (importedFieldValue !== undefined) {
+      case FieldMetadataType.Phones: {
+        if (
+          isDefined(
+            importedStructuredRow[
+              `${primaryPhoneCountryCodeLabel} (${field.name})`
+            ] ||
+              importedStructuredRow[
+                `${primaryPhoneNumberLabel} (${field.name})`
+              ],
+          )
+        ) {
           recordToBuild[field.name] = {
-            label: field.name,
-            url: importedFieldValue || null,
-          };
+            primaryPhoneCountryCode: castToString(
+              importedStructuredRow[
+                `${primaryPhoneCountryCodeLabel} (${field.name})`
+              ],
+            ),
+            primaryPhoneNumber: castToString(
+              importedStructuredRow[
+                `${primaryPhoneNumberLabel} (${field.name})`
+              ],
+            ),
+            additionalPhones: null,
+          } satisfies FieldPhonesValue;
         }
         break;
+      }
+      case FieldMetadataType.Emails: {
+        if (
+          isDefined(
+            importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
+          )
+        ) {
+          recordToBuild[field.name] = {
+            primaryEmail: castToString(
+              importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
+            ),
+            additionalEmails: null,
+          } satisfies FieldEmailsValue;
+        }
+        break;
+      }
       case FieldMetadataType.Relation:
         if (
           isDefined(importedFieldValue) &&

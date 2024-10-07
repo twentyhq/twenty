@@ -29,7 +29,7 @@ export const USER_QUERY_FRAGMENT = gql`
         value
         workspaceId
       }
-      currentCacheVersion
+      metadataVersion
       currentBillingSubscription {
         id
         status

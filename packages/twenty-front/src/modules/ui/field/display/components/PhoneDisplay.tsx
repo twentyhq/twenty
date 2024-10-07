@@ -1,11 +1,11 @@
-import { MouseEvent } from 'react';
 import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
+import { MouseEvent } from 'react';
 
 import { ContactLink } from '@/ui/navigation/link/components/ContactLink';
 import { isDefined } from '~/utils/isDefined';
 
 type PhoneDisplayProps = {
-  value: string | null;
+  value: string | null | undefined;
 };
 
 // TODO: see if we can find a faster way to format the phone number
@@ -24,7 +24,7 @@ export const PhoneDisplay = ({ value }: PhoneDisplayProps) => {
   }
 
   const URI = parsedPhoneNumber.getURI();
-  const formattedNational = parsedPhoneNumber?.formatNational();
+  const formatedPhoneNumber = parsedPhoneNumber.formatInternational();
 
   return (
     <ContactLink
@@ -33,7 +33,7 @@ export const PhoneDisplay = ({ value }: PhoneDisplayProps) => {
         event.stopPropagation();
       }}
     >
-      {formattedNational || value}
+      {formatedPhoneNumber || value}
     </ContactLink>
   );
 };

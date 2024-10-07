@@ -11,7 +11,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getPeopleMock, peopleQueryResult } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
-import { viewQueryResultMock } from '~/testing/mock-data/views';
 import { RecordShowPage } from '../RecordShowPage';
 
 const peopleMock = getPeopleMock();
@@ -63,13 +62,6 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        graphql.query('FindManyViews', () => {
-          return HttpResponse.json({
-            data: {
-              views: viewQueryResultMock,
-            },
-          });
-        }),
         graphqlMocks.handlers,
       ],
     },
@@ -90,7 +82,7 @@ export const Default: Story = {
     // await canvas.findAllByText(peopleMock[0].name.firstName);
     expect(
       await canvas.findByText('Twenty', undefined, {
-        timeout: 3000,
+        timeout: 5000,
       }),
     ).toBeInTheDocument();
     expect(

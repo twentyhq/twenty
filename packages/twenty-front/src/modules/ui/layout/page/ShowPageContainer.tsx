@@ -6,7 +6,6 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledOuterContainer = styled.div`
   display: flex;
-
   gap: ${({ theme }) => (useIsMobile() ? theme.spacing(3) : '0')};
   height: 100%;
   width: 100%;
@@ -32,7 +31,7 @@ export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
   const isMobile = useIsMobile();
   return isMobile ? (
     <StyledOuterContainer>
-      <StyledScrollWrapper>
+      <StyledScrollWrapper contextProviderName="showPageContainer">
         <StyledInnerContainer>{children}</StyledInnerContainer>
       </StyledScrollWrapper>
     </StyledOuterContainer>

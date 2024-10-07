@@ -4,8 +4,11 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
+import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
+import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -18,17 +21,20 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
+import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   FieldMetadataType,
@@ -55,6 +61,8 @@ export const RecordShowContainer = ({
     objectNameSingular,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
       objectNameSingular,
@@ -64,7 +72,7 @@ export const RecordShowContainer = ({
     recordLoadingFamilyState(objectRecordId),
   );
 
-  const [recordFromStore] = useRecoilState<any>(
+  const [recordFromStore] = useRecoilState<ObjectRecord | null>(
     recordStoreFamilyState(objectRecordId),
   );
 
@@ -74,7 +82,9 @@ export const RecordShowContainer = ({
       recordId: objectRecordId,
     }),
   );
-
+  const isNewViewableRecordLoading = useRecoilValue(
+    isNewViewableRecordLoadingState,
+  );
   const [uploadImage] = useUploadImageMutation();
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
 
@@ -118,7 +128,7 @@ export const RecordShowContainer = ({
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem) &&
+        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
         fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
@@ -126,7 +136,11 @@ export const RecordShowContainer = ({
     );
 
   const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
-    availableFieldMetadataItems,
+    availableFieldMetadataItems.filter(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.name !== 'createdAt' &&
+        fieldMetadataItem.name !== 'deletedAt',
+    ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.Relation
         ? 'relationFieldMetadataItems'
@@ -148,55 +162,60 @@ export const RecordShowContainer = ({
       objectNameSingular !== CoreObjectNameSingular.Task &&
       fieldMetadataItem.name !== 'taskTargets',
   );
-
+  const { Icon, IconColor } = useGetStandardObjectIcon(objectNameSingular);
   const isReadOnly = objectMetadataItem.isRemote;
   const isMobile = useIsMobile() || isInRightDrawer;
   const isPrefetchLoading = useIsPrefetchLoading();
+  const isNewRightDrawerItemLoading =
+    isInRightDrawer && isNewViewableRecordLoading;
 
-  const summaryCard = isDefined(recordFromStore) ? (
-    <ShowPageSummaryCard
-      isMobile={isMobile}
-      id={objectRecordId}
-      logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
-      avatarPlaceholder={recordIdentifier?.name ?? ''}
-      date={recordFromStore.createdAt ?? ''}
-      loading={isPrefetchLoading || loading || recordLoading}
-      title={
-        <FieldContext.Provider
-          value={{
-            recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
-            isLabelIdentifier: false,
-            fieldDefinition: {
-              type:
-                labelIdentifierFieldMetadataItem?.type ||
-                FieldMetadataType.Text,
-              iconName: '',
-              fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
-              label: labelIdentifierFieldMetadataItem?.label || '',
-              metadata: {
-                fieldName: labelIdentifierFieldMetadataItem?.name || '',
-                objectMetadataNameSingular: objectNameSingular,
+  const summaryCard =
+    !isNewRightDrawerItemLoading && isDefined(recordFromStore) ? (
+      <ShowPageSummaryCard
+        isMobile={isMobile}
+        id={objectRecordId}
+        logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+        icon={Icon}
+        iconColor={IconColor}
+        avatarPlaceholder={recordIdentifier?.name ?? ''}
+        date={recordFromStore.createdAt ?? ''}
+        loading={isPrefetchLoading || loading || recordLoading}
+        title={
+          <FieldContext.Provider
+            value={{
+              recordId: objectRecordId,
+              recoilScopeId:
+                objectRecordId + labelIdentifierFieldMetadataItem?.id,
+              isLabelIdentifier: false,
+              fieldDefinition: {
+                type:
+                  labelIdentifierFieldMetadataItem?.type ||
+                  FieldMetadataType.Text,
+                iconName: '',
+                fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
+                label: labelIdentifierFieldMetadataItem?.label || '',
+                metadata: {
+                  fieldName: labelIdentifierFieldMetadataItem?.name || '',
+                  objectMetadataNameSingular: objectNameSingular,
+                },
+                defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
               },
-              defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
-            },
-            useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
-            isCentered: true,
-          }}
-        >
-          <RecordInlineCell readonly={isReadOnly} isCentered={true} />
-        </FieldContext.Provider>
-      }
-      avatarType={recordIdentifier?.avatarType ?? 'rounded'}
-      onUploadPicture={
-        objectNameSingular === 'person' ? onUploadPicture : undefined
-      }
-    />
-  ) : (
-    <></>
-  );
+              useUpdateRecord: useUpdateOneObjectRecordMutation,
+              hotkeyScope: InlineCellHotkeyScope.InlineCell,
+              isCentered: !isMobile,
+            }}
+          >
+            <RecordInlineCell readonly={isReadOnly} />
+          </FieldContext.Provider>
+        }
+        avatarType={recordIdentifier?.avatarType ?? 'rounded'}
+        onUploadPicture={
+          objectNameSingular === 'person' ? onUploadPicture : undefined
+        }
+      />
+    ) : (
+      <ShowPageSummaryCardSkeletonLoader />
+    );
 
   const fieldsBox = (
     <>
@@ -301,25 +320,33 @@ export const RecordShowContainer = ({
   );
 
   return (
-    <ShowPageContainer>
-      <ShowPageLeftContainer forceMobile={isMobile}>
-        {!isMobile && summaryCard}
-        {!isMobile && fieldsBox}
-      </ShowPageLeftContainer>
-      <ShowPageRightContainer
-        targetableObject={{
-          id: objectRecordId,
-          targetObjectNameSingular: objectMetadataItem?.nameSingular,
-        }}
-        timeline
-        tasks
-        notes
-        emails
-        isInRightDrawer={isInRightDrawer}
-        summaryCard={isMobile ? summaryCard : <></>}
-        fieldsBox={fieldsBox}
-        loading={isPrefetchLoading || loading || recordLoading}
-      />
-    </ShowPageContainer>
+    <>
+      {recordFromStore && recordFromStore.deletedAt && (
+        <InformationBannerDeletedRecord
+          recordId={objectRecordId}
+          objectNameSingular={objectNameSingular}
+        />
+      )}
+      <ShowPageContainer>
+        <ShowPageLeftContainer forceMobile={isMobile}>
+          {!isMobile && summaryCard}
+          {!isMobile && fieldsBox}
+        </ShowPageLeftContainer>
+        <ShowPageRightContainer
+          targetableObject={{
+            id: objectRecordId,
+            targetObjectNameSingular: objectMetadataItem?.nameSingular,
+          }}
+          timeline
+          tasks
+          notes
+          emails
+          isInRightDrawer={isInRightDrawer}
+          summaryCard={isMobile ? summaryCard : <></>}
+          fieldsBox={fieldsBox}
+          loading={isPrefetchLoading || loading || recordLoading}
+        />
+      </ShowPageContainer>
+    </>
   );
 };

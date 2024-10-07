@@ -1,7 +1,12 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { OrderBy } from '@/object-metadata/types/OrderBy';
+
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
-import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
+import {
+  FieldEmailsValue,
+  FieldLinksValue,
+  FieldPhonesValue,
+} from '@/object-record/record-field/types/FieldMetadata';
+import { OrderBy } from '@/types/OrderBy';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getOrderByForFieldMetadataType = (
@@ -40,6 +45,22 @@ export const getOrderByForFieldMetadataType = (
           [field.name]: {
             primaryLinkUrl: direction ?? 'AscNullsLast',
           } satisfies { [key in keyof FieldLinksValue]?: OrderBy },
+        },
+      ];
+    case FieldMetadataType.Emails:
+      return [
+        {
+          [field.name]: {
+            primaryEmail: direction ?? 'AscNullsLast',
+          } satisfies { [key in keyof FieldEmailsValue]?: OrderBy },
+        },
+      ];
+    case FieldMetadataType.Phones:
+      return [
+        {
+          [field.name]: {
+            primaryPhoneNumber: direction ?? 'AscNullsLast',
+          } satisfies { [key in keyof FieldPhonesValue]?: OrderBy },
         },
       ];
     default:

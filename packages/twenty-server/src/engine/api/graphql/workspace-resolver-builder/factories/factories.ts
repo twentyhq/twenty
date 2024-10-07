@@ -1,3 +1,7 @@
+import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
+import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
+import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
+import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 
 import { CreateManyResolverFactory } from './create-many-resolver.factory';
@@ -19,6 +23,10 @@ export const workspaceResolverBuilderFactories = [
   DeleteOneResolverFactory,
   UpdateManyResolverFactory,
   DeleteManyResolverFactory,
+  DestroyOneResolverFactory,
+  DestroyManyResolverFactory,
+  RestoreManyResolverFactory,
+  SearchResolverFactory,
 ];
 
 export const workspaceResolverBuilderMethodNames = {
@@ -26,6 +34,7 @@ export const workspaceResolverBuilderMethodNames = {
     FindManyResolverFactory.methodName,
     FindOneResolverFactory.methodName,
     FindDuplicatesResolverFactory.methodName,
+    SearchResolverFactory.methodName,
   ],
   mutations: [
     CreateManyResolverFactory.methodName,
@@ -34,5 +43,8 @@ export const workspaceResolverBuilderMethodNames = {
     DeleteOneResolverFactory.methodName,
     UpdateManyResolverFactory.methodName,
     DeleteManyResolverFactory.methodName,
+    DestroyOneResolverFactory.methodName,
+    DestroyManyResolverFactory.methodName,
+    RestoreManyResolverFactory.methodName,
   ],
 } as const;

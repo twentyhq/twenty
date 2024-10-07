@@ -7,12 +7,16 @@ import { isFieldAddress } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateValue } from '@/object-record/record-field/types/guards/isFieldDateValue';
+import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
+import { isFieldEmailsValue } from '@/object-record/record-field/types/guards/isFieldEmailsValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
+import { isFieldPhonesValue } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
@@ -22,6 +26,8 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
+import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
+import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -65,6 +71,9 @@ export const usePersistField = () => {
         const fieldIsEmail =
           isFieldEmail(fieldDefinition) && isFieldEmailValue(valueToPersist);
 
+        const fieldIsEmails =
+          isFieldEmails(fieldDefinition) && isFieldEmailsValue(valueToPersist);
+
         const fieldIsDateTime =
           isFieldDateTime(fieldDefinition) &&
           isFieldDateTimeValue(valueToPersist);
@@ -99,6 +108,9 @@ export const usePersistField = () => {
         const fieldIsPhone =
           isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);
 
+        const fieldIsPhones =
+          isFieldPhones(fieldDefinition) && isFieldPhonesValue(valueToPersist);
+
         const fieldIsSelect =
           isFieldSelect(fieldDefinition) && isFieldSelectValue(valueToPersist);
 
@@ -114,16 +126,21 @@ export const usePersistField = () => {
           isFieldRawJson(fieldDefinition) &&
           isFieldRawJsonValue(valueToPersist);
 
+        const fieldIsArray =
+          isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
+
         const isValuePersistable =
           fieldIsRelationToOneObject ||
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||
+          fieldIsEmails ||
           fieldIsRating ||
           fieldIsNumber ||
           fieldIsDateTime ||
           fieldIsDate ||
           fieldIsPhone ||
+          fieldIsPhones ||
           fieldIsLink ||
           fieldIsLinks ||
           fieldIsCurrency ||
@@ -131,7 +148,8 @@ export const usePersistField = () => {
           fieldIsSelect ||
           fieldIsMultiSelect ||
           fieldIsAddress ||
-          fieldIsRawJson;
+          fieldIsRawJson ||
+          fieldIsArray;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;

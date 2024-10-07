@@ -10,6 +10,12 @@
         "outputPath": "{projectRoot}/build"
       }
     },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx serve -s {projectRoot}/build"
+      }
+    },
     "start": {
       "executor": "@nx/vite:dev-server",
       "options": {

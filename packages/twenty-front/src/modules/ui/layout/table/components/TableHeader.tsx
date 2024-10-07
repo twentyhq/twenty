@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 
-const StyledTableHeader = styled.div<{ align?: 'left' | 'center' | 'right' }>`
+const StyledTableHeader = styled.div<{
+  align?: 'left' | 'center' | 'right';
+  onClick?: () => void;
+}>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -15,6 +18,7 @@ const StyledTableHeader = styled.div<{ align?: 'left' | 'center' | 'right' }>`
         : 'flex-start'};
   padding: 0 ${({ theme }) => theme.spacing(2)};
   text-align: ${({ align }) => align ?? 'left'};
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `;
 
 export { StyledTableHeader as TableHeader };

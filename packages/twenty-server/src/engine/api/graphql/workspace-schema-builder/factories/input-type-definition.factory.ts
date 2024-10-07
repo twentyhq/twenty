@@ -1,15 +1,13 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
-import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
+import { GraphQLInputObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { pascalCase } from 'src/utils/pascal-case';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { generateFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/generate-fields.utils';
+import { pascalCase } from 'src/utils/pascal-case';
 
 import { InputTypeFactory } from './input-type.factory';
 
@@ -55,7 +53,12 @@ export class InputTypeDefinitionFactory {
             });
 
             return {
-              ...this.generateFields(objectMetadata, kind, options),
+              ...generateFields(
+                objectMetadata,
+                kind,
+                options,
+                this.inputTypeFactory,
+              ),
               and: {
                 type: andOrType,
               },
@@ -73,7 +76,12 @@ export class InputTypeDefinitionFactory {
            * Other input types are generated with fields only
            */
           default:
-            return this.generateFields(objectMetadata, kind, options);
+            return generateFields(
+              objectMetadata,
+              kind,
+              options,
+              this.inputTypeFactory,
+            );
         }
       },
     });
@@ -83,47 +91,5 @@ export class InputTypeDefinitionFactory {
       kind,
       type: inputType,
     };
-  }
-
-  private generateFields(
-    objectMetadata: ObjectMetadataInterface,
-    kind: InputTypeDefinitionKind,
-    options: WorkspaceBuildSchemaOptions,
-  ): GraphQLInputFieldConfigMap {
-    const fields: GraphQLInputFieldConfigMap = {};
-
-    for (const fieldMetadata of objectMetadata.fields) {
-      // Relation field types are generated during extension of object type definition
-      if (isRelationFieldMetadataType(fieldMetadata.type)) {
-        continue;
-      }
-
-      const target = isCompositeFieldMetadataType(fieldMetadata.type)
-        ? fieldMetadata.type.toString()
-        : fieldMetadata.id;
-
-      const isIdField = fieldMetadata.name === 'id';
-
-      const type = this.inputTypeFactory.create(
-        target,
-        fieldMetadata.type,
-        kind,
-        options,
-        {
-          nullable: fieldMetadata.isNullable,
-          defaultValue: fieldMetadata.defaultValue,
-          isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-          settings: fieldMetadata.settings,
-          isIdField,
-        },
-      );
-
-      fields[fieldMetadata.name] = {
-        type,
-        description: fieldMetadata.description,
-      };
-    }
-
-    return fields;
   }
 }

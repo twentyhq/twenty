@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import { Section } from '@react-email/components';
+import { useNavigate } from 'react-router-dom';
 import { H2Title } from 'twenty-ui';
 
 import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
@@ -31,6 +31,7 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
     SettingsPath.Integrations,
   );
 
+  // TODO: move breadcrumb to header?
   return (
     <>
       <Breadcrumb

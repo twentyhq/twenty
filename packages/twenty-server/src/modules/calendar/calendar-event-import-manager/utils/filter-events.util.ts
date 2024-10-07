@@ -1,9 +1,8 @@
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 
 export const filterEventsAndReturnCancelledEvents = (
-  calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'handle'>,
+  calendarChannelHandles: string[],
   events: CalendarEventWithParticipants[],
   blocklist: string[],
 ): {
@@ -11,7 +10,7 @@ export const filterEventsAndReturnCancelledEvents = (
   cancelledEvents: CalendarEventWithParticipants[];
 } => {
   const filteredEvents = filterOutBlocklistedEvents(
-    calendarChannel.handle,
+    calendarChannelHandles,
     events,
     blocklist,
   );

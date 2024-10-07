@@ -175,3 +175,27 @@ export class FieldMetadataDefaultActor {
   @IsString()
   name: string;
 }
+
+export class FieldMetadataDefaultValueEmails {
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryEmail: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsObject()
+  additionalEmails: object | null;
+}
+
+export class FieldMetadataDefaultValuePhones {
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryPhoneNumber: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryPhoneCountryCode: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsObject()
+  additionalPhones: object | null;
+}

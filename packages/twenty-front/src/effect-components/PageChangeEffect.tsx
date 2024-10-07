@@ -4,7 +4,10 @@ import { useRecoilValue } from 'recoil';
 import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { useEventTracker } from '@/analytics/hooks/useEventTracker';
+import {
+  setSessionId,
+  useEventTracker,
+} from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -16,10 +19,10 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { isDefined } from '~/utils/isDefined';
-import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -153,17 +156,24 @@ export const PageChangeEffect = () => {
         label: 'Create Task',
         type: CommandType.Create,
         Icon: IconCheckbox,
-        onCommandClick: () => openCreateActivity({ targetableObjects: [] }),
+        onCommandClick: () =>
+          openCreateActivity({
+            targetableObjects: [],
+          }),
       },
     ]);
   }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);
 
   useEffect(() => {
     setTimeout(() => {
+      setSessionId();
       eventTracker('pageview', {
-        location: {
-          pathname: location.pathname,
-        },
+        pathname: location.pathname,
+        locale: navigator.language,
+        userAgent: window.navigator.userAgent,
+        href: window.location.href,
+        referrer: document.referrer,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }, 500);
   }, [eventTracker, location.pathname]);

@@ -6,15 +6,6 @@ export class WorkspaceEntitiesStorage {
     Map<string, EntitySchema>
   >();
 
-  static getEntitySchema(
-    workspaceId: string,
-    objectMetadataName: string,
-  ): EntitySchema | undefined {
-    const workspace = this.workspaceEntities.get(workspaceId);
-
-    return workspace?.get(objectMetadataName);
-  }
-
   static setEntitySchema(
     workspaceId: string,
     objectMetadataName: string,
@@ -37,13 +28,5 @@ export class WorkspaceEntitiesStorage {
     return Array.from(workspace?.entries() || []).find(
       ([, schema]) => schema.options.name === target.options.name,
     )?.[0];
-  }
-
-  static getEntities(workspaceId: string): EntitySchema[] {
-    return Array.from(this.workspaceEntities.get(workspaceId)?.values() || []);
-  }
-
-  static clearWorkspace(workspaceId: string): void {
-    this.workspaceEntities.delete(workspaceId);
   }
 }

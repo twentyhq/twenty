@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 type MessagingTelemetryTrackInput = {
   eventName: string;
@@ -29,8 +29,8 @@ export class MessagingTelemetryService {
   }: MessagingTelemetryTrackInput): Promise<void> {
     await this.analyticsService.create(
       {
-        type: 'track',
-        data: {
+        action: 'monitoring',
+        payload: {
           eventName: `messaging.${eventName}`,
           workspaceId,
           userId,
@@ -41,9 +41,6 @@ export class MessagingTelemetryService {
       },
       userId,
       workspaceId,
-      '', // voluntarely not retrieving this
-      '', // to avoid slowing down
-      this.environmentService.get('SERVER_URL'),
     );
   }
 }
