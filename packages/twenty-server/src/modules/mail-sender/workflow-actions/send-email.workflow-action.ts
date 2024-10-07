@@ -83,15 +83,16 @@ export class SendEmailWorkflowAction {
         return { result: { success: false } };
       }
 
-      const mainText = Handlebars.compile(step.settings.template)(payload);
+      const body = Handlebars.compile(step.settings.body)(payload);
+      const subject = Handlebars.compile(step.settings.subject)(payload);
 
       const message = [
         `To: ${payload.email}`,
-        `Subject: ${step.settings.subject || ''}`,
+        `Subject: ${subject || ''}`,
         'MIME-Version: 1.0',
         'Content-Type: text/plain; charset="UTF-8"',
         '',
-        mainText,
+        body,
       ].join('\n');
 
       const encodedMessage = Buffer.from(message).toString('base64');

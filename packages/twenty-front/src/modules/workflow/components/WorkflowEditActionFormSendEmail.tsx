@@ -51,11 +51,11 @@ export const WorkflowEditActionFormSendEmail = ({
       action.settings.connectedAccountId ?? '',
     );
     form.setValue('subject', action.settings.subject ?? '');
-    form.setValue('body', action.settings.template ?? '');
+    form.setValue('body', action.settings.body ?? '');
   }, [
     action.settings.connectedAccountId,
     action.settings.subject,
-    action.settings.template,
+    action.settings.body,
     form,
   ]);
 
@@ -65,9 +65,8 @@ export const WorkflowEditActionFormSendEmail = ({
       settings: {
         ...action.settings,
         connectedAccountId: formData.connectedAccountId,
-        title: formData.subject,
         subject: formData.subject,
-        template: formData.body,
+        body: formData.body,
       },
     });
   }, 1_000);
@@ -131,7 +130,7 @@ export const WorkflowEditActionFormSendEmail = ({
             render={({ field }) => (
               <TextInput
                 label="Subject"
-                placeholder="Thank you for building such an awesome CRM!"
+                placeholder="Use payload variables with {{variable}}"
                 value={field.value}
                 onChange={(email) => {
                   field.onChange(email);
@@ -148,7 +147,7 @@ export const WorkflowEditActionFormSendEmail = ({
             render={({ field }) => (
               <TextArea
                 label="Body"
-                placeholder="Thank you so much!"
+                placeholder="Use payload variables with {{variable}}"
                 value={field.value}
                 minRows={4}
                 onChange={(email) => {

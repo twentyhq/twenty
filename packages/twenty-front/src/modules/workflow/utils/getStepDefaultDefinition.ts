@@ -34,9 +34,8 @@ export const getStepDefaultDefinition = (
         valid: false,
         settings: {
           connectedAccountId: '',
-          subject: 'hello',
-          title: 'hello',
-          template: '{{title}}',
+          subject: '',
+          body: '',
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,
