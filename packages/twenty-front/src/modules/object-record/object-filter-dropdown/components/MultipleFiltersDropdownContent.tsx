@@ -99,9 +99,10 @@ export const MultipleFiltersDropdownContent = ({
                 'ACTOR',
                 'ARRAY',
                 'PHONES',
-              ].includes(filterDefinitionUsedInDropdown.type) && (
-                <ObjectFilterDropdownTextSearchInput />
-              )}
+              ].includes(filterDefinitionUsedInDropdown.type) &&
+                !isActorSourceCompositeFilter(
+                  filterDefinitionUsedInDropdown,
+                ) && <ObjectFilterDropdownTextSearchInput />}
               {['NUMBER', 'CURRENCY'].includes(
                 filterDefinitionUsedInDropdown.type,
               ) && <ObjectFilterDropdownNumberInput />}

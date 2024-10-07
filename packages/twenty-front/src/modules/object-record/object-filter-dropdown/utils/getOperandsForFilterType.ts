@@ -1,8 +1,9 @@
-import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-export const getOperandsForFilterType = (
-  filterType: FilterableFieldType | null | undefined,
+export const getOperandsForFilterDefinition = (
+  filterDefinition: FilterDefinition,
 ): ViewFilterOperand[] => {
   const emptyOperands = [
     ViewFilterOperand.IsEmpty,
@@ -11,7 +12,7 @@ export const getOperandsForFilterType = (
 
   const relationOperands = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
 
-  switch (filterType) {
+  switch (filterDefinition.type) {
     case 'TEXT':
     case 'EMAIL':
     case 'EMAILS':
@@ -20,7 +21,6 @@ export const getOperandsForFilterType = (
     case 'PHONE':
     case 'LINK':
     case 'LINKS':
-    case 'ACTOR':
     case 'ARRAY':
     case 'PHONES':
       return [
@@ -58,6 +58,21 @@ export const getOperandsForFilterType = (
       return [...relationOperands, ...emptyOperands];
     case 'SELECT':
       return [...relationOperands];
+    case 'ACTOR': {
+      if (isActorSourceCompositeFilter(filterDefinition)) {
+        return [
+          ViewFilterOperand.Is,
+          ViewFilterOperand.IsNot,
+          ...emptyOperands,
+        ];
+      }
+
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
+    }
     default:
       return [];
   }

@@ -25,7 +25,7 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
@@ -716,10 +716,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         break;
       }
       case 'ACTOR':
-        if (
-          rawUIFilter.definition.compositeFieldName ===
-          ('source' satisfies keyof FieldActorValue)
-        ) {
+        if (isActorSourceCompositeFilter(rawUIFilter.definition)) {
           const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
           switch (rawUIFilter.operand) {
@@ -788,7 +785,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               break;
             default:
               throw new Error(
-                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.label} filter`,
               );
           }
         }

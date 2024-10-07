@@ -4,7 +4,7 @@ import { CompositeFilterableFieldType } from '@/object-record/object-filter-drop
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
-import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
+import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -38,7 +38,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
       setFilterDefinitionUsedInDropdown(definition);
 
       setSelectedOperandInDropdown(
-        getOperandsForFilterType(definition.type)?.[0],
+        getOperandsForFilterDefinition(definition)[0],
       );
 
       setObjectFilterDropdownSearchInput('');
