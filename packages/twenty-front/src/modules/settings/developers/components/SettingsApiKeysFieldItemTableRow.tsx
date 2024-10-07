@@ -7,7 +7,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px auto 24px;
+  grid-template-columns: 312px auto 28px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
