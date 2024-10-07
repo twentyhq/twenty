@@ -47,6 +47,7 @@ export class DeleteNameColumnStandardObjectTablesCommand extends ActiveWorkspace
             isCustom: false,
             workspaceId,
           },
+          relations: ['fields'],
         });
 
         const dataSource =
@@ -71,6 +72,19 @@ export class DeleteNameColumnStandardObjectTablesCommand extends ActiveWorkspace
               standardObject.nameSingular,
               'name',
             );
+
+            const nameFieldMetadataExists = standardObject.fields.some(
+              (field) => field.name === 'name',
+            );
+
+            if (nameFieldMetadataExists) {
+              this.logger.log(
+                chalk.yellow(
+                  `Name field exists for workspace ${workspaceId} and table ${standardObject.nameSingular}. Skipping deletion.`,
+                ),
+              );
+              continue;
+            }
 
             if (!nameColumnExists) {
               this.logger.log(
