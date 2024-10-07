@@ -33,8 +33,10 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
 
         const affectedColumns = context.objectMetadataItem.indexes
           .find((index) => index.name === indexName)
-          ?.indexFieldMetadatas?.map((field) => field.fieldMetadata.name)
-          .filter((name) => name !== 'deletedAt');
+          ?.indexFieldMetadatas?.filter(
+            (field) => field.fieldMetadata.name !== 'deletedAt',
+          )
+          .map((field) => field.fieldMetadata.label);
 
         const columnNames = affectedColumns?.join(', ');
 

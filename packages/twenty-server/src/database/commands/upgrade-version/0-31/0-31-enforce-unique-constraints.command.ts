@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -14,7 +14,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 @Command({
   name: 'upgrade-0.31:enforce-unique-constraints',
   description:
-    'Enforce unique constraints on company domainName and person emailsPrimaryEmail',
+    'Enforce unique constraints on company domainName, person emailsPrimaryEmail, ViewField, and ViewSort',
 })
 export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunner {
   constructor(
@@ -67,6 +67,8 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
   ): Promise<void> {
     await this.enforceUniqueCompanyDomainName(workspaceId, dryRun);
     await this.enforceUniquePersonEmail(workspaceId, dryRun);
+    await this.enforceUniqueViewField(workspaceId, dryRun);
+    await this.enforceUniqueViewSort(workspaceId, dryRun);
   }
 
   private async enforceUniqueCompanyDomainName(
@@ -92,7 +94,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
     for (const duplicate of duplicates) {
       const { domainNamePrimaryLinkUrl } = duplicate;
       const companies = await companyRepository.find({
-        where: { domainNamePrimaryLinkUrl, deletedAt: null },
+        where: { domainNamePrimaryLinkUrl, deletedAt: IsNull() },
         order: { createdAt: 'DESC' },
       });
 
@@ -136,7 +138,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
     for (const duplicate of duplicates) {
       const { emailsPrimaryEmail } = duplicate;
       const persons = await personRepository.find({
-        where: { emailsPrimaryEmail, deletedAt: null },
+        where: { emailsPrimaryEmail, deletedAt: IsNull() },
         order: { createdAt: 'DESC' },
       });
 
@@ -151,6 +153,84 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
         this.logger.log(
           chalk.yellow(
             `Updated person ${persons[i].id} emailsPrimaryEmail from ${emailsPrimaryEmail} to ${newEmail}`,
+          ),
+        );
+      }
+    }
+  }
+
+  private async enforceUniqueViewField(
+    workspaceId: string,
+    dryRun: boolean,
+  ): Promise<void> {
+    const viewFieldRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'viewField',
+      );
+
+    const duplicates = await viewFieldRepository
+      .createQueryBuilder('viewField')
+      .select(['viewField.fieldMetadataId', 'viewField.viewId'])
+      .addSelect('COUNT(*)', 'count')
+      .where('viewField.deletedAt IS NULL')
+      .groupBy('viewField.fieldMetadataId, viewField.viewId')
+      .having('COUNT(*) > 1')
+      .getRawMany();
+
+    for (const duplicate of duplicates) {
+      const { fieldMetadataId, viewId } = duplicate;
+      const viewFields = await viewFieldRepository.find({
+        where: { fieldMetadataId, viewId, deletedAt: IsNull() },
+        order: { createdAt: 'DESC' },
+      });
+
+      for (let i = 1; i < viewFields.length; i++) {
+        if (!dryRun) {
+          await viewFieldRepository.softDelete(viewFields[i].id);
+        }
+        this.logger.log(
+          chalk.yellow(
+            `Soft deleted duplicate ViewField ${viewFields[i].id} for fieldMetadataId ${fieldMetadataId} and viewId ${viewId}`,
+          ),
+        );
+      }
+    }
+  }
+
+  private async enforceUniqueViewSort(
+    workspaceId: string,
+    dryRun: boolean,
+  ): Promise<void> {
+    const viewSortRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'viewSort',
+      );
+
+    const duplicates = await viewSortRepository
+      .createQueryBuilder('viewSort')
+      .select(['viewSort.fieldMetadataId', 'viewSort.viewId'])
+      .addSelect('COUNT(*)', 'count')
+      .where('viewSort.deletedAt IS NULL')
+      .groupBy('viewSort.fieldMetadataId, viewSort.viewId')
+      .having('COUNT(*) > 1')
+      .getRawMany();
+
+    for (const duplicate of duplicates) {
+      const { fieldMetadataId, viewId } = duplicate;
+      const viewSorts = await viewSortRepository.find({
+        where: { fieldMetadataId, viewId, deletedAt: IsNull() },
+        order: { createdAt: 'DESC' },
+      });
+
+      for (let i = 1; i < viewSorts.length; i++) {
+        if (!dryRun) {
+          await viewSortRepository.softDelete(viewSorts[i].id);
+        }
+        this.logger.log(
+          chalk.yellow(
+            `Soft deleted duplicate ViewSort ${viewSorts[i].id} for fieldMetadataId ${fieldMetadataId} and viewId ${viewId}`,
           ),
         );
       }

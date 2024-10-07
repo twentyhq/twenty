@@ -5,7 +5,7 @@ import { getColumnsForIndex } from 'src/engine/twenty-orm/utils/get-default-colu
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export function WorkspaceColumnIndex(
+export function WorkspaceFieldIndex(
   options?: WorkspaceIndexOptions,
 ): PropertyDecorator {
   return (target: any, propertyKey: string | symbol) => {

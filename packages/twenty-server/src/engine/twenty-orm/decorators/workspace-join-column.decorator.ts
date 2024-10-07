@@ -1,4 +1,4 @@
-import { WorkspaceColumnIndex } from 'src/engine/twenty-orm/decorators/workspace-column-index.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 export function WorkspaceJoinColumn(
@@ -12,6 +12,6 @@ export function WorkspaceJoinColumn(
     });
 
     // Register index for join column
-    WorkspaceColumnIndex()(object, propertyKey);
+    WorkspaceFieldIndex()(object, propertyKey);
   };
 }

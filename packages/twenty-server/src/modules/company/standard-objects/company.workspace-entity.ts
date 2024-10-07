@@ -15,8 +15,8 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceColumnIndex } from 'src/engine/twenty-orm/decorators/workspace-column-index.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
@@ -54,7 +54,8 @@ TODO: Uncomment this in a followup PR, after testing
 */
 @WorkspaceIndex(['domainNamePrimaryLinkUrl'], {
   isUnique: true,
-  indexWhereClause: '"deletedAt" IS NULL',
+  indexWhereClause:
+    '"deletedAt" IS NULL AND  "domainNamePrimaryLinkUrl" != \'\'',
 })
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -303,6 +304,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceColumnIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   [SEARCH_VECTOR_FIELD.name]: any;
 }

@@ -16,8 +16,8 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceColumnIndex } from 'src/engine/twenty-orm/decorators/workspace-column-index.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
@@ -55,7 +55,7 @@ const JOB_TITLE_FIELD_NAME = 'jobTitle';
 })
 @WorkspaceIndex(['emailsPrimaryEmail'], {
   isUnique: true,
-  indexWhereClause: '"deletedAt" IS NULL',
+  indexWhereClause: '"deletedAt" IS NULL AND  "emailsPrimaryEmail" != \'\'',
 })
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -319,6 +319,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceColumnIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   [SEARCH_VECTOR_FIELD.name]: any;
 }
