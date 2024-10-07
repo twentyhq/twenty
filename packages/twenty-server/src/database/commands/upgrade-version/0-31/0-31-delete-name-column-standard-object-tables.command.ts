@@ -9,6 +9,7 @@ import {
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -74,7 +75,8 @@ export class DeleteNameColumnStandardObjectTablesCommand extends ActiveWorkspace
             );
 
             const nameFieldMetadataExists = standardObject.fields.some(
-              (field) => field.name === 'name',
+              (field) =>
+                field.name === 'name' && field.type === FieldMetadataType.TEXT,
             );
 
             if (nameFieldMetadataExists) {
