@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ModuleRef } from '@nestjs/core';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
@@ -8,6 +8,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -17,6 +18,7 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
@@ -26,6 +28,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
@@ -68,6 +72,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
+
+    await this.enableDefaultFeatureFlags(user.defaultWorkspaceId);
 
     await this.workspaceManagerService.init(user.defaultWorkspaceId);
     await this.userWorkspaceService.createWorkspaceMember(
@@ -151,5 +157,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         },
       );
     }
+  }
+
+  private async enableDefaultFeatureFlags(workspaceId: string) {
+    DEFAULT_FEATURE_FLAGS.forEach(async (featureFlagKey) => {
+      await this.featureFlagRepository.save({
+        key: featureFlagKey,
+        value: true,
+        workspaceId,
+      });
+    });
   }
 }
