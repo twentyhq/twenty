@@ -64,6 +64,7 @@ const StyledTableCell = styled(TableCell)`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     &:first-child {
       max-width: 100%;
+      padding-top: 2px;
       white-space: nowrap;
       overflow: scroll;
       scroll-behavior: smooth;
@@ -74,6 +75,7 @@ const StyledIconWrapper = styled.div`
   left: 2px;
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
+  top: 1px;
 `;
 
 const StyledScrollableTextContainer = styled.div`
@@ -193,7 +195,7 @@ export const SettingsWorkspaceMembers = () => {
           />
           <Table>
             <StyledTableHeaderRow>
-              <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(23)}`}>
+              <TableRow>
                 <TableHeader>Name</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader align={'right'}></TableHeader>
