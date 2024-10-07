@@ -4,7 +4,7 @@ import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 
-export const useObjectMetadataItemsInWorkspaceFavorites = () => {
+export const useFilteredObjectMetadataItemsForWorkspaceFavorites = () => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const { workspaceFavorites } = useFavorites();

@@ -1,9 +1,6 @@
-import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { useParams } from 'react-router-dom';
 
-import { currentUserState } from '@/auth/states/currentUserState';
-import { useObjectMetadataItemsInWorkspaceFavorites } from '@/navigation/hooks/useObjectMetadataItemsInWorkspaceFavorites';
+import { useFilteredObjectMetadataItemsForWorkspaceFavorites } from '@/navigation/hooks/useObjectMetadataItemsInWorkspaceFavorites';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -13,8 +10,6 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 
 export const NavigationDrawerOpenedSection = () => {
-  const currentUser = useRecoilValue(currentUserState);
-
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
     (item) => !item.isRemote,
@@ -23,11 +18,10 @@ export const NavigationDrawerOpenedSection = () => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
-  const currentPath = useLocation().pathname;
-  const currentObjectNamePlural = extractObjectFromCurrentPath(currentPath);
+  const currentObjectNamePlural = useParams().objectNamePlural;
 
-  const { activeObjectMetadataItems: objectMetadataItemsCurrentlyDisplayed } =
-    useObjectMetadataItemsInWorkspaceFavorites();
+  const { activeObjectMetadataItems: workspaceFavoritesObjectMetadataItems } =
+    useFilteredObjectMetadataItemsForWorkspaceFavorites();
 
   if (!currentObjectNamePlural) {
     return;
@@ -42,11 +36,11 @@ export const NavigationDrawerOpenedSection = () => {
   }
 
   const shouldDisplayObjectInOpenedSection =
-    !objectMetadataItemsCurrentlyDisplayed
+    !workspaceFavoritesObjectMetadataItems
       .map((item) => item.id)
       .includes(objectMetadataItem.id);
 
-  if (loading && isDefined(currentUser)) {
+  if (loading) {
     return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
   }
 
@@ -60,15 +54,4 @@ export const NavigationDrawerOpenedSection = () => {
       />
     )
   );
-};
-
-const extractObjectFromCurrentPath = (url: string): string | null => {
-  const regex = /^\/objects\/([^/?]+)/;
-  const match = url.match(regex);
-
-  if (isDefined(match) && match.length > 1) {
-    return match[1];
-  }
-
-  return null;
 };
