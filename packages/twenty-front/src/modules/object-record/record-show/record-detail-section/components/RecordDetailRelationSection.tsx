@@ -72,7 +72,7 @@ export const RecordDetailRelationSection = ({
 
   // TODO: use new relation type
   const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
-  const isToManyObjects = RelationDefinitionType.OneToMany;
+  const isToManyObjects = relationType === RelationDefinitionType.OneToMany;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
