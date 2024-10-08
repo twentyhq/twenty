@@ -4,26 +4,27 @@ import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-fun
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { SettingsServerlessFunctionTestTabEffect } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTabEffect';
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
+import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
+import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
+import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDefined } from '~/utils/isDefined';
-import { useDebouncedCallback } from 'use-debounce';
-import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { useState } from 'react';
-import isEmpty from 'lodash.isempty';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -53,9 +54,6 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const save = async () => {
     try {
-      if (isEmpty(formValues.name)) {
-        return;
-      }
       await updateOneServerlessFunction({
         id: serverlessFunctionId,
         name: formValues.name,
@@ -72,10 +70,10 @@ export const SettingsServerlessFunctionDetail = () => {
     }
   };
 
-  const handleSave = useDebouncedCallback(save, 500);
+  const handleSave = usePreventOverlapCallback(save, 1000);
 
   const onChange = (key: string) => {
-    return async (value: string | undefined) => {
+    return async (value: string) => {
       setFormValues((prevState) => ({
         ...prevState,
         [key]: value,
@@ -84,14 +82,24 @@ export const SettingsServerlessFunctionDetail = () => {
     };
   };
 
+  const onCodeChange = async (filePath: string, value: string) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      code: { ...prevState.code, [filePath]: value },
+    }));
+    await handleSave();
+  };
+
   const resetDisabled =
-    !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
-  const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
+    !isDefined(latestVersionCode) ||
+    isDeeplyEqual(latestVersionCode, formValues.code);
+  const publishDisabled =
+    !isCodeValid || isDeeplyEqual(latestVersionCode, formValues.code);
 
   const handleReset = async () => {
     try {
       const newState = {
-        code: latestVersionCode || '',
+        code: latestVersionCode || {},
       };
       setFormValues((prevState) => ({
         ...prevState,
@@ -169,18 +177,30 @@ export const SettingsServerlessFunctionDetail = () => {
     { id: 'settings', title: 'Settings', Icon: IconSettings },
   ];
 
+  const files = formValues.code
+    ? Object.keys(formValues.code)
+        .map((key) => {
+          return {
+            path: key,
+            language: key === '.env' ? 'ini' : 'typescript',
+            content: formValues.code?.[key] || '',
+          };
+        })
+        .reverse()
+    : [];
+
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'editor':
         return (
           <SettingsServerlessFunctionCodeEditorTab
-            formValues={formValues}
+            files={files}
             handleExecute={handleExecute}
             handlePublish={handlePublish}
             handleReset={handleReset}
             resetDisabled={resetDisabled}
             publishDisabled={publishDisabled}
-            onChange={onChange}
+            onChange={onCodeChange}
             setIsCodeValid={setIsCodeValid}
           />
         );
@@ -208,14 +228,18 @@ export const SettingsServerlessFunctionDetail = () => {
     !loading && (
       <SubMenuTopBarContainer
         Icon={IconFunction}
-        title={
-          <Breadcrumb
-            links={[
-              { children: 'Functions', href: '/settings/functions' },
-              { children: `${formValues.name}` },
-            ]}
-          />
-        }
+        title={formValues.name}
+        links={[
+          {
+            children: 'Workspace',
+            href: getSettingsPagePath(SettingsPath.Workspace),
+          },
+          {
+            children: 'Functions',
+            href: getSettingsPagePath(SettingsPath.ServerlessFunctions),
+          },
+          { children: `${formValues.name}` },
+        ]}
       >
         <SettingsPageContainer>
           <Section>

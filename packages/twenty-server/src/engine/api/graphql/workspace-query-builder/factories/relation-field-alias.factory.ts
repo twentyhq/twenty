@@ -5,18 +5,18 @@ import { GraphQLResolveInfo } from 'graphql';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-builder/utils/get-field-arguments-by-key.util';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import {
   deduceRelationDirection,
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
-import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-builder/utils/get-field-arguments-by-key.util';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
-import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
+import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
 export class RelationFieldAliasFactory {
@@ -101,7 +101,7 @@ export class RelationFieldAliasFactory {
       const argsString = this.argsStringFactory.create(
         args,
         referencedObjectMetadata.fields ?? [],
-        !withSoftDeleted && !!referencedObjectMetadata.isSoftDeletable,
+        !withSoftDeleted,
       );
       const fieldsString =
         await this.fieldsStringFactory.createFieldsStringRecursive(

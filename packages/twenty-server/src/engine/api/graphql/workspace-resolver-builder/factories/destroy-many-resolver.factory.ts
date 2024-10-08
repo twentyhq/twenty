@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   DestroyManyResolverArgs,
@@ -27,13 +28,20 @@ export class DestroyManyResolverFactory
 
     return async (_source, args, context, info) => {
       try {
-        return await this.workspaceQueryRunnerService.destroyMany(args, {
+        const options: WorkspaceQueryRunnerOptions = {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,
-        });
+          objectMetadataMap: internalContext.objectMetadataMap,
+          objectMetadataMapItem: internalContext.objectMetadataMapItem,
+        };
+
+        return await this.workspaceQueryRunnerService.destroyMany(
+          args,
+          options,
+        );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error);
       }

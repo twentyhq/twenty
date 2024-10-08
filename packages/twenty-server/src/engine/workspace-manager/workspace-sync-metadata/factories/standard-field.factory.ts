@@ -150,14 +150,6 @@ export class StandardFieldFactory {
       return [];
     }
 
-    if (
-      workspaceFieldMetadataArgs.name === 'deletedAt' &&
-      workspaceEntityMetadataArgs &&
-      !workspaceEntityMetadataArgs.softDelete
-    ) {
-      return [];
-    }
-
     return [
       {
         type: workspaceFieldMetadataArgs.type,
@@ -168,11 +160,14 @@ export class StandardFieldFactory {
         description: workspaceFieldMetadataArgs.description,
         defaultValue: workspaceFieldMetadataArgs.defaultValue,
         options: workspaceFieldMetadataArgs.options,
+        settings: workspaceFieldMetadataArgs.settings,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
+        asExpression: workspaceFieldMetadataArgs.asExpression,
+        generatedType: workspaceFieldMetadataArgs.generatedType,
       },
     ];
   }

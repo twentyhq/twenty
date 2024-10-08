@@ -18,13 +18,15 @@ import {
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
+// TODO: could we export this to GraphQL ?
 export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.CURRENCY
   | FieldMetadataType.FULL_NAME
   | FieldMetadataType.LINK
   | FieldMetadataType.LINKS
-  | FieldMetadataType.EMAILS;
+  | FieldMetadataType.EMAILS
+  | FieldMetadataType.PHONES;
 
 @Injectable()
 export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<CompositeFieldMetadataType> {

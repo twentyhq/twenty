@@ -25,8 +25,7 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeysNew>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Settings');
-    await canvas.findByText('New API Key');
+    await canvas.findByText('New Key');
     await canvas.findByText('Name');
     await canvas.findByText('Expiration Date');
 

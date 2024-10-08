@@ -145,15 +145,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   conferenceLink: LinksMetadata;
 
-  @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.recurringEventExternalId,
-    type: FieldMetadataType.TEXT,
-    label: 'Recurring Event ID',
-    description: 'Recurring Event ID',
-    icon: 'IconHistory',
-  })
-  recurringEventExternalId: string;
-
   @WorkspaceRelation({
     standardId:
       CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarChannelEventAssociations,

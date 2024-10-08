@@ -1,16 +1,21 @@
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus } from 'twenty-ui';
 
+import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
+import {
+  DropdownMenuInput,
+  DropdownMenuInputProps,
+} from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 
@@ -25,7 +30,7 @@ type MultiItemFieldInputProps<T> = {
   onPersist: (updatedItems: T[]) => void;
   onCancel?: () => void;
   placeholder: string;
-  validateInput?: (input: string) => boolean;
+  validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   formatInput?: (input: string) => T;
   renderItem: (props: {
     value: T;
@@ -35,8 +40,12 @@ type MultiItemFieldInputProps<T> = {
     handleDelete: () => void;
   }) => React.ReactNode;
   hotkeyScope: string;
+  newItemLabel?: string;
+  fieldMetadataType: FieldMetadataType;
+  renderInput?: DropdownMenuInputProps['renderInput'];
 };
 
+// Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
 export const MultiItemFieldInput = <T,>({
   items,
   onPersist,
@@ -46,9 +55,11 @@ export const MultiItemFieldInput = <T,>({
   formatInput,
   renderItem,
   hotkeyScope,
+  newItemLabel,
+  fieldMetadataType,
+  renderInput,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
   const handleDropdownClose = () => {
     onCancel?.();
   };
@@ -63,7 +74,20 @@ export const MultiItemFieldInput = <T,>({
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
+  const [errorData, setErrorData] = useState({
+    isValid: true,
+    errorMessage: '',
+  });
   const isAddingNewItem = itemToEditIndex === -1;
+
+  const handleOnChange = (value: string) => {
+    setInputValue(value);
+    if (!validateInput) return;
+
+    if (errorData.isValid) {
+      setErrorData(errorData);
+    }
+  };
 
   const handleAddButtonClick = () => {
     setItemToEditIndex(-1);
@@ -71,13 +95,36 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleEditButtonClick = (index: number) => {
+    let item;
+    switch (fieldMetadataType) {
+      case FieldMetadataType.Links:
+        item = items[index] as { label: string; url: string };
+        setInputValue(item.url || '');
+        break;
+      case FieldMetadataType.Phones:
+        item = items[index] as PhoneRecord;
+        setInputValue(item.countryCode + item.number);
+        break;
+      case FieldMetadataType.Emails:
+        item = items[index] as string;
+        setInputValue(item);
+        break;
+      default:
+        throw new Error(`Unsupported field type: ${fieldMetadataType}`);
+    }
+
     setItemToEditIndex(index);
-    setInputValue((items[index] as unknown as string) || '');
     setIsInputDisplayed(true);
   };
 
   const handleSubmitInput = () => {
-    if (validateInput !== undefined && !validateInput(inputValue)) return;
+    if (validateInput !== undefined) {
+      const validationData = validateInput(inputValue) ?? { isValid: true };
+      if (!validationData.isValid) {
+        setErrorData(validationData);
+        return;
+      }
+    }
 
     const newItem = formatInput
       ? formatInput(inputValue)
@@ -132,7 +179,18 @@ export const MultiItemFieldInput = <T,>({
           placeholder={placeholder}
           value={inputValue}
           hotkeyScope={hotkeyScope}
-          onChange={(event) => setInputValue(event.target.value)}
+          hasError={!errorData.isValid}
+          renderInput={
+            renderInput
+              ? (props) =>
+                  renderInput({
+                    ...props,
+                    onChange: (newValue) =>
+                      setInputValue(newValue as unknown as string),
+                  })
+              : undefined
+          }
+          onChange={(event) => handleOnChange(event.target.value)}
           onEnter={handleSubmitInput}
           rightComponent={
             <LightIconButton
@@ -146,7 +204,7 @@ export const MultiItemFieldInput = <T,>({
           <MenuItem
             onClick={handleAddButtonClick}
             LeftIcon={IconPlus}
-            text={`Add ${placeholder}`}
+            text={newItemLabel || `Add ${placeholder}`}
           />
         </DropdownMenuItemsContainer>
       )}

@@ -1,7 +1,7 @@
-import { ReactNode, useState } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
@@ -32,7 +32,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3.5)};
+  gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
@@ -40,8 +40,8 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   ${({ isSubMenu, theme }) =>
     isSubMenu
       ? css`
+          padding-left: ${theme.spacing(0)};
           padding-right: ${theme.spacing(8)};
-          padding-top: 41px;
         `
       : ''}
 
@@ -49,13 +49,12 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
     width: 100%;
   }
 `;
-
-const StyledItemsContainer = styled.div`
+const StyledItemsContainer = styled.div<{ isSubMenu?: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
   margin-bottom: auto;
-  overflow-y: auto;
+  gap: ${({ theme }) => theme.spacing(3)};
+  ${({ isSubMenu }) => (!isSubMenu ? 'overflow-y: auto' : '')};
 `;
 
 export const NavigationDrawer = ({
@@ -112,7 +111,9 @@ export const NavigationDrawer = ({
             showCollapseButton={isHovered}
           />
         )}
-        <StyledItemsContainer>{children}</StyledItemsContainer>
+        <StyledItemsContainer isSubMenu={isSubMenu}>
+          {children}
+        </StyledItemsContainer>
         {footer}
       </StyledContainer>
     </StyledAnimatedContainer>

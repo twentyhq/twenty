@@ -93,5 +93,11 @@ module.exports = {
         '@nx/workspace-inject-workspace-repository': 'warn',
       },
     },
+    {
+      files: ['scripts/**/*.ts'],
+      parserOptions: {
+        project: ['packages/twenty-server/tsconfig.scripts.json'],
+      },
+    },
   ],
 };

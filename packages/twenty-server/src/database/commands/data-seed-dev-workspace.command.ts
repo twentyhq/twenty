@@ -12,12 +12,14 @@ import {
   getDevSeedCompanyCustomFields,
   getDevSeedPeopleCustomFields,
 } from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
+import { getDevSeedCustomObjects } from 'src/database/typeorm-seeds/metadata/objectsMetadata';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
 import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
 import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connected-account';
+import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
 import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
 import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
@@ -29,15 +31,16 @@ import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
-import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -62,6 +65,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     private readonly objectMetadataService: ObjectMetadataService,
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly workspaceSchemaCache: CacheStorageService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -128,10 +132,17 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           return acc;
         }, {});
 
-        const featureFlagRepository =
-          workspaceDataSource.getRepository<FeatureFlagEntity>('featureFlag');
+        const isMessageThreadSubscriberEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IsMessageThreadSubscriberEnabled,
+            workspaceId,
+          );
 
-        const featureFlags = await featureFlagRepository.find({});
+        const isWorkflowEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IsWorkflowEnabled,
+            workspaceId,
+          );
 
         await this.seedCompanyCustomFields(
           objectMetadataMap[STANDARD_OBJECT_IDS.company],
@@ -141,6 +152,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           objectMetadataMap[STANDARD_OBJECT_IDS.person],
           workspaceId,
         );
+        await this.seedCustomObjects(workspaceId, dataSourceMetadata.id);
 
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
@@ -158,13 +170,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               await seedConnectedAccount(
                 entityManager,
                 dataSourceMetadata.schema,
-              );
-
-              const isMessageThreadSubscriberEnabled = featureFlags.some(
-                (featureFlag) =>
-                  featureFlag.key ===
-                    FeatureFlagKey.IsMessageThreadSubscriberEnabled &&
-                  featureFlag.value === true,
               );
 
               if (isMessageThreadSubscriberEnabled) {
@@ -206,11 +211,26 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               );
             }
 
-            await viewPrefillData(
+            const viewDefinitionsWithId = await viewPrefillData(
               entityManager,
               dataSourceMetadata.schema,
               objectMetadataMap,
-              featureFlags,
+              isWorkflowEnabled,
+            );
+
+            await seedWorkspaceFavorites(
+              viewDefinitionsWithId
+                .filter(
+                  (view) =>
+                    view.key === 'INDEX' &&
+                    shouldSeedWorkspaceFavorite(
+                      view.objectMetadataId,
+                      objectMetadataMap,
+                    ),
+                )
+                .map((view) => view.id),
+              entityManager,
+              dataSourceMetadata.schema,
             );
           },
         );
@@ -270,6 +290,17 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         ...customField,
         isCustom: true,
       });
+    }
+  }
+
+  async seedCustomObjects(workspaceId: string, dataSourceId: string) {
+    const devSeedCustomObjects = getDevSeedCustomObjects(
+      workspaceId,
+      dataSourceId,
+    );
+
+    for (const customObject of devSeedCustomObjects) {
+      await this.objectMetadataService.createOne(customObject);
     }
   }
 }

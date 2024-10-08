@@ -1,15 +1,21 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedCustomObjectMetadataItem,
-} from '~/testing/mock-data/metadata';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getSelectFieldPreviewValue } from '../getSelectFieldPreviewValue';
+
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+);
+
+const mockedOpportunityObjectMetadataItem =
+  generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'opportunity',
+  );
 
 describe('getSelectFieldPreviewValue', () => {
   it('returns null if the field is not a Select field', () => {
     // Given
-    const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+    const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
       ({ type }) => type !== FieldMetadataType.Select,
     );
 
@@ -24,9 +30,9 @@ describe('getSelectFieldPreviewValue', () => {
     expect(previewValue).toBeNull();
   });
 
-  const fieldName = 'priority';
-  const fieldMetadataItem = mockedCustomObjectMetadataItem.fields.find(
-    ({ name, type }) => name === fieldName && type === FieldMetadataType.Select,
+  const fieldName = 'stage';
+  const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
+    ({ name }) => name === fieldName,
   );
 
   if (!fieldMetadataItem) {
@@ -35,7 +41,7 @@ describe('getSelectFieldPreviewValue', () => {
 
   it("returns the defaultValue as an option value if a valid defaultValue is found in the field's metadata", () => {
     // Given
-    const defaultValue = "'MEDIUM'";
+    const defaultValue = "'NEW'";
     const fieldMetadataItemWithDefaultValue = {
       ...fieldMetadataItem,
       defaultValue,
@@ -47,7 +53,7 @@ describe('getSelectFieldPreviewValue', () => {
     });
 
     // Then
-    expect(previewValue).toBe('MEDIUM');
+    expect(previewValue).toBe('NEW');
   });
 
   it("returns the first option value if no defaultValue was found in the field's metadata", () => {
@@ -64,7 +70,7 @@ describe('getSelectFieldPreviewValue', () => {
     });
 
     // Then
-    expect(previewValue).toBe('LOW');
+    expect(previewValue).toBe('NEW');
     expect(previewValue).toBe(
       fieldMetadataItemWithDefaultValue.options?.[0]?.value,
     );
@@ -84,7 +90,7 @@ describe('getSelectFieldPreviewValue', () => {
     });
 
     // Then
-    expect(previewValue).toBe('LOW');
+    expect(previewValue).toBe('NEW');
     expect(previewValue).toBe(
       fieldMetadataItemWithDefaultValue.options?.[0]?.value,
     );

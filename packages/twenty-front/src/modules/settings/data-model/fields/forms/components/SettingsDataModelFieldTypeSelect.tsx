@@ -1,61 +1,89 @@
-import omit from 'lodash.omit';
-import { Controller, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  SETTINGS_FIELD_TYPE_CONFIGS,
-  SettingsFieldTypeConfig,
-} from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
+import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
+import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Section } from '@react-email/components';
+import { useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { H2Title, IconSearch } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
     Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
-      SettingsSupportedFieldType,
-      ...SettingsSupportedFieldType[],
+      SettingsFieldType,
+      ...SettingsFieldType[],
     ],
   ),
 });
 
-type SettingsDataModelFieldTypeFormValues = z.infer<
+export type SettingsDataModelFieldTypeFormValues = z.infer<
   typeof settingsDataModelFieldTypeFormSchema
 >;
 
 type SettingsDataModelFieldTypeSelectProps = {
   className?: string;
-  disabled?: boolean;
-  excludedFieldTypes?: SettingsSupportedFieldType[];
+  excludedFieldTypes?: SettingsFieldType[];
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
   >;
+  onFieldTypeSelect: () => void;
 };
+
+const StyledTypeSelectContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  width: 100%;
+`;
+
+const StyledContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+`;
+
+const StyledCardContainer = styled.div`
+  display: flex;
+
+  position: relative;
+  width: calc(50% - ${({ theme }) => theme.spacing(1)});
+`;
+
+const StyledSearchInput = styled(TextInput)`
+  width: 100%;
+`;
 
 export const SettingsDataModelFieldTypeSelect = ({
   className,
-  disabled,
   excludedFieldTypes = [],
   fieldMetadataItem,
+  onFieldTypeSelect,
 }: SettingsDataModelFieldTypeSelectProps) => {
+  const theme = useTheme();
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
-
-  const fieldTypeConfigs: Partial<
-    Record<SettingsSupportedFieldType, SettingsFieldTypeConfig>
-  > = omit(SETTINGS_FIELD_TYPE_CONFIGS, excludedFieldTypes);
-
-  const fieldTypeOptions = Object.entries<SettingsFieldTypeConfig>(
-    fieldTypeConfigs,
-  ).map<SelectOption<SettingsSupportedFieldType>>(([key, dataTypeConfig]) => ({
-    Icon: dataTypeConfig.Icon,
-    label: dataTypeConfig.label,
-    value: key as SettingsSupportedFieldType,
-  }));
+  const [searchQuery, setSearchQuery] = useState('');
+  const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig<any>>(
+    SETTINGS_FIELD_TYPE_CONFIGS,
+  ).filter(
+    ([key, config]) =>
+      !excludedFieldTypes.includes(key as SettingsFieldType) &&
+      config.label.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const { resetDefaultValueField: resetBooleanDefaultValueField } =
     useBooleanSettingsFormInitialValues({ fieldMetadataItem });
@@ -66,9 +94,7 @@ export const SettingsDataModelFieldTypeSelect = ({
   const { resetDefaultValueField: resetSelectDefaultValueField } =
     useSelectSettingsFormInitialValues({ fieldMetadataItem });
 
-  // Reset defaultValue on type change with a valid value for the selected type
-  // so the form does not become invalid.
-  const resetDefaultValueField = (nextValue: SettingsSupportedFieldType) => {
+  const resetDefaultValueField = (nextValue: SettingsFieldType) => {
     switch (nextValue) {
       case FieldMetadataType.Boolean:
         resetBooleanDefaultValueField();
@@ -91,22 +117,53 @@ export const SettingsDataModelFieldTypeSelect = ({
       control={control}
       defaultValue={
         fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
-          ? (fieldMetadataItem.type as SettingsSupportedFieldType)
+          ? (fieldMetadataItem.type as SettingsFieldType)
           : FieldMetadataType.Text
       }
-      render={({ field: { onChange, value } }) => (
-        <Select
-          className={className}
-          fullWidth
-          disabled={disabled}
-          dropdownId="object-field-type-select"
-          value={value}
-          onChange={(nextValue) => {
-            onChange(nextValue);
-            resetDefaultValueField(nextValue);
-          }}
-          options={fieldTypeOptions}
-        />
+      render={({ field: { onChange } }) => (
+        <StyledTypeSelectContainer className={className}>
+          <Section>
+            <StyledSearchInput
+              LeftIcon={IconSearch}
+              placeholder="Search a type"
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+          </Section>
+          {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
+            <Section key={category}>
+              <H2Title
+                title={category}
+                description={
+                  SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
+                }
+              />
+              <StyledContainer>
+                {fieldTypeConfigs
+                  .filter(([, config]) => config.category === category)
+                  .map(([key, config]) => (
+                    <StyledCardContainer>
+                      <SettingsCard
+                        key={key}
+                        onClick={() => {
+                          onChange(key as SettingsFieldType);
+                          resetDefaultValueField(key as SettingsFieldType);
+                          onFieldTypeSelect();
+                        }}
+                        Icon={
+                          <config.Icon
+                            size={theme.icon.size.xl}
+                            stroke={theme.icon.stroke.sm}
+                          />
+                        }
+                        title={config.label}
+                      />
+                    </StyledCardContainer>
+                  ))}
+              </StyledContainer>
+            </Section>
+          ))}
+        </StyledTypeSelectContainer>
       )}
     />
   );

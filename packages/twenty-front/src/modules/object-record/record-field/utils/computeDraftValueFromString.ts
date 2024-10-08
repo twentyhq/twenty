@@ -6,10 +6,12 @@ import { isFieldAddress } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
+import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
@@ -63,6 +65,18 @@ export const computeDraftValueFromString = <FieldValue>({
   if (isFieldLinks(fieldDefinition)) {
     return {
       primaryLinkUrl: value,
+    } as FieldInputDraftValue<FieldValue>;
+  }
+
+  if (isFieldEmails(fieldDefinition)) {
+    return {
+      primaryEmail: value,
+    } as FieldInputDraftValue<FieldValue>;
+  }
+
+  if (isFieldPhones(fieldDefinition)) {
+    return {
+      primaryPhoneNumber: value,
     } as FieldInputDraftValue<FieldValue>;
   }
 

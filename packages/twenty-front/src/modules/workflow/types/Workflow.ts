@@ -1,4 +1,4 @@
-type WorkflowBaseSettingsType = {
+type BaseWorkflowStepSettings = {
   errorHandlingOptions: {
     retryOnFailure: {
       value: boolean;
@@ -9,26 +9,43 @@ type WorkflowBaseSettingsType = {
   };
 };
 
-export type WorkflowCodeSettingsType = WorkflowBaseSettingsType & {
+export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
   serverlessFunctionId: string;
 };
 
-export type WorkflowActionType = 'CODE_ACTION';
+export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
+  subject?: string;
+  template?: string;
+  title?: string;
+  callToAction?: {
+    value: string;
+    href: string;
+  };
+};
 
-type CommonWorkflowAction = {
+type BaseWorkflowStep = {
   id: string;
   name: string;
   valid: boolean;
 };
 
-type WorkflowCodeAction = CommonWorkflowAction & {
-  type: 'CODE_ACTION';
-  settings: WorkflowCodeSettingsType;
+export type WorkflowCodeStep = BaseWorkflowStep & {
+  type: 'CODE';
+  settings: WorkflowCodeStepSettings;
 };
 
-export type WorkflowAction = WorkflowCodeAction;
+export type WorkflowSendEmailStep = BaseWorkflowStep & {
+  type: 'SEND_EMAIL';
+  settings: WorkflowSendEmailStepSettings;
+};
+
+export type WorkflowAction = WorkflowCodeStep | WorkflowSendEmailStep;
 
 export type WorkflowStep = WorkflowAction;
+
+export type WorkflowActionType = WorkflowAction['type'];
+
+export type WorkflowStepType = WorkflowStep['type'];
 
 export type WorkflowTriggerType = 'DATABASE_EVENT';
 
@@ -46,14 +63,23 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
 
 export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
 
+export type WorkflowStatus = 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
+
+export type WorkflowVersionStatus =
+  | 'DRAFT'
+  | 'ACTIVE'
+  | 'DEACTIVATED'
+  | 'ARCHIVED';
+
 export type WorkflowVersion = {
   id: string;
   name: string;
   createdAt: string;
   updatedAt: string;
   workflowId: string;
-  trigger: WorkflowTrigger;
-  steps: Array<WorkflowStep>;
+  trigger: WorkflowTrigger | null;
+  steps: Array<WorkflowStep> | null;
+  status: WorkflowVersionStatus;
   __typename: 'WorkflowVersion';
 };
 
@@ -62,5 +88,10 @@ export type Workflow = {
   id: string;
   name: string;
   versions: Array<WorkflowVersion>;
-  publishedVersionId: string;
+  lastPublishedVersionId: string;
+  statuses: Array<WorkflowStatus> | null;
+};
+
+export type WorkflowWithCurrentVersion = Workflow & {
+  currentVersion: WorkflowVersion;
 };

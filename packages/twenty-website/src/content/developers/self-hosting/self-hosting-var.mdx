@@ -36,10 +36,12 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['PG_SSL_ALLOW_SELF_SIGNED', 'false', 'Allow self signed certificates'],
     ['REDIS_HOST', '127.0.0.1', 'Redis connection host'],
     ['REDIS_PORT', '6379', 'Redis connection port'],
+    ['REDIS_USERNAME', 'redis_username', 'Redis connection username'],
+    ['REDIS_PASSWORD', 'redis_pwd', 'Redis connection password'],
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
     ['PORT', '3000', 'Port'],
-    ['CACHE_STORAGE_TYPE', 'memory', 'Cache type (memory, redis...)'],
+    ['CACHE_STORAGE_TYPE', 'redis', 'Cache type (memory, redis...)'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>
 
@@ -160,7 +162,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Message Queue
 
 <ArticleTable options={[
-    ['MESSAGE_QUEUE_TYPE', 'pg-boss', "Queue driver: 'pg-boss' or 'bull-mq'"],
+    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'pg-boss' or 'bull-mq'"],
     ]}></ArticleTable>
 
 ### Logging

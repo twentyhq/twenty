@@ -4,12 +4,16 @@ import styled from '@emotion/styled';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 import { ColorSchemeCard } from './ColorSchemeCard';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
     margin-left: ${({ theme }) => theme.spacing(4)};
+  }
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    overflow: scroll;
   }
 `;
 

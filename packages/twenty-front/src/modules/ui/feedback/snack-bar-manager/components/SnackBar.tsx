@@ -1,7 +1,7 @@
-import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
+import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react';
 import {
   IconAlertTriangle,
   IconInfoCircle,
@@ -46,7 +46,6 @@ const StyledContainer = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   box-sizing: border-box;
   cursor: pointer;
-  height: 61px;
   padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
   width: 296px;
@@ -90,7 +89,6 @@ const StyledDescription = styled.div`
   padding-left: ${({ theme }) => theme.spacing(6)};
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   width: 200px;
 `;
 

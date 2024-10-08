@@ -13,9 +13,4 @@ export interface WorkspaceExtendedEntityMetadataArgs {
    * Entity gate.
    */
   readonly gate?: Gate;
-
-  /**
-   * Enable soft delete.
-   */
-  readonly softDelete?: boolean;
 }

@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -130,7 +130,6 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** Visibility of the calendar channel */
 export enum CalendarChannelVisibility {
   Metadata = 'METADATA',
   ShareEverything = 'SHARE_EVERYTHING'
@@ -159,7 +158,6 @@ export type ClientConfig = {
   signInPrefilled: Scalars['Boolean'];
   signUpDisabled: Scalars['Boolean'];
   support: Support;
-  telemetry: Telemetry;
 };
 
 export type CreateServerlessFunctionFromFileInput = {
@@ -219,7 +217,7 @@ export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
   /** Payload in JSON format */
-  payload?: InputMaybe<Scalars['JSON']>;
+  payload: Scalars['JSON'];
   /** Version of the serverless function to execute */
   version?: Scalars['String'];
 };
@@ -260,6 +258,7 @@ export type FieldConnection = {
 export enum FieldMetadataType {
   Actor = 'ACTOR',
   Address = 'ADDRESS',
+  Array = 'ARRAY',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   Date = 'DATE',
@@ -273,6 +272,7 @@ export enum FieldMetadataType {
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
+  Phones = 'PHONES',
   Position = 'POSITION',
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
@@ -280,6 +280,7 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
+  TsVector = 'TS_VECTOR',
   Uuid = 'UUID'
 }
 
@@ -328,7 +329,6 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
-/** Visibility of the message channel */
 export enum MessageChannelVisibility {
   Metadata = 'METADATA',
   ShareEverything = 'SHARE_EVERYTHING',
@@ -337,8 +337,10 @@ export enum MessageChannelVisibility {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   addUserToWorkspace: User;
+  addUserToWorkspaceByInviteToken: User;
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
@@ -346,15 +348,15 @@ export type Mutation = {
   createOneObject: Object;
   createOneServerlessFunction: ServerlessFunction;
   createOneServerlessFunctionFromFile: ServerlessFunction;
+  deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
+  deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
-  disableWorkflowTrigger: Scalars['Boolean'];
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
-  enableWorkflowTrigger: Scalars['Boolean'];
   exchangeAuthorizationCode: ExchangeAuthCode;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
@@ -363,8 +365,9 @@ export type Mutation = {
   impersonate: Verify;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
+  resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
-  sendInviteLink: SendInviteLink;
+  sendInvitations: SendInvitationsOutput;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
@@ -381,6 +384,11 @@ export type Mutation = {
 };
 
 
+export type MutationActivateWorkflowVersionArgs = {
+  workflowVersionId: Scalars['String'];
+};
+
+
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
 };
@@ -388,6 +396,11 @@ export type MutationActivateWorkspaceArgs = {
 
 export type MutationAddUserToWorkspaceArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type MutationAddUserToWorkspaceByInviteTokenArgs = {
+  inviteToken: Scalars['String'];
 };
 
 
@@ -422,6 +435,11 @@ export type MutationCreateOneServerlessFunctionFromFileArgs = {
 };
 
 
+export type MutationDeactivateWorkflowVersionArgs = {
+  workflowVersionId: Scalars['String'];
+};
+
+
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
 };
@@ -432,18 +450,13 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 };
 
 
-export type MutationDisableWorkflowTriggerArgs = {
-  workflowVersionId: Scalars['String'];
+export type MutationDeleteWorkspaceInvitationArgs = {
+  appTokenId: Scalars['String'];
 };
 
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
-};
-
-
-export type MutationEnableWorkflowTriggerArgs = {
-  workflowVersionId: Scalars['String'];
 };
 
 
@@ -485,12 +498,17 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationResendWorkspaceInvitationArgs = {
+  appTokenId: Scalars['String'];
+};
+
+
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
 };
 
 
-export type MutationSendInviteLinkArgs = {
+export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
 };
 
@@ -500,11 +518,13 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
+  workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationTrackArgs = {
   data: Scalars['JSON'];
+  sessionId: Scalars['String'];
   type: Scalars['String'];
 };
 
@@ -636,10 +656,12 @@ export type Query = {
   currentUser: User;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
+  findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAISQLQuery: AisqlQueryResult;
+  getAvailablePackages: Scalars['JSON'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
-  getServerlessFunctionSourceCode: Scalars['String'];
+  getServerlessFunctionSourceCode?: Maybe<Scalars['String']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -789,8 +811,10 @@ export type RunWorkflowVersionInput = {
   workflowVersionId: Scalars['String'];
 };
 
-export type SendInviteLink = {
-  __typename?: 'SendInviteLink';
+export type SendInvitationsOutput = {
+  __typename?: 'SendInvitationsOutput';
+  errors: Array<Scalars['String']>;
+  result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -894,11 +918,6 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
-};
-
-export type Telemetry = {
-  __typename?: 'Telemetry';
-  enabled: Scalars['Boolean'];
 };
 
 export type TimelineCalendarEvent = {
@@ -1146,6 +1165,13 @@ export type WorkspaceEdge = {
   node: Workspace;
 };
 
+export type WorkspaceInvitation = {
+  __typename?: 'WorkspaceInvitation';
+  email: Scalars['String'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+};
+
 export type WorkspaceInviteHashValid = {
   __typename?: 'WorkspaceInviteHashValid';
   isValid: Scalars['Boolean'];
@@ -1324,8 +1350,8 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type TrackMutationVariables = Exact<{
-  type: Scalars['String'];
-  data: Scalars['JSON'];
+  action: Scalars['String'];
+  payload: Scalars['JSON'];
 }>;
 
 
@@ -1414,6 +1440,7 @@ export type SignUpMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
+  workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
   captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
@@ -1480,7 +1507,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, chromeExtensionId?: string | null, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, chromeExtensionId?: string | null, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1513,6 +1540,46 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> } };
 
+export type ActivateWorkflowVersionMutationVariables = Exact<{
+  workflowVersionId: Scalars['String'];
+}>;
+
+
+export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
+
+export type DeactivateWorkflowVersionMutationVariables = Exact<{
+  workflowVersionId: Scalars['String'];
+}>;
+
+
+export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
+
+export type DeleteWorkspaceInvitationMutationVariables = Exact<{
+  appTokenId: Scalars['String'];
+}>;
+
+
+export type DeleteWorkspaceInvitationMutation = { __typename?: 'Mutation', deleteWorkspaceInvitation: string };
+
+export type ResendWorkspaceInvitationMutationVariables = Exact<{
+  appTokenId: Scalars['String'];
+}>;
+
+
+export type ResendWorkspaceInvitationMutation = { __typename?: 'Mutation', resendWorkspaceInvitation: { __typename?: 'SendInvitationsOutput', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> } };
+
+export type SendInvitationsMutationVariables = Exact<{
+  emails: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type SendInvitationsMutation = { __typename?: 'Mutation', sendInvitations: { __typename?: 'SendInvitationsOutput', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> } };
+
+export type GetWorkspaceInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetWorkspaceInvitationsQuery = { __typename?: 'Query', findWorkspaceInvitations: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> };
+
 export type WorkspaceMemberQueryFragmentFragment = { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } };
 
 export type AddUserToWorkspaceMutationVariables = Exact<{
@@ -1521,6 +1588,13 @@ export type AddUserToWorkspaceMutationVariables = Exact<{
 
 
 export type AddUserToWorkspaceMutation = { __typename?: 'Mutation', addUserToWorkspace: { __typename?: 'User', id: any } };
+
+export type AddUserToWorkspaceByInviteTokenMutationVariables = Exact<{
+  inviteToken: Scalars['String'];
+}>;
+
+
+export type AddUserToWorkspaceByInviteTokenMutation = { __typename?: 'Mutation', addUserToWorkspaceByInviteToken: { __typename?: 'User', id: any } };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1533,13 +1607,6 @@ export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: nev
 
 
 export type DeleteCurrentWorkspaceMutation = { __typename?: 'Mutation', deleteCurrentWorkspace: { __typename?: 'Workspace', id: any } };
-
-export type SendInviteLinkMutationVariables = Exact<{
-  emails: Array<Scalars['String']> | Scalars['String'];
-}>;
-
-
-export type SendInviteLinkMutation = { __typename?: 'Mutation', sendInviteLink: { __typename?: 'SendInviteLink', success: boolean } };
 
 export type UpdateWorkspaceMutationVariables = Exact<{
   input: UpdateWorkspaceInput;
@@ -1877,8 +1944,8 @@ export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof us
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
 export const TrackDocument = gql`
-    mutation Track($type: String!, $data: JSON!) {
-  track(type: $type, data: $data) {
+    mutation Track($action: String!, $payload: JSON!) {
+  track(action: $action, payload: $payload) {
     success
   }
 }
@@ -1898,8 +1965,8 @@ export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutati
  * @example
  * const [trackMutation, { data, loading, error }] = useTrackMutation({
  *   variables: {
- *      type: // value for 'type'
- *      data: // value for 'data'
+ *      action: // value for 'type'
+ *      payload: // value for 'payload'
  *   },
  * });
  */
@@ -2261,11 +2328,12 @@ export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutati
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $captchaToken: String) {
+    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String) {
   signUp(
     email: $email
     password: $password
     workspaceInviteHash: $workspaceInviteHash
+    workspacePersonalInviteToken: $workspacePersonalInviteToken
     captchaToken: $captchaToken
   ) {
     loginToken {
@@ -2292,6 +2360,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      email: // value for 'email'
  *      password: // value for 'password'
  *      workspaceInviteHash: // value for 'workspaceInviteHash'
+ *      workspacePersonalInviteToken: // value for 'workspacePersonalInviteToken'
  *      captchaToken: // value for 'captchaToken'
  *   },
  * });
@@ -2611,9 +2680,6 @@ export const GetClientConfigDocument = gql`
     signInPrefilled
     signUpDisabled
     debugMode
-    telemetry {
-      enabled
-    }
     support {
       supportDriver
       supportFrontChatId
@@ -2827,6 +2893,217 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export const ActivateWorkflowVersionDocument = gql`
+    mutation ActivateWorkflowVersion($workflowVersionId: String!) {
+  activateWorkflowVersion(workflowVersionId: $workflowVersionId)
+}
+    `;
+export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+
+/**
+ * __useActivateWorkflowVersionMutation__
+ *
+ * To run a mutation, you first call `useActivateWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateWorkflowVersionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [activateWorkflowVersionMutation, { data, loading, error }] = useActivateWorkflowVersionMutation({
+ *   variables: {
+ *      workflowVersionId: // value for 'workflowVersionId'
+ *   },
+ * });
+ */
+export function useActivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>(ActivateWorkflowVersionDocument, options);
+      }
+export type ActivateWorkflowVersionMutationHookResult = ReturnType<typeof useActivateWorkflowVersionMutation>;
+export type ActivateWorkflowVersionMutationResult = Apollo.MutationResult<ActivateWorkflowVersionMutation>;
+export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+export const DeactivateWorkflowVersionDocument = gql`
+    mutation DeactivateWorkflowVersion($workflowVersionId: String!) {
+  deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)
+}
+    `;
+export type DeactivateWorkflowVersionMutationFn = Apollo.MutationFunction<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+
+/**
+ * __useDeactivateWorkflowVersionMutation__
+ *
+ * To run a mutation, you first call `useDeactivateWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeactivateWorkflowVersionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deactivateWorkflowVersionMutation, { data, loading, error }] = useDeactivateWorkflowVersionMutation({
+ *   variables: {
+ *      workflowVersionId: // value for 'workflowVersionId'
+ *   },
+ * });
+ */
+export function useDeactivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>(DeactivateWorkflowVersionDocument, options);
+      }
+export type DeactivateWorkflowVersionMutationHookResult = ReturnType<typeof useDeactivateWorkflowVersionMutation>;
+export type DeactivateWorkflowVersionMutationResult = Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
+export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+export const DeleteWorkspaceInvitationDocument = gql`
+    mutation DeleteWorkspaceInvitation($appTokenId: String!) {
+  deleteWorkspaceInvitation(appTokenId: $appTokenId)
+}
+    `;
+export type DeleteWorkspaceInvitationMutationFn = Apollo.MutationFunction<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>;
+
+/**
+ * __useDeleteWorkspaceInvitationMutation__
+ *
+ * To run a mutation, you first call `useDeleteWorkspaceInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteWorkspaceInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteWorkspaceInvitationMutation, { data, loading, error }] = useDeleteWorkspaceInvitationMutation({
+ *   variables: {
+ *      appTokenId: // value for 'appTokenId'
+ *   },
+ * });
+ */
+export function useDeleteWorkspaceInvitationMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>(DeleteWorkspaceInvitationDocument, options);
+      }
+export type DeleteWorkspaceInvitationMutationHookResult = ReturnType<typeof useDeleteWorkspaceInvitationMutation>;
+export type DeleteWorkspaceInvitationMutationResult = Apollo.MutationResult<DeleteWorkspaceInvitationMutation>;
+export type DeleteWorkspaceInvitationMutationOptions = Apollo.BaseMutationOptions<DeleteWorkspaceInvitationMutation, DeleteWorkspaceInvitationMutationVariables>;
+export const ResendWorkspaceInvitationDocument = gql`
+    mutation ResendWorkspaceInvitation($appTokenId: String!) {
+  resendWorkspaceInvitation(appTokenId: $appTokenId) {
+    success
+    errors
+    result {
+      ... on WorkspaceInvitation {
+        id
+        email
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+export type ResendWorkspaceInvitationMutationFn = Apollo.MutationFunction<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>;
+
+/**
+ * __useResendWorkspaceInvitationMutation__
+ *
+ * To run a mutation, you first call `useResendWorkspaceInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendWorkspaceInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendWorkspaceInvitationMutation, { data, loading, error }] = useResendWorkspaceInvitationMutation({
+ *   variables: {
+ *      appTokenId: // value for 'appTokenId'
+ *   },
+ * });
+ */
+export function useResendWorkspaceInvitationMutation(baseOptions?: Apollo.MutationHookOptions<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>(ResendWorkspaceInvitationDocument, options);
+      }
+export type ResendWorkspaceInvitationMutationHookResult = ReturnType<typeof useResendWorkspaceInvitationMutation>;
+export type ResendWorkspaceInvitationMutationResult = Apollo.MutationResult<ResendWorkspaceInvitationMutation>;
+export type ResendWorkspaceInvitationMutationOptions = Apollo.BaseMutationOptions<ResendWorkspaceInvitationMutation, ResendWorkspaceInvitationMutationVariables>;
+export const SendInvitationsDocument = gql`
+    mutation SendInvitations($emails: [String!]!) {
+  sendInvitations(emails: $emails) {
+    success
+    errors
+    result {
+      ... on WorkspaceInvitation {
+        id
+        email
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+export type SendInvitationsMutationFn = Apollo.MutationFunction<SendInvitationsMutation, SendInvitationsMutationVariables>;
+
+/**
+ * __useSendInvitationsMutation__
+ *
+ * To run a mutation, you first call `useSendInvitationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendInvitationsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendInvitationsMutation, { data, loading, error }] = useSendInvitationsMutation({
+ *   variables: {
+ *      emails: // value for 'emails'
+ *   },
+ * });
+ */
+export function useSendInvitationsMutation(baseOptions?: Apollo.MutationHookOptions<SendInvitationsMutation, SendInvitationsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendInvitationsMutation, SendInvitationsMutationVariables>(SendInvitationsDocument, options);
+      }
+export type SendInvitationsMutationHookResult = ReturnType<typeof useSendInvitationsMutation>;
+export type SendInvitationsMutationResult = Apollo.MutationResult<SendInvitationsMutation>;
+export type SendInvitationsMutationOptions = Apollo.BaseMutationOptions<SendInvitationsMutation, SendInvitationsMutationVariables>;
+export const GetWorkspaceInvitationsDocument = gql`
+    query GetWorkspaceInvitations {
+  findWorkspaceInvitations {
+    id
+    email
+    expiresAt
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceInvitationsQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceInvitationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceInvitationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceInvitationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetWorkspaceInvitationsQuery(baseOptions?: Apollo.QueryHookOptions<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>(GetWorkspaceInvitationsDocument, options);
+      }
+export function useGetWorkspaceInvitationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>(GetWorkspaceInvitationsDocument, options);
+        }
+export type GetWorkspaceInvitationsQueryHookResult = ReturnType<typeof useGetWorkspaceInvitationsQuery>;
+export type GetWorkspaceInvitationsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceInvitationsLazyQuery>;
+export type GetWorkspaceInvitationsQueryResult = Apollo.QueryResult<GetWorkspaceInvitationsQuery, GetWorkspaceInvitationsQueryVariables>;
 export const AddUserToWorkspaceDocument = gql`
     mutation AddUserToWorkspace($inviteHash: String!) {
   addUserToWorkspace(inviteHash: $inviteHash) {
@@ -2860,6 +3137,39 @@ export function useAddUserToWorkspaceMutation(baseOptions?: Apollo.MutationHookO
 export type AddUserToWorkspaceMutationHookResult = ReturnType<typeof useAddUserToWorkspaceMutation>;
 export type AddUserToWorkspaceMutationResult = Apollo.MutationResult<AddUserToWorkspaceMutation>;
 export type AddUserToWorkspaceMutationOptions = Apollo.BaseMutationOptions<AddUserToWorkspaceMutation, AddUserToWorkspaceMutationVariables>;
+export const AddUserToWorkspaceByInviteTokenDocument = gql`
+    mutation AddUserToWorkspaceByInviteToken($inviteToken: String!) {
+  addUserToWorkspaceByInviteToken(inviteToken: $inviteToken) {
+    id
+  }
+}
+    `;
+export type AddUserToWorkspaceByInviteTokenMutationFn = Apollo.MutationFunction<AddUserToWorkspaceByInviteTokenMutation, AddUserToWorkspaceByInviteTokenMutationVariables>;
+
+/**
+ * __useAddUserToWorkspaceByInviteTokenMutation__
+ *
+ * To run a mutation, you first call `useAddUserToWorkspaceByInviteTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddUserToWorkspaceByInviteTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addUserToWorkspaceByInviteTokenMutation, { data, loading, error }] = useAddUserToWorkspaceByInviteTokenMutation({
+ *   variables: {
+ *      inviteToken: // value for 'inviteToken'
+ *   },
+ * });
+ */
+export function useAddUserToWorkspaceByInviteTokenMutation(baseOptions?: Apollo.MutationHookOptions<AddUserToWorkspaceByInviteTokenMutation, AddUserToWorkspaceByInviteTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddUserToWorkspaceByInviteTokenMutation, AddUserToWorkspaceByInviteTokenMutationVariables>(AddUserToWorkspaceByInviteTokenDocument, options);
+      }
+export type AddUserToWorkspaceByInviteTokenMutationHookResult = ReturnType<typeof useAddUserToWorkspaceByInviteTokenMutation>;
+export type AddUserToWorkspaceByInviteTokenMutationResult = Apollo.MutationResult<AddUserToWorkspaceByInviteTokenMutation>;
+export type AddUserToWorkspaceByInviteTokenMutationOptions = Apollo.BaseMutationOptions<AddUserToWorkspaceByInviteTokenMutation, AddUserToWorkspaceByInviteTokenMutationVariables>;
 export const ActivateWorkspaceDocument = gql`
     mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
   activateWorkspace(data: $input) {
@@ -2925,39 +3235,6 @@ export function useDeleteCurrentWorkspaceMutation(baseOptions?: Apollo.MutationH
 export type DeleteCurrentWorkspaceMutationHookResult = ReturnType<typeof useDeleteCurrentWorkspaceMutation>;
 export type DeleteCurrentWorkspaceMutationResult = Apollo.MutationResult<DeleteCurrentWorkspaceMutation>;
 export type DeleteCurrentWorkspaceMutationOptions = Apollo.BaseMutationOptions<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>;
-export const SendInviteLinkDocument = gql`
-    mutation SendInviteLink($emails: [String!]!) {
-  sendInviteLink(emails: $emails) {
-    success
-  }
-}
-    `;
-export type SendInviteLinkMutationFn = Apollo.MutationFunction<SendInviteLinkMutation, SendInviteLinkMutationVariables>;
-
-/**
- * __useSendInviteLinkMutation__
- *
- * To run a mutation, you first call `useSendInviteLinkMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendInviteLinkMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendInviteLinkMutation, { data, loading, error }] = useSendInviteLinkMutation({
- *   variables: {
- *      emails: // value for 'emails'
- *   },
- * });
- */
-export function useSendInviteLinkMutation(baseOptions?: Apollo.MutationHookOptions<SendInviteLinkMutation, SendInviteLinkMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendInviteLinkMutation, SendInviteLinkMutationVariables>(SendInviteLinkDocument, options);
-      }
-export type SendInviteLinkMutationHookResult = ReturnType<typeof useSendInviteLinkMutation>;
-export type SendInviteLinkMutationResult = Apollo.MutationResult<SendInviteLinkMutation>;
-export type SendInviteLinkMutationOptions = Apollo.BaseMutationOptions<SendInviteLinkMutation, SendInviteLinkMutationVariables>;
 export const UpdateWorkspaceDocument = gql`
     mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
   updateWorkspace(data: $input) {

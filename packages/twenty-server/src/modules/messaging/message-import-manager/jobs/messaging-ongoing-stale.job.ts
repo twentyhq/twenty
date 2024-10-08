@@ -2,9 +2,9 @@ import { Logger, Scope } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -55,20 +55,20 @@ export class MessagingOngoingStaleJob {
           `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
         );
 
-        await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
+        await this.messageChannelSyncStatusService.resetSyncStageStartedAt([
           messageChannel.id,
-        );
+        ]);
 
         switch (messageChannel.syncStage) {
           case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
             await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
-              messageChannel.id,
+              [messageChannel.id],
             );
             break;
           case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
-            await this.messageChannelSyncStatusService.scheduleMessagesImport(
+            await this.messageChannelSyncStatusService.scheduleMessagesImport([
               messageChannel.id,
-            );
+            ]);
             break;
           default:
             break;

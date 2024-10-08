@@ -29,15 +29,17 @@ export const useSettingsIntegrationCategories =
       ({ name }) => name === 'stripe',
     )?.isActive;
 
+    const allIntegrations = getSettingsIntegrationAll({
+      isAirtableIntegrationEnabled,
+      isAirtableIntegrationActive,
+      isPostgresqlIntegrationEnabled,
+      isPostgresqlIntegrationActive,
+      isStripeIntegrationEnabled,
+      isStripeIntegrationActive,
+    });
+
     return [
-      getSettingsIntegrationAll({
-        isAirtableIntegrationEnabled,
-        isAirtableIntegrationActive,
-        isPostgresqlIntegrationEnabled,
-        isPostgresqlIntegrationActive,
-        isStripeIntegrationEnabled,
-        isStripeIntegrationActive,
-      }),
+      ...(allIntegrations.integrations.length > 0 ? [allIntegrations] : []),
       SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
       SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
       SETTINGS_INTEGRATION_REQUEST_CATEGORY,

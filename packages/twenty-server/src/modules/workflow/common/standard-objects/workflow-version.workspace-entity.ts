@@ -21,16 +21,17 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowStep } from 'src/modules/workflow/common/types/workflow-step.type';
-import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export enum WorkflowVersionStatus {
   DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
   DEACTIVATED = 'DEACTIVATED',
+  ARCHIVED = 'ARCHIVED',
 }
 
-export const WorkflowVersionStatusOptions = [
+const WorkflowVersionStatusOptions = [
   {
     value: WorkflowVersionStatus.DRAFT,
     label: 'Draft',
@@ -47,15 +48,21 @@ export const WorkflowVersionStatusOptions = [
     value: WorkflowVersionStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
-    color: 'gray',
+    color: 'red',
+  },
+  {
+    value: WorkflowVersionStatus.ARCHIVED,
+    label: 'Archived',
+    position: 3,
+    color: 'grey',
   },
 ];
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,
   namePlural: 'workflowVersions',
-  labelSingular: 'WorkflowVersion',
-  labelPlural: 'WorkflowVersions',
+  labelSingular: 'Workflow Version',
+  labelPlural: 'Workflow Versions',
   description: 'A workflow version',
   icon: 'IconVersions',
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
@@ -63,7 +70,6 @@ export const WorkflowVersionStatusOptions = [
 @WorkspaceGate({
   featureFlag: FeatureFlagKey.IsWorkflowEnabled,
 })
-@WorkspaceIsSystem()
 export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
@@ -79,6 +85,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.RAW_JSON,
     label: 'Version trigger',
     description: 'Json object to provide trigger',
+    icon: 'IconSettingsAutomation',
   })
   @WorkspaceIsNullable()
   trigger: WorkflowTrigger | null;
@@ -88,6 +95,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.RAW_JSON,
     label: 'Version steps',
     description: 'Json object to provide steps',
+    icon: 'IconSettingsAutomation',
   })
   @WorkspaceIsNullable()
   steps: WorkflowStep[] | null;
@@ -97,10 +105,22 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.SELECT,
     label: 'Version status',
     description: 'The workflow version status',
+    icon: 'IconStatusChange',
     options: WorkflowVersionStatusOptions,
     defaultValue: "'DRAFT'",
   })
   status: WorkflowVersionStatus;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: 'Position',
+    description: 'Workflow version position',
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  position: number | null;
 
   // Relations
   @WorkspaceRelation({

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import {
@@ -31,16 +31,9 @@ export class CalendarBlocklistListener {
       ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
     >,
   ) {
-    await Promise.all(
-      payload.events.map((eventPayload) =>
-        this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
-          BlocklistItemDeleteCalendarEventsJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            blocklistItemId: eventPayload.recordId,
-          },
-        ),
-      ),
+    await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+      BlocklistItemDeleteCalendarEventsJob.name,
+      payload,
     );
   }
 
@@ -50,17 +43,9 @@ export class CalendarBlocklistListener {
       ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
     >,
   ) {
-    await Promise.all(
-      payload.events.map((eventPayload) =>
-        this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
-          BlocklistReimportCalendarEventsJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            workspaceMemberId:
-              eventPayload.properties.before.workspaceMember.id,
-          },
-        ),
-      ),
+    await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
+      BlocklistReimportCalendarEventsJob.name,
+      payload,
     );
   }
 
@@ -70,31 +55,14 @@ export class CalendarBlocklistListener {
       ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>
     >,
   ) {
-    await Promise.all(
-      payload.events.reduce((acc: Promise<void>[], eventPayload) => {
-        acc.push(
-          this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
-            BlocklistItemDeleteCalendarEventsJob.name,
-            {
-              workspaceId: payload.workspaceId,
-              blocklistItemId: eventPayload.recordId,
-            },
-          ),
-        );
+    await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+      BlocklistItemDeleteCalendarEventsJob.name,
+      payload,
+    );
 
-        acc.push(
-          this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
-            BlocklistReimportCalendarEventsJob.name,
-            {
-              workspaceId: payload.workspaceId,
-              workspaceMemberId:
-                eventPayload.properties.after.workspaceMember.id,
-            },
-          ),
-        );
-
-        return acc;
-      }, []),
+    await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
+      BlocklistReimportCalendarEventsJob.name,
+      payload,
     );
   }
 }

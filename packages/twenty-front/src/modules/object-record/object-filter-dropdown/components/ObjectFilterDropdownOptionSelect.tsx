@@ -41,7 +41,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
     selectableListScopeId: MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   });
 
-  const { handleResetSelectedPosition } = useSelectableList(
+  const { resetSelectedItem } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
 
@@ -90,10 +90,10 @@ export const ObjectFilterDropdownOptionSelect = () => {
     [Key.Escape],
     () => {
       closeDropdown();
-      handleResetSelectedPosition();
+      resetSelectedItem();
     },
     RelationPickerHotkeyScope.RelationPicker,
-    [closeDropdown, handleResetSelectedPosition],
+    [closeDropdown, resetSelectedItem],
   );
 
   const handleMultipleOptionSelectChange = (
@@ -137,7 +137,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         value: newFilterValue,
       });
     }
-    handleResetSelectedPosition();
+    resetSelectedItem();
   };
 
   const optionsInDropdown = selectableOptions?.filter((option) =>

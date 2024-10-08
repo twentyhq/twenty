@@ -13,7 +13,6 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
@@ -25,247 +24,17 @@ import {
   convertLessThanRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
-import { Filter } from '../../object-filter-dropdown/types/Filter';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
+import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
+import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
+import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
+import { z } from 'zod';
 
-export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
-  definition: {
-    type: Filter['definition']['type'];
-  };
-};
-
-const applyEmptyFilters = (
-  operand: ViewFilterOperand,
-  correspondingField: Pick<Field, 'id' | 'name'>,
-  objectRecordFilters: RecordGqlOperationFilter[],
-  filterType: FilterType,
-) => {
-  let emptyRecordFilter: RecordGqlOperationFilter = {};
-
-  switch (filterType) {
-    case 'TEXT':
-    case 'EMAIL':
-    case 'PHONE':
-      emptyRecordFilter = {
-        or: [
-          { [correspondingField.name]: { ilike: '' } as StringFilter },
-          { [correspondingField.name]: { is: 'NULL' } as StringFilter },
-        ],
-      };
-      break;
-    case 'CURRENCY':
-      emptyRecordFilter = {
-        or: [
-          {
-            [correspondingField.name]: {
-              amountMicros: { is: 'NULL' },
-            } as CurrencyFilter,
-          },
-        ],
-      };
-      break;
-    case 'FULL_NAME': {
-      const fullNameFilters = generateILikeFiltersForCompositeFields(
-        '',
-        correspondingField.name,
-        ['firstName', 'lastName'],
-        true,
-      );
-
-      emptyRecordFilter = {
-        and: fullNameFilters,
-      };
-      break;
-    }
-    case 'LINK':
-      emptyRecordFilter = {
-        or: [
-          { [correspondingField.name]: { url: { ilike: '' } } as URLFilter },
-          {
-            [correspondingField.name]: { url: { is: 'NULL' } } as URLFilter,
-          },
-        ],
-      };
-      break;
-    case 'LINKS': {
-      const linksFilters = generateILikeFiltersForCompositeFields(
-        '',
-        correspondingField.name,
-        ['primaryLinkLabel', 'primaryLinkUrl'],
-        true,
-      );
-
-      emptyRecordFilter = {
-        and: linksFilters,
-      };
-      break;
-    }
-    case 'ADDRESS':
-      emptyRecordFilter = {
-        and: [
-          {
-            or: [
-              {
-                [correspondingField.name]: {
-                  addressStreet1: { ilike: '' },
-                } as AddressFilter,
-              },
-              {
-                [correspondingField.name]: {
-                  addressStreet1: { is: 'NULL' },
-                } as AddressFilter,
-              },
-            ],
-          },
-          {
-            or: [
-              {
-                [correspondingField.name]: {
-                  addressStreet2: { ilike: '' },
-                } as AddressFilter,
-              },
-              {
-                [correspondingField.name]: {
-                  addressStreet2: { is: 'NULL' },
-                } as AddressFilter,
-              },
-            ],
-          },
-          {
-            or: [
-              {
-                [correspondingField.name]: {
-                  addressCity: { ilike: '' },
-                } as AddressFilter,
-              },
-              {
-                [correspondingField.name]: {
-                  addressCity: { is: 'NULL' },
-                } as AddressFilter,
-              },
-            ],
-          },
-          {
-            or: [
-              {
-                [correspondingField.name]: {
-                  addressState: { ilike: '' },
-                } as AddressFilter,
-              },
-              {
-                [correspondingField.name]: {
-                  addressState: { is: 'NULL' },
-                } as AddressFilter,
-              },
-            ],
-          },
-          {
-            or: [
-              {
-                [correspondingField.name]: {
-                  addressCountry: { ilike: '' },
-                } as AddressFilter,
-              },
-              {
-                [correspondingField.name]: {
-                  addressCountry: { is: 'NULL' },
-                } as AddressFilter,
-              },
-            ],
-          },
-          {
-            or: [
-              {
-                [correspondingField.name]: {
-                  addressPostcode: { ilike: '' },
-                } as AddressFilter,
-              },
-              {
-                [correspondingField.name]: {
-                  addressPostcode: { is: 'NULL' },
-                } as AddressFilter,
-              },
-            ],
-          },
-        ],
-      };
-      break;
-    case 'NUMBER':
-      emptyRecordFilter = {
-        [correspondingField.name]: { is: 'NULL' } as FloatFilter,
-      };
-      break;
-    case 'RATING':
-      emptyRecordFilter = {
-        [correspondingField.name]: { is: 'NULL' } as StringFilter,
-      };
-      break;
-    case 'DATE_TIME':
-      emptyRecordFilter = {
-        [correspondingField.name]: { is: 'NULL' } as DateFilter,
-      };
-      break;
-    case 'SELECT':
-      emptyRecordFilter = {
-        [correspondingField.name]: { is: 'NULL' } as UUIDFilter,
-      };
-      break;
-    case 'RELATION':
-      emptyRecordFilter = {
-        [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
-      };
-      break;
-    case 'ACTOR':
-      emptyRecordFilter = {
-        or: [
-          {
-            [correspondingField.name]: {
-              name: { ilike: '' },
-            } as ActorFilter,
-          },
-          {
-            [correspondingField.name]: {
-              name: { is: 'NULL' },
-            } as ActorFilter,
-          },
-        ],
-      };
-      break;
-    case 'EMAILS':
-      emptyRecordFilter = {
-        or: [
-          {
-            [correspondingField.name]: {
-              primaryEmail: { ilike: '' },
-            } as EmailsFilter,
-          },
-          {
-            [correspondingField.name]: {
-              primaryEmail: { is: 'NULL' },
-            } as EmailsFilter,
-          },
-        ],
-      };
-      break;
-    default:
-      throw new Error(`Unsupported empty filter type ${filterType}`);
-  }
-
-  switch (operand) {
-    case ViewFilterOperand.IsEmpty:
-      objectRecordFilters.push(emptyRecordFilter);
-      break;
-    case ViewFilterOperand.IsNotEmpty:
-      objectRecordFilters.push({
-        not: emptyRecordFilter,
-      });
-      break;
-    default:
-      throw new Error(`Unknown operand ${operand} for ${filterType} filter`);
-  }
-};
-
+// TODO: break this down into smaller functions and make the whole thing immutable
+// Especially applyEmptyFilters
 export const turnObjectDropdownFilterIntoQueryFilter = (
-  rawUIFilters: ObjectDropdownFilter[],
+  rawUIFilters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
 ): RecordGqlOperationFilter | undefined => {
   const objectRecordFilters: RecordGqlOperationFilter[] = [];
@@ -275,9 +44,16 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       (field) => field.id === rawUIFilter.fieldMetadataId,
     );
 
+    const compositeFieldName = rawUIFilter.definition.compositeFieldName;
+
+    const isCompositeFieldFiter = isNonEmptyString(compositeFieldName);
+
     const isEmptyOperand = [
       ViewFilterOperand.IsEmpty,
       ViewFilterOperand.IsNotEmpty,
+      ViewFilterOperand.IsInPast,
+      ViewFilterOperand.IsInFuture,
+      ViewFilterOperand.IsToday,
     ].includes(rawUIFilter.operand);
 
     if (!correspondingField) {
@@ -291,8 +67,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
 
     switch (rawUIFilter.definition.type) {
-      case 'EMAIL':
-      case 'PHONE':
       case 'TEXT':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
@@ -317,7 +91,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -326,37 +100,133 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
-      case 'DATE_TIME':
+      case 'DATE':
+      case 'DATE_TIME': {
+        const resolvedFilterValue = resolveFilterValue(rawUIFilter);
+        const now = roundToNearestMinutes(new Date());
+        const date =
+          resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
+
         switch (rawUIFilter.operand) {
-          case ViewFilterOperand.GreaterThan:
+          case ViewFilterOperand.IsAfter: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: rawUIFilter.value,
+                gt: date.toISOString(),
               } as DateFilter,
             });
             break;
-          case ViewFilterOperand.LessThan:
+          }
+          case ViewFilterOperand.IsBefore: {
             objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: rawUIFilter.value,
+                lt: date.toISOString(),
               } as DateFilter,
             });
             break;
+          }
           case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
+          case ViewFilterOperand.IsNotEmpty: {
             applyEmptyFilters(
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
+          }
+          case ViewFilterOperand.IsRelative: {
+            const dateRange = z
+              .object({ start: z.date(), end: z.date() })
+              .safeParse(resolvedFilterValue).data;
+
+            const defaultDateRange = resolveFilterValue({
+              value: 'PAST_1_DAY',
+              definition: {
+                type: 'DATE',
+              },
+              operand: ViewFilterOperand.IsRelative,
+            });
+
+            if (!defaultDateRange) {
+              throw new Error('Failed to resolve default date range');
+            }
+
+            const { start, end } = dateRange ?? defaultDateRange;
+
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    gte: start.toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    lte: end.toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
+          case ViewFilterOperand.Is: {
+            const isValid = resolvedFilterValue instanceof Date;
+            const date = isValid ? resolvedFilterValue : now;
+
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(date).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
+          case ViewFilterOperand.IsInPast:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                lte: now.toISOString(),
+              } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsInFuture:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                gte: now.toISOString(),
+              } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsToday: {
+            objectRecordFilters.push({
+              and: [
+                {
+                  [correspondingField.name]: {
+                    lte: endOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    gte: startOfDay(now).toISOString(),
+                  } as DateFilter,
+                },
+              ],
+            });
+            break;
+          }
           default:
             throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`, //
             );
         }
         break;
+      }
       case 'RATING':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Is:
@@ -390,7 +260,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -421,7 +291,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -476,7 +346,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 rawUIFilter.operand,
                 correspondingField,
                 objectRecordFilters,
-                rawUIFilter.definition.type,
+                rawUIFilter.definition,
               );
               break;
             default:
@@ -509,7 +379,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -546,7 +416,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -561,20 +431,43 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
           correspondingField.name,
           ['primaryLinkLabel', 'primaryLinkUrl'],
         );
+
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              or: linksFilters,
-            });
+            if (!isCompositeFieldFiter) {
+              objectRecordFilters.push({
+                or: linksFilters,
+              });
+            } else {
+              objectRecordFilters.push({
+                [correspondingField.name]: {
+                  [compositeFieldName]: {
+                    ilike: `%${rawUIFilter.value}%`,
+                  },
+                },
+              });
+            }
             break;
           case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              and: linksFilters.map((filter) => {
-                return {
-                  not: filter,
-                };
-              }),
-            });
+            if (!isCompositeFieldFiter) {
+              objectRecordFilters.push({
+                and: linksFilters.map((filter) => {
+                  return {
+                    not: filter,
+                  };
+                }),
+              });
+            } else {
+              objectRecordFilters.push({
+                not: {
+                  [correspondingField.name]: {
+                    [compositeFieldName]: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  },
+                },
+              });
+            }
             break;
           case ViewFilterOperand.IsEmpty:
           case ViewFilterOperand.IsNotEmpty:
@@ -582,7 +475,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -600,18 +493,40 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         );
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              or: fullNameFilters,
-            });
+            if (!isCompositeFieldFiter) {
+              objectRecordFilters.push({
+                or: fullNameFilters,
+              });
+            } else {
+              objectRecordFilters.push({
+                [correspondingField.name]: {
+                  [compositeFieldName]: {
+                    ilike: `%${rawUIFilter.value}%`,
+                  },
+                },
+              });
+            }
             break;
           case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              and: fullNameFilters.map((filter) => {
-                return {
-                  not: filter,
-                };
-              }),
-            });
+            if (!isCompositeFieldFiter) {
+              objectRecordFilters.push({
+                and: fullNameFilters.map((filter) => {
+                  return {
+                    not: filter,
+                  };
+                }),
+              });
+            } else {
+              objectRecordFilters.push({
+                not: {
+                  [correspondingField.name]: {
+                    [compositeFieldName]: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  },
+                },
+              });
+            }
             break;
           case ViewFilterOperand.IsEmpty:
           case ViewFilterOperand.IsNotEmpty:
@@ -619,7 +534,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -632,85 +547,107 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       case 'ADDRESS':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              or: [
-                {
-                  [correspondingField.name]: {
-                    addressStreet1: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as AddressFilter,
-                },
-                {
-                  [correspondingField.name]: {
-                    addressStreet2: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as AddressFilter,
-                },
-                {
-                  [correspondingField.name]: {
-                    addressCity: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as AddressFilter,
-                },
-                {
-                  [correspondingField.name]: {
-                    addressState: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as AddressFilter,
-                },
-                {
-                  [correspondingField.name]: {
-                    addressCountry: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as AddressFilter,
-                },
-                {
-                  [correspondingField.name]: {
-                    addressPostcode: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as AddressFilter,
-                },
-              ],
-            });
-            break;
-          case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              and: [
-                {
-                  not: {
+            if (!isCompositeFieldFiter) {
+              objectRecordFilters.push({
+                or: [
+                  {
                     [correspondingField.name]: {
                       addressStreet1: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as AddressFilter,
                   },
-                },
-                {
-                  not: {
+                  {
                     [correspondingField.name]: {
                       addressStreet2: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as AddressFilter,
                   },
-                },
-                {
-                  not: {
+                  {
                     [correspondingField.name]: {
                       addressCity: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as AddressFilter,
                   },
+                  {
+                    [correspondingField.name]: {
+                      addressState: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                  {
+                    [correspondingField.name]: {
+                      addressCountry: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                  {
+                    [correspondingField.name]: {
+                      addressPostcode: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                ],
+              });
+            } else {
+              objectRecordFilters.push({
+                [correspondingField.name]: {
+                  [compositeFieldName]: {
+                    ilike: `%${rawUIFilter.value}%`,
+                  } as AddressFilter,
                 },
-              ],
-            });
+              });
+            }
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            if (!isCompositeFieldFiter) {
+              objectRecordFilters.push({
+                and: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        addressStreet1: {
+                          ilike: `%${rawUIFilter.value}%`,
+                        },
+                      } as AddressFilter,
+                    },
+                  },
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        addressStreet2: {
+                          ilike: `%${rawUIFilter.value}%`,
+                        },
+                      } as AddressFilter,
+                    },
+                  },
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        addressCity: {
+                          ilike: `%${rawUIFilter.value}%`,
+                        },
+                      } as AddressFilter,
+                    },
+                  },
+                ],
+              });
+            } else {
+              objectRecordFilters.push({
+                not: {
+                  [correspondingField.name]: {
+                    [compositeFieldName]: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    } as AddressFilter,
+                  },
+                },
+              });
+            }
             break;
           case ViewFilterOperand.IsEmpty:
           case ViewFilterOperand.IsNotEmpty:
@@ -718,7 +655,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -733,7 +670,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             rawUIFilter.operand,
             correspondingField,
             objectRecordFilters,
-            rawUIFilter.definition.type,
+            rawUIFilter.definition,
           );
           break;
         }
@@ -779,48 +716,78 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         break;
       }
       case 'ACTOR':
-        switch (rawUIFilter.operand) {
-          case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              or: [
-                {
-                  [correspondingField.name]: {
-                    name: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as ActorFilter,
+        if (isActorSourceCompositeFilter(rawUIFilter.definition)) {
+          const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
+
+          switch (rawUIFilter.operand) {
+            case ViewFilterOperand.Is:
+              objectRecordFilters.push({
+                [correspondingField.name]: {
+                  source: {
+                    in: parsedRecordIds,
+                  } as RelationFilter,
                 },
-              ],
-            });
-            break;
-          case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              and: [
-                {
+              });
+
+              break;
+            case ViewFilterOperand.IsNot:
+              if (parsedRecordIds.length > 0) {
+                objectRecordFilters.push({
                   not: {
+                    [correspondingField.name]: {
+                      source: {
+                        in: parsedRecordIds,
+                      } as RelationFilter,
+                    },
+                  },
+                });
+              }
+              break;
+          }
+        } else {
+          switch (rawUIFilter.operand) {
+            case ViewFilterOperand.Contains:
+              objectRecordFilters.push({
+                or: [
+                  {
                     [correspondingField.name]: {
                       name: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as ActorFilter,
                   },
-                },
-              ],
-            });
-            break;
-          case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
-            applyEmptyFilters(
-              rawUIFilter.operand,
-              correspondingField,
-              objectRecordFilters,
-              rawUIFilter.definition.type,
-            );
-            break;
-          default:
-            throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-            );
+                ],
+              });
+              break;
+            case ViewFilterOperand.DoesNotContain:
+              objectRecordFilters.push({
+                and: [
+                  {
+                    not: {
+                      [correspondingField.name]: {
+                        name: {
+                          ilike: `%${rawUIFilter.value}%`,
+                        },
+                      } as ActorFilter,
+                    },
+                  },
+                ],
+              });
+              break;
+            case ViewFilterOperand.IsEmpty:
+            case ViewFilterOperand.IsNotEmpty:
+              applyEmptyFilters(
+                rawUIFilter.operand,
+                correspondingField,
+                objectRecordFilters,
+                rawUIFilter.definition,
+              );
+              break;
+            default:
+              throw new Error(
+                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.label} filter`,
+              );
+          }
         }
         break;
       case 'EMAILS':
@@ -859,7 +826,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              rawUIFilter.definition.type,
+              rawUIFilter.definition,
             );
             break;
           default:
@@ -868,6 +835,43 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      case 'PHONES': {
+        const phonesFilters = generateILikeFiltersForCompositeFields(
+          rawUIFilter.value,
+          correspondingField.name,
+          ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
+        );
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: phonesFilters,
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: phonesFilters.map((filter) => {
+                return {
+                  not: filter,
+                };
+              }),
+            });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition,
+            );
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      }
       default:
         throw new Error('Unknown filter type');
     }

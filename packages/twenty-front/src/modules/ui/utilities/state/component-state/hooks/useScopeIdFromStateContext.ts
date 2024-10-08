@@ -1,9 +1,9 @@
 import { useScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopeInternalContext';
 import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
-import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
+import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
 
 export const useScopeIdFromStateContext = (
-  componentState: ComponentState<any> | ComponentFamilyState<any, any>,
+  componentState: RecoilComponentState<any> | ComponentFamilyState<any, any>,
 ) => {
   const componentContext = (window as any).componentContextStateMap?.get(
     componentState.key,

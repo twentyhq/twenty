@@ -8,6 +8,7 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
 import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
+import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
@@ -30,6 +31,7 @@ export class WorkspaceMigrationFactory {
 
   constructor(
     private readonly basicColumnActionFactory: BasicColumnActionFactory,
+    private readonly tsVectorColumnActionFactory: TsVectorColumnActionFactory,
     private readonly enumColumnActionFactory: EnumColumnActionFactory,
     private readonly compositeColumnActionFactory: CompositeColumnActionFactory,
   ) {
@@ -97,9 +99,18 @@ export class WorkspaceMigrationFactory {
       ],
       [FieldMetadataType.LINKS, { factory: this.compositeColumnActionFactory }],
       [FieldMetadataType.ACTOR, { factory: this.compositeColumnActionFactory }],
+      [FieldMetadataType.ARRAY, { factory: this.basicColumnActionFactory }],
       [
         FieldMetadataType.EMAILS,
         { factory: this.compositeColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.PHONES,
+        { factory: this.compositeColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.TS_VECTOR,
+        { factory: this.tsVectorColumnActionFactory },
       ],
     ]);
   }

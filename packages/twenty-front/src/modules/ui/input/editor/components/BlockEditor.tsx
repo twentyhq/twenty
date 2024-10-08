@@ -93,6 +93,16 @@ const StyledEditor = styled.div`
   & .bn-color-picker-dropdown {
     margin-left: 8px;
   }
+
+  & .bn-inline-content code {
+    font-family: monospace;
+    color: ${({ theme }) => theme.font.color.danger};
+    padding: 2px 4px;
+    border-radius: 4px;
+    border: 1px solid ${({ theme }) => theme.font.color.extraLight};
+    font-size: 0.9rem;
+    background-color: ${({ theme }) => theme.background.transparent.light};
+  }
 `;
 
 export const BlockEditor = ({

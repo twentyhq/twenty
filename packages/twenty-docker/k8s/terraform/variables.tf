@@ -1,30 +1,6 @@
 ######################
 # Required Variables #
 ######################
-variable "twentycrm_token_accessToken" {
-  type        = string
-  description = "TwentyCRM access Token"
-  sensitive   = true
-}
-
-variable "twentycrm_token_loginToken" {
-  type        = string
-  description = "TwentyCRM login Token"
-  sensitive   = true
-}
-
-variable "twentycrm_token_refreshToken" {
-  type        = string
-  description = "TwentyCRM refresh Token"
-  sensitive   = true
-}
-
-variable "twentycrm_token_fileToken" {
-  type        = string
-  description = "TwentyCRM file Token"
-  sensitive   = true
-}
-
 variable "twentycrm_pgdb_admin_password" {
   type        = string
   description = "TwentyCRM password for postgres database."
@@ -77,8 +53,8 @@ variable "twentycrm_db_replicas" {
 
 variable "twentycrm_server_data_mount_path" {
   type        = string
-  default     = "/app/docker-data"
-  description = "TwentyCRM mount path for servers application data. Defaults to '/app/docker-data'."
+  default     = "/app/packages/twenty-server/.local-storage"
+  description = "TwentyCRM mount path for servers application data. Defaults to '/app/packages/twenty-server/.local-storage'."
 }
 
 variable "twentycrm_db_pv_path" {
@@ -121,4 +97,40 @@ variable "twentycrm_namespace" {
   type        = string
   default     = "twentycrm"
   description = "Namespace for all TwentyCRM resources"
+}
+
+variable "twentycrm_redis_replicas" {
+  type        = number
+  default     = 1
+  description = "Number of replicas for the TwentyCRM Redis deployment. This defaults to 1."
+}
+
+variable "twentycrm_redis_image" {
+  type        = string
+  default     = "redis/redis-stack-server:latest"
+  description = "TwentyCRM image for Redis deployment. This defaults to latest."
+}
+
+variable "twentycrm_docker_data_mount_path" {
+  type        = string
+  default     = "/app/docker-data"
+  description = "TwentyCRM mount path for servers application data. Defaults to '/app/docker-data'."
+}
+
+variable "twentycrm_docker_data_pv_path" {
+  type        = string
+  default     = ""
+  description = "Local path to use to store the physical volume if using local storage on nodes."
+}
+
+variable "twentycrm_docker_data_pv_capacity" {
+  type        = string
+  default     = "100Mi"
+  description = "Storage capacity provisioned for server persistent volume."
+}
+
+variable "twentycrm_docker_data_pvc_requests" {
+  type        = string
+  default     = "100Mi"
+  description = "Storage capacity reservation for server persistent volume claim."
 }

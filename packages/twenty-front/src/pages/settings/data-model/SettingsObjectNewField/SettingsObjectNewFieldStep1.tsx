@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconHierarchy2, IconPlus } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -9,11 +9,12 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useRecoilState } from 'recoil';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
@@ -85,19 +86,19 @@ export const SettingsObjectNewFieldStep1 = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconSettings}
-      title={
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            {
-              children: activeObjectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectSlug}`,
-            },
-            { children: 'New Field' },
-          ]}
-        />
-      }
+      Icon={IconHierarchy2}
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Objects', href: '/settings/objects' },
+        {
+          children: activeObjectMetadataItem.labelPlural,
+          href: `/settings/objects/${objectSlug}`,
+        },
+        { children: 'New Field' },
+      ]}
       actionButton={
         !activeObjectMetadataItem.isRemote && (
           <SaveAndCancelButtons

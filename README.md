@@ -1,3 +1,12 @@
+<p align="center">
+  <a href="https://oss.gg/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/twentyhq/twenty/blob/33be2dbbe14eea00445010ecb9cd53ed603c01d5/packages/twenty-website/public/images/readme/Github%20Read-me%20banner.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://github.com/twentyhq/twenty/blob/33be2dbbe14eea00445010ecb9cd53ed603c01d5/packages/twenty-website/public/images/readme/Github%20Read-me%20banner.png">
+      <img src="./packages/twenty-website/public/images/readme/Github%20Read-me%20banner.png" alt="Hacktoberfest" />
+    </picture>
+  </a>
+</p>
 
 <br>
 <p align="center">
@@ -32,8 +41,9 @@ We felt the need for a CRM platform that empowers rather than constrains. We bel
 
 # Demo 
 Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the following credentials:
+
 ```
-email: noah@demo.dev
+email: tim@apple.dev
 password: Applecar2025
 ```
 
@@ -66,6 +76,7 @@ Below are some features we have implemented to date:
 + [See rich notes tasks displayed in a timeline](#see-rich-notes-tasks-displayed-in-a-timeline)
 + [Create tasks on records](#create-tasks-on-records)
 + [Navigate quickly through the app using keyboard shortcuts and search](#navigate-quickly-through-the-app-using-keyboard-shortcuts-and-search)
+
 
 ## Add, filter, sort, edit, and track customers:
 

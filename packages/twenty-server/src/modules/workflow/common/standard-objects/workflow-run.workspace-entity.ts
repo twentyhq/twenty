@@ -27,18 +27,39 @@ export enum WorkflowRunStatus {
   FAILED = 'FAILED',
 }
 
+export type WorkflowRunOutput = {
+  steps: {
+    id: string;
+    name: string;
+    type: string;
+    attemptCount: number;
+    result: object | undefined;
+    error: string | undefined;
+  }[];
+};
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowRun,
   namePlural: 'workflowRuns',
-  labelSingular: 'workflowRun',
-  labelPlural: 'WorkflowRuns',
+  labelSingular: 'Workflow Run',
+  labelPlural: 'Workflow Runs',
   description: 'A workflow run',
+  labelIdentifierStandardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
+  icon: 'IconHistory',
 })
 @WorkspaceGate({
   featureFlag: FeatureFlagKey.IsWorkflowEnabled,
 })
-@WorkspaceIsSystem()
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
+    type: FieldMetadataType.TEXT,
+    label: 'Name',
+    description: 'Name of the workflow run',
+    icon: 'IconText',
+  })
+  name: string;
+
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
     type: FieldMetadataType.DATE_TIME,
@@ -64,7 +85,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.SELECT,
     label: 'Workflow run status',
     description: 'Workflow run status',
-    icon: 'IconHistory',
+    icon: 'IconStatusChange',
     options: [
       {
         value: WorkflowRunStatus.NOT_STARTED,
@@ -107,6 +128,26 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     },
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.output,
+    type: FieldMetadataType.RAW_JSON,
+    label: 'Output',
+    description: 'Json object to provide output of the workflow run',
+  })
+  @WorkspaceIsNullable()
+  output: WorkflowRunOutput | null;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: 'Position',
+    description: 'Workflow run position',
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  position: number | null;
 
   // Relations
   @WorkspaceRelation({

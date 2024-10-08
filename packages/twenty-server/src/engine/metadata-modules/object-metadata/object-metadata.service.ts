@@ -5,19 +5,30 @@ import console from 'console';
 
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { isDefined } from 'class-validator';
 import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import {
+  computeColumnName,
+  FieldTypeAndNameMetadata,
+} from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -32,14 +43,18 @@ import {
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -57,6 +72,9 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -76,11 +94,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     private readonly remoteTableRelationsService: RemoteTableRelationsService,
 
+    private readonly tsVectorColumnActionFactory: TsVectorColumnActionFactory,
+
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
+
+    private readonly indexMetadataService: IndexMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {
     super(objectMetadataRepository);
   }
@@ -138,6 +163,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.deleteAllRelationsAndDropTable(objectMetadata, workspaceId);
     }
 
+    // DELETE VIEWS
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+        workspaceId,
+        'view',
+      );
+
+    const views = await viewRepository.find({
+      where: {
+        objectMetadataId: objectMetadata.id,
+      },
+    });
+
+    if (views.length > 0) {
+      await viewRepository.delete(views.map((view) => view.id));
+    }
+
+    // DELETE OBJECT
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -209,7 +252,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: isCustom,
       isSystem: false,
       isRemote: objectMetadataInput.isRemote,
-      isSoftDeletable: true,
       fields: isCustom
         ? // Creating default fields.
           // No need to create a custom migration for this though as the default columns are already
@@ -270,6 +312,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               defaultValue: 'now',
             },
             {
+              standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+              type: FieldMetadataType.DATE_TIME,
+              name: 'deletedAt',
+              label: 'Deleted at',
+              icon: 'IconCalendarClock',
+              description: 'Deletion date',
+              isNullable: true,
+              isActive: true,
+              isCustom: false,
+              isSystem: false,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: null,
+            },
+            {
               standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
               type: FieldMetadataType.ACTOR,
               name: 'createdBy',
@@ -315,6 +371,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput,
         createdObjectMetadata,
       );
+
+      const isSearchEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsSearchEnabled,
+        objectMetadataInput.workspaceId,
+      );
+
+      if (isSearchEnabled) {
+        await this.createSearchVectorField(
+          objectMetadataInput,
+          createdObjectMetadata,
+        );
+      }
     } else {
       await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
         objectMetadataInput.workspaceId,
@@ -342,7 +410,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     createdObjectMetadata.fields.map(async (field, index) => {
-      if (field.name === 'id') {
+      if (field.name === 'id' || field.name === 'deletedAt') {
         return;
       }
 
@@ -354,6 +422,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       }') RETURNING *`,
       );
     });
+
+    await this.createViewWorkspaceFavorite(
+      objectMetadataInput.workspaceId,
+      view[0].id,
+    );
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       objectMetadataInput.workspaceId,
@@ -493,8 +566,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadataInput.primaryKeyFieldMetadataSettings,
     );
 
-    return this.workspaceMigrationService.createCustomMigration(
+    await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+      createdObjectMetadata.workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: WorkspaceMigrationTableActionType.CREATE,
+        } satisfies WorkspaceMigrationTableAction,
+      ],
+    );
+
+    for (const fieldMetadata of createdObjectMetadata.fields) {
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`create-${fieldMetadata.name}`),
+        createdObjectMetadata.workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(createdObjectMetadata),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.CREATE,
+              fieldMetadata,
+            ),
+          },
+        ] satisfies WorkspaceMigrationTableAction[],
+      );
+    }
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(
+        `create-${createdObjectMetadata.nameSingular}-relations`,
+      ),
       createdObjectMetadata.workspaceId,
       buildMigrationsForCustomObjectRelations(
         createdObjectMetadata,
@@ -505,6 +608,72 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         noteTargetObjectMetadata,
         taskTargetObjectMetadata,
       ),
+    );
+  }
+
+  private async createSearchVectorField(
+    objectMetadataInput: CreateObjectInput,
+    createdObjectMetadata: ObjectMetadataEntity,
+  ) {
+    const searchVectorFieldMetadata = await this.fieldMetadataRepository.save({
+      standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
+      objectMetadataId: createdObjectMetadata.id,
+      workspaceId: objectMetadataInput.workspaceId,
+      isCustom: false,
+      isActive: false,
+      isSystem: true,
+      type: FieldMetadataType.TS_VECTOR,
+      name: SEARCH_VECTOR_FIELD.name,
+      label: SEARCH_VECTOR_FIELD.label,
+      description: SEARCH_VECTOR_FIELD.description,
+      isNullable: true,
+    });
+
+    const searchableFieldForCustomObject =
+      createdObjectMetadata.labelIdentifierFieldMetadataId
+        ? createdObjectMetadata.fields.find(
+            (field) =>
+              field.id === createdObjectMetadata.labelIdentifierFieldMetadataId,
+          )
+        : createdObjectMetadata.fields.find(
+            (field) => field.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+          );
+
+    if (!isDefined(searchableFieldForCustomObject)) {
+      throw new Error('No searchable field found for custom object');
+    }
+
+    this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(
+        `update-${createdObjectMetadata.nameSingular}-add-searchVector`,
+      ),
+      createdObjectMetadata.workspaceId,
+      [
+        {
+          name: computeTableName(
+            createdObjectMetadata.nameSingular,
+            createdObjectMetadata.isCustom,
+          ),
+          action: WorkspaceMigrationTableActionType.ALTER,
+          columns: this.tsVectorColumnActionFactory.handleCreateAction({
+            ...searchVectorFieldMetadata,
+            defaultValue: undefined,
+            generatedType: 'STORED',
+            asExpression: getTsVectorColumnExpressionFromFields([
+              searchableFieldForCustomObject as FieldTypeAndNameMetadata,
+            ]),
+            options: undefined,
+          } as FieldMetadataInterface<FieldMetadataType.TS_VECTOR>),
+        },
+      ],
+    );
+
+    await this.indexMetadataService.createIndex(
+      objectMetadataInput.workspaceId,
+      createdObjectMetadata,
+      [searchVectorFieldMetadata],
+      false,
+      IndexType.GIN,
     );
   }
 
@@ -1245,5 +1414,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         { isActive: isActive },
       );
     }
+  }
+
+  private async createViewWorkspaceFavorite(
+    workspaceId: string,
+    viewId: string,
+  ) {
+    const favoriteRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
+        workspaceId,
+        'favorite',
+      );
+
+    const favoriteCount = await favoriteRepository.count();
+
+    return favoriteRepository.insert(
+      favoriteRepository.create({
+        viewId,
+        position: favoriteCount,
+      }),
+    );
   }
 }

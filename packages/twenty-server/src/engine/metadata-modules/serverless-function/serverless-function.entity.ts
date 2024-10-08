@@ -29,11 +29,11 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: true })
   latestVersion: string;
 
-  @Column({ nullable: false })
-  sourceCodeHash: string;
-
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
   runtime: ServerlessFunctionRuntime;
+
+  @Column({ nullable: true })
+  layerVersion: number;
 
   @Column({
     nullable: false,

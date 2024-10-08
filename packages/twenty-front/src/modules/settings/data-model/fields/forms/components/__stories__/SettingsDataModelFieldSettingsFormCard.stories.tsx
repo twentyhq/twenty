@@ -7,9 +7,17 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelFieldSettingsFormCard } from '../SettingsDataModelFieldSettingsFormCard';
+
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+);
+
+if (!mockedCompanyObjectMetadataItem) {
+  throw new Error('Company object metadata item not found');
+}
 
 const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
   ({ type }) => type === FieldMetadataType.Text,

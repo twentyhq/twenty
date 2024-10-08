@@ -2,6 +2,7 @@ import { useLinksField } from '@/object-record/record-field/meta-types/hooks/use
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-ui';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
@@ -41,13 +42,19 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
     });
   };
 
+  const isPrimaryLink = (index: number) => index === 0 && links?.length > 1;
+
   return (
     <MultiItemFieldInput
       items={links}
       onPersist={handlePersistLinks}
       onCancel={onCancel}
       placeholder="URL"
-      validateInput={(input) => absoluteUrlSchema.safeParse(input).success}
+      fieldMetadataType={FieldMetadataType.Links}
+      validateInput={(input) => ({
+        isValid: absoluteUrlSchema.safeParse(input).success,
+        errorMessage: '',
+      })}
       formatInput={(input) => ({ url: input, label: '' })}
       renderItem={({
         value: link,
@@ -59,7 +66,7 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
         <LinksFieldMenuItem
           key={index}
           dropdownId={`${hotkeyScope}-links-${index}`}
-          isPrimary={index === 0}
+          isPrimary={isPrimaryLink(index)}
           label={link.label}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}
