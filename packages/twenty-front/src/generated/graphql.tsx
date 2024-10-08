@@ -209,6 +209,20 @@ export enum DistantTableUpdate {
   TableDeleted = 'TABLE_DELETED'
 }
 
+export type EditSsoInput = {
+  id: Scalars['String'];
+  status: SsoIdentityProviderStatus;
+};
+
+export type EditSsoOutput = {
+  __typename?: 'EditSsoOutput';
+  id: Scalars['String'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
+  status: SsoIdentityProviderStatus;
+  type: IdpType;
+};
+
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
@@ -396,6 +410,7 @@ export type Mutation = {
   deleteUser: User;
   deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
+  editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
@@ -510,6 +525,11 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationEditSsoIdentityProviderArgs = {
+  input: EditSsoInput;
 };
 
 
@@ -1641,6 +1661,13 @@ export type DeleteSsoIdentityProviderMutationVariables = Exact<{
 
 
 export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', idpId: string } };
+
+export type EditSsoIdentityProviderMutationVariables = Exact<{
+  input: EditSsoInput;
+}>;
+
+
+export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdpType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
 export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3029,6 +3056,43 @@ export function useDeleteSsoIdentityProviderMutation(baseOptions?: Apollo.Mutati
 export type DeleteSsoIdentityProviderMutationHookResult = ReturnType<typeof useDeleteSsoIdentityProviderMutation>;
 export type DeleteSsoIdentityProviderMutationResult = Apollo.MutationResult<DeleteSsoIdentityProviderMutation>;
 export type DeleteSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>;
+export const EditSsoIdentityProviderDocument = gql`
+    mutation EditSSOIdentityProvider($input: EditSsoInput!) {
+  editSSOIdentityProvider(input: $input) {
+    id
+    type
+    issuer
+    name
+    status
+  }
+}
+    `;
+export type EditSsoIdentityProviderMutationFn = Apollo.MutationFunction<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
+
+/**
+ * __useEditSsoIdentityProviderMutation__
+ *
+ * To run a mutation, you first call `useEditSsoIdentityProviderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditSsoIdentityProviderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editSsoIdentityProviderMutation, { data, loading, error }] = useEditSsoIdentityProviderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditSsoIdentityProviderMutation(baseOptions?: Apollo.MutationHookOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>(EditSsoIdentityProviderDocument, options);
+      }
+export type EditSsoIdentityProviderMutationHookResult = ReturnType<typeof useEditSsoIdentityProviderMutation>;
+export type EditSsoIdentityProviderMutationResult = Apollo.MutationResult<EditSsoIdentityProviderMutation>;
+export type EditSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<EditSsoIdentityProviderMutation, EditSsoIdentityProviderMutationVariables>;
 export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     query ListSSOIdentityProvidersByWorkspaceId {
   listSSOIdentityProvidersByWorkspaceId {

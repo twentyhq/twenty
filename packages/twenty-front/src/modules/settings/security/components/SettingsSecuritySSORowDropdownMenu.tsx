@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconTrash } from 'twenty-ui';
+import { IconDotsVertical, IconTrash, IconArchive } from 'twenty-ui';
 
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -7,29 +7,50 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
+import { useEditSSOIdentityProvider } from '@/settings/security/hooks/useEditSSOIdentityProvider';
 import { isDefined } from '~/utils/isDefined';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { UnwrapRecoilValue } from 'recoil';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { SsoIdentityProviderStatus } from '~/generated/graphql';
 
 type SettingsSecuritySSORowDropdownMenuProps = {
-  SSOIdpId: string;
+  SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];
 };
 
 export const SettingsSecuritySSORowDropdownMenu = ({
-  SSOIdpId,
+  SSOIdp,
 }: SettingsSecuritySSORowDropdownMenuProps) => {
-  const dropdownId = `settings-account-row-${SSOIdpId}`;
+  const dropdownId = `settings-account-row-${SSOIdp.id}`;
 
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdown } = useDropdown(dropdownId);
 
   const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
+  const { editSSOIdentityProvider } = useEditSSOIdentityProvider();
 
   const handleDeleteSSOIdentityProvider = async (SSOIdpId: string) => {
     const result = await deleteSSOIdentityProvider({ idpId: SSOIdpId });
     if (isDefined(result.errors)) {
       enqueueSnackBar('Error deleting SSO Identity Provider', {
+        variant: SnackBarVariant.Error,
+        duration: 2000,
+      });
+    }
+  };
+
+  const toggleSSOIdentityProviderStatus = async (SSOIdpId: string) => {
+    const result = await editSSOIdentityProvider({
+      id: SSOIdpId,
+      status:
+        SSOIdp.status === 'Active'
+          ? SsoIdentityProviderStatus.Inactive
+          : SsoIdentityProviderStatus.Active,
+    });
+    if (isDefined(result.errors)) {
+      enqueueSnackBar('Error editing SSO Identity Provider', {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -48,11 +69,20 @@ export const SettingsSecuritySSORowDropdownMenu = ({
         <DropdownMenu>
           <DropdownMenuItemsContainer>
             <MenuItem
+              accent="default"
+              LeftIcon={IconArchive}
+              text={SSOIdp.status === 'Active' ? 'Deactivate' : 'Activate'}
+              onClick={() => {
+                toggleSSOIdentityProviderStatus(SSOIdp.id);
+                closeDropdown();
+              }}
+            />
+            <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
               text="Delete"
               onClick={() => {
-                handleDeleteSSOIdentityProvider(SSOIdpId);
+                handleDeleteSSOIdentityProvider(SSOIdp.id);
                 closeDropdown();
               }}
             />
