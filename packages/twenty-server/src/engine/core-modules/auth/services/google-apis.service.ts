@@ -7,7 +7,6 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   CalendarEventListFetchJob,
@@ -17,7 +16,6 @@ import {
   CalendarChannelVisibility,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import {
   ConnectedAccountProvider,
@@ -46,8 +44,6 @@ export class GoogleAPIsService {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
@@ -72,14 +68,17 @@ export class GoogleAPIsService {
       'CALENDAR_PROVIDER_GOOGLE_ENABLED',
     );
 
-    const connectedAccounts =
-      await this.connectedAccountRepository.getAllByHandleAndWorkspaceMemberId(
-        handle,
-        workspaceMemberId,
+    const connectedAccountRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
+        'connectedAccount',
       );
 
-    const existingAccountId = connectedAccounts?.[0]?.id;
+    const connectedAccount = await connectedAccountRepository.findOne({
+      where: { handle, accountOwnerId: workspaceMemberId },
+    });
+
+    const existingAccountId = connectedAccount?.id;
     const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
     const calendarChannelRepository =
@@ -99,7 +98,7 @@ export class GoogleAPIsService {
 
     await workspaceDataSource.transaction(async (manager: EntityManager) => {
       if (!existingAccountId) {
-        await this.connectedAccountRepository.create(
+        await connectedAccountRepository.save(
           {
             id: newOrExistingConnectedAccountId,
             handle,
@@ -109,7 +108,7 @@ export class GoogleAPIsService {
             accountOwnerId: workspaceMemberId,
             scopes: GOOGLE_APIS_OAUTH_SCOPES,
           },
-          workspaceId,
+          {},
           manager,
         );
 
@@ -142,11 +141,15 @@ export class GoogleAPIsService {
           );
         }
       } else {
-        await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
-          input.accessToken,
-          input.refreshToken,
-          newOrExistingConnectedAccountId,
-          workspaceId,
+        await connectedAccountRepository.update(
+          {
+            id: newOrExistingConnectedAccountId,
+          },
+          {
+            accessToken: input.accessToken,
+            refreshToken: input.refreshToken,
+            scopes: GOOGLE_APIS_OAUTH_SCOPES,
+          },
           manager,
         );
 

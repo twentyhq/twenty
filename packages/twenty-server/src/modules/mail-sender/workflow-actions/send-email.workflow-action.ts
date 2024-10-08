@@ -9,9 +9,7 @@ import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/typ
 import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -22,6 +20,7 @@ import {
   MailSenderExceptionCode,
 } from 'src/modules/mail-sender/exceptions/mail-sender.exception';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class SendEmailWorkflowAction {
@@ -31,8 +30,7 @@ export class SendEmailWorkflowAction {
     private readonly emailService: EmailService,
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   private async getEmailClient(step: WorkflowSendEmailStep) {
@@ -45,11 +43,16 @@ export class SendEmailWorkflowAction {
       );
     }
 
-    const connectedAccount =
-      await this.connectedAccountRepository.getByIdOrFail(
-        step.settings.connectedAccountId,
+    const connectedAccountRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
+        'connectedAccount',
       );
+    const connectedAccount = await connectedAccountRepository.findOneOrFail({
+      where: {
+        id: step.settings.connectedAccountId,
+      },
+    });
 
     switch (connectedAccount.provider) {
       case 'google':

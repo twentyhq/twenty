@@ -53,8 +53,8 @@ const StyledItemsContainer = styled.div<{ isSubMenu?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow-y: auto;
-  ${({ isSubMenu, theme }) => !isSubMenu && `gap: ${theme.spacing(3)}`}
+  gap: ${({ theme }) => theme.spacing(3)};
+  ${({ isSubMenu }) => (!isSubMenu ? 'overflow-y: auto' : '')};
 `;
 
 export const NavigationDrawer = ({

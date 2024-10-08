@@ -14,6 +14,7 @@ import { RelationType } from '@/settings/data-model/types/RelationType';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
@@ -44,13 +45,12 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledSelectsContainer = styled.div`
+const StyledSelectsContainer = styled.div<{ isMobile: boolean }>`
   display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: ${({ isMobile }) => (isMobile ? '1fr' : '1fr 1fr')};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
-
 const StyledInputsLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   display: block;
@@ -98,9 +98,11 @@ export const SettingsDataModelFieldRelationForm = ({
     watchFormValue('relation.objectMetadataId'),
   );
 
+  const isMobile = useIsMobile();
+
   return (
     <StyledContainer>
-      <StyledSelectsContainer>
+      <StyledSelectsContainer isMobile={isMobile}>
         <Controller
           name="relation.type"
           control={control}

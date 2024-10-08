@@ -5,6 +5,7 @@ import { IconSearch, IconSettings } from 'twenty-ui';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -43,6 +44,8 @@ export const MainNavigationDrawerItems = () => {
           />
         </NavigationDrawerSection>
       )}
+
+      {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 
       <CurrentWorkspaceMemberFavorites />
 

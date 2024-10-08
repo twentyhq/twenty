@@ -1,5 +1,5 @@
-import path, { join } from 'path';
 import fs from 'fs/promises';
+import path, { join } from 'path';
 
 import { ASSET_PATH } from 'src/constants/assets-path';
 

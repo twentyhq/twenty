@@ -12,6 +12,7 @@ export enum FieldActorSource {
   API = 'API',
   IMPORT = 'IMPORT',
   MANUAL = 'MANUAL',
+  SYSTEM = 'SYSTEM',
 }
 
 export const actorCompositeType: CompositeType = {

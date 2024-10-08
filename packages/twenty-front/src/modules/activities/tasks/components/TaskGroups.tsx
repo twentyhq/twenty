@@ -27,6 +27,7 @@ import { TaskList } from './TaskList';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 type TaskGroupsProps = {
