@@ -115,47 +115,53 @@ export class CalendarSaveEventsService {
 
     await workspaceDataSource?.transaction(async (transactionManager) => {
       await calendarEventRepository.save(
-        eventsToSave.map((calendarEvent) => ({
-          id: calendarEvent.id,
-          iCalUID: calendarEvent.iCalUID,
-          title: calendarEvent.title,
-          description: calendarEvent.description,
-          startsAt: calendarEvent.startsAt,
-          endsAt: calendarEvent.endsAt,
-          location: calendarEvent.location,
-          isFullDay: calendarEvent.isFullDay,
-          isCanceled: calendarEvent.isCanceled,
-          conferenceSolution: calendarEvent.conferenceSolution,
-          conferenceLink: {
-            primaryLinkLabel: calendarEvent.conferenceLinkLabel,
-            primaryLinkUrl: calendarEvent.conferenceLinkUrl,
-          },
-          externalCreatedAt: calendarEvent.externalCreatedAt,
-          externalUpdatedAt: calendarEvent.externalUpdatedAt,
-        })),
+        eventsToSave.map(
+          (calendarEvent) =>
+            ({
+              id: calendarEvent.id,
+              iCalUID: calendarEvent.iCalUID,
+              title: calendarEvent.title,
+              description: calendarEvent.description,
+              startsAt: calendarEvent.startsAt,
+              endsAt: calendarEvent.endsAt,
+              location: calendarEvent.location,
+              isFullDay: calendarEvent.isFullDay,
+              isCanceled: calendarEvent.isCanceled,
+              conferenceSolution: calendarEvent.conferenceSolution,
+              conferenceLink: {
+                primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+              },
+              externalCreatedAt: calendarEvent.externalCreatedAt,
+              externalUpdatedAt: calendarEvent.externalUpdatedAt,
+            }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+        ),
         {},
         transactionManager,
       );
 
       await calendarEventRepository.save(
-        eventsToUpdate.map((calendarEvent) => ({
-          id: calendarEvent.id,
-          iCalUID: calendarEvent.iCalUID,
-          title: calendarEvent.title,
-          description: calendarEvent.description,
-          startsAt: calendarEvent.startsAt,
-          endsAt: calendarEvent.endsAt,
-          location: calendarEvent.location,
-          isFullDay: calendarEvent.isFullDay,
-          isCanceled: calendarEvent.isCanceled,
-          conferenceSolution: calendarEvent.conferenceSolution,
-          conferenceLink: {
-            primaryLinkLabel: calendarEvent.conferenceLinkLabel,
-            primaryLinkUrl: calendarEvent.conferenceLinkUrl,
-          },
-          externalCreatedAt: calendarEvent.externalCreatedAt,
-          externalUpdatedAt: calendarEvent.externalUpdatedAt,
-        })),
+        eventsToUpdate.map(
+          (calendarEvent) =>
+            ({
+              id: calendarEvent.id,
+              iCalUID: calendarEvent.iCalUID,
+              title: calendarEvent.title,
+              description: calendarEvent.description,
+              startsAt: calendarEvent.startsAt,
+              endsAt: calendarEvent.endsAt,
+              location: calendarEvent.location,
+              isFullDay: calendarEvent.isFullDay,
+              isCanceled: calendarEvent.isCanceled,
+              conferenceSolution: calendarEvent.conferenceSolution,
+              conferenceLink: {
+                primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+              },
+              externalCreatedAt: calendarEvent.externalCreatedAt,
+              externalUpdatedAt: calendarEvent.externalUpdatedAt,
+            }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+        ),
         {},
         transactionManager,
       );
