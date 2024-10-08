@@ -5,7 +5,11 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-export const RecordShowPageEffect = ({ recordId }: { recordId: string }) => {
+export const RecordShowPageContextStoreEffect = ({
+  recordId,
+}: {
+  recordId: string;
+}) => {
   const setContextStoreTargetedRecordIds = useSetRecoilState(
     contextStoreTargetedRecordIdsState,
   );
