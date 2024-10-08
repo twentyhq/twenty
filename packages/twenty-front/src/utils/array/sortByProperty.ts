@@ -11,6 +11,8 @@ export const sortByProperty =
     } else if (typeof a[propertyName] === 'number') {
       return (a[propertyName] as number) - (b[propertyName] as number);
     } else {
-      return 0;
+      throw new Error(
+        'Property type not supported in sortByProperty, only string and number are supported',
+      );
     }
   };
