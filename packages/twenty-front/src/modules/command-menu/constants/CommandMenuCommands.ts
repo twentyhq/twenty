@@ -8,8 +8,8 @@ import {
 
 import { Command, CommandType } from '../types/Command';
 
-export const COMMAND_MENU_COMMANDS: Command[] = [
-  {
+export const COMMAND_MENU_COMMANDS: { [key: string]: Command } = {
+  people: {
     id: 'go-to-people',
     to: '/objects/people',
     label: 'Go to People',
@@ -18,7 +18,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     secondHotKey: 'P',
     Icon: IconUser,
   },
-  {
+  companies: {
     id: 'go-to-companies',
     to: '/objects/companies',
     label: 'Go to Companies',
@@ -27,7 +27,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     secondHotKey: 'C',
     Icon: IconBuildingSkyscraper,
   },
-  {
+  opportunities: {
     id: 'go-to-activities',
     to: '/objects/opportunities',
     label: 'Go to Opportunities',
@@ -36,7 +36,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     secondHotKey: 'O',
     Icon: IconTargetArrow,
   },
-  {
+  settings: {
     id: 'go-to-settings',
     to: '/settings/profile',
     label: 'Go to Settings',
@@ -45,7 +45,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     secondHotKey: 'S',
     Icon: IconSettings,
   },
-  {
+  tasks: {
     id: 'go-to-tasks',
     to: '/objects/tasks',
     label: 'Go to Tasks',
@@ -54,4 +54,4 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
     secondHotKey: 'T',
     Icon: IconCheckbox,
   },
-];
+};
