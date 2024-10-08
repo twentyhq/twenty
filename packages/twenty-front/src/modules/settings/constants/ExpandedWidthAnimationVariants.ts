@@ -6,7 +6,7 @@ export const EXPANDED_WIDTH_ANIMATION_VARIANTS = {
     width: 0,
     overflow: 'hidden',
     transition: {
-      opactity: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.opacity },
+      opacity: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.opacity },
       width: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.size },
     },
   },
@@ -15,7 +15,7 @@ export const EXPANDED_WIDTH_ANIMATION_VARIANTS = {
     width: '100%',
     overflow: 'hidden',
     transition: {
-      opactity: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.opacity },
+      opacity: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.opacity },
       width: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.size },
     },
   },
@@ -24,7 +24,7 @@ export const EXPANDED_WIDTH_ANIMATION_VARIANTS = {
     width: 0,
     overflow: 'hidden',
     transition: {
-      opactity: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.opacity },
+      opacity: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.opacity },
       width: { duration: ADVANCED_SETTINGS_ANIMATION_DURATION.size },
     },
   },
