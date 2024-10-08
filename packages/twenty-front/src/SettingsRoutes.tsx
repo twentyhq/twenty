@@ -203,7 +203,7 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
   })),
 );
 
-const SettingsObjectNewFieldType = lazy(() =>
+const SettingsObjectNewFieldSelect = lazy(() =>
   import(
     '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect'
   ).then((module) => ({
@@ -346,7 +346,7 @@ export const SettingsRoutes = ({
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}
-        element={<SettingsObjectNewFieldType />}
+        element={<SettingsObjectNewFieldSelect />}
       />
       <Route
         path={SettingsPath.ObjectNewFieldConfigure}
