@@ -2,8 +2,10 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
-import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
-import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
+import {
+  settingsDataModelFieldTypeFormSchema,
+  SettingsObjectNewFieldSelector,
+} from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -12,21 +14,7 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
-import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-export const settingsDataModelFieldTypeFormSchema = z.object({
-  type: z.enum(
-    Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
-      SettingsSupportedFieldType,
-      ...SettingsSupportedFieldType[],
-    ],
-  ),
-});
-
-export type SettingsDataModelFieldTypeFormValues = z.infer<
-  typeof settingsDataModelFieldTypeFormSchema
->;
 
 export const SettingsObjectNewFieldSelect = () => {
   const navigate = useNavigate();

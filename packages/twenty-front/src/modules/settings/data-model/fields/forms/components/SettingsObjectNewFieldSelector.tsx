@@ -18,8 +18,20 @@ import { Section } from '@react-email/components';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconSearch } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
+export const settingsDataModelFieldTypeFormSchema = z.object({
+  type: z.enum(
+    Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
+      SettingsSupportedFieldType,
+      ...SettingsSupportedFieldType[],
+    ],
+  ),
+});
+
+export type SettingsDataModelFieldTypeFormValues = z.infer<
+  typeof settingsDataModelFieldTypeFormSchema
+>;
 
 type SettingsObjectNewFieldSelectorProps = {
   excludedFieldTypes?: SettingsSupportedFieldType[];
