@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { z } from 'zod';
 import Handlebars from 'handlebars';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
 
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
 import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
@@ -86,13 +88,18 @@ export class SendEmailWorkflowAction {
       const body = Handlebars.compile(step.settings.body)(payload);
       const subject = Handlebars.compile(step.settings.subject)(payload);
 
+      const window = new JSDOM('').window;
+      const purify = DOMPurify(window);
+      const safeBody = purify.sanitize(body || '');
+      const safeSubject = purify.sanitize(subject || '');
+
       const message = [
         `To: ${payload.email}`,
-        `Subject: ${subject || ''}`,
+        `Subject: ${safeSubject || ''}`,
         'MIME-Version: 1.0',
         'Content-Type: text/plain; charset="UTF-8"',
         '',
-        body,
+        safeBody,
       ].join('\n');
 
       const encodedMessage = Buffer.from(message).toString('base64');

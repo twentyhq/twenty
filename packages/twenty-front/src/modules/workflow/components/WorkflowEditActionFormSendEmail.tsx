@@ -188,7 +188,7 @@ export const WorkflowEditActionFormSendEmail = ({
             render={({ field }) => (
               <TextInput
                 label="Subject"
-                placeholder="Use payload variables with {{variable}}"
+                placeholder="Enter email subject (use {{variable}} for dynamic content)"
                 value={field.value}
                 onChange={(email) => {
                   field.onChange(email);
@@ -204,7 +204,7 @@ export const WorkflowEditActionFormSendEmail = ({
             render={({ field }) => (
               <TextArea
                 label="Body"
-                placeholder="Use payload variables with {{variable}}"
+                placeholder="Enter email body (use {{variable}} for dynamic content)"
                 value={field.value}
                 minRows={4}
                 onChange={(email) => {
