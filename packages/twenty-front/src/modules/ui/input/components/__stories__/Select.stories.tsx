@@ -61,7 +61,7 @@ export const WithSearch: Story = {
 export const CallToActionButton: Story = {
   args: {
     callToActionButton: {
-      onClick: () => console.log('click'),
+      onClick: () => {},
       Icon: IconPlus,
       text: 'Add action',
     },
