@@ -181,13 +181,13 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleAddOption = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions);
+    setFormValue('options', newOptions, { shouldDirty: true });
   };
 
   const handleInputEnter = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions);
+    setFormValue('options', newOptions, { shouldDirty: true });
   };
 
   return (
