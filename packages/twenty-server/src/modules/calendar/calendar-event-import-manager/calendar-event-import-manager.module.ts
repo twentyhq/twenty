@@ -25,13 +25,11 @@ import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-commo
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { RefreshAccessTokenManagerModule } from 'src/modules/connected-account/refresh-access-token-manager/refresh-access-token-manager.module';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Module({
   imports: [
     ObjectMetadataRepositoryModule.forFeature([
-      ConnectedAccountWorkspaceEntity,
       BlocklistWorkspaceEntity,
       WorkspaceMemberWorkspaceEntity,
     ]),
