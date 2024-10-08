@@ -24,19 +24,26 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+type WorkflowEditActionFormSendEmailProps =
+  | {
+      action: WorkflowSendEmailStep;
+      readonly: true;
+    }
+  | {
+      action: WorkflowSendEmailStep;
+      readonly?: false;
+      onActionUpdate: (action: WorkflowSendEmailStep) => void;
+    };
+
 type SendEmailFormData = {
   connectedAccountId: string;
   subject: string;
   body: string;
 };
 
-export const WorkflowEditActionFormSendEmail = ({
-  action,
-  onActionUpdate,
-}: {
-  action: WorkflowSendEmailStep;
-  onActionUpdate: (action: WorkflowSendEmailStep) => void;
-}) => {
+export const WorkflowEditActionFormSendEmail = (
+  props: WorkflowEditActionFormSendEmailProps,
+) => {
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
@@ -49,6 +56,7 @@ export const WorkflowEditActionFormSendEmail = ({
       subject: '',
       body: '',
     },
+    disabled: props.readonly,
   });
 
   const checkConnectedAccountScopes = async (
@@ -75,23 +83,21 @@ export const WorkflowEditActionFormSendEmail = ({
   useEffect(() => {
     form.setValue(
       'connectedAccountId',
-      action.settings.connectedAccountId ?? '',
+      props.action.settings.connectedAccountId ?? '',
     );
-    form.setValue('subject', action.settings.subject ?? '');
-    form.setValue('body', action.settings.body ?? '');
-  }, [
-    action.settings.connectedAccountId,
-    action.settings.subject,
-    action.settings.body,
-    form,
-  ]);
+    form.setValue('subject', props.action.settings.subject ?? '');
+    form.setValue('body', props.action.settings.body ?? '');
+  }, [props.action.settings, form]);
 
   const saveAction = useDebouncedCallback(
     async (formData: SendEmailFormData, checkScopes = false) => {
-      onActionUpdate({
-        ...action,
+      if (props.readonly === true) {
+        return;
+      }
+      props.onActionUpdate({
+        ...props.action,
         settings: {
-          ...action.settings,
+          ...props.action.settings,
           connectedAccountId: formData.connectedAccountId,
           subject: formData.subject,
           body: formData.body,
@@ -126,12 +132,12 @@ export const WorkflowEditActionFormSendEmail = ({
   };
 
   if (
-    isDefined(action.settings.connectedAccountId) &&
-    action.settings.connectedAccountId !== ''
+    isDefined(props.action.settings.connectedAccountId) &&
+    props.action.settings.connectedAccountId !== ''
   ) {
     filter.or.push({
       id: {
-        eq: action.settings.connectedAccountId,
+        eq: props.action.settings.connectedAccountId,
       },
     });
   }

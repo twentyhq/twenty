@@ -10,6 +10,7 @@ import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
+import { RecordShowPageWorkflowVersionHeader } from '@/workflow/components/RecordShowPageWorkflowVersionHeader';
 import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 
@@ -47,8 +48,11 @@ export const RecordShowPage = () => {
         >
           <>
             {objectNameSingular === CoreObjectNameSingular.Workflow ? (
-              <RecordShowPageWorkflowHeader
-                workflowId={parameters.objectRecordId}
+              <RecordShowPageWorkflowHeader workflowId={objectRecordId} />
+            ) : objectNameSingular ===
+              CoreObjectNameSingular.WorkflowVersion ? (
+              <RecordShowPageWorkflowVersionHeader
+                workflowVersionId={objectRecordId}
               />
             ) : (
               <RecordShowPageBaseHeader
