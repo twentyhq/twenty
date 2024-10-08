@@ -2,13 +2,9 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
-import {
-  settingsDataModelFieldTypeFormSchema,
-  SettingsDataModelFieldTypeSelect,
-} from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
-
+import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-
 import { AppPath } from '@/types/AppPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,7 +12,21 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+
+export const settingsDataModelFieldTypeFormSchema = z.object({
+  type: z.enum(
+    Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
+      SettingsFieldType,
+      ...SettingsFieldType[],
+    ],
+  ),
+});
+
+export type SettingsDataModelFieldTypeFormValues = z.infer<
+  typeof settingsDataModelFieldTypeFormSchema
+>;
 
 export const SettingsObjectNewFieldSelect = () => {
   const navigate = useNavigate();
@@ -68,7 +78,7 @@ export const SettingsObjectNewFieldSelect = () => {
           ]}
         >
           <SettingsPageContainer>
-            <SettingsDataModelFieldTypeSelect
+            <SettingsObjectNewFieldSelector
               objectSlug={objectSlug}
               excludedFieldTypes={excludedFieldTypes}
             />

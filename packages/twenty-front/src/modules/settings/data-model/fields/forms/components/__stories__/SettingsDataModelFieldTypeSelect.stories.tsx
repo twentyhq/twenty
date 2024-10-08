@@ -1,11 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
-
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-
 import { SettingsObjectNewFieldSelector } from '../SettingsObjectNewFieldSelector';
 
 const meta: Meta<typeof SettingsObjectNewFieldSelector> = {

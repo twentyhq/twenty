@@ -17,22 +17,10 @@ import { Section } from '@react-email/components';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconSearch } from 'twenty-ui';
-import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-export const settingsDataModelFieldTypeFormSchema = z.object({
-  type: z.enum(
-    Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
-      SettingsFieldType,
-      ...SettingsFieldType[],
-    ],
-  ),
-});
+import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
 
-export type SettingsDataModelFieldTypeFormValues = z.infer<
-  typeof settingsDataModelFieldTypeFormSchema
->;
-
-type SettingsDataModelFieldTypeSelectProps = {
+type SettingsObjectNewFieldSelectorProps = {
   className?: string;
   excludedFieldTypes?: SettingsFieldType[];
   fieldMetadataItem?: Pick<
@@ -69,11 +57,11 @@ const StyledSearchInput = styled(TextInput)`
   width: 100%;
 `;
 
-export const SettingsDataModelFieldTypeSelect = ({
+export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   fieldMetadataItem,
   objectSlug,
-}: SettingsDataModelFieldTypeSelectProps) => {
+}: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
