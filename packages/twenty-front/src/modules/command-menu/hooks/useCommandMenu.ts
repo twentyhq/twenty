@@ -75,8 +75,8 @@ export const useCommandMenu = () => {
 
   const setObjectsInCommandMenu = (menuItems: ObjectMetadataItem[]) => {
     const formattedItems = [
-      ...menuItems
-        .map(
+      ...[
+        ...menuItems.map(
           (item) =>
             ({
               id: item.id,
@@ -89,8 +89,8 @@ export const useCommandMenu = () => {
                 (item?.icon as keyof typeof ALL_ICONS) ?? 'IconArrowUpRight'
               ],
             }) as Command,
-        )
-        .toSorted(sortByProperty('label', 'asc')),
+        ),
+      ].sort(sortByProperty('label', 'asc')),
       COMMAND_MENU_COMMANDS.settings,
     ];
     setCommands(formattedItems);
