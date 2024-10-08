@@ -56,6 +56,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
       redirectLocation: request.query.redirectLocation,
       calendarVisibility: request.query.calendarVisibility,
       messageVisibility: request.query.messageVisibility,
+      loginHint: request.query.loginHint,
     });
 
     const activate = (await super.canActivate(context)) as boolean;

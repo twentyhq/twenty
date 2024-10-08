@@ -42,7 +42,6 @@ export const WorkflowEditActionFormSendEmail = ({
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
   const workflowId = useRecoilValue(workflowIdState);
   const redirectUrl = `/object/workflow/${workflowId}`;
-  const connectAccountFromWorkflow = () => triggerGoogleApisOAuth(redirectUrl);
 
   const form = useForm<SendEmailFormData>({
     defaultValues: {
@@ -66,7 +65,10 @@ export const WorkflowEditActionFormSendEmail = ({
       !isDefined(scopes) ||
       !isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))
     ) {
-      await connectAccountFromWorkflow();
+      await triggerGoogleApisOAuth({
+        redirectLocation: redirectUrl,
+        loginHint: connectedAccount.handle,
+      });
     }
   };
 
@@ -176,7 +178,8 @@ export const WorkflowEditActionFormSendEmail = ({
                 value={field.value}
                 options={connectedAccountOptions}
                 callToActionButton={{
-                  onClick: connectAccountFromWorkflow,
+                  onClick: () =>
+                    triggerGoogleApisOAuth({ redirectLocation: redirectUrl }),
                   Icon: IconPlus,
                   text: 'Add account',
                 }}

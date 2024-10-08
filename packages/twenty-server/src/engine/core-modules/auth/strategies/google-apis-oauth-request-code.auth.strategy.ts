@@ -23,6 +23,7 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
       ...options,
       accessType: 'offline',
       prompt: 'consent',
+      loginHint: req.params.loginHint,
       state: JSON.stringify({
         transientToken: req.params.transientToken,
         redirectLocation: req.params.redirectLocation,
