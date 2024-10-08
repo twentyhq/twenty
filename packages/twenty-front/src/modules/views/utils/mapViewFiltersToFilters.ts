@@ -2,7 +2,6 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { isDefined } from '~/utils/isDefined';
 
-import { getFilterDefinitionForViewFilter } from '@/views/utils/getFilterDefinitionForViewFilter';
 import { ViewFilter } from '../types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
@@ -24,10 +23,7 @@ export const mapViewFiltersToFilters = (
         value: viewFilter.value,
         displayValue: viewFilter.displayValue,
         operand: viewFilter.operand,
-        definition: getFilterDefinitionForViewFilter(
-          viewFilter,
-          availableFilterDefinition,
-        ),
+        definition: viewFilter.definition ?? availableFilterDefinition,
       };
     })
     .filter(isDefined);

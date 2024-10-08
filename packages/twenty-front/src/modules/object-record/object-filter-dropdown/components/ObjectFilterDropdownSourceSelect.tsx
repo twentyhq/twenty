@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { getSourceEnumOptions } from '@/object-record/object-filter-dropdown/utils/getSourceEnumOptions';
+import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -55,7 +55,7 @@ export const ObjectFilterDropdownSourceSelect = ({
 
   const selectedFilter = useRecoilValue(selectedFilterState);
 
-  const sourceTypes = getSourceEnumOptions(
+  const sourceTypes = getActorSourceMultiSelectOptions(
     objectFilterDropdownSelectedRecordIds,
   );
 

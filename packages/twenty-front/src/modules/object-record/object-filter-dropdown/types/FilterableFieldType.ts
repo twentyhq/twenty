@@ -1,4 +1,8 @@
-export type FilterType =
+import { FieldType } from '@/settings/data-model/types/FieldType';
+import { PickLiteral } from '~/types/PickLiteral';
+
+export type FilterableFieldType = PickLiteral<
+  FieldType,
   | 'TEXT'
   | 'PHONE'
   | 'PHONES'
@@ -18,4 +22,4 @@ export type FilterType =
   | 'MULTI_SELECT'
   | 'ACTOR'
   | 'ARRAY'
-  | 'SOURCE';
+>;
