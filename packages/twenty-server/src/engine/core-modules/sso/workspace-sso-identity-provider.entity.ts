@@ -32,6 +32,16 @@ registerEnumType(IdpType, {
   name: 'IdpType',
 });
 
+export enum SSOIdentityProviderStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  ERROR = 'error',
+}
+
+registerEnumType(SSOIdentityProviderStatus, {
+  name: 'SSOIdentityProviderStatus',
+});
+
 @Entity({ name: 'workspaceSSOIdentityProvider', schema: 'core' })
 @ObjectType('WorkspaceSSOIdentityProvider')
 export class WorkspaceSSOIdentityProvider {
@@ -42,6 +52,13 @@ export class WorkspaceSSOIdentityProvider {
 
   @Column({ nullable: true })
   name?: string;
+
+  @Column({
+    type: 'enum',
+    enum: SSOIdentityProviderStatus,
+    default: SSOIdentityProviderStatus.ACTIVE,
+  })
+  status: SSOIdentityProviderStatus;
 
   @ManyToOne(
     () => Workspace,
