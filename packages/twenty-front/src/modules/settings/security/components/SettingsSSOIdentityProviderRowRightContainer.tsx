@@ -29,7 +29,7 @@ export const SettingsSSOIdentityProviderRowRightContainer = ({
         text={SSOIdp.status}
         weight="medium"
       />
-      <SettingsSecuritySSORowDropdownMenu SSOIdpId={SSOIdp.id} />
+      <SettingsSecuritySSORowDropdownMenu SSOIdp={SSOIdp} />
     </StyledRowRightContainer>
   );
 };

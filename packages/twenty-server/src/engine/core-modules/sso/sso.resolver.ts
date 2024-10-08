@@ -17,6 +17,8 @@ import { FindAvailableSSOIDPInput } from 'src/engine/core-modules/sso/dtos/find-
 import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
+import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
+import { EditSsoOutput } from 'src/engine/core-modules/sso/dtos/edit-sso.output';
 
 @Resolver()
 export class SSOResolver {
@@ -74,5 +76,14 @@ export class SSOResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.sSOService.deleteSSOIdentityProvider(idpId, workspaceId);
+  }
+
+  @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
+  @Mutation(() => EditSsoOutput)
+  async editSSOIdentityProvider(
+    @Args('input') input: EditSsoInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.sSOService.editSSOIdentityProvider(input, workspaceId);
   }
 }
