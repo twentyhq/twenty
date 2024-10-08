@@ -85,7 +85,7 @@ export const WorkflowEditActionFormSendEmail = ({
   ]);
 
   const saveAction = useDebouncedCallback(
-    async (formData: SendEmailFormData) => {
+    async (formData: SendEmailFormData, checkScopes = false) => {
       onActionUpdate({
         ...action,
         settings: {
@@ -95,6 +95,9 @@ export const WorkflowEditActionFormSendEmail = ({
           body: formData.body,
         },
       });
+      if (checkScopes === true) {
+        await checkConnectedAccountScopes(formData.connectedAccountId);
+      }
     },
     1_000,
   );
@@ -105,7 +108,10 @@ export const WorkflowEditActionFormSendEmail = ({
     };
   }, [saveAction]);
 
-  const handleSave = form.handleSubmit(saveAction);
+  const handleSave = (checkScopes = false) =>
+    form.handleSubmit((formData: SendEmailFormData) =>
+      saveAction(formData, checkScopes),
+    )();
 
   const filter: { or: object[] } = {
     or: [
@@ -176,8 +182,7 @@ export const WorkflowEditActionFormSendEmail = ({
                 }}
                 onChange={(connectedAccountId) => {
                   field.onChange(connectedAccountId);
-                  handleSave();
-                  checkConnectedAccountScopes(connectedAccountId);
+                  handleSave(true);
                 }}
               />
             )}
