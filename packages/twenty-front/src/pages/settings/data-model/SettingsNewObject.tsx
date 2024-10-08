@@ -19,10 +19,18 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-
+import styled from '@emotion/styled';
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 
 type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
+
+const StyledFormSection = styled(Section)`
+  padding-left: 0 !important;
+`;
+
+const StyledFormTitle = styled(H2Title)`
+  margin-left: ${({ theme }) => theme.spacing(8)};
+`;
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
@@ -91,14 +99,14 @@ export const SettingsNewObject = () => {
           />
         }
       >
-        <SettingsPageContainer>
-          <Section>
-            <H2Title
+        <SettingsPageContainer individualPaddingLeftForItems>
+          <StyledFormSection>
+            <StyledFormTitle
               title="About"
               description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
             />
             <SettingsDataModelObjectAboutForm />
-          </Section>
+          </StyledFormSection>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>

@@ -21,8 +21,8 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  computeColumnName,
   FieldTypeAndNameMetadata,
+  computeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -34,7 +34,10 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
-import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import {
+  transliterateAndFormatOrThrow,
+  validateObjectMetadataInputOrThrow,
+} from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -45,6 +48,7 @@ import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
+import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -441,7 +445,29 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ): Promise<ObjectMetadataEntity> {
     validateObjectMetadataInputOrThrow(input.update);
 
-    const updatedObject = await super.updateOne(input.id, input.update);
+    const oldObject = await this.objectMetadataRepository.findOne({
+      where: { id: input.id },
+    });
+
+    if (!oldObject) {
+      throw new ObjectMetadataException(
+        'Object does not exist',
+        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+    const {
+      /* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars */
+      labelSingular,
+      nameSingular,
+      labelPlural,
+      namePlural,
+      ...restInputUpdate
+      /* eslint-enable @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars */
+    } = input.update;
+
+    const updatedObject = await super.updateOne(input.id, restInputUpdate);
+
+    await this.updateObjectNamesandLabels(oldObject, updatedObject, input);
 
     if (input.update.isActive !== undefined) {
       await this.updateObjectRelationships(input.id, input.update.isActive);
@@ -451,7 +477,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
     );
 
-    return updatedObject;
+    return (await this.objectMetadataRepository.findOne({
+      where: { id: input.id },
+    })) as ObjectMetadataEntity;
   }
 
   public async findOneWithinWorkspace(
@@ -1433,6 +1461,222 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         viewId,
         position: favoriteCount,
       }),
+    );
+  }
+
+  private async syncObjectMetadataAfterUpdate(
+    oldObject: ObjectMetadataEntity,
+    updatedObject: ObjectMetadataEntity,
+  ) {
+    const oldTableName = computeObjectTargetTable(oldObject);
+    const newTableName = computeObjectTargetTable(updatedObject);
+
+    if (oldTableName !== newTableName) {
+      const searchCriteria = {
+        isCustom: false,
+        settings: {
+          isForeignKey: true,
+        },
+        name: `${oldObject.nameSingular}Id`,
+      };
+
+      const fieldWithNonCustomRelation =
+        await this.fieldMetadataRepository.find({
+          where: searchCriteria,
+        });
+
+      await this.fieldMetadataRepository.update(searchCriteria, {
+        name: `${updatedObject.nameSingular}Id`,
+      });
+
+      await Promise.all(
+        fieldWithNonCustomRelation.map(async (fieldWithNonCustomRelation) => {
+          const relatedObject = await this.objectMetadataRepository.findOneBy({
+            id: fieldWithNonCustomRelation.objectMetadataId,
+            workspaceId: updatedObject.workspaceId,
+          });
+
+          if (relatedObject) {
+            await this.fieldMetadataRepository.update(
+              {
+                name: oldObject.nameSingular,
+                label: oldObject.labelSingular,
+              },
+              {
+                name: updatedObject.nameSingular,
+                label: updatedObject.labelSingular,
+              },
+            );
+
+            const relationTableName = computeObjectTargetTable(relatedObject);
+            const columnName = `${oldObject.nameSingular}Id`;
+            const columnType = fieldMetadataTypeToColumnType(
+              fieldWithNonCustomRelation.type,
+            );
+
+            await this.workspaceMigrationService.createCustomMigration(
+              generateMigrationName(
+                `rename-${oldObject.nameSingular}-to-${updatedObject.nameSingular}-in-${relatedObject.nameSingular}`,
+              ),
+              updatedObject.workspaceId,
+              [
+                {
+                  name: relationTableName,
+                  action: WorkspaceMigrationTableActionType.ALTER,
+                  columns: [
+                    {
+                      action: WorkspaceMigrationColumnActionType.ALTER,
+                      currentColumnDefinition: {
+                        columnName,
+                        columnType,
+                        isNullable: true,
+                        defaultValue: null,
+                      },
+                      alteredColumnDefinition: {
+                        columnName: `${updatedObject.nameSingular}Id`,
+                        columnType,
+                        isNullable: true,
+                        defaultValue: null,
+                      },
+                    },
+                  ],
+                },
+              ],
+            );
+          }
+        }),
+      );
+
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`rename-${oldObject.nameSingular}`),
+        updatedObject.workspaceId,
+        [
+          {
+            name: oldTableName,
+            action: WorkspaceMigrationTableActionType.ALTER,
+            newName: newTableName,
+          },
+        ],
+      );
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        updatedObject.workspaceId,
+      );
+
+      await this.updateObjectView(updatedObject, oldObject.workspaceId);
+    }
+  }
+
+  private async updateObjectNamesandLabels(
+    oldObject: ObjectMetadataEntity,
+    updatedObject: ObjectMetadataEntity,
+    input: UpdateOneObjectInput,
+  ) {
+    const { labelSingular, nameSingular, labelPlural, namePlural } =
+      updatedObject;
+
+    const objectAlreadyExists = await this.objectMetadataRepository.findOne({
+      where: [
+        {
+          nameSingular: input.update.nameSingular,
+          workspaceId: oldObject.workspaceId,
+        },
+        {
+          nameSingular: input.update.namePlural,
+          workspaceId: oldObject.workspaceId,
+        },
+        {
+          namePlural: input.update.nameSingular,
+          workspaceId: oldObject.workspaceId,
+        },
+        {
+          namePlural: input.update.namePlural,
+          workspaceId: oldObject.workspaceId,
+        },
+      ],
+    });
+
+    if (objectAlreadyExists) {
+      throw new ObjectMetadataException(
+        'Object already exists',
+        ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+      );
+    }
+
+    if (updatedObject.areLabelAndNameSync) {
+      const newLabelSingular = input.update.labelSingular || labelSingular;
+      const newLabelPlural = input.update.labelPlural || labelPlural;
+
+      const formatedSingularNameFromLabel =
+        transliterateAndFormatOrThrow(newLabelSingular);
+      const formatedPluralNameFromLabel =
+        transliterateAndFormatOrThrow(newLabelPlural);
+
+      const updatedObjectWithSyncedName = await super.updateOne(input.id, {
+        labelSingular: newLabelSingular,
+        nameSingular: formatedSingularNameFromLabel,
+        labelPlural: newLabelPlural,
+        namePlural: formatedPluralNameFromLabel,
+      });
+
+      this.syncObjectMetadataAfterUpdate(
+        oldObject,
+        updatedObjectWithSyncedName,
+      );
+    } else {
+      if (input.update.nameSingular || input.update.namePlural) {
+        const newNameSingular = input.update.nameSingular || nameSingular;
+        const newNamePlural = input.update.namePlural || namePlural;
+
+        const formatedSingularName =
+          transliterateAndFormatOrThrow(newNameSingular);
+
+        const formatedPluralName = transliterateAndFormatOrThrow(newNamePlural);
+
+        const updatedObjectWithFormatedName = await super.updateOne(input.id, {
+          nameSingular: formatedSingularName,
+          namePlural: formatedPluralName,
+          labelSingular,
+          labelPlural,
+        });
+
+        await this.syncObjectMetadataAfterUpdate(
+          oldObject,
+          updatedObjectWithFormatedName,
+        );
+      } else {
+        const newLabelSingular = input.update.labelSingular || labelSingular;
+        const newLabelPlural = input.update.labelPlural || labelPlural;
+
+        const updatedObject = await super.updateOne(input.id, {
+          labelSingular: newLabelSingular,
+          labelPlural: newLabelPlural,
+        });
+
+        await this.updateObjectView(updatedObject, oldObject.workspaceId);
+      }
+    }
+  }
+
+  private async updateObjectView(
+    updatedObject: ObjectMetadataEntity,
+    workspaceId: string,
+  ) {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    await workspaceDataSource?.query(
+      `UPDATE ${dataSourceMetadata.schema}."view"
+    SET "name"=$1, "icon"=$2 WHERE "objectMetadataId"=$3`,
+      [
+        `All ${updatedObject.labelPlural}`,
+        updatedObject.icon,
+        updatedObject.id,
+      ],
     );
   }
 }

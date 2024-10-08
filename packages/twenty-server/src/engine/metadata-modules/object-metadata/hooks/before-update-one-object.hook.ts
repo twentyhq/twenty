@@ -13,8 +13,8 @@ import { Equal, In, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 @Injectable()
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
@@ -111,7 +111,8 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   ) {
     if (
       update.nameSingular &&
-      update.nameSingular !== objectMetadata.nameSingular
+      update.nameSingular !== objectMetadata.nameSingular &&
+      !objectMetadata.isCustom
     ) {
       throw new BadRequestException(
         "Object's nameSingular can't be updated. Please create a new object instead",
@@ -120,14 +121,19 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
 
     if (
       update.labelSingular &&
-      update.labelSingular !== objectMetadata.labelSingular
+      update.labelSingular !== objectMetadata.labelSingular &&
+      !objectMetadata.isCustom
     ) {
       throw new BadRequestException(
         "Object's labelSingular can't be updated. Please create a new object instead",
       );
     }
 
-    if (update.namePlural && update.namePlural !== objectMetadata.namePlural) {
+    if (
+      update.namePlural &&
+      update.namePlural !== objectMetadata.namePlural &&
+      !objectMetadata.isCustom
+    ) {
       throw new BadRequestException(
         "Object's namePlural can't be updated. Please create a new object instead",
       );
@@ -135,7 +141,8 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
 
     if (
       update.labelPlural &&
-      update.labelPlural !== objectMetadata.labelPlural
+      update.labelPlural !== objectMetadata.labelPlural &&
+      !objectMetadata.isCustom
     ) {
       throw new BadRequestException(
         "Object's labelPlural can't be updated. Please create a new object instead",

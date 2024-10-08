@@ -29,6 +29,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import styled from '@emotion/styled';
 
 const objectEditFormSchema = z
   .object({})
@@ -38,6 +39,14 @@ const objectEditFormSchema = z
 type SettingsDataModelObjectEditFormValues = z.infer<
   typeof objectEditFormSchema
 >;
+
+const StyledFormSection = styled(Section)`
+  padding-left: 0 !important;
+`;
+
+const StyledFormTitle = styled(H2Title)`
+  margin-left: ${({ theme }) => theme.spacing(8)};
+`;
 
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
@@ -85,7 +94,7 @@ export const SettingsObjectEdit = () => {
       navigate(
         `${settingsObjectsPagePath}/${getObjectSlug({
           ...formValues,
-          namePlural: formValues.labelPlural,
+          namePlural: formValues.namePlural,
         })}`,
       );
     } catch (error) {
@@ -137,18 +146,18 @@ export const SettingsObjectEdit = () => {
             )
           }
         >
-          <SettingsPageContainer>
-            <Section>
-              <H2Title
+          <SettingsPageContainer individualPaddingLeftForItems>
+            <StyledFormSection>
+              <StyledFormTitle
                 title="About"
                 description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
               />
               <SettingsDataModelObjectAboutForm
                 disabled={!activeObjectMetadataItem.isCustom}
-                disableNameEdit
+                disableNameEdit={!activeObjectMetadataItem.isCustom}
                 objectMetadataItem={activeObjectMetadataItem}
               />
-            </Section>
+            </StyledFormSection>
             <Section>
               <H2Title
                 title="Settings"
