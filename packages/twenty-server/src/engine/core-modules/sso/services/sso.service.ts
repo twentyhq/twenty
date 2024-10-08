@@ -256,4 +256,24 @@ export class SSOService {
       select: ['id', 'name', 'type', 'issuer'],
     });
   }
+
+  async deleteSSOIdentityProvider(idpId: string, workspaceId: string) {
+    const ssoIdp = await this.workspaceSSOIdentityProviderRepository.findOne({
+      where: {
+        id: idpId,
+        workspaceId,
+      },
+    });
+
+    if (!ssoIdp) {
+      throw new SSOException(
+        'Identity Provider not found',
+        SSOExceptionCode.IDENTITY_PROVIDER_NOT_FOUND,
+      );
+    }
+
+    await this.workspaceSSOIdentityProviderRepository.delete(ssoIdp);
+
+    return ssoIdp.id;
+  }
 }

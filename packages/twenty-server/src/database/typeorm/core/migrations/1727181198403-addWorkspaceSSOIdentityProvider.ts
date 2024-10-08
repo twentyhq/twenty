@@ -23,7 +23,8 @@ export class AddWorkspaceSSOIdentityProvider1727181198403
         "clientID" varchar NULL,
         "clientSecret" varchar NULL,
         "certificate" varchar NULL,
-        "fingerprint" varchar NULL
+        "fingerprint" varchar NULL,
+        "status" varchar DEFAULT 'ACTIVE' NOT NULL
       );
     `);
 
