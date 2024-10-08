@@ -111,6 +111,8 @@ export class SendEmailWorkflowAction {
         },
       });
 
+      this.logger.log(`Email sent successfully`);
+
       return { result: { success: true } };
     } catch (error) {
       return { error };
