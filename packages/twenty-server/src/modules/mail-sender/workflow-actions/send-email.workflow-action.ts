@@ -21,6 +21,7 @@ import {
 } from 'src/modules/mail-sender/exceptions/mail-sender.exception';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class SendEmailWorkflowAction {
@@ -48,11 +49,16 @@ export class SendEmailWorkflowAction {
         workspaceId,
         'connectedAccount',
       );
-    const connectedAccount = await connectedAccountRepository.findOneOrFail({
-      where: {
-        id: step.settings.connectedAccountId,
-      },
+    const connectedAccount = await connectedAccountRepository.findOneBy({
+      id: step.settings.connectedAccountId,
     });
+
+    if (!isDefined(connectedAccount)) {
+      throw new MailSenderException(
+        `Connected Account '${step.settings.connectedAccountId}' not found`,
+        MailSenderExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+      );
+    }
 
     switch (connectedAccount.provider) {
       case 'google':
