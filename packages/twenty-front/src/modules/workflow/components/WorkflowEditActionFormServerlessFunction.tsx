@@ -13,13 +13,20 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const WorkflowEditActionFormServerlessFunction = ({
-  action,
-  onActionUpdate,
-}: {
-  action: WorkflowCodeStep;
-  onActionUpdate: (trigger: WorkflowCodeStep) => void;
-}) => {
+type WorkflowEditActionFormServerlessFunctionProps =
+  | {
+      action: WorkflowCodeStep;
+      readonly: true;
+    }
+  | {
+      action: WorkflowCodeStep;
+      readonly?: false;
+      onActionUpdate: (action: WorkflowCodeStep) => void;
+    };
+
+export const WorkflowEditActionFormServerlessFunction = (
+  props: WorkflowEditActionFormServerlessFunctionProps,
+) => {
   const theme = useTheme();
 
   const { serverlessFunctions } = useGetManyServerlessFunctions();
@@ -47,13 +54,18 @@ export const WorkflowEditActionFormServerlessFunction = ({
           dropdownId="workflow-edit-action-function"
           label="Function"
           fullWidth
-          value={action.settings.serverlessFunctionId}
+          value={props.action.settings.serverlessFunctionId}
           options={availableFunctions}
+          disabled={props.readonly}
           onChange={(updatedFunction) => {
-            onActionUpdate({
-              ...action,
+            if (props.readonly === true) {
+              return;
+            }
+
+            props.onActionUpdate({
+              ...props.action,
               settings: {
-                ...action.settings,
+                ...props.action.settings,
                 serverlessFunctionId: updatedFunction,
               },
             });

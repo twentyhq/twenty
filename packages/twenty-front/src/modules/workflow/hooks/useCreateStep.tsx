@@ -32,9 +32,7 @@ export const useCreateStep = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion({
-    workflowId: workflow.id,
-  });
+  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
   const insertNodeAndSave = async ({
     parentNodeId,
@@ -66,6 +64,7 @@ export const useCreateStep = ({
     }
 
     await createNewWorkflowVersion({
+      workflowId: workflow.id,
       name: `v${workflow.versions.length + 1}`,
       status: 'DRAFT',
       trigger: workflow.currentVersion.trigger,

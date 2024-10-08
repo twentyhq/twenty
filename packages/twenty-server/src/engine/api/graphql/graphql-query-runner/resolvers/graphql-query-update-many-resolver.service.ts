@@ -65,16 +65,13 @@ export class GraphqlQueryUpdateManyResolverService
 
     const data = formatData(args.data, objectMetadataMapItem);
 
-    const result = await withFilterQueryBuilder
-      .update()
-      .set(data)
+    const nonFormattedUpdatedObjectRecords = await withFilterQueryBuilder
+      .update(data)
       .returning('*')
       .execute();
 
-    const nonFormattedUpdatedObjectRecords = result.raw;
-
     const updatedRecords = formatResult(
-      nonFormattedUpdatedObjectRecords,
+      nonFormattedUpdatedObjectRecords.raw,
       objectMetadataMapItem,
       objectMetadataMap,
     );
@@ -97,12 +94,12 @@ export class GraphqlQueryUpdateManyResolverService
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     return updatedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord(
-        record,
-        objectMetadataMapItem.nameSingular,
-        1,
-        1,
-      ),
+      typeORMObjectRecordsParser.processRecord({
+        objectRecord: record,
+        objectName: objectMetadataMapItem.nameSingular,
+        take: 1,
+        totalCount: 1,
+      }),
     );
   }
 
@@ -111,6 +108,10 @@ export class GraphqlQueryUpdateManyResolverService
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataMapItem);
-    args.filter?.id?.in?.forEach((id: string) => assertIsValidUuid(id));
+    if (!args.filter) {
+      throw new Error('Filter is required');
+    }
+
+    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
 }

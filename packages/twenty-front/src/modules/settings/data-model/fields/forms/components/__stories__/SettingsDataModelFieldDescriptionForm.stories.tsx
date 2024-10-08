@@ -3,7 +3,7 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 
-import { mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelFieldDescriptionForm } from '../SettingsDataModelFieldDescriptionForm';
 
 const meta: Meta<typeof SettingsDataModelFieldDescriptionForm> = {
@@ -25,11 +25,15 @@ type Story = StoryObj<typeof SettingsDataModelFieldDescriptionForm>;
 
 export const Default: Story = {};
 
+const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.namePlural === 'person',
+);
+
 export const WithFieldMetadataItem: Story = {
   args: {
-    fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
+    fieldMetadataItem: mockedPersonObjectMetadataItem?.fields.find(
       ({ description }) => description === 'description',
-    )!,
+    ),
   },
 };
 

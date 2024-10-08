@@ -28,7 +28,8 @@ import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { AvatarChipVariant, IconEye } from 'twenty-ui';
+import { AvatarChipVariant, IconEye, IconEyeOff } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -165,7 +166,7 @@ export const RecordBoardCard = ({
   } = useRecordBoardStates();
   const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
 
-  const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
+  const [isCardExpanded, setIsCardExpanded] = useState(false);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] = useRecoilState(
     isRecordBoardCardSelectedFamilyState(recordId),
@@ -214,11 +215,11 @@ export const RecordBoardCard = ({
     </StyledFieldContainer>
   );
 
-  const onMouseLeaveBoard = () => {
-    if (isCompactModeActive) {
-      setIsCardInCompactMode(true);
+  const onMouseLeaveBoard = useDebouncedCallback(() => {
+    if (isCompactModeActive && isCardExpanded) {
+      setIsCardExpanded(false);
     }
-  };
+  }, 800);
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
@@ -298,11 +299,11 @@ export const RecordBoardCard = ({
               {isCompactModeActive && (
                 <StyledCompactIconContainer className="compact-icon-container">
                   <LightIconButton
-                    Icon={IconEye}
+                    Icon={isCardExpanded ? IconEyeOff : IconEye}
                     accent="tertiary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setIsCardInCompactMode(false);
+                      setIsCardExpanded((prev) => !prev);
                     }}
                   />
                 </StyledCompactIconContainer>
@@ -323,7 +324,7 @@ export const RecordBoardCard = ({
         </StyledBoardCardHeader>
 
         <AnimatedEaseInOut
-          isOpen={!isCardInCompactMode || !isCompactModeActive}
+          isOpen={isCardExpanded || !isCompactModeActive}
           initial={false}
         >
           <StyledBoardCardBody>
