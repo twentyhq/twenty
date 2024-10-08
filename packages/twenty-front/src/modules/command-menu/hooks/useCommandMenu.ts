@@ -12,6 +12,7 @@ import { isDefined } from '~/utils/isDefined';
 import { COMMAND_MENU_COMMANDS } from '@/command-menu/constants/CommandMenuCommands';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ALL_ICONS } from '@ui/display/icon/providers/internal/AllIcons';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
@@ -74,20 +75,22 @@ export const useCommandMenu = () => {
 
   const setObjectsInCommandMenu = (menuItems: ObjectMetadataItem[]) => {
     const formattedItems = [
-      ...menuItems.map(
-        (item) =>
-          ({
-            id: item.id,
-            to: `/objects/${item.namePlural}`,
-            label: `Go to ${item.labelPlural}`,
-            type: CommandType.Navigate,
-            firstHotKey: 'G',
-            secondHotKey: item.labelPlural[0],
-            Icon: ALL_ICONS[
-              (item?.icon as keyof typeof ALL_ICONS) ?? 'IconArrowUpRight'
-            ],
-          }) as Command,
-      ),
+      ...menuItems
+        .map(
+          (item) =>
+            ({
+              id: item.id,
+              to: `/objects/${item.namePlural}`,
+              label: `Go to ${item.labelPlural}`,
+              type: CommandType.Navigate,
+              firstHotKey: 'G',
+              secondHotKey: item.labelPlural[0],
+              Icon: ALL_ICONS[
+                (item?.icon as keyof typeof ALL_ICONS) ?? 'IconArrowUpRight'
+              ],
+            }) as Command,
+        )
+        .toSorted(sortByProperty('label', 'asc')),
       COMMAND_MENU_COMMANDS.settings,
     ];
     setCommands(formattedItems);
