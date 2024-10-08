@@ -63,6 +63,7 @@ export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {
   calendarChannel: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
   calendarEvent: '20202020-5aa5-437e-bb86-f42d457783e3',
   eventExternalId: '20202020-9ec8-48bb-b279-21d0734a75a1',
+  recurringEventExternalId: '20202020-c58f-4c69-9bf8-9518fa31aa50',
 };
 
 export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
@@ -78,6 +79,7 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   syncStatus: '20202020-7116-41da-8b4b-035975c4eb6a',
   syncStage: '20202020-6246-42e6-b5cd-003bd921782c',
   syncStageStartedAt: '20202020-a934-46f1-a8e7-9568b1e3a53e',
+  syncedAt: '20202020-2ff5-4f70-953a-3d0d36357576',
 };
 
 export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
@@ -103,7 +105,6 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   iCalUID: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
-  recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
   calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };

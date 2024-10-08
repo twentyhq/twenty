@@ -3,16 +3,12 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -27,12 +23,9 @@ export type MessagingMessagesImportJobData = {
 })
 export class MessagingMessagesImportJob {
   constructor(
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
   @Process(MessagingMessagesImportJob.name)
@@ -56,6 +49,7 @@ export class MessagingMessagesImportJob {
       where: {
         id: messageChannelId,
       },
+      relations: ['connectedAccount'],
     });
 
     if (!messageChannel) {
@@ -67,12 +61,6 @@ export class MessagingMessagesImportJob {
 
       return;
     }
-
-    const connectedAccount =
-      await this.connectedAccountRepository.getConnectedAccountOrThrow(
-        workspaceId,
-        messageChannel.connectedAccountId,
-      );
 
     if (!messageChannel?.isSyncEnabled) {
       return;
@@ -96,7 +84,7 @@ export class MessagingMessagesImportJob {
 
     await this.messagingMessagesImportService.processMessageBatchImport(
       messageChannel,
-      connectedAccount,
+      messageChannel.connectedAccount,
       workspaceId,
     );
 
