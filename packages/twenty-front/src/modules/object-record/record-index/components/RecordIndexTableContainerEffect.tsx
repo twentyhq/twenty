@@ -124,6 +124,11 @@ export const RecordIndexTableContainerEffect = ({
   useEffect(() => {
     setContextStoreTargetedRecordIds(selectedRowIds);
     setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+
+    return () => {
+      setContextStoreTargetedRecordIds([]);
+      setContextStoreCurrentObjectMetadataItem(null);
+    };
   }, [
     objectMetadataItem?.id,
     selectedRowIds,

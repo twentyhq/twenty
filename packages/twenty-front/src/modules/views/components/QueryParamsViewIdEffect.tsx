@@ -97,6 +97,10 @@ export const QueryParamsViewIdEffect = () => {
       setContextStoreCurrentViewId(indexView.id);
       return;
     }
+
+    return () => {
+      setContextStoreCurrentViewId(null);
+    };
   }, [
     currentViewId,
     getFiltersFromQueryParams,

@@ -147,6 +147,11 @@ export const RecordIndexBoardDataLoaderEffect = ({
   useEffect(() => {
     setContextStoreTargetedRecordIds(selectedRecordIds);
     setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+
+    return () => {
+      setContextStoreTargetedRecordIds([]);
+      setContextStoreCurrentObjectMetadataItem(null);
+    };
   }, [
     objectMetadataItem?.id,
     selectedRecordIds,
