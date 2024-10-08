@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { UnwrapRecoilValue } from 'recoil';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/components/SettingsSecuritySSORowDropdownMenu';
-import { ThemeColor } from 'twenty-ui';
+import { colorByStatus } from '@/settings/security/utils/colorByStatus';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -16,12 +16,6 @@ export const SettingsSSOIdentityProviderRowRightContainer = ({
 }: {
   SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];
 }) => {
-  const colorByStatus: Record<(typeof SSOIdp)['status'], ThemeColor> = {
-    Active: 'green',
-    Inactive: 'gray',
-    Error: 'red',
-  };
-
   return (
     <StyledRowRightContainer>
       <Status

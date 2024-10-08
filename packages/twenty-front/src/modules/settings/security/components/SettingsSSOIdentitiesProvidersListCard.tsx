@@ -8,7 +8,7 @@ import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/securit
 import { useRecoilState } from 'recoil';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { SettingsSSOIdentitiesProvidersListEmptyStateCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListEmptyStateCard';
-import { gessIconByUrl } from '../utils/gessIconByUrl';
+import { guessIconByUrl } from '../utils/guessIconByUrl';
 import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -34,11 +34,9 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
     },
   });
 
-  if (!SSOIdentitiesProviders.length && !loading) {
-    return <SettingsSSOIdentitiesProvidersListEmptyStateCard />;
-  }
-
-  return (
+  return !SSOIdentitiesProviders.length && !loading ? (
+    <SettingsSSOIdentitiesProvidersListEmptyStateCard />
+  ) : (
     <SettingsListCard
       items={SSOIdentitiesProviders}
       getItemLabel={(SSOIdentityProvider) =>
@@ -46,7 +44,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
       }
       isLoading={loading}
       RowIconFn={(SSOIdentityProvider) =>
-        gessIconByUrl(SSOIdentityProvider.issuer)
+        guessIconByUrl(SSOIdentityProvider.issuer)
       }
       RowRightComponent={({ item: SSOIdp }) => (
         <SettingsSSOIdentityProviderRowRightContainer SSOIdp={SSOIdp} />

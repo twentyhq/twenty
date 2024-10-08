@@ -25,7 +25,7 @@ export const SSOIdentitiesProvidersParamsSchema = z
   .and(
     z
       .object({
-        name: z.string(),
+        name: z.string().min(1),
         issuer: z.string().url().optional(),
       })
       .required(),
