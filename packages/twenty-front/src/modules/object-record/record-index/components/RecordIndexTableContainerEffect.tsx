@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -37,6 +38,10 @@ export const RecordIndexTableContainerEffect = ({
 
   const setContextStoreTargetedRecordIds = useSetRecoilState(
     contextStoreTargetedRecordIdsState,
+  );
+
+  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
+    contextStoreCurrentObjectMetadataIdState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -118,7 +123,13 @@ export const RecordIndexTableContainerEffect = ({
 
   useEffect(() => {
     setContextStoreTargetedRecordIds(selectedRowIds);
-  }, [selectedRowIds, setContextStoreTargetedRecordIds]);
+    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+  }, [
+    objectMetadataItem?.id,
+    selectedRowIds,
+    setContextStoreCurrentObjectMetadataItem,
+    setContextStoreTargetedRecordIds,
+  ]);
 
   return <></>;
 };

@@ -1,13 +1,14 @@
+import { contextStoreCurrentViewIdState } from '@/context-store/states/contextStoreCurrentViewIdState';
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useSetViewInUrl } from '@/views/hooks/useSetViewInUrl';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isUndefined } from '@sniptt/guards';
 import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
@@ -38,7 +39,9 @@ export const QueryParamsViewIdEffect = () => {
     objectMetadataItemId?.id,
     lastVisitedObjectMetadataItemId,
   );
-  const { setViewInUrl } = useSetViewInUrl();
+  const setContextStoreCurrentViewId = useSetRecoilState(
+    contextStoreCurrentViewIdState,
+  );
 
   // // TODO: scope view bar per view id if possible
   // const { resetCurrentView } = useResetCurrentView();
@@ -61,7 +64,7 @@ export const QueryParamsViewIdEffect = () => {
         });
       }
       setCurrentViewId(lastVisitedViewId);
-      setViewInUrl(lastVisitedViewId);
+      setContextStoreCurrentViewId(lastVisitedViewId);
       return;
     }
 
@@ -76,6 +79,7 @@ export const QueryParamsViewIdEffect = () => {
         });
       }
       setCurrentViewId(viewIdQueryParam);
+      setContextStoreCurrentViewId(viewIdQueryParam);
       return;
     }
 
@@ -90,6 +94,7 @@ export const QueryParamsViewIdEffect = () => {
         });
       }
       setCurrentViewId(indexView.id);
+      setContextStoreCurrentViewId(indexView.id);
       return;
     }
   }, [
@@ -99,10 +104,10 @@ export const QueryParamsViewIdEffect = () => {
     lastVisitedViewId,
     objectMetadataItemId?.id,
     objectNamePlural,
+    setContextStoreCurrentViewId,
     setCurrentViewId,
     setLastVisitedObjectMetadataItem,
     setLastVisitedView,
-    setViewInUrl,
     viewIdQueryParam,
     viewsOnCurrentObject,
   ]);

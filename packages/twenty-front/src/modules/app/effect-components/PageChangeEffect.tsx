@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -17,11 +12,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreCurrentViewIdState } from '@/context-store/states/contextStoreCurrentViewIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -62,29 +53,6 @@ export const PageChangeEffect = () => {
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const [searchParams] = useSearchParams();
-  const { objectNameSingular, objectNamePlural } = useParams();
-
-  const objectMetadataItem = useRecoilValue(
-    objectMetadataItemFamilySelector(
-      objectNameSingular
-        ? { objectName: objectNameSingular, objectNameType: 'singular' }
-        : objectNamePlural
-          ? { objectName: objectNamePlural, objectNameType: 'plural' }
-          : { objectName: '', objectNameType: 'singular' },
-    ),
-  );
-
-  const setContextStoreCurrentViewId = useSetRecoilState(
-    contextStoreCurrentViewIdState,
-  );
-  const setContextStoreCurrentObjectMetadataId = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
-  );
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
-  );
-
   useEffect(() => {
     cleanRecoilState();
   }, [cleanRecoilState]);
@@ -102,20 +70,6 @@ export const PageChangeEffect = () => {
       navigate(pageChangeEffectNavigateLocation);
     }
   }, [navigate, pageChangeEffectNavigateLocation]);
-
-  useEffect(() => {
-    const viewId = searchParams.get('view');
-    setContextStoreCurrentViewId(viewId);
-    setContextStoreTargetedRecordIds([]);
-  }, [
-    searchParams,
-    setContextStoreCurrentViewId,
-    setContextStoreTargetedRecordIds,
-  ]);
-
-  useEffect(() => {
-    setContextStoreCurrentObjectMetadataId(objectMetadataItem?.id ?? null);
-  }, [objectMetadataItem, setContextStoreCurrentObjectMetadataId]);
 
   useEffect(() => {
     switch (true) {
