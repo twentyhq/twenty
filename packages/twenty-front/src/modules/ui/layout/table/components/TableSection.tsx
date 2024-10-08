@@ -28,10 +28,9 @@ const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
 `;
 
 const StyledSection = styled.div<{ isExpanded: boolean }>`
-  max-height: ${({ isExpanded }) => (isExpanded ? '1000px' : 0)};
+  max-height: ${({ isExpanded }) => (isExpanded ? 'fit-content' : 0)};
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: 'hidden';
   transition:
     max-height ${({ theme }) => theme.animation.duration.normal}s,
     opacity ${({ theme }) => theme.animation.duration.normal}s;
