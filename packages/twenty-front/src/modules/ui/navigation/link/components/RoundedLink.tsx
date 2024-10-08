@@ -1,6 +1,6 @@
-import { MouseEvent, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { MouseEvent, useContext } from 'react';
 import { FONT_COMMON, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
 type RoundedLinkProps = {

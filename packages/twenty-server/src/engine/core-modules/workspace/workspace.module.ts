@@ -5,7 +5,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
@@ -13,6 +13,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -34,14 +35,16 @@ import { WorkspaceService } from './services/workspace.service';
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [User, Workspace, UserWorkspace, FeatureFlagEntity],
+          [User, Workspace, UserWorkspace],
           'core',
         ),
         UserWorkspaceModule,
         WorkspaceManagerModule,
+        FeatureFlagModule,
         DataSourceModule,
         OnboardingModule,
         TypeORMModule,
+        WorkspaceInvitationModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

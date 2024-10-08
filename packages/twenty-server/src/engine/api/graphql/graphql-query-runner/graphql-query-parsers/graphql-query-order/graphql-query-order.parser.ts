@@ -1,5 +1,3 @@
-import { FindOptionsOrderValue } from 'typeorm';
-
 import {
   OrderByDirection,
   RecordOrderBy,
@@ -24,8 +22,9 @@ export class GraphqlQueryOrderFieldParser {
 
   parse(
     orderBy: RecordOrderBy,
+    objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, FindOptionsOrderValue> {
+  ): Record<string, string> {
     return orderBy.reduce(
       (acc, item) => {
         Object.entries(item).forEach(([key, value]) => {
@@ -42,29 +41,29 @@ export class GraphqlQueryOrderFieldParser {
             const compositeOrder = this.parseCompositeFieldForOrder(
               fieldMetadata,
               value,
+              objectNameSingular,
               isForwardPagination,
             );
 
             Object.assign(acc, compositeOrder);
           } else {
-            acc[key] = this.convertOrderByToFindOptionsOrder(
-              value,
-              isForwardPagination,
-            );
+            acc[`"${objectNameSingular}"."${key}"`] =
+              this.convertOrderByToFindOptionsOrder(value, isForwardPagination);
           }
         });
 
         return acc;
       },
-      {} as Record<string, FindOptionsOrderValue>,
+      {} as Record<string, string>,
     );
   }
 
   private parseCompositeFieldForOrder(
     fieldMetadata: FieldMetadataInterface,
     value: any,
+    objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, FindOptionsOrderValue> {
+  ): Record<string, string> {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );
@@ -87,7 +86,7 @@ export class GraphqlQueryOrderFieldParser {
           );
         }
 
-        const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
+        const fullFieldName = `"${objectNameSingular}"."${fieldMetadata.name}${capitalize(subFieldKey)}"`;
 
         if (!this.isOrderByDirection(subFieldValue)) {
           throw new Error(
@@ -101,35 +100,23 @@ export class GraphqlQueryOrderFieldParser {
 
         return acc;
       },
-      {} as Record<string, FindOptionsOrderValue>,
+      {} as Record<string, string>,
     );
   }
 
   private convertOrderByToFindOptionsOrder(
     direction: OrderByDirection,
     isForwardPagination = true,
-  ): FindOptionsOrderValue {
+  ): string {
     switch (direction) {
       case OrderByDirection.AscNullsFirst:
-        return {
-          direction: isForwardPagination ? 'ASC' : 'DESC',
-          nulls: 'FIRST',
-        };
+        return `${isForwardPagination ? 'ASC' : 'DESC'} NULLS FIRST`;
       case OrderByDirection.AscNullsLast:
-        return {
-          direction: isForwardPagination ? 'ASC' : 'DESC',
-          nulls: 'LAST',
-        };
+        return `${isForwardPagination ? 'ASC' : 'DESC'} NULLS LAST`;
       case OrderByDirection.DescNullsFirst:
-        return {
-          direction: isForwardPagination ? 'DESC' : 'ASC',
-          nulls: 'FIRST',
-        };
+        return `${isForwardPagination ? 'DESC' : 'ASC'} NULLS FIRST`;
       case OrderByDirection.DescNullsLast:
-        return {
-          direction: isForwardPagination ? 'DESC' : 'ASC',
-          nulls: 'LAST',
-        };
+        return `${isForwardPagination ? 'DESC' : 'ASC'} NULLS LAST`;
       default:
         throw new GraphqlQueryRunnerException(
           `Invalid direction: ${direction}`,

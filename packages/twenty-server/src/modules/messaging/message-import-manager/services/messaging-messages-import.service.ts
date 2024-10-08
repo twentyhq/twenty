@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -110,11 +110,10 @@ export class MessagingMessagesImportService {
 
       await this.emailAliasManagerService.refreshHandleAliases(
         connectedAccount,
-        workspaceId,
       );
 
       messageIdsToFetch = await this.cacheStorage.setPop(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
         MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
       );
 
@@ -186,7 +185,7 @@ export class MessagingMessagesImportService {
       );
     } catch (error) {
       await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageIdsToFetch,
       );
 

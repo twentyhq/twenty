@@ -1,10 +1,10 @@
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { gql } from '@apollo/client';
 
 export const query = gql`
   mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
-      ${PERSON_FRAGMENT}
+      ${PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS}
     }
   }
 `;
@@ -18,13 +18,11 @@ const basePerson = {
   },
   createdAt: '',
   city: '',
-  email: '',
   jobTitle: '',
   name: {
     firstName: '',
     lastName: '',
   },
-  phone: '',
   linkedinLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',

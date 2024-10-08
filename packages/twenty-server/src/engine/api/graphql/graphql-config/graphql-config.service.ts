@@ -14,7 +14,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';

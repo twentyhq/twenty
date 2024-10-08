@@ -1,7 +1,8 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import {
   StyledBoardCardBody,
   StyledBoardCardHeader,
@@ -43,7 +44,10 @@ export const RecordBoardColumnCardContainerSkeletonLoader = ({
     >
       <StyledBoardCardHeader showCompactView={isCompactModeActive}>
         <StyledSkeletonTitle>
-          <Skeleton width={titleSkeletonWidth} height={16} />
+          <Skeleton
+            width={titleSkeletonWidth}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
         </StyledSkeletonTitle>
       </StyledBoardCardHeader>
       <StyledSeparator />
@@ -51,8 +55,14 @@ export const RecordBoardColumnCardContainerSkeletonLoader = ({
         skeletonItems.map(({ id }) => (
           <StyledBoardCardBody key={id}>
             <StyledSkeletonIconAndText>
-              <Skeleton width={16} height={16} />
-              <Skeleton width={151} height={16} />
+              <Skeleton
+                width={16}
+                height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+              />
+              <Skeleton
+                width={151}
+                height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+              />
             </StyledSkeletonIconAndText>
           </StyledBoardCardBody>
         ))}

@@ -1,20 +1,25 @@
 import styled from '@emotion/styled';
 import { ReactNode, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
+import { canPersistViewComponentFamilySelector } from '@/views/states/selectors/canPersistViewComponentFamilySelector';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { isDefined } from 'twenty-ui';
 import { VariantFilterChip } from './VariantFilterChip';
 
 export type ViewBarDetailsProps = {
@@ -26,24 +31,27 @@ export type ViewBarDetailsProps = {
 
 const StyledBar = styled.div`
   align-items: center;
+  align-items: center;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
-  min-height: 32px;
   justify-content: space-between;
-  z-index: 4;
+  min-height: 32px;
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
+  z-index: 4;
 `;
 
 const StyledChipcontainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  overflow: scroll;
   gap: ${({ theme }) => theme.spacing(1)};
-  min-height: 32px;
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  flex-wrap: wrap;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(0.5)};
+  z-index: 1;
 `;
 
 const StyledCancelButton = styled.button`
@@ -52,15 +60,8 @@ const StyledCancelButton = styled.button`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: auto;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  padding: ${(props) => {
-    const horiz = props.theme.spacing(2);
-    const vert = props.theme.spacing(1);
-    return `${vert} ${horiz} ${vert} ${horiz}`;
-  }};
   user-select: none;
-
+  margin-right: ${({ theme }) => theme.spacing(2)};
   &:hover {
     background-color: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.spacing(1)};
@@ -68,8 +69,10 @@ const StyledCancelButton = styled.button`
 `;
 
 const StyledFilterContainer = styled.div`
-  align-items: center;
   display: flex;
+  align-items: center;
+  flex: 1;
+  overflow-x: hidden;
 `;
 
 const StyledSeperatorContainer = styled.div`
@@ -97,27 +100,32 @@ export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
   filterDropdownId,
+  viewBarId,
 }: ViewBarDetailsProps) => {
-  const {
-    canPersistViewSelector,
-    isViewBarExpandedState,
-    availableFilterDefinitionsState,
-    availableSortDefinitionsState,
-  } = useViewStates();
-
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
-  const { hasFiltersQueryParams } = useViewFromQueryParams();
-  const canPersistView = useRecoilValue(canPersistViewSelector());
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
-  );
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
+  const viewId = currentViewWithCombinedFiltersAndSorts?.id;
+
+  const isViewBarExpanded = useRecoilComponentValueV2(
+    isViewBarExpandedComponentState,
   );
 
-  const { resetCurrentView } = useResetCurrentView();
+  const { hasFiltersQueryParams } = useViewFromQueryParams();
+
+  const canPersistView = useRecoilComponentFamilyValueV2(
+    canPersistViewComponentFamilySelector,
+    { viewId },
+  );
+
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+  );
+
+  const availableSortDefinitions = useRecoilComponentValueV2(
+    availableSortDefinitionsComponentState,
+  );
+
+  const { resetUnsavedViewStates } = useResetUnsavedViewStates();
   const canResetView = canPersistView && !hasFiltersQueryParams;
 
   const { otherViewFilters, defaultViewFilters } = useMemo(() => {
@@ -144,7 +152,9 @@ export const ViewBarDetails = ({
   }, [currentViewWithCombinedFiltersAndSorts]);
 
   const handleCancelClick = () => {
-    resetCurrentView();
+    if (isDefined(viewId)) {
+      resetUnsavedViewStates(viewId);
+    }
   };
 
   const shouldExpandViewBar =
@@ -169,6 +179,7 @@ export const ViewBarDetails = ({
               // Also as filter is spread into viewFilter, definition is present
               // FixMe: Ugly hack to make it work
               viewFilter={viewFilter as unknown as Filter}
+              viewBarId={viewBarId}
             />
           ))}
           {!!otherViewFilters.length &&

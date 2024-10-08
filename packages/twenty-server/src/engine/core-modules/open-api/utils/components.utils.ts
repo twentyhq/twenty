@@ -17,8 +17,8 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { capitalize } from 'src/utils/capitalize';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { capitalize } from 'src/utils/capitalize';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -109,7 +109,8 @@ const getSchemaComponentsProperties = ({
   return item.fields.reduce((node, field) => {
     if (
       !isFieldAvailable(field, forResponse) ||
-      field.type === FieldMetadataType.RELATION
+      field.type === FieldMetadataType.RELATION ||
+      field.type === FieldMetadataType.TS_VECTOR
     ) {
       return node;
     }
@@ -122,6 +123,14 @@ const getSchemaComponentsProperties = ({
         itemProperty = {
           type: 'string',
           enum: field.options.map((option: { value: string }) => option.value),
+        };
+        break;
+      case FieldMetadataType.ARRAY:
+        itemProperty = {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
         };
         break;
       case FieldMetadataType.RATING:

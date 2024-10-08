@@ -1,10 +1,14 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedPersonObjectMetadataItem,
-} from '~/testing/mock-data/metadata';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getFieldPreviewValueFromRecord } from '../getFieldPreviewValueFromRecord';
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+);
+
+const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'person',
+);
 
 describe('getFieldPreviewValueFromRecord', () => {
   describe('RELATION field', () => {
@@ -21,9 +25,13 @@ describe('getFieldPreviewValueFromRecord', () => {
         },
         __typename: 'Opportunity',
       };
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+      const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
         ({ name }) => name === 'people',
-      )!;
+      );
+
+      if (!fieldMetadataItem) {
+        throw new Error('Field not found');
+      }
 
       // When
       const result = getFieldPreviewValueFromRecord({
@@ -43,9 +51,13 @@ describe('getFieldPreviewValueFromRecord', () => {
         company: relationRecord,
         __typename: 'Opportunity',
       };
-      const fieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
+      const fieldMetadataItem = mockedPersonObjectMetadataItem?.fields.find(
         ({ name }) => name === 'company',
-      )!;
+      );
+
+      if (!fieldMetadataItem) {
+        throw new Error('Field not found');
+      }
 
       // When
       const result = getFieldPreviewValueFromRecord({
@@ -62,9 +74,13 @@ describe('getFieldPreviewValueFromRecord', () => {
     it('returns the record field value', () => {
       // Given
       const record = { id: '', name: 'Twenty', __typename: 'Opportunity' };
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+      const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
         ({ name }) => name === 'name',
-      )!;
+      );
+
+      if (!fieldMetadataItem) {
+        throw new Error('Field not found');
+      }
 
       // When
       const result = getFieldPreviewValueFromRecord({

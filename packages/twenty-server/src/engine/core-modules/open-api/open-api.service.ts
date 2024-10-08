@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -33,7 +34,6 @@ import {
   getFindOneResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';

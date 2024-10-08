@@ -17,7 +17,7 @@ export type FieldMetadataItemOption = {
 
 export type FieldMetadataItem = Omit<
   Field,
-  '__typename' | 'defaultValue' | 'options' | 'settings' | 'relationDefinition'
+  '__typename' | 'defaultValue' | 'options' | 'relationDefinition'
 > & {
   __typename?: string;
   defaultValue?: any;
@@ -36,4 +36,7 @@ export type FieldMetadataItem = Omit<
       'id' | 'nameSingular' | 'namePlural'
     >;
   } | null;
+  settings?: {
+    displayAsRelativeDate?: boolean;
+  };
 };

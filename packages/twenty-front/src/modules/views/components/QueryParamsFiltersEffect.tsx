@@ -1,18 +1,24 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
-import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 
 export const QueryParamsFiltersEffect = () => {
-  const { hasFiltersQueryParams, getFiltersFromQueryParams } =
+  const { hasFiltersQueryParams, getFiltersFromQueryParams, viewIdQueryParam } =
     useViewFromQueryParams();
-  const { unsavedToUpsertViewFiltersState } = useViewStates();
-  const setUnsavedViewFilter = useSetRecoilState(
-    unsavedToUpsertViewFiltersState,
+
+  const currentViewId = useRecoilComponentValueV2(currentViewIdComponentState);
+
+  const setUnsavedViewFilter = useSetRecoilComponentFamilyStateV2(
+    unsavedToUpsertViewFiltersComponentFamilyState,
+    { viewId: viewIdQueryParam ?? currentViewId },
   );
-  const { resetCurrentView } = useResetCurrentView();
+
+  const { resetUnsavedViewStates } = useResetUnsavedViewStates();
 
   useEffect(() => {
     if (!hasFiltersQueryParams) {
@@ -24,14 +30,10 @@ export const QueryParamsFiltersEffect = () => {
         setUnsavedViewFilter(filtersFromParams);
       }
     });
-
-    return () => {
-      resetCurrentView();
-    };
   }, [
     getFiltersFromQueryParams,
     hasFiltersQueryParams,
-    resetCurrentView,
+    resetUnsavedViewStates,
     setUnsavedViewFilter,
   ]);
 

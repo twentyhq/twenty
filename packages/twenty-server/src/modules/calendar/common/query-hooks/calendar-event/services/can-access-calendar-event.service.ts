@@ -1,12 +1,12 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
+import { Any } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -15,8 +15,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class CanAccessCalendarEventService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
@@ -46,20 +44,20 @@ export class CanAccessCalendarEventService {
     const currentWorkspaceMember =
       await this.workspaceMemberService.getByIdOrFail(userId, workspaceId);
 
-    const calendarChannelsConnectedAccounts =
-      await this.connectedAccountRepository.getByIds(
-        calendarChannels.map((channel) => channel.connectedAccountId),
-        workspaceId,
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
       );
 
-    const calendarChannelsWorkspaceMemberIds =
-      calendarChannelsConnectedAccounts.map(
-        (connectedAccount) => connectedAccount.accountOwnerId,
-      );
+    const connectedAccounts = await connectedAccountRepository.find({
+      select: ['id'],
+      where: {
+        calendarChannels: Any(calendarChannels.map((channel) => channel.id)),
+        accountOwnerId: currentWorkspaceMember.id,
+      },
+    });
 
-    if (
-      calendarChannelsWorkspaceMemberIds.includes(currentWorkspaceMember.id)
-    ) {
+    if (connectedAccounts.length > 0) {
       return;
     }
 

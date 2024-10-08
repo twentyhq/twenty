@@ -13,13 +13,12 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useApolloClient } from '@apollo/client';
@@ -35,18 +34,21 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
+// TODO: fix this type
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
->;
+> &
+  any;
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
+  padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
+  const fieldType = searchParams.get('fieldType') as SettingsFieldType;
   const { enqueueSnackBar } = useSnackBar();
 
   const [isConfigureStep, setIsConfigureStep] = useState(false);
@@ -159,7 +161,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   };
 
-  const excludedFieldTypes: SettingsSupportedFieldType[] = (
+  const excludedFieldTypes: SettingsFieldType[] = (
     [
       FieldMetadataType.Link,
       FieldMetadataType.Numeric,
@@ -177,30 +179,24 @@ export const SettingsObjectNewFieldStep2 = () => {
       >
         <SubMenuTopBarContainer
           Icon={IconHierarchy2}
-          title={
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: '/settings/objects',
-                  styles: { minWidth: 'max-content' },
-                },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                  styles: { maxWidth: '50%' },
-                },
-                {
-                  children: (
-                    <SettingsDataModelNewFieldBreadcrumbDropDown
-                      isConfigureStep={isConfigureStep}
-                      onBreadcrumbClick={setIsConfigureStep}
-                    />
-                  ),
-                },
-              ]}
-            />
-          }
+          links={[
+            {
+              children: 'Objects',
+              href: '/settings/objects',
+            },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            {
+              children: (
+                <SettingsDataModelNewFieldBreadcrumbDropDown
+                  isConfigureStep={isConfigureStep}
+                  onBreadcrumbClick={setIsConfigureStep}
+                />
+              ),
+            },
+          ]}
           actionButton={
             !activeObjectMetadataItem.isRemote && (
               <SaveAndCancelButtons
@@ -232,7 +228,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               <SettingsDataModelFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
                 fieldMetadataItem={{
-                  type: fieldType,
+                  type: fieldType as FieldMetadataType,
                 }}
                 onFieldTypeSelect={() => setIsConfigureStep(true)}
               />
@@ -254,6 +250,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   />
 
                   <SettingsDataModelFieldSettingsFormCard
+                    isCreatingField
                     fieldMetadataItem={{
                       icon: formConfig.watch('icon'),
                       label: formConfig.watch('label') || 'Employees',

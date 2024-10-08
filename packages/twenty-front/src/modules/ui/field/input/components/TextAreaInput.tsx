@@ -1,11 +1,12 @@
+import styled from '@emotion/styled';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import styled from '@emotion/styled';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { isDefined } from '~/utils/isDefined';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export type TextAreaInputProps = {
   disabled?: boolean;
@@ -35,10 +36,10 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 const StyledTextAreaContainer = styled.div`
-  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   position: relative;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(0)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   background: ${({ theme }) => theme.background.primary};
 `;
@@ -67,10 +68,12 @@ export const TextAreaInput = ({
   copyButton = true,
 }: TextAreaInputProps) => {
   const [internalText, setInternalText] = useState(value);
-
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setInternalText(event.target.value);
-    onChange?.(event.target.value);
+    const targetValue = turnIntoEmptyStringIfWhitespacesOnly(
+      event.target.value,
+    );
+    setInternalText(targetValue);
+    onChange?.(targetValue);
   };
 
   const wrapperRef = useRef<HTMLTextAreaElement>(null);

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { Any } from 'typeorm';
 
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
@@ -89,7 +89,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
 
@@ -171,6 +171,7 @@ export class CalendarChannelSyncStatusService {
       syncStatus: CalendarChannelSyncStatus.ACTIVE,
       throttleFailureCount: 0,
       syncStageStartedAt: null,
+      syncedAt: new Date().toISOString(),
     });
 
     await this.schedulePartialCalendarEventListFetch(calendarChannelIds);
@@ -191,7 +192,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
 
@@ -216,7 +217,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        `calendar-events-to-import:${workspaceId}:google-calendar:${calendarChannelId}`,
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
     await calendarChannelRepository.update(calendarChannelIds, {

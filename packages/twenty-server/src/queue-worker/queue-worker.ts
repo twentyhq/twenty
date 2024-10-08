@@ -4,6 +4,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
+import 'src/instrument';
 
 async function bootstrap() {
   let exceptionHandlerService: ExceptionHandlerService | undefined;

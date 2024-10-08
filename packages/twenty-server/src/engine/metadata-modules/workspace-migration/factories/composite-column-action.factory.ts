@@ -18,6 +18,7 @@ import {
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
+// TODO: could we export this to GraphQL ?
 export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.CURRENCY
