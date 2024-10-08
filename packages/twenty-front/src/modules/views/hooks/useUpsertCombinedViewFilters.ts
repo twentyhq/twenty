@@ -106,15 +106,18 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
           return;
         }
 
+        const newValue = [
+          ...unsavedToUpsertViewFilters,
+          {
+            ...upsertedFilter,
+            id: upsertedFilter.id,
+            __typename: 'ViewFilter',
+          } satisfies ViewFilter,
+        ] satisfies ViewFilter[];
+
         set(
           unsavedToUpsertViewFiltersCallbackState({ viewId: currentViewId }),
-          [
-            ...unsavedToUpsertViewFilters,
-            {
-              ...upsertedFilter,
-              __typename: 'ViewFilter',
-            } satisfies ViewFilter,
-          ],
+          newValue,
         );
       },
     [

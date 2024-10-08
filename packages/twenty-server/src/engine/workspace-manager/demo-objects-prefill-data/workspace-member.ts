@@ -21,6 +21,7 @@ export const workspaceMemberPrefillData = async (
       'nameLastName',
       'locale',
       'colorScheme',
+      'userEmail',
       'userId',
     ])
     .orIgnore()

@@ -27,12 +27,18 @@ export type FieldDateTimeMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: {
+    displayAsRelativeDate?: boolean;
+  };
 };
 
 export type FieldDateMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: {
+    displayAsRelativeDate?: boolean;
+  };
 };
 
 export type FieldNumberMetadata = {
@@ -171,7 +177,7 @@ export type FieldMetadata =
   | FieldArrayMetadata;
 
 export type FieldTextValue = string;
-export type FieldUUidValue = string;
+export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
 export type FieldDateTimeValue = string | null;
 export type FieldDateValue = string | null;
 export type FieldNumberValue = number | null;
@@ -218,6 +224,8 @@ export type FieldRelationValue<
 
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
+
+export type FieldRichTextValue = Record<string, Json> | Json[] | null;
 
 export type FieldActorValue = {
   source: string;

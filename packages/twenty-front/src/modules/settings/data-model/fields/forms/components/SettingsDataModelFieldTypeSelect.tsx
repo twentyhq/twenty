@@ -2,14 +2,13 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
 import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
-import {
-  SETTINGS_FIELD_TYPE_CONFIGS,
-  SettingsFieldTypeConfig,
-} from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -23,8 +22,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
     Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
-      SettingsSupportedFieldType,
-      ...SettingsSupportedFieldType[],
+      SettingsFieldType,
+      ...SettingsFieldType[],
     ],
   ),
 });
@@ -35,7 +34,7 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 
 type SettingsDataModelFieldTypeSelectProps = {
   className?: string;
-  excludedFieldTypes?: SettingsSupportedFieldType[];
+  excludedFieldTypes?: SettingsFieldType[];
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
@@ -78,11 +77,11 @@ export const SettingsDataModelFieldTypeSelect = ({
   const theme = useTheme();
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
-  const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig>(
+  const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig<any>>(
     SETTINGS_FIELD_TYPE_CONFIGS,
   ).filter(
     ([key, config]) =>
-      !excludedFieldTypes.includes(key as SettingsSupportedFieldType) &&
+      !excludedFieldTypes.includes(key as SettingsFieldType) &&
       config.label.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
@@ -95,7 +94,7 @@ export const SettingsDataModelFieldTypeSelect = ({
   const { resetDefaultValueField: resetSelectDefaultValueField } =
     useSelectSettingsFormInitialValues({ fieldMetadataItem });
 
-  const resetDefaultValueField = (nextValue: SettingsSupportedFieldType) => {
+  const resetDefaultValueField = (nextValue: SettingsFieldType) => {
     switch (nextValue) {
       case FieldMetadataType.Boolean:
         resetBooleanDefaultValueField();
@@ -118,7 +117,7 @@ export const SettingsDataModelFieldTypeSelect = ({
       control={control}
       defaultValue={
         fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
-          ? (fieldMetadataItem.type as SettingsSupportedFieldType)
+          ? (fieldMetadataItem.type as SettingsFieldType)
           : FieldMetadataType.Text
       }
       render={({ field: { onChange } }) => (
@@ -147,10 +146,8 @@ export const SettingsDataModelFieldTypeSelect = ({
                       <SettingsCard
                         key={key}
                         onClick={() => {
-                          onChange(key as SettingsSupportedFieldType);
-                          resetDefaultValueField(
-                            key as SettingsSupportedFieldType,
-                          );
+                          onChange(key as SettingsFieldType);
+                          resetDefaultValueField(key as SettingsFieldType);
                           onFieldTypeSelect();
                         }}
                         Icon={

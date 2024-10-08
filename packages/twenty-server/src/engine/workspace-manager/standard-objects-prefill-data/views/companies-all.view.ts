@@ -5,7 +5,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const companiesAllView = async (
+export const companiesAllView = (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {

@@ -1,9 +1,11 @@
-import { isPlainObject } from '@nestjs/common/utils/shared.utils';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
-import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
+import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { capitalize } from 'src/utils/capitalize';
 
 export function formatData<T>(
   data: T,
@@ -17,49 +19,70 @@ export function formatData<T>(
     return data.map((item) => formatData(item, objectMetadata)) as T;
   }
 
-  const compositeFieldMetadataCollection =
-    getCompositeFieldMetadataCollection(objectMetadata);
-
-  const compositeFieldMetadataMap = new Map(
-    compositeFieldMetadataCollection.map((fieldMetadata) => [
-      fieldMetadata.name,
-      fieldMetadata,
-    ]),
-  );
-  const newData: object = {};
+  const newData: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(data)) {
-    const fieldMetadata = compositeFieldMetadataMap.get(key);
+    const fieldMetadata = objectMetadata.fields[key];
 
     if (!fieldMetadata) {
-      if (isPlainObject(value)) {
-        newData[key] = formatData(value, objectMetadata);
-      } else {
-        newData[key] = value;
-      }
-      continue;
-    }
-
-    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
-
-    if (!compositeType) {
-      continue;
-    }
-
-    for (const compositeProperty of compositeType.properties) {
-      const compositeKey = computeCompositeColumnName(
-        fieldMetadata.name,
-        compositeProperty,
+      throw new Error(
+        `Field metadata for field "${key}" is missing in object metadata`,
       );
-      const value = data?.[key]?.[compositeProperty.name];
+    }
 
-      if (value === undefined || value === null) {
-        continue;
-      }
+    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+      const formattedCompositeField = formatCompositeField(
+        value,
+        fieldMetadata,
+      );
 
-      newData[compositeKey] = data[key][compositeProperty.name];
+      Object.assign(newData, formattedCompositeField);
+    } else {
+      newData[key] = formatFieldMetadataValue(value, fieldMetadata);
     }
   }
 
   return newData as T;
+}
+
+function formatCompositeField(
+  value: any,
+  fieldMetadata: FieldMetadataInterface,
+): Record<string, any> {
+  const compositeType = compositeTypeDefinitions.get(
+    fieldMetadata.type as CompositeFieldMetadataType,
+  );
+
+  if (!compositeType) {
+    throw new Error(
+      `Composite type definition not found for type: ${fieldMetadata.type}`,
+    );
+  }
+
+  const formattedCompositeField: Record<string, any> = {};
+
+  for (const property of compositeType.properties) {
+    const subFieldKey = property.name;
+    const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
+
+    if (value && value[subFieldKey] !== undefined) {
+      formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
+        value[subFieldKey],
+        property as unknown as FieldMetadataInterface,
+      );
+    }
+  }
+
+  return formattedCompositeField;
+}
+
+function formatFieldMetadataValue(
+  value: any,
+  fieldMetadata: FieldMetadataInterface,
+) {
+  if (fieldMetadata.type === FieldMetadataType.RAW_JSON) {
+    return JSON.parse(value as string);
+  }
+
+  return value;
 }

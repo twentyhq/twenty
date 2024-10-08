@@ -71,7 +71,7 @@ export const ProfilePictureUploader = () => {
 
       return result;
     } catch (error) {
-      setErrorMessage('An error occured while uploading the picture.');
+      setErrorMessage('An error occurred while uploading the picture.');
     }
   };
 
@@ -97,7 +97,7 @@ export const ProfilePictureUploader = () => {
 
       setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl: null });
     } catch (error) {
-      setErrorMessage('An error occured while removing the picture.');
+      setErrorMessage('An error occurred while removing the picture.');
     }
   };
 

@@ -13,33 +13,38 @@ import { Button } from '@/ui/input/button/components/Button';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconArrowBackUp } from 'twenty-ui';
+
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  flex: 1;
   height: 85%;
-  justify-content: flex-start;
   overflow-y: auto;
-  position: relative;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
-  bottom: 0;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
-  height: 110px;
-  left: 0;
-  padding-left: ${({ theme }) => theme.spacing(7)};
-  padding-top: ${({ theme }) => theme.spacing(5)};
-  position: fixed;
-  right: 0;
+  justify-content: flex-end;
+  height: ${({ isMobile }) => (isMobile ? '100px' : '50px')};
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const RightDrawerEmailThread = () => {
   const setMessageThread = useSetRecoilState(messageThreadState);
-
+  const isMobile = useIsMobile();
   const {
     thread,
     messages,
@@ -50,23 +55,11 @@ export const RightDrawerEmailThread = () => {
     messageChannelLoading,
   } = useRightDrawerEmailThread();
 
-  const visibleMessages = useMemo(() => {
-    return messages.filter(({ messageParticipants }) => {
-      const from = messageParticipants.find(
-        (participant) => participant.role === 'from',
-      );
-      const receivers = messageParticipants.filter(
-        (participant) => participant.role !== 'from',
-      );
-      return from && receivers.length > 0;
-    });
-  }, [messages]);
-
   useEffect(() => {
-    if (!visibleMessages[0]?.messageThread) {
+    if (!messages[0]?.messageThread) {
       return;
     }
-    setMessageThread(visibleMessages[0]?.messageThread);
+    setMessageThread(messages[0]?.messageThread);
   });
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
@@ -88,17 +81,17 @@ export const RightDrawerEmailThread = () => {
     ),
   });
 
-  const visibleMessagesCount = visibleMessages.length;
-  const is5OrMoreMessages = visibleMessagesCount >= 5;
-  const firstMessages = visibleMessages.slice(
+  const messagesCount = messages.length;
+  const is5OrMoreMessages = messagesCount >= 5;
+  const firstMessages = messages.slice(
     0,
-    is5OrMoreMessages ? 2 : visibleMessagesCount - 1,
+    is5OrMoreMessages ? 2 : messagesCount - 1,
   );
   const intermediaryMessages = is5OrMoreMessages
-    ? visibleMessages.slice(2, visibleMessagesCount - 1)
+    ? messages.slice(2, messagesCount - 1)
     : [];
-  const lastMessage = visibleMessages[visibleMessagesCount - 1];
-  const subject = visibleMessages[0]?.subject;
+  const lastMessage = messages[messagesCount - 1];
+  const subject = messages[0]?.subject;
 
   const canReply = useMemo(() => {
     return (
@@ -114,51 +107,55 @@ export const RightDrawerEmailThread = () => {
     const url = `https://mail.google.com/mail/?authuser=${connectedAccountHandle}#all/${messageThreadExternalId}`;
     window.open(url, '_blank');
   };
-  if (!thread) {
+  if (!thread || !messages.length) {
     return null;
   }
   return (
-    <StyledContainer>
-      {threadLoading ? (
-        <EmailLoader loadingText="Loading thread" />
-      ) : (
-        <>
-          <EmailThreadHeader
-            subject={subject}
-            lastMessageSentAt={lastMessage.receivedAt}
-          />
-          {firstMessages.map((message) => (
-            <EmailThreadMessage
-              key={message.id}
-              participants={message.messageParticipants}
-              body={message.text}
-              sentAt={message.receivedAt}
+    <StyledWrapper>
+      <StyledContainer>
+        {threadLoading ? (
+          <EmailLoader loadingText="Loading thread" />
+        ) : (
+          <>
+            <EmailThreadHeader
+              subject={subject}
+              lastMessageSentAt={lastMessage.receivedAt}
             />
-          ))}
-          <IntermediaryMessages messages={intermediaryMessages} />
-          <EmailThreadMessage
-            key={lastMessage.id}
-            participants={lastMessage.messageParticipants}
-            body={lastMessage.text}
-            sentAt={lastMessage.receivedAt}
-            isExpanded
-          />
-          <CustomResolverFetchMoreLoader
-            loading={threadLoading}
-            onLastRowVisible={fetchMoreMessages}
-          />
-        </>
-      )}
-      {canReply && !messageChannelLoading ? (
-        <StyledButtonContainer>
+            {firstMessages.map((message) => (
+              <EmailThreadMessage
+                key={message.id}
+                sender={message.sender}
+                participants={message.messageParticipants}
+                body={message.text}
+                sentAt={message.receivedAt}
+              />
+            ))}
+            <IntermediaryMessages messages={intermediaryMessages} />
+            <EmailThreadMessage
+              key={lastMessage.id}
+              sender={lastMessage.sender}
+              participants={lastMessage.messageParticipants}
+              body={lastMessage.text}
+              sentAt={lastMessage.receivedAt}
+              isExpanded
+            />
+            <CustomResolverFetchMoreLoader
+              loading={threadLoading}
+              onLastRowVisible={fetchMoreMessages}
+            />
+          </>
+        )}
+      </StyledContainer>
+      {canReply && !messageChannelLoading && (
+        <StyledButtonContainer isMobile={isMobile}>
           <Button
             onClick={handleReplyClick}
-            title="Reply (View in Gmail)"
+            title="Reply"
             Icon={IconArrowBackUp}
             disabled={!canReply}
-          ></Button>
+          />
         </StyledButtonContainer>
-      ) : null}
-    </StyledContainer>
+      )}
+    </StyledWrapper>
   );
 };

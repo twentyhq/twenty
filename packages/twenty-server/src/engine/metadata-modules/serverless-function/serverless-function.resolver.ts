@@ -3,7 +3,6 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import graphqlTypeJson from 'graphql-type-json';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -11,7 +10,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { DeleteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/delete-serverless-function.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
@@ -63,7 +61,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Query(() => String, { nullable: true })
+  @Query(() => graphqlTypeJson, { nullable: true })
   async getServerlessFunctionSourceCode(
     @Args('input') input: GetServerlessFunctionSourceCodeInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -130,28 +128,6 @@ export class ServerlessFunctionResolver {
           name: input.name,
           description: input.description,
         },
-        input.code,
-        workspaceId,
-      );
-    } catch (error) {
-      serverlessFunctionGraphQLApiExceptionHandler(error);
-    }
-  }
-
-  @Mutation(() => ServerlessFunctionDTO)
-  async createOneServerlessFunctionFromFile(
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    file: FileUpload,
-    @Args('input')
-    input: CreateServerlessFunctionFromFileInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
-    try {
-      await this.checkFeatureFlag(workspaceId);
-
-      return await this.serverlessFunctionService.createOneServerlessFunction(
-        input,
-        file,
         workspaceId,
       );
     } catch (error) {

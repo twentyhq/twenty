@@ -29,8 +29,8 @@ export class MessagingTelemetryService {
   }: MessagingTelemetryTrackInput): Promise<void> {
     await this.analyticsService.create(
       {
-        type: 'track',
-        data: {
+        action: 'monitoring',
+        payload: {
           eventName: `messaging.${eventName}`,
           workspaceId,
           userId,
@@ -41,9 +41,6 @@ export class MessagingTelemetryService {
       },
       userId,
       workspaceId,
-      '', // voluntarely not retrieving this
-      '', // to avoid slowing down
-      this.environmentService.get('SERVER_URL'),
     );
   }
 }

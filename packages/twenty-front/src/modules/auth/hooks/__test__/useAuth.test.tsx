@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { iconsState } from 'twenty-ui';
 
@@ -12,7 +12,6 @@ import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { telemetryState } from '@/client-config/states/telemetryState';
 
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
@@ -81,7 +80,6 @@ describe('useAuth', () => {
         const billing = useRecoilValue(billingState);
         const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
         const supportChat = useRecoilValue(supportChatState);
-        const telemetry = useRecoilValue(telemetryState);
         const isDebugMode = useRecoilValue(isDebugModeState);
         return {
           ...useAuth(),
@@ -92,7 +90,6 @@ describe('useAuth', () => {
             billing,
             isSignInPrefilled,
             supportChat,
-            telemetry,
             isDebugMode,
           },
         };
@@ -125,9 +122,6 @@ describe('useAuth', () => {
     expect(state.supportChat).toEqual({
       supportDriver: 'none',
       supportFrontChatId: null,
-    });
-    expect(state.telemetry).toEqual({
-      enabled: true,
     });
     expect(state.isDebugMode).toBe(false);
   });

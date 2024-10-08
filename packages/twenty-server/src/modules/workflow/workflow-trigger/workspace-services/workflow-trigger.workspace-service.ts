@@ -203,6 +203,10 @@ export class WorkflowTriggerWorkspaceService {
         workflowVersionNullable,
       );
 
+    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+      return;
+    }
+
     await this.setDeactivatedVersionStatus(
       workflowVersion,
       workflowVersionRepository,

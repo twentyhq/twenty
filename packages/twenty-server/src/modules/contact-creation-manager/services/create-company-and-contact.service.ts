@@ -143,11 +143,8 @@ export class CreateCompanyAndContactService {
         createdByWorkspaceMember: connectedAccount.accountOwner,
       }));
 
-    const shouldUseEmailsField = isDefined(emailsFieldMetadata);
-
     return this.createContactService.createPeople(
       formattedContactsToCreate,
-      shouldUseEmailsField,
       workspaceId,
       transactionManager,
     );

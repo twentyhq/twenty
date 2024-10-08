@@ -11,7 +11,10 @@ describe('peopleResolver (integration)', () => {
             edges {
               node {
                 jobTitle
-                phone
+                phones {
+                  primaryPhoneNumber
+                  primaryPhoneCountryCode
+                }
                 city
                 avatarUrl
                 position
@@ -21,8 +24,10 @@ describe('peopleResolver (integration)', () => {
                 deletedAt
                 companyId
                 intro
-                whatsapp
-                workPrefereance
+                whatsapp {
+                  primaryPhoneNumber
+                }
+                workPreference
                 performanceRating
               }
             }
@@ -37,6 +42,7 @@ describe('peopleResolver (integration)', () => {
       .send(queryData)
       .expect(200)
       .expect((res) => {
+        console.log(res.body);
         expect(res.body.data).toBeDefined();
         expect(res.body.errors).toBeUndefined();
       })
@@ -52,7 +58,7 @@ describe('peopleResolver (integration)', () => {
           const people = edges[0].node;
 
           expect(people).toHaveProperty('jobTitle');
-          expect(people).toHaveProperty('phone');
+          expect(people).toHaveProperty('phones');
           expect(people).toHaveProperty('city');
           expect(people).toHaveProperty('avatarUrl');
           expect(people).toHaveProperty('position');
@@ -63,7 +69,7 @@ describe('peopleResolver (integration)', () => {
           expect(people).toHaveProperty('companyId');
           expect(people).toHaveProperty('intro');
           expect(people).toHaveProperty('whatsapp');
-          expect(people).toHaveProperty('workPrefereance');
+          expect(people).toHaveProperty('workPreference');
           expect(people).toHaveProperty('performanceRating');
         }
       });

@@ -171,6 +171,7 @@ export class CalendarChannelSyncStatusService {
       syncStatus: CalendarChannelSyncStatus.ACTIVE,
       throttleFailureCount: 0,
       syncStageStartedAt: null,
+      syncedAt: new Date().toISOString(),
     });
 
     await this.schedulePartialCalendarEventListFetch(calendarChannelIds);

@@ -6,9 +6,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -30,8 +28,6 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
   );
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -63,10 +59,16 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       return;
     }
 
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    const connectedAccount = await connectedAccountRepository.findOne({
+      where: {
+        id: connectedAccountId,
+      },
+    });
 
     if (!connectedAccount) {
       throw new Error(

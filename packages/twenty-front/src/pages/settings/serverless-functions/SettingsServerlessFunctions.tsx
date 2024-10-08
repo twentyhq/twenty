@@ -1,4 +1,3 @@
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServerlessFunctionsTable } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -35,11 +34,9 @@ export const SettingsServerlessFunctions = () => {
         },
       ]}
     >
-      <SettingsPageContainer>
-        <Section>
-          <SettingsServerlessFunctionsTable />
-        </Section>
-      </SettingsPageContainer>
+      <Section>
+        <SettingsServerlessFunctionsTable />
+      </Section>
     </SubMenuTopBarContainer>
   );
 };

@@ -1,11 +1,9 @@
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { getOrderByFieldForObjectMetadataItem } from '@/object-metadata/utils/getObjectOrderByField';
-
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('getObjectOrderByField', () => {
   it('should work as expected', () => {
-    const objectMetadataItem = mockObjectMetadataItems.find(
+    const objectMetadataItem = generatedMockObjectMetadataItems.find(
       (item) => item.nameSingular === 'person',
     )!;
     const res = getOrderByFieldForObjectMetadataItem(objectMetadataItem);

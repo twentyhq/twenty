@@ -47,6 +47,7 @@ export enum FieldMetadataType {
   RICH_TEXT = 'RICH_TEXT',
   ACTOR = 'ACTOR',
   ARRAY = 'ARRAY',
+  TS_VECTOR = 'TS_VECTOR',
 }
 
 @Entity('fieldMetadata')

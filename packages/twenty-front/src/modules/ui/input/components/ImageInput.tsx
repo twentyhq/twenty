@@ -1,8 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { useMemo } from 'react';
-import { IconFileUpload, IconTrash, IconUpload, IconX } from 'twenty-ui';
-
+import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
 import { Button } from '@/ui/input/button/components/Button';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { isDefined } from '~/utils/isDefined';
@@ -15,8 +14,8 @@ const StyledContainer = styled.div`
 const StyledPicture = styled.button<{ withPicture: boolean }>`
   align-items: center;
   background: ${({ theme, disabled }) =>
-    disabled ? theme.background.secondary : theme.background.tertiary};
-  border: none;
+    disabled ? theme.background.secondary : theme.background.transparent.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
@@ -35,6 +34,10 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
     width: 100%;
   }
 
+  &:hover svg {
+    color: ${({ theme }) => theme.font.color.tertiary};
+  }
+
   ${({ theme, withPicture, disabled }) => {
     if ((withPicture || disabled) === true) {
       return '';
@@ -42,7 +45,7 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
 
     return `
       &:hover {
-        background: ${theme.background.quaternary};
+        background: ${theme.background.transparent.medium};
       }
     `;
   }};
@@ -122,7 +125,7 @@ export const ImageInput = ({
             alt="profile"
           />
         ) : (
-          <IconFileUpload size={theme.icon.size.md} />
+          <IconPhotoUp size={theme.icon.size.lg} />
         )}
       </StyledPicture>
       <StyledContent>

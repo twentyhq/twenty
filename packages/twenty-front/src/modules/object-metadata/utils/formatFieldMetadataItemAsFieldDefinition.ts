@@ -37,6 +37,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     targetFieldMetadataName:
       field.relationDefinition?.targetFieldMetadata?.name ?? '',
     options: field.options,
+    settings: field.settings,
     isNullable: field.isNullable,
   };
 
@@ -53,5 +54,6 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       metadata: fieldDefintionMetadata,
       type: field.type,
     }),
+    settings: field.settings,
   };
 };
