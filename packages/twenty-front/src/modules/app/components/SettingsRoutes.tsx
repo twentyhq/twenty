@@ -242,9 +242,9 @@ const SettingsSecurity = lazy(() =>
 
 const SettingsSecurityNewSSOIdentityProvider = lazy(() =>
   import(
-    '~/pages/settings/security/SettingsSecurityNewSSOIdentityProvider'
+    '~/pages/settings/security/SettingsSecurityCRUDSSOIdentityProvider'
   ).then((module) => ({
-    default: module.SettingsSecurityNewSSOIdentityProvider,
+    default: module.SettingsSecurityCRUDSSOIdentityProvider,
   })),
 );
 

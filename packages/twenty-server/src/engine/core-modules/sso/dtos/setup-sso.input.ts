@@ -9,6 +9,11 @@ class SetupSsoInputCommon {
   @Field(() => String)
   @IsString()
   name: string;
+
+  @Field(() => String)
+  @IsString()
+  @IsUrl({ protocols: ['http', 'https'] })
+  issuer: string;
 }
 
 @InputType()
@@ -20,11 +25,6 @@ export class SetupOIDCSsoInput extends SetupSsoInputCommon {
   @Field(() => String)
   @IsString()
   clientSecret: string;
-
-  @Field(() => String)
-  @IsString()
-  @IsUrl({ protocols: ['http', 'https'] })
-  issuer: string;
 }
 
 @InputType()

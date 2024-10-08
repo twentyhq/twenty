@@ -41,7 +41,7 @@ export class AddWorkspaceSSOIdentityProvider1727181198403
     `);
     await queryRunner.query(`
       ALTER TABLE "core"."workspaceSSOIdentityProvider" ADD CONSTRAINT "CHK_SAML" CHECK (
-         ("type" = 'SAML' AND "ssoURL" IS NOT NULL AND "certificate" IS NOT NULL AND "fingerprint" IS NOT NULL) OR "type" = 'OIDC'
+         ("type" = 'SAML' AND "ssoURL" IS NOT NULL AND "certificate" IS NOT NULL) OR "type" = 'OIDC'
       )
     `);
   }

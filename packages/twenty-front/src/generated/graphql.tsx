@@ -948,6 +948,7 @@ export type SetupSamlSsoInput = {
   certificate: Scalars['String'];
   fingerprint?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
+  issuer: Scalars['String'];
   name: Scalars['String'];
   ssoURL: Scalars['String'];
 };

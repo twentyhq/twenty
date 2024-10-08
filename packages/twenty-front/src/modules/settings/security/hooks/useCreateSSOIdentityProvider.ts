@@ -2,7 +2,6 @@ import { useSetRecoilState } from 'recoil';
 import {
   CreateOidcIdentityProviderMutationVariables,
   CreateSamlIdentityProviderMutationVariables,
-  IdpType,
   useCreateOidcIdentityProviderMutation,
   useCreateSamlIdentityProviderMutation,
 } from '~/generated/graphql';
@@ -18,21 +17,20 @@ export const useCreateSSOIdentityProvider = () => {
     SSOIdentitiesProvidersState,
   );
 
-  const createSSOIdentityProvider = async <T extends IdpType>({
-    type,
-    input,
-  }: T extends 'OIDC'
-    ? {
-        type: 'OIDC';
-        input: CreateOidcIdentityProviderMutationVariables['input'];
-      }
-    : {
-        type: 'SAML';
-        input: CreateSamlIdentityProviderMutationVariables['input'];
-      }) => {
-    if (type === 'OIDC') {
+  const createSSOIdentityProvider = async (
+    input:
+      | ({
+          type: 'OIDC';
+        } & CreateOidcIdentityProviderMutationVariables['input'])
+      | ({
+          type: 'SAML';
+        } & CreateSamlIdentityProviderMutationVariables['input']),
+  ) => {
+    if (input.type === 'OIDC') {
+      // eslint-disable-next-line unused-imports/no-unused-vars
+      const { type, ...params } = input;
       return await createOidcIdentityProviderMutation({
-        variables: { input },
+        variables: { input: params },
         onCompleted: (data) => {
           setSSOIdentitiesProviders((existingProvider) => [
             ...existingProvider,
@@ -40,9 +38,11 @@ export const useCreateSSOIdentityProvider = () => {
           ]);
         },
       });
-    } else if (type === 'SAML') {
+    } else if (input.type === 'SAML') {
+      // eslint-disable-next-line unused-imports/no-unused-vars
+      const { type, ...params } = input;
       return await createSamlIdentityProviderMutation({
-        variables: { input },
+        variables: { input: params },
         onCompleted: (data) => {
           setSSOIdentitiesProviders((existingProvider) => [
             ...existingProvider,
