@@ -41,6 +41,7 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
   user-select: none;
+  white-space: nowrap;
 `;
 
 const StyledIcon = styled.div`
@@ -52,6 +53,7 @@ const StyledIcon = styled.div`
 const StyledDelete = styled.div<{ variant: SortOrFitlerChipVariant }>`
   align-items: center;
   cursor: pointer;
+  padding: ${({ theme }) => theme.spacing(0.5)};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   margin-left: ${({ theme }) => theme.spacing(2)};

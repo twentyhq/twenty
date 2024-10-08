@@ -20,7 +20,9 @@ import { CommandType } from '@/command-menu/types/Command';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreCurrentViewIdState } from '@/context-store/states/contextStoreCurrentViewIdState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
@@ -52,7 +54,9 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
-  const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
+  const { addToCommandMenu, setObjectsInCommandMenu } = useCommandMenu();
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
@@ -192,8 +196,11 @@ export const PageChangeEffect = () => {
     }
   }, [isMatchingLocation, setHotkeyScope]);
 
+  const { nonSystemActiveObjectMetadataItems } =
+    useNonSystemActiveObjectMetadataItems();
+
   useEffect(() => {
-    setToInitialCommandMenu();
+    setObjectsInCommandMenu(nonSystemActiveObjectMetadataItems);
 
     addToCommandMenu([
       {
@@ -208,7 +215,13 @@ export const PageChangeEffect = () => {
           }),
       },
     ]);
-  }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);
+  }, [
+    nonSystemActiveObjectMetadataItems,
+    addToCommandMenu,
+    setObjectsInCommandMenu,
+    openCreateActivity,
+    objectMetadataItems,
+  ]);
 
   useEffect(() => {
     setTimeout(() => {
