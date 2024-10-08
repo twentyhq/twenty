@@ -9,54 +9,54 @@ import {
   IconUserCircle,
 } from 'twenty-ui';
 
-export const getSourceEnumOptions = (
-  selectedItemIds: string[],
+export const getActorSourceMultiSelectOptions = (
+  selectedSourceNames: string[],
 ): SelectableItem[] => {
   return [
     {
       id: 'MANUAL',
       name: 'User',
-      isSelected: selectedItemIds.includes('MANUAL'),
+      isSelected: selectedSourceNames.includes('MANUAL'),
       AvatarIcon: IconUserCircle,
       isIconInverted: true,
     },
     {
       id: 'IMPORT',
       name: 'Import',
-      isSelected: selectedItemIds.includes('IMPORT'),
+      isSelected: selectedSourceNames.includes('IMPORT'),
       AvatarIcon: IconCsv,
       isIconInverted: true,
     },
     {
       id: 'API',
       name: 'Api',
-      isSelected: selectedItemIds.includes('API'),
+      isSelected: selectedSourceNames.includes('API'),
       AvatarIcon: IconApi,
       isIconInverted: true,
     },
     {
       id: 'EMAIL',
       name: 'Email',
-      isSelected: selectedItemIds.includes('EMAIL'),
+      isSelected: selectedSourceNames.includes('EMAIL'),
       AvatarIcon: IconGmail,
     },
     {
       id: 'CALENDAR',
       name: 'Calendar',
-      isSelected: selectedItemIds.includes('CALENDAR'),
+      isSelected: selectedSourceNames.includes('CALENDAR'),
       AvatarIcon: IconGoogleCalendar,
     },
     {
       id: 'WORKFLOW',
       name: 'Workflow',
-      isSelected: selectedItemIds.includes('WORKFLOW'),
+      isSelected: selectedSourceNames.includes('WORKFLOW'),
       AvatarIcon: IconSettingsAutomation,
       isIconInverted: true,
     },
     {
       id: 'SYSTEM',
       name: 'System',
-      isSelected: selectedItemIds.includes('SYSTEM'),
+      isSelected: selectedSourceNames.includes('SYSTEM'),
       AvatarIcon: IconRobot,
       isIconInverted: true,
     },

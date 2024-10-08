@@ -25,7 +25,7 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -37,9 +37,11 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
+//TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
->;
+> &
+  any;
 
 const canPersistFieldMetadataItemUpdate = (
   fieldMetadataItem: FieldMetadataItem,
@@ -89,7 +91,7 @@ export const SettingsObjectFieldEdit = () => {
     resolver: zodResolver(settingsFieldFormSchema()),
     values: {
       icon: fieldMetadataItem?.icon ?? 'Icon',
-      type: fieldMetadataItem?.type as SettingsSupportedFieldType,
+      type: fieldMetadataItem?.type as SettingsFieldType,
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
     },

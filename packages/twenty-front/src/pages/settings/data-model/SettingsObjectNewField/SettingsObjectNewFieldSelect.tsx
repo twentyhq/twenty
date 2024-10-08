@@ -4,9 +4,11 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import {
   settingsDataModelFieldTypeFormSchema,
-  SettingsObjectNewFieldSelector,
-} from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+  SettingsDataModelFieldTypeSelect,
+} from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
+
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+
 import { AppPath } from '@/types/AppPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,7 +31,7 @@ export const SettingsObjectNewFieldSelect = () => {
       type: FieldMetadataType.Text,
     },
   });
-  const excludedFieldTypes: SettingsSupportedFieldType[] = (
+  const excludedFieldTypes: SettingsFieldType[] = (
     [
       FieldMetadataType.Link,
       FieldMetadataType.Numeric,
@@ -66,7 +68,7 @@ export const SettingsObjectNewFieldSelect = () => {
           ]}
         >
           <SettingsPageContainer>
-            <SettingsObjectNewFieldSelector
+            <SettingsDataModelFieldTypeSelect
               objectSlug={objectSlug}
               excludedFieldTypes={excludedFieldTypes}
             />

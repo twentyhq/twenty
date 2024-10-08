@@ -12,7 +12,7 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -33,14 +33,15 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
->;
+> &
+  any;
 
 export const SettingsObjectNewFieldConfigure = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
   const fieldType =
-    (searchParams.get('fieldType') as SettingsSupportedFieldType) ||
+    (searchParams.get('fieldType') as SettingsFieldType) ||
     FieldMetadataType.Text;
   const { enqueueSnackBar } = useSnackBar();
 
@@ -200,7 +201,7 @@ export const SettingsObjectNewFieldConfigure = () => {
                 fieldMetadataItem={{
                   icon: formConfig.watch('icon'),
                   label: formConfig.watch('label') || 'New Field',
-                  type: fieldType,
+                  type: fieldType as FieldMetadataType,
                 }}
                 objectMetadataItem={activeObjectMetadataItem}
               />

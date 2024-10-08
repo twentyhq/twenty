@@ -2,17 +2,17 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -37,6 +37,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingSubscriptionItem,
         PostgresCredentials,
       ],
+      metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {
             rejectUnauthorized: false,

@@ -1,10 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, QueryFailedError } from 'typeorm';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
@@ -35,6 +37,8 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   /**
@@ -149,6 +153,13 @@ export class WorkspaceSyncMetadataService {
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
         context.workspaceId,
       );
+
+      if (workspaceFeatureFlagsMap.IS_SEARCH_ENABLED) {
+        await this.featureFlagService.enableFeatureFlags(
+          [FeatureFlagKey.IsWorkspaceMigratedForSearch],
+          context.workspaceId,
+        );
+      }
     } catch (error) {
       this.logger.error('Sync of standard objects failed with:', error);
 
