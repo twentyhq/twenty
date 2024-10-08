@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -25,11 +25,15 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SSOService {
   constructor(
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
     @InjectRepository(User, 'core')
@@ -39,6 +43,21 @@ export class SSOService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
+  private async isSSOEnabled(workspaceId: string) {
+    const isSSOEnabledFeatureFlag = await this.featureFlagRepository.findOneBy({
+      workspaceId,
+      key: FeatureFlagKey.IsSSOEnabled,
+      value: true,
+    });
+
+    if (!isSSOEnabledFeatureFlag?.value) {
+      throw new SSOException(
+        `${FeatureFlagKey.IsSSOEnabled} feature flag is disabled`,
+        SSOExceptionCode.SSO_DISABLE,
+      );
+    }
+  }
+
   async createOIDCIdentityProvider(
     data: Pick<
       WorkspaceSSOIdentityProvider,
@@ -47,6 +66,8 @@ export class SSOService {
     workspaceId: string,
   ) {
     try {
+      await this.isSSOEnabled(workspaceId);
+
       if (!data.issuer) {
         throw new SSOException(
           'Invalid issuer URL',
@@ -97,6 +118,8 @@ export class SSOService {
     >,
     workspaceId: string,
   ) {
+    await this.isSSOEnabled(workspaceId);
+
     const idp = await this.workspaceSSOIdentityProviderRepository.save({
       ...data,
       type: IdpType.SAML,
