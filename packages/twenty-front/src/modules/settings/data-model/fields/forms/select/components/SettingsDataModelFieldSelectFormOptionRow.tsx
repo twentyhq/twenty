@@ -13,6 +13,7 @@ import {
 import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { EXPANDED_WIDTH_ANIMATION_VARIANTS } from '@/settings/constants/ExpandedWidthAnimationVariants';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -23,6 +24,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useRecoilValue } from 'recoil';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -45,14 +49,16 @@ const StyledRow = styled.div`
 
 const StyledColorSample = styled(ColorSample)`
   cursor: pointer;
-  margin-left: 9px;
-  margin-right: 14px;
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+
+  margin-right: ${({ theme }) => theme.spacing(3.5)};
+  margin-left: ${({ theme }) => theme.spacing(3.5)};
 `;
 
 const StyledOptionInput = styled(TextInput)`
-  flex: 1 0 auto;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-
+  width: 100%;
+  flex-grow: 1;
   & input {
     height: ${({ theme }) => theme.spacing(6)};
   }
@@ -69,6 +75,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   option,
   isNewRow,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
@@ -91,10 +98,33 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   return (
     <StyledRow className={className}>
       <IconGripVertical
+        style={{ minWidth: theme.icon.size.md }}
         size={theme.icon.size.md}
         stroke={theme.icon.stroke.sm}
         color={theme.font.color.extraLight}
       />
+      <AnimatePresence>
+        {isAdvancedModeEnabled && (
+          <motion.div
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={EXPANDED_WIDTH_ANIMATION_VARIANTS}
+          >
+            <StyledOptionInput
+              value={option.value}
+              onChange={(input) =>
+                onChange({
+                  ...option,
+                  value: getOptionValueFromLabel(input),
+                })
+              }
+              RightIcon={isDefault ? IconCheck : undefined}
+              maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Dropdown
         dropdownId={dropdownIds.color}
         dropdownPlacement="bottom-start"
@@ -126,7 +156,10 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           onChange({
             ...option,
             label,
-            value: getOptionValueFromLabel(label),
+            value:
+              option.value === getOptionValueFromLabel(option.label)
+                ? getOptionValueFromLabel(label)
+                : option.value,
           })
         }
         RightIcon={isDefault ? IconCheck : undefined}
