@@ -13,8 +13,9 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
   constructor(
     environmentService: EnvironmentService,
     scopeConfig: GoogleAPIScopeConfig,
+    isGmailSendEmailScopeEnabled = false,
   ) {
-    super(environmentService, scopeConfig);
+    super(environmentService, scopeConfig, isGmailSendEmailScopeEnabled);
   }
 
   authenticate(req: any, options: any) {
