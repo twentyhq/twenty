@@ -7,6 +7,7 @@ export const LIST_WORKSPACE_SSO_IDENTITIES_PROVIDERS = gql`
       id
       name
       issuer
+      status
     }
   }
 `;

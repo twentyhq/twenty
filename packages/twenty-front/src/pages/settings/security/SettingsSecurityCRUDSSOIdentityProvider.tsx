@@ -31,7 +31,11 @@ export const SettingsSecurityCRUDSSOIdentityProvider = () => {
   const selectedType = formConfig.watch('type');
 
   useEffect(
-    () => formConfig.reset(defaultIdpValues[selectedType]()),
+    () =>
+      formConfig.reset({
+        ...defaultIdpValues[selectedType](),
+        name: formConfig.getValues('name'),
+      }),
     [formConfig, selectedType],
   );
 

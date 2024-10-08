@@ -192,6 +192,15 @@ export type DeleteServerlessFunctionInput = {
   id: Scalars['ID'];
 };
 
+export type DeleteSsoInput = {
+  idpId: Scalars['String'];
+};
+
+export type DeleteSsoOutput = {
+  __typename?: 'DeleteSsoOutput';
+  idpId: Scalars['String'];
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   ColumnsAdded = 'COLUMNS_ADDED',
@@ -301,6 +310,7 @@ export type FindAvailableSsoidpOutput = {
   id: Scalars['String'];
   issuer: Scalars['String'];
   name: Scalars['String'];
+  status: SsoIdentityProviderStatus;
   type: IdpType;
 };
 
@@ -382,6 +392,7 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteOneServerlessFunction: ServerlessFunction;
+  deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteUser: User;
   deleteWorkspaceInvitation: Scalars['String'];
   disablePostgresProxy: PostgresCredentials;
@@ -489,6 +500,11 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationDeleteOneServerlessFunctionArgs = {
   input: DeleteServerlessFunctionInput;
+};
+
+
+export type MutationDeleteSsoIdentityProviderArgs = {
+  input: DeleteSsoInput;
 };
 
 
@@ -864,6 +880,12 @@ export type RunWorkflowVersionInput = {
   workflowVersionId: Scalars['String'];
 };
 
+export enum SsoIdentityProviderStatus {
+  Active = 'Active',
+  Error = 'Error',
+  Inactive = 'Inactive'
+}
+
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']>;
@@ -958,6 +980,7 @@ export type SetupSsoOutput = {
   id: Scalars['String'];
   issuer: Scalars['String'];
   name: Scalars['String'];
+  status: SsoIdentityProviderStatus;
   type: IdpType;
 };
 
@@ -1603,19 +1626,26 @@ export type CreateOidcIdentityProviderMutationVariables = Exact<{
 }>;
 
 
-export type CreateOidcIdentityProviderMutation = { __typename?: 'Mutation', createOIDCIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdpType, issuer: string, name: string } };
+export type CreateOidcIdentityProviderMutation = { __typename?: 'Mutation', createOIDCIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdpType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
 export type CreateSamlIdentityProviderMutationVariables = Exact<{
   input: SetupSamlSsoInput;
 }>;
 
 
-export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdpType, issuer: string, name: string } };
+export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdpType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+
+export type DeleteSsoIdentityProviderMutationVariables = Exact<{
+  input: DeleteSsoInput;
+}>;
+
+
+export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', idpId: string } };
 
 export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdpType, id: string, name: string, issuer: string }> };
+export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdpType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
 export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
@@ -2899,6 +2929,7 @@ export const CreateOidcIdentityProviderDocument = gql`
     type
     issuer
     name
+    status
   }
 }
     `;
@@ -2935,6 +2966,7 @@ export const CreateSamlIdentityProviderDocument = gql`
     type
     issuer
     name
+    status
   }
 }
     `;
@@ -2964,6 +2996,39 @@ export function useCreateSamlIdentityProviderMutation(baseOptions?: Apollo.Mutat
 export type CreateSamlIdentityProviderMutationHookResult = ReturnType<typeof useCreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationResult = Apollo.MutationResult<CreateSamlIdentityProviderMutation>;
 export type CreateSamlIdentityProviderMutationOptions = Apollo.BaseMutationOptions<CreateSamlIdentityProviderMutation, CreateSamlIdentityProviderMutationVariables>;
+export const DeleteSsoIdentityProviderDocument = gql`
+    mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
+  deleteSSOIdentityProvider(input: $input) {
+    idpId
+  }
+}
+    `;
+export type DeleteSsoIdentityProviderMutationFn = Apollo.MutationFunction<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>;
+
+/**
+ * __useDeleteSsoIdentityProviderMutation__
+ *
+ * To run a mutation, you first call `useDeleteSsoIdentityProviderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSsoIdentityProviderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSsoIdentityProviderMutation, { data, loading, error }] = useDeleteSsoIdentityProviderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteSsoIdentityProviderMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>(DeleteSsoIdentityProviderDocument, options);
+      }
+export type DeleteSsoIdentityProviderMutationHookResult = ReturnType<typeof useDeleteSsoIdentityProviderMutation>;
+export type DeleteSsoIdentityProviderMutationResult = Apollo.MutationResult<DeleteSsoIdentityProviderMutation>;
+export type DeleteSsoIdentityProviderMutationOptions = Apollo.BaseMutationOptions<DeleteSsoIdentityProviderMutation, DeleteSsoIdentityProviderMutationVariables>;
 export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     query ListSSOIdentityProvidersByWorkspaceId {
   listSSOIdentityProvidersByWorkspaceId {
@@ -2971,6 +3036,7 @@ export const ListSsoIdentityProvidersByWorkspaceIdDocument = gql`
     id
     name
     issuer
+    status
   }
 }
     `;
