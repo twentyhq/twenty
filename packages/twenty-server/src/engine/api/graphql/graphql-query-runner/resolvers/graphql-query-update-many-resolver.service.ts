@@ -65,15 +65,13 @@ export class GraphqlQueryUpdateManyResolverService
 
     const data = formatData(args.data, objectMetadataMapItem);
 
-    const result = await withFilterQueryBuilder
+    const nonFormattedUpdatedObjectRecords = await withFilterQueryBuilder
       .update(data)
       .returning('*')
       .execute();
 
-    const nonFormattedUpdatedObjectRecords = result.raw;
-
     const updatedRecords = formatResult(
-      nonFormattedUpdatedObjectRecords,
+      nonFormattedUpdatedObjectRecords.raw,
       objectMetadataMapItem,
       objectMetadataMap,
     );
