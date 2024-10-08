@@ -42,6 +42,7 @@ const StyledValueContainer = styled.div`
   display: flex;
   flex-grow: 1;
   min-width: 0;
+  position: relative;
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -79,7 +80,6 @@ export type RecordInlineCellContainerProps = {
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
-  isCentered?: boolean;
 };
 
 export const RecordInlineCellContainer = () => {

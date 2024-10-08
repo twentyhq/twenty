@@ -202,10 +202,10 @@ export const RecordShowContainer = ({
               },
               useUpdateRecord: useUpdateOneObjectRecordMutation,
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
-              isCentered: true,
+              isCentered: !isMobile,
             }}
           >
-            <RecordInlineCell readonly={isReadOnly} isCentered={true} />
+            <RecordInlineCell readonly={isReadOnly} />
           </FieldContext.Provider>
         }
         avatarType={recordIdentifier?.avatarType ?? 'rounded'}

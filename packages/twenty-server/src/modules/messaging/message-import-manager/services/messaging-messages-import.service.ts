@@ -110,7 +110,6 @@ export class MessagingMessagesImportService {
 
       await this.emailAliasManagerService.refreshHandleAliases(
         connectedAccount,
-        workspaceId,
       );
 
       messageIdsToFetch = await this.cacheStorage.setPop(

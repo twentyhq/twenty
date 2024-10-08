@@ -1,15 +1,15 @@
 import { IconComponent } from 'twenty-ui';
 
-import { FilterType } from './FilterType';
+import { FilterableFieldType } from './FilterableFieldType';
 
 export type FilterDefinition = {
   fieldMetadataId: string;
   label: string;
   iconName: string;
-  type: FilterType;
+  type: FilterableFieldType;
   relationObjectMetadataNamePlural?: string;
   relationObjectMetadataNameSingular?: string;
   selectAllLabel?: string;
   SelectAllIcon?: IconComponent;
-  subFieldType?: FilterType;
+  compositeFieldName?: string;
 };
