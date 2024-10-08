@@ -6,6 +6,7 @@ import {
   WorkflowTrigger,
   WorkflowVersion,
 } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { isDefined } from 'twenty-ui';
 
@@ -71,4 +72,9 @@ export const WorkflowStepDetail = ({
       }
     }
   }
+
+  return assertUnreachable(
+    stepDefinition,
+    `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
+  );
 };
