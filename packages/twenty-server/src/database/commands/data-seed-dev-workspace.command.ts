@@ -40,6 +40,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -219,7 +220,14 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
             await seedWorkspaceFavorites(
               viewDefinitionsWithId
-                .filter((view) => view.key === 'INDEX')
+                .filter(
+                  (view) =>
+                    view.key === 'INDEX' &&
+                    shouldSeedWorkspaceFavorite(
+                      view.objectMetadataId,
+                      objectMetadataMap,
+                    ),
+                )
                 .map((view) => view.id),
               entityManager,
               dataSourceMetadata.schema,

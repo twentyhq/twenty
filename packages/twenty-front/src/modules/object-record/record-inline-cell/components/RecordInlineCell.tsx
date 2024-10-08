@@ -24,15 +24,13 @@ import {
 type RecordInlineCellProps = {
   readonly?: boolean;
   loading?: boolean;
-  isCentered?: boolean;
 };
 
 export const RecordInlineCell = ({
   readonly,
   loading,
-  isCentered,
 }: RecordInlineCellProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition, recordId, isCentered } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -90,7 +88,7 @@ export const RecordInlineCell = ({
     label: fieldDefinition.label,
     labelWidth: fieldDefinition.labelWidth,
     showLabel: fieldDefinition.showLabel,
-    isCentered: isCentered,
+    isCentered,
     editModeContent: (
       <FieldInput
         recordFieldInputdId={getRecordFieldInputId(

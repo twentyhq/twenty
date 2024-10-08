@@ -93,6 +93,11 @@ export const triggerDeleteRecordsOptimisticEffect = ({
       objectMetadataItems,
     });
 
-    cache.evict({ id: cache.identify(recordToDelete) });
+    cache.modify({
+      id: cache.identify(recordToDelete),
+      fields: {
+        deletedAt: () => recordToDelete.deletedAt,
+      },
+    });
   });
 };

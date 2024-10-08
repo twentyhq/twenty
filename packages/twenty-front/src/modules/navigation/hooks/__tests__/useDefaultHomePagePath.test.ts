@@ -6,7 +6,7 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { AppPath } from '@/types/AppPath';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedUserData } from '~/testing/mock-data/users';
 
 jest.mock('@/prefetch/hooks/usePrefetchedData');

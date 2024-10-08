@@ -1,3 +1,18 @@
+locals {
+  tokens = [
+    "accessToken",
+    "loginToken",
+    "refreshToken",
+    "fileToken"
+  ]
+}
+
+resource "random_bytes" "this" {
+  for_each = toset(local.tokens)
+
+  length = 32
+}
+
 resource "kubernetes_secret" "twentycrm_tokens" {
   metadata {
     name      = "tokens"
@@ -5,11 +20,9 @@ resource "kubernetes_secret" "twentycrm_tokens" {
   }
 
   data = {
-    accessToken  = var.twentycrm_token_accessToken
-    loginToken   = var.twentycrm_token_loginToken
-    refreshToken = var.twentycrm_token_refreshToken
-    fileToken    = var.twentycrm_token_fileToken
+    accessToken  = random_bytes.this["accessToken"].base64
+    loginToken   = random_bytes.this["loginToken"].base64
+    refreshToken = random_bytes.this["refreshToken"].base64
+    fileToken    = random_bytes.this["fileToken"].base64
   }
-
-  # type = "kubernetes.io/basic-auth"
 }

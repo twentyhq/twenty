@@ -56,6 +56,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
+import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -82,6 +83,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly fieldMetadataValidationService: FieldMetadataValidationService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -157,6 +159,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       this.validateFieldMetadataInput<CreateFieldInput>(
+        fieldMetadataInput.type,
         fieldMetadataInput,
         objectMetadata,
       );
@@ -391,6 +394,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       this.validateFieldMetadataInput<UpdateFieldInput>(
+        existingFieldMetadata.type,
         fieldMetadataInput,
         objectMetadata,
       );
@@ -707,7 +711,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   private validateFieldMetadataInput<
     T extends UpdateFieldInput | CreateFieldInput,
-  >(fieldMetadataInput: T, objectMetadata: ObjectMetadataEntity): T {
+  >(
+    fieldMetadataType: FieldMetadataType,
+    fieldMetadataInput: T,
+    objectMetadata: ObjectMetadataEntity,
+  ): T {
     if (fieldMetadataInput.name) {
       try {
         validateFieldNameValidityOrThrow(fieldMetadataInput.name);
@@ -746,6 +754,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         }
       }
+    }
+
+    if (fieldMetadataInput.settings) {
+      this.fieldMetadataValidationService.validateSettingsOrThrow({
+        fieldType: fieldMetadataType,
+        settings: fieldMetadataInput.settings,
+      });
     }
 
     return fieldMetadataInput;

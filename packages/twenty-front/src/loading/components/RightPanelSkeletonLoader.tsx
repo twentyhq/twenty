@@ -1,3 +1,4 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import {
@@ -60,7 +61,10 @@ const StyledSkeletonHeaderLoader = () => {
         highlightColor={BACKGROUND_LIGHT.transparent.lighter}
         borderRadius={4}
       >
-        <Skeleton height={16} width={104} />
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          width={104}
+        />
       </SkeletonTheme>
     </StyledHeaderContainer>
   );
@@ -73,7 +77,7 @@ const StyledSkeletonAddLoader = () => {
       highlightColor={BACKGROUND_LIGHT.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={132} height={16} />
+      <Skeleton width={132} height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
     </SkeletonTheme>
   );
 };
