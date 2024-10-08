@@ -100,7 +100,7 @@ export class ConnectedAccountRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO ${dataSourceSchema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId", "scopes") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
         connectedAccount.id,
         connectedAccount.handle,
@@ -108,6 +108,7 @@ export class ConnectedAccountRepository {
         connectedAccount.accessToken,
         connectedAccount.refreshToken,
         connectedAccount.accountOwnerId,
+        connectedAccount.scopes,
       ],
       workspaceId,
       transactionManager,

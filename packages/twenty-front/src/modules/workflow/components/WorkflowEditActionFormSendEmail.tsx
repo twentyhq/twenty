@@ -94,7 +94,6 @@ export const WorkflowEditActionFormSendEmail = ({
           body: formData.body,
         },
       });
-      await checkConnectedAccountScopes(formData.connectedAccountId);
     },
     1_000,
   );
@@ -177,6 +176,7 @@ export const WorkflowEditActionFormSendEmail = ({
                 onChange={(connectedAccountId) => {
                   field.onChange(connectedAccountId);
                   handleSave();
+                  checkConnectedAccountScopes(connectedAccountId);
                 }}
               />
             )}
