@@ -29,6 +29,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
     skip: !isDefined(workflowVersion),
   });
 
+  // TODO: In the future, use the workflow.status property to determine if there is a draft version
   const {
     records: draftWorkflowVersions,
     loading: loadingDraftWorkflowVersions,
