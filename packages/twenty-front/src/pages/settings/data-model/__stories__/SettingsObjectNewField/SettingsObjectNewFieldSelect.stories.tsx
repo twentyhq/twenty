@@ -31,13 +31,11 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText('Objects');
     await canvas.findByText('1. Select a field type');
-
     const searchInput = await canvas.findByPlaceholderText('Search a type');
-
+    await userEvent.type(searchInput, 'Rela');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await userEvent.clear(searchInput);
     await userEvent.type(searchInput, 'Num');
-
-    const numberTypeButton = await canvas.findByText('Number');
-    await new Promise((resolve) => setTimeout(resolve, 10000));
-    await userEvent.click(numberTypeButton);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
   },
 };

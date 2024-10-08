@@ -41,7 +41,7 @@ export const Default: Story = {
     await userEvent.type(descriptionInput, 'Test description');
 
     const saveButton = await canvas.findByText('Save');
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     await userEvent.click(saveButton);
   },
 };
