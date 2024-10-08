@@ -12,6 +12,7 @@ import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
 import { RecordShowPageWorkflowVersionHeader } from '@/workflow/components/RecordShowPageWorkflowVersionHeader';
 import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
+import { RecordShowPageContextStoreEffect } from '~/pages/object-record/RecordShowPageContextStoreEffect';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 
 export const RecordShowPage = () => {
@@ -39,6 +40,7 @@ export const RecordShowPage = () => {
   return (
     <RecordFieldValueSelectorContextProvider>
       <RecordValueSetterEffect recordId={objectRecordId} />
+      <RecordShowPageContextStoreEffect recordId={objectRecordId} />
       <PageContainer>
         <PageTitle title={pageTitle} />
         <RecordShowPageHeader
