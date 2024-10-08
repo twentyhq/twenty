@@ -1,4 +1,7 @@
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { CommandMenuEffect } from '@/app/effect-components/CommandMenuEffect';
+import { GotoHotkeys } from '@/app/effect-components/GotoHotkeysEffect';
+import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
@@ -17,9 +20,6 @@ import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
-import { GotoHotkeys } from '~/effect-components/GotoHotkeysEffect';
-import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const AppRouterProviders = () => {
