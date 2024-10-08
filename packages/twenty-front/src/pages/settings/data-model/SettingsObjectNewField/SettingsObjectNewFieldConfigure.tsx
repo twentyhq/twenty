@@ -11,7 +11,6 @@ import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/Field
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
-import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
@@ -30,29 +29,27 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 >;
 
-export const SettingsObjectNewField = () => {
+export const SettingsObjectNewFieldConfigure = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const fieldTypeFromUrl = searchParams.get(
-    'fieldType',
-  ) as SettingsSupportedFieldType;
+  const fieldType =
+    (searchParams.get('fieldType') as SettingsSupportedFieldType) ||
+    FieldMetadataType.Text;
   const { enqueueSnackBar } = useSnackBar();
 
-  const [isConfigureStep, setIsConfigureStep] = useState(!!fieldTypeFromUrl);
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
-
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
+  const apolloClient = useApolloClient();
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
@@ -62,15 +59,12 @@ export const SettingsObjectNewField = () => {
       ),
     ),
     defaultValues: {
-      type: fieldTypeFromUrl || FieldMetadataType.Text,
+      type: fieldType,
+      icon: 'IconUsers',
+      label: '',
+      description: '',
     },
   });
-
-  useEffect(() => {
-    if (!activeObjectMetadataItem) {
-      navigate(AppPath.NotFound);
-    }
-  }, [activeObjectMetadataItem, navigate]);
 
   const [, setObjectViews] = useState<View[]>([]);
   const [, setRelationObjectViews] = useState<View[]>([]);
@@ -83,7 +77,6 @@ export const SettingsObjectNewField = () => {
     },
     onCompleted: async (views) => {
       if (isUndefinedOrNull(views)) return;
-
       setObjectViews(views);
     },
   });
@@ -101,15 +94,17 @@ export const SettingsObjectNewField = () => {
     },
     onCompleted: async (views) => {
       if (isUndefinedOrNull(views)) return;
-
       setRelationObjectViews(views);
     },
   });
-
   const { createOneRelationMetadataItem: createOneRelationMetadata } =
     useCreateOneRelationMetadataItem();
 
-  const apolloClient = useApolloClient();
+  useEffect(() => {
+    if (!activeObjectMetadataItem) {
+      navigate(AppPath.NotFound);
+    }
+  }, [activeObjectMetadataItem, navigate]);
 
   if (!activeObjectMetadataItem) return null;
 
@@ -158,22 +153,7 @@ export const SettingsObjectNewField = () => {
       });
     }
   };
-
-  const excludedFieldTypes: SettingsSupportedFieldType[] = (
-    [
-      FieldMetadataType.Link,
-      FieldMetadataType.Numeric,
-      FieldMetadataType.RichText,
-      FieldMetadataType.Actor,
-      FieldMetadataType.Email,
-      FieldMetadataType.Phone,
-    ] as const
-  ).filter(isDefined);
-
-  const handleFieldTypeSelect = (selectedType: SettingsSupportedFieldType) => {
-    navigate(`?fieldType=${selectedType}`, { replace: true });
-    setIsConfigureStep(true);
-  };
+  if (!activeObjectMetadataItem) return null;
 
   return (
     <RecordFieldValueSelectorContextProvider>
@@ -181,93 +161,57 @@ export const SettingsObjectNewField = () => {
         {...formConfig}
       >
         <SubMenuTopBarContainer
+          title="2. Configure field"
           links={[
-            {
-              children: 'Workspace',
-              href: '/settings/workspace',
-            },
-            {
-              children: 'Objects',
-              href: '/settings/objects',
-            },
+            { children: 'Workspace', href: '/settings/workspace' },
+            { children: 'Objects', href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
               href: `/settings/objects/${objectSlug}`,
             },
-            {
-              children: (
-                <SettingsDataModelNewFieldBreadcrumbDropDown
-                  isConfigureStep={isConfigureStep}
-                  onBreadcrumbClick={setIsConfigureStep}
-                />
-              ),
-            },
+
+            { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
           ]}
-          title={
-            !isConfigureStep ? '1. Select a field type' : '2. Configure field'
-          }
           actionButton={
-            !activeObjectMetadataItem.isRemote && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                isCancelDisabled={isSubmitting}
-                onCancel={() => {
-                  if (!isConfigureStep) {
-                    navigate(`/settings/objects/${objectSlug}`);
-                  } else {
-                    setIsConfigureStep(false);
-                  }
-                }}
-                onSave={formConfig.handleSubmit(handleSave)}
-              />
-            )
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              isCancelDisabled={isSubmitting}
+              onCancel={() =>
+                navigate(`/settings/objects/${objectSlug}/new-field/select`)
+              }
+              onSave={formConfig.handleSubmit(handleSave)}
+            />
           }
         >
           <SettingsPageContainer>
-            {!isConfigureStep ? (
-              <SettingsDataModelFieldTypeSelect
-                excludedFieldTypes={excludedFieldTypes}
-                fieldMetadataItem={{
-                  type: formConfig.watch('type'),
-                }}
-                onFieldTypeSelect={handleFieldTypeSelect}
+            <Section>
+              <H2Title
+                title="Icon and Name"
+                description="The name and icon of this field"
               />
-            ) : (
-              <>
-                <Section>
-                  <H2Title
-                    title="Icon and Name"
-                    description="The name and icon of this field"
-                  />
-                  <SettingsDataModelFieldIconLabelForm
-                    maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-                  />
-                </Section>
-                <Section>
-                  <H2Title
-                    title="Values"
-                    description="The values of this field"
-                  />
-
-                  <SettingsDataModelFieldSettingsFormCard
-                    isCreatingField
-                    fieldMetadataItem={{
-                      icon: formConfig.watch('icon'),
-                      label: formConfig.watch('label') || 'Employees',
-                      type: formConfig.watch('type'),
-                    }}
-                    objectMetadataItem={activeObjectMetadataItem}
-                  />
-                </Section>
-                <Section>
-                  <H2Title
-                    title="Description"
-                    description="The description of this field"
-                  />
-                  <SettingsDataModelFieldDescriptionForm />
-                </Section>
-              </>
-            )}
+              <SettingsDataModelFieldIconLabelForm
+                maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+              />
+            </Section>
+            <Section>
+              <H2Title title="Values" description="The values of this field" />
+              <SettingsDataModelFieldSettingsFormCard
+                isCreatingField
+                fieldMetadataItem={{
+                  icon: formConfig.watch('icon'),
+                  label: formConfig.watch('label') || 'New Field',
+                  type: fieldType,
+                }}
+                objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Description"
+                description="The description of this field"
+              />
+              <SettingsDataModelFieldDescriptionForm />
+            </Section>
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>

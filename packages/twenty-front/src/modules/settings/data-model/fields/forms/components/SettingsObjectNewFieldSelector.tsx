@@ -18,29 +18,17 @@ import { Section } from '@react-email/components';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconSearch } from 'twenty-ui';
-import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
 
-export const settingsDataModelFieldTypeFormSchema = z.object({
-  type: z.enum(
-    Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
-      SettingsSupportedFieldType,
-      ...SettingsSupportedFieldType[],
-    ],
-  ),
-});
-
-export type SettingsDataModelFieldTypeFormValues = z.infer<
-  typeof settingsDataModelFieldTypeFormSchema
->;
-
-type SettingsDataModelFieldTypeSelectProps = {
+type SettingsObjectNewFieldSelectorProps = {
   excludedFieldTypes?: SettingsSupportedFieldType[];
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
   >;
-  onFieldTypeSelect: (fieldType: SettingsSupportedFieldType) => void;
+
+  objectSlug: string;
 };
 
 const StyledTypeSelectContainer = styled.div`
@@ -69,11 +57,11 @@ const StyledSearchInput = styled(TextInput)`
   width: 100%;
 `;
 
-export const SettingsDataModelFieldTypeSelect = ({
+export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   fieldMetadataItem,
-  onFieldTypeSelect,
-}: SettingsDataModelFieldTypeSelectProps) => {
+  objectSlug,
+}: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -125,7 +113,7 @@ export const SettingsDataModelFieldTypeSelect = ({
       <Controller
         name="type"
         control={control}
-        render={({ field: { onChange } }) => (
+        render={() => (
           <StyledTypeSelectContainer>
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
               <Section key={category}>
@@ -141,16 +129,13 @@ export const SettingsDataModelFieldTypeSelect = ({
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink
-                          to="#"
+                          to={`/settings/objects/${objectSlug}/new-field/configure?fieldType=${key}`}
                           fullWidth
-                          onClick={(e) => {
-                            e.preventDefault();
-                            const newFieldType =
-                              key as SettingsSupportedFieldType;
-                            onChange(newFieldType);
-                            resetDefaultValueField(newFieldType);
-                            onFieldTypeSelect(newFieldType);
-                          }}
+                          onClick={() =>
+                            resetDefaultValueField(
+                              key as SettingsSupportedFieldType,
+                            )
+                          }
                         >
                           <SettingsCard
                             key={key}

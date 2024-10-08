@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
+import { SettingsObjectNewFieldSelect } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
 
 import {
   PageDecorator,
@@ -7,15 +8,13 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsObjectNewField } from '../../SettingsObjectNewField/SettingsObjectNewField';
-
 const meta: Meta<PageDecoratorArgs> = {
   title:
-    'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewField',
-  component: SettingsObjectNewField,
+    'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldSelect',
+  component: SettingsObjectNewFieldSelect,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:objectSlug/new-field',
+    routePath: '/settings/objects/:objectSlug/new-field/select',
     routeParams: { ':objectSlug': 'companies' },
   },
   parameters: {
@@ -25,7 +24,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsObjectNewField>;
+export type Story = StoryObj<typeof SettingsObjectNewFieldSelect>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
@@ -38,22 +37,7 @@ export const Default: Story = {
     await userEvent.type(searchInput, 'Num');
 
     const numberTypeButton = await canvas.findByText('Number');
-
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     await userEvent.click(numberTypeButton);
-
-    await canvas.findByText('2. Configure field');
-
-    const employeeInput = await canvas.findByPlaceholderText('Employees');
-    await userEvent.type(employeeInput, 'Test');
-
-    const descriptionInput = await canvas.findByPlaceholderText(
-      'Write a description',
-    );
-
-    await userEvent.type(descriptionInput, 'Test description');
-
-    const saveButton = await canvas.findByText('Save');
-
-    await userEvent.click(saveButton);
   },
 };

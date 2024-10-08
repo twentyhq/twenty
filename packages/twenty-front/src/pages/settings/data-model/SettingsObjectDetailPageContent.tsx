@@ -74,7 +74,7 @@ export const SettingsObjectDetailPageContent = ({
           />
           {shouldDisplayAddFieldButton && (
             <StyledDiv>
-              <UndecoratedLink to={'./new-field'}>
+              <UndecoratedLink to={'./new-field/select'}>
                 <Button
                   Icon={IconPlus}
                   title="Add Field"

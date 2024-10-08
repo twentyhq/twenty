@@ -6,12 +6,12 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsDataModelFieldTypeSelect } from '../SettingsDataModelFieldTypeSelect';
+import { SettingsObjectNewFieldSelector } from '../SettingsObjectNewFieldSelector';
 
-const meta: Meta<typeof SettingsDataModelFieldTypeSelect> = {
+const meta: Meta<typeof SettingsObjectNewFieldSelector> = {
   title:
     'Modules/Settings/DataModel/Fields/Forms/SettingsDataModelFieldTypeSelect',
-  component: SettingsDataModelFieldTypeSelect,
+  component: SettingsObjectNewFieldSelector,
   decorators: [FormProviderDecorator, ComponentDecorator],
   parameters: {
     container: { width: 512 },
@@ -20,7 +20,7 @@ const meta: Meta<typeof SettingsDataModelFieldTypeSelect> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsDataModelFieldTypeSelect>;
+type Story = StoryObj<typeof SettingsObjectNewFieldSelector>;
 
 export const Default: Story = {};
 
