@@ -1,9 +1,13 @@
-import { IdpType } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import {
+  IdpType,
+  SSOIdentityProviderStatus,
+} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 type CommonSSOConfiguration = {
   id: string;
   issuer: string;
   name?: string;
+  status: SSOIdentityProviderStatus;
 };
 
 export type OIDCConfiguration = {

@@ -7,6 +7,7 @@ export const CREATE_OIDC_SSO_IDENTITY_PROVIDER = gql`
       type
       issuer
       name
+      status
     }
   }
 `;

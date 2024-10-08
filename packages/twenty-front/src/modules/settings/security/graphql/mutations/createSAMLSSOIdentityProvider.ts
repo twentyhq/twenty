@@ -7,6 +7,7 @@ export const CREATE_SAML_SSO_IDENTITY_PROVIDER = gql`
       type
       issuer
       name
+      status
     }
   }
 `;

@@ -33,9 +33,9 @@ registerEnumType(IdpType, {
 });
 
 export enum SSOIdentityProviderStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  ERROR = 'error',
+  Active = 'Active',
+  Inactive = 'Inactive',
+  Error = 'Error',
 }
 
 registerEnumType(SSOIdentityProviderStatus, {
@@ -56,7 +56,7 @@ export class WorkspaceSSOIdentityProvider {
   @Column({
     type: 'enum',
     enum: SSOIdentityProviderStatus,
-    default: SSOIdentityProviderStatus.ACTIVE,
+    default: SSOIdentityProviderStatus.Active,
   })
   status: SSOIdentityProviderStatus;
 
