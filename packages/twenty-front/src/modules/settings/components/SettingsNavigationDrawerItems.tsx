@@ -47,14 +47,16 @@ type SettingsNavigationItem = {
   indentationLevel?: NavigationDrawerItemIndentationLevel;
 };
 
+const StyledNavigationDrawerSection = styled(NavigationDrawerSection)`
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+`;
+
 const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
-  display: flex;
-  width: 16px;
   position: absolute;
   left: ${({ theme }) => theme.spacing(-5)};
   margin-top: ${({ theme }) => theme.spacing(2)};
-  height: 90%;
+  height: 75%;
 `;
 
 const StyledDeveloperSection = styled.div`
@@ -119,7 +121,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <>
-      <NavigationDrawerSection>
+      <StyledNavigationDrawerSection>
         <NavigationDrawerSectionTitle label="User" />
         <SettingsNavigationDrawerItem
           label="Profile"
@@ -152,8 +154,8 @@ export const SettingsNavigationDrawerItems = () => {
             />
           ))}
         </NavigationDrawerItemGroup>
-      </NavigationDrawerSection>
-      <NavigationDrawerSection>
+      </StyledNavigationDrawerSection>
+      <StyledNavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <SettingsNavigationDrawerItem
           label="General"
@@ -190,7 +192,7 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
-      </NavigationDrawerSection>
+      </StyledNavigationDrawerSection>
       <AnimatePresence>
         {isAdvancedModeEnabled && (
           <motion.div
@@ -204,7 +206,7 @@ export const SettingsNavigationDrawerItems = () => {
               <StyledIconContainer>
                 <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
               </StyledIconContainer>
-              <NavigationDrawerSection>
+              <StyledNavigationDrawerSection>
                 <NavigationDrawerSectionTitle label="Developers" />
                 <SettingsNavigationDrawerItem
                   label="API & Webhooks"
@@ -218,12 +220,12 @@ export const SettingsNavigationDrawerItems = () => {
                     Icon={IconFunction}
                   />
                 )}
-              </NavigationDrawerSection>
+              </StyledNavigationDrawerSection>
             </StyledDeveloperSection>
           </motion.div>
         )}
       </AnimatePresence>
-      <NavigationDrawerSection>
+      <StyledNavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
         <SettingsNavigationDrawerItem
           label="Releases"
@@ -235,7 +237,7 @@ export const SettingsNavigationDrawerItems = () => {
           onClick={signOut}
           Icon={IconDoorEnter}
         />
-      </NavigationDrawerSection>
+      </StyledNavigationDrawerSection>
     </>
   );
 };
