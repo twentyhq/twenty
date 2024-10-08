@@ -12,6 +12,7 @@ export enum FeatureFlagKey {
   IsWorkspaceFavoriteEnabled = 'IS_WORKSPACE_FAVORITE_ENABLED',
   IsSearchEnabled = 'IS_SEARCH_ENABLED',
   IsWorkspaceMigratedForSearch = 'IS_WORKSPACE_MIGRATED_FOR_SEARCH',
+  IsSSOEnabled = 'IS_SSO_ENABLED',
   IsGmailSendEmailScopeEnabled = 'IS_GMAIL_SEND_EMAIL_SCOPE_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
 }

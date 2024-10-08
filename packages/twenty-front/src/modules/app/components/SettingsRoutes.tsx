@@ -252,12 +252,14 @@ type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
+  isSSOEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
   isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
+  isSSOEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -371,11 +373,15 @@ export const SettingsRoutes = ({
         element={<SettingsObjectFieldEdit />}
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
-      <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
-      <Route
-        path={SettingsPath.NewSSOIdentityProvider}
-        element={<SettingsSecurityNewSSOIdentityProvider />}
-      />
+      {isSSOEnabled && (
+        <>
+          <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
+          <Route
+            path={SettingsPath.NewSSOIdentityProvider}
+            element={<SettingsSecurityNewSSOIdentityProvider />}
+          />
+        </>
+      )}
     </Routes>
   </Suspense>
 );
