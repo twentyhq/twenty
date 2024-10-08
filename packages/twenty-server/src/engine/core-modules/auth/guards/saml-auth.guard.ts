@@ -38,7 +38,7 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
     try {
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      console.log('>>>>>>>>>>>>>>', err);
+      // TODO: improve error management
       return false;
     }
   }
