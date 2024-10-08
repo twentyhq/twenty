@@ -25,7 +25,7 @@ export class GraphqlQueryFilterConditionParser {
   public parse(
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
-    filter: RecordFilter,
+    filter: Partial<RecordFilter>,
   ): SelectQueryBuilder<any> {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;

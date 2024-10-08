@@ -24,6 +24,8 @@ const commonFieldPropertiesToIgnore = [
   'settings',
   'joinColumn',
   'gate',
+  'asExpression',
+  'generatedType',
 ];
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;

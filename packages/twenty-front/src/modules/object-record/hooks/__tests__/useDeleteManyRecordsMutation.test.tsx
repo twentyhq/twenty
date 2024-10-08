@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
-import { RecoilRoot } from 'recoil';
 
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
   mutation DeleteManyPeople($filter: PersonFilterInput!) {
@@ -11,6 +11,10 @@ const expectedQueryTemplate = `
     }
   }
 `.replace(/\s/g, '');
+
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useDeleteManyRecordsMutation', () => {
   it('should return a valid deleteManyRecordsMutation', () => {
@@ -22,7 +26,7 @@ describe('useDeleteManyRecordsMutation', () => {
           objectNameSingular,
         }),
       {
-        wrapper: RecoilRoot,
+        wrapper: Wrapper,
       },
     );
 

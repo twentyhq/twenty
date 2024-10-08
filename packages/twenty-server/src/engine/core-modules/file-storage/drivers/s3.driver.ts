@@ -1,4 +1,8 @@
 import { Readable } from 'stream';
+import fs from 'fs';
+import { mkdir } from 'fs/promises';
+import { join } from 'path';
+import { pipeline } from 'stream/promises';
 
 import {
   CopyObjectCommand,
@@ -188,6 +192,23 @@ export class S3Driver implements StorageDriver {
     }
   }
 
+  extractFolderAndFilePaths(objectKey: string | undefined) {
+    if (!isDefined(objectKey)) {
+      return;
+    }
+
+    const result = /(?<folder>.*)\/(?<file>.*)/.exec(objectKey);
+
+    if (!isDefined(result) || !isDefined(result.groups)) {
+      return;
+    }
+
+    const fromFolderPath = result.groups.folder;
+    const filename = result.groups.file;
+
+    return { fromFolderPath, filename };
+  }
+
   async copy(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
@@ -239,17 +260,18 @@ export class S3Driver implements StorageDriver {
     );
 
     if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-      throw new Error('No objects found in the source folder.');
+      throw new Error(`No objects found in the source folder ${fromKey}.`);
     }
 
     for (const object of listedObjects.Contents) {
-      const match = object.Key?.match(/(.*)\/(.*)/);
+      const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
 
-      if (!isDefined(match)) {
+      if (!isDefined(folderAndFilePaths)) {
         continue;
       }
-      const fromFolderPath = match[1];
-      const filename = match[2];
+
+      const { fromFolderPath, filename } = folderAndFilePaths;
+
       const toFolderPath = fromFolderPath.replace(
         params.from.folderPath,
         params.to.folderPath,
@@ -260,6 +282,85 @@ export class S3Driver implements StorageDriver {
       }
 
       await this.copy({
+        from: {
+          folderPath: fromFolderPath,
+          filename,
+        },
+        to: { folderPath: toFolderPath, filename },
+      });
+    }
+  }
+
+  async download(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    if (!params.from.filename && params.to.filename) {
+      throw new Error('Cannot copy folder to file');
+    }
+
+    if (isDefined(params.from.filename)) {
+      try {
+        const dir = params.to.folderPath;
+
+        await mkdir(dir, { recursive: true });
+
+        const fileStream = await this.read({
+          folderPath: params.from.folderPath,
+          filename: params.from.filename,
+        });
+
+        const toPath = join(
+          params.to.folderPath,
+          params.to.filename || params.from.filename,
+        );
+
+        await pipeline(fileStream, fs.createWriteStream(toPath));
+
+        return;
+      } catch (error) {
+        if (error.name === 'NotFound') {
+          throw new FileStorageException(
+            'File not found',
+            FileStorageExceptionCode.FILE_NOT_FOUND,
+          );
+        }
+        // For other errors, throw the original error
+        throw error;
+      }
+    }
+
+    const listedObjects = await this.s3Client.send(
+      new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: params.from.folderPath,
+      }),
+    );
+
+    if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+      throw new Error(
+        `No objects found in the source folder ${params.from.folderPath}.`,
+      );
+    }
+
+    for (const object of listedObjects.Contents) {
+      const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
+
+      if (!isDefined(folderAndFilePaths)) {
+        continue;
+      }
+
+      const { fromFolderPath, filename } = folderAndFilePaths;
+      const toFolderPath = fromFolderPath.replace(
+        params.from.folderPath,
+        params.to.folderPath,
+      );
+
+      if (!isDefined(toFolderPath)) {
+        continue;
+      }
+
+      await this.download({
         from: {
           folderPath: fromFolderPath,
           filename,

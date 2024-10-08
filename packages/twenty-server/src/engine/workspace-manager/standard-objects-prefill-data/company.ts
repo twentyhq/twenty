@@ -1,5 +1,7 @@
 import { EntityManager } from 'typeorm';
 
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+
 export const AIRBNB_ID = 'c776ee49-f608-4a77-8cc8-6fe96ae1e43f';
 export const QONTO_ID = 'f45ee421-8a3e-4aa5-a1cf-7207cc6754e1';
 export const STRIPE_ID = '1f70157c-4ea5-4d81-bc49-e1401abfbb94';
@@ -43,7 +45,7 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 5000,
         position: 1,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
       },
@@ -59,7 +61,7 @@ export const companyPrefillData = async (
         addressAddressCountry: 'France',
         employees: 800,
         position: 2,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
       },
@@ -75,7 +77,7 @@ export const companyPrefillData = async (
         addressAddressCountry: 'Ireland',
         employees: 8000,
         position: 3,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
       },
@@ -91,7 +93,7 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 800,
         position: 4,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
       },
@@ -107,7 +109,7 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 400,
         position: 5,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
       },

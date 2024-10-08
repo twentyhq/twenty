@@ -16,18 +16,25 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+type WorkflowEditActionFormSendEmailProps =
+  | {
+      action: WorkflowSendEmailStep;
+      readonly: true;
+    }
+  | {
+      action: WorkflowSendEmailStep;
+      readonly?: false;
+      onActionUpdate: (action: WorkflowSendEmailStep) => void;
+    };
+
 type SendEmailFormData = {
   subject: string;
   body: string;
 };
 
-export const WorkflowEditActionFormSendEmail = ({
-  action,
-  onActionUpdate,
-}: {
-  action: WorkflowSendEmailStep;
-  onActionUpdate: (action: WorkflowSendEmailStep) => void;
-}) => {
+export const WorkflowEditActionFormSendEmail = (
+  props: WorkflowEditActionFormSendEmailProps,
+) => {
   const theme = useTheme();
 
   const form = useForm<SendEmailFormData>({
@@ -35,18 +42,23 @@ export const WorkflowEditActionFormSendEmail = ({
       subject: '',
       body: '',
     },
+    disabled: props.readonly,
   });
 
   useEffect(() => {
-    form.setValue('subject', action.settings.subject ?? '');
-    form.setValue('body', action.settings.template ?? '');
-  }, [action.settings.subject, action.settings.template, form]);
+    form.setValue('subject', props.action.settings.subject ?? '');
+    form.setValue('body', props.action.settings.template ?? '');
+  }, [props.action.settings.subject, props.action.settings.template, form]);
 
   const saveAction = useDebouncedCallback((formData: SendEmailFormData) => {
-    onActionUpdate({
-      ...action,
+    if (props.readonly === true) {
+      return;
+    }
+
+    props.onActionUpdate({
+      ...props.action,
       settings: {
-        ...action.settings,
+        ...props.action.settings,
         title: formData.subject,
         subject: formData.subject,
         template: formData.body,
@@ -77,6 +89,7 @@ export const WorkflowEditActionFormSendEmail = ({
               label="Subject"
               placeholder="Thank you for building such an awesome CRM!"
               value={field.value}
+              disabled={field.disabled}
               onChange={(email) => {
                 field.onChange(email);
 
@@ -95,6 +108,7 @@ export const WorkflowEditActionFormSendEmail = ({
               placeholder="Thank you so much!"
               value={field.value}
               minRows={4}
+              disabled={field.disabled}
               onChange={(email) => {
                 field.onChange(email);
 

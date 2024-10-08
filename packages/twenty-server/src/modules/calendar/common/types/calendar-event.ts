@@ -5,6 +5,7 @@ export type CalendarEvent = Omit<
   CalendarEventWorkspaceEntity,
   | 'createdAt'
   | 'updatedAt'
+  | 'deletedAt'
   | 'calendarChannelEventAssociations'
   | 'calendarEventParticipants'
   | 'conferenceLink'
@@ -19,6 +20,7 @@ export type CalendarEventParticipant = Omit<
   | 'id'
   | 'createdAt'
   | 'updatedAt'
+  | 'deletedAt'
   | 'personId'
   | 'workspaceMemberId'
   | 'person'
@@ -34,6 +36,7 @@ export type CalendarEventParticipantWithCalendarEventId =
 
 export type CalendarEventWithParticipants = CalendarEvent & {
   externalId: string;
+  recurringEventExternalId?: string;
   participants: CalendarEventParticipant[];
   status: string;
 };
@@ -41,6 +44,7 @@ export type CalendarEventWithParticipants = CalendarEvent & {
 export type CalendarEventWithParticipantsAndCalendarEventId = CalendarEvent & {
   id: string;
   externalId: string;
+  recurringEventExternalId?: string;
   participants: CalendarEventParticipantWithCalendarEventId[];
   status: string;
 };
