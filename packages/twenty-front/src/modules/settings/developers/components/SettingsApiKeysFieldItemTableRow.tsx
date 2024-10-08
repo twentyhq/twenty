@@ -18,6 +18,7 @@ const StyledNameTableCell = styled(TableCell)`
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-left: 0;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
