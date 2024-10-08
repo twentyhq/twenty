@@ -22,7 +22,7 @@ const StyledBody = styled(CardContent)`
 export const SettingsSSOIdentitiesProvidersListEmptyStateCard = () => {
   return (
     <Card>
-      <StyledHeader>{'No SSO Identity Provider'}</StyledHeader>
+      <StyledHeader>{'No SSO Identity Providers Configured'}</StyledHeader>
       <StyledBody>
         <Button
           Icon={IconKey}

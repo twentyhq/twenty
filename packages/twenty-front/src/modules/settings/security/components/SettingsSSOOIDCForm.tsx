@@ -50,6 +50,7 @@ export const SettingsSSOOIDCForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
+                readOnly={true}
                 label="Authorized URI"
                 value={authorizedUrl}
                 fullWidth
@@ -73,6 +74,7 @@ export const SettingsSSOOIDCForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
+                readOnly={true}
                 label="Redirection URI"
                 value={redirectionUrl}
                 fullWidth

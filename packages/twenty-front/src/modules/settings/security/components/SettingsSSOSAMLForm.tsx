@@ -52,10 +52,17 @@ export const SettingsSSOSAMLForm = () => {
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
       const text = await e.target.files[0].text();
-      const params = parseSAMLMetadata(text);
-      setValue('ssoURL', params.ssoUrl);
-      setValue('certificate', params.certificate);
-      setValue('issuer', params.entityID);
+      const samlMetadataParsed = parseSAMLMetadata(text);
+      if (!samlMetadataParsed.success) {
+        enqueueSnackBar('Error parsing SAML metadata', {
+          variant: SnackBarVariant.Error,
+          duration: 2000,
+        });
+        return;
+      }
+      setValue('ssoURL', samlMetadataParsed.data.ssoUrl);
+      setValue('certificate', samlMetadataParsed.data.certificate);
+      setValue('issuer', samlMetadataParsed.data.entityID);
     }
   };
 
@@ -72,7 +79,7 @@ export const SettingsSSOSAMLForm = () => {
     <>
       <Section>
         <H2Title
-          title="Identify Provider Metadata XML"
+          title="Identity Provider Metadata XML"
           description="Upload the XML file with your connection infos"
         />
         <StyledUploadFileContainer>
@@ -96,7 +103,12 @@ export const SettingsSSOSAMLForm = () => {
         <StyledInputsContainer>
           <StyledContainer>
             <StyledLinkContainer>
-              <TextInput label="ACS Url" value={acsUrl} fullWidth />
+              <TextInput
+                readOnly={true}
+                label="ACS Url"
+                value={acsUrl}
+                fullWidth
+              />
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
@@ -115,7 +127,12 @@ export const SettingsSSOSAMLForm = () => {
           </StyledContainer>
           <StyledContainer>
             <StyledLinkContainer>
-              <TextInput label="Entity ID" value={entityID} fullWidth />
+              <TextInput
+                readOnly={true}
+                label="Entity ID"
+                value={entityID}
+                fullWidth
+              />
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button

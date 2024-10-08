@@ -8,6 +8,8 @@ import { SettingsSSOSAMLForm } from '@/settings/security/components/SettingsSSOS
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import styled from '@emotion/styled';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { IdpType } from '~/generated/graphql';
+import { ReactElement } from 'react';
 
 const StyledInputsContainer = styled.div`
   display: grid;
@@ -27,6 +29,49 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
   const { control, getValues } =
     useFormContext<SettingSecurityNewSSOIdentityFormValues>();
 
+  const IdpMap: Record<
+    IdpType,
+    {
+      form: ReactElement;
+      card: {
+        cardMedia: ReactElement;
+        title: string;
+        value: string;
+        description: string;
+      };
+    }
+  > = {
+    OIDC: {
+      card: {
+        cardMedia: <IconKey />,
+        title: 'OIDC',
+        value: 'OIDC',
+        description: '',
+      },
+      form: <SettingsSSOOIDCForm />,
+    },
+    SAML: {
+      card: {
+        cardMedia: <IconKey />,
+        title: 'SAML',
+        value: 'SAML',
+        description: '',
+      },
+      form: <SettingsSSOSAMLForm />,
+    },
+  };
+
+  const getFormByType = (type: Uppercase<IdpType> | undefined) => {
+    switch (type) {
+      case IdpType.Oidc:
+        return IdpMap.OIDC.form;
+      case IdpType.Saml:
+        return IdpMap.SAML.form;
+      default:
+        return null;
+    }
+  };
+
   return (
     <SettingsPageContainer>
       <Section>
@@ -37,7 +82,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                autoComplete="new-password" // Disable autocomplete
+                autoComplete="off"
                 label="Name"
                 value={value}
                 onChange={onChange}
@@ -61,31 +106,14 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
               <SettingsAccountsRadioSettingsCard
                 onChange={onChange}
                 name="type"
-                options={[
-                  {
-                    cardMedia: <IconKey />,
-                    title: 'OIDC',
-                    value: 'OIDC',
-                    description: '',
-                  },
-                  {
-                    cardMedia: <IconKey />,
-                    title: 'SAML',
-                    value: 'SAML',
-                    description: '',
-                  },
-                ]}
+                options={Object.values(IdpMap).map(({ card }) => card)}
                 value={value}
               />
             )}
           />
         </StyledInputsContainer>
       </Section>
-      {getValues().type === 'OIDC' ? (
-        <SettingsSSOOIDCForm />
-      ) : (
-        <SettingsSSOSAMLForm />
-      )}
+      {getFormByType(getValues().type)}
     </SettingsPageContainer>
   );
 };
