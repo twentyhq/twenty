@@ -1,3 +1,4 @@
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServerlessFunctionsFieldItemTableRow } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsFieldItemTableRow';
 import { SettingsServerlessFunctionsTableEmpty } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTableEmpty';
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
@@ -24,26 +25,28 @@ export const SettingsServerlessFunctionsTable = () => {
   return (
     <>
       {serverlessFunctions.length ? (
-        <Table>
-          <StyledTableRow>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Runtime</TableHeader>
-            <TableHeader></TableHeader>
-          </StyledTableRow>
-          <StyledTableBody>
-            {serverlessFunctions.map(
-              (serverlessFunction: ServerlessFunction) => (
-                <SettingsServerlessFunctionsFieldItemTableRow
-                  key={serverlessFunction.id}
-                  serverlessFunction={serverlessFunction}
-                  to={getSettingsPagePath(SettingsPath.ServerlessFunctions, {
-                    id: serverlessFunction.id,
-                  })}
-                />
-              ),
-            )}
-          </StyledTableBody>
-        </Table>
+        <SettingsPageContainer>
+          <Table>
+            <StyledTableRow>
+              <TableHeader>Name</TableHeader>
+              <TableHeader>Runtime</TableHeader>
+              <TableHeader></TableHeader>
+            </StyledTableRow>
+            <StyledTableBody>
+              {serverlessFunctions.map(
+                (serverlessFunction: ServerlessFunction) => (
+                  <SettingsServerlessFunctionsFieldItemTableRow
+                    key={serverlessFunction.id}
+                    serverlessFunction={serverlessFunction}
+                    to={getSettingsPagePath(SettingsPath.ServerlessFunctions, {
+                      id: serverlessFunction.id,
+                    })}
+                  />
+                ),
+              )}
+            </StyledTableBody>
+          </Table>
+        </SettingsPageContainer>
       ) : (
         <SettingsServerlessFunctionsTableEmpty />
       )}

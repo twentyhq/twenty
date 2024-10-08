@@ -48,7 +48,18 @@ export const queries = {
   createMetadataField: gql`
     mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
       createOneField(input: $input) {
-        ${baseFields}
+        id
+        type
+        name
+        label
+        description
+        icon
+        isCustom
+        isActive
+        isNullable
+        createdAt
+        updatedAt
+        settings
         defaultValue
         options
       }
