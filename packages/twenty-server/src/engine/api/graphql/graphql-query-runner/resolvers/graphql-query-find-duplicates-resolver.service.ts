@@ -88,15 +88,15 @@ export class GraphqlQueryFindDuplicatesResolverService
         );
 
         if (isEmpty(duplicateConditions)) {
-          return typeORMObjectRecordsParser.createConnection(
-            [],
-            objectMetadataMapItem.nameSingular,
-            0,
-            0,
-            [{ id: OrderByDirection.AscNullsFirst }],
-            false,
-            false,
-          );
+          return typeORMObjectRecordsParser.createConnection({
+            objectRecords: [],
+            objectName: objectMetadataMapItem.nameSingular,
+            take: 0,
+            totalCount: 0,
+            order: [{ id: OrderByDirection.AscNullsFirst }],
+            hasNextPage: false,
+            hasPreviousPage: false,
+          });
         }
 
         const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
@@ -114,15 +114,15 @@ export class GraphqlQueryFindDuplicatesResolverService
           objectMetadataMap,
         );
 
-        return typeORMObjectRecordsParser.createConnection(
-          duplicates,
-          objectMetadataMapItem.nameSingular,
-          duplicates.length,
-          duplicates.length,
-          [{ id: OrderByDirection.AscNullsFirst }],
-          false,
-          false,
-        );
+        return typeORMObjectRecordsParser.createConnection({
+          objectRecords: duplicates,
+          objectName: objectMetadataMapItem.nameSingular,
+          take: duplicates.length,
+          totalCount: duplicates.length,
+          order: [{ id: OrderByDirection.AscNullsFirst }],
+          hasNextPage: false,
+          hasPreviousPage: false,
+        });
       }),
     );
 

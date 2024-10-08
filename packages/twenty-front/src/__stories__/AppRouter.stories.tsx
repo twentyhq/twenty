@@ -1,8 +1,8 @@
-import { HelmetProvider } from 'react-helmet-async';
 import { getOperationName } from '@apollo/client/utilities';
 import { jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { graphql, HttpResponse } from 'msw';
+import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui';
 
@@ -11,13 +11,14 @@ import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { App } from '~/App';
+
+import { AppRouter } from '@/app/components/AppRouter';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedUserData } from '~/testing/mock-data/users';
 
-const meta: Meta<typeof App> = {
-  title: 'App/App',
-  component: App,
+const meta: Meta<typeof AppRouter> = {
+  title: 'App/AppRouter',
+  component: AppRouter,
   decorators: [
     (Story) => {
       return (
@@ -41,7 +42,7 @@ const meta: Meta<typeof App> = {
 };
 
 export default meta;
-export type Story = StoryObj<typeof App>;
+export type Story = StoryObj<typeof AppRouter>;
 
 export const Default: Story = {
   play: async () => {
