@@ -253,7 +253,7 @@ export class SSOService {
   async listSSOIdentityProvidersByWorkspaceId(workspaceId: string) {
     return this.workspaceSSOIdentityProviderRepository.find({
       where: { workspaceId },
-      select: ['id', 'name', 'type', 'issuer'],
+      select: ['id', 'name', 'type', 'issuer', 'status'],
     });
   }
 

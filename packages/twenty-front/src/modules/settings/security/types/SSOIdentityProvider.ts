@@ -1,4 +1,4 @@
-import { IdpType } from '~/generated/graphql';
+import { IdpType, SsoIdentityProviderStatus } from '~/generated/graphql';
 import { z } from 'zod';
 import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/utils/SSOIdentityProviderSchema';
 
@@ -8,6 +8,7 @@ export type SSOIdentityProvider = {
   type: IdpType;
   issuer: string;
   name?: string | null;
+  status: SsoIdentityProviderStatus;
 };
 
 export type SettingSecurityNewSSOIdentityFormValues = z.infer<
