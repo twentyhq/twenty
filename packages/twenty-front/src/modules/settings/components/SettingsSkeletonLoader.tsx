@@ -1,7 +1,9 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -14,12 +16,35 @@ const StyledTitleLoaderContainer = styled.div`
 `;
 
 export const SettingsSkeletonLoader = () => {
+  const theme = useTheme();
   return (
     <StyledContainer>
-      <PageHeader title={<Skeleton height={20} width={120} />} />
+      <PageHeader
+        title={
+          <SkeletonTheme
+            baseColor={theme.background.tertiary}
+            highlightColor={theme.background.transparent.lighter}
+            borderRadius={4}
+          >
+            <Skeleton
+              height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+              width={120}
+            />{' '}
+          </SkeletonTheme>
+        }
+      />
       <PageBody>
         <StyledTitleLoaderContainer>
-          <Skeleton height={20} width={220} />
+          <SkeletonTheme
+            baseColor={theme.background.tertiary}
+            highlightColor={theme.background.transparent.lighter}
+            borderRadius={4}
+          >
+            <Skeleton
+              height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+              width={200}
+            />
+          </SkeletonTheme>
         </StyledTitleLoaderContainer>
       </PageBody>
     </StyledContainer>
