@@ -24,12 +24,15 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
@@ -119,12 +122,21 @@ export const RecordDetailRelationSection = ({
     scopeId: dropdownId,
   });
 
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+
+  const indexView = views.find(
+    (view) =>
+      view.key === 'INDEX' &&
+      view.objectMetadataId === relationObjectMetadataItem.id,
+  );
+
   const filterQueryParams: FilterQueryParams = {
     filter: {
       [relationFieldMetadataItem?.name || '']: {
         [ViewFilterOperand.Is]: [recordId],
       },
     },
+    view: indexView?.id,
   };
   const filterLinkHref = `/objects/${
     relationObjectMetadataItem.namePlural
