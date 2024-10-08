@@ -276,4 +276,36 @@ export class SSOService {
 
     return ssoIdp.id;
   }
+
+  async editSSOIdentityProvider(
+    payload: Partial<WorkspaceSSOIdentityProvider>,
+    workspaceId: string,
+  ) {
+    const ssoIdp = await this.workspaceSSOIdentityProviderRepository.findOne({
+      where: {
+        id: payload.id,
+        workspaceId,
+      },
+    });
+
+    if (!ssoIdp) {
+      throw new SSOException(
+        'Identity Provider not found',
+        SSOExceptionCode.IDENTITY_PROVIDER_NOT_FOUND,
+      );
+    }
+
+    const result = await this.workspaceSSOIdentityProviderRepository.save({
+      ...ssoIdp,
+      ...payload,
+    });
+
+    return {
+      id: result.id,
+      type: result.type,
+      issuer: result.issuer,
+      name: result.name,
+      status: result.status,
+    };
+  }
 }
