@@ -96,12 +96,12 @@ export class GraphqlQueryDestroyOneResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
-    return typeORMObjectRecordsParser.processRecord(
-      recordBeforeDeletion,
-      objectMetadataMapItem.nameSingular,
-      1,
-      1,
-    );
+    return typeORMObjectRecordsParser.processRecord({
+      objectRecord: recordBeforeDeletion,
+      objectName: objectMetadataMapItem.nameSingular,
+      take: 1,
+      totalCount: 1,
+    });
   }
 
   async validate(

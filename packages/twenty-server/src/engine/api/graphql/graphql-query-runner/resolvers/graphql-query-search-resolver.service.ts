@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
-  Record as IRecord,
-  OrderByDirection,
+    Record as IRecord,
+    OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -11,8 +11,8 @@ import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-bu
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
+    GraphqlQueryRunnerException,
+    GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -45,13 +45,7 @@ export class GraphqlQuerySearchResolverService
 
     if (!args.searchInput) {
       return typeORMObjectRecordsParser.createConnection(
-        [],
-        objectMetadataItem.nameSingular,
-        0,
-        0,
-        [{ id: OrderByDirection.AscNullsFirst }],
-        false,
-        false,
+        { objectRecords: [], objectName: objectMetadataItem.nameSingular, take: 0, totalCount: 0, order: [{ id: OrderByDirection.AscNullsFirst }], hasNextPage: false, hasPreviousPage: false },
       );
     }
     const searchTerms = this.formatSearchTerms(args.searchInput);
@@ -77,13 +71,7 @@ export class GraphqlQuerySearchResolverService
     const order = undefined;
 
     return typeORMObjectRecordsParser.createConnection(
-      objectRecords ?? [],
-      objectMetadataItem.nameSingular,
-      limit,
-      totalCount,
-      order,
-      false,
-      false,
+      { objectRecords: objectRecords ?? [], objectName: objectMetadataItem.nameSingular, take: limit, totalCount, order, hasNextPage: false, hasPreviousPage: false },
     );
   }
 

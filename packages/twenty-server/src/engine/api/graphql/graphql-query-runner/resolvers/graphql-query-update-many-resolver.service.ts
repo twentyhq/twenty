@@ -94,12 +94,12 @@ export class GraphqlQueryUpdateManyResolverService
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     return updatedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord(
-        record,
-        objectMetadataMapItem.nameSingular,
-        1,
-        1,
-      ),
+      typeORMObjectRecordsParser.processRecord({
+        objectRecord: record,
+        objectName: objectMetadataMapItem.nameSingular,
+        take: 1,
+        totalCount: 1,
+      }),
     );
   }
 
@@ -108,6 +108,10 @@ export class GraphqlQueryUpdateManyResolverService
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataMapItem);
-    args.filter?.id?.in?.forEach((id: string) => assertIsValidUuid(id));
+    if (!args.filter) {
+      throw new Error('Filter is required');
+    }
+
+    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
 }
