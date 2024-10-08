@@ -27,25 +27,34 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     this.objectMetadataMap = objectMetadataMap;
   }
 
-  public createConnection<ObjectRecord extends IRecord = IRecord>(
-    objectRecords: ObjectRecord[],
-    objectName: string,
-    take: number,
-    totalCount: number,
-    order: RecordOrderBy | undefined,
-    hasNextPage: boolean,
-    hasPreviousPage: boolean,
+  public createConnection<ObjectRecord extends IRecord = IRecord>({
+    objectRecords,
+    objectName,
+    take,
+    totalCount,
+    order,
+    hasNextPage,
+    hasPreviousPage,
     depth = 0,
-  ): IConnection<ObjectRecord> {
+  }: {
+    objectRecords: ObjectRecord[];
+    objectName: string;
+    take: number;
+    totalCount: number;
+    order?: RecordOrderBy;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    depth?: number;
+  }): IConnection<ObjectRecord> {
     const edges = (objectRecords ?? []).map((objectRecord) => ({
-      node: this.processRecord(
+      node: this.processRecord({
         objectRecord,
         objectName,
         take,
         totalCount,
         order,
         depth,
-      ),
+      }),
       cursor: encodeCursor(objectRecord, order),
     }));
 
@@ -61,14 +70,21 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     };
   }
 
-  public processRecord<T extends Record<string, any>>(
-    objectRecord: T,
-    objectName: string,
-    take: number,
-    totalCount: number,
-    order?: RecordOrderBy,
+  public processRecord<T extends Record<string, any>>({
+    objectRecord,
+    objectName,
+    take,
+    totalCount,
+    order,
     depth = 0,
-  ): T {
+  }: {
+    objectRecord: T;
+    objectName: string;
+    take: number;
+    totalCount: number;
+    order?: RecordOrderBy;
+    depth?: number;
+  }): T {
     if (depth >= CONNECTION_MAX_DEPTH) {
       throw new GraphqlQueryRunnerException(
         `Maximum depth of ${CONNECTION_MAX_DEPTH} reached`,
@@ -97,27 +113,31 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         if (Array.isArray(value)) {
-          processedObjectRecord[key] = this.createConnection(
-            value,
-            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
-              .nameSingular,
+          processedObjectRecord[key] = this.createConnection({
+            objectRecords: value,
+            objectName: getRelationObjectMetadata(
+              fieldMetadata,
+              this.objectMetadataMap,
+            ).nameSingular,
             take,
-            value.length,
+            totalCount: value.length,
             order,
-            false,
-            false,
-            depth + 1,
-          );
+            hasNextPage: false,
+            hasPreviousPage: false,
+            depth: depth + 1,
+          });
         } else if (isPlainObject(value)) {
-          processedObjectRecord[key] = this.processRecord(
-            value,
-            getRelationObjectMetadata(fieldMetadata, this.objectMetadataMap)
-              .nameSingular,
+          processedObjectRecord[key] = this.processRecord({
+            objectRecord: value,
+            objectName: getRelationObjectMetadata(
+              fieldMetadata,
+              this.objectMetadataMap,
+            ).nameSingular,
             take,
             totalCount,
             order,
-            depth + 1,
-          );
+            depth: depth + 1,
+          });
         }
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         processedObjectRecord[key] = this.processCompositeField(
