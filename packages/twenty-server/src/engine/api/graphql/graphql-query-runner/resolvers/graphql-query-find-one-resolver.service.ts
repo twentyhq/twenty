@@ -113,12 +113,12 @@ export class GraphqlQueryFindOneResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
-    return typeORMObjectRecordsParser.processRecord(
-      objectRecords[0],
-      objectMetadataMapItem.nameSingular,
-      1,
-      1,
-    ) as ObjectRecord;
+    return typeORMObjectRecordsParser.processRecord({
+      objectRecord: objectRecords[0],
+      objectName: objectMetadataMapItem.nameSingular,
+      take: 1,
+      totalCount: 1,
+    }) as ObjectRecord;
   }
 
   async validate<Filter extends RecordFilter>(

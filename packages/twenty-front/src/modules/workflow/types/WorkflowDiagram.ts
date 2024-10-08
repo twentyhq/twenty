@@ -28,3 +28,8 @@ export type WorkflowDiagramCreateStepNodeData = {
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
   | WorkflowDiagramCreateStepNodeData;
+
+export type WorkflowDiagramNodeType =
+  | 'default'
+  | 'empty-trigger'
+  | 'create-step';

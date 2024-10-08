@@ -45,13 +45,23 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+type WorkflowEditTriggerFormProps =
+  | {
+      trigger: WorkflowTrigger | undefined;
+      readonly: true;
+      onTriggerUpdate?: undefined;
+    }
+  | {
+      trigger: WorkflowTrigger | undefined;
+      readonly?: false;
+      onTriggerUpdate: (trigger: WorkflowTrigger) => void;
+    };
+
 export const WorkflowEditTriggerForm = ({
   trigger,
+  readonly,
   onTriggerUpdate,
-}: {
-  trigger: WorkflowTrigger | undefined;
-  onTriggerUpdate: (trigger: WorkflowTrigger) => void;
-}) => {
+}: WorkflowEditTriggerFormProps) => {
   const theme = useTheme();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -102,9 +112,14 @@ export const WorkflowEditTriggerForm = ({
           dropdownId="workflow-edit-trigger-record-type"
           label="Record Type"
           fullWidth
+          disabled={readonly}
           value={triggerEvent?.objectType}
           options={availableMetadata}
           onChange={(updatedRecordType) => {
+            if (readonly === true) {
+              return;
+            }
+
             onTriggerUpdate(
               isDefined(trigger) && isDefined(triggerEvent)
                 ? {
@@ -129,7 +144,12 @@ export const WorkflowEditTriggerForm = ({
           fullWidth
           value={triggerEvent?.event}
           options={OBJECT_EVENT_TRIGGERS}
+          disabled={readonly}
           onChange={(updatedEvent) => {
+            if (readonly === true) {
+              return;
+            }
+
             onTriggerUpdate(
               isDefined(trigger) && isDefined(triggerEvent)
                 ? {

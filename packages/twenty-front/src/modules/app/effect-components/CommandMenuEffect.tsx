@@ -7,7 +7,7 @@ import { commandMenuCommandsState } from '@/command-menu/states/commandMenuComma
 export const CommandMenuEffect = () => {
   const setCommands = useSetRecoilState(commandMenuCommandsState);
 
-  const commands = COMMAND_MENU_COMMANDS;
+  const commands = Object.values(COMMAND_MENU_COMMANDS);
   useEffect(() => {
     setCommands(commands);
   }, [commands, setCommands]);
