@@ -11,6 +11,7 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
     pagedObjectMetadataItems?.objects.edges.map((object) => ({
       ...object.node,
       fields: object.node.fields.edges.map((field) => field.node),
+      indexes: object.node.indexes.edges.map((index) => index.node),
     })) ?? [];
 
   return formattedObjects;
