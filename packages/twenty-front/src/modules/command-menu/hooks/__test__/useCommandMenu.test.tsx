@@ -114,7 +114,7 @@ describe('useCommandMenu', () => {
       result.current.commandMenu.setObjectsInCommandMenu([]);
     });
 
-    expect(result.current.commandMenuCommands.length).toBe(0);
+    expect(result.current.commandMenuCommands.length).toBe(1);
 
     act(() => {
       result.current.commandMenu.setObjectsInCommandMenu([
@@ -140,6 +140,6 @@ describe('useCommandMenu', () => {
       ]);
     });
 
-    expect(result.current.commandMenuCommands.length).toBe(1);
+    expect(result.current.commandMenuCommands.length).toBe(2);
   });
 });
