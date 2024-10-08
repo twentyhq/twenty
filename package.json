@@ -340,7 +340,7 @@
   },
   "license": "AGPL-3.0",
   "name": "twenty",
-  "packageManager": "yarn@4.3.1",
+  "packageManager": "yarn@4.4.0",
   "resolutions": {
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
