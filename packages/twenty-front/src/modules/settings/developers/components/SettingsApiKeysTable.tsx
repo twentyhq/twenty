@@ -16,6 +16,8 @@ const StyledTableBody = styled(TableBody)`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-top: ${({ theme }) => theme.spacing(3)};
     display: flex;
+    justify-content: space-between;
+    scroll-behavior: smooth;
   }
 `;
 
