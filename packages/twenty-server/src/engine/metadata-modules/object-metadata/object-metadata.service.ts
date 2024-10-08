@@ -17,12 +17,12 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
-  FieldMetadataEntity,
-  FieldMetadataType,
+    FieldMetadataEntity,
+    FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  FieldTypeAndNameMetadata,
-  computeColumnName,
+    FieldTypeAndNameMetadata,
+    computeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -30,18 +30,18 @@ import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadat
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
 import {
-  transliterateAndFormatOrThrow,
-  validateObjectMetadataInputOrThrow,
+    transliterateAndFormatOrThrow,
+    validateObjectMetadataInputOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import {
-  RelationMetadataEntity,
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataEntity,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
@@ -51,10 +51,10 @@ import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspa
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-  WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnDrop,
-  WorkspaceMigrationTableAction,
-  WorkspaceMigrationTableActionType,
+    WorkspaceMigrationColumnActionType,
+    WorkspaceMigrationColumnDrop,
+    WorkspaceMigrationTableAction,
+    WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -63,18 +63,18 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import {
-  ACTIVITY_TARGET_STANDARD_FIELD_IDS,
-  ATTACHMENT_STANDARD_FIELD_IDS,
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  FAVORITE_STANDARD_FIELD_IDS,
-  NOTE_TARGET_STANDARD_FIELD_IDS,
-  TASK_TARGET_STANDARD_FIELD_IDS,
-  TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
+    ACTIVITY_TARGET_STANDARD_FIELD_IDS,
+    ATTACHMENT_STANDARD_FIELD_IDS,
+    BASE_OBJECT_STANDARD_FIELD_IDS,
+    CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+    FAVORITE_STANDARD_FIELD_IDS,
+    NOTE_TARGET_STANDARD_FIELD_IDS,
+    TASK_TARGET_STANDARD_FIELD_IDS,
+    TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import {
-  createForeignKeyDeterministicUuid,
-  createRelationDeterministicUuid,
+    createForeignKeyDeterministicUuid,
+    createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -467,7 +467,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const updatedObject = await super.updateOne(input.id, restInputUpdate);
 
-    await this.updateObjectNamesandLabels(oldObject, updatedObject, input);
+    await this.updateObjectNamesAndLabels(oldObject, updatedObject, input);
 
     if (input.update.isActive !== undefined) {
       await this.updateObjectRelationships(input.id, input.update.isActive);
@@ -1566,7 +1566,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
   }
 
-  private async updateObjectNamesandLabels(
+  private async updateObjectNamesAndLabels(
     oldObject: ObjectMetadataEntity,
     updatedObject: ObjectMetadataEntity,
     input: UpdateOneObjectInput,
