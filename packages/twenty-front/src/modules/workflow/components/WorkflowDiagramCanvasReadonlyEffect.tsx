@@ -1,29 +1,16 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
+import { useTriggerNodeSelection } from '@/workflow/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
-import {
-  WorkflowDiagramEdge,
-  WorkflowDiagramNode,
-} from '@/workflow/types/WorkflowDiagram';
-import {
-  OnSelectionChangeParams,
-  useOnSelectionChange,
-  useReactFlow,
-} from '@xyflow/react';
-import { useCallback, useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { WorkflowDiagramNode } from '@/workflow/types/WorkflowDiagram';
+import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
+import { useCallback } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasReadonlyEffect = () => {
-  const reactflow = useReactFlow<WorkflowDiagramNode, WorkflowDiagramEdge>();
-
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
-
-  const workflowDiagramTriggerNodeSelection = useRecoilValue(
-    workflowDiagramTriggerNodeSelectionState,
-  );
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
@@ -46,15 +33,7 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
     onChange: handleSelectionChange,
   });
 
-  useEffect(() => {
-    if (!isDefined(workflowDiagramTriggerNodeSelection)) {
-      return;
-    }
-
-    reactflow.updateNode(workflowDiagramTriggerNodeSelection, {
-      selected: true,
-    });
-  }, [reactflow, workflowDiagramTriggerNodeSelection]);
+  useTriggerNodeSelection();
 
   return null;
 };
