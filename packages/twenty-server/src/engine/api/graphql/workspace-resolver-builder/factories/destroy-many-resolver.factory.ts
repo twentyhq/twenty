@@ -8,8 +8,11 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
+import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
 export class DestroyManyResolverFactory
@@ -19,6 +22,8 @@ export class DestroyManyResolverFactory
 
   constructor(
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
   ) {}
 
   create(
@@ -37,6 +42,19 @@ export class DestroyManyResolverFactory
           objectMetadataMap: internalContext.objectMetadataMap,
           objectMetadataMapItem: internalContext.objectMetadataMapItem,
         };
+
+        const isQueryRunnerTwentyORMEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IsQueryRunnerTwentyORMEnabled,
+            internalContext.authContext.workspace.id,
+          );
+
+        if (isQueryRunnerTwentyORMEnabled) {
+          return await this.graphqlQueryRunnerService.destroyMany(
+            args,
+            options,
+          );
+        }
 
         return await this.workspaceQueryRunnerService.destroyMany(
           args,

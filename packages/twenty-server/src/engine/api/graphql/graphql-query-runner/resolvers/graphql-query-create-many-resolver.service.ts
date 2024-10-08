@@ -93,12 +93,12 @@ export class GraphqlQueryCreateManyResolverService
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     return upsertedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord(
-        record,
-        objectMetadataMapItem.nameSingular,
-        1,
-        1,
-      ),
+      typeORMObjectRecordsParser.processRecord({
+        objectRecord: record,
+        objectName: objectMetadataMapItem.nameSingular,
+        take: 1,
+        totalCount: 1,
+      }),
     );
   }
 

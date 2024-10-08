@@ -1,6 +1,6 @@
+import { renderHook } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import { MemoryRouter } from 'react-router-dom';
-import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -107,13 +107,39 @@ describe('useCommandMenu', () => {
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should setToInitialCommandMenu command menu', () => {
+  it('should setObjectsInCommandMenu command menu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.setToInitialCommandMenu();
+      result.current.commandMenu.setObjectsInCommandMenu([]);
     });
 
-    expect(result.current.commandMenuCommands.length).toBe(5);
+    expect(result.current.commandMenuCommands.length).toBe(1);
+
+    act(() => {
+      result.current.commandMenu.setObjectsInCommandMenu([
+        {
+          id: 'b88745ce-9021-4316-a018-8884e02d05ca',
+          nameSingular: 'task',
+          namePlural: 'tasks',
+          labelSingular: 'Task',
+          labelPlural: 'Tasks',
+          description: 'A task',
+          icon: 'IconCheckbox',
+          isCustom: false,
+          isRemote: false,
+          isActive: true,
+          isSystem: false,
+          createdAt: '2024-09-12T20:23:46.041Z',
+          updatedAt: '2024-09-13T08:36:53.426Z',
+          labelIdentifierFieldMetadataId:
+            'ab7901eb-43e1-4dc7-8f3b-cdee2857eb9a',
+          imageIdentifierFieldMetadataId: null,
+          fields: [],
+        },
+      ]);
+    });
+
+    expect(result.current.commandMenuCommands.length).toBe(2);
   });
 });

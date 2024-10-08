@@ -7,6 +7,7 @@ import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-work
 import { AddIndexKeyToTasksAndNotesViewsCommand } from 'src/database/commands/upgrade-version/0-31/0-31-add-index-key-to-tasks-and-notes-views.command';
 import { BackfillWorkspaceFavoritesCommand } from 'src/database/commands/upgrade-version/0-31/0-31-backfill-workspace-favorites.command';
 import { CleanViewsAssociatedWithOutdatedObjectsCommand } from 'src/database/commands/upgrade-version/0-31/0-31-clean-views-associated-with-outdated-objects.command';
+import { DeleteNameColumnStandardObjectTablesCommand } from 'src/database/commands/upgrade-version/0-31/0-31-delete-name-column-standard-object-tables.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -29,6 +30,7 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
     private readonly cleanViewsAssociatedWithOutdatedObjectsCommand: CleanViewsAssociatedWithOutdatedObjectsCommand,
     private readonly addIndexKeyToTasksAndNotesViewsCommand: AddIndexKeyToTasksAndNotesViewsCommand,
     private readonly enforceUniqueConstraintsCommand: EnforceUniqueConstraintsCommand,
+    private readonly deleteNameColumnStandardObjectTablesCommand: DeleteNameColumnStandardObjectTablesCommand,
   ) {
     super(workspaceRepository);
   }
@@ -61,7 +63,11 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
       options,
       workspaceIds,
     );
+<<<<<<< HEAD
     await this.enforceUniqueConstraintsCommand.executeActiveWorkspacesCommand(
+=======
+    await this.deleteNameColumnStandardObjectTablesCommand.executeActiveWorkspacesCommand(
+>>>>>>> main
       passedParam,
       options,
       workspaceIds,

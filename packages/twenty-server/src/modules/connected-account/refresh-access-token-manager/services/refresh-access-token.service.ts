@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/drivers/google/services/google-api-refresh-access-token.service';
 import {
   RefreshAccessTokenException,
   RefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-access-token-manager/exceptions/refresh-access-token.exception';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class RefreshAccessTokenService {
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   async refreshAndSaveAccessToken(
@@ -44,10 +42,16 @@ export class RefreshAccessTokenService {
       );
     }
 
-    await this.connectedAccountRepository.updateAccessToken(
-      accessToken,
-      connectedAccount.id,
-      workspaceId,
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    await connectedAccountRepository.update(
+      { id: connectedAccount.id },
+      {
+        accessToken,
+      },
     );
 
     return accessToken;

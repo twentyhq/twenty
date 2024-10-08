@@ -7,7 +7,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px 132px 68px;
+  grid-template-columns: 312px auto 28px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
@@ -18,6 +18,7 @@ const StyledNameTableCell = styled(TableCell)`
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-left: 0;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
