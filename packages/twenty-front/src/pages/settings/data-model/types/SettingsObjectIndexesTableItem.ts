@@ -5,4 +5,5 @@ export type SettingsObjectIndexesTableItem = {
   indexType: IndexType;
   isUnique: boolean;
   indexWhereClause?: string | null;
+  indexFields: string;
 };

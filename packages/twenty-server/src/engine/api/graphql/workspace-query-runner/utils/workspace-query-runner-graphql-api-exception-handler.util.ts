@@ -35,7 +35,7 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
           (field) => field.name === 'deletedAt',
         );
 
-        const affectedColumns = context.objectMetadataItem.indexes
+        const affectedColumns = context.objectMetadataItem.indexMetadatas
           .find((index) => index.name === indexName)
           ?.indexFieldMetadatas?.filter(
             (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,

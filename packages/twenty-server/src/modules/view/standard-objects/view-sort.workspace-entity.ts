@@ -25,7 +25,7 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-@WorkspaceIndex(['fieldMetadataId', 'viewId'],  {
+@WorkspaceIndex(['fieldMetadataId', 'viewId'], {
   isUnique: true,
   indexWhereClause: '"deletedAt" IS NULL',
 })

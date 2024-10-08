@@ -32,7 +32,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
             many: {
-              name: 'indexes',
+              name: 'indexMetadatas', //TODO: check + singular
             },
           },
           create: {

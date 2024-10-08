@@ -2,7 +2,6 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { StyledObjectFieldTableRow } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectIndexesFamilyState } from '@/settings/data-model/object-details/states/settingsObjectIndexesFamilyState';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -23,22 +22,10 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObje
     tableId: 'settingsObjectIndexs',
     fields: [
       {
-        fieldLabel: 'Name',
-        fieldName: 'name',
+        fieldLabel: 'Fields',
+        fieldName: 'indexFields',
         fieldType: 'string',
         align: 'left',
-      },
-      {
-        fieldLabel: 'Where clause',
-        fieldName: 'indexWhereClause',
-        fieldType: 'string',
-        align: 'right',
-      },
-      {
-        fieldLabel: 'Is Unique',
-        fieldName: 'isUnique',
-        fieldType: 'string',
-        align: 'right',
       },
       {
         fieldLabel: 'Type',
@@ -73,7 +60,7 @@ export const SettingsObjectIndexTable = ({
   );
 
   useEffect(() => {
-    setSettingsObjectIndexes(objectMetadataItem.indexes);
+    setSettingsObjectIndexes(objectMetadataItem.indexMetadatas);
   }, [objectMetadataItem, setSettingsObjectIndexes]);
 
   const objectSettingsDetailItems = useMemo(() => {
@@ -81,13 +68,20 @@ export const SettingsObjectIndexTable = ({
       settingsObjectIndexes?.map((indexMetadataItem) => {
         return {
           name: indexMetadataItem.name,
-          indexWhereClause: indexMetadataItem.indexWhereClause,
           isUnique: indexMetadataItem.isUnique,
           indexType: indexMetadataItem.indexType,
+          indexFields: indexMetadataItem.indexFieldMetadatas
+            ?.map((indexField) => {
+              const fieldMetadataItem = objectMetadataItem.fields.find(
+                (field) => field.id === indexField.fieldMetadataId,
+              );
+              return fieldMetadataItem?.label;
+            })
+            .join(', '),
         };
       }) ?? []
     );
-  }, [settingsObjectIndexes]);
+  }, [settingsObjectIndexes, objectMetadataItem]);
 
   const sortedActiveObjectSettingsDetailItems = useSortedArray(
     objectSettingsDetailItems,
@@ -130,17 +124,7 @@ export const SettingsObjectIndexTable = ({
         {isNonEmptyArray(filteredActiveItems) &&
           filteredActiveItems.map((objectSettingsIndex) => (
             <TableRow key={objectSettingsIndex.name}>
-              <TableCell>
-                <EllipsisDisplay maxWidth={100}>
-                  {objectSettingsIndex.name}
-                </EllipsisDisplay>
-              </TableCell>
-              <TableCell>
-                <EllipsisDisplay maxWidth={100}>
-                  {objectSettingsIndex.indexWhereClause}
-                </EllipsisDisplay>
-              </TableCell>
-              <TableCell>{objectSettingsIndex.isUnique}</TableCell>
+              <TableCell>{objectSettingsIndex.indexFields}</TableCell>
               <TableCell>{objectSettingsIndex.indexType}</TableCell>
             </TableRow>
           ))}

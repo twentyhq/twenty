@@ -7,10 +7,10 @@ import {
 
 import {
   Authorize,
+  CursorConnection,
   FilterableField,
   IDField,
   QueryOptions,
-  Relation,
 } from '@ptc-org/nestjs-query-graphql';
 import {
   IsBoolean,
@@ -44,12 +44,8 @@ registerEnumType(IndexType, {
   disableSort: true,
   maxResultsSize: 1000,
 })
-@Relation('objectMetadata', () => ObjectMetadataDTO, {
-  nullable: true,
-})
-@Relation('indexFieldMetadatas', () => IndexFieldMetadataDTO, {
-  nullable: true,
-})
+@CursorConnection('objectMetadata', () => ObjectMetadataDTO)
+@CursorConnection('indexFieldMetadatas', () => IndexFieldMetadataDTO)
 export class IndexMetadataDTO {
   @IsUUID()
   @IsNotEmpty()

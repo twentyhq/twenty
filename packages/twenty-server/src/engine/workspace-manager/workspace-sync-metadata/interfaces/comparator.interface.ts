@@ -34,10 +34,12 @@ export interface ComparatorDeleteResult<T> {
 export type ObjectComparatorResult =
   | ComparatorSkipResult
   | ComparatorCreateResult<
-      Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexes'>
+      Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexMetadatas'>
     >
   | ComparatorUpdateResult<
-      Partial<Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexes'>> & {
+      Partial<
+        Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexMetadatas'>
+      > & {
         id: string;
       }
     >;

@@ -77,8 +77,8 @@ export class WorkspaceMetadataCacheService {
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
-        'indexes',
-        'indexes.indexFieldMetadatas',
+        'indexMetadatas',
+        'indexMetadatas.indexFieldMetadatas',
       ],
     });
 

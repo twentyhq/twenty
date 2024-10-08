@@ -15,7 +15,7 @@ export interface ObjectMetadataInterface {
   fromRelations: RelationMetadataInterface[];
   toRelations: RelationMetadataInterface[];
   fields: FieldMetadataInterface[];
-  indexes: IndexMetadataInterface[];
+  indexMetadatas: IndexMetadataInterface[];
   isSystem: boolean;
   isCustom: boolean;
   isActive: boolean;

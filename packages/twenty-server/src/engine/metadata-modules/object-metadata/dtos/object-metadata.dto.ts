@@ -27,7 +27,7 @@ import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metada
 })
 @BeforeDeleteOne(BeforeDeleteOneObject)
 @CursorConnection('fields', () => FieldMetadataDTO)
-@CursorConnection('indexes', () => IndexMetadataDTO)
+@CursorConnection('indexMetadatas', () => IndexMetadataDTO)
 export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;

@@ -30,7 +30,7 @@ export class WorkspaceObjectComparator {
     originalObjectMetadata: Omit<ObjectMetadataEntity, 'fields'> | undefined,
     standardObjectMetadata: Omit<
       ComputedPartialWorkspaceEntity,
-      'fields' | 'indexes'
+      'fields' | 'indexMetadatas'
     >,
   ): ObjectComparatorResult {
     // If the object doesn't exist in the original metadata, we need to create it

@@ -129,7 +129,7 @@ export class FieldMetadataEntity<
   @OneToMany(
     () => IndexFieldMetadataEntity,
     (indexFieldMetadata: IndexFieldMetadataEntity) =>
-      indexFieldMetadata.fieldMetadata,
+      indexFieldMetadata.indexMetadata,
     {
       cascade: true,
     },

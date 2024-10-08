@@ -10,10 +10,10 @@ export class WorkspaceSyncStorage {
   // Object metadata
   private readonly _objectMetadataCreateCollection: Omit<
     ComputedPartialWorkspaceEntity,
-    'fields' | 'indexes'
+    'fields' | 'indexMetadatas'
   >[] = [];
   private readonly _objectMetadataUpdateCollection: (Partial<
-    Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexes'>
+    Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexMetadatas'>
   > & {
     id: string;
   })[] = [];
@@ -89,7 +89,7 @@ export class WorkspaceSyncStorage {
   }
 
   addCreateObjectMetadata(
-    object: Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexes'>,
+    object: Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexMetadatas'>,
   ) {
     this._objectMetadataCreateCollection.push(object);
   }

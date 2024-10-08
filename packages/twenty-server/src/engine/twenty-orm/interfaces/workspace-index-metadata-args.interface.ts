@@ -19,7 +19,6 @@ export interface WorkspaceIndexMetadataArgs {
    */
   columns: string[];
 
-
   /**
    * Is index unique.
    */

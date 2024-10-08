@@ -36,6 +36,7 @@ import { isFieldRichText } from '@/object-record/record-field/types/guards/isFie
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { isFieldTsVector } from '@/object-record/record-field/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { isDefined } from '~/utils/isDefined';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -138,6 +139,10 @@ export const isFieldValueEmpty = ({
       !isFieldPhonesValue(fieldValue) ||
       isValueEmpty(fieldValue.primaryPhoneNumber)
     );
+  }
+
+  if (isFieldTsVector(fieldDefinition)) {
+    return false;
   }
 
   throw new Error(

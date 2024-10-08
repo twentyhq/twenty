@@ -9,5 +9,5 @@ export type ObjectMetadataItem = Omit<
 > & {
   __typename?: string;
   fields: FieldMetadataItem[];
-  indexes: IndexMetadataItem[];
+  indexMetadatas: IndexMetadataItem[];
 };

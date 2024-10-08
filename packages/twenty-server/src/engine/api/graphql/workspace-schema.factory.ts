@@ -76,7 +76,7 @@ export class WorkspaceSchemaFactory {
       (objectMetadataItem) => ({
         ...objectMetadataItem,
         fields: Object.values(objectMetadataItem.fields),
-        indexes: objectMetadataItem.indexes,
+        indexes: objectMetadataItem.indexMetadatas,
       }),
     );
 

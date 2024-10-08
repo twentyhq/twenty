@@ -24,13 +24,22 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
           updatedAt
           labelIdentifierFieldMetadataId
           imageIdentifierFieldMetadataId
-          indexes(paging: { first: 100 }) {
+          indexMetadatas(paging: { first: 100 }) {
             edges {
               node {
                 id
                 name
                 indexWhereClause
                 indexType
+                indexFieldMetadatas(paging: { first: 100 }) {
+                  edges {
+                    node {
+                      id
+                      order
+                      fieldMetadataId
+                    }
+                  }
+                }
               }
             }
           }

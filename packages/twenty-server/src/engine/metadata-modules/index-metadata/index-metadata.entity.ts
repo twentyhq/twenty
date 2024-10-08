@@ -38,7 +38,7 @@ export class IndexMetadataEntity {
   @Column({ nullable: false, type: 'uuid' })
   objectMetadataId: string;
 
-  @ManyToOne(() => ObjectMetadataEntity, (object) => object.indexes, {
+  @ManyToOne(() => ObjectMetadataEntity, (object) => object.indexMetadatas, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
