@@ -12,11 +12,17 @@ export const useTriggerGoogleApisOAuth = () => {
   const [generateTransientToken] = useGenerateTransientTokenMutation();
 
   const triggerGoogleApisOAuth = useCallback(
-    async (
-      redirectLocation?: AppPath,
-      messageVisibility?: MessageChannelVisibility,
-      calendarVisibility?: CalendarChannelVisibility,
-    ) => {
+    async ({
+      redirectLocation,
+      messageVisibility,
+      calendarVisibility,
+      loginHint,
+    }: {
+      redirectLocation?: AppPath | string;
+      messageVisibility?: MessageChannelVisibility;
+      calendarVisibility?: CalendarChannelVisibility;
+      loginHint?: string;
+    } = {}) => {
       const authServerUrl = REACT_APP_SERVER_BASE_URL;
 
       const transientToken = await generateTransientToken();
@@ -37,6 +43,8 @@ export const useTriggerGoogleApisOAuth = () => {
       params += messageVisibility
         ? `&messageVisibility=${messageVisibility}`
         : '';
+
+      params += loginHint ? `&loginHint=${loginHint}` : '';
 
       window.location.href = `${authServerUrl}/auth/google-apis?${params}`;
     },

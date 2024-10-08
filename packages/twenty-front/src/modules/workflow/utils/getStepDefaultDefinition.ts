@@ -33,9 +33,9 @@ export const getStepDefaultDefinition = (
         type: 'SEND_EMAIL',
         valid: false,
         settings: {
-          subject: 'hello',
-          title: 'hello',
-          template: '{{title}}',
+          connectedAccountId: '',
+          subject: '',
+          body: '',
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,
