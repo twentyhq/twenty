@@ -222,8 +222,8 @@ export const ShowPageRightContainer = ({
       hide: !isWorkflow,
     },
     {
-      id: 'flow',
-      title: 'Flow',
+      id: 'workflowVersion',
+      title: 'Workflow Version',
       Icon: IconSettings,
       hide: !isWorkflowVersion,
     },
@@ -273,7 +273,7 @@ export const ShowPageRightContainer = ({
             <WorkflowVisualizer targetableObject={targetableObject} />
           </>
         );
-      case 'flow':
+      case 'workflowVersion':
         return (
           <>
             <WorkflowVersionVisualizerEffect
