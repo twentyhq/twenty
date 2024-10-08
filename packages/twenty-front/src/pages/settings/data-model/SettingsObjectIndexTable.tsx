@@ -1,6 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { StyledObjectFieldTableRow } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectIndexesFamilyState } from '@/settings/data-model/object-details/states/settingsObjectIndexesFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -16,6 +15,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { IconSearch } from 'twenty-ui';
 import { SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
+
+export const StyledObjectIndexTableRow = styled(TableRow)`
+  grid-template-columns: 280px 100px;
+`;
 
 const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectIndexesTableItem> =
   {
@@ -107,7 +110,7 @@ export const SettingsObjectIndexTable = ({
         onChange={setSearchTerm}
       />
       <Table>
-        <StyledObjectFieldTableRow>
+        <StyledObjectIndexTableRow>
           {SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD.fields.map((item) => (
             <SortableTableHeader
               key={item.fieldName}
@@ -120,13 +123,13 @@ export const SettingsObjectIndexTable = ({
             />
           ))}
           <TableHeader></TableHeader>
-        </StyledObjectFieldTableRow>
+        </StyledObjectIndexTableRow>
         {isNonEmptyArray(filteredActiveItems) &&
           filteredActiveItems.map((objectSettingsIndex) => (
-            <TableRow key={objectSettingsIndex.name}>
+            <StyledObjectIndexTableRow key={objectSettingsIndex.name}>
               <TableCell>{objectSettingsIndex.indexFields}</TableCell>
               <TableCell>{objectSettingsIndex.indexType}</TableCell>
-            </TableRow>
+            </StyledObjectIndexTableRow>
           ))}
       </Table>
     </>
