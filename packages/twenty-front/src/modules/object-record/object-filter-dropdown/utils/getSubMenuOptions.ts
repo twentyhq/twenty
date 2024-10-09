@@ -1,6 +1,6 @@
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 
-export const getSubMenuOptions = (subMenu: FilterType | null) => {
+export const getSubMenuOptions = (subMenu: FilterableFieldType | null) => {
   switch (subMenu) {
     case 'ACTOR':
       return [

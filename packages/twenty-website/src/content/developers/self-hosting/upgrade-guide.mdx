@@ -22,6 +22,8 @@ Migrating a CRM is a bit trickier than migrating a traditional software, because
 
 ## v0.21.0 to v0.22.0
 
+Upgrade your Twenty instance to use v0.22.0 image
+
 Run the following commands:
 
 ```
@@ -36,6 +38,8 @@ The `yarn command:prod upgrade-0.22` command will apply specific data transforma
 
 ## v0.22.0 to v0.23.0
 
+Upgrade your Twenty instance to use v0.23.0 image
+
 Run the following commands:
 
 ```
@@ -47,6 +51,8 @@ The `yarn database:migrate:prod` command will apply the migrations to the Databa
 The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
 
 ## v0.23.0 to v0.24.0
+
+Upgrade your Twenty instance to use v0.24.0 image
 
 Run the following commands:
 
@@ -79,5 +85,18 @@ yarn command:prod upgrade-0.30
 
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-30` takes care of the data migration of all workspaces.
+
+# v0.30.0 to v0.31.0
+
+Upgrade your Twenty instance to use v0.31.0 image
+
+**Schema and data migration**: 
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-31` takes care of the data migration of all workspaces.
 
 <ArticleEditContent></ArticleEditContent>

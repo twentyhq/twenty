@@ -36,6 +36,7 @@ export type CalendarEventParticipantWithCalendarEventId =
 
 export type CalendarEventWithParticipants = CalendarEvent & {
   externalId: string;
+  recurringEventExternalId?: string;
   participants: CalendarEventParticipant[];
   status: string;
 };
@@ -43,6 +44,7 @@ export type CalendarEventWithParticipants = CalendarEvent & {
 export type CalendarEventWithParticipantsAndCalendarEventId = CalendarEvent & {
   id: string;
   externalId: string;
+  recurringEventExternalId?: string;
   participants: CalendarEventParticipantWithCalendarEventId[];
   status: string;
 };

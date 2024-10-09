@@ -144,6 +144,7 @@ export const CurrencyInput = ({
         placeholder={placeholder}
         autoFocus={autoFocus}
         value={value}
+        unmask
       />
     </StyledContainer>
   );

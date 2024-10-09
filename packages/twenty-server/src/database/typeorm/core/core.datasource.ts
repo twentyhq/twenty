@@ -17,6 +17,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
+  metadataTableName: '_typeorm_generated_columns_and_materialized_views',
   migrations: [
     `${isJest ? '' : 'dist/'}src/database/typeorm/core/migrations/*{.ts,.js}`,
   ],

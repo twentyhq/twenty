@@ -44,15 +44,15 @@ export class GraphqlQuerySearchResolverService
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     if (!args.searchInput) {
-      return typeORMObjectRecordsParser.createConnection(
-        [],
-        objectMetadataItem.nameSingular,
-        0,
-        0,
-        [{ id: OrderByDirection.AscNullsFirst }],
-        false,
-        false,
-      );
+      return typeORMObjectRecordsParser.createConnection({
+        objectRecords: [],
+        objectName: objectMetadataItem.nameSingular,
+        take: 0,
+        totalCount: 0,
+        order: [{ id: OrderByDirection.AscNullsFirst }],
+        hasNextPage: false,
+        hasPreviousPage: false,
+      });
     }
     const searchTerms = this.formatSearchTerms(args.searchInput);
 
@@ -76,15 +76,15 @@ export class GraphqlQuerySearchResolverService
     const totalCount = await repository.count();
     const order = undefined;
 
-    return typeORMObjectRecordsParser.createConnection(
-      objectRecords ?? [],
-      objectMetadataItem.nameSingular,
-      limit,
+    return typeORMObjectRecordsParser.createConnection({
+      objectRecords: objectRecords ?? [],
+      objectName: objectMetadataItem.nameSingular,
+      take: limit,
       totalCount,
       order,
-      false,
-      false,
-    );
+      hasNextPage: false,
+      hasPreviousPage: false,
+    });
   }
 
   private formatSearchTerms(searchTerm: string) {
