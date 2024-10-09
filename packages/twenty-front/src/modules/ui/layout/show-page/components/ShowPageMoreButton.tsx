@@ -11,6 +11,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isReadOnlyObject } from '@/object-metadata/utils/isReadOnlyObject';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -41,7 +43,9 @@ export const ShowPageMoreButton = ({
   const { restoreManyRecords } = useRestoreManyRecords({
     objectNameSingular,
   });
-
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
   const handleDelete = () => {
     deleteOneRecord(recordId);
     closeDropdown();
@@ -62,6 +66,8 @@ export const ShowPageMoreButton = ({
     recordStoreFamilyState(recordId),
   );
 
+  const isReadOnly = isReadOnlyObject(objectMetadataItem);
+
   return (
     <StyledContainer>
       <Dropdown
@@ -79,7 +85,7 @@ export const ShowPageMoreButton = ({
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>
-              {recordFromStore && !recordFromStore.deletedAt && (
+              {!isReadOnly && recordFromStore && !recordFromStore.deletedAt && (
                 <MenuItem
                   onClick={handleDelete}
                   accent="danger"
@@ -87,7 +93,7 @@ export const ShowPageMoreButton = ({
                   text="Delete"
                 />
               )}
-              {recordFromStore && recordFromStore.deletedAt && (
+              {!isReadOnly && recordFromStore && recordFromStore.deletedAt && (
                 <>
                   <MenuItem
                     onClick={handleDestroy}
