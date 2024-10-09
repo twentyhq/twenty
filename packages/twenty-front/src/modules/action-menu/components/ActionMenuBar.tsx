@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ActionMenuBarItem } from '@/action-menu/components/ActionMenuBarItem';
+import { ActionMenuBarEntry } from '@/action-menu/components/ActionMenuBarEntry';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
@@ -41,8 +41,8 @@ export const ActionMenuBar = () => {
       <StyledLabel>
         {contextStoreTargetedRecordIds.length} selected:
       </StyledLabel>
-      {actionMenuEntries.map((item, index) => (
-        <ActionMenuBarItem key={index} item={item} />
+      {actionMenuEntries.map((entry, index) => (
+        <ActionMenuBarEntry key={index} entry={entry} />
       ))}
     </BottomBar>
   );
