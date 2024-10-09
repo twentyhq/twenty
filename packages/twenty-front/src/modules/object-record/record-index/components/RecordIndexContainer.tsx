@@ -25,9 +25,9 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
+import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
-import { ActionMenuNavigationModal } from '@/action-menu/components/ActionMenuNavigationModal';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -199,7 +199,7 @@ export const RecordIndexContainer = () => {
           <ActionMenuEffect actionMenuId={recordIndexId} />
           <ActionMenuBar actionMenuId={recordIndexId} />
           <ActionMenuDropdown actionMenuId={recordIndexId} />
-          <ActionMenuNavigationModal />
+          <ActionMenuConfirmationModals />
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>

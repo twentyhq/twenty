@@ -1,7 +1,7 @@
 import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
 import { useRecoilValue } from 'recoil';
 
-export const ActionMenuNavigationModal = () => {
+export const ActionMenuConfirmationModals = () => {
   const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
 
   return (
