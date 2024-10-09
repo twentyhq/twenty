@@ -1,3 +1,4 @@
+const folderStructureConfig = require('./project-structure.cjs');
 module.exports = {
   extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
@@ -15,6 +16,10 @@ module.exports = {
     'tsup.ui.index.tsx',
     '__mocks__',
   ],
+  plugins: ['project-structure'],
+  rules: {
+    'project-structure/folder-structure': ['warn', folderStructureConfig],
+  },
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
