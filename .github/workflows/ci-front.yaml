@@ -41,7 +41,7 @@ jobs:
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
-        run: npx nx storybook:build twenty-front
+        run: node --max-old-space-size=4096 npx nx storybook:build twenty-front
   front-sb-test:
     runs-on: ci-8-cores
     needs: front-sb-build
