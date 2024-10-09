@@ -5,7 +5,8 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { isDefined } from '~/utils/isDefined';
@@ -42,7 +43,15 @@ export const useHandleToggleColumnFilter = ({
         correspondingColumnDefinition?.type,
       );
 
-      const availableOperandsForFilter = getOperandsForFilterType(filterType);
+      const filterDefinition = {
+        label: correspondingColumnDefinition.label,
+        iconName: correspondingColumnDefinition.iconName,
+        fieldMetadataId,
+        type: filterType,
+      } satisfies FilterDefinition;
+
+      const availableOperandsForFilter =
+        getOperandsForFilterDefinition(filterDefinition);
 
       const defaultOperand = availableOperandsForFilter[0];
 
@@ -51,12 +60,7 @@ export const useHandleToggleColumnFilter = ({
         fieldMetadataId,
         operand: defaultOperand,
         displayValue: '',
-        definition: {
-          label: correspondingColumnDefinition.label,
-          iconName: correspondingColumnDefinition.iconName,
-          fieldMetadataId,
-          type: filterType,
-        },
+        definition: filterDefinition,
         value: '',
       };
 

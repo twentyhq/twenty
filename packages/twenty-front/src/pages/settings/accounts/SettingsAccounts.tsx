@@ -1,5 +1,5 @@
 import { useRecoilValue } from 'recoil';
-import { H2Title, IconAt } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -36,7 +36,6 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconAt}
       title="Account"
       links={[
         {

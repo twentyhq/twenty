@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconHierarchy2 } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
@@ -69,7 +69,6 @@ export const SettingsNewObject = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
-        Icon={IconHierarchy2}
         title="New Object"
         links={[
           {

@@ -24,11 +24,10 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -47,9 +46,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       [Workspace, User, AppToken, FeatureFlagEntity],
       'core',
     ),
-    ObjectMetadataRepositoryModule.forFeature([
-      ConnectedAccountWorkspaceEntity,
-    ]),
     HttpModule,
     TokenModule,
     UserWorkspaceModule,
@@ -57,6 +53,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     OnboardingModule,
     WorkspaceDataSourceModule,
     ConnectedAccountModule,
+    FeatureFlagModule,
   ],
   controllers: [
     GoogleAuthController,
