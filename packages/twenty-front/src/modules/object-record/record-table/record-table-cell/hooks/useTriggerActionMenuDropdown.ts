@@ -24,7 +24,7 @@ export const useTriggerActionMenuDropdown = ({
         set(
           extractComponentState(
             actionMenuDropdownPositionComponentState,
-            recordTableId,
+            `action-menu-dropdown-${recordTableId}`,
           ),
           {
             x: event.clientX,
