@@ -30,6 +30,9 @@
     "workerDirectory": "public"
   },
   "dependencies": {
+    "@nivo/calendar": "^0.87.0",
+    "@nivo/core": "^0.87.0",
+    "@nivo/line": "^0.87.0",
     "@xyflow/react": "^12.0.4",
     "transliteration": "^2.3.5"
   }
