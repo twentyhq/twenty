@@ -6,6 +6,7 @@ export type Message = Omit<
   MessageWorkspaceEntity,
   | 'createdAt'
   | 'updatedAt'
+  | 'deletedAt'
   | 'messageChannelMessageAssociations'
   | 'messageParticipants'
   | 'messageThread'
@@ -25,6 +26,7 @@ export type MessageParticipant = Omit<
   | 'id'
   | 'createdAt'
   | 'updatedAt'
+  | 'deletedAt'
   | 'personId'
   | 'workspaceMemberId'
   | 'person'

@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';

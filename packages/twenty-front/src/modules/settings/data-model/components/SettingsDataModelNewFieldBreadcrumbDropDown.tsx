@@ -6,20 +6,17 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IconChevronDown } from 'twenty-ui';
-
-type SettingsDataModelNewFieldBreadcrumbDropDownProps = {
-  isConfigureStep: boolean;
-  onBreadcrumbClick: (isConfigureStep: boolean) => void;
-};
 
 const StyledContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
 `;
+
 const StyledButtonContainer = styled.div`
   position: relative;
   width: 100%;
@@ -48,19 +45,24 @@ const StyledButton = styled(Button)`
   padding-right: ${({ theme }) => theme.spacing(6)};
 `;
 
-export const SettingsDataModelNewFieldBreadcrumbDropDown = ({
-  isConfigureStep,
-  onBreadcrumbClick,
-}: SettingsDataModelNewFieldBreadcrumbDropDownProps) => {
+export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const dropdownId = `settings-object-new-field-breadcrumb-dropdown`;
-
   const { closeDropdown } = useDropdown(dropdownId);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { objectSlug = '' } = useParams();
+  const theme = useTheme();
 
-  const handleClick = (step: boolean) => {
-    onBreadcrumbClick(step);
+  const isConfigureStep = location.pathname.includes('/configure');
+
+  const handleClick = (isConfigureStep: boolean) => {
+    if (isConfigureStep) {
+      navigate(`/settings/objects/${objectSlug}/new-field/configure`);
+    } else {
+      navigate(`/settings/objects/${objectSlug}/new-field/select`);
+    }
     closeDropdown();
   };
-  const theme = useTheme();
 
   return (
     <StyledContainer>

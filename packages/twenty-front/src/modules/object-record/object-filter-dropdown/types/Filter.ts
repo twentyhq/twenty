@@ -1,5 +1,4 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-
 import { FilterDefinition } from './FilterDefinition';
 
 export type Filter = {

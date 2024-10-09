@@ -305,14 +305,6 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
   ) {
     this.logger.log(`Migrating person email field of type EMAIL to EMAILS`);
 
-    await this.migrateDataWithinTable({
-      sourceColumnName: 'email',
-      targetColumnName: 'emailsPrimaryEmail',
-      tableName: 'person',
-      workspaceQueryRunner,
-      dataSourceMetadata,
-    });
-
     const personEmailFieldMetadata = await this.fieldMetadataRepository.findOne(
       {
         where: {
@@ -321,6 +313,22 @@ export class MigrateEmailFieldsToEmailsCommand extends ActiveWorkspacesCommandRu
         },
       },
     );
+
+    if (!personEmailFieldMetadata) {
+      this.logger.log(
+        `Could not find person email field with standardId ${PERSON_STANDARD_FIELD_IDS.email}, skipping migration`,
+      );
+
+      return;
+    }
+
+    await this.migrateDataWithinTable({
+      sourceColumnName: 'email',
+      targetColumnName: 'emailsPrimaryEmail',
+      tableName: 'person',
+      workspaceQueryRunner,
+      dataSourceMetadata,
+    });
 
     if (personEmailFieldMetadata) {
       await this.fieldMetadataService.deleteOneField(

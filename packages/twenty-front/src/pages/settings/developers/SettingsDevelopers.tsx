@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { H2Title, IconCode, IconPlus } from 'twenty-ui';
+import { H2Title, IconPlus } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
@@ -20,7 +20,6 @@ const StyledButtonContainer = styled.div`
 export const SettingsDevelopers = () => {
   return (
     <SubMenuTopBarContainer
-      Icon={IconCode}
       title="Developers"
       actionButton={<SettingsReadDocumentationButton />}
       links={[

@@ -31,24 +31,27 @@ export type ViewBarDetailsProps = {
 
 const StyledBar = styled.div`
   align-items: center;
+  align-items: center;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
-  min-height: 32px;
   justify-content: space-between;
-  z-index: 4;
+  min-height: 32px;
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
+  z-index: 4;
 `;
 
 const StyledChipcontainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  overflow: scroll;
   gap: ${({ theme }) => theme.spacing(1)};
-  min-height: 32px;
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  flex-wrap: wrap;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(0.5)};
+  z-index: 1;
 `;
 
 const StyledCancelButton = styled.button`
@@ -57,15 +60,8 @@ const StyledCancelButton = styled.button`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: auto;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  padding: ${(props) => {
-    const horiz = props.theme.spacing(2);
-    const vert = props.theme.spacing(1);
-    return `${vert} ${horiz} ${vert} ${horiz}`;
-  }};
   user-select: none;
-
+  margin-right: ${({ theme }) => theme.spacing(2)};
   &:hover {
     background-color: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.spacing(1)};
@@ -73,8 +69,10 @@ const StyledCancelButton = styled.button`
 `;
 
 const StyledFilterContainer = styled.div`
-  align-items: center;
   display: flex;
+  align-items: center;
+  flex: 1;
+  overflow-x: hidden;
 `;
 
 const StyledSeperatorContainer = styled.div`
