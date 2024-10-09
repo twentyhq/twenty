@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 
-import { useBottomBarStates } from '@/ui/layout/bottom-bar/hooks/internal/useBottomBarStates';
 import { useBottomBarInternalHotkeyScopeManagement } from '@/ui/layout/bottom-bar/hooks/useBottomBarInternalHotkeyScopeManagement';
-import { BottomBarScope } from '@/ui/layout/bottom-bar/scopes/BottomBarScope';
+import { BottomBarInstanceContext } from '@/ui/layout/bottom-bar/states/contexts/BottomBarInstanceContext';
+import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { useRecoilValue } from 'recoil';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledContainerActionBar = styled.div`
   align-items: center;
@@ -38,13 +37,13 @@ export const BottomBar = ({
   bottomBarHotkeyScopeFromParent,
   children,
 }: BottomBarProps) => {
-  const scopeId = getScopeIdFromComponentId(bottomBarId);
-  const { isBottomBarOpenState } = useBottomBarStates({
-    bottomBarScopeId: scopeId,
-  });
-  const isBottomBarOpen = useRecoilValue(isBottomBarOpenState);
+  const isBottomBarOpen = useRecoilComponentValueV2(
+    isBottomBarOpenedComponentState,
+    bottomBarId,
+  );
+
   useBottomBarInternalHotkeyScopeManagement({
-    bottomBarScopeId: scopeId,
+    bottomBarId,
     bottomBarHotkeyScopeFromParent,
   });
 
@@ -53,10 +52,10 @@ export const BottomBar = ({
   }
 
   return (
-    <BottomBarScope bottomBarScopeId={scopeId}>
+    <BottomBarInstanceContext.Provider value={{ instanceId: bottomBarId }}>
       <StyledContainerActionBar data-select-disable className="bottom-bar">
         {children}
       </StyledContainerActionBar>
-    </BottomBarScope>
+    </BottomBarInstanceContext.Provider>
   );
 };

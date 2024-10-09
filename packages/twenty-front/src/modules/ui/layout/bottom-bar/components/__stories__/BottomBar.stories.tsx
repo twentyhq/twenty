@@ -3,8 +3,7 @@ import { IconPlus } from 'twenty-ui';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
-import { isBottomBarOpenComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import styled from '@emotion/styled';
 import { RecoilRoot } from 'recoil';
 
@@ -42,7 +41,9 @@ export const Default: StoryObj<typeof BottomBar> = {
       <RecoilRoot
         initializeState={({ set }) => {
           set(
-            extractComponentState(isBottomBarOpenComponentState, 'test'),
+            isBottomBarOpenedComponentState.atomFamily({
+              instanceId: 'test',
+            }),
             true,
           );
         }}

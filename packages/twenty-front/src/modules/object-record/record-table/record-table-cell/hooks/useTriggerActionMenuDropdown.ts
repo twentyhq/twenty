@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { isBottomBarOpenComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenComponentState';
+import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -52,7 +52,7 @@ export const useTriggerActionMenuDropdown = ({
         );
 
         const isActionBarOpenState = extractComponentState(
-          isBottomBarOpenComponentState,
+          isBottomBarOpenedComponentState,
           `action-bar-${recordTableId}`,
         );
 

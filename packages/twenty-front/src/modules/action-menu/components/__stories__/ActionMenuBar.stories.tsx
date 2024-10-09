@@ -5,8 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
-import { isBottomBarOpenComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
 import { IconCheckbox, IconTrash } from 'twenty-ui';
 
@@ -39,10 +38,9 @@ const meta: Meta<typeof ActionMenuBar> = {
             ],
           );
           set(
-            extractComponentState(
-              isBottomBarOpenComponentState,
-              'action-bar-story-action-menu',
-            ),
+            isBottomBarOpenedComponentState.atomFamily({
+              instanceId: 'action-bar-story-action-menu',
+            }),
             true,
           );
         }}

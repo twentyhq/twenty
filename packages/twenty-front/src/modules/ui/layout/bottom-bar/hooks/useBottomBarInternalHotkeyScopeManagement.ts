@@ -1,24 +1,19 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 
-import { useBottomBarStates } from '@/ui/layout/bottom-bar/hooks/internal/useBottomBarStates';
+import { bottomBarHotkeyComponentState } from '@/ui/layout/bottom-bar/states/bottomBarHotkeyComponentState';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useBottomBarInternalHotkeyScopeManagement = ({
-  bottomBarScopeId,
+  bottomBarId,
   bottomBarHotkeyScopeFromParent,
 }: {
-  bottomBarScopeId: string;
+  bottomBarId?: string;
   bottomBarHotkeyScopeFromParent?: HotkeyScope;
 }) => {
-  const { bottomBarHotkeyScopeState } = useBottomBarStates({
-    bottomBarScopeId,
-  });
-
-  const [bottomBarHotkeyScope, setBottomBarHotkeyScope] = useRecoilState(
-    bottomBarHotkeyScopeState,
-  );
+  const [bottomBarHotkeyScope, setBottomBarHotkeyScope] =
+    useRecoilComponentStateV2(bottomBarHotkeyComponentState, bottomBarId);
 
   useEffect(() => {
     if (!isDeeplyEqual(bottomBarHotkeyScopeFromParent, bottomBarHotkeyScope)) {
