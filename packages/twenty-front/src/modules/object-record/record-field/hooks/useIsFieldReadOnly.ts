@@ -8,11 +8,11 @@ import { FieldContext } from '../contexts/FieldContext';
 export const useIsFieldReadOnly = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  const metadata = fieldDefinition.metadata;
+  const { metadata } = fieldDefinition;
 
   return (
-    fieldDefinition.metadata.fieldName === 'noteTargets' ||
-    fieldDefinition.metadata.fieldName === 'taskTargets' ||
+    metadata.fieldName === 'noteTargets' ||
+    metadata.fieldName === 'taskTargets' ||
     isFieldActor(fieldDefinition) ||
     isFieldRichText(fieldDefinition) ||
     isFieldReadonlyFromObjectMetadataName(

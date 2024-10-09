@@ -159,7 +159,7 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
-  const isReadOnly = !isFieldReadonlyFromObjectMetadataName(
+  const canEdit = !isFieldReadonlyFromObjectMetadataName(
     fieldDefinition.metadata.fieldName,
     fieldDefinition.metadata.objectMetadataNameSingular,
   );
@@ -184,7 +184,7 @@ export const RecordDetailRelationSection = ({
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
-          isReadOnly && (
+          canEdit && (
             <DropdownScope dropdownScopeId={dropdownId}>
               <StyledAddDropdown
                 dropdownId={dropdownId}

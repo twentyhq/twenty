@@ -11,7 +11,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -42,9 +41,7 @@ export const ShowPageMoreButton = ({
   const { restoreManyRecords } = useRestoreManyRecords({
     objectNameSingular,
   });
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+
   const handleDelete = () => {
     deleteOneRecord(recordId);
     closeDropdown();
