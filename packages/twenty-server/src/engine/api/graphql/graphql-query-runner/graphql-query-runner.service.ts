@@ -13,6 +13,7 @@ import {
   CreateOneResolverArgs,
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
+  DestroyManyResolverArgs,
   DestroyOneResolverArgs,
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
@@ -278,6 +279,25 @@ export class GraphqlQueryRunnerService {
 
     this.apiEventEmitterService.emitDestroyEvents(
       [result],
+      options.authContext,
+      options.objectMetadataItem,
+    );
+
+    return result;
+  }
+
+  @LogExecutionTime()
+  async destroyMany<ObjectRecord extends IRecord>(
+    args: DestroyManyResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<ObjectRecord[]> {
+    const result = await this.executeQuery<
+      DestroyManyResolverArgs,
+      ObjectRecord[]
+    >('destroyMany', args, options);
+
+    this.apiEventEmitterService.emitDestroyEvents(
+      result,
       options.authContext,
       options.objectMetadataItem,
     );

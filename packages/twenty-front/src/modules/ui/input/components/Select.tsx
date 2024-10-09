@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo, useRef, useState } from 'react';
+import React, { MouseEvent, useMemo, useRef, useState } from 'react';
 import { IconChevronDown, IconComponent } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -11,10 +11,17 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
+import { isDefined } from '~/utils/isDefined';
 
 export type SelectOption<Value extends string | number | null> = {
   value: Value;
   label: string;
+  Icon?: IconComponent;
+};
+
+type CallToActionButton = {
+  text: string;
+  onClick: (event: MouseEvent<HTMLDivElement>) => void;
   Icon?: IconComponent;
 };
 
@@ -32,6 +39,7 @@ export type SelectProps<Value extends string | number | null> = {
   options: SelectOption<Value>[];
   value?: Value;
   withSearchInput?: boolean;
+  callToActionButton?: CallToActionButton;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -89,6 +97,7 @@ export const Select = <Value extends string | number | null>({
   options,
   value,
   withSearchInput,
+  callToActionButton,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -97,8 +106,8 @@ export const Select = <Value extends string | number | null>({
 
   const selectedOption =
     options.find(({ value: key }) => key === value) ||
-    options[0] ||
-    emptyOption;
+    emptyOption ||
+    options[0];
   const filteredOptions = useMemo(
     () =>
       searchInputValue
@@ -109,7 +118,9 @@ export const Select = <Value extends string | number | null>({
     [options, searchInputValue],
   );
 
-  const isDisabled = disabledFromProps || options.length <= 1;
+  const isDisabled =
+    disabledFromProps ||
+    (options.length <= 1 && !isDefined(callToActionButton));
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -175,6 +186,18 @@ export const Select = <Value extends string | number | null>({
                       }}
                     />
                   ))}
+                </DropdownMenuItemsContainer>
+              )}
+              {!!callToActionButton && !!filteredOptions.length && (
+                <DropdownMenuSeparator />
+              )}
+              {!!callToActionButton && (
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  <MenuItem
+                    onClick={callToActionButton.onClick}
+                    LeftIcon={callToActionButton.Icon}
+                    text={callToActionButton.text}
+                  />
                 </DropdownMenuItemsContainer>
               )}
             </>
