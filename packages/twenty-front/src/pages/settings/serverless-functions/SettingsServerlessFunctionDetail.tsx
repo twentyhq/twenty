@@ -21,7 +21,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
+import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDefined } from '~/utils/isDefined';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -227,7 +227,6 @@ export const SettingsServerlessFunctionDetail = () => {
   return (
     !loading && (
       <SubMenuTopBarContainer
-        Icon={IconFunction}
         title={formValues.name}
         links={[
           {

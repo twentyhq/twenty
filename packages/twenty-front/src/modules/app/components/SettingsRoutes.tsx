@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
@@ -64,7 +65,7 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
 
 const SettingsDevelopersWebhooksNew = lazy(() =>
   import(
-    '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew'
+    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew'
   ).then((module) => ({
     default: module.SettingsDevelopersWebhooksNew,
   })),
@@ -164,7 +165,7 @@ const SettingsObjects = lazy(() =>
 
 const SettingsDevelopersWebhooksDetail = lazy(() =>
   import(
-    '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail'
+    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail'
   ).then((module) => ({
     default: module.SettingsDevelopersWebhooksDetail,
   })),
@@ -202,22 +203,21 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
   })),
 );
 
-const SettingsObjectNewFieldStep1 = lazy(() =>
+const SettingsObjectNewFieldSelect = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1'
+    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect'
   ).then((module) => ({
-    default: module.SettingsObjectNewFieldStep1,
+    default: module.SettingsObjectNewFieldSelect,
   })),
 );
 
-const SettingsObjectNewFieldStep2 = lazy(() =>
+const SettingsObjectNewFieldConfigure = lazy(() =>
   import(
-    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2'
+    '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure'
   ).then((module) => ({
-    default: module.SettingsObjectNewFieldStep2,
+    default: module.SettingsObjectNewFieldConfigure,
   })),
 );
-
 const SettingsObjectFieldEdit = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectFieldEdit').then(
     (module) => ({
@@ -245,7 +245,7 @@ export const SettingsRoutes = ({
   isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
 }: SettingsRoutesProps) => (
-  <Suspense fallback={null}>
+  <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
       <Route path={SettingsPath.Appearance} element={<SettingsAppearance />} />
@@ -345,12 +345,12 @@ export const SettingsRoutes = ({
         element={<SettingsIntegrationShowDatabaseConnection />}
       />
       <Route
-        path={SettingsPath.ObjectNewFieldStep1}
-        element={<SettingsObjectNewFieldStep1 />}
+        path={SettingsPath.ObjectNewFieldSelect}
+        element={<SettingsObjectNewFieldSelect />}
       />
       <Route
-        path={SettingsPath.ObjectNewFieldStep2}
-        element={<SettingsObjectNewFieldStep2 />}
+        path={SettingsPath.ObjectNewFieldConfigure}
+        element={<SettingsObjectNewFieldConfigure />}
       />
       <Route
         path={SettingsPath.ObjectFieldEdit}

@@ -5,7 +5,6 @@ import {
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
-  IconCurrencyDollar,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -137,7 +136,6 @@ export const SettingsBilling = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconCurrencyDollar}
       title="Billing"
       links={[
         {
