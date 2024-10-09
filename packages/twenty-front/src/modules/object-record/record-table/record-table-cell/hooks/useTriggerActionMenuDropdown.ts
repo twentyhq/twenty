@@ -51,9 +51,10 @@ export const useTriggerActionMenuDropdown = ({
           `action-menu-dropdown-${recordTableId}`,
         );
 
-        const isActionBarOpenState = extractComponentState(
-          isBottomBarOpenedComponentState,
-          `action-bar-${recordTableId}`,
+        const isActionBarOpenState = isBottomBarOpenedComponentState.atomFamily(
+          {
+            instanceId: `action-bar-${recordTableId}`,
+          },
         );
 
         set(isActionBarOpenState, false);

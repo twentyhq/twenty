@@ -71,10 +71,10 @@ export const RecordTableCellBaseContainer = ({
     }
   };
 
-  const { onActionMenuDropdown } = useContext(RecordTableContext);
+  const { onActionMenuDropdownOpened } = useContext(RecordTableContext);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
-    onActionMenuDropdown(event, recordId);
+    onActionMenuDropdownOpened(event, recordId);
   };
 
   const { hotkeyScope } = useContext(FieldContext);

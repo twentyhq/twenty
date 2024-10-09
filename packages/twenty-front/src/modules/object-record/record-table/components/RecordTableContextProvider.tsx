@@ -102,7 +102,7 @@ export const RecordTableContextProvider = ({
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handleCloseTableCell,
         onMoveSoftFocusToCell: handleMoveSoftFocusToCell,
-        onActionMenuDropdown: handleActionMenuDropdown,
+        onActionMenuDropdownOpened: handleActionMenuDropdown,
         onCellMouseEnter: handleContainerMouseEnter,
         visibleTableColumns,
         recordTableId,

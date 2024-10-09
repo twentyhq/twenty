@@ -70,7 +70,7 @@ const meta: Meta = {
               onMoveFocus: () => {},
               onCloseTableCell: () => {},
               onMoveSoftFocusToCell: () => {},
-              onActionMenuDropdown: () => {},
+              onActionMenuDropdownOpened: () => {},
               onCellMouseEnter: () => {},
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
               objectNameSingular:
