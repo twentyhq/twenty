@@ -25,7 +25,6 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   flex-direction: column;
-  gap: 1px;
 
   left: ${(props) => `${props.position.x}px`};
   position: fixed;
@@ -33,7 +32,6 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
 
   transform: translateX(-50%);
   width: auto;
-  z-index: 2;
 `;
 
 export const ActionMenuDropdown = () => {
