@@ -1,19 +1,15 @@
+import { useUpsertViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { unsavedToUpsertViewFilterGroupsComponentFamilyState } from '@/views/states/unsavedToUpsertViewFilterGroupsComponentFamilyState';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
 import { IconFilter, Pill } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -51,44 +47,10 @@ export const AdvancedFilterButton = () => {
 
   const { currentViewId } = useGetCurrentView();
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    ViewComponentInstanceContext,
-    undefined, // TODO: Find out what to pass here
-  );
+  const { createViewFilterGroup: upsertCombinedViewFilterGroup } =
+    useUpsertViewFilterGroup();
 
-  const unsavedToUpsertViewFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(
-      unsavedToUpsertViewFilterGroupsComponentFamilyState,
-      instanceId,
-    );
-
-  const createViewFilterGroup = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (newViewFilterGroup: Omit<ViewFilterGroup, '__typename'>) => {
-        const currentViewUnsavedToUpsertViewFilterGroups =
-          unsavedToUpsertViewFilterGroupsCallbackState({
-            viewId: currentViewId,
-          });
-
-        const unsavedToUpsertViewFilterGroups = getSnapshotValue(
-          snapshot,
-          currentViewUnsavedToUpsertViewFilterGroups,
-        );
-
-        const newViewFilterWithTypename: ViewFilterGroup = {
-          ...newViewFilterGroup,
-          __typename: 'ViewFilterGroup',
-        };
-
-        set(
-          unsavedToUpsertViewFilterGroupsCallbackState({
-            viewId: currentViewId,
-          }),
-          [...unsavedToUpsertViewFilterGroups, newViewFilterWithTypename],
-        );
-      },
-    [unsavedToUpsertViewFilterGroupsCallbackState, currentViewId],
-  );
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
   const handleClick = () => {
     setIsDraftingAdvancedFilter(true);
@@ -97,10 +59,22 @@ export const AdvancedFilterButton = () => {
       throw new Error('Missing current view id');
     }
 
-    createViewFilterGroup({
+    const newViewFilterGroup = {
       id: v4(),
       viewId: currentViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.AND,
+    };
+
+    upsertCombinedViewFilterGroup(newViewFilterGroup);
+
+    upsertCombinedViewFilter({
+      id: v4(),
+      fieldMetadataId: undefined as any,
+      operand: ViewFilterOperand.Is,
+      value: '',
+      displayValue: '',
+      definition: {} as any,
+      viewFilterGroupId: newViewFilterGroup.id,
     });
 
     openAdvancedFilterDropdown();

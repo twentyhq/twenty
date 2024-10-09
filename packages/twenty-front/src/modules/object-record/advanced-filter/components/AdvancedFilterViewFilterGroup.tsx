@@ -1,8 +1,11 @@
 import { AdvancedFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRow';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
+import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -20,6 +23,8 @@ export const AdvancedFilterViewFilterGroup = (
 ) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
+
   const viewFilters = currentViewWithCombinedFiltersAndSorts?.viewFilters;
   const viewFilterGroups =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups;
@@ -32,23 +37,37 @@ export const AdvancedFilterViewFilterGroup = (
   );
 
   if (!viewFilterGroup) {
-    return 'Missing view filter group';
+    throw new Error('Missing view filter group');
   }
 
   const viewFilterGroupViewFilters = viewFilters?.filter(
     (viewFilter) => viewFilter.viewFilterGroupId === viewFilterGroup.id,
   );
 
-  const viewFilterGroupViewFilterGroups = viewFilterGroups?.filter(
+  const subViewFilterGroups = viewFilterGroups?.filter(
     (viewFilterGroup) =>
       viewFilterGroup.parentViewFilterGroupId === viewFilterGroup.id,
   );
 
+  const handleAddFilter = () => {
+    upsertCombinedViewFilter({
+      id: v4(),
+      variant: 'default',
+      fieldMetadataId: undefined as any,
+      operand: ViewFilterOperand.Is,
+      value: '',
+      displayValue: '',
+      definition: {} as any,
+      viewFilterGroupId: viewFilterGroup.id,
+    });
+  };
+
   return (
     <StyledContainer>
-      {viewFilterGroupViewFilterGroups?.map((viewFilterGroup, i) => (
+      {subViewFilterGroups?.map((viewFilterGroup, i) => (
         <AdvancedFilterRow
           key={viewFilterGroup.id}
+          viewBarInstanceId={props.viewBarInstanceId}
           index={i}
           logicalOperator={viewFilterGroup.logicalOperator}
           viewFilterGroupId={viewFilterGroup.id}
@@ -57,12 +76,17 @@ export const AdvancedFilterViewFilterGroup = (
       {viewFilterGroupViewFilters?.map((viewFilter, i) => (
         <AdvancedFilterRow
           key={viewFilter.id}
+          viewBarInstanceId={props.viewBarInstanceId}
           index={i}
           logicalOperator={viewFilterGroup.logicalOperator}
           viewFilter={viewFilter}
         />
       ))}
-      <LightButton Icon={IconPlus} title="Add filter rule" />
+      <LightButton
+        Icon={IconPlus}
+        title="Add filter rule"
+        onClick={handleAddFilter}
+      />
     </StyledContainer>
   );
 };

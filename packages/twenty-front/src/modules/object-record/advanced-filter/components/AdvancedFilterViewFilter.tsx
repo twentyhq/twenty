@@ -25,5 +25,5 @@ export const AdvancedFilterViewFilter = (
     availableFilterDefinitions,
   );
 
-  return <StyledRow>{filter.displayValue}</StyledRow>;
+  return <StyledRow>AdvancedFilterViewFilter</StyledRow>;
 };

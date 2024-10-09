@@ -65,6 +65,7 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
 
         const matchingFilterInUnsavedFilters = unsavedToUpsertViewFilters.find(
           (viewFilter) =>
+            isDefined(viewFilter.fieldMetadataId) &&
             viewFilter.fieldMetadataId === upsertedFilter.fieldMetadataId,
         );
 

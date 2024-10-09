@@ -15,11 +15,13 @@ const StyledRow = styled.div`
 type AdvancedFilterRowProps = {
   index: number;
   logicalOperator: ViewFilterGroupLogicalOperator;
+  viewBarInstanceId: string;
 } & (
   | { viewFilter: ViewFilter; viewFilterGroupId?: never }
   | { viewFilter?: never; viewFilterGroupId: string }
 );
 
+// TODO: make this component a wrapper?
 export const AdvancedFilterRow = (props: AdvancedFilterRowProps) => {
   return (
     <StyledRow>
@@ -32,6 +34,7 @@ export const AdvancedFilterRow = (props: AdvancedFilterRowProps) => {
         <AdvancedFilterViewFilter viewFilter={props.viewFilter} />
       ) : (
         <AdvancedFilterViewFilterGroup
+          viewBarInstanceId={props.viewBarInstanceId}
           parentViewFilterGroupId={props.viewFilterGroupId}
         />
       )}

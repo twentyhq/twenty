@@ -134,28 +134,39 @@ export const ViewBarDetails = ({
   const { resetUnsavedViewStates } = useResetUnsavedViewStates();
   const canResetView = canPersistView && !hasFiltersQueryParams;
 
-  const { otherViewFilters, defaultViewFilters } = useMemo(() => {
-    if (!currentViewWithCombinedFiltersAndSorts) {
+  const { otherViewFilters, defaultViewFilters, advancedFilterViewFilters } =
+    useMemo(() => {
+      if (!currentViewWithCombinedFiltersAndSorts) {
+        return {
+          otherViewFilters: [],
+          defaultViewFilters: [],
+        };
+      }
+
+      const otherViewFilters =
+        currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+          (viewFilter) =>
+            viewFilter.variant &&
+            viewFilter.variant !== 'default' &&
+            !viewFilter.viewFilterGroupId,
+        );
+      const defaultViewFilters =
+        currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+          (viewFilter) =>
+            (!viewFilter.variant || viewFilter.variant === 'default') &&
+            !viewFilter.viewFilterGroupId,
+        );
+      const advancedFilterViewFilters =
+        currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+          (viewFilter) => viewFilter.viewFilterGroupId,
+        );
+
       return {
-        otherViewFilters: [],
-        defaultViewFilters: [],
+        otherViewFilters,
+        defaultViewFilters,
+        advancedFilterViewFilters,
       };
-    }
-
-    const otherViewFilters =
-      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
-        (viewFilter) => viewFilter.variant && viewFilter.variant !== 'default',
-      );
-    const defaultViewFilters =
-      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
-        (viewFilter) => !viewFilter.variant || viewFilter.variant === 'default',
-      );
-
-    return {
-      otherViewFilters,
-      defaultViewFilters,
-    };
-  }, [currentViewWithCombinedFiltersAndSorts]);
+    }, [currentViewWithCombinedFiltersAndSorts]);
 
   const handleCancelClick = () => {
     if (isDefined(viewId)) {
@@ -174,7 +185,10 @@ export const ViewBarDetails = ({
     return null;
   }
 
-  const showAdvancedFilterDropdownButton = isDraftingAdvancedFilter; // TODO: || viewFilterGroups.length > 1;
+  const showAdvancedFilterDropdownButton =
+    isDraftingAdvancedFilter ||
+    (currentViewWithCombinedFiltersAndSorts?.viewFilterGroups &&
+      currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.length > 0);
 
   return (
     <StyledBar>
