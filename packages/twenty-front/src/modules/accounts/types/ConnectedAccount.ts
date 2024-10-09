@@ -13,5 +13,6 @@ export type ConnectedAccount = {
   authFailedAt: Date | null;
   messageChannels: MessageChannel[];
   calendarChannels: CalendarChannel[];
+  scopes: string[] | null;
   __typename: 'ConnectedAccount';
 };

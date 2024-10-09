@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { H2Title, IconCode, IconRepeat, IconTrash } from 'twenty-ui';
+import { H2Title, IconRepeat, IconTrash } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -145,7 +145,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
     <>
       {apiKeyData?.name && (
         <SubMenuTopBarContainer
-          Icon={IconCode}
           title={apiKeyData?.name}
           links={[
             {
