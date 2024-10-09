@@ -126,7 +126,6 @@ export class SSOService {
       workspaceId,
     });
 
-    console.log('>>>>>>>>>>>>>>', idp);
     return {
       id: idp.id,
       type: idp.type,
@@ -288,10 +287,15 @@ export class SSOService {
   }
 
   async listSSOIdentityProvidersByWorkspaceId(workspaceId: string) {
-    return this.workspaceSSOIdentityProviderRepository.find({
+    return (await this.workspaceSSOIdentityProviderRepository.find({
       where: { workspaceId },
       select: ['id', 'name', 'type', 'issuer', 'status'],
-    });
+    })) as Array<
+      Pick<
+        WorkspaceSSOIdentityProvider,
+        'id' | 'name' | 'type' | 'issuer' | 'status'
+      >
+    >;
   }
 
   async deleteSSOIdentityProvider(idpId: string, workspaceId: string) {

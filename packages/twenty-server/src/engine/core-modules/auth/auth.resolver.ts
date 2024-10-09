@@ -38,6 +38,11 @@ import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.enti
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 import { TokenService } from './token/services/token.service';
+import {
+  GenerateJWTOutput,
+  GenerateJWTOutputWithAuthTokens,
+  GenerateJWTOutputWithSSOAUTH,
+} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -159,18 +164,39 @@ export class AuthResolver {
     return authorizedApp;
   }
 
-  @Mutation(() => AuthTokens)
+  @Mutation(() => GenerateJWTOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateJWT(
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
-  ): Promise<AuthTokens> {
-    const token = await this.tokenService.generateSwitchWorkspaceToken(
+  ): Promise<GenerateJWTOutputWithAuthTokens | GenerateJWTOutputWithSSOAUTH> {
+    const result = await this.tokenService.switchWorkspace(
       user,
       args.workspaceId,
     );
 
-    return token;
+    if (result.useSSOAuth) {
+      return {
+        success: true,
+        reason: 'WORKSPACE_USE_SSO_AUTH',
+        payload: result.availableSSOIdentityProviders.map((idp) => ({
+          ...idp,
+          workspace: {
+            id: result.workspace.id,
+            displayName: result.workspace.displayName,
+          },
+        })),
+      };
+    }
+
+    return {
+      success: true,
+      reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH',
+      payload: await this.tokenService.generateSwitchWorkspaceToken(
+        user,
+        result.workspace,
+      ),
+    };
   }
 
   @Mutation(() => AuthTokens)

@@ -6,10 +6,12 @@ import { AppPath } from '@/types/AppPath';
 import { useGenerateJwtMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';
+import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 
 export const useWorkspaceSwitching = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const [generateJWT] = useGenerateJwtMutation();
+  const { redirectToSSOLoginPage } = useSSO();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const switchWorkspace = async (workspaceId: string) => {
@@ -28,7 +30,19 @@ export const useWorkspaceSwitching = () => {
       throw new Error('could not create token');
     }
 
-    const { tokens } = jwt.data.generateJWT;
+    if (jwt.data.generateJWT.reason === 'WORKSPACE_USE_SSO_AUTH') {
+      if (jwt.data.generateJWT.availableSSOIDPs.length === 1) {
+        redirectToSSOLoginPage(jwt.data.generateJWT.availableSSOIDPs[0].id);
+      }
+
+      if (jwt.data.generateJWT.availableSSOIDPs.length > 1) {
+        // TODO: redirect to idp selection page
+      }
+
+      return;
+    }
+
+    const { tokens } = jwt.data.generateJWT.authTokens;
     setTokenPair(tokens);
     await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
     window.location.href = AppPath.Index;
