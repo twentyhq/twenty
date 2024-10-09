@@ -1,6 +1,5 @@
 // @ts-expect-error external library has a typing issue
 import { RevertConnect } from '@revertdotdev/revert-react';
-import { IconSettings } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -18,7 +17,6 @@ export const SettingsCRMMigration = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   return (
     <SubMenuTopBarContainer
-      Icon={IconSettings}
       title="Migrate"
       links={[
         {

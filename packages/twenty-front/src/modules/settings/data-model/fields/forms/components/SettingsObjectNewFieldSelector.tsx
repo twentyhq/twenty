@@ -10,36 +10,25 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconSearch } from 'twenty-ui';
-import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
 
-export const settingsDataModelFieldTypeFormSchema = z.object({
-  type: z.enum(
-    Object.keys(SETTINGS_FIELD_TYPE_CONFIGS) as [
-      SettingsFieldType,
-      ...SettingsFieldType[],
-    ],
-  ),
-});
-
-export type SettingsDataModelFieldTypeFormValues = z.infer<
-  typeof settingsDataModelFieldTypeFormSchema
->;
-
-type SettingsDataModelFieldTypeSelectProps = {
+type SettingsObjectNewFieldSelectorProps = {
   className?: string;
   excludedFieldTypes?: SettingsFieldType[];
   fieldMetadataItem?: Pick<
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
   >;
-  onFieldTypeSelect: () => void;
+
+  objectSlug: string;
 };
 
 const StyledTypeSelectContainer = styled.div`
@@ -68,12 +57,11 @@ const StyledSearchInput = styled(TextInput)`
   width: 100%;
 `;
 
-export const SettingsDataModelFieldTypeSelect = ({
-  className,
+export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   fieldMetadataItem,
-  onFieldTypeSelect,
-}: SettingsDataModelFieldTypeSelectProps) => {
+  objectSlug,
+}: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
   const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -112,59 +100,60 @@ export const SettingsDataModelFieldTypeSelect = ({
   };
 
   return (
-    <Controller
-      name="type"
-      control={control}
-      defaultValue={
-        fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
-          ? (fieldMetadataItem.type as SettingsFieldType)
-          : FieldMetadataType.Text
-      }
-      render={({ field: { onChange } }) => (
-        <StyledTypeSelectContainer className={className}>
-          <Section>
-            <StyledSearchInput
-              LeftIcon={IconSearch}
-              placeholder="Search a type"
-              value={searchQuery}
-              onChange={setSearchQuery}
-            />
-          </Section>
-          {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
-            <Section key={category}>
-              <H2Title
-                title={category}
-                description={
-                  SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
-                }
-              />
-              <StyledContainer>
-                {fieldTypeConfigs
-                  .filter(([, config]) => config.category === category)
-                  .map(([key, config]) => (
-                    <StyledCardContainer>
-                      <SettingsCard
-                        key={key}
-                        onClick={() => {
-                          onChange(key as SettingsFieldType);
-                          resetDefaultValueField(key as SettingsFieldType);
-                          onFieldTypeSelect();
-                        }}
-                        Icon={
-                          <config.Icon
-                            size={theme.icon.size.xl}
-                            stroke={theme.icon.stroke.sm}
+    <>
+      {' '}
+      <Section>
+        <StyledSearchInput
+          LeftIcon={IconSearch}
+          placeholder="Search a type"
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+      </Section>
+      <Controller
+        name="type"
+        control={control}
+        render={() => (
+          <StyledTypeSelectContainer>
+            {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
+              <Section key={category}>
+                <H2Title
+                  title={category}
+                  description={
+                    SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
+                  }
+                />
+                <StyledContainer>
+                  {fieldTypeConfigs
+                    .filter(([, config]) => config.category === category)
+                    .map(([key, config]) => (
+                      <StyledCardContainer key={key}>
+                        <UndecoratedLink
+                          to={`/settings/objects/${objectSlug}/new-field/configure?fieldType=${key}`}
+                          fullWidth
+                          onClick={() =>
+                            resetDefaultValueField(key as SettingsFieldType)
+                          }
+                        >
+                          <SettingsCard
+                            key={key}
+                            Icon={
+                              <config.Icon
+                                size={theme.icon.size.xl}
+                                stroke={theme.icon.stroke.sm}
+                              />
+                            }
+                            title={config.label}
                           />
-                        }
-                        title={config.label}
-                      />
-                    </StyledCardContainer>
-                  ))}
-              </StyledContainer>
-            </Section>
-          ))}
-        </StyledTypeSelectContainer>
-      )}
-    />
+                        </UndecoratedLink>
+                      </StyledCardContainer>
+                    ))}
+                </StyledContainer>
+              </Section>
+            ))}
+          </StyledTypeSelectContainer>
+        )}
+      />
+    </>
   );
 };
