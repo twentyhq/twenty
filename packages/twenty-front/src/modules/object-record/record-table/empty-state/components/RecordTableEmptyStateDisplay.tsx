@@ -8,7 +8,10 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
+import { isReadOnlyObject } from '@/object-metadata/utils/isReadOnlyObject';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { Button } from '@/ui/input/button/components/Button';
+import { useContext } from 'react';
 import { IconComponent } from 'twenty-ui';
 
 type RecordTableEmptyStateDisplayProps = {
@@ -28,6 +31,9 @@ export const RecordTableEmptyStateDisplay = ({
   subTitle,
   title,
 }: RecordTableEmptyStateDisplayProps) => {
+  const { objectMetadataItem } = useContext(RecordTableContext);
+  const isReadOnly = isReadOnlyObject(objectMetadataItem);
+
   return (
     <AnimatedPlaceholderEmptyContainer>
       <AnimatedPlaceholder type={animatedPlaceholderType} />
@@ -37,12 +43,14 @@ export const RecordTableEmptyStateDisplay = ({
           {subTitle}
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
-      <Button
-        Icon={Icon}
-        title={buttonTitle}
-        variant={'secondary'}
-        onClick={onClick}
-      />
+      {!isReadOnly && (
+        <Button
+          Icon={Icon}
+          title={buttonTitle}
+          variant={'secondary'}
+          onClick={onClick}
+        />
+      )}
     </AnimatedPlaceholderEmptyContainer>
   );
 };
