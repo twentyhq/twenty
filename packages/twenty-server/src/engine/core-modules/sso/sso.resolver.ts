@@ -39,9 +39,9 @@ export class SSOResolver {
   @UseGuards(SSOProviderEnabledGuard)
   @Mutation(() => [FindAvailableSSOIDPOutput])
   async findAvailableSSOIdentityProviders(
-    @Args('input') { email }: FindAvailableSSOIDPInput,
+    @Args('input') input: FindAvailableSSOIDPInput,
   ) {
-    return this.sSOService.findAvailableSSOIdentityProviders(email);
+    return this.sSOService.findAvailableSSOIdentityProviders(input.email);
   }
 
   @UseGuards(SSOProviderEnabledGuard)

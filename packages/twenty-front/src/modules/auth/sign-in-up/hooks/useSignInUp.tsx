@@ -9,22 +9,23 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { useRecoilState } from 'recoil';
 
 import { useAuth } from '../../hooks/useAuth';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 
 export enum SignInUpMode {
   SignIn = 'sign-in',
   SignUp = 'sign-up',
 }
 
-export enum SignInUpStep {
-  Init = 'init',
-  Email = 'email',
-  Password = 'password',
-}
-
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
+
+  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
 
   const isMatchingLocation = useIsMatchingLocation();
 
@@ -34,10 +35,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     searchParams.get('inviteToken') ?? undefined;
 
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
-
-  const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
-    SignInUpStep.Init,
-  );
 
   const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
     return isMatchingLocation(AppPath.SignInUp)
@@ -97,6 +94,18 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     requestFreshCaptchaToken,
   ]);
 
+  const continueWithSSO = () => {
+    setSignInUpStep(SignInUpStep.EmailSSO);
+  };
+
+  const submitSSOEmail = () => {
+    // load workspaces
+    // If only one workspace, redirect to SSO
+    // If multiple workspaces, show workspace selection
+    // If no workspaces, display an error
+    setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
+  };
+
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
       const token = await readCaptchaToken();
@@ -144,6 +153,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     signInUpMode,
     continueWithCredentials,
     continueWithEmail,
+    continueWithSSO,
+    submitSSOEmail,
     submitCredentials,
   };
 };
