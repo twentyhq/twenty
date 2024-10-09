@@ -211,7 +211,9 @@ export const ViewBarDetails = ({
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
-          {showAdvancedFilterDropdownButton && <AdvancedFilterDropdownButton />}
+          {showAdvancedFilterDropdownButton && (
+            <AdvancedFilterDropdownButton viewBarId={viewBarId} />
+          )}
           {mapViewFiltersToFilters(
             defaultViewFilters,
             availableFilterDefinitions,

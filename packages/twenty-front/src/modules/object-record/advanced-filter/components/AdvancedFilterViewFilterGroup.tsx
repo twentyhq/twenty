@@ -12,6 +12,7 @@ const StyledContainer = styled.div`
 
 interface AdvancedFilterViewFilterGroupProps {
   parentViewFilterGroupId?: string;
+  viewBarInstanceId: string;
 }
 
 export const AdvancedFilterViewFilterGroup = (
