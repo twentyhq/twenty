@@ -1,10 +1,8 @@
-import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
   findManyViewsQuery,
   query,
@@ -47,13 +45,9 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useCreateOneObjectMetadataItem', () => {
   it('should work as expected', async () => {

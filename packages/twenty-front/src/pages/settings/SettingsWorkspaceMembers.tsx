@@ -7,8 +7,8 @@ import {
   IconUsers,
   IconReload,
   IconMail,
-  StyledText,
   Avatar,
+  MOBILE_VIEWPORT,
 } from 'twenty-ui';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useTheme } from '@emotion/react';
@@ -53,6 +53,47 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
+const StyledTableRow = styled(TableRow)`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: grid;
+    grid-template-columns: 3fr;
+  }
+`;
+const StyledTableCell = styled(TableCell)`
+  padding: ${({ theme }) => theme.spacing(1)};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    &:first-child {
+      max-width: 100%;
+      padding-top: 2px;
+      white-space: nowrap;
+      overflow: scroll;
+      scroll-behavior: smooth;
+    }
+  }
+`;
+const StyledIconWrapper = styled.div`
+  left: 2px;
+  margin-right: ${({ theme }) => theme.spacing(2)};
+  position: relative;
+  top: 1px;
+`;
+
+const StyledScrollableTextContainer = styled.div`
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-line;
+`;
+
+const StyledTextContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  max-width: max-content;
+  overflow-x: auto;
+  position: absolute;
+  @media (min-width: 360px) and (max-width: 420px) {
+    max-width: 150px;
+    margin-top: ${({ theme }) => theme.spacing(1)};
+  }
+`;
 const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
 `;
@@ -165,28 +206,25 @@ export const SettingsWorkspaceMembers = () => {
               <StyledTable key={workspaceMember.id}>
                 <TableRow>
                   <TableCell>
-                    <StyledText
-                      PrefixComponent={
-                        <Avatar
-                          avatarUrl={workspaceMember.avatarUrl}
-                          placeholderColorSeed={workspaceMember.id}
-                          placeholder={workspaceMember.name.firstName ?? ''}
-                          type="rounded"
-                          size="sm"
-                        />
-                      }
-                      text={
-                        workspaceMember.name.firstName +
+                    <StyledIconWrapper>
+                      <Avatar
+                        avatarUrl={workspaceMember.avatarUrl}
+                        placeholderColorSeed={workspaceMember.id}
+                        placeholder={workspaceMember.name.firstName ?? ''}
+                        type="rounded"
+                        size="sm"
+                      />
+                    </StyledIconWrapper>
+                    <StyledScrollableTextContainer>
+                      {workspaceMember.name.firstName +
                         ' ' +
-                        workspaceMember.name.lastName
-                      }
-                    />
+                        workspaceMember.name.lastName}
+                    </StyledScrollableTextContainer>
                   </TableCell>
                   <TableCell>
-                    <StyledText
-                      text={workspaceMember.userEmail}
-                      color={theme.font.color.secondary}
-                    />
+                    <StyledTextContainer>
+                      {workspaceMember.userEmail}
+                    </StyledTextContainer>
                   </TableCell>
                   <TableCell align={'right'}>
                     {currentWorkspaceMember?.id !== workspaceMember.id && (
@@ -225,25 +263,27 @@ export const SettingsWorkspaceMembers = () => {
               </StyledTableHeaderRow>
               {workspaceInvitations?.map((workspaceInvitation) => (
                 <StyledTable key={workspaceInvitation.id}>
-                  <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
-                    <TableCell>
-                      <StyledText
-                        PrefixComponent={
-                          <IconMail
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
-                          />
-                        }
-                        text={workspaceInvitation.email}
-                      />
-                    </TableCell>
-                    <TableCell align={'right'}>
+                  <StyledTableRow
+                    gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}
+                  >
+                    <StyledTableCell>
+                      <StyledIconWrapper>
+                        <IconMail
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      </StyledIconWrapper>
+                      <StyledScrollableTextContainer>
+                        {workspaceInvitation.email}
+                      </StyledScrollableTextContainer>
+                    </StyledTableCell>
+                    <StyledTableCell align={'right'}>
                       <Status
                         color={'gray'}
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}
                       />
-                    </TableCell>
-                    <TableCell align={'right'}>
+                    </StyledTableCell>
+                    <StyledTableCell align={'right'}>
                       <StyledButtonContainer>
                         <IconButton
                           onClick={() => {
@@ -266,8 +306,8 @@ export const SettingsWorkspaceMembers = () => {
                           Icon={IconTrash}
                         />
                       </StyledButtonContainer>
-                    </TableCell>
-                  </TableRow>
+                    </StyledTableCell>
+                  </StyledTableRow>
                 </StyledTable>
               ))}
             </Table>

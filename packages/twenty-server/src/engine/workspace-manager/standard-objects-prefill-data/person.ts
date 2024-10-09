@@ -1,5 +1,6 @@
 import { EntityManager } from 'typeorm';
 
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import {
   AIRBNB_ID,
   FIGMA_ID,
@@ -40,7 +41,7 @@ export const personPrefillData = async (
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-3.png',
         position: 1,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
         phonesPrimaryPhoneNumber: '1234567890',
@@ -55,7 +56,7 @@ export const personPrefillData = async (
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-89.png',
         position: 2,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
         phonesPrimaryPhoneNumber: '677118822',
@@ -70,7 +71,7 @@ export const personPrefillData = async (
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-47.png',
         position: 3,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
         phonesPrimaryPhoneNumber: '987625341',
@@ -85,7 +86,7 @@ export const personPrefillData = async (
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-40.png',
         position: 4,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
         phonesPrimaryPhoneNumber: '09882261',
@@ -100,7 +101,7 @@ export const personPrefillData = async (
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-68.png',
         position: 5,
-        createdBySource: 'MANUAL',
+        createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
         phonesPrimaryPhoneNumber: '88226173',

@@ -6,9 +6,9 @@ metadata:
 spec:
   internalTrafficPolicy: Cluster
   ports:
-  - port: 5432
-    protocol: TCP
-    targetPort: 5432
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
   selector:
     app: twentycrm-db
   sessionAffinity: ClientIP

@@ -24,6 +24,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDefined } from '~/utils/isDefined';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -81,14 +82,24 @@ export const SettingsServerlessFunctionDetail = () => {
     };
   };
 
+  const onCodeChange = async (filePath: string, value: string) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      code: { ...prevState.code, [filePath]: value },
+    }));
+    await handleSave();
+  };
+
   const resetDisabled =
-    !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
-  const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
+    !isDefined(latestVersionCode) ||
+    isDeeplyEqual(latestVersionCode, formValues.code);
+  const publishDisabled =
+    !isCodeValid || isDeeplyEqual(latestVersionCode, formValues.code);
 
   const handleReset = async () => {
     try {
       const newState = {
-        code: latestVersionCode || '',
+        code: latestVersionCode || {},
       };
       setFormValues((prevState) => ({
         ...prevState,
@@ -166,18 +177,30 @@ export const SettingsServerlessFunctionDetail = () => {
     { id: 'settings', title: 'Settings', Icon: IconSettings },
   ];
 
+  const files = formValues.code
+    ? Object.keys(formValues.code)
+        .map((key) => {
+          return {
+            path: key,
+            language: key === '.env' ? 'ini' : 'typescript',
+            content: formValues.code?.[key] || '',
+          };
+        })
+        .reverse()
+    : [];
+
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'editor':
         return (
           <SettingsServerlessFunctionCodeEditorTab
-            formValues={formValues}
+            files={files}
             handleExecute={handleExecute}
             handlePublish={handlePublish}
             handleReset={handleReset}
             resetDisabled={resetDisabled}
             publishDisabled={publishDisabled}
-            onChange={onChange}
+            onChange={onCodeChange}
             setIsCodeValid={setIsCodeValid}
           />
         );
