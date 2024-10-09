@@ -31,6 +31,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                 name
                 indexWhereClause
                 indexType
+                isUnique
                 indexFieldMetadatas(paging: { first: 100 }) {
                   edges {
                     node {

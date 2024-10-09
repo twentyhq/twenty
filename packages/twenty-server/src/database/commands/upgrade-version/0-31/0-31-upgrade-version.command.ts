@@ -63,11 +63,12 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
       options,
       workspaceIds,
     );
-<<<<<<< HEAD
     await this.enforceUniqueConstraintsCommand.executeActiveWorkspacesCommand(
-=======
+      passedParam,
+      options,
+      workspaceIds,
+    );
     await this.deleteNameColumnStandardObjectTablesCommand.executeActiveWorkspacesCommand(
->>>>>>> main
       passedParam,
       options,
       workspaceIds,

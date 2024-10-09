@@ -81,6 +81,7 @@ export class TypeMapperService {
         StringArrayScalarType as unknown as GraphQLScalarType,
       ],
       [FieldMetadataType.RICH_TEXT, GraphQLString],
+      [FieldMetadataType.TS_VECTOR, GraphQLString],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -118,6 +119,7 @@ export class TypeMapperService {
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
       [FieldMetadataType.RICH_TEXT, StringFilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
+      [FieldMetadataType.TS_VECTOR, StringFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -143,6 +145,7 @@ export class TypeMapperService {
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
       [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
       [FieldMetadataType.ARRAY, OrderByDirectionType],
+      [FieldMetadataType.TS_VECTOR, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

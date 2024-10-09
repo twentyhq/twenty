@@ -13,11 +13,11 @@ import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { IconSearch } from 'twenty-ui';
+import { IconSearch, IconSquareKey } from 'twenty-ui';
 import { SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 
 export const StyledObjectIndexTableRow = styled(TableRow)`
-  grid-template-columns: 280px 100px;
+  grid-template-columns: 280px 50px 100px;
 `;
 
 const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectIndexesTableItem> =
@@ -27,6 +27,13 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObje
       {
         fieldLabel: 'Fields',
         fieldName: 'indexFields',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: '',
+        FieldIcon: IconSquareKey,
+        fieldName: 'isUnique',
         fieldType: 'string',
         align: 'left',
       },
@@ -116,6 +123,7 @@ export const SettingsObjectIndexTable = ({
               key={item.fieldName}
               fieldName={item.fieldName}
               label={item.fieldLabel}
+              Icon={item.FieldIcon}
               tableId={SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD.tableId}
               initialSort={
                 SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD.initialSort
@@ -128,6 +136,13 @@ export const SettingsObjectIndexTable = ({
           filteredActiveItems.map((objectSettingsIndex) => (
             <StyledObjectIndexTableRow key={objectSettingsIndex.name}>
               <TableCell>{objectSettingsIndex.indexFields}</TableCell>
+              <TableCell>
+                {objectSettingsIndex.isUnique ? (
+                  <IconSquareKey size={14} />
+                ) : (
+                  ''
+                )}
+              </TableCell>
               <TableCell>{objectSettingsIndex.indexType}</TableCell>
             </StyledObjectIndexTableRow>
           ))}

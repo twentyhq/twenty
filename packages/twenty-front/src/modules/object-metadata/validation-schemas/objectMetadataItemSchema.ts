@@ -11,6 +11,7 @@ export const objectMetadataItemSchema = z.object({
   dataSourceId: z.string().uuid(),
   description: z.string().trim().nullable().optional(),
   fields: z.array(fieldMetadataItemSchema()),
+  indexes: z.array(indexMetadataItemSchema()),
   icon: z.string().startsWith('Icon').trim(),
   id: z.string().uuid(),
   imageIdentifierFieldMetadataId: z.string().uuid().nullable(),
