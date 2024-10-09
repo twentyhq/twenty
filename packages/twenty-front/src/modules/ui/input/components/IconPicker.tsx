@@ -1,13 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconApps,
-  IconComponent,
-  IconLayoutKanban,
-  IconTable,
-  useIcons,
-} from 'twenty-ui';
+import { IconApps, IconComponent, useIcons } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -35,7 +29,6 @@ export type IconPickerProps = {
   variant?: IconButtonVariant;
   className?: string;
   disableBlur?: boolean;
-  takeControlOfCustomIcon?: boolean;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -94,7 +87,6 @@ export const IconPicker = ({
   variant = 'secondary',
   disableBlur = false,
   className,
-  takeControlOfCustomIcon = false,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
   const {
@@ -155,15 +147,7 @@ export const IconPicker = ({
     [matchingSearchIconKeys],
   );
 
-  const getIconForIconPicker = () => {
-    if (
-      !takeControlOfCustomIcon &&
-      (selectedIconKey === 'table' || selectedIconKey === 'kanban')
-    ) {
-      return selectedIconKey === 'table' ? IconTable : IconLayoutKanban;
-    }
-    return selectedIconKey ? getIcon(selectedIconKey) : IconApps;
-  };
+  const icon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
 
   return (
     <div className={className}>
@@ -178,7 +162,7 @@ export const IconPicker = ({
                 : `(no icon selected)`
             }`}
             disabled={disabled}
-            Icon={getIconForIconPicker()}
+            Icon={icon}
             variant={variant}
           />
         }

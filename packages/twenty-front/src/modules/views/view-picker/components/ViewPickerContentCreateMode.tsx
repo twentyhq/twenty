@@ -30,6 +30,7 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { useState } from 'react';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -41,6 +42,7 @@ const StyledNoKanbanFieldAvailableContainer = styled.div`
 
 export const ViewPickerContentCreateMode = () => {
   const { setViewPickerMode } = useViewPickerMode();
+  const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
 
   const [viewPickerInputName, setViewPickerInputName] =
     useRecoilComponentStateV2(viewPickerInputNameComponentState);
@@ -87,10 +89,17 @@ export const ViewPickerContentCreateMode = () => {
     ViewsHotkeyScope.ListDropdown,
   );
 
+  const defaultIcon =
+    viewPickerType === ViewType.Kanban ? 'IconLayoutKanban' : 'IconTable';
+
+  const selectedIcon = hasManuallySelectedIcon
+    ? viewPickerSelectedIcon
+    : defaultIcon;
+
   const onIconChange = ({ iconKey }: { iconKey: string }) => {
-    toggleTakeControlOfCustomIcon(true);
     setViewPickerIsDirty(true);
     setViewPickerSelectedIcon(iconKey);
+    setHasManuallySelectedIcon(true);
   };
 
   const handleClose = async () => {
@@ -107,12 +116,9 @@ export const ViewPickerContentCreateMode = () => {
         <ViewPickerIconAndNameContainer>
           <IconPicker
             onChange={onIconChange}
-            selectedIconKey={
-              takeControlOfCustomIcon ? viewPickerSelectedIcon : viewPickerType
-            }
+            selectedIconKey={selectedIcon}
             disableBlur
             onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
-            takeControlOfCustomIcon={takeControlOfCustomIcon}
           />
           <DropdownMenuInput
             value={viewPickerInputName}
