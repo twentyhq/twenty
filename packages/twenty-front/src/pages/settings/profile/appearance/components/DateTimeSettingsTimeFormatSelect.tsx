@@ -1,6 +1,7 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
 
@@ -15,12 +16,11 @@ export const DateTimeSettingsTimeFormatSelect = ({
   timeZone,
   value,
 }: DateTimeSettingsTimeFormatSelectProps) => {
-  const setTimeZone = timeZone === 'system' ? detectTimeZone() : timeZone;
+  const systemTimeZone = detectTimeZone();
 
-  const is12HourFormat = (timeZone: string): boolean => {
-    const formattedTime = formatInTimeZone(new Date(), timeZone, 'hh:mm a');
-    return formattedTime.includes('AM') || formattedTime.includes('PM');
-  };
+  const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
+
+  const systemTimeFormat = detectTimeFormat();
 
   return (
     <Select
@@ -33,15 +33,15 @@ export const DateTimeSettingsTimeFormatSelect = ({
         {
           label: `System Settings - ${formatInTimeZone(
             Date.now(),
-            setTimeZone,
-            is12HourFormat(setTimeZone) ? TimeFormat.HOUR_12 : TimeFormat.HOUR_24,
+            usedTimeZone,
+            systemTimeFormat,
           )}`,
           value: TimeFormat.SYSTEM,
         },
         {
           label: `24h (${formatInTimeZone(
             Date.now(),
-            setTimeZone,
+            usedTimeZone,
             TimeFormat.HOUR_24,
           )})`,
           value: TimeFormat.HOUR_24,
@@ -49,7 +49,7 @@ export const DateTimeSettingsTimeFormatSelect = ({
         {
           label: `12h (${formatInTimeZone(
             Date.now(),
-            setTimeZone,
+            usedTimeZone,
             TimeFormat.HOUR_12,
           )})`,
           value: TimeFormat.HOUR_12,
