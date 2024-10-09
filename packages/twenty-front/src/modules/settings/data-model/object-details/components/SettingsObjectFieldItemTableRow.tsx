@@ -1,7 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { IconMinus, IconPlus, isDefined, useIcons } from 'twenty-ui';
+import {
+  IconMinus,
+  IconPlus,
+  isDefined,
+  useIcons,
+  MOBILE_VIEWPORT,
+} from 'twenty-ui';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -41,6 +47,14 @@ type SettingsObjectFieldItemTableRowProps = {
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    grid-template-columns: 120px 90px 100px 16px;
+  }
+
+  @media (min-width: 360px) and (max-width: 390px) {
+    grid-template-columns: 100px 86px 89px 9px;
+  }
 `;
 
 const StyledNameTableCell = styled(TableCell)`
