@@ -99,7 +99,14 @@ export const getDevSeedPeopleCustomFields = (
       description: "Contact's Whatsapp Number",
       icon: 'IconBrandWhatsapp',
       isActive: true,
-      isNullable: true,
+      isNullable: false,
+      defaultValue: [
+        {
+          primaryPhoneNumber: '',
+          primaryPhoneCountryCode: '',
+          additionalPhones: {},
+        },
+      ],
       objectMetadataId,
     },
     {
