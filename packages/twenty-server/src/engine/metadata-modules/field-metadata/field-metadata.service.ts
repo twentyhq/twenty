@@ -748,7 +748,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     if (!fieldMetadataInput.isNullable) {
       if (!fieldMetadataInput.defaultValue) {
         throw new FieldMetadataException(
-          'Default value is required for nullable fields',
+          'Default value is required for non nullable fields',
           FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         );
       }
