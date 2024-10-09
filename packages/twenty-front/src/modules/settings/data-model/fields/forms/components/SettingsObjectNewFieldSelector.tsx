@@ -4,7 +4,6 @@ import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/
 import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
-
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
@@ -63,7 +62,8 @@ export const SettingsObjectNewFieldSelector = ({
   objectSlug,
 }: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
-  const { control } = useFormContext<SettingsDataModelFieldTypeFormValues>();
+  const { control, setValue } =
+    useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig<any>>(
     SETTINGS_FIELD_TYPE_CONFIGS,
@@ -131,9 +131,10 @@ export const SettingsObjectNewFieldSelector = ({
                         <UndecoratedLink
                           to={`/settings/objects/${objectSlug}/new-field/configure?fieldType=${key}`}
                           fullWidth
-                          onClick={() =>
-                            resetDefaultValueField(key as SettingsFieldType)
-                          }
+                          onClick={() => {
+                            setValue('type', key as SettingsFieldType);
+                            resetDefaultValueField(key as SettingsFieldType);
+                          }}
                         >
                           <SettingsCard
                             key={key}

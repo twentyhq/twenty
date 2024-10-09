@@ -1,3 +1,4 @@
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { Button } from '@/ui/input/button/components/Button';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -6,13 +7,18 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { IconChevronDown } from 'twenty-ui';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
+import { IconChevronDown, isDefined } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
+  cursor: default;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
 `;
@@ -30,10 +36,24 @@ const StyledDownChevron = styled(IconChevronDown)`
   transform: translateY(-50%);
 `;
 
-const StyledMenuItem = styled(MenuItem)<{ selected?: boolean }>`
+const StyledMenuItemWrapper = styled.div<{ disabled?: boolean }>`
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  width: 100%;
+`;
+
+const StyledMenuItem = styled(MenuItem)<{
+  selected?: boolean;
+  disabled?: boolean;
+}>`
   background: ${({ theme, selected }) =>
     selected ? theme.background.quaternary : 'transparent'};
-  cursor: pointer;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+
+  &:hover {
+    background: ${({ theme, disabled }) =>
+      disabled ? 'transparent' : theme.background.tertiary};
+  }
 `;
 
 const StyledSpan = styled.span`
@@ -51,16 +71,23 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { objectSlug = '' } = useParams();
+  const [searchParams] = useSearchParams();
   const theme = useTheme();
 
+  const fieldType = searchParams.get('fieldType') as SettingsFieldType;
   const isConfigureStep = location.pathname.includes('/configure');
 
-  const handleClick = (isConfigureStep: boolean) => {
-    if (isConfigureStep) {
-      navigate(`/settings/objects/${objectSlug}/new-field/configure`);
-    } else {
-      navigate(`/settings/objects/${objectSlug}/new-field/select`);
+  const handleClick = (step: 'select' | 'configure') => {
+    if (step === 'configure' && isDefined(fieldType)) {
+      navigate(
+        `/settings/objects/${objectSlug}/new-field/configure?fieldType=${fieldType}`,
+      );
+      return;
     }
+
+    navigate(
+      `/settings/objects/${objectSlug}/new-field/select${fieldType ? `?fieldType=${fieldType}` : ''}`,
+    );
     closeDropdown();
   };
 
@@ -83,16 +110,21 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>
-              <StyledMenuItem
-                text="1. Type"
-                onClick={() => handleClick(false)}
-                selected={!isConfigureStep}
-              />
-              <StyledMenuItem
-                text="2. Configure"
-                onClick={() => handleClick(true)}
-                selected={isConfigureStep}
-              />
+              <StyledMenuItemWrapper>
+                <StyledMenuItem
+                  text="1. Type"
+                  onClick={() => handleClick('select')}
+                  selected={!isConfigureStep}
+                />
+              </StyledMenuItemWrapper>
+              <StyledMenuItemWrapper disabled={!isDefined(fieldType)}>
+                <StyledMenuItem
+                  text="2. Configure"
+                  onClick={() => handleClick('configure')}
+                  selected={isConfigureStep}
+                  disabled={!isDefined(fieldType)}
+                />
+              </StyledMenuItemWrapper>
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }
