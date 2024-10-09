@@ -23,10 +23,10 @@ export const useRecordShowPage = (
     objectRecordId: paramObjectRecordId,
   } = useParams();
 
-  const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
-  const objectRecordId = propsObjectRecordId || paramObjectRecordId;
+  const objectNameSingular = propsObjectNameSingular ?? paramObjectNameSingular;
+  const objectRecordId = propsObjectRecordId ?? paramObjectRecordId;
 
-  if (!objectNameSingular || !objectRecordId) {
+  if (!isDefined(objectNameSingular) || !isDefined(objectRecordId)) {
     throw new Error('Object name or Record id is not defined');
   }
 

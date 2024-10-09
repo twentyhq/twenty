@@ -18,7 +18,7 @@ const StyledTableBody = styled(TableBody)`
 `;
 
 const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 312px 132px 68px;
+  grid-template-columns: 312px auto 28px;
 `;
 
 export const SettingsApiKeysTable = () => {

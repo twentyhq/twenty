@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
@@ -131,7 +131,6 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconSettings}
       title="New"
       links={[
         {
