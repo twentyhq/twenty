@@ -65,14 +65,6 @@ export const triggerDeleteRecordsOptimisticEffect = ({
         if (nextCachedEdges.length === cachedEdges?.length)
           return rootQueryCachedObjectRecordConnection;
 
-        // TODO: same as in update, should we trigger DELETE ?
-        if (
-          isDefined(rootQueryVariables?.first) &&
-          cachedEdges?.length === rootQueryVariables.first
-        ) {
-          return DELETE;
-        }
-
         return {
           ...rootQueryCachedObjectRecordConnection,
           edges: nextCachedEdges,
