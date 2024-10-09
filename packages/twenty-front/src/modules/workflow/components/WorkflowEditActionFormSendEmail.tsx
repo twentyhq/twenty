@@ -94,6 +94,7 @@ export const WorkflowEditActionFormSendEmail = (
       if (props.readonly === true) {
         return;
       }
+
       props.onActionUpdate({
         ...props.action,
         settings: {
@@ -103,6 +104,7 @@ export const WorkflowEditActionFormSendEmail = (
           body: formData.body,
         },
       });
+
       if (checkScopes === true) {
         await checkConnectedAccountScopes(formData.connectedAccountId);
       }
