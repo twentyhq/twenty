@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
+import { SettingsObjectNewFieldConfigure } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure';
 
 import {
   PageDecorator,
@@ -7,15 +8,13 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsObjectNewFieldStep2 } from '../../SettingsObjectNewField/SettingsObjectNewFieldStep2';
-
 const meta: Meta<PageDecoratorArgs> = {
   title:
-    'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldStep2',
-  component: SettingsObjectNewFieldStep2,
+    'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldConfigure',
+  component: SettingsObjectNewFieldConfigure,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:objectSlug/new-field/step-2',
+    routePath: '/settings/objects/:objectSlug/new-field/configure',
     routeParams: { ':objectSlug': 'companies' },
   },
   parameters: {
@@ -25,21 +24,11 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsObjectNewFieldStep2>;
+export type Story = StoryObj<typeof SettingsObjectNewFieldConfigure>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Objects');
-    await canvas.findByText('1. Select a field type');
-
-    const searchInput = await canvas.findByPlaceholderText('Search a type');
-
-    await userEvent.type(searchInput, 'Num');
-
-    const numberTypeButton = await canvas.findByText('Number');
-
-    await userEvent.click(numberTypeButton);
 
     await canvas.findByText('2. Configure field');
 
@@ -49,11 +38,10 @@ export const Default: Story = {
     const descriptionInput = await canvas.findByPlaceholderText(
       'Write a description',
     );
-
     await userEvent.type(descriptionInput, 'Test description');
 
     const saveButton = await canvas.findByText('Save');
-
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     await userEvent.click(saveButton);
   },
 };

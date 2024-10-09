@@ -67,7 +67,7 @@
     "test": {},
     "storybook:build": {
       "options": {
-        "env": { "NODE_OPTIONS": "--max_old_space_size=6000" }
+        "env": { "NODE_OPTIONS": "--max_old_space_size=6500" }
       }
     },
     "storybook:serve:dev": {

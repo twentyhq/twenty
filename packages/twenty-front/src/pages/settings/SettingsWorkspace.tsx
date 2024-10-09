@@ -1,4 +1,4 @@
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
@@ -13,7 +13,6 @@ import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersion
 
 export const SettingsWorkspace = () => (
   <SubMenuTopBarContainer
-    Icon={IconSettings}
     title="General"
     links={[
       {
