@@ -329,6 +329,22 @@ export type FullName = {
   lastName: Scalars['String'];
 };
 
+export type GenerateJwt = GenerateJwtOutputWithAuthTokens | GenerateJwtOutputWithSsoauth;
+
+export type GenerateJwtOutputWithAuthTokens = {
+  __typename?: 'GenerateJWTOutputWithAuthTokens';
+  payload: AuthTokens;
+  reason: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+export type GenerateJwtOutputWithSsoauth = {
+  __typename?: 'GenerateJWTOutputWithSSOAUTH';
+  payload: Array<FindAvailableSsoidpOutput>;
+  reason: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type GetAuthorizationUrlInput = {
   idpId: Scalars['String'];
 };
@@ -411,7 +427,7 @@ export type Mutation = {
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   findAvailableSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   generateApiKeyToken: ApiKeyToken;
-  generateJWT: AuthTokens;
+  generateJWT: GenerateJwt;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
   impersonate: Verify;
@@ -1534,7 +1550,7 @@ export type GenerateJwtMutationVariables = Exact<{
 }>;
 
 
-export type GenerateJwtMutation = { __typename?: 'Mutation', generateJWT: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type GenerateJwtMutation = { __typename?: 'Mutation', generateJWT: { __typename?: 'GenerateJWTOutputWithAuthTokens', success: boolean, reason: string, authTokens: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } } | { __typename?: 'GenerateJWTOutputWithSSOAUTH', success: boolean, reason: string, availableSSOIDPs: Array<{ __typename?: 'FindAvailableSSOIDPOutput', id: string, issuer: string, name: string, status: SsoIdentityProviderStatus, workspace: { __typename?: 'WorkspaceNameAndId', id: string, displayName: string } }> } };
 
 export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2385,8 +2401,28 @@ export type GenerateApiKeyTokenMutationOptions = Apollo.BaseMutationOptions<Gene
 export const GenerateJwtDocument = gql`
     mutation GenerateJWT($workspaceId: String!) {
   generateJWT(workspaceId: $workspaceId) {
-    tokens {
-      ...AuthTokensFragment
+    ... on GenerateJWTOutputWithAuthTokens {
+      success
+      reason
+      authTokens: payload {
+        tokens {
+          ...AuthTokensFragment
+        }
+      }
+    }
+    ... on GenerateJWTOutputWithSSOAUTH {
+      success
+      reason
+      availableSSOIDPs: payload {
+        id
+        issuer
+        name
+        status
+        workspace {
+          id
+          displayName
+        }
+      }
     }
   }
 }

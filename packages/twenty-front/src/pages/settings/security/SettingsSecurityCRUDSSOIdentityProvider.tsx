@@ -55,7 +55,6 @@ export const SettingsSecurityCRUDSSOIdentityProvider = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconKey}
       title="New SSO Configuration"
       actionButton={
         <SaveAndCancelButtons

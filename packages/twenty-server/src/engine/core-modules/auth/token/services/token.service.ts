@@ -46,6 +46,7 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 @Injectable()
 export class TokenService {
@@ -60,6 +61,7 @@ export class TokenService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
+    private readonly sSSOService: SSOService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
@@ -341,10 +343,7 @@ export class TokenService {
     };
   }
 
-  async generateSwitchWorkspaceToken(
-    user: User,
-    workspaceId: string,
-  ): Promise<AuthTokens> {
+  async switchWorkspace(user: User, workspaceId: string) {
     const userExists = await this.userRepository.findBy({ id: user.id });
 
     if (!userExists) {
@@ -356,7 +355,7 @@ export class TokenService {
 
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
-      relations: ['workspaceUsers'],
+      relations: ['workspaceUsers', 'workspaceSSOIdentityProviders'],
     });
 
     if (!workspace) {
@@ -377,12 +376,44 @@ export class TokenService {
       );
     }
 
+    if (workspace.workspaceSSOIdentityProviders.length > 0) {
+      return {
+        useSSOAuth: true,
+        workspace,
+        availableSSOIdentityProviders:
+          await this.sSSOService.listSSOIdentityProvidersByWorkspaceId(
+            workspaceId,
+          ),
+      } as {
+        useSSOAuth: true;
+        workspace: Workspace;
+        availableSSOIdentityProviders: Awaited<
+          ReturnType<
+            typeof this.sSSOService.listSSOIdentityProvidersByWorkspaceId
+          >
+        >;
+      };
+    }
+
+    return {
+      useSSOAuth: false,
+      workspace,
+    } as {
+      useSSOAuth: false;
+      workspace: Workspace;
+    };
+  }
+
+  async generateSwitchWorkspaceToken(
+    user: User,
+    workspace: Workspace,
+  ): Promise<AuthTokens> {
     await this.userRepository.save({
       id: user.id,
       defaultWorkspace: workspace,
     });
 
-    const token = await this.generateAccessToken(user.id, workspaceId);
+    const token = await this.generateAccessToken(user.id, workspace.id);
     const refreshToken = await this.generateRefreshToken(user.id);
 
     return {
