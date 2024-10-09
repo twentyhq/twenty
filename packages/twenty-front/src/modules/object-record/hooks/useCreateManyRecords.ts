@@ -127,7 +127,7 @@ export const useCreateManyRecords = <
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
-            recordToDelete: recordToDelete,
+            recordToDelete,
           });
         });
 

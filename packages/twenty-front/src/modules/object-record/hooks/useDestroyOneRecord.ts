@@ -39,10 +39,13 @@ export const useDestroyOneRecord = ({
   const mutationResponseField =
     getDestroyOneRecordMutationResponseField(objectNameSingular);
 
-  let cachedRecord: ObjectRecord;
-
   const destroyOneRecord = useCallback(
     async (idToDestroy: string) => {
+      const originalRecord: ObjectRecord | null = getRecordFromCache(
+        idToDestroy,
+        apolloClient.cache,
+      );
+
       const deletedRecord = await apolloClient
         .mutate({
           mutation: destroyOneRecordMutation,
@@ -71,11 +74,11 @@ export const useDestroyOneRecord = ({
           },
         })
         .catch((error: Error) => {
-          if (!isUndefinedOrNull(cachedRecord)) {
+          if (!isUndefinedOrNull(originalRecord)) {
             triggerCreateRecordsOptimisticEffect({
               cache: apolloClient.cache,
               objectMetadataItem,
-              recordsToCreate: [cachedRecord],
+              recordsToCreate: [originalRecord],
               objectMetadataItems,
             });
           }

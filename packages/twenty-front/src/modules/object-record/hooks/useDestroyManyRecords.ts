@@ -8,7 +8,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDestroyManyRecordsMutation } from '@/object-record/hooks/useDestroyManyRecordsMutation';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
@@ -67,7 +66,9 @@ export const useDestroyManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      let cachedRecords: ObjectRecord[] = [];
+      const originalRecords = idsToDestroy
+        .map((recordId) => getRecordFromCache(recordId, apolloClient.cache))
+        .filter(isDefined);
 
       const destroyedRecordsResponse = await apolloClient
         .mutate({
@@ -90,7 +91,7 @@ export const useDestroyManyRecords = ({
 
                 if (!records?.length) return;
 
-                cachedRecords = records
+                const cachedRecords = records
                   .map((record) => getRecordFromCache(record.id, cache))
                   .filter(isDefined);
 
@@ -103,11 +104,11 @@ export const useDestroyManyRecords = ({
               },
         })
         .catch((error: Error) => {
-          if (cachedRecords.length > 0) {
+          if (originalRecords.length > 0) {
             triggerCreateRecordsOptimisticEffect({
               cache: apolloClient.cache,
               objectMetadataItem,
-              recordsToCreate: cachedRecords,
+              recordsToCreate: originalRecords,
               objectMetadataItems,
             });
           }
