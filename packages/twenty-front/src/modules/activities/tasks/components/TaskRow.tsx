@@ -130,17 +130,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
-        {TaskTargetsContextProvider && (
-          <TaskTargetsContextProvider>
-            <ActivityTargetsInlineCell
-              activityObjectNameSingular={CoreObjectNameSingular.Task}
-              activity={task}
-              showLabel={false}
-              maxWidth={200}
-              readonly
-            />
-          </TaskTargetsContextProvider>
-        )}
         {task.dueAt && (
           <StyledDueDate
             isPast={
@@ -152,6 +141,17 @@ export const TaskRow = ({ task }: { task: Task }) => {
             <IconCalendar size={theme.icon.size.md} />
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
+        )}
+        {TaskTargetsContextProvider && (
+          <TaskTargetsContextProvider>
+            <ActivityTargetsInlineCell
+              activityObjectNameSingular={CoreObjectNameSingular.Task}
+              activity={task}
+              showLabel={false}
+              maxWidth={200}
+              readonly
+            />
+          </TaskTargetsContextProvider>
         )}
       </StyledRightSideContainer>
     </StyledContainer>
