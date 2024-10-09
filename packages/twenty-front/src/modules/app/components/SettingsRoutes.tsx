@@ -65,7 +65,7 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
 
 const SettingsDevelopersWebhooksNew = lazy(() =>
   import(
-    '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew'
+    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew'
   ).then((module) => ({
     default: module.SettingsDevelopersWebhooksNew,
   })),
@@ -165,7 +165,7 @@ const SettingsObjects = lazy(() =>
 
 const SettingsDevelopersWebhooksDetail = lazy(() =>
   import(
-    '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail'
+    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail'
   ).then((module) => ({
     default: module.SettingsDevelopersWebhooksDetail,
   })),

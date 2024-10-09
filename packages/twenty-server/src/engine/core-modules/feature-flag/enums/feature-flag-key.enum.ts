@@ -13,4 +13,5 @@ export enum FeatureFlagKey {
   IsSearchEnabled = 'IS_SEARCH_ENABLED',
   IsWorkspaceMigratedForSearch = 'IS_WORKSPACE_MIGRATED_FOR_SEARCH',
   IsGmailSendEmailScopeEnabled = 'IS_GMAIL_SEND_EMAIL_SCOPE_ENABLED',
+  IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
 }
