@@ -28,6 +28,7 @@ import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
+import { ActionMenuEntriesProvider } from '@/action-menu/components/ActionMenuEntriesProvider';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -201,6 +202,7 @@ export const RecordIndexContainer = () => {
             value={{ instanceId: recordIndexId }}
           >
             <ActionMenuEffect />
+            <ActionMenuEntriesProvider />
             <ActionMenuBar />
             <ActionMenuDropdown />
             <ActionMenuConfirmationModals />

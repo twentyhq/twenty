@@ -5,7 +5,6 @@ import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -28,7 +27,6 @@ export const RecordIndexTableContainerEffect = ({
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
-    resetTableRowSelection,
     selectedRowIdsSelector,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
@@ -79,13 +77,6 @@ export const RecordIndexTableContainerEffect = ({
           (tableRowIds.length - selectedRowIds.length) // unselected row Ids
       : selectedRowIds.length;
 
-  const { setActionMenuEntries } = useRecordActionBar({
-    objectMetadataItem,
-    selectedRecordIds: selectedRowIds,
-    callback: resetTableRowSelection,
-    totalNumberOfRecordsSelected: numSelected,
-  });
-
   const handleToggleColumnFilter = useHandleToggleColumnFilter({
     objectNameSingular,
     viewBarId,
@@ -109,10 +100,6 @@ export const RecordIndexTableContainerEffect = ({
         handleToggleColumnSort(fieldMetadataId),
     );
   }, [setOnToggleColumnSort, handleToggleColumnSort]);
-
-  useEffect(() => {
-    setActionMenuEntries?.();
-  }, [setActionMenuEntries]);
 
   useEffect(() => {
     setOnEntityCountChange(
