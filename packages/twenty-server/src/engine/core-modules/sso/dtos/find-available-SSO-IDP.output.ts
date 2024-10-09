@@ -7,6 +7,15 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 @ObjectType()
+class WorkspaceNameAndId {
+  @Field(() => String)
+  displayName: string;
+
+  @Field(() => String)
+  id: string;
+}
+
+@ObjectType()
 export class FindAvailableSSOIDPOutput {
   @Field(() => IdpType)
   type: SSOConfiguration['type'];
@@ -22,4 +31,7 @@ export class FindAvailableSSOIDPOutput {
 
   @Field(() => SSOIdentityProviderStatus)
   status: SSOConfiguration['status'];
+
+  @Field(() => WorkspaceNameAndId)
+  workspace: WorkspaceNameAndId;
 }

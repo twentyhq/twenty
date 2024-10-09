@@ -9,13 +9,16 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 
 import { useAuth } from '../../hooks/useAuth';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 
 export enum SignInUpMode {
   SignIn = 'sign-in',
@@ -28,6 +31,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
 
   const isMatchingLocation = useIsMatchingLocation();
+
+  const { redirectToSSOLoginPage, findAvailableSSOProviderByEmail } = useSSO();
+  const setAvailableWorkspacesForSSOState = useSetRecoilState(
+    availableSSOIdentityProvidersState,
+  );
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [searchParams] = useSearchParams();
@@ -92,18 +100,46 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExistsQuery,
     enqueueSnackBar,
     requestFreshCaptchaToken,
+    setSignInUpStep,
   ]);
 
   const continueWithSSO = () => {
     setSignInUpStep(SignInUpStep.EmailSSO);
   };
 
-  const submitSSOEmail = () => {
-    // load workspaces
+  const submitSSOEmail = async (email: string) => {
+    const result = await findAvailableSSOProviderByEmail({
+      email,
+    });
+
+    if (isDefined(result.errors)) {
+      return enqueueSnackBar(result.errors[0].message, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+
+    if (
+      !result.data?.findAvailableSSOIdentityProviders ||
+      result.data?.findAvailableSSOIdentityProviders.length === 0
+    ) {
+      enqueueSnackBar('No workspaces with SSO found', {
+        variant: SnackBarVariant.Error,
+      });
+      return;
+    }
     // If only one workspace, redirect to SSO
-    // If multiple workspaces, show workspace selection
-    // If no workspaces, display an error
-    setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
+    if (result.data?.findAvailableSSOIdentityProviders.length === 1) {
+      return redirectToSSOLoginPage(
+        result.data.findAvailableSSOIdentityProviders[0].id,
+      );
+    }
+
+    if (result.data?.findAvailableSSOIdentityProviders.length > 1) {
+      setAvailableWorkspacesForSSOState(
+        result.data.findAvailableSSOIdentityProviders,
+      );
+      setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
+    }
   };
 
   const submitCredentials: SubmitHandler<Form> = useCallback(

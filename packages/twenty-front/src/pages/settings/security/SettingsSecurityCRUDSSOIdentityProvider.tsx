@@ -23,9 +23,12 @@ export const SettingsSecurityCRUDSSOIdentityProvider = () => {
   const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
 
   const formConfig = useForm<SettingSecurityNewSSOIdentityFormValues>({
-    mode: 'onSubmit',
+    mode: 'onChange',
     resolver: zodResolver(SSOIdentitiesProvidersParamsSchema),
-    defaultValues: defaultIdpValues.OIDC(),
+    defaultValues: Object.values(defaultIdpValues).reduce(
+      (acc, fn) => ({ ...acc, ...fn() }),
+      {},
+    ),
   });
 
   const selectedType = formConfig.watch('type');
