@@ -1,16 +1,16 @@
 import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
-import { RecoilRoot } from 'recoil';
 
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
   query FindManyPeople($filter: PersonFilterInput, $orderBy: [PersonOrderByInput], $lastCursor: String, $limit: Int) {
     people(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
       edges {
         node {
-      ${PERSON_FRAGMENT}
+      ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
         }
         cursor
       }
@@ -25,6 +25,10 @@ const expectedQueryTemplate = `
   }
 `.replace(/\s/g, '');
 
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
+
 describe('useFindManyRecordsQuery', () => {
   it('should return a valid findManyRecordsQuery', () => {
     const objectNameSingular = 'person';
@@ -37,7 +41,7 @@ describe('useFindManyRecordsQuery', () => {
           computeReferences,
         }),
       {
-        wrapper: RecoilRoot,
+        wrapper: Wrapper,
       },
     );
 

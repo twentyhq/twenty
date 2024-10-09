@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconCode, IconTrash } from 'twenty-ui';
+import { H2Title, IconTrash } from 'twenty-ui';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -93,7 +93,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconCode}
       title={webhookData.targetUrl}
       links={[
         {

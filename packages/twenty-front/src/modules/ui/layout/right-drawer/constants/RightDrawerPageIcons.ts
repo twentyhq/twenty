@@ -7,4 +7,5 @@ export const RIGHT_DRAWER_PAGE_ICONS = {
   [RightDrawerPages.Copilot]: 'IconSparkles',
   [RightDrawerPages.WorkflowStepEdit]: 'IconSparkles',
   [RightDrawerPages.WorkflowStepSelectAction]: 'IconSparkles',
+  [RightDrawerPages.WorkflowStepView]: 'IconSparkles',
 };

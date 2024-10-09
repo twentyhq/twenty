@@ -18,10 +18,6 @@ export const buildMigrationsForCustomObjectRelations = (
   noteTargetObjectMetadata: ObjectMetadataEntity,
   taskTargetObjectMetadata: ObjectMetadataEntity,
 ): WorkspaceMigrationTableAction[] => [
-  {
-    name: computeObjectTargetTable(createdObjectMetadata),
-    action: WorkspaceMigrationTableActionType.CREATE,
-  } satisfies WorkspaceMigrationTableAction,
   // Add activity target relation
   {
     name: computeObjectTargetTable(activityTargetObjectMetadata),

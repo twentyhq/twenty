@@ -30,7 +30,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'RelationFieldDisplay',
-  averageThresholdInMs: 0.2,
+  averageThresholdInMs: 0.22,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

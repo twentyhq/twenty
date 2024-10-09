@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { Preview } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
+import { useEffect } from 'react';
 import { useDarkMode } from 'storybook-dark-mode';
 import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui';
 
@@ -13,9 +13,13 @@ import 'react-loading-skeleton/dist/skeleton.css';
 initialize({
   onUnhandledRequest: async (request: Request) => {
     const fileExtensionsToIgnore =
-      /\.(ts|tsx|js|jsx|svg|css|png)(\?v=[a-zA-Z0-9]+)?/;
+      /\.(ts|tsx|js|jsx|svg|css|png|woff2)(\?v=[a-zA-Z0-9]+)?/;
 
     if (fileExtensionsToIgnore.test(request.url)) {
+      return;
+    }
+
+    if (request.url.startsWith('http://localhost:3000/files/data:image')) {
       return;
     }
 

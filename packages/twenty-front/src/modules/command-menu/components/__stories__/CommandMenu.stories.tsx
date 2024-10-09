@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCheckbox, IconNotes } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -20,6 +20,7 @@ import {
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CommandMenu } from '../CommandMenu';
 
 const companiesMock = getCompaniesMock();
@@ -35,14 +36,21 @@ const meta: Meta<typeof CommandMenu> = {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
-      const { addToCommandMenu, setToInitialCommandMenu, openCommandMenu } =
+      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+      const { addToCommandMenu, setObjectsInCommandMenu, openCommandMenu } =
         useCommandMenu();
 
       setCurrentWorkspace(mockDefaultWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
 
       useEffect(() => {
-        setToInitialCommandMenu();
+        const nonSystemActiveObjects = objectMetadataItems.filter(
+          (object) => !object.isSystem && object.isActive,
+        );
+
+        setObjectsInCommandMenu(nonSystemActiveObjects);
+
         addToCommandMenu([
           {
             id: 'create-task',
@@ -62,7 +70,12 @@ const meta: Meta<typeof CommandMenu> = {
           },
         ]);
         openCommandMenu();
-      }, [addToCommandMenu, setToInitialCommandMenu, openCommandMenu]);
+      }, [
+        addToCommandMenu,
+        setObjectsInCommandMenu,
+        openCommandMenu,
+        objectMetadataItems,
+      ]);
 
       return <Story />;
     },
