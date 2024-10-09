@@ -126,11 +126,13 @@ export class SSOService {
       workspaceId,
     });
 
+    console.log('>>>>>>>>>>>>>>', idp);
     return {
       id: idp.id,
       type: idp.type,
       name: idp.name,
       issuer: this.buildIssuerURL(idp),
+      status: idp.status,
     };
   }
 
@@ -152,12 +154,24 @@ export class SSOService {
       (
         userWorkspace.workspace
           .workspaceSSOIdentityProviders as Array<SSOConfiguration>
-      ).map(async (idp) => ({
-        id: idp.id,
-        name: idp.name ?? 'Unknown',
-        issuer: idp.issuer,
-        type: idp.type,
-      })),
+      ).reduce((acc, idp) => {
+        if (idp.status === 'Inactive') return acc;
+
+        return [
+          ...acc,
+          {
+            id: idp.id,
+            name: idp.name ?? 'Unknown',
+            issuer: idp.issuer,
+            type: idp.type,
+            status: idp.status,
+            workspace: {
+              id: userWorkspace.workspaceId,
+              name: userWorkspace.workspace.displayName,
+            },
+          },
+        ];
+      }, []),
     );
   }
 
@@ -208,7 +222,7 @@ export class SSOService {
     });
   }
 
-  async loginWithSSO(idpId: string) {
+  async getAuthorizationUrl(idpId: string) {
     const idp = (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: {
         id: idpId,
@@ -297,7 +311,7 @@ export class SSOService {
 
     await this.workspaceSSOIdentityProviderRepository.delete(ssoIdp);
 
-    return ssoIdp.id;
+    return { idpId: ssoIdp.id };
   }
 
   async editSSOIdentityProvider(

@@ -10,8 +10,8 @@ import {
   SetupSAMLSsoInput,
 } from 'src/engine/core-modules/sso/dtos/setup-sso.input';
 import { SetupSsoOutput } from 'src/engine/core-modules/sso/dtos/setup-sso.output';
-import { LoginSSOInput } from 'src/engine/core-modules/sso/dtos/login-sso.input';
-import { LoginSSOOutput } from 'src/engine/core-modules/sso/dtos/login-sso.output';
+import { GetAuthorizationUrlInput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.input';
+import { GetAuthorizationUrlOutput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.output';
 import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
 import { FindAvailableSSOIDPInput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.input';
 import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
@@ -52,9 +52,11 @@ export class SSOResolver {
     return this.sSOService.listSSOIdentityProvidersByWorkspaceId(workspaceId);
   }
 
-  @Mutation(() => LoginSSOOutput)
-  async loginWithSSO(@Args('input') { idpId }: LoginSSOInput) {
-    return this.sSOService.loginWithSSO(idpId);
+  @Mutation(() => GetAuthorizationUrlOutput)
+  async getAuthorizationUrl(
+    @Args('input') { idpId }: GetAuthorizationUrlInput,
+  ) {
+    return this.sSOService.getAuthorizationUrl(idpId);
   }
 
   @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)

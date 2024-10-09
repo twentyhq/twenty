@@ -54,7 +54,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       'UpdatePasswordViaResetToken',
       'IntrospectionQuery',
       'ExchangeAuthorizationCode',
-      'LoginWithSSO',
+      'GetAuthorizationUrl',
       'FindAvailableSSOIdentityProviders',
     ];
 
