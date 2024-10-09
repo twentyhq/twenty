@@ -78,19 +78,16 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const isConfigureStep = location.pathname.includes('/configure');
 
   const handleClick = (step: 'select' | 'configure') => {
-    if (step === 'configure') {
-      if (isDefined(fieldType)) {
-        navigate(
-          `/settings/objects/${objectSlug}/new-field/configure?fieldType=${fieldType}`,
-        );
-      } else {
-        return;
-      }
-    } else {
+    if (step === 'configure' && isDefined(fieldType)) {
       navigate(
-        `/settings/objects/${objectSlug}/new-field/select${fieldType ? `?fieldType=${fieldType}` : ''}`,
+        `/settings/objects/${objectSlug}/new-field/configure?fieldType=${fieldType}`,
       );
+      return;
     }
+
+    navigate(
+      `/settings/objects/${objectSlug}/new-field/select${fieldType ? `?fieldType=${fieldType}` : ''}`,
+    );
     closeDropdown();
   };
 
