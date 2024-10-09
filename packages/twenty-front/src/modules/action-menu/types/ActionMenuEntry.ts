@@ -9,5 +9,4 @@ export type ActionMenuEntry = {
   accent?: MenuItemAccent;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactNode;
-  subActions?: ActionMenuEntry[];
 };

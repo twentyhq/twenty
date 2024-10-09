@@ -1,12 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown } from 'twenty-ui';
 
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionMenuBarEntryProps = {
@@ -42,52 +37,13 @@ const StyledButtonLabel = styled.div`
 
 export const ActionMenuBarEntry = ({ entry }: ActionMenuBarEntryProps) => {
   const theme = useTheme();
-  const dropdownId = `action-bar-entry-${entry.label}`;
-  const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
   return (
-    <>
-      {Array.isArray(entry.subActions) ? (
-        <Dropdown
-          dropdownId={dropdownId}
-          dropdownPlacement="top-start"
-          dropdownHotkeyScope={{
-            scope: dropdownId,
-          }}
-          clickableComponent={
-            <StyledButton
-              accent={entry.accent ?? 'default'}
-              onClick={toggleDropdown}
-            >
-              {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
-              <StyledButtonLabel>{entry.label}</StyledButtonLabel>
-              <IconChevronDown size={theme.icon.size.md} />
-            </StyledButton>
-          }
-          dropdownComponents={
-            <DropdownMenuItemsContainer>
-              {entry.subActions.map((subAction) => (
-                <MenuItem
-                  key={subAction.label}
-                  text={subAction.label}
-                  LeftIcon={subAction.Icon}
-                  onClick={() => {
-                    closeDropdown();
-                    subAction.onClick?.();
-                  }}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          }
-        />
-      ) : (
-        <StyledButton
-          accent={entry.accent ?? 'default'}
-          onClick={() => entry.onClick?.()}
-        >
-          {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
-          <StyledButtonLabel>{entry.label}</StyledButtonLabel>
-        </StyledButton>
-      )}
-    </>
+    <StyledButton
+      accent={entry.accent ?? 'default'}
+      onClick={() => entry.onClick?.()}
+    >
+      {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
+      <StyledButtonLabel>{entry.label}</StyledButtonLabel>
+    </StyledButton>
   );
 };
