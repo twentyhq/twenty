@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -160,13 +160,7 @@ export type ClientConfig = {
   support: Support;
 };
 
-export type CreateServerlessFunctionFromFileInput = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-};
-
 export type CreateServerlessFunctionInput = {
-  code: Scalars['String'];
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
 };
@@ -326,12 +320,24 @@ export type FindAvailableSsoidpOutput = {
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdpType;
+  workspace: WorkspaceNameAndId;
 };
 
 export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+};
+
+export type GetAuthorizationUrlInput = {
+  idpId: Scalars['String'];
+};
+
+export type GetAuthorizationUrlOutput = {
+  __typename?: 'GetAuthorizationUrlOutput';
+  authorizationURL: Scalars['String'];
+  id: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type GetServerlessFunctionSourceCodeInput = {
@@ -365,17 +371,6 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
-export type LoginSsoInput = {
-  idpId: Scalars['String'];
-};
-
-export type LoginSsoOutput = {
-  __typename?: 'LoginSSOOutput';
-  authorizationURL: Scalars['String'];
-  id: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -400,7 +395,6 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneObject: Object;
   createOneServerlessFunction: ServerlessFunction;
-  createOneServerlessFunctionFromFile: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
@@ -419,8 +413,8 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
+  getAuthorizationUrl: GetAuthorizationUrlOutput;
   impersonate: Verify;
-  loginWithSSO: LoginSsoOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -492,12 +486,6 @@ export type MutationCreateOneServerlessFunctionArgs = {
 };
 
 
-export type MutationCreateOneServerlessFunctionFromFileArgs = {
-  file: Scalars['Upload'];
-  input: CreateServerlessFunctionFromFileInput;
-};
-
-
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -566,13 +554,13 @@ export type MutationGenerateJwtArgs = {
 };
 
 
-export type MutationImpersonateArgs = {
-  userId: Scalars['String'];
+export type MutationGetAuthorizationUrlArgs = {
+  input: GetAuthorizationUrlInput;
 };
 
 
-export type MutationLoginWithSsoArgs = {
-  input: LoginSsoInput;
+export type MutationImpersonateArgs = {
+  userId: Scalars['String'];
 };
 
 
@@ -611,9 +599,8 @@ export type MutationSignUpArgs = {
 
 
 export type MutationTrackArgs = {
-  data: Scalars['JSON'];
-  sessionId: Scalars['String'];
-  type: Scalars['String'];
+  action: Scalars['String'];
+  payload: Scalars['JSON'];
 };
 
 
@@ -749,7 +736,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
-  getServerlessFunctionSourceCode?: Maybe<Scalars['String']>;
+  getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -929,7 +916,6 @@ export type ServerlessFunction = {
   latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   runtime: Scalars['String'];
-  sourceCodeHash: Scalars['String'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime'];
 };
@@ -1151,7 +1137,7 @@ export type UpdateOneObjectInput = {
 };
 
 export type UpdateServerlessFunctionInput = {
-  code: Scalars['String'];
+  code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
@@ -1323,6 +1309,12 @@ export enum WorkspaceMemberTimeFormatEnum {
   Hour_24 = 'HOUR_24',
   System = 'SYSTEM'
 }
+
+export type WorkspaceNameAndId = {
+  __typename?: 'WorkspaceNameAndId';
+  displayName: Scalars['String'];
+  id: Scalars['String'];
+};
 
 export type Field = {
   __typename?: 'field';
@@ -1522,6 +1514,13 @@ export type EmailPasswordResetLinkMutationVariables = Exact<{
 
 export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLink', success: boolean } };
 
+export type FindAvailableSsoIdentityProvidersMutationVariables = Exact<{
+  input: FindAvailableSsoidpInput;
+}>;
+
+
+export type FindAvailableSsoIdentityProvidersMutation = { __typename?: 'Mutation', findAvailableSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', id: string, name: string, issuer: string, workspace: { __typename?: 'WorkspaceNameAndId', id: string, displayName: string } }> };
+
 export type GenerateApiKeyTokenMutationVariables = Exact<{
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
@@ -1541,6 +1540,13 @@ export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: nev
 
 
 export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
+
+export type GetAuthorizationUrlMutationVariables = Exact<{
+  input: GetAuthorizationUrlInput;
+}>;
+
+
+export type GetAuthorizationUrlMutation = { __typename?: 'Mutation', getAuthorizationUrl: { __typename?: 'GetAuthorizationUrlOutput', id: string, type: string, authorizationURL: string } };
 
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -2118,7 +2124,7 @@ export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutati
  * @example
  * const [trackMutation, { data, loading, error }] = useTrackMutation({
  *   variables: {
- *      action: // value for 'type'
+ *      action: // value for 'action'
  *      payload: // value for 'payload'
  *   },
  * });
@@ -2303,6 +2309,45 @@ export function useEmailPasswordResetLinkMutation(baseOptions?: Apollo.MutationH
 export type EmailPasswordResetLinkMutationHookResult = ReturnType<typeof useEmailPasswordResetLinkMutation>;
 export type EmailPasswordResetLinkMutationResult = Apollo.MutationResult<EmailPasswordResetLinkMutation>;
 export type EmailPasswordResetLinkMutationOptions = Apollo.BaseMutationOptions<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>;
+export const FindAvailableSsoIdentityProvidersDocument = gql`
+    mutation FindAvailableSSOIdentityProviders($input: FindAvailableSSOIDPInput!) {
+  findAvailableSSOIdentityProviders(input: $input) {
+    id
+    name
+    issuer
+    workspace {
+      id
+      displayName
+    }
+  }
+}
+    `;
+export type FindAvailableSsoIdentityProvidersMutationFn = Apollo.MutationFunction<FindAvailableSsoIdentityProvidersMutation, FindAvailableSsoIdentityProvidersMutationVariables>;
+
+/**
+ * __useFindAvailableSsoIdentityProvidersMutation__
+ *
+ * To run a mutation, you first call `useFindAvailableSsoIdentityProvidersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFindAvailableSsoIdentityProvidersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [findAvailableSsoIdentityProvidersMutation, { data, loading, error }] = useFindAvailableSsoIdentityProvidersMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFindAvailableSsoIdentityProvidersMutation(baseOptions?: Apollo.MutationHookOptions<FindAvailableSsoIdentityProvidersMutation, FindAvailableSsoIdentityProvidersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<FindAvailableSsoIdentityProvidersMutation, FindAvailableSsoIdentityProvidersMutationVariables>(FindAvailableSsoIdentityProvidersDocument, options);
+      }
+export type FindAvailableSsoIdentityProvidersMutationHookResult = ReturnType<typeof useFindAvailableSsoIdentityProvidersMutation>;
+export type FindAvailableSsoIdentityProvidersMutationResult = Apollo.MutationResult<FindAvailableSsoIdentityProvidersMutation>;
+export type FindAvailableSsoIdentityProvidersMutationOptions = Apollo.BaseMutationOptions<FindAvailableSsoIdentityProvidersMutation, FindAvailableSsoIdentityProvidersMutationVariables>;
 export const GenerateApiKeyTokenDocument = gql`
     mutation GenerateApiKeyToken($apiKeyId: String!, $expiresAt: String!) {
   generateApiKeyToken(apiKeyId: $apiKeyId, expiresAt: $expiresAt) {
@@ -2406,6 +2451,41 @@ export function useGenerateTransientTokenMutation(baseOptions?: Apollo.MutationH
 export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
+export const GetAuthorizationUrlDocument = gql`
+    mutation GetAuthorizationUrl($input: GetAuthorizationUrlInput!) {
+  getAuthorizationUrl(input: $input) {
+    id
+    type
+    authorizationURL
+  }
+}
+    `;
+export type GetAuthorizationUrlMutationFn = Apollo.MutationFunction<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
+
+/**
+ * __useGetAuthorizationUrlMutation__
+ *
+ * To run a mutation, you first call `useGetAuthorizationUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetAuthorizationUrlMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getAuthorizationUrlMutation, { data, loading, error }] = useGetAuthorizationUrlMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetAuthorizationUrlMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>(GetAuthorizationUrlDocument, options);
+      }
+export type GetAuthorizationUrlMutationHookResult = ReturnType<typeof useGetAuthorizationUrlMutation>;
+export type GetAuthorizationUrlMutationResult = Apollo.MutationResult<GetAuthorizationUrlMutation>;
+export type GetAuthorizationUrlMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
 export const ImpersonateDocument = gql`
     mutation Impersonate($userId: String!) {
   impersonate(userId: $userId) {

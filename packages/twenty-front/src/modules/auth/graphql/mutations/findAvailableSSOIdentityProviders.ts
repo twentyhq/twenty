@@ -7,6 +7,11 @@ export const FIND_AVAILABLE_SSO_IDENTITY_PROVIDERS = gql`
     findAvailableSSOIdentityProviders(input: $input) {
       id
       name
+      issuer
+      workspace {
+        id
+        displayName
+      }
     }
   }
 `;

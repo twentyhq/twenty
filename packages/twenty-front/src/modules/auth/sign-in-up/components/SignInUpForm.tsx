@@ -137,7 +137,6 @@ export const SignInUpForm = () => {
   return (
     <>
       <StyledContentContainer>
-        {signInUpStep}
         {authProviders.google && (
           <>
             <MainButton
@@ -323,7 +322,7 @@ export const SignInUpForm = () => {
                 type="submit"
                 onClick={async () => {
                   setShowErrors(true);
-                  submitSSOEmail();
+                  submitSSOEmail(form.getValues('email'));
                 }}
                 Icon={() => form.formState.isSubmitting && <Loader />}
                 disabled={isSubmitButtonDisabled}
@@ -338,27 +337,7 @@ export const SignInUpForm = () => {
           Forgot your password?
         </ActionLink>
       )}
-      {signInUpStep === SignInUpStep.Init && (
-        <FooterNote>
-          By using Twenty, you agree to the{' '}
-          <a
-            href="https://twenty.com/legal/terms"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a
-            href="https://twenty.com/legal/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Privacy Policy
-          </a>
-          .
-        </FooterNote>
-      )}
+      {signInUpStep === SignInUpStep.Init && <FooterNote />}
     </>
   );
 };
