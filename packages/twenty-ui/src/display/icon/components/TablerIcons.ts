@@ -97,9 +97,13 @@ export {
   IconCurrencyRubel,
   IconCurrencyRufiyaa,
   IconCurrencyRupee,
-  IconCurrencyRupeeNepalese, IconCurrencyShekel, IconCurrencySom, IconCurrencyTaka,
+  IconCurrencyRupeeNepalese,
+  IconCurrencyShekel,
+  IconCurrencySom,
+  IconCurrencyTaka,
   IconCurrencyTenge,
-  IconCurrencyTugrik, IconCurrencyWon,
+  IconCurrencyTugrik,
+  IconCurrencyWon,
   IconCurrencyYen,
   IconCurrencyYuan,
   IconCurrencyZloty,
@@ -198,7 +202,9 @@ export {
   IconSettingsAutomation,
   IconSortDescending,
   IconSparkles,
-  IconSql, IconSquareKey, IconSquareRoundedCheck,
+  IconSql,
+  IconSquareKey,
+  IconSquareRoundedCheck,
   IconTable,
   IconTag,
   IconTags,
@@ -217,7 +223,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX
+  IconX,
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';
