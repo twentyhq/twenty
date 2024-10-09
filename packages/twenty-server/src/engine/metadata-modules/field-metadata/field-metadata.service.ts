@@ -55,6 +55,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import {
@@ -746,7 +747,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (!fieldMetadataInput.isNullable) {
-      if (!fieldMetadataInput.defaultValue) {
+      if (!isDefined(fieldMetadataInput.defaultValue)) {
         throw new FieldMetadataException(
           'Default value is required for non nullable fields',
           FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
