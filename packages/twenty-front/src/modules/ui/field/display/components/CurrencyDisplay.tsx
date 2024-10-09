@@ -5,6 +5,7 @@ import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMeta
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
@@ -29,10 +30,9 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
     ? SETTINGS_FIELD_CURRENCY_CODES[currencyValue?.currencyCode]?.Icon
     : null;
 
-  const amountToDisplay =
-    currencyValue?.amountMicros != null
-      ? currencyValue?.amountMicros / 1000000
-      : null;
+  const amountToDisplay = isUndefinedOrNull(currencyValue?.amountMicros)
+    ? null
+    : currencyValue?.amountMicros / 1000000;
 
   if (!shouldDisplayCurrency) {
     return <StyledEllipsisDisplay>{0}</StyledEllipsisDisplay>;

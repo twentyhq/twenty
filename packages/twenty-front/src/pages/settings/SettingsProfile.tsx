@@ -1,4 +1,4 @@
-import { H2Title, IconUserCircle } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ChangePassword } from '@/settings/profile/components/ChangePassword';
@@ -13,7 +13,6 @@ import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsProfile = () => (
   <SubMenuTopBarContainer
-    Icon={IconUserCircle}
     title="Profile"
     links={[
       {

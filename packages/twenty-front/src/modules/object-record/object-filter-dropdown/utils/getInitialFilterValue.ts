@@ -1,10 +1,10 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { z } from 'zod';
 
 export const getInitialFilterValue = (
-  newType: FilterType,
+  newType: FilterableFieldType,
   newOperand: ViewFilterOperand,
   oldValue?: string,
   oldDisplayValue?: string,
@@ -35,6 +35,7 @@ export const getInitialFilterValue = (
       break;
     }
   }
+
   return {
     value: oldValue ?? '',
     displayValue: oldDisplayValue ?? '',

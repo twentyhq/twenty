@@ -1,13 +1,11 @@
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
 import pick from 'lodash.pick';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const mockedDate = '2024-03-15T12:00:00.000Z';
@@ -26,14 +24,44 @@ const mocks: MockedResponse[] = [
         mutation CreateOneTask($input: TaskCreateInput!) {
           createTask(data: $input) {
             __typename
-            updatedAt
+            assignee {
+              __typename
+              id
+              name {
+                firstName
+                lastName
+              }
+            }
+            assigneeId
+            attachments {
+              edges {
+                node {
+                  __typename
+                  activityId
+                  authorId
+                  companyId
+                  createdAt
+                  deletedAt
+                  fullPath
+                  id
+                  name
+                  noteId
+                  opportunityId
+                  personId
+                  rocketId
+                  taskId
+                  type
+                  updatedAt
+                }
+              }
+            }
+            body
             createdAt
             dueAt
             id
             status
-            body
-            assigneeId
             title
+            updatedAt
           }
         }
       `,
@@ -56,15 +84,9 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        {children}
-      </SnackBarProviderScope>
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useCreateActivityInDB', () => {
   it('Should create activity in DB', async () => {

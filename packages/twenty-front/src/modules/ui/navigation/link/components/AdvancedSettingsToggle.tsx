@@ -9,6 +9,7 @@ const StyledContainer = styled.div`
   display: flex;
   width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
+  position: relative;
 `;
 
 const StyledText = styled.span`
@@ -20,8 +21,9 @@ const StyledText = styled.span`
 
 const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
-  display: flex;
   height: 16px;
+  position: absolute;
+  left: ${({ theme }) => theme.spacing(-5)};
 `;
 
 const StyledToggleContainer = styled.div`
@@ -50,7 +52,7 @@ export const AdvancedSettingsToggle = () => {
         <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
       </StyledIconContainer>
       <StyledToggleContainer>
-        <StyledText>Advanced</StyledText>
+        <StyledText>Advanced:</StyledText>
         <Toggle
           onChange={onChange}
           color={MAIN_COLORS.yellow}

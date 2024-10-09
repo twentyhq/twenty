@@ -39,31 +39,6 @@ import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 
-const StyledNavigationDrawerSection = styled(NavigationDrawerSection)<{
-  withLeftMargin?: boolean;
-}>`
-  margin-left: ${({ withLeftMargin, theme }) =>
-    withLeftMargin && theme.spacing(5)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledIconContainer = styled.div`
-  border-right: 1px solid ${MAIN_COLORS.yellow};
-  display: flex;
-  margin-top: ${({ theme }) => theme.spacing(5)};
-  width: 16px;
-`;
-
-const StyledDeveloperSection = styled.div`
-  display: flex;
-  width: 100%;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledIconTool = styled(IconTool)`
-  margin-right: ${({ theme }) => theme.spacing(0.5)};
-`;
-
 type SettingsNavigationItem = {
   label: string;
   path: SettingsPath;
@@ -71,6 +46,29 @@ type SettingsNavigationItem = {
   matchSubPages?: boolean;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
 };
+
+const StyledNavigationDrawerSection = styled(NavigationDrawerSection)`
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledIconContainer = styled.div`
+  border-right: 1px solid ${MAIN_COLORS.yellow};
+  position: absolute;
+  left: ${({ theme }) => theme.spacing(-5)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  height: 75%;
+`;
+
+const StyledDeveloperSection = styled.div`
+  display: flex;
+  width: 100%;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+`;
+
+const StyledIconTool = styled(IconTool)`
+  margin-right: ${({ theme }) => theme.spacing(0.5)};
+`;
 
 export const SettingsNavigationDrawerItems = () => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
@@ -123,7 +121,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <>
-      <StyledNavigationDrawerSection withLeftMargin>
+      <StyledNavigationDrawerSection>
         <NavigationDrawerSectionTitle label="User" />
         <SettingsNavigationDrawerItem
           label="Profile"
@@ -157,7 +155,7 @@ export const SettingsNavigationDrawerItems = () => {
           ))}
         </NavigationDrawerItemGroup>
       </StyledNavigationDrawerSection>
-      <StyledNavigationDrawerSection withLeftMargin>
+      <StyledNavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <SettingsNavigationDrawerItem
           label="General"
@@ -227,7 +225,7 @@ export const SettingsNavigationDrawerItems = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <StyledNavigationDrawerSection withLeftMargin>
+      <StyledNavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
         <SettingsNavigationDrawerItem
           label="Releases"

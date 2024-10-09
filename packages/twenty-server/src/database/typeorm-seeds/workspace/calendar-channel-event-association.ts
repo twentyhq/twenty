@@ -14,6 +14,7 @@ export const seedCalendarChannelEventAssociations = async (
       'calendarChannelId',
       'calendarEventId',
       'eventExternalId',
+      'recurringEventExternalId',
     ])
     .orIgnore()
     .values([
@@ -22,6 +23,7 @@ export const seedCalendarChannelEventAssociations = async (
         calendarChannelId: '59efdefe-a40f-4faf-bb9f-c6f9945b8203',
         calendarEventId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
         eventExternalId: 'exampleExternalId',
+        recurringEventExternalId: 'exampleRecurringExternalId',
       },
     ])
     .execute();
