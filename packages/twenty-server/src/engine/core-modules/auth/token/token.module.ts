@@ -11,6 +11,7 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     TypeORMModule,
     DataSourceModule,
     EmailModule,
+    WorkspaceSSOModule,
   ],
   providers: [TokenService, JwtAuthStrategy],
   exports: [TokenService],

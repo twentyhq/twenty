@@ -1,4 +1,4 @@
-import { H2Title, IconKey } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
@@ -11,7 +11,6 @@ import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/comp
 export const SettingsSecurity = () => {
   return (
     <SubMenuTopBarContainer
-      Icon={IconKey}
       title="Security"
       actionButton={<SettingsReadDocumentationButton />}
       links={[
