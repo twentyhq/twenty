@@ -2,7 +2,7 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { ActionBar } from '@/action-menu/components/ActionBar';
+import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { isBottomBarOpenComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenComponentState';
@@ -13,9 +13,9 @@ import { IconCheckbox, IconTrash } from 'twenty-ui';
 const deleteMock = jest.fn();
 const markAsDoneMock = jest.fn();
 
-const meta: Meta<typeof ActionBar> = {
-  title: 'Modules/ActionMenu/ActionBar',
-  component: ActionBar,
+const meta: Meta<typeof ActionMenuBar> = {
+  title: 'Modules/ActionMenu/ActionMenuBar',
+  component: ActionMenuBar,
   decorators: [
     (Story) => (
       <RecoilRoot
@@ -53,7 +53,7 @@ const meta: Meta<typeof ActionBar> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ActionBar>;
+type Story = StoryObj<typeof ActionMenuBar>;
 
 export const Default: Story = {
   args: {

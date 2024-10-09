@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
+import { ActionMenuBarItem } from '@/action-menu/components/ActionMenuBarItem';
 import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useRecoilValue } from 'recoil';
-import { ActionBarItem } from './ActionBarItem';
 
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -15,11 +15,11 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type ActionBarProps = {
+type ActionMenuBarProps = {
   actionMenuId: string;
 };
 
-export const ActionBar = ({ actionMenuId }: ActionBarProps) => {
+export const ActionMenuBar = ({ actionMenuId }: ActionMenuBarProps) => {
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
   );
@@ -37,7 +37,7 @@ export const ActionBar = ({ actionMenuId }: ActionBarProps) => {
         {contextStoreTargetedRecordIds.length} selected:
       </StyledLabel>
       {actionMenuEntries.map((item, index) => (
-        <ActionBarItem key={index} item={item} />
+        <ActionMenuBarItem key={index} item={item} />
       ))}
     </BottomBar>
   );

@@ -9,7 +9,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
-type ActionBarItemProps = {
+type ActionMenuBarItemProps = {
   item: ActionMenuEntry;
 };
 
@@ -40,7 +40,7 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionBarItem = ({ item }: ActionBarItemProps) => {
+export const ActionMenuBarItem = ({ item }: ActionMenuBarItemProps) => {
   const theme = useTheme();
   const dropdownId = `action-bar-item-${item.label}`;
   const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
