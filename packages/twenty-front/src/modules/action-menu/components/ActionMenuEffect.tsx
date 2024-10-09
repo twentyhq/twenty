@@ -27,6 +27,9 @@ export const ActionMenuEffect = () => {
 
   useEffect(() => {
     if (contextStoreTargetedRecordIds.length > 0 && !isDropdownOpen) {
+      // We only handle opening the ActionMenuBar here, not the Dropdown.
+      // The Dropdown is already managed by sync handlers for events like
+      // right-click to open and click outside to close.
       openActionBar();
     }
     if (contextStoreTargetedRecordIds.length === 0) {

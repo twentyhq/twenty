@@ -72,7 +72,7 @@ export const WithCustomSelection: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const selectionText = canvas.getByText('3 selected:');
+    const selectionText = await canvas.findByText('3 selected:');
     expect(selectionText).toBeInTheDocument();
   },
 };
@@ -84,10 +84,10 @@ export const WithButtonClicks: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const deleteButton = canvas.getByText('Delete');
+    const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
 
-    const markAsDoneButton = canvas.getByText('Mark as done');
+    const markAsDoneButton = await canvas.findByText('Mark as done');
     await userEvent.click(markAsDoneButton);
 
     await waitFor(() => {

@@ -59,9 +59,7 @@ const meta: Meta<typeof ActionMenuDropdown> = {
           );
         }}
       >
-        <div style={{ padding: '100px' }}>
-          <Story />
-        </div>
+        <Story />
       </RecoilRoot>
     ),
   ],
@@ -84,15 +82,15 @@ export const WithInteractions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const deleteButton = canvas.getByText('Delete');
+    const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
     expect(deleteMock).toHaveBeenCalled();
 
-    const markAsDoneButton = canvas.getByText('Mark as done');
+    const markAsDoneButton = await canvas.findByText('Mark as done');
     await userEvent.click(markAsDoneButton);
     expect(markAsDoneMock).toHaveBeenCalled();
 
-    const addToFavoritesButton = canvas.getByText('Add to favorites');
+    const addToFavoritesButton = await canvas.findByText('Add to favorites');
     await userEvent.click(addToFavoritesButton);
     expect(addToFavoritesMock).toHaveBeenCalled();
   },
