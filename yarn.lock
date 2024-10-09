@@ -7566,6 +7566,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nivo/calendar@npm:^0.87.0":
+  version: 0.87.0
+  resolution: "@nivo/calendar@npm:0.87.0"
+  dependencies:
+    "@nivo/core": "npm:0.87.0"
+    "@nivo/legends": "npm:0.87.0"
+    "@nivo/tooltip": "npm:0.87.0"
+    "@types/d3-scale": "npm:^4.0.8"
+    "@types/d3-time": "npm:^1.0.10"
+    "@types/d3-time-format": "npm:^3.0.0"
+    d3-scale: "npm:^4.0.2"
+    d3-time: "npm:^1.0.10"
+    d3-time-format: "npm:^3.0.0"
+    lodash: "npm:^4.17.21"
+  peerDependencies:
+    react: ">= 16.14.0 < 19.0.0"
+  checksum: 10c0/5cb0f4ceb45109695f1b86e4215ef464b7c33449c50d45a436f71a30029bcfca6b91956d6be9862d17cd0d8bf4dd80e2ce281cb85ace83ee07159a0e9f603242
+  languageName: node
+  linkType: hard
+
 "@nivo/colors@npm:0.87.0":
   version: 0.87.0
   resolution: "@nivo/colors@npm:0.87.0"
@@ -15579,7 +15599,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/d3-time@npm:^1.1.1":
+"@types/d3-time@npm:^1.0.10, @types/d3-time@npm:^1.1.1":
   version: 1.1.4
   resolution: "@types/d3-time@npm:1.1.4"
   checksum: 10c0/d1dafa4605c10739de216bdf3dfe9c3953e583e849dc5586216525897c96bbbae8972c50e9c11a4c54e700c089914cf7a9764e9806d316a84838ecf9e5c52722
@@ -16694,15 +16714,6 @@ __metadata:
   dependencies:
     "@types/react": "npm:*"
   checksum: 10c0/6c90d2ed72c5a0e440d2c75d99287e4b5df3e7b011838cdc03ae5cd518ab52164d86990e73246b9d812eaf02ec351d74e3b4f5bd325bf341e13bf980392fd53b
-  languageName: node
-  linkType: hard
-
-"@types/react-lifecycles-compat@npm:^3.0.1":
-  version: 3.0.4
-  resolution: "@types/react-lifecycles-compat@npm:3.0.4"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/3c33fcd7d52d44031b21cf8a6ae9c0f208fe3b972ee4f03fcbe4509d2c50da474bfdd3330f5a09046b7fd63a1f7f23b194bc8d774823c1981cc13929744b90d2
   languageName: node
   linkType: hard
 
@@ -23272,7 +23283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-time@npm:^1.0.11":
+"d3-time@npm:^1.0.10, d3-time@npm:^1.0.11":
   version: 1.1.0
   resolution: "d3-time@npm:1.1.0"
   checksum: 10c0/69ab137adff5b22d0fa148ea514a207bd9cd7d2c042ccf34a268f2ef73720b404f0be6e7b56c95650c53caf52080b5254e2a27f0a676f41d1dd22ef8872c8335
@@ -39111,13 +39122,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-lifecycles-compat@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "react-lifecycles-compat@npm:3.0.4"
-  checksum: 10c0/1d0df3c85af79df720524780f00c064d53a9dd1899d785eddb7264b378026979acbddb58a4b7e06e7d0d12aa1494fd5754562ee55d32907b15601068dae82c27
-  languageName: node
-  linkType: hard
-
 "react-loading-skeleton@npm:^3.3.1":
   version: 3.4.0
   resolution: "react-loading-skeleton@npm:3.4.0"
@@ -43756,6 +43760,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
   dependencies:
+    "@nivo/calendar": "npm:^0.87.0"
+    "@nivo/core": "npm:^0.87.0"
     "@nivo/line": "npm:^0.87.0"
     "@xyflow/react": "npm:^12.0.4"
     transliteration: "npm:^2.3.5"
@@ -43905,8 +43911,6 @@ __metadata:
     "@nestjs/testing": "npm:^9.0.0"
     "@nestjs/typeorm": "npm:^10.0.0"
     "@next/eslint-plugin-next": "npm:^14.1.4"
-    "@nivo/core": "npm:^0.87.0"
-    "@nivo/line": "npm:^0.87.0"
     "@nx/eslint": "npm:18.3.3"
     "@nx/eslint-plugin": "npm:18.3.3"
     "@nx/jest": "npm:18.3.3"

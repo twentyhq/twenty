@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconCode, IconTrash } from 'twenty-ui';
 
@@ -11,6 +11,8 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
+import { SettingsDeveloppersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
+import { SettingsDevelopersWebhookUsageGraphEffect } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraphEffect';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
@@ -20,25 +22,14 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { ResponsiveLine } from '@nivo/line';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+
 const StyledFilterRow = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
-const StyledGraphContainer = styled.div`
-  height: 200px;
-  width: 100%;
-`;
 
-type NivoLineInput = {
-  id: string | number;
-  color?: string;
-  data: Array<{
-    x: number | string | Date;
-    y: number | string | Date;
-  }>;
-};
 export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const navigate = useNavigate();
@@ -52,7 +43,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
     useState<string>('');
   const [operationAction, setOperationAction] = useState('');
   const [isDirty, setIsDirty] = useState<boolean>(false);
-  const [data, setData] = useState<NivoLineInput[]>([]);
 
   const { record: webhookData } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.Webhook,
@@ -76,6 +66,8 @@ export const SettingsDevelopersWebhooksDetail = () => {
     navigate(developerPath);
   };
 
+  const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
+
   const fieldTypeOptions = [
     { value: '*', label: 'All Objects' },
     ...objectMetadataItems.map((item) => ({
@@ -83,78 +75,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
       label: item.labelSingular,
     })),
   ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const queryString = new URLSearchParams({
-          webhookIdRequest: webhookId,
-        }).toString();
-        const token = ''; //put your tinybird token here
-        const response = await fetch(
-          `https://api.eu-central-1.aws.tinybird.co/v0/pipes/getWebhooksAnalytics.json?${queryString}`,
-          {
-            headers: {
-              Authorization: 'Bearer ' + token,
-            },
-          },
-        );
-        const result = await response.json();
-        const graphInput = result.data
-          .flatMap(
-            (dataRow: {
-              start_interval: string;
-              failure_count: number;
-              success_count: number;
-            }) => [
-              {
-                x: dataRow.start_interval,
-                y: dataRow.failure_count,
-                id: 'failure_count',
-                color: 'red',
-              },
-              {
-                x: dataRow.start_interval,
-                y: dataRow.success_count,
-                id: 'success_count',
-                color: 'green',
-              },
-            ],
-          )
-          .reduce(
-            (
-              acc: NivoLineInput[],
-              {
-                id,
-                x,
-                y,
-                color,
-              }: { id: string; x: string; y: number; color: string },
-            ) => {
-              const existingGroupIndex = acc.findIndex(
-                (group) => group.id === id,
-              );
-              const isExistingGroup = existingGroupIndex !== -1;
-
-              if (isExistingGroup) {
-                return acc.map((group, index) =>
-                  index === existingGroupIndex
-                    ? { ...group, data: [...group.data, { x, y }] }
-                    : group,
-                );
-              } else {
-                return [...acc, { id, color, data: [{ x, y }] }];
-              }
-            },
-            [],
-          );
-        setData(graphInput);
-      } catch (error) {
-        /* empty todo add error to snackbar*/
-      }
-    };
-    fetchData();
-  }, [webhookId]);
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
@@ -175,7 +95,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   if (!webhookData?.targetUrl) {
     return <></>;
   }
-  //TO DO: Improve graphics axes, and cropped visualization
+
   return (
     <SubMenuTopBarContainer
       Icon={IconCode}
@@ -259,36 +179,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
             />
           </StyledFilterRow>
         </Section>
-        {data.length ? (
-          <Section>
-            <H2Title title="Statistics" />
-
-            <StyledGraphContainer>
-              <ResponsiveLine
-                data={data}
-                colors={(d) => d.color}
-                margin={{ top: 0, right: 0, bottom: 50, left: 60 }}
-                xFormat="time:%Y-%m-%d %H:%M%"
-                xScale={{
-                  type: 'time',
-                  useUTC: false,
-                  format: '%Y-%m-%d %H:%M:%S',
-                  precision: 'hour',
-                }}
-                yScale={{
-                  type: 'linear',
-                }}
-                axisBottom={{
-                  tickValues: 'every day',
-                  format: '%b %d',
-                }}
-                enableTouchCrosshair={true}
-                enableGridY={false}
-                enableGridX={false}
-                enablePoints={false}
-              />
-            </StyledGraphContainer>
-          </Section>
+        {isAnalyticsV2Enabled ? (
+          <>
+            <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
+            <SettingsDeveloppersWebhookUsageGraph />
+          </>
         ) : (
           <></>
         )}
