@@ -9,8 +9,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
-type ActionMenuBarItemProps = {
-  item: ActionMenuEntry;
+type ActionMenuBarEntryProps = {
+  entry: ActionMenuEntry;
 };
 
 const StyledButton = styled.div<{ accent: MenuItemAccent }>`
@@ -40,13 +40,13 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionMenuBarItem = ({ item }: ActionMenuBarItemProps) => {
+export const ActionMenuBarEntry = ({ entry }: ActionMenuBarEntryProps) => {
   const theme = useTheme();
-  const dropdownId = `action-bar-item-${item.label}`;
+  const dropdownId = `action-bar-entry-${entry.label}`;
   const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
   return (
     <>
-      {Array.isArray(item.subActions) ? (
+      {Array.isArray(entry.subActions) ? (
         <Dropdown
           dropdownId={dropdownId}
           dropdownPlacement="top-start"
@@ -55,17 +55,17 @@ export const ActionMenuBarItem = ({ item }: ActionMenuBarItemProps) => {
           }}
           clickableComponent={
             <StyledButton
-              accent={item.accent ?? 'default'}
+              accent={entry.accent ?? 'default'}
               onClick={toggleDropdown}
             >
-              {item.Icon && <item.Icon size={theme.icon.size.md} />}
-              <StyledButtonLabel>{item.label}</StyledButtonLabel>
+              {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
+              <StyledButtonLabel>{entry.label}</StyledButtonLabel>
               <IconChevronDown size={theme.icon.size.md} />
             </StyledButton>
           }
           dropdownComponents={
             <DropdownMenuItemsContainer>
-              {item.subActions.map((subAction) => (
+              {entry.subActions.map((subAction) => (
                 <MenuItem
                   key={subAction.label}
                   text={subAction.label}
@@ -81,11 +81,11 @@ export const ActionMenuBarItem = ({ item }: ActionMenuBarItemProps) => {
         />
       ) : (
         <StyledButton
-          accent={item.accent ?? 'default'}
-          onClick={() => item.onClick?.()}
+          accent={entry.accent ?? 'default'}
+          onClick={() => entry.onClick?.()}
         >
-          {item.Icon && <item.Icon size={theme.icon.size.md} />}
-          <StyledButtonLabel>{item.label}</StyledButtonLabel>
+          {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
+          <StyledButtonLabel>{entry.label}</StyledButtonLabel>
         </StyledButton>
       )}
     </>
