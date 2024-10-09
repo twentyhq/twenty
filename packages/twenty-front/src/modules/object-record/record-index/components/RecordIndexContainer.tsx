@@ -28,6 +28,7 @@ import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -196,10 +197,14 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
-          <ActionMenuEffect actionMenuId={recordIndexId} />
-          <ActionMenuBar actionMenuId={recordIndexId} />
-          <ActionMenuDropdown actionMenuId={recordIndexId} />
-          <ActionMenuConfirmationModals />
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: recordIndexId }}
+          >
+            <ActionMenuEffect />
+            <ActionMenuBar />
+            <ActionMenuDropdown />
+            <ActionMenuConfirmationModals />
+          </ActionMenuComponentInstanceContext.Provider>
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>

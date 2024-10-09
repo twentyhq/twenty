@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
-import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
@@ -28,23 +28,28 @@ const meta: Meta<typeof ActionMenuDropdown> = {
             ),
             { x: 10, y: 10 },
           );
-          set(actionMenuEntriesState, [
-            {
-              label: 'Delete',
-              Icon: IconTrash,
-              onClick: deleteMock,
-            },
-            {
-              label: 'Mark as done',
-              Icon: IconCheckbox,
-              onClick: markAsDoneMock,
-            },
-            {
-              label: 'Add to favorites',
-              Icon: IconHeart,
-              onClick: addToFavoritesMock,
-            },
-          ]);
+          set(
+            actionMenuEntriesComponentState.atomFamily({
+              instanceId: 'story-action-menu',
+            }),
+            [
+              {
+                label: 'Delete',
+                Icon: IconTrash,
+                onClick: deleteMock,
+              },
+              {
+                label: 'Mark as done',
+                Icon: IconCheckbox,
+                onClick: markAsDoneMock,
+              },
+              {
+                label: 'Add to favorites',
+                Icon: IconHeart,
+                onClick: addToFavoritesMock,
+              },
+            ],
+          );
           set(
             extractComponentState(
               isDropdownOpenComponentState,

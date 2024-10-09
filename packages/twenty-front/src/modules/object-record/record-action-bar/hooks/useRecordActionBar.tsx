@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo, useState } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { IconFileExport, IconHeart, IconHeartOff, IconTrash } from 'twenty-ui';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -14,8 +14,9 @@ import {
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
-import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from '~/utils/isDefined';
 
 type useRecordActionBarProps = {
@@ -31,7 +32,9 @@ export const useRecordActionBar = ({
   callback,
   totalNumberOfRecordsSelected,
 }: useRecordActionBarProps) => {
-  const setActionMenuEntries = useSetRecoilState(actionMenuEntriesState);
+  const setActionMenuEntries = useSetRecoilComponentStateV2(
+    actionMenuEntriesComponentState,
+  );
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 

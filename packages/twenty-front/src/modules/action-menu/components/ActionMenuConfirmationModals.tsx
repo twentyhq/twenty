@@ -1,8 +1,10 @@
-import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
-import { useRecoilValue } from 'recoil';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const ActionMenuConfirmationModals = () => {
-  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
+  const actionMenuEntries = useRecoilComponentValueV2(
+    actionMenuEntriesComponentState,
+  );
 
   return (
     <div data-select-disable>

@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
-import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { isBottomBarOpenComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -21,18 +21,23 @@ const meta: Meta<typeof ActionMenuBar> = {
       <RecoilRoot
         initializeState={({ set }) => {
           set(contextStoreTargetedRecordIdsState, ['1', '2', '3']);
-          set(actionMenuEntriesState, [
-            {
-              label: 'Delete',
-              Icon: IconTrash,
-              onClick: deleteMock,
-            },
-            {
-              label: 'Mark as done',
-              Icon: IconCheckbox,
-              onClick: markAsDoneMock,
-            },
-          ]);
+          set(
+            actionMenuEntriesComponentState.atomFamily({
+              instanceId: 'story-action-menu',
+            }),
+            [
+              {
+                label: 'Delete',
+                Icon: IconTrash,
+                onClick: deleteMock,
+              },
+              {
+                label: 'Mark as done',
+                Icon: IconCheckbox,
+                onClick: markAsDoneMock,
+              },
+            ],
+          );
           set(
             extractComponentState(
               isBottomBarOpenComponentState,

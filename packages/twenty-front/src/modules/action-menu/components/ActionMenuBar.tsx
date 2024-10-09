@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
 
 import { ActionMenuBarItem } from '@/action-menu/components/ActionMenuBarItem';
-import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
 
 const StyledLabel = styled.div`
@@ -15,16 +18,18 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type ActionMenuBarProps = {
-  actionMenuId: string;
-};
-
-export const ActionMenuBar = ({ actionMenuId }: ActionMenuBarProps) => {
+export const ActionMenuBar = () => {
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
   );
 
-  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
+  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
+    ActionMenuComponentInstanceContext,
+  );
+
+  const actionMenuEntries = useRecoilComponentValueV2(
+    actionMenuEntriesComponentState,
+  );
 
   return (
     <BottomBar

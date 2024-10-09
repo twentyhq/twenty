@@ -4,10 +4,13 @@ import { useRecoilValue } from 'recoil';
 import { PositionType } from '../types/PositionType';
 
 import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
-import { actionMenuEntriesState } from '@/action-menu/states/actionMenuEntriesState';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type StyledContainerProps = {
@@ -33,14 +36,14 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   z-index: 2;
 `;
 
-export type ActionMenuDropdownProps = {
-  actionMenuId: string;
-};
+export const ActionMenuDropdown = () => {
+  const actionMenuEntries = useRecoilComponentValueV2(
+    actionMenuEntriesComponentState,
+  );
 
-export const ActionMenuDropdown = ({
-  actionMenuId,
-}: ActionMenuDropdownProps) => {
-  const actionMenuEntries = useRecoilValue(actionMenuEntriesState);
+  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
+    ActionMenuComponentInstanceContext,
+  );
 
   const actionMenuDropdownPosition = useRecoilValue(
     extractComponentState(
