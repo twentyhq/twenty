@@ -6,6 +6,7 @@ import { RecoilRoot } from 'recoil';
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
@@ -53,13 +54,17 @@ const meta: Meta<typeof ActionMenuDropdown> = {
           set(
             extractComponentState(
               isDropdownOpenComponentState,
-              'action-menu-dropdown-story',
+              'action-menu-dropdown-story-action-menu',
             ),
             true,
           );
         }}
       >
-        <Story />
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: 'story-action-menu' }}
+        >
+          <Story />
+        </ActionMenuComponentInstanceContext.Provider>
       </RecoilRoot>
     ),
   ],

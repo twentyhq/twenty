@@ -4,6 +4,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
@@ -45,7 +46,11 @@ const meta: Meta<typeof ActionMenuBar> = {
           );
         }}
       >
-        <Story />
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: 'story-action-menu' }}
+        >
+          <Story />
+        </ActionMenuComponentInstanceContext.Provider>
       </RecoilRoot>
     ),
   ],
