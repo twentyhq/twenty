@@ -21,7 +21,6 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
@@ -49,6 +48,7 @@ type RecordShowContainerProps = {
   objectRecordId: string;
   loading: boolean;
   isInRightDrawer?: boolean;
+  isNewRightDrawerItemLoading?: boolean;
 };
 
 export const RecordShowContainer = ({
@@ -56,6 +56,7 @@ export const RecordShowContainer = ({
   objectRecordId,
   loading,
   isInRightDrawer = false,
+  isNewRightDrawerItemLoading = false,
 }: RecordShowContainerProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -81,9 +82,6 @@ export const RecordShowContainer = ({
       objectNameSingular,
       recordId: objectRecordId,
     }),
-  );
-  const isNewViewableRecordLoading = useRecoilValue(
-    isNewViewableRecordLoadingState,
   );
   const [uploadImage] = useUploadImageMutation();
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
@@ -166,8 +164,6 @@ export const RecordShowContainer = ({
   const isReadOnly = objectMetadataItem.isRemote;
   const isMobile = useIsMobile() || isInRightDrawer;
   const isPrefetchLoading = useIsPrefetchLoading();
-  const isNewRightDrawerItemLoading =
-    isInRightDrawer && isNewViewableRecordLoading;
 
   const summaryCard =
     !isNewRightDrawerItemLoading && isDefined(recordFromStore) ? (

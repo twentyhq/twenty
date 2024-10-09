@@ -49,12 +49,10 @@ type SettingsNavigationItem = {
 
 const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
-  display: flex;
-  width: 16px;
   position: absolute;
   left: ${({ theme }) => theme.spacing(-5)};
   margin-top: ${({ theme }) => theme.spacing(2)};
-  height: 90%;
+  height: 75%;
 `;
 
 const StyledDeveloperSection = styled.div`

@@ -67,8 +67,8 @@ export const useOpenCreateActivityDrawer = ({
     targetableObjects: ActivityTargetableObject[];
     customAssignee?: WorkspaceMember;
   }) => {
-    openRightDrawer(RightDrawerPages.ViewRecord);
     setIsNewViewableRecordLoading(true);
+    openRightDrawer(RightDrawerPages.ViewRecord);
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 

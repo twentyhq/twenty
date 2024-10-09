@@ -271,6 +271,16 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncCursor: string;
 
   @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Last sync date',
+    description: 'Last sync date',
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  syncedAt: string | null;
+
+  @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Sync stage started at',

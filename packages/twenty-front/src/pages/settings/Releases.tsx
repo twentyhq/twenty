@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { IconRocket } from 'twenty-ui';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
@@ -107,7 +106,6 @@ export const Releases = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconRocket}
       title="Releases"
       links={[
         {

@@ -14,11 +14,7 @@ export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
 };
 
 export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
+  connectedAccountId: string;
   subject?: string;
-  template?: string;
-  title?: string;
-  callToAction?: {
-    value: string;
-    href: string;
-  };
+  body?: string;
 };
