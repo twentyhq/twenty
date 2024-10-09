@@ -46,8 +46,7 @@ export const SettingsObjectNewFieldConfigure = () => {
     FieldMetadataType.Text;
   const { enqueueSnackBar } = useSnackBar();
 
-  const [isConfigureStep, setIsConfigureStep] = useState(false);
-  const { findActiveObjectMetadataItemBySlug, findObjectMetadataItemById } =
+  const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
@@ -94,10 +93,6 @@ export const SettingsObjectNewFieldConfigure = () => {
 
   const relationObjectMetadataId = formConfig.watch(
     'relation.objectMetadataId',
-  );
-  const relationType = formConfig.watch('relation.type');
-  const relationObjectMetadataItem = findObjectMetadataItemById(
-    relationObjectMetadataId,
   );
 
   useFindManyRecords<View>({
@@ -206,8 +201,6 @@ export const SettingsObjectNewFieldConfigure = () => {
               />
               <SettingsDataModelFieldIconLabelForm
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-                relationObjectMetadataItem={relationObjectMetadataItem}
-                relationType={relationType}
               />
             </Section>
             <Section>
