@@ -66,7 +66,7 @@ const StyledOptionsLabel = styled.div<{
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: 6px;
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   margin-left: ${({ theme, isAdvancedModeEnabled }) =>
@@ -83,9 +83,10 @@ const StyledApiKey = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: 6px;
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+  white-space: nowrap;
 `;
 
 const StyledLabelContainer = styled.div`
@@ -96,7 +97,7 @@ const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
 
-  margin-bottom: 6px;
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -261,7 +262,7 @@ export const SettingsDataModelFieldSelectForm = ({
                             color={MAIN_COLORS.yellow}
                           />
                         </StyledIconContainer>
-                        <StyledApiKey>API_KEYS</StyledApiKey>
+                        <StyledApiKey>API keys</StyledApiKey>
                       </StyledApiKeyContainer>
                     </motion.div>
                   )}
@@ -269,7 +270,7 @@ export const SettingsDataModelFieldSelectForm = ({
                 <StyledOptionsLabel
                   isAdvancedModeEnabled={isAdvancedModeEnabled}
                 >
-                  {isAdvancedModeEnabled ? 'Values' : 'Options'}
+                  Options
                 </StyledOptionsLabel>
               </StyledLabelContainer>
               <DraggableList

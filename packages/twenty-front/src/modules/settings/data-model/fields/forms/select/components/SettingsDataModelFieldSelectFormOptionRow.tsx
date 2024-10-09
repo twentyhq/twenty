@@ -57,11 +57,19 @@ const StyledColorSample = styled(ColorSample)`
 `;
 
 const StyledOptionInput = styled(TextInput)`
-  width: 100%;
   flex-grow: 1;
+  width: 100%;
   & input {
     height: ${({ theme }) => theme.spacing(6)};
   }
+`;
+
+const StyledIconGripVertical = styled(IconGripVertical)`
+  margin-right: ${({ theme }) => theme.spacing(0.75)};
+`;
+
+const StyledLightIconButton = styled(LightIconButton)`
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDataModelFieldSelectFormOptionRow = ({
@@ -97,7 +105,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 
   return (
     <StyledRow className={className}>
-      <IconGripVertical
+      <StyledIconGripVertical
         style={{ minWidth: theme.icon.size.md }}
         size={theme.icon.size.md}
         stroke={theme.icon.stroke.sm}
@@ -174,7 +182,9 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         dropdownHotkeyScope={{
           scope: dropdownIds.actions,
         }}
-        clickableComponent={<LightIconButton Icon={IconDotsVertical} />}
+        clickableComponent={
+          <StyledLightIconButton accent="tertiary" Icon={IconDotsVertical} />
+        }
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>

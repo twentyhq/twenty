@@ -35,10 +35,7 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input<
-  Pick<
-    TextInputV2ComponentProps,
-    'fullWidth' | 'LeftIcon' | 'RightIcon' | 'error'
-  >
+  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon' | 'error'>
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid
@@ -46,7 +43,7 @@ const StyledInput = styled.input<
       error ? theme.border.color.danger : theme.border.color.medium};
   border-bottom-left-radius: ${({ theme, LeftIcon }) =>
     !LeftIcon && theme.border.radius.sm};
-  border-right: ${({ RightIcon }) => RightIcon && 'none'};
+  border-right: none;
   border-left: ${({ LeftIcon }) => LeftIcon && 'none'};
   border-top-left-radius: ${({ theme, LeftIcon }) =>
     !LeftIcon && theme.border.radius.sm};
@@ -208,9 +205,8 @@ const TextInputV2Component = (
             error,
           }}
         />
-
-        {!error && type === INPUT_TYPE_PASSWORD && (
-          <StyledTrailingIconContainer {...{ error }}>
+        <StyledTrailingIconContainer {...{ error }}>
+          {!error && type === INPUT_TYPE_PASSWORD && (
             <StyledTrailingIcon
               onClick={handleTogglePasswordVisibility}
               data-testid="reveal-password-button"
@@ -221,15 +217,13 @@ const TextInputV2Component = (
                 <IconEye size={theme.icon.size.md} />
               )}
             </StyledTrailingIcon>
-          </StyledTrailingIconContainer>
-        )}
-        {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-          <StyledTrailingIconContainer {...{ error }}>
+          )}
+          {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
             <StyledTrailingIcon>
               <RightIcon size={theme.icon.size.md} />
             </StyledTrailingIcon>
-          </StyledTrailingIconContainer>
-        )}
+          )}
+        </StyledTrailingIconContainer>
       </StyledInputContainer>
       {error && !noErrorHelper && (
         <StyledErrorHelper>{error}</StyledErrorHelper>
