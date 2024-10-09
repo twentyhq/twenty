@@ -57,8 +57,6 @@ export const useComputeActionsBasedOnContextStore = ({
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
-  // const numberOfSelectedRecords =
-  //   totalNumberOfRecordsSelected ?? contextStoreTargetedRecordIds.length;
   const numberOfSelectedRecords = contextStoreTargetedRecordIds.length;
 
   const canDelete =

@@ -7,11 +7,8 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
-import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 
 type RecordIndexTableContainerEffectProps = {
   objectNameSingular: string;
@@ -56,26 +53,7 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns(columnDefinitions);
   }, [columnDefinitions, setAvailableTableColumns]);
 
-  const { tableRowIdsState, hasUserSelectedAllRowsState } =
-    useRecordTableStates(recordTableId);
-
-  // TODO: verify this instance id works
-  const entityCountInCurrentView = useRecoilComponentValueV2(
-    entityCountInCurrentViewComponentState,
-    recordTableId,
-  );
-  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
-  const tableRowIds = useRecoilValue(tableRowIdsState);
-
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
-
-  const numSelected =
-    hasUserSelectedAllRows && entityCountInCurrentView
-      ? selectedRowIds.length === tableRowIds.length
-        ? entityCountInCurrentView
-        : entityCountInCurrentView -
-          (tableRowIds.length - selectedRowIds.length) // unselected row Ids
-      : selectedRowIds.length;
 
   const handleToggleColumnFilter = useHandleToggleColumnFilter({
     objectNameSingular,
