@@ -5,7 +5,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { objectDropdownFiltersToQueryFilter } from '@/object-record/record-filter/utils/objectDropdownFiltersToQueryFilter';
+import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -27,7 +27,7 @@ export const useFindManyParams = (
   const tableFilters = useRecoilValue(tableFiltersState);
   const tableSorts = useRecoilValue(tableSortsState);
 
-  const filter = objectDropdownFiltersToQueryFilter(
+  const filter = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
   );

@@ -1,5 +1,5 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { objectDropdownFiltersToQueryFilter } from '@/object-record/record-filter/utils/objectDropdownFiltersToQueryFilter';
+import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -16,7 +16,7 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 
 jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
-describe('objectDropdownFiltersToQueryFilter', () => {
+describe('turnObjectDropdownFilterIntoQueryFilter', () => {
   it('should work as expected for single filter', () => {
     const companyMockNameFieldMetadataId =
       companyMockObjectMetadataItem.fields.find(
@@ -37,7 +37,7 @@ describe('objectDropdownFiltersToQueryFilter', () => {
       },
     };
 
-    const result = objectDropdownFiltersToQueryFilter(
+    const result = turnObjectDropdownFilterIntoQueryFilter(
       [nameFilter],
       companyMockObjectMetadataItem.fields,
     );
@@ -88,7 +88,7 @@ describe('objectDropdownFiltersToQueryFilter', () => {
       },
     };
 
-    const result = objectDropdownFiltersToQueryFilter(
+    const result = turnObjectDropdownFilterIntoQueryFilter(
       [nameFilter, employeesFilter],
       companyMockObjectMetadataItem.fields,
     );
@@ -173,7 +173,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = objectDropdownFiltersToQueryFilter(
+    const result = turnObjectDropdownFilterIntoQueryFilter(
       [
         addressFilterContains,
         addressFilterDoesNotContain,
@@ -554,7 +554,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = objectDropdownFiltersToQueryFilter(
+    const result = turnObjectDropdownFilterIntoQueryFilter(
       [
         phonesFilterContains,
         phonesFilterDoesNotContain,
@@ -754,7 +754,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = objectDropdownFiltersToQueryFilter(
+    const result = turnObjectDropdownFilterIntoQueryFilter(
       [
         emailsFilterContains,
         emailsFilterDoesNotContain,
@@ -908,7 +908,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = objectDropdownFiltersToQueryFilter(
+    const result = turnObjectDropdownFilterIntoQueryFilter(
       [
         dateFilterIsAfter,
         dateFilterIsBefore,
@@ -1023,7 +1023,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = objectDropdownFiltersToQueryFilter(
+    const result = turnObjectDropdownFilterIntoQueryFilter(
       [
         employeesFilterIsGreaterThan,
         employeesFilterIsLessThan,

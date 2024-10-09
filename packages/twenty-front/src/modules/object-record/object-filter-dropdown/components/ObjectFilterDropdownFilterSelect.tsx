@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
+import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -182,6 +183,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
                   </SelectableItem>
                 ))}
             </DropdownMenuItemsContainer>
+            <AdvancedFilterButton />
           </SelectableList>
         </>
       ) : (
