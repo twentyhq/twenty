@@ -73,7 +73,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsAnalyticsV2Enabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
     ])
     .execute();
