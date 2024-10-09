@@ -178,7 +178,9 @@ export const SettingsObjectNewFieldConfigure = () => {
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
               onCancel={() =>
-                navigate(`/settings/objects/${objectSlug}/new-field/select`)
+                navigate(
+                  `/settings/objects/${objectSlug}/new-field/select?fieldType=${fieldType}`,
+                )
               }
               onSave={formConfig.handleSubmit(handleSave)}
             />
