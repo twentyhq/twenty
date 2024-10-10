@@ -20,6 +20,7 @@ export enum CallWebhookJobsJobOperation {
   create = 'create',
   update = 'update',
   delete = 'delete',
+  destroy = 'destroy',
 }
 
 export type CallWebhookJobsJobData = {

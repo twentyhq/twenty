@@ -1,6 +1,9 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
@@ -81,9 +84,15 @@ export function formatResult<T>(
     if (!compositePropertyArgs && !relationMetadata) {
       if (isPlainObject(value)) {
         newData[key] = formatResult(value, objectMetadata, objectMetadataMap);
+      } else if (objectMetadata.fields[key]) {
+        newData[key] = formatFieldMetadataValue(
+          value,
+          objectMetadata.fields[key],
+        );
       } else {
         newData[key] = value;
       }
+
       continue;
     }
 
@@ -128,4 +137,19 @@ export function formatResult<T>(
   }
 
   return newData as T;
+}
+
+function formatFieldMetadataValue(
+  value: any,
+  fieldMetadata: FieldMetadataInterface,
+) {
+  if (
+    typeof value === 'string' &&
+    (fieldMetadata.type === FieldMetadataType.MULTI_SELECT ||
+      fieldMetadata.type === FieldMetadataType.ARRAY)
+  ) {
+    return value.replace(/{|}/g, '').split(',');
+  }
+
+  return value;
 }

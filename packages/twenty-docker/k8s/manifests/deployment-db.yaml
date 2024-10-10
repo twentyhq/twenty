@@ -22,33 +22,33 @@ spec:
         app: twentycrm-db
     spec:
       volumes:
-      - name: twentycrm-db-data
-        persistentVolumeClaim:
-          claimName: twentycrm-db-pvc
+        - name: twentycrm-db-data
+          persistentVolumeClaim:
+            claimName: twentycrm-db-pvc
       containers:
-      - env:
-        - name: POSTGRES_PASSWORD
-          value: "twenty"
-        - name: BITNAMI_DEBUG
-          value: "true"
-      - image: twentycrm/twenty-postgres:latest
-        imagePullPolicy: Always
-        name: twentycrm
-        ports:
-        - containerPort: 5432
-          name: tcp
-          protocol: TCP
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "1024Mi"
-            cpu: "1000m"
-        stdin: true
-        tty: true
-        volumeMounts:
-        - mountPath: /bitnami/postgresql
-          name: twentycrm-db-data
+        - name: twentycrm
+          image: twentycrm/twenty-postgres:latest
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "twenty"
+            - name: BITNAMI_DEBUG
+              value: "true"
+          ports:
+            - containerPort: 5432
+              name: tcp
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /bitnami/postgresql
+              name: twentycrm-db-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always

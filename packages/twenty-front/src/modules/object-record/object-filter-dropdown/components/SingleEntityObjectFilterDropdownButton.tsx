@@ -13,7 +13,7 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
-import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
+import { getOperandsForFilterDefinition } from '../utils/getOperandsForFilterType';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from './ObjectFilterDropdownSearchInput';
@@ -36,14 +36,16 @@ export const SingleEntityObjectFilterDropdownButton = ({
   );
   const selectedFilter = useRecoilValue(selectedFilterState);
 
-  const availableFilter = availableFilterDefinitions[0];
+  const availableFilterDefinition = availableFilterDefinitions[0];
 
   React.useEffect(() => {
-    setFilterDefinitionUsedInDropdown(availableFilter);
-    const defaultOperand = getOperandsForFilterType(availableFilter?.type)[0];
+    setFilterDefinitionUsedInDropdown(availableFilterDefinition);
+    const defaultOperand = getOperandsForFilterDefinition(
+      availableFilterDefinition,
+    )[0];
     setSelectedOperandInDropdown(defaultOperand);
   }, [
-    availableFilter,
+    availableFilterDefinition,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
   ]);
@@ -62,7 +64,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
               filter={selectedFilter}
               Icon={
                 selectedFilter.operand === ViewFilterOperand.IsNotNull
-                  ? availableFilter.SelectAllIcon
+                  ? availableFilterDefinition.SelectAllIcon
                   : undefined
               }
             />

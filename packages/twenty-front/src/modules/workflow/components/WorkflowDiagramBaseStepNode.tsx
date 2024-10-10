@@ -2,6 +2,7 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
+import { isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 type Variant = 'placeholder';
@@ -76,16 +77,24 @@ export const StyledTargetHandle = styled(Handle)`
   visibility: hidden;
 `;
 
+const StyledRightFloatingElementContainer = styled.div`
+  position: absolute;
+  transform: translateX(100%);
+  right: ${({ theme }) => theme.spacing(-2)};
+`;
+
 export const WorkflowDiagramBaseStepNode = ({
   nodeType,
   label,
   variant,
   Icon,
+  RightFloatingElement,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   label: string;
   variant?: Variant;
   Icon?: React.ReactNode;
+  RightFloatingElement?: React.ReactNode;
 }) => {
   return (
     <StyledStepNodeContainer>
@@ -101,6 +110,12 @@ export const WorkflowDiagramBaseStepNode = ({
 
           {label}
         </StyledStepNodeLabel>
+
+        {isDefined(RightFloatingElement) ? (
+          <StyledRightFloatingElementContainer>
+            {RightFloatingElement}
+          </StyledRightFloatingElementContainer>
+        ) : null}
       </StyledStepNodeInnerContainer>
 
       <StyledSourceHandle type="source" position={Position.Bottom} />

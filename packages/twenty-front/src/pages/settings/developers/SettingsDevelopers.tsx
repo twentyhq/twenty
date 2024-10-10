@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
-import { H2Title, IconCode, IconPlus, MOBILE_VIEWPORT } from 'twenty-ui';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import styled from '@emotion/styled';
+import { H2Title, IconPlus, MOBILE_VIEWPORT } from 'twenty-ui';
+
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
@@ -31,7 +32,6 @@ export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
   return (
     <SubMenuTopBarContainer
-      Icon={IconCode}
       title="Developers"
       actionButton={<SettingsReadDocumentationButton />}
       links={[

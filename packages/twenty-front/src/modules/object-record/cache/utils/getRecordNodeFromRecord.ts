@@ -65,7 +65,9 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             RelationDefinitionType.OneToMany
         ) {
           const oneToManyObjectMetadataItem = objectMetadataItems.find(
-            (item) => item.namePlural === fieldName,
+            (item) =>
+              item.namePlural ===
+              field.relationDefinition?.targetObjectMetadata.namePlural,
           );
 
           if (!oneToManyObjectMetadataItem) {

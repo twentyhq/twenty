@@ -1,8 +1,10 @@
 import {
   FieldAddressValue,
   FieldCurrencyValue,
+  FieldEmailsValue,
   FieldFullNameValue,
   FieldLinksValue,
+  FieldPhonesValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { CompositeFieldLabels } from '@/object-record/spreadsheet-import/types/CompositeFieldLabels';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -30,6 +32,13 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     primaryLinkUrlLabel: 'Link URL',
     primaryLinkLabelLabel: 'Link Label',
   } satisfies Partial<CompositeFieldLabels<FieldLinksValue>>,
+  [FieldMetadataType.Emails]: {
+    primaryEmailLabel: 'Email',
+  } satisfies Partial<CompositeFieldLabels<FieldEmailsValue>>,
+  [FieldMetadataType.Phones]: {
+    primaryPhoneCountryCodeLabel: 'Phone country code',
+    primaryPhoneNumberLabel: 'Phone number',
+  } satisfies Partial<CompositeFieldLabels<FieldPhonesValue>>,
   [FieldMetadataType.Actor]: {
     sourceLabel: 'Source',
   },

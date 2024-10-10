@@ -6,12 +6,15 @@ describe('formatNumber', () => {
     expect(formatNumber(123)).toEqual('123');
   });
   it(`Should format decimal numbers correctly`, () => {
-    expect(formatNumber(123.92)).toEqual('123.92');
+    expect(formatNumber(123.92, 2)).toEqual('123.92');
   });
   it(`Should format large numbers correctly`, () => {
     expect(formatNumber(1234567)).toEqual('1,234,567');
   });
   it(`Should format large numbers with a decimal point correctly`, () => {
-    expect(formatNumber(7654321.89)).toEqual('7,654,321.89');
+    expect(formatNumber(7654321.89, 2)).toEqual('7,654,321.89');
+  });
+  it('should format apply decimals correctly', () => {
+    expect(formatNumber(123.456, 2)).toEqual('123.46');
   });
 });

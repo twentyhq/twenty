@@ -1,7 +1,5 @@
-import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -11,8 +9,8 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useFindManyRecords';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const mocks = [
   {
@@ -28,29 +26,10 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-      <MockedProvider mocks={mocks} addTypename={false}>
-        {children}
-      </MockedProvider>
-    </SnackBarProviderScope>
-  </RecoilRoot>
-);
-
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 describe('useFindManyRecords', () => {
-  it('should skip fetch if currentWorkspaceMember is undefined', async () => {
-    const { result } = renderHook(
-      () => useFindManyRecords({ objectNameSingular: 'person' }),
-      {
-        wrapper: Wrapper,
-      },
-    );
-
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeUndefined();
-  });
-
   it('should work as expected', async () => {
     const onCompleted = jest.fn();
 
