@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { isReadOnlyObject } from '@/object-metadata/utils/isReadOnlyObject';
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -32,7 +32,7 @@ export const RecordIndexPageHeader = () => {
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
   const shouldDisplayAddButton = objectMetadataItem
-    ? !isReadOnlyObject(objectMetadataItem)
+    ? !isObjectMetadataReadOnly(objectMetadataItem)
     : false;
 
   const isTable = recordIndexViewType === ViewType.Table;

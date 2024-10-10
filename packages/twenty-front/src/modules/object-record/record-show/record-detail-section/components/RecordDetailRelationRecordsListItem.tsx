@@ -24,7 +24,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { isFieldReadonlyFromObjectMetadataName } from '@/object-record/record-field/utils/isFieldReadonlyFromObjectMetadataName';
+import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldMetadataReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -181,10 +181,7 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const canEdit = !isFieldReadonlyFromObjectMetadataName(
-    fieldDefinition.metadata.fieldName,
-    fieldDefinition.metadata.objectMetadataNameSingular,
-  );
+  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
 
   return (
     <>

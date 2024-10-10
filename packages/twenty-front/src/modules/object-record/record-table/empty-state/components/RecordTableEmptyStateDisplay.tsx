@@ -8,7 +8,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
-import { isReadOnlyObject } from '@/object-metadata/utils/isReadOnlyObject';
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { Button } from '@/ui/input/button/components/Button';
 import { useContext } from 'react';
@@ -32,7 +32,7 @@ export const RecordTableEmptyStateDisplay = ({
   title,
 }: RecordTableEmptyStateDisplayProps) => {
   const { objectMetadataItem } = useContext(RecordTableContext);
-  const isReadOnly = isReadOnlyObject(objectMetadataItem);
+  const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
 
   return (
     <AnimatedPlaceholderEmptyContainer>

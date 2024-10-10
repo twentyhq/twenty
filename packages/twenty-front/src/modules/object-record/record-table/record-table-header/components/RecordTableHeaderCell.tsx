@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { isReadOnlyObject } from '@/object-metadata/utils/isReadOnlyObject';
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
@@ -198,7 +198,7 @@ export const RecordTableHeaderCell = ({
     createNewTableRecord();
   };
 
-  const isReadOnly = isReadOnlyObject(objectMetadataItem);
+  const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
 
   return (
     <StyledColumnHeaderCell

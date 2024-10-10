@@ -12,7 +12,7 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { isFieldReadonlyFromObjectMetadataName } from '@/object-record/record-field/utils/isFieldReadonlyFromObjectMetadataName';
+import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldMetadataReadOnly';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
@@ -159,10 +159,7 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
-  const canEdit = !isFieldReadonlyFromObjectMetadataName(
-    fieldDefinition.metadata.fieldName,
-    fieldDefinition.metadata.objectMetadataNameSingular,
-  );
+  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
 
   if (loading) return null;
 
