@@ -1,12 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  H2Title,
-  IconChevronRight,
-  IconHierarchy2,
-  IconPlus,
-  IconSearch,
-} from 'twenty-ui';
+import { H2Title, IconChevronRight, IconPlus, IconSearch } from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -133,7 +127,6 @@ export const SettingsObjects = () => {
   );
   return (
     <SubMenuTopBarContainer
-      Icon={IconHierarchy2}
       title="Data model"
       actionButton={
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>

@@ -5,7 +5,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>

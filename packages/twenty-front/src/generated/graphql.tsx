@@ -263,15 +263,12 @@ export enum FieldMetadataType {
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
-  Email = 'EMAIL',
   Emails = 'EMAILS',
   FullName = 'FULL_NAME',
-  Link = 'LINK',
   Links = 'LINKS',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
-  Phone = 'PHONE',
   Phones = 'PHONES',
   Position = 'POSITION',
   Rating = 'RATING',
@@ -280,6 +277,7 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
+  TsVector = 'TS_VECTOR',
   Uuid = 'UUID'
 }
 

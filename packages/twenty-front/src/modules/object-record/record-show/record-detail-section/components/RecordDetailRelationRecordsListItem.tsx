@@ -24,6 +24,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldMetadataReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -180,6 +181,8 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
+  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
+
   return (
     <>
       <RecordValueSetterEffect recordId={relationRecord.id} />
@@ -195,37 +198,39 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        <DropdownScope dropdownScopeId={dropdownScopeId}>
-          <Dropdown
-            dropdownId={dropdownScopeId}
-            dropdownPlacement="right-start"
-            clickableComponent={
-              <LightIconButton
-                className="displayOnHover"
-                Icon={IconDotsVertical}
-                accent="tertiary"
-              />
-            }
-            dropdownComponents={
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  LeftIcon={IconUnlink}
-                  text="Detach"
-                  onClick={handleDetach}
+        {canEdit && (
+          <DropdownScope dropdownScopeId={dropdownScopeId}>
+            <Dropdown
+              dropdownId={dropdownScopeId}
+              dropdownPlacement="right-start"
+              clickableComponent={
+                <LightIconButton
+                  className="displayOnHover"
+                  Icon={IconDotsVertical}
+                  accent="tertiary"
                 />
-                {!isAccountOwnerRelation && (
+              }
+              dropdownComponents={
+                <DropdownMenuItemsContainer>
                   <MenuItem
-                    LeftIcon={IconTrash}
-                    text="Delete"
-                    accent="danger"
-                    onClick={handleDelete}
+                    LeftIcon={IconUnlink}
+                    text="Detach"
+                    onClick={handleDetach}
                   />
-                )}
-              </DropdownMenuItemsContainer>
-            }
-            dropdownHotkeyScope={{ scope: dropdownScopeId }}
-          />
-        </DropdownScope>
+                  {!isAccountOwnerRelation && (
+                    <MenuItem
+                      LeftIcon={IconTrash}
+                      text="Delete"
+                      accent="danger"
+                      onClick={handleDelete}
+                    />
+                  )}
+                </DropdownMenuItemsContainer>
+              }
+              dropdownHotkeyScope={{ scope: dropdownScopeId }}
+            />
+          </DropdownScope>
+        )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
         <PropertyBox>

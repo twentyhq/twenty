@@ -54,7 +54,6 @@ export class MessagingPartialMessageListFetchService {
         },
         {
           throttleFailureCount: 0,
-          syncStageStartedAt: null,
         },
       );
 

@@ -6,7 +6,6 @@ import {
   FieldMetadataDefaultValueDateTime,
   FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueLinks,
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
@@ -27,9 +26,7 @@ type FieldMetadataDefaultValueMapping = {
     | FieldMetadataDefaultValueString
     | FieldMetadataDefaultValueUuidFunction;
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONES]: FieldMetadataDefaultValuePhones;
-  [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
   [FieldMetadataType.EMAILS]: FieldMetadataDefaultValueEmails;
   [FieldMetadataType.DATE_TIME]:
     | FieldMetadataDefaultValueDateTime
@@ -41,7 +38,6 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
   [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;

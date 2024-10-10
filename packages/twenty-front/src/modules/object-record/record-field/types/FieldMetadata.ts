@@ -177,19 +177,16 @@ export type FieldMetadata =
   | FieldArrayMetadata;
 
 export type FieldTextValue = string;
-export type FieldUUidValue = string;
+export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
 export type FieldDateTimeValue = string | null;
 export type FieldDateValue = string | null;
 export type FieldNumberValue = number | null;
 export type FieldBooleanValue = boolean;
 
-export type FieldPhoneValue = string;
-export type FieldEmailValue = string;
 export type FieldEmailsValue = {
   primaryEmail: string;
   additionalEmails: string[] | null;
 };
-export type FieldLinkValue = { url: string; label: string };
 export type FieldLinksValue = {
   primaryLinkLabel: string;
   primaryLinkUrl: string;
@@ -224,6 +221,8 @@ export type FieldRelationValue<
 
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
+
+export type FieldRichTextValue = Record<string, Json> | Json[] | null;
 
 export type FieldActorValue = {
   source: string;

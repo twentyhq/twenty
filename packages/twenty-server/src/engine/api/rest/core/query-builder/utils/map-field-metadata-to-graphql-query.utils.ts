@@ -18,8 +18,6 @@ export const mapFieldMetadataToGraphqlQuery = (
   const fieldIsSimpleValue = [
     FieldMetadataType.UUID,
     FieldMetadataType.TEXT,
-    FieldMetadataType.PHONE,
-    FieldMetadataType.EMAIL,
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
     FieldMetadataType.BOOLEAN,
@@ -89,14 +87,6 @@ export const mapFieldMetadataToGraphqlQuery = (
           }
         }
       }`;
-  } else if (fieldType === FieldMetadataType.LINK) {
-    return `
-      ${field.name}
-      {
-        label
-        url
-      }
-    `;
   } else if (fieldType === FieldMetadataType.LINKS) {
     return `
       ${field.name}

@@ -22,7 +22,7 @@ type MenuItemMultiSelectAvatarProps = {
   avatar?: ReactNode;
   selected: boolean;
   isKeySelected?: boolean;
-  text: string;
+  text?: string;
   className?: string;
   onSelectChange?: (selected: boolean) => void;
 };

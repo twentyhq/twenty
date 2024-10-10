@@ -24,7 +24,6 @@ export const seedCalendarEvents = async (
       'conferenceSolution',
       'conferenceLinkPrimaryLinkLabel',
       'conferenceLinkPrimaryLinkUrl',
-      'recurringEventExternalId',
     ])
     .orIgnore()
     .values([
@@ -43,7 +42,6 @@ export const seedCalendarEvents = async (
         conferenceSolution: 'Zoom',
         conferenceLinkPrimaryLinkLabel: 'https://zoom.us/j/1234567890',
         conferenceLinkPrimaryLinkUrl: 'https://zoom.us/j/1234567890',
-        recurringEventExternalId: 'recurring1',
       },
     ])
     .execute();

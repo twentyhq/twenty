@@ -1,5 +1,5 @@
-import 'tsconfig-paths/register';
 import { JestConfigWithTsJest } from 'ts-jest';
+import 'tsconfig-paths/register';
 
 import { createApp } from './create-app';
 
