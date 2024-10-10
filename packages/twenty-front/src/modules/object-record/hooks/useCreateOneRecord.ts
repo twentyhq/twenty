@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
+import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
+import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
@@ -85,27 +87,49 @@ export const useCreateOneRecord = <
     const mutationResponseField =
       getCreateOneRecordMutationResponseField(objectNameSingular);
 
-    const createdObject = await apolloClient.mutate({
-      mutation: createOneRecordMutation,
-      variables: {
-        input: sanitizedInput,
-      },
-      update: (cache, { data }) => {
-        const record = data?.[mutationResponseField];
+    const createdObject = await apolloClient
+      .mutate({
+        mutation: createOneRecordMutation,
+        variables: {
+          input: sanitizedInput,
+        },
+        update: (cache, { data }) => {
+          const record = data?.[mutationResponseField];
 
-        if (!record || skipPostOptmisticEffect) return;
+          if (!record || skipPostOptmisticEffect) return;
 
-        triggerCreateRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem,
-          recordsToCreate: [record],
+          triggerCreateRecordsOptimisticEffect({
+            cache,
+            objectMetadataItem,
+            recordsToCreate: [record],
+            objectMetadataItems,
+            shouldMatchRootQueryFilter,
+          });
+
+          setLoading(false);
+        },
+      })
+      .catch((error: Error) => {
+        if (!recordCreatedInCache) {
+          throw error;
+        }
+
+        deleteRecordFromCache({
           objectMetadataItems,
-          shouldMatchRootQueryFilter,
+          objectMetadataItem,
+          cache: apolloClient.cache,
+          recordToDelete: recordCreatedInCache,
         });
 
-        setLoading(false);
-      },
-    });
+        triggerDeleteRecordsOptimisticEffect({
+          cache: apolloClient.cache,
+          objectMetadataItem,
+          recordsToDelete: [recordCreatedInCache],
+          objectMetadataItems,
+        });
+
+        throw error;
+      });
 
     return createdObject.data?.[mutationResponseField] ?? null;
   };

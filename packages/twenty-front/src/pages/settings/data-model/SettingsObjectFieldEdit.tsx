@@ -5,12 +5,7 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  IconHierarchy2,
-} from 'twenty-ui';
+import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -186,7 +181,6 @@ export const SettingsObjectFieldEdit = () => {
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
-          Icon={IconHierarchy2}
           title={fieldMetadataItem?.label}
           links={[
             {
