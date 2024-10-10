@@ -1,10 +1,8 @@
-import { PAGES_REDIRECT_TO_APP } from '@/ui/navigation/bread-crumb/constants/PagesRedirectToApp';
+import { MobileBreadcrumb } from '@/ui/navigation/bread-crumb/components/MobileBreadcrumb';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Fragment, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { IconChevronLeft } from 'twenty-ui';
 
 export type BreadcrumbProps = {
   className?: string;
@@ -44,39 +42,9 @@ const StyledDivider = styled.span`
 
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
   const isMobile = useIsMobile();
-  const theme = useTheme();
 
   if (isMobile && links.length > 0) {
-    const currentPage = links[links.length - 1].children;
-    const previousLink = links[links.length - 2];
-    const shouldRedirectToApp =
-      typeof currentPage === 'string' &&
-      PAGES_REDIRECT_TO_APP.includes(currentPage);
-
-    const text =
-      typeof previousLink.children === 'string' ? previousLink.children : '';
-
-    return (
-      <StyledWrapper className={className}>
-        {shouldRedirectToApp ? (
-          <Fragment>
-            <IconChevronLeft size={theme.icon.size.md} />
-            <StyledLink title="Back to App" to="/">
-              Back to App
-            </StyledLink>
-          </Fragment>
-        ) : previousLink?.href ? (
-          <Fragment>
-            <IconChevronLeft size={theme.icon.size.md} />
-            <StyledLink title={text} to={previousLink.href}>
-              Back to {previousLink.children}
-            </StyledLink>
-          </Fragment>
-        ) : (
-          <StyledText title={text}>{previousLink?.children}</StyledText>
-        )}
-      </StyledWrapper>
-    );
+    <MobileBreadcrumb className={className} links={links} />;
   }
 
   return (
