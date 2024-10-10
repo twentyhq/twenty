@@ -17,7 +17,7 @@ import { IconSearch, IconSquareKey } from 'twenty-ui';
 import { SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 
 export const StyledObjectIndexTableRow = styled(TableRow)`
-  grid-template-columns: 280px 50px 100px;
+  grid-template-columns: 350px 70px 80px;
 `;
 
 const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectIndexesTableItem> =
