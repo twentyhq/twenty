@@ -17,7 +17,7 @@ Your turn 👇
 
 ////////////////////////////
 
-» 01-October-2024 by YOUR NAME
-» Link to Tweet: https://x.com/...
+» 10-October-2024 by Devansh Baghel
+» Link to Tweet: https://x.com/DevanshBaghel5/status/1844359648037748954
 
 ---
