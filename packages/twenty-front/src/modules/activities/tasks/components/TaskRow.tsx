@@ -8,27 +8,11 @@ import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
+import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useCompleteTask } from '../hooks/useCompleteTask';
-
-const StyledContainer = styled.div`
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  cursor: pointer;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(12)};
-  min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
-  max-width: calc(100% - ${({ theme }) => theme.spacing(8)});
-  padding: 0 ${({ theme }) => theme.spacing(4)};
-  overflow: hidden;
-  max-inline-size: 60px;
-  &:last-child {
-    border-bottom: 0;
-  }
-`;
 
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -105,7 +89,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
   });
 
   return (
-    <StyledContainer
+    <ActivityRow
       onClick={() => {
         openActivityRightDrawer(task.id);
       }}
@@ -150,6 +134,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
           </TaskTargetsContextProvider>
         )}
       </StyledRightSideContainer>
-    </StyledContainer>
+    </ActivityRow>
   );
 };

@@ -37,12 +37,12 @@ import {
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
-  flex: 1 0 0;
   flex-direction: column;
   height: 100%;
   justify-content: start;
   width: 100%;
-  position: relative;
+  height: 100%;
+  overflow: auto;
 `;
 
 const StyledTabListContainer = styled.div`
