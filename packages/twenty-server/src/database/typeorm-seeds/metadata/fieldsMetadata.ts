@@ -15,6 +15,7 @@ export const getDevSeedCompanyCustomFields = (
       icon: 'IconAdCircle',
       isActive: true,
       isNullable: false,
+      defaultValue: "''",
       objectMetadataId,
     },
     {
@@ -99,6 +100,13 @@ export const getDevSeedPeopleCustomFields = (
       icon: 'IconBrandWhatsapp',
       isActive: true,
       isNullable: false,
+      defaultValue: [
+        {
+          primaryPhoneNumber: '',
+          primaryPhoneCountryCode: '',
+          additionalPhones: {},
+        },
+      ],
       objectMetadataId,
     },
     {

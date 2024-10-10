@@ -1,15 +1,9 @@
-import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 import { WorkflowDiagramBaseStepNode } from '@/workflow/components/WorkflowDiagramBaseStepNode';
-import { useDeleteOneStep } from '@/workflow/hooks/useDeleteOneStep';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { IconCode, IconMail, IconPlaylistAdd, IconTrash } from 'twenty-ui';
+import { IconCode, IconMail, IconPlaylistAdd } from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -20,26 +14,14 @@ const StyledStepNodeLabelIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const WorkflowDiagramStepNode = ({
-  id,
+export const WorkflowDiagramStepNodeBase = ({
   data,
-  selected,
+  RightFloatingElement,
 }: {
-  id: string;
   data: WorkflowDiagramStepNodeData;
-  selected?: boolean;
+  RightFloatingElement?: React.ReactNode;
 }) => {
   const theme = useTheme();
-
-  const workflowId = useRecoilValue(workflowIdState);
-
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
-  assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
-
-  const { deleteOneStep } = useDeleteOneStep({
-    workflow: workflowWithCurrentVersion,
-    stepId: id,
-  });
 
   const renderStepIcon = () => {
     switch (data.nodeType) {
@@ -87,16 +69,7 @@ export const WorkflowDiagramStepNode = ({
       nodeType={data.nodeType}
       label={data.label}
       Icon={renderStepIcon()}
-      RightFloatingElement={
-        selected ? (
-          <FloatingIconButton
-            Icon={IconTrash}
-            onClick={() => {
-              return deleteOneStep();
-            }}
-          />
-        ) : undefined
-      }
+      RightFloatingElement={RightFloatingElement}
     />
   );
 };

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconCode, isDefined } from 'twenty-ui';
+import { H2Title, isDefined } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -64,7 +64,6 @@ export const SettingsDevelopersWebhooksNew = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconCode}
       title="New Webhook"
       links={[
         {

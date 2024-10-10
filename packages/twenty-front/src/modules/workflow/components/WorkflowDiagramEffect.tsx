@@ -1,6 +1,5 @@
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
 import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
@@ -13,21 +12,12 @@ import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-type WorkflowEffectProps = {
-  workflowId: string;
-  workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
-};
-
-export const WorkflowEffect = ({
-  workflowId,
+export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion,
-}: WorkflowEffectProps) => {
-  const setWorkflowId = useSetRecoilState(workflowIdState);
+}: {
+  workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
+}) => {
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
-
-  useEffect(() => {
-    setWorkflowId(workflowId);
-  }, [setWorkflowId, workflowId]);
 
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {

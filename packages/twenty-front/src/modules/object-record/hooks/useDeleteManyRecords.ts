@@ -1,10 +1,12 @@
 import { useApolloClient } from '@apollo/client';
 
+import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
@@ -65,38 +67,74 @@ export const useDeleteManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const deletedRecordsResponse = await apolloClient.mutate({
-        mutation: deleteManyRecordsMutation,
-        variables: {
-          filter: { id: { in: batchIds } },
-        },
-        optimisticResponse: options?.skipOptimisticEffect
-          ? undefined
-          : {
-              [mutationResponseField]: batchIds.map((idToDelete) => ({
-                __typename: capitalize(objectNameSingular),
-                id: idToDelete,
+      const deletedRecordsResponse = await apolloClient
+        .mutate({
+          mutation: deleteManyRecordsMutation,
+          variables: {
+            filter: { id: { in: batchIds } },
+          },
+          optimisticResponse: options?.skipOptimisticEffect
+            ? undefined
+            : {
+                [mutationResponseField]: batchIds.map((idToDelete) => ({
+                  __typename: capitalize(objectNameSingular),
+                  id: idToDelete,
+                })),
+              },
+          update: options?.skipOptimisticEffect
+            ? undefined
+            : (cache, { data }) => {
+                const records = data?.[mutationResponseField];
+
+                if (!records?.length) return;
+
+                const cachedRecords = records
+                  .map((record) => getRecordFromCache(record.id, cache))
+                  .filter(isDefined);
+
+                triggerDeleteRecordsOptimisticEffect({
+                  cache,
+                  objectMetadataItem,
+                  recordsToDelete: cachedRecords,
+                  objectMetadataItems,
+                });
+              },
+        })
+        .catch((error: Error) => {
+          const cachedRecords = batchIds.map((idToDelete) =>
+            getRecordFromCache(idToDelete, apolloClient.cache),
+          );
+
+          cachedRecords.forEach((cachedRecord) => {
+            if (!cachedRecord) {
+              return;
+            }
+
+            updateRecordFromCache({
+              objectMetadataItems,
+              objectMetadataItem,
+              cache: apolloClient.cache,
+              record: {
+                ...cachedRecord,
+                deletedAt: null,
+              },
+            });
+          });
+
+          triggerCreateRecordsOptimisticEffect({
+            cache: apolloClient.cache,
+            objectMetadataItem,
+            objectMetadataItems,
+            recordsToCreate: cachedRecords
+              .filter(isDefined)
+              .map((cachedRecord) => ({
+                ...cachedRecord,
+                deletedAt: null,
               })),
-            },
-        update: options?.skipOptimisticEffect
-          ? undefined
-          : (cache, { data }) => {
-              const records = data?.[mutationResponseField];
+          });
 
-              if (!records?.length) return;
-
-              const cachedRecords = records
-                .map((record) => getRecordFromCache(record.id, cache))
-                .filter(isDefined);
-
-              triggerDeleteRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToDelete: cachedRecords,
-                objectMetadataItems,
-              });
-            },
-      });
+          throw error;
+        });
 
       const deletedRecordsForThisBatch =
         deletedRecordsResponse.data?.[mutationResponseField] ?? [];
