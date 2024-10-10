@@ -3,7 +3,6 @@ import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinit
 import {
   FieldActorMetadata,
   FieldFullNameMetadata,
-  FieldLinkMetadata,
   FieldRatingMetadata,
   FieldSelectMetadata,
   FieldTextMetadata
@@ -64,18 +63,6 @@ export const fullNameFieldDefinition: FieldDefinition<FieldFullNameMetadata> = {
   metadata: {
     fieldName: 'displayName',
     placeHolder: 'Mr Miagi',
-  },
-};
-
-export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
-  fieldMetadataId,
-  label: 'LinkedIn URL',
-  iconName: 'url',
-  type: FieldMetadataType.Link,
-  defaultValue: { url: '', label: '' },
-  metadata: {
-    fieldName: 'linkedInURL',
-    placeHolder: 'https://linkedin.com/user',
   },
 };
 

@@ -12,7 +12,7 @@ import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useTriggerContextMenu } from '@/object-record/record-table/record-table-cell/hooks/useTriggerContextMenu';
+import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerActionMenuDropdown';
 import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -75,12 +75,15 @@ export const RecordTableContextProvider = ({
     moveSoftFocusToCell(cellPosition);
   };
 
-  const { triggerContextMenu } = useTriggerContextMenu({
+  const { triggerActionMenuDropdown } = useTriggerActionMenuDropdown({
     recordTableId,
   });
 
-  const handleContextMenu = (event: React.MouseEvent, recordId: string) => {
-    triggerContextMenu(event, recordId);
+  const handleActionMenuDropdown = (
+    event: React.MouseEvent,
+    recordId: string,
+  ) => {
+    triggerActionMenuDropdown(event, recordId);
   };
 
   const { handleContainerMouseEnter } = useHandleContainerMouseEnter({
@@ -99,7 +102,7 @@ export const RecordTableContextProvider = ({
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handleCloseTableCell,
         onMoveSoftFocusToCell: handleMoveSoftFocusToCell,
-        onContextMenu: handleContextMenu,
+        onActionMenuDropdownOpened: handleActionMenuDropdown,
         onCellMouseEnter: handleContainerMouseEnter,
         visibleTableColumns,
         recordTableId,

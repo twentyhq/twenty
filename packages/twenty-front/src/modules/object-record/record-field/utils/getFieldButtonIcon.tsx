@@ -11,9 +11,6 @@ import { isFieldRelation } from '@/object-record/record-field/types/guards/isFie
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
-import { isFieldEmail } from '../types/guards/isFieldEmail';
-import { isFieldLink } from '../types/guards/isFieldLink';
-import { isFieldPhone } from '../types/guards/isFieldPhone';
 
 export const getFieldButtonIcon = (
   fieldDefinition:
@@ -24,9 +21,6 @@ export const getFieldButtonIcon = (
   if (isUndefinedOrNull(fieldDefinition)) return undefined;
 
   if (
-    isFieldLink(fieldDefinition) ||
-    isFieldEmail(fieldDefinition) ||
-    isFieldPhone(fieldDefinition) ||
     isFieldDisplayedAsPhone(fieldDefinition) ||
     isFieldMultiSelect(fieldDefinition) ||
     (isFieldRelation(fieldDefinition) &&

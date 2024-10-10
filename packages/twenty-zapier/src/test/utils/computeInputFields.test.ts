@@ -1,5 +1,5 @@
 import { computeInputFields } from '../../utils/computeInputFields';
-import { InputField } from '../../utils/data.types';
+import { FieldMetadataType, InputField } from '../../utils/data.types';
 
 describe('computeInputFields', () => {
   test('should create Person input fields properly', () => {
@@ -11,7 +11,7 @@ describe('computeInputFields', () => {
         edges: [
           {
             node: {
-              type: 'RELATION',
+              type: FieldMetadataType.RELATION,
               name: 'favorites',
               label: 'Favorites',
               description: 'Favorites linked to the contact',
@@ -21,7 +21,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'CURRENCY',
+              type: FieldMetadataType.CURRENCY,
               name: 'annualSalary',
               label: 'Annual Salary',
               description: 'Annual Salary of the Person',
@@ -31,7 +31,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'TEXT',
+              type: FieldMetadataType.TEXT,
               name: 'jobTitle',
               label: 'Job Title',
               description: 'Contact’s job title',
@@ -43,7 +43,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'DATE_TIME',
+              type: FieldMetadataType.DATE_TIME,
               name: 'updatedAt',
               label: 'Update date',
               description: null,
@@ -55,7 +55,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'FULL_NAME',
+              type: FieldMetadataType.FULL_NAME,
               name: 'name',
               label: 'Name',
               description: 'Contact’s name',
@@ -68,7 +68,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'UUID',
+              type: FieldMetadataType.UUID,
               name: 'id',
               label: 'Id',
               description: null,
@@ -81,7 +81,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'NUMBER',
+              type: FieldMetadataType.NUMBER,
               name: 'recordPosition',
               label: 'RecordPosition',
               description: 'Record Position',
@@ -91,7 +91,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'LINK',
+              type: FieldMetadataType.LINK,
               name: 'xLink',
               label: 'X',
               description: 'Contact’s X/Twitter account',
@@ -101,7 +101,17 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'EMAIL',
+              type: FieldMetadataType.LINKS,
+              name: 'whatsapp',
+              label: 'Whatsapp',
+              description: 'Contact’s Whatsapp account',
+              isNullable: true,
+              defaultValue: null,
+            },
+          },
+          {
+            node: {
+              type: FieldMetadataType.EMAIL,
               name: 'email',
               label: 'Email',
               description: 'Contact’s Email',
@@ -113,7 +123,7 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'UUID',
+              type: FieldMetadataType.UUID,
               name: 'companyId',
               label: 'Company id (foreign key)',
               description: 'Contact’s company id foreign key',
@@ -188,6 +198,27 @@ describe('computeInputFields', () => {
         label: 'X: Label',
         type: 'string',
         helpText: 'Contact’s X/Twitter account: Link Label',
+        required: false,
+      },
+      {
+        key: 'whatsapp__url',
+        label: 'Whatsapp: Url',
+        type: 'string',
+        helpText: 'Contact’s Whatsapp account: Link Url',
+        required: false,
+      },
+      {
+        key: 'whatsapp__label',
+        label: 'Whatsapp: Label',
+        type: 'string',
+        helpText: 'Contact’s Whatsapp account: Link Label',
+        required: false,
+      },
+      {
+        key: 'whatsapp__secondaryLinks',
+        label: 'Whatsapp: Secondary Lings',
+        type: 'string',
+        helpText: 'Contact’s Whatsapp account: Link Label',
         required: false,
       },
       {

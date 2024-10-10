@@ -13,7 +13,6 @@ import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-type
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
-import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
@@ -27,13 +26,10 @@ import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisp
 import { CurrencyFieldDisplay } from '../meta-types/display/components/CurrencyFieldDisplay';
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
 import { DateTimeFieldDisplay } from '../meta-types/display/components/DateTimeFieldDisplay';
-import { EmailFieldDisplay } from '../meta-types/display/components/EmailFieldDisplay';
 import { FullNameFieldDisplay } from '../meta-types/display/components/FullNameFieldDisplay';
 import { JsonFieldDisplay } from '../meta-types/display/components/JsonFieldDisplay';
-import { LinkFieldDisplay } from '../meta-types/display/components/LinkFieldDisplay';
 import { MultiSelectFieldDisplay } from '../meta-types/display/components/MultiSelectFieldDisplay';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
-import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
 import { RelationToOneFieldDisplay } from '../meta-types/display/components/RelationToOneFieldDisplay';
 import { SelectFieldDisplay } from '../meta-types/display/components/SelectFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
@@ -42,12 +38,9 @@ import { isFieldAddress } from '../types/guards/isFieldAddress';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDateTime } from '../types/guards/isFieldDateTime';
-import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldFullName } from '../types/guards/isFieldFullName';
-import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldMultiSelect } from '../types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
-import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRawJson } from '../types/guards/isFieldRawJson';
 import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -67,23 +60,16 @@ export const FieldDisplay = () => {
     <RelationToOneFieldDisplay />
   ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
     <RelationFromManyFieldDisplay />
-  ) : isFieldPhone(fieldDefinition) ||
-    isFieldDisplayedAsPhone(fieldDefinition) ? (
-    <PhoneFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
     <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
     <UuidFieldDisplay />
-  ) : isFieldEmail(fieldDefinition) ? (
-    <EmailFieldDisplay />
   ) : isFieldDateTime(fieldDefinition) ? (
     <DateTimeFieldDisplay />
   ) : isFieldDate(fieldDefinition) ? (
     <DateFieldDisplay />
   ) : isFieldNumber(fieldDefinition) ? (
     <NumberFieldDisplay />
-  ) : isFieldLink(fieldDefinition) ? (
-    <LinkFieldDisplay />
   ) : isFieldLinks(fieldDefinition) ? (
     <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (

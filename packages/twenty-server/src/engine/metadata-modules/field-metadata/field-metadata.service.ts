@@ -145,20 +145,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.options = generateRatingOptions();
       }
 
-      if (fieldMetadataInput.type === FieldMetadataType.LINK) {
-        throw new FieldMetadataException(
-          '"Link" field types are being deprecated, please use Links type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      if (fieldMetadataInput.type === FieldMetadataType.EMAIL) {
-        throw new FieldMetadataException(
-          '"Email" field types are being deprecated, please use Emails type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
       const fieldMetadataForCreate = {
         id: v4(),
         createdAt: new Date(),
