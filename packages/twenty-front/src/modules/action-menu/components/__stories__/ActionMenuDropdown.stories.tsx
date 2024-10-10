@@ -33,23 +33,32 @@ const meta: Meta<typeof ActionMenuDropdown> = {
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
-            [
-              {
-                label: 'Delete',
-                Icon: IconTrash,
-                onClick: deleteMock,
-              },
-              {
-                label: 'Mark as done',
-                Icon: IconCheckbox,
-                onClick: markAsDoneMock,
-              },
-              {
-                label: 'Add to favorites',
-                Icon: IconHeart,
-                onClick: addToFavoritesMock,
-              },
-            ],
+            new Map([
+              [
+                'delete',
+                {
+                  label: 'Delete',
+                  Icon: IconTrash,
+                  onClick: deleteMock,
+                },
+              ],
+              [
+                'markAsDone',
+                {
+                  label: 'Mark as done',
+                  Icon: IconCheckbox,
+                  onClick: markAsDoneMock,
+                },
+              ],
+              [
+                'addToFavorites',
+                {
+                  label: 'Add to favorites',
+                  Icon: IconHeart,
+                  onClick: addToFavoritesMock,
+                },
+              ],
+            ]),
           );
           set(
             extractComponentState(

@@ -21,7 +21,11 @@ export const NonEmptyActionMenuEntriesEffect = ({
   );
 
   useEffect(() => {
-    setActionMenuEntries(availableActionsInContext);
+    setActionMenuEntries(
+      new Map(
+        availableActionsInContext.map((action) => [action.label, action]),
+      ),
+    );
   }, [availableActionsInContext, setActionMenuEntries]);
 
   return null;

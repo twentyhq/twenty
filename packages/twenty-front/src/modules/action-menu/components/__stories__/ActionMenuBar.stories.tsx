@@ -25,18 +25,24 @@ const meta: Meta<typeof ActionMenuBar> = {
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
-            [
-              {
-                label: 'Delete',
-                Icon: IconTrash,
-                onClick: deleteMock,
-              },
-              {
-                label: 'Mark as done',
-                Icon: IconCheckbox,
-                onClick: markAsDoneMock,
-              },
-            ],
+            new Map([
+              [
+                'delete',
+                {
+                  label: 'Delete',
+                  Icon: IconTrash,
+                  onClick: deleteMock,
+                },
+              ],
+              [
+                'markAsDone',
+                {
+                  label: 'Mark as done',
+                  Icon: IconCheckbox,
+                  onClick: markAsDoneMock,
+                },
+              ],
+            ]),
           );
           set(
             isBottomBarOpenedComponentState.atomFamily({

@@ -7,7 +7,7 @@ export const EmptyActionMenuEntriesEffect = () => {
     actionMenuEntriesComponentState,
   );
   useEffect(() => {
-    setActionMenuEntries([]);
+    setActionMenuEntries(new Map());
   }, [setActionMenuEntries]);
 
   return null;

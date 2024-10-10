@@ -3,9 +3,9 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 import { ActionMenuEntry } from '../types/ActionMenuEntry';
 
 export const actionMenuEntriesComponentState = createComponentStateV2<
-  ActionMenuEntry[]
+  Map<string, ActionMenuEntry>
 >({
   key: 'actionMenuEntriesComponentState',
-  defaultValue: [],
+  defaultValue: new Map(),
   componentInstanceContext: ActionMenuComponentInstanceContext,
 });
