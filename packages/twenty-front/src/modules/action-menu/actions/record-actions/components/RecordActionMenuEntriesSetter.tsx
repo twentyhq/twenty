@@ -1,5 +1,5 @@
-import { MultipleRecordsActions } from '@/action-menu/actions/record-actions/MultipleRecordsActions';
-import { SingleRecordActions } from '@/action-menu/actions/record-actions/SingleRecordActions';
+import { MultipleRecordsActions } from '@/action-menu/actions/record-actions/components/MultipleRecordsActions';
+import { SingleRecordActions } from '@/action-menu/actions/record-actions/components/SingleRecordActions';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useRecoilValue } from 'recoil';
 

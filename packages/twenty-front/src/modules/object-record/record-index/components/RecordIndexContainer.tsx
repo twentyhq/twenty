@@ -24,7 +24,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/RecordActionMenuEntriesSetter';
+import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';

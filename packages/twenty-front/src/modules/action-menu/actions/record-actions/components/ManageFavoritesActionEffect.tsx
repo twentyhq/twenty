@@ -40,7 +40,7 @@ export const ManageFavoritesActionEffect = () => {
   const isFavorite = !!selectedRecordId && !!foundFavorite;
 
   useEffect(() => {
-    if (!isDefined(objectMetadataItem)) {
+    if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
     }
 

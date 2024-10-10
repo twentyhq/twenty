@@ -1,7 +1,5 @@
-import { useHandleFavoriteButton } from '@/action-menu/hooks/useHandleFavoriteButton';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
@@ -10,16 +8,9 @@ import {
   useExportTableData,
 } from '@/object-record/record-index/options/hooks/useExportTableData';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconFileExport,
-  IconHeart,
-  IconHeartOff,
-  IconTrash,
-  isDefined,
-} from 'twenty-ui';
+import { IconFileExport, IconTrash, isDefined } from 'twenty-ui';
 
 export const useComputeActionsBasedOnContextStore = ({
   objectMetadataItem,
@@ -32,11 +23,6 @@ export const useComputeActionsBasedOnContextStore = ({
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
-
-  const { handleFavoriteButtonClick } = useHandleFavoriteButton(
-    contextStoreTargetedRecordIds,
-    objectMetadataItem,
-  );
 
   const baseTableDataParams = {
     delayMs: 100,
@@ -112,37 +98,7 @@ export const useComputeActionsBasedOnContextStore = ({
     ],
   );
 
-  const hasOnlyOneRecordSelected = contextStoreTargetedRecordIds.length === 1;
-
-  const { favorites } = useFavorites();
-
-  const isFavorite =
-    isNonEmptyString(contextStoreTargetedRecordIds[0]) &&
-    !!favorites?.find(
-      (favorite) => favorite.recordId === contextStoreTargetedRecordIds[0],
-    );
-
   return {
-    availableActionsInContext: [
-      ...menuActions,
-      ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
-        ? [
-            {
-              label: 'Remove from favorites',
-              Icon: IconHeartOff,
-              onClick: handleFavoriteButtonClick,
-            },
-          ]
-        : []),
-      ...(!isRemoteObject && !isFavorite && hasOnlyOneRecordSelected
-        ? [
-            {
-              label: 'Add to favorites',
-              Icon: IconHeart,
-              onClick: handleFavoriteButtonClick,
-            },
-          ]
-        : []),
-    ],
+    availableActionsInContext: [...menuActions],
   };
 };
