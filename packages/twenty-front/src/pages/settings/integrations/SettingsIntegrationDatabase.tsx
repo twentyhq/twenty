@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -42,7 +42,6 @@ export const SettingsIntegrationDatabase = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconSettings}
       title={integration.text}
       links={[
         {

@@ -1,5 +1,5 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { resolveNumberViewFilterValue } from '@/views/utils/view-filter-value/resolveNumberViewFilterValue';
 import {
@@ -8,7 +8,7 @@ import {
 } from './resolveDateViewFilterValue';
 
 type ResolvedFilterValue<
-  T extends FilterType,
+  T extends FilterableFieldType,
   O extends ViewFilterOperand,
 > = T extends 'DATE' | 'DATE_TIME'
   ? ResolvedDateViewFilterValue<O>
@@ -16,16 +16,16 @@ type ResolvedFilterValue<
     ? ReturnType<typeof resolveNumberViewFilterValue>
     : string;
 
-type PartialFilter<T extends FilterType, O extends ViewFilterOperand> = Pick<
-  Filter,
-  'value'
-> & {
+type PartialFilter<
+  T extends FilterableFieldType,
+  O extends ViewFilterOperand,
+> = Pick<Filter, 'value'> & {
   definition: { type: T };
   operand: O;
 };
 
 export const resolveFilterValue = <
-  T extends FilterType,
+  T extends FilterableFieldType,
   O extends ViewFilterOperand,
 >(
   filter: PartialFilter<T, O>,

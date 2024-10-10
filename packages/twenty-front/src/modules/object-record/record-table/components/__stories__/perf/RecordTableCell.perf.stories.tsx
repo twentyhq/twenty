@@ -21,7 +21,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
 
 const RelationFieldValueSetterEffect = () => {
@@ -70,7 +70,7 @@ const meta: Meta = {
               onMoveFocus: () => {},
               onCloseTableCell: () => {},
               onMoveSoftFocusToCell: () => {},
-              onContextMenu: () => {},
+              onActionMenuDropdownOpened: () => {},
               onCellMouseEnter: () => {},
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
               objectNameSingular:

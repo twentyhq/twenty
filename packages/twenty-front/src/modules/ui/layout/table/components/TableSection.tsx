@@ -1,8 +1,7 @@
-import { ReactNode, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ReactNode, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui';
-
 import { TableBody } from './TableBody';
 
 type TableSectionProps = {
@@ -28,7 +27,7 @@ const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
 `;
 
 const StyledSection = styled.div<{ isExpanded: boolean }>`
-  max-height: ${({ isExpanded }) => (isExpanded ? '1000px' : 0)};
+  max-height: ${({ isExpanded }) => (isExpanded ? 'fit-content' : 0)};
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   overflow: hidden;
   transition:

@@ -26,10 +26,10 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
+import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
-import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -121,7 +121,12 @@ export class WorkspaceMigrationRunnerService {
   ) {
     switch (tableMigration.action) {
       case WorkspaceMigrationTableActionType.CREATE:
-        await this.createTable(queryRunner, schemaName, tableMigration.name);
+        await this.createTable(
+          queryRunner,
+          schemaName,
+          tableMigration.name,
+          tableMigration.columns,
+        );
         break;
       case WorkspaceMigrationTableActionType.ALTER: {
         if (tableMigration.newName) {
@@ -244,15 +249,25 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
+    columns?: WorkspaceMigrationColumnAction[],
   ) {
     await queryRunner.createTable(
       new Table({
         name: tableName,
         schema: schemaName,
-        columns: customTableDefaultColumns(tableName),
+        columns: tableDefaultColumns(),
       }),
       true,
     );
+
+    if (columns && columns.length > 0) {
+      await this.handleColumnChanges(
+        queryRunner,
+        schemaName,
+        tableName,
+        columns,
+      );
+    }
 
     // Enable totalCount for the table
     await queryRunner.query(`

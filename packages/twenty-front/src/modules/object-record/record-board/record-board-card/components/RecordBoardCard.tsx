@@ -1,6 +1,9 @@
+import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
+import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import {
   FieldContext,
   RecordUpdateHook,
@@ -17,15 +20,16 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { AvatarChipVariant, IconEye } from 'twenty-ui';
+import { AvatarChipVariant, IconEye, IconEyeOff } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -162,7 +166,7 @@ export const RecordBoardCard = ({
   } = useRecordBoardStates();
   const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
 
-  const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
+  const [isCardExpanded, setIsCardExpanded] = useState(false);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] = useRecoilState(
     isRecordBoardCardSelectedFamilyState(recordId),
@@ -174,17 +178,27 @@ export const RecordBoardCard = ({
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const recordBoardId = useAvailableScopeIdOrThrow(
+    RecordBoardScopeInternalContext,
+  );
 
-  const handleContextMenu = (event: React.MouseEvent) => {
+  const setActionMenuDropdownPosition = useSetRecoilState(
+    extractComponentState(
+      actionMenuDropdownPositionComponentState,
+      `action-menu-dropdown-${recordBoardId}`,
+    ),
+  );
+
+  const { openActionMenuDropdown } = useActionMenu(recordBoardId);
+
+  const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsCurrentCardSelected(true);
-    setContextMenuPosition({
+    setActionMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
-    setContextMenuOpenState(true);
+    openActionMenuDropdown();
   };
 
   const PreventSelectOnClickContainer = ({
@@ -201,11 +215,11 @@ export const RecordBoardCard = ({
     </StyledFieldContainer>
   );
 
-  const onMouseLeaveBoard = () => {
-    if (isCompactModeActive) {
-      setIsCardInCompactMode(true);
+  const onMouseLeaveBoard = useDebouncedCallback(() => {
+    if (isCompactModeActive && isCardExpanded) {
+      setIsCardExpanded(false);
     }
-  };
+  }, 800);
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
@@ -234,7 +248,7 @@ export const RecordBoardCard = ({
   );
 
   return (
-    <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
+    <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
       {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
       <StyledBoardCard
         ref={cardRef}
@@ -285,11 +299,11 @@ export const RecordBoardCard = ({
               {isCompactModeActive && (
                 <StyledCompactIconContainer className="compact-icon-container">
                   <LightIconButton
-                    Icon={IconEye}
+                    Icon={isCardExpanded ? IconEyeOff : IconEye}
                     accent="tertiary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setIsCardInCompactMode(false);
+                      setIsCardExpanded((prev) => !prev);
                     }}
                   />
                 </StyledCompactIconContainer>
@@ -310,7 +324,7 @@ export const RecordBoardCard = ({
         </StyledBoardCardHeader>
 
         <AnimatedEaseInOut
-          isOpen={!isCardInCompactMode || !isCompactModeActive}
+          isOpen={isCardExpanded || !isCompactModeActive}
           initial={false}
         >
           <StyledBoardCardBody>

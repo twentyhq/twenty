@@ -54,11 +54,11 @@ export const SyncEmails = () => {
         ? CalendarChannelVisibility.ShareEverything
         : CalendarChannelVisibility.Metadata;
 
-    await triggerGoogleApisOAuth(
-      AppPath.Index,
-      visibility,
-      calendarChannelVisibility,
-    );
+    await triggerGoogleApisOAuth({
+      redirectLocation: AppPath.Index,
+      messageVisibility: visibility,
+      calendarVisibility: calendarChannelVisibility,
+    });
   };
 
   const continueWithoutSync = async () => {

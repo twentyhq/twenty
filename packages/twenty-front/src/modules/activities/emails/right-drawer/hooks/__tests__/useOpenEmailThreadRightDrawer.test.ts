@@ -1,5 +1,5 @@
-import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 
 import { useOpenEmailThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenEmailThreadRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';

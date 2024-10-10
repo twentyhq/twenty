@@ -1,10 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  mockedObjectMetadataItems,
-  mockedPersonObjectMetadataItem,
-} from '~/testing/mock-data/metadata';
+
 import { getPeopleMock } from '~/testing/mock-data/people';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getRecordNodeFromRecord } from '../getRecordNodeFromRecord';
 
 const peopleMock = getPeopleMock();
@@ -12,11 +10,18 @@ const peopleMock = getPeopleMock();
 describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
     // Given
-    const objectMetadataItems: ObjectMetadataItem[] = mockedObjectMetadataItems;
-    const objectMetadataItem: Pick<
-      ObjectMetadataItem,
-      'fields' | 'namePlural' | 'nameSingular'
-    > = mockedPersonObjectMetadataItem;
+    const objectMetadataItems: ObjectMetadataItem[] =
+      generatedMockObjectMetadataItems;
+    const objectMetadataItem:
+      | Pick<ObjectMetadataItem, 'fields' | 'namePlural' | 'nameSingular'>
+      | undefined = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'person',
+    );
+
+    if (!objectMetadataItem) {
+      throw new Error('Object metadata item not found');
+    }
+
     const recordGqlFields = {
       name: true,
       company: true,
@@ -47,11 +52,18 @@ describe('getRecordNodeFromRecord', () => {
 
   it('does not compute relation records cache references when `computeReferences` is false', () => {
     // Given
-    const objectMetadataItems: ObjectMetadataItem[] = mockedObjectMetadataItems;
-    const objectMetadataItem: Pick<
-      ObjectMetadataItem,
-      'fields' | 'namePlural' | 'nameSingular'
-    > = mockedPersonObjectMetadataItem;
+    const objectMetadataItems: ObjectMetadataItem[] =
+      generatedMockObjectMetadataItems;
+    const objectMetadataItem:
+      | Pick<ObjectMetadataItem, 'fields' | 'namePlural' | 'nameSingular'>
+      | undefined = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'person',
+    );
+
+    if (!objectMetadataItem) {
+      throw new Error('Object metadata item not found');
+    }
+
     const recordGqlFields = {
       name: true,
       company: true,

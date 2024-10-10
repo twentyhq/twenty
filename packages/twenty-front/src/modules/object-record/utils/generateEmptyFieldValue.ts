@@ -8,19 +8,11 @@ export const generateEmptyFieldValue = (
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>,
 ) => {
   switch (fieldMetadataItem.type) {
-    case FieldMetadataType.Email:
-    case FieldMetadataType.Phone:
     case FieldMetadataType.Text: {
       return '';
     }
     case FieldMetadataType.Emails: {
       return { primaryEmail: '', additionalEmails: null };
-    }
-    case FieldMetadataType.Link: {
-      return {
-        label: '',
-        url: '',
-      };
     }
     case FieldMetadataType.Links: {
       return { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: null };

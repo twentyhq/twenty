@@ -1,16 +1,13 @@
-import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider addTypename={false}>{children}</MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 // Split into tests for each new hook
 describe('useObjectMetadataItem', () => {
@@ -28,5 +25,16 @@ describe('useObjectMetadataItem', () => {
     const { objectMetadataItem } = result.current;
 
     expect(objectMetadataItem.id).toBe(opportunityObjectMetadata?.id);
+  });
+
+  it('should throw an error when invalid object name singular is provided', async () => {
+    expect(() =>
+      renderHook(
+        () => useObjectMetadataItem({ objectNameSingular: 'invalid-object' }),
+        {
+          wrapper: Wrapper,
+        },
+      ),
+    ).toThrow(ObjectMetadataItemNotFoundError);
   });
 });
