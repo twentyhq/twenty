@@ -76,7 +76,7 @@ export interface WorkspaceFieldMetadataArgs {
   readonly isNullable: boolean;
 
   /**
-   * Is nullable field.
+   * Is unique field.
    */
   readonly isUnique: boolean;
 

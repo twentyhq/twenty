@@ -104,6 +104,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
             : undefined,
           isArray: currentFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
           isNullable: currentFieldMetadata.isNullable ?? true,
+          isUnique: currentFieldMetadata.isUnique ?? false,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue,
           ),
@@ -114,6 +115,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
           enum: enumOptions,
           isArray: alteredFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
           isNullable: alteredFieldMetadata.isNullable ?? true,
+          isUnique: alteredFieldMetadata.isUnique ?? false,
           defaultValue: serializedDefaultValue,
         },
       },

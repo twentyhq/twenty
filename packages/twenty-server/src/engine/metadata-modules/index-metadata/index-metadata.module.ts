@@ -36,7 +36,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
             },
           },
           create: {
-            many: { disabled: true },
+            disabled: true,
           },
           update: { disabled: true },
           delete: { disabled: true },

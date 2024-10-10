@@ -189,17 +189,6 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
-export type CreateIndex = {
-  createdAt: Scalars['DateTime']['input'];
-  id: Scalars['UUID']['input'];
-  indexType: IndexType;
-  indexWhereClause?: InputMaybe<Scalars['String']['input']>;
-  isCustom?: InputMaybe<Scalars['Boolean']['input']>;
-  isUnique: Scalars['Boolean']['input'];
-  name: Scalars['String']['input'];
-  updatedAt: Scalars['DateTime']['input'];
-};
-
 export type CreateObjectInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -222,11 +211,6 @@ export type CreateOneAppTokenInput = {
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
-};
-
-export type CreateOneIndexInput = {
-  /** The record to create */
-  index: CreateIndex;
 };
 
 export type CreateOneObjectInput = {
@@ -486,7 +470,6 @@ export type Mutation = {
   checkoutSession: SessionEntity;
   createOneAppToken: AppToken;
   createOneField: Field;
-  createOneIndex: Index;
   createOneObject: Object;
   createOneRelation: Relation;
   createOneRemoteServer: RemoteServer;
@@ -582,11 +565,6 @@ export type MutationCreateOneAppTokenArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
-};
-
-
-export type MutationCreateOneIndexArgs = {
-  input: CreateOneIndexInput;
 };
 
 

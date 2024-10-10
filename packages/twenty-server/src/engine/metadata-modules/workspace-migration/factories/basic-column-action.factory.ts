@@ -49,6 +49,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
         isArray: fieldMetadata.type === FieldMetadataType.ARRAY,
         isNullable: fieldMetadata.isNullable ?? true,
+        isUnique: fieldMetadata.isUnique ?? false,
         defaultValue: serializedDefaultValue,
       },
     ];
