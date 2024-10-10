@@ -17,7 +17,7 @@ Your turn 👇
 
 ////////////////////////////
 
-» 01-October-2024 by YOUR NAME
-» Link to Tweet: https://x.com/...
+» 10-October-2024 by Teddy ASSIH
+» Link to Tweet: https://x.com/ion_finisher/status/1844389252253299173
 
 ---
