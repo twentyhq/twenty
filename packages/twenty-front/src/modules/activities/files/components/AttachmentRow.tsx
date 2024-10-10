@@ -13,7 +13,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { IconCalendar } from 'twenty-ui';
+import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
@@ -27,14 +27,19 @@ const StyledRow = styled.div`
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(2)};
   height: 32px;
-  gap: ${({ theme }) => theme.spacing(3)};
+
+  width: calc(100% - ${({ theme }) => theme.spacing(4)});
+  overflow: auto;
 `;
 
 const StyledLeftContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
-  flex-grow: 1;
+
+  width: 100%;
+  overflow: auto;
+  flex: 1;
 `;
 
 const StyledRightContent = styled.div`
@@ -54,12 +59,17 @@ const StyledLink = styled.a`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   text-decoration: none;
-  width: 0;
-  flex-grow: 1;
-  overflow: auto;
+
+  width: 100%;
+
   :hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
+`;
+
+const StyledLinkContainer = styled.div`
+  overflow: auto;
+  width: 100%;
 `;
 
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
@@ -114,12 +124,14 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
               fullWidth
             />
           ) : (
-            <StyledLink
-              href={getFileAbsoluteURI(attachment.fullPath)}
-              target="__blank"
-            >
-              {attachment.name}
-            </StyledLink>
+            <StyledLinkContainer>
+              <StyledLink
+                href={getFileAbsoluteURI(attachment.fullPath)}
+                target="__blank"
+              >
+                <OverflowingTextWithTooltip text={attachment.name} />
+              </StyledLink>
+            </StyledLinkContainer>
           )}
         </StyledLeftContent>
         <StyledRightContent>

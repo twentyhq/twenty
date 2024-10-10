@@ -22,6 +22,9 @@ const StyledContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(2, 6, 6)};
+
+  width: calc(100% - ${({ theme }) => theme.spacing(12)});
+
   height: 100%;
 `;
 
@@ -53,12 +56,17 @@ const StyledAttachmentContainer = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
-  width: 100%;
+
+  width: calc(100% - 2px);
+
+  overflow: auto;
 `;
 
 const StyledDropZoneContainer = styled.div`
   height: 100%;
   width: 100%;
+
+  overflow: auto;
 `;
 
 export const AttachmentList = ({

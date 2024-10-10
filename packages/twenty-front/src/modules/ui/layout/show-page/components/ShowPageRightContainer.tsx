@@ -28,11 +28,11 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
-  flex: 1 0 0;
   flex-direction: column;
   justify-content: start;
   width: 100%;
   height: 100%;
+  overflow: auto;
 `;
 
 const StyledTabListContainer = styled.div`
