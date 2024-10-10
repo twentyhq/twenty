@@ -1,5 +1,5 @@
-**Side Quest**: Create a bug report
-**Points**: 50-150 points
+**Side Quest**: Create a bug report.
+**Points**: 50-150 Points
 **Proof**: Add a link to your bug report in the list below.
 
 Please follow the following schema:
