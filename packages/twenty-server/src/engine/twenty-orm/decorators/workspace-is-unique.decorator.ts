@@ -1,7 +1,5 @@
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { getColumnsForIndex } from 'src/engine/twenty-orm/utils/get-default-columns-for-index.util';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -17,17 +15,10 @@ export function WorkspaceIsUnique(): PropertyDecorator {
       propertyKey.toString(),
     );
 
-    const additionalDefaultColumnsForIndex = getColumnsForIndex(
-      IndexType.BTREE,
-    );
-
-    const columns = [
-      propertyKey.toString(),
-      ...additionalDefaultColumnsForIndex,
-    ];
+    const columns = [propertyKey.toString()];
 
     metadataArgsStorage.addIndexes({
-      name: `IDX_${generateDeterministicIndexName([
+      name: `IDX_UNIQUE_${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.constructor.name),
         ...columns,
       ])}`,
@@ -35,7 +26,16 @@ export function WorkspaceIsUnique(): PropertyDecorator {
       target: target.constructor,
       gate,
       isUnique: true,
-      whereClause: '"deletedAt" IS NULL AND "domainNamePrimaryLinkUrl" != \'\'',
+      whereClause: `"deletedAt" IS NULL AND "${propertyKey.toString}" != ''`,
     });
+
+    return (object, propertyKey) => {
+      TypedReflect.defineMetadata(
+        'workspace:is-unique-metadata-args',
+        true,
+        object,
+        propertyKey.toString(),
+      );
+    };
   };
 }

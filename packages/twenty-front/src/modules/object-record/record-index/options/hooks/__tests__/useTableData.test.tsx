@@ -282,7 +282,7 @@ describe('useTableData', () => {
                   displayAsRelativeDate: true,
                 },
               },
-              position: 17,
+              position: 9,
               settings: {
                 displayAsRelativeDate: true,
               },

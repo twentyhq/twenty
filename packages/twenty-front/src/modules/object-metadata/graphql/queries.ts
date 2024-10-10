@@ -61,6 +61,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                 isActive
                 isSystem
                 isNullable
+                isUnique
                 createdAt
                 updatedAt
                 defaultValue

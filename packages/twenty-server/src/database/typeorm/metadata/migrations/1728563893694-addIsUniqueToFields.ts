@@ -1,13 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddWhereToIndexMetadata1726766871572
-  implements MigrationInterface
-{
-  name = 'AddWhereToIndexMetadata1726766871572';
+export class AddIsUniqueToFields1728563893694 implements MigrationInterface {
+  name = 'AddIsUniqueToFields1728563893694';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."indexMetadata" ADD "indexWhereClause" text`,
+      `ALTER TABLE "metadata"."fieldMetadata" ADD "isUnique" boolean DEFAULT false`,
     );
   }
 

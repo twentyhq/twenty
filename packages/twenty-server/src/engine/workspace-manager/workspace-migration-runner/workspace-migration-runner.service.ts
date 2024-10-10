@@ -407,6 +407,7 @@ export class WorkspaceMigrationRunnerService {
         enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
+        isUnique: migrationColumn.isUnique,
         asExpression: migrationColumn.asExpression,
         generatedType: migrationColumn.generatedType,
       }),
@@ -462,6 +463,7 @@ export class WorkspaceMigrationRunnerService {
         ),
         isArray: migrationColumn.currentColumnDefinition.isArray,
         isNullable: migrationColumn.currentColumnDefinition.isNullable,
+        isUnique: migrationColumn.currentColumnDefinition.isUnique,
       }),
       new TableColumn({
         name: migrationColumn.alteredColumnDefinition.columnName,
@@ -472,6 +474,7 @@ export class WorkspaceMigrationRunnerService {
         ),
         isArray: migrationColumn.alteredColumnDefinition.isArray,
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
+        isUnique: migrationColumn.alteredColumnDefinition.isUnique,
       }),
     );
   }
