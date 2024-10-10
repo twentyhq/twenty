@@ -11,7 +11,6 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelPlural
       description
       icon
-      isCustom
       isActive
       createdAt
       updatedAt
@@ -69,7 +68,6 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      isCustom
       isActive
       isNullable
       createdAt

@@ -42,6 +42,7 @@ export const useUpdateOneFieldMetadataItem = () => {
         idToUpdate: fieldMetadataIdToUpdate,
         updatePayload: {
           ...updatePayload,
+          isCustom:false,
           label: updatePayload.label ?? undefined,
         },
       },

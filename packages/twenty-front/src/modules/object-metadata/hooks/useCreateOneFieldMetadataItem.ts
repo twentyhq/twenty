@@ -26,7 +26,10 @@ export const useCreateOneFieldMetadataItem = () => {
     return await mutate({
       variables: {
         input: {
-          field: input,
+          field: {
+            ...input,
+            isCustom:true
+          },
         },
       },
       awaitRefetchQueries: true,
