@@ -408,17 +408,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const fieldMetadataForUpdate = {
         ...updatableFieldInput,
-        defaultValue:
-          // Todo: we handle default value for all field types.
-          ![
-            FieldMetadataType.SELECT,
-            FieldMetadataType.MULTI_SELECT,
-            FieldMetadataType.BOOLEAN,
-          ].includes(existingFieldMetadata.type)
-            ? existingFieldMetadata.defaultValue
-            : updatableFieldInput.defaultValue !== null
-              ? updatableFieldInput.defaultValue
-              : null,
+        defaultValue: isDefined(updatableFieldInput.defaultValue)
+          ? updatableFieldInput.defaultValue
+          : existingFieldMetadata.defaultValue,
       };
 
       this.validateFieldMetadataInput<UpdateFieldInput>(
@@ -752,7 +744,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    if (!fieldMetadataInput.isNullable) {
+    if (fieldMetadataInput.isNullable === false) {
       if (!isDefined(fieldMetadataInput.defaultValue)) {
         throw new FieldMetadataException(
           'Default value is required for non nullable fields',
