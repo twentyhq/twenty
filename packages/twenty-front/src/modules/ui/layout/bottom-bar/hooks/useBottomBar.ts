@@ -15,7 +15,6 @@ export const useBottomBar = () => {
   const closeBottomBar = useRecoilCallback(
     ({ set }) =>
       (specificComponentId: string) => {
-        console.log('closeBottomBar', specificComponentId);
         goBackToPreviousHotkeyScope();
         set(
           isBottomBarOpenedComponentState.atomFamily({
@@ -30,7 +29,6 @@ export const useBottomBar = () => {
   const openBottomBar = useRecoilCallback(
     ({ set, snapshot }) =>
       (specificComponentId: string, customHotkeyScope?: HotkeyScope) => {
-        console.log('openBottomBar', specificComponentId);
         const bottomBarHotkeyScope = snapshot
           .getLoadable(
             bottomBarHotkeyComponentState.atomFamily({
