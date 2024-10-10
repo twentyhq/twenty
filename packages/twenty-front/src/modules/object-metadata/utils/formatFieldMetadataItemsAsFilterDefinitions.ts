@@ -66,8 +66,6 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'DATE_TIME';
     case FieldMetadataType.Date:
       return 'DATE';
-    case FieldMetadataType.Link:
-      return 'LINK';
     case FieldMetadataType.Links:
       return 'LINKS';
     case FieldMetadataType.FullName:

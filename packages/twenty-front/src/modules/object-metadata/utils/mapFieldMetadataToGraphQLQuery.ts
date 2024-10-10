@@ -95,14 +95,6 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
-  if (fieldType === FieldMetadataType.Link) {
-    return `${field.name}
-{
-  label
-  url
-}`;
-  }
-
   if (fieldType === FieldMetadataType.Links) {
     return `${field.name}
 {
