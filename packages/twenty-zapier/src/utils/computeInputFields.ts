@@ -5,8 +5,12 @@ import {
   NodeField,
 } from '../utils/data.types';
 
+const getListFromFieldMetadataType = (fieldMetadataType: FieldMetadataType) => {
+  return fieldMetadataType === FieldMetadataType.ARRAY;
+};
+
 const getTypeFromFieldMetadataType = (
-  fieldMetadataType: string,
+  fieldMetadataType: FieldMetadataType,
 ): string | undefined => {
   switch (fieldMetadataType) {
     case FieldMetadataType.UUID:
@@ -15,6 +19,7 @@ const getTypeFromFieldMetadataType = (
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.LINK:
+    case FieldMetadataType.ARRAY:
     case FieldMetadataType.RATING:
       return 'string';
     case FieldMetadataType.DATE_TIME:
@@ -160,7 +165,17 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         isNullable: true,
         defaultValue: null,
       };
-      return [primaryPhoneNumber, primaryPhoneCountryCode];
+      const additionalPhones: NodeField = {
+        type: FieldMetadataType.TEXT,
+        name: 'additionalPhones',
+        label: 'Additional Phones',
+        description: 'Additional Phones',
+        isNullable: true,
+        defaultValue: null,
+        placeholder: '{ number: "", countryCode: "" }',
+        list: true,
+      };
+      return [primaryPhoneNumber, primaryPhoneCountryCode, additionalPhones];
     }
     case FieldMetadataType.EMAILS: {
       const primaryEmail: NodeField = {
@@ -171,7 +186,16 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         isNullable: true,
         defaultValue: null,
       };
-      return [primaryEmail];
+      const additionalEmails: NodeField = {
+        type: FieldMetadataType.TEXT,
+        name: 'additionalEmails',
+        label: 'Additional Emails',
+        description: 'Additional Emails',
+        list: true,
+        isNullable: true,
+        defaultValue: null,
+      };
+      return [primaryEmail, additionalEmails];
     }
     case FieldMetadataType.LINKS: {
       const primaryLinkLabel: NodeField = {
@@ -190,7 +214,17 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         isNullable: true,
         defaultValue: null,
       };
-      return [primaryLinkLabel, primaryLinkUrl];
+      const secondaryLinks: NodeField = {
+        type: FieldMetadataType.TEXT,
+        name: 'secondaryLinks',
+        label: 'Secondary Links',
+        description: 'Secondary Links',
+        isNullable: true,
+        defaultValue: null,
+        placeholder: '{ url: "", label: "" }',
+        list: true,
+      };
+      return [primaryLinkLabel, primaryLinkUrl, secondaryLinks];
     }
     default:
       throw new Error(`Unknown nodeField type: ${nodeField.type}`);
@@ -223,6 +257,8 @@ export const computeInputFields = (
             type: getTypeFromFieldMetadataType(subNodeField.type),
             helpText: `${nodeField.description}: ${subNodeField.description}`,
             required: isFieldRequired(subNodeField),
+            list: !!subNodeField.list,
+            placeholder: subNodeField.placeholder,
           } as InputField;
           result.push(field);
         }
@@ -238,6 +274,7 @@ export const computeInputFields = (
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC:
       case FieldMetadataType.POSITION:
+      case FieldMetadataType.ARRAY:
       case FieldMetadataType.RATING: {
         const nodeFieldType = getTypeFromFieldMetadataType(nodeField.type);
         if (!nodeFieldType) {
@@ -252,6 +289,7 @@ export const computeInputFields = (
           type: nodeFieldType,
           helpText: nodeField.description,
           required,
+          list: getListFromFieldMetadataType(nodeField.type),
         };
         result.push(field);
         break;

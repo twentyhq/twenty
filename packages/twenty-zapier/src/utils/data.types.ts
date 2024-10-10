@@ -3,12 +3,14 @@ export type InputData = { [x: string]: any };
 export type ObjectData = { id: string } | { [x: string]: any };
 
 export type NodeField = {
-  type: string;
+  type: FieldMetadataType;
   name: string;
   label: string;
   description: string | null;
   isNullable: boolean;
   defaultValue: object | null;
+  list?: boolean;
+  placeholder?: string;
 };
 
 export type Node = {
@@ -28,6 +30,8 @@ export type InputField = {
   type: string;
   helpText: string | null;
   required: boolean;
+  list?: boolean;
+  placeholder?: string;
 };
 
 export enum FieldMetadataType {
@@ -51,10 +55,14 @@ export enum FieldMetadataType {
   MULTI_SELECT = 'MULTI_SELECT',
   POSITION = 'POSITION',
   ADDRESS = 'ADDRESS',
-  RAW_JSON = 'RAW_JSON',
   RICH_TEXT = 'RICH_TEXT',
-  ACTOR = 'ACTOR',
   ARRAY = 'ARRAY',
+
+  // Ignored fieldTypes
+  RELATION = 'RELATION',
+  RAW_JSON = 'RAW_JSON',
+  ACTOR = 'ACTOR',
+  TS_VECTOR = 'TS_VECTOR',
 }
 
 export type Schema = {
