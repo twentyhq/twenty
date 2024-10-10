@@ -1,3 +1,4 @@
+import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
@@ -17,20 +18,6 @@ import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
-
-const StyledRow = styled.div`
-  align-items: center;
-  align-self: stretch;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)};
-  height: 32px;
-
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
-  overflow: auto;
-`;
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -112,7 +99,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
 
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
-      <StyledRow>
+      <ActivityRow disabled>
         <StyledLeftContent>
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
@@ -148,7 +135,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             onRename={handleRename}
           />
         </StyledRightContent>
-      </StyledRow>
+      </ActivityRow>
     </FieldContext.Provider>
   );
 };

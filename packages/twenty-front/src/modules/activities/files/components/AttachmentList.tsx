@@ -6,6 +6,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { Attachment } from '@/activities/files/types/Attachment';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
+import { ActivityList } from '@/activities/components/ActivityList';
 import { AttachmentRow } from './AttachmentRow';
 
 type AttachmentListProps = {
@@ -47,21 +48,6 @@ const StyledCount = styled.span`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledAttachmentContainer = styled.div`
-  align-items: flex-start;
-  align-self: stretch;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-
-  width: calc(100% - 2px);
-
-  overflow: auto;
-`;
-
 const StyledDropZoneContainer = styled.div`
   height: 100%;
   width: 100%;
@@ -99,11 +85,11 @@ export const AttachmentList = ({
                 onUploadFile={onUploadFile}
               />
             ) : (
-              <StyledAttachmentContainer>
+              <ActivityList>
                 {attachments.map((attachment) => (
                   <AttachmentRow key={attachment.id} attachment={attachment} />
                 ))}
-              </StyledAttachmentContainer>
+              </ActivityList>
             )}
           </StyledDropZoneContainer>
         </StyledContainer>
