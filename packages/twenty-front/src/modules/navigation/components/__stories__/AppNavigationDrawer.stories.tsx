@@ -1,16 +1,17 @@
+import { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { AppPath } from '@/types/AppPath';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
+
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import {
   AppNavigationDrawer,
   AppNavigationDrawerProps,
@@ -22,8 +23,8 @@ const MobileNavigationDrawerStateSetterEffect = ({
   mobileNavigationDrawer?: 'main' | 'settings';
 }) => {
   const isMobile = useIsMobile();
-  const setIsNavigationDrawerOpen = useSetRecoilState(
-    isNavigationDrawerOpenState,
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
+    isNavigationDrawerExpandedState,
   );
   const setCurrentMobileNavigationDrawer = useSetRecoilState(
     currentMobileNavigationDrawerState,
@@ -32,13 +33,13 @@ const MobileNavigationDrawerStateSetterEffect = ({
   useEffect(() => {
     if (!isMobile) return;
 
-    setIsNavigationDrawerOpen(true);
+    setIsNavigationDrawerExpanded(true);
     setCurrentMobileNavigationDrawer(mobileNavigationDrawer);
   }, [
     isMobile,
     mobileNavigationDrawer,
     setCurrentMobileNavigationDrawer,
-    setIsNavigationDrawerOpen,
+    setIsNavigationDrawerExpanded,
   ]);
 
   return null;

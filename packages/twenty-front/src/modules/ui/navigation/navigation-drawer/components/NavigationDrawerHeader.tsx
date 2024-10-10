@@ -7,6 +7,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
@@ -57,6 +58,9 @@ export const NavigationDrawerHeader = ({
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
   const isMultiWorkspace = workspaces !== null && workspaces.length > 1;
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
 
   return (
     <StyledContainer isMultiWorkspace={isMultiWorkspace}>
@@ -67,11 +71,11 @@ export const NavigationDrawerHeader = ({
           <StyledLogo
             logo={isNonEmptyString(logo) ? logo : DEFAULT_WORKSPACE_LOGO}
           />
-          <StyledName>{name}</StyledName>
+          {isNavigationDrawerExpanded && <StyledName>{name}</StyledName>}
         </>
       )}
 
-      {!isMobile && (
+      {!isMobile && isNavigationDrawerExpanded && (
         <StyledNavigationDrawerCollapseButton
           direction="left"
           show={showCollapseButton}
