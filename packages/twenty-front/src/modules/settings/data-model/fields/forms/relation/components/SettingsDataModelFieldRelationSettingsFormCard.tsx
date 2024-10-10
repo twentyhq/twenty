@@ -75,6 +75,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
   const relationType = watchFormValue('relation.type', initialRelationType);
   const relationTypeConfig = RELATION_TYPES[relationType];
 
+  console.log("relationTypeConfig.imageSrc",initialRelationFieldMetadataItem)
   return (
     <SettingsDataModelPreviewFormCard
       preview={
