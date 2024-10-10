@@ -13,7 +13,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
-import { IconApps, IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
+import { IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText, setSearchText] = useState('');
@@ -96,15 +96,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
         }
       />
       <DropdownMenuItemsContainer>
-        <MenuItem
-          key={`select-filter-${-1}`}
-          testId={`select-filter-${-1}`}
-          onClick={() => {
-            handleSelectFilter(objectFilterDropdownFirstLevelFilterDefinition);
-          }}
-          LeftIcon={IconApps}
-          text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
-        />
         {options.map((subFieldName, index) => (
           <MenuItem
             key={`select-filter-${index}`}
