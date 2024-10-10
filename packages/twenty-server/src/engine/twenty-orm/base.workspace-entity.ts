@@ -55,5 +55,5 @@ export abstract class BaseWorkspaceEntity {
     },
   })
   @WorkspaceIsNullable()
-  deletedAt?: string | null;
+  deletedAt: string | null;
 }

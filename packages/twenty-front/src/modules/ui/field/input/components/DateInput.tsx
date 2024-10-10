@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRef, useState } from 'react';
 import { Nullable } from 'twenty-ui';
 
 import {
@@ -16,9 +16,6 @@ const StyledCalendarContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  top: 0;
-
-  position: absolute;
 `;
 
 export type DateInputProps = {

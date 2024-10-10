@@ -4,8 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { workspaceColumnActionFactories } from 'src/engine/metadata-modules/workspace-migration/factories/factories';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 
-import { WorkspaceMigrationService } from './workspace-migration.service';
 import { WorkspaceMigrationEntity } from './workspace-migration.entity';
+import { WorkspaceMigrationService } from './workspace-migration.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([WorkspaceMigrationEntity], 'metadata')],
@@ -14,6 +14,10 @@ import { WorkspaceMigrationEntity } from './workspace-migration.entity';
     WorkspaceMigrationFactory,
     WorkspaceMigrationService,
   ],
-  exports: [WorkspaceMigrationFactory, WorkspaceMigrationService],
+  exports: [
+    ...workspaceColumnActionFactories,
+    WorkspaceMigrationFactory,
+    WorkspaceMigrationService,
+  ],
 })
 export class WorkspaceMigrationModule {}

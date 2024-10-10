@@ -1,3 +1,4 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, ReactNode, useRef } from 'react';
@@ -60,11 +61,12 @@ const StyledTitle = styled.div<{ isMobile: boolean }>`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
-  width: ${({ isMobile }) => (isMobile ? '' : '100%')};
+  max-width: 90%;
 `;
 
-const StyledAvatarWrapper = styled.div`
-  cursor: pointer;
+const StyledAvatarWrapper = styled.div<{ isAvatarEditable: boolean }>`
+  cursor: ${({ isAvatarEditable }) =>
+    isAvatarEditable ? 'pointer' : 'default'};
 `;
 
 const StyledFileInput = styled.input`
@@ -87,9 +89,9 @@ const StyledShowPageSummaryCardSkeletonLoader = () => {
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={40} height={40} />
+      <Skeleton width={40} height={SKELETON_LOADER_HEIGHT_SIZES.standard.xl} />
       <StyledSubSkeleton>
-        <Skeleton width={96} height={16} />
+        <Skeleton width={96} height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
       </StyledSubSkeleton>
     </SkeletonTheme>
   );
@@ -130,7 +132,7 @@ export const ShowPageSummaryCard = ({
 
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
-      <StyledAvatarWrapper>
+      <StyledAvatarWrapper isAvatarEditable={!!onUploadPicture}>
         <Avatar
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}

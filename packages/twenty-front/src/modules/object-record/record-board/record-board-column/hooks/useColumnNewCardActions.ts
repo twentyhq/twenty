@@ -12,7 +12,8 @@ export const useColumnNewCardActions = (columnId: string) => {
     (field) => field.isLabelIdentifier,
   );
 
-  const { handleAddNewCardClick, handleCreateSuccess } = useAddNewCard();
+  const { handleAddNewCardClick, handleCreateSuccess, handleEntitySelect } =
+    useAddNewCard();
 
   const newRecord = useRecoilValue(
     recordBoardNewRecordByColumnIdSelector({
@@ -21,11 +22,15 @@ export const useColumnNewCardActions = (columnId: string) => {
     }),
   );
 
-  const handleNewButtonClick = (position: 'first' | 'last') => {
+  const handleNewButtonClick = (
+    position: 'first' | 'last',
+    isOpportunity: boolean,
+  ) => {
     handleAddNewCardClick(
       labelIdentifierField?.label ?? '',
       '',
       position,
+      isOpportunity,
       columnId,
     );
   };
@@ -34,5 +39,6 @@ export const useColumnNewCardActions = (columnId: string) => {
     newRecord,
     handleNewButtonClick,
     handleCreateSuccess,
+    handleEntitySelect,
   };
 };
