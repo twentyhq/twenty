@@ -290,6 +290,7 @@ export const computeInputFields = (
           helpText: nodeField.description,
           required,
           list: getListFromFieldMetadataType(nodeField.type),
+          placeholder: undefined,
         };
         result.push(field);
         break;
