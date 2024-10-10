@@ -159,14 +159,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      this.validateFieldMetadataInput<CreateFieldInput>(
-        fieldMetadataInput.type,
-        fieldMetadataInput,
-        objectMetadata,
-      );
-
-      console.time('createOne save');
-      const createdFieldMetadata = await fieldMetadataRepository.save({
+      const fieldMetadataForCreate = {
         id: v4(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -187,7 +180,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           : undefined,
         isActive: true,
         isCustom: true,
-      });
+      };
+
+      this.validateFieldMetadataInput<CreateFieldInput>(
+        fieldMetadataForCreate.type,
+        fieldMetadataForCreate,
+        objectMetadata,
+      );
+
+      console.time('createOne save');
+      const createdFieldMetadata = await fieldMetadataRepository.save(
+        fieldMetadataForCreate,
+      );
 
       console.timeEnd('createOne save');
 
@@ -394,12 +398,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         }
       }
 
-      this.validateFieldMetadataInput<UpdateFieldInput>(
-        existingFieldMetadata.type,
-        fieldMetadataInput,
-        objectMetadata,
-      );
-
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
           ? this.buildUpdatableStandardFieldInput(
@@ -408,8 +406,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             )
           : fieldMetadataInput;
 
-      // We're running field update under a transaction, so we can rollback if migration fails
-      await fieldMetadataRepository.update(id, {
+      const fieldMetadataForUpdate = {
         ...updatableFieldInput,
         defaultValue:
           // Todo: we handle default value for all field types.
@@ -422,7 +419,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             : updatableFieldInput.defaultValue !== null
               ? updatableFieldInput.defaultValue
               : null,
-      });
+      };
+
+      this.validateFieldMetadataInput<UpdateFieldInput>(
+        existingFieldMetadata.type,
+        fieldMetadataForUpdate,
+        objectMetadata,
+      );
+
+      // We're running field update under a transaction, so we can rollback if migration fails
+      await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
 
       const updatedFieldMetadata = await fieldMetadataRepository.findOne({
         where: { id },
