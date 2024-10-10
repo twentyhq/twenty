@@ -126,7 +126,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       throw new Error('Invalid invitation token');
     }
 
-    if (appToken.context?.email !== email) {
+    if (!appToken.context?.email && appToken.context?.email !== email) {
       throw new Error('Email does not match the invitation');
     }
 

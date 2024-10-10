@@ -41,6 +41,7 @@ import { WorkflowTriggerApiModule } from 'src/engine/core-modules/workflow/workf
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -62,6 +63,7 @@ import { FileModule } from './file/file.module';
     UserModule,
     WorkspaceModule,
     WorkspaceInvitationModule,
+    WorkspaceSSOModule,
     AISQLQueryModule,
     PostgresCredentialsModule,
     WorkflowTriggerApiModule,
@@ -119,6 +121,7 @@ import { FileModule } from './file/file.module';
     UserModule,
     WorkspaceModule,
     WorkspaceInvitationModule,
+    WorkspaceSSOModule,
   ],
 })
 export class CoreEngineModule {}
