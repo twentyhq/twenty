@@ -46,16 +46,6 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           },
         } as ColumnDefinition<any>,
         {
-          fieldMetadataId: '2',
-          iconName: 'Icon123',
-          label: 'Email',
-          type: FieldMetadataType.Email,
-          isVisible: true,
-          metadata: {
-            fieldName: 'email',
-          },
-        } as ColumnDefinition<any>,
-        {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
@@ -83,12 +73,6 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           iconName: 'IconUser',
           label: 'Text',
           type: FieldMetadataType.Text,
-        },
-        {
-          fieldMetadataId: '2',
-          iconName: 'Icon123',
-          label: 'Email',
-          type: FieldMetadataType.Emails,
         },
         {
           fieldMetadataId: '3',
