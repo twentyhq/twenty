@@ -1,5 +1,6 @@
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
@@ -26,6 +27,10 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     objectFilterDropdownFirstLevelFilterDefinitionComponentState,
   );
 
+  const [, setObjectFilterDropdownFilterIsSelected] = useRecoilComponentStateV2(
+    objectFilterDropdownFilterIsSelectedComponentState,
+  );
+
   const [
     objectFilterDropdownSubMenuFieldType,
     setObjectFilterDropdownSubMenuFieldType,
@@ -48,10 +53,13 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       );
 
       setObjectFilterDropdownSearchInput('');
+
+      setObjectFilterDropdownFilterIsSelected(true);
     }
   };
 
   const handleSubMenuBack = () => {
+    setFilterDefinitionUsedInDropdown(null);
     setObjectFilterDropdownSubMenuFieldType(null);
     setObjectFilterDropdownFirstLevelFilterDefinition(null);
   };
@@ -101,17 +109,18 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           <MenuItem
             key={`select-filter-${index}`}
             testId={`select-filter-${index}`}
-            onClick={() =>
-              objectFilterDropdownFirstLevelFilterDefinition &&
-              handleSelectFilter({
-                ...objectFilterDropdownFirstLevelFilterDefinition,
-                label: getCompositeSubFieldLabel(
-                  objectFilterDropdownSubMenuFieldType,
-                  subFieldName,
-                ),
-                compositeFieldName: subFieldName,
-              })
-            }
+            onClick={() => {
+              if (isDefined(objectFilterDropdownFirstLevelFilterDefinition)) {
+                handleSelectFilter({
+                  ...objectFilterDropdownFirstLevelFilterDefinition,
+                  label: getCompositeSubFieldLabel(
+                    objectFilterDropdownSubMenuFieldType,
+                    subFieldName,
+                  ),
+                  compositeFieldName: subFieldName,
+                });
+              }
+            }}
             text={getCompositeSubFieldLabel(
               objectFilterDropdownSubMenuFieldType,
               subFieldName,

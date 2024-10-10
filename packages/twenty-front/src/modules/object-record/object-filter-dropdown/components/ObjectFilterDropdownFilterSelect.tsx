@@ -3,20 +3,17 @@ import { useContext } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
-import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useRecoilValue } from 'recoil';
@@ -49,10 +46,6 @@ export const StyledInput = styled.input`
 `;
 
 export const ObjectFilterDropdownFilterSelect = () => {
-  const [objectFilterDropdownSubMenuFieldType] = useRecoilComponentStateV2(
-    objectFilterDropdownSubMenuFieldTypeComponentState,
-  );
-
   const {
     setObjectFilterDropdownSearchInput,
     objectFilterDropdownSearchInputState,
@@ -121,14 +114,11 @@ export const ObjectFilterDropdownFilterSelect = () => {
     selectFilter({ filterDefinition: selectedFilterDefinition });
   };
 
-  const shouldShowFirstLevelMenu = !isDefined(
-    objectFilterDropdownSubMenuFieldType,
-  );
   const shoudShowSeparator =
     visibleColumnsFilterDefinitions.length > 0 &&
     hiddenColumnsFilterDefinitions.length > 0;
 
-  return shouldShowFirstLevelMenu ? (
+  return (
     <>
       <StyledInput
         value={objectFilterDropdownSearchInput}
@@ -157,7 +147,9 @@ export const ObjectFilterDropdownFilterSelect = () => {
               </SelectableItem>
             ),
           )}
-          {shoudShowSeparator && <SeparatorLineText> </SeparatorLineText>}
+        </DropdownMenuItemsContainer>
+        {shoudShowSeparator && <DropdownMenuSeparator />}
+        <DropdownMenuItemsContainer>
           {hiddenColumnsFilterDefinitions.map(
             (hiddenFilterDefinition, index) => (
               <SelectableItem
@@ -173,7 +165,5 @@ export const ObjectFilterDropdownFilterSelect = () => {
         </DropdownMenuItemsContainer>
       </SelectableList>
     </>
-  ) : (
-    <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu />
   );
 };

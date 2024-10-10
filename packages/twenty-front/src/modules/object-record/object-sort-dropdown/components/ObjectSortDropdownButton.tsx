@@ -7,10 +7,10 @@ import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hook
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -130,6 +130,10 @@ export const ObjectSortDropdownButton = ({
     .sort((a, b) => a.label.localeCompare(b.label))
     .filter((item) => hiddenColumnIds.includes(item.fieldMetadataId));
 
+  const shoudShowSeparator =
+    visibleColumnsSortDefinitions.length > 0 &&
+    hiddenColumnsSortDefinitions.length > 0;
+
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
       <Dropdown
@@ -192,10 +196,9 @@ export const ObjectSortDropdownButton = ({
                     />
                   ),
                 )}
-                {visibleColumnsSortDefinitions.length > 0 &&
-                  hiddenColumnsSortDefinitions.length > 0 && (
-                    <SeparatorLineText> </SeparatorLineText>
-                  )}
+              </DropdownMenuItemsContainer>
+              {shoudShowSeparator && <DropdownMenuSeparator />}
+              <DropdownMenuItemsContainer>
                 {hiddenColumnsSortDefinitions.map(
                   (hiddenSortDefinition, index) => (
                     <MenuItem

@@ -1,7 +1,9 @@
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
+import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
+import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { CompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/types/CompositeFilterableFieldType';
 
@@ -32,6 +34,15 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const [, setObjectFilterDropdownSubMenuFieldType] = useRecoilComponentStateV2(
     objectFilterDropdownSubMenuFieldTypeComponentState,
+  );
+
+  const [, setObjectFilterDropdownIsSelectingCompositeField] =
+    useRecoilComponentStateV2(
+      objectFilterDropdownIsSelectingCompositeFieldComponentState,
+    );
+
+  const [, setObjectFilterDropdownFilterIsSelected] = useRecoilComponentStateV2(
+    objectFilterDropdownFilterIsSelectedComponentState,
   );
 
   const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
@@ -67,6 +78,8 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     );
 
     setObjectFilterDropdownSearchInput('');
+
+    setObjectFilterDropdownFilterIsSelected(true);
   };
 
   const { getIcon } = useIcons();
@@ -82,6 +95,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
         filterDefinition.type as CompositeFilterableFieldType,
       );
       setObjectFilterDropdownFirstLevelFilterDefinition(filterDefinition);
+      setObjectFilterDropdownIsSelectingCompositeField(true);
     } else {
       handleSelectFilter(filterDefinition);
     }
