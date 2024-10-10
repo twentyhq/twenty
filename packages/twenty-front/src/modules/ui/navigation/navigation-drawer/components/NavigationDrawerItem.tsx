@@ -16,6 +16,7 @@ import {
   TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -191,12 +192,15 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       >
-        {isNavigationDrawerExpanded || isSettingsPage ? (
+        {true ? (
           <>
-            {' '}
-            {showBreadcrumb && (
-              <NavigationDrawerItemBreadcrumb state={subItemState} />
-            )}
+            <NavigationDrawerAnimatedCollapseWrapper>
+              {' '}
+              {showBreadcrumb && (
+                <NavigationDrawerItemBreadcrumb state={subItemState} />
+              )}
+            </NavigationDrawerAnimatedCollapseWrapper>
+
             {Icon && (
               <Icon
                 style={{ minWidth: theme.icon.size.md }}
@@ -204,14 +208,16 @@ export const NavigationDrawerItem = ({
                 stroke={theme.icon.stroke.md}
               />
             )}
-            <StyledItemLabel>{label}</StyledItemLabel>
-            {soon && <Pill label="Soon" />}
-            {!!count && <StyledItemCount>{count}</StyledItemCount>}
-            {keyboard && (
-              <StyledKeyBoardShortcut className="keyboard-shortcuts">
-                {keyboard}
-              </StyledKeyBoardShortcut>
-            )}
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <StyledItemLabel>{label}</StyledItemLabel>
+              {soon && <Pill label="Soon" />}
+              {!!count && <StyledItemCount>{count}</StyledItemCount>}
+              {keyboard && (
+                <StyledKeyBoardShortcut className="keyboard-shortcuts">
+                  {keyboard}
+                </StyledKeyBoardShortcut>
+              )}
+            </NavigationDrawerAnimatedCollapseWrapper>
           </>
         ) : (
           Icon && (

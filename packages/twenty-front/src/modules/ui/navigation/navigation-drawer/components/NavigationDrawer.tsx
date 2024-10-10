@@ -83,23 +83,12 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const desktopWidth = !isNavigationDrawerExpanded
-    ? 42
-    : DESKTOP_NAV_DRAWER_WIDTHS.menu;
+  const desktopWidth = !isNavigationDrawerExpanded ? 42 : 'auto';
 
   const mobileWidth = isNavigationDrawerExpanded ? '100%' : 0;
 
   return (
-    <StyledAnimatedContainer
-      className={className}
-      initial={false}
-      animate={{
-        width: isMobile ? mobileWidth : desktopWidth,
-      }}
-      transition={{
-        duration: theme.animation.duration.normal,
-      }}
-    >
+    <StyledAnimatedContainer className={className}>
       <StyledContainer
         isSubMenu={isSubMenu}
         onMouseEnter={handleHover}
