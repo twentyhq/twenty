@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkflowCreateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.post-query.hook';
 import { WorkflowCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.pre-query.hook';
+import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.post-query.hook';
 import { WorkflowCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.pre-query.hook';
 import { WorkflowRunCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-many.pre-query.hook';
 import { WorkflowRunCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-one.pre-query.hook';
@@ -17,6 +21,9 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
 
 @Module({
+  imports: [
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+  ],
   providers: [
     WorkflowCreateOnePreQueryHook,
     WorkflowCreateManyPreQueryHook,
@@ -30,6 +37,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowVersionUpdateManyPreQueryHook,
     WorkflowVersionDeleteOnePreQueryHook,
     WorkflowVersionDeleteManyPreQueryHook,
+    WorkflowCreateOnePostQueryHook,
     WorkflowCreateManyPostQueryHook,
     WorkflowVersionValidationWorkspaceService,
     WorkflowCommonWorkspaceService,
