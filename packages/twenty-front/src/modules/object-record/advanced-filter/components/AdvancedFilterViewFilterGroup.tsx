@@ -46,27 +46,35 @@ export const AdvancedFilterViewFilterGroup = (
       : !viewFilterGroup.parentViewFilterGroupId,
   );
 
-  console.log(
-    'componentViewFilterGroup',
-    viewFilterGroups?.map((vfg) => vfg.parentViewFilterGroupId),
-    props.parentViewFilterGroupId,
-  );
-
   if (!componentViewFilterGroup) {
     throw new Error(
       `Missing component view filter group for view filter group with parent id of '${props.parentViewFilterGroupId}'`,
     );
   }
 
-  const viewFilterGroupViewFilters = viewFilters?.filter(
+  const childViewFilters = viewFilters?.filter(
     (viewFilter) =>
       viewFilter.viewFilterGroupId === componentViewFilterGroup.id,
   );
 
-  const subViewFilterGroups = viewFilterGroups?.filter(
+  const childViewFilterGroups = viewFilterGroups?.filter(
     (viewFilterGroup) =>
       viewFilterGroup.parentViewFilterGroupId === componentViewFilterGroup.id,
   );
+
+  const childViewFiltersAndViewFilterGroups = [
+    ...(childViewFilterGroups ?? []),
+    ...(childViewFilters ?? []),
+  ].sort((a, b) => {
+    const positionA = a.positionInViewFilterGroup ?? 0;
+    const positionB = b.positionInViewFilterGroup ?? 0;
+    return positionA - positionB;
+  });
+
+  const newPositionInViewFilterGroup =
+    (childViewFiltersAndViewFilterGroups[
+      childViewFiltersAndViewFilterGroups.length - 1
+    ]?.positionInViewFilterGroup ?? 0) + 1;
 
   const handleAddFilter = () => {
     upsertCombinedViewFilter({
@@ -78,46 +86,48 @@ export const AdvancedFilterViewFilterGroup = (
       displayValue: '',
       definition: {} as any,
       viewFilterGroupId: componentViewFilterGroup.id,
+      positionInViewFilterGroup: newPositionInViewFilterGroup,
     });
   };
 
   return (
     <StyledContainer>
-      {subViewFilterGroups?.map((viewFilterGroup, i) => (
-        <StyledRow>
-          <AdvancedFilterLogicalOperatorCell
-            index={i}
-            viewFilterGroup={viewFilterGroup}
-          />
-          <AdvancedFilterViewFilterGroup
-            viewBarInstanceId={props.viewBarInstanceId}
-            parentViewFilterGroupId={componentViewFilterGroup.id}
-          />
-          <AdvancedFilterRuleOptionsDropdown
-            dropdownId={`advanced-filter-rule-options-${viewFilterGroup.id}`}
-            viewFilterGroupId={viewFilterGroup.id}
-          />
-        </StyledRow>
-      ))}
-      {viewFilterGroupViewFilters?.map((viewFilter, i) => (
-        <StyledRow>
-          <AdvancedFilterLogicalOperatorCell
-            index={i}
-            viewFilterGroup={componentViewFilterGroup}
-          />
-          <AdvancedFilterViewFilter viewFilter={viewFilter} />
-          <AdvancedFilterRuleOptionsDropdown
-            dropdownId={`advanced-filter-rule-options-${viewFilter.id}`}
-            viewFilterId={viewFilter.id}
-          />
-        </StyledRow>
-      ))}
+      {childViewFiltersAndViewFilterGroups?.map((child, i) =>
+        child.__typename === 'ViewFilterGroup' ? (
+          <StyledRow key={child.id}>
+            <AdvancedFilterLogicalOperatorCell
+              index={i}
+              viewFilterGroup={child}
+            />
+            <AdvancedFilterViewFilterGroup
+              viewBarInstanceId={props.viewBarInstanceId}
+              parentViewFilterGroupId={componentViewFilterGroup.id}
+            />
+            <AdvancedFilterRuleOptionsDropdown
+              dropdownId={`advanced-filter-rule-options-${child.id}`}
+              viewFilterGroupId={child.id}
+            />
+          </StyledRow>
+        ) : (
+          <StyledRow key={child.id}>
+            <AdvancedFilterLogicalOperatorCell
+              index={i}
+              viewFilterGroup={componentViewFilterGroup}
+            />
+            <AdvancedFilterViewFilter viewFilter={child} />
+            <AdvancedFilterRuleOptionsDropdown
+              dropdownId={`advanced-filter-rule-options-${child.id}`}
+              viewFilterId={child.id}
+            />
+          </StyledRow>
+        ),
+      )}
       <LightButton
         Icon={IconPlus}
         title="Add filter rule"
         onClick={handleAddFilter}
       />
-      {/* Placeholder until design decision */}
+      {/* The following is a placeholder until design decision */}
       <LightButton
         Icon={IconPlus}
         title="Add filter rule group"
@@ -131,6 +141,7 @@ export const AdvancedFilterViewFilterGroup = (
             viewId: currentViewWithCombinedFiltersAndSorts?.id,
             logicalOperator: ViewFilterGroupLogicalOperator.AND,
             parentViewFilterGroupId: componentViewFilterGroup.id,
+            positionInViewFilterGroup: newPositionInViewFilterGroup,
           });
         }}
       />

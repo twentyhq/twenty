@@ -10,5 +10,6 @@ export type Filter = {
   viewFilterGroupId?: string;
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;
+  positionInViewFilterGroup?: number | null;
   definition: FilterDefinition;
 };

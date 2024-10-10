@@ -81,4 +81,15 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: `'${ViewFilterGroupLogicalOperator.NOT}'`,
   })
   logicalOperator: string;
+
+  @WorkspaceField({
+    standardId: VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.positionInViewFilterGroup,
+    type: FieldMetadataType.POSITION,
+    label: 'Position in view filter group',
+    description: 'Position in the parent view filter group',
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  positionInViewFilterGroup: number | null;
 }

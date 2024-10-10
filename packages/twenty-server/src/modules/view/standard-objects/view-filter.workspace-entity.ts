@@ -81,4 +81,15 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   viewFilterGroupId: string | null;
+
+  @WorkspaceField({
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.positionInViewFilterGroup,
+    type: FieldMetadataType.POSITION,
+    label: 'Position in view filter group',
+    description: 'Position in the view filter group',
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  positionInViewFilterGroup: number | null;
 }

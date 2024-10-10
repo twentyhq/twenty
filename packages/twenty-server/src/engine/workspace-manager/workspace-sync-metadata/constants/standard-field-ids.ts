@@ -369,12 +369,14 @@ export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   displayValue: '20202020-1270-4ebf-9018-c0ec10d5038e',
   view: '20202020-4f5b-487e-829c-3d881c163611',
   viewFilterGroupId: '20202020-2580-420a-8328-cab1635c0296',
+  positionInViewFilterGroup: '20202020-3bb0-4f66-a537-a46fe0dc468f',
 };
 
 export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {
   view: '20202020-ff7a-4b54-8be5-aa0249047b74',
   parentViewFilterGroupId: '20202020-edbf-4929-8ede-64f48d6bf2a7',
   logicalOperator: '20202020-64d9-4bc5-85ba-c250796ce9aa',
+  positionInViewFilterGroup: '20202020-90d6-4299-ad87-d05ddd3a0a3f',
 };
 
 export const VIEW_SORT_STANDARD_FIELD_IDS = {

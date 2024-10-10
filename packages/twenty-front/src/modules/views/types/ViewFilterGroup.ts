@@ -6,4 +6,5 @@ export type ViewFilterGroup = {
   viewId: string;
   parentViewFilterGroupId?: string | null;
   logicalOperator: ViewFilterGroupLogicalOperator;
+  positionInViewFilterGroup?: number | null;
 };
