@@ -1,5 +1,8 @@
+import { Injectable } from '@nestjs/common';
+
 import graphqlFields from 'graphql-fields';
 
+import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
   Record as IRecord,
   RecordFilter,
@@ -13,28 +16,31 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ObjectRecordsToGraphqlConnectionMapper } from 'src/engine/api/graphql/graphql-query-runner/orm-mappers/object-records-to-graphql-connection.mapper';
-import { getObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-object-metadata-or-throw.util';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
-export class GraphqlQueryFindOneResolverService {
-  private twentyORMGlobalManager: TwentyORMGlobalManager;
+@Injectable()
+export class GraphqlQueryFindOneResolverService
+  implements ResolverService<FindOneResolverArgs, IRecord>
+{
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
-  constructor(twentyORMGlobalManager: TwentyORMGlobalManager) {
-    this.twentyORMGlobalManager = twentyORMGlobalManager;
-  }
-
-  async findOne<
+  async resolve<
     ObjectRecord extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
   >(
     args: FindOneResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord | undefined> {
-    const { authContext, objectMetadataItem, info, objectMetadataCollection } =
+  ): Promise<ObjectRecord> {
+    const { authContext, objectMetadataMapItem, info, objectMetadataMap } =
       options;
 
     const dataSource =
@@ -43,37 +49,28 @@ export class GraphqlQueryFindOneResolverService {
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
-    );
-
-    const objectMetadataMap = generateObjectMetadataMap(
-      objectMetadataCollection,
-    );
-
-    const objectMetadata = getObjectMetadataOrThrow(
-      objectMetadataMap,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadata.fields,
+      objectMetadataMapItem.fields,
       objectMetadataMap,
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItem,
+      objectMetadataMapItem,
       selectedFields,
     );
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItem.nameSingular,
+      objectMetadataMapItem.nameSingular,
       args.filter ?? ({} as Filter),
     );
 
@@ -86,11 +83,9 @@ export class GraphqlQueryFindOneResolverService {
 
     const objectRecord = formatResult(
       nonFormattedObjectRecord,
-      objectMetadata,
+      objectMetadataMapItem,
       objectMetadataMap,
     );
-
-    const limit = QUERY_MAX_RECORDS;
 
     if (!objectRecord) {
       throw new GraphqlQueryRunnerException(
@@ -99,32 +94,42 @@ export class GraphqlQueryFindOneResolverService {
       );
     }
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper(
-      this.twentyORMGlobalManager,
-    );
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     const objectRecords = [objectRecord];
 
     if (relations) {
       await processNestedRelationsHelper.processNestedRelations(
         objectMetadataMap,
-        objectMetadata,
+        objectMetadataMapItem,
         objectRecords,
         relations,
-        limit,
+        QUERY_MAX_RECORDS,
         authContext,
         dataSource,
       );
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionMapper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
-    return typeORMObjectRecordsParser.processRecord(
-      objectRecords[0],
-      objectMetadataItem.nameSingular,
-      1,
-      1,
-    ) as ObjectRecord;
+    return typeORMObjectRecordsParser.processRecord({
+      objectRecord: objectRecords[0],
+      objectName: objectMetadataMapItem.nameSingular,
+      take: 1,
+      totalCount: 1,
+    }) as ObjectRecord;
+  }
+
+  async validate<Filter extends RecordFilter>(
+    args: FindOneResolverArgs<Filter>,
+    _options: WorkspaceQueryRunnerOptions,
+  ): Promise<void> {
+    if (!args.filter || Object.keys(args.filter).length === 0) {
+      throw new WorkspaceQueryRunnerException(
+        'Missing filter argument',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
   }
 }

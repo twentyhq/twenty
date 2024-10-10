@@ -7,12 +7,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -28,7 +26,6 @@ export class CalendarSaveEventsService {
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   public async saveCalendarEventsAndEnqueueContactCreationJob(
@@ -103,6 +100,7 @@ export class CalendarSaveEventsService {
         calendarEventId: calendarEvent.id,
         eventExternalId: calendarEvent.externalId,
         calendarChannelId: calendarChannel.id,
+        recurringEventExternalId: calendarEvent.recurringEventExternalId,
       }));
 
     const participantsToSave = eventsToSave.flatMap(
@@ -113,16 +111,57 @@ export class CalendarSaveEventsService {
       (event) => event.participants,
     );
 
-    const savedCalendarEventParticipantsToEmit: CalendarEventParticipantWorkspaceEntity[] =
-      [];
-
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
     await workspaceDataSource?.transaction(async (transactionManager) => {
-      await calendarEventRepository.save(eventsToSave, {}, transactionManager);
+      await calendarEventRepository.save(
+        eventsToSave.map(
+          (calendarEvent) =>
+            ({
+              id: calendarEvent.id,
+              iCalUID: calendarEvent.iCalUID,
+              title: calendarEvent.title,
+              description: calendarEvent.description,
+              startsAt: calendarEvent.startsAt,
+              endsAt: calendarEvent.endsAt,
+              location: calendarEvent.location,
+              isFullDay: calendarEvent.isFullDay,
+              isCanceled: calendarEvent.isCanceled,
+              conferenceSolution: calendarEvent.conferenceSolution,
+              conferenceLink: {
+                primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+              },
+              externalCreatedAt: calendarEvent.externalCreatedAt,
+              externalUpdatedAt: calendarEvent.externalUpdatedAt,
+            }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+        ),
+        {},
+        transactionManager,
+      );
 
       await calendarEventRepository.save(
-        eventsToUpdate,
+        eventsToUpdate.map(
+          (calendarEvent) =>
+            ({
+              id: calendarEvent.id,
+              iCalUID: calendarEvent.iCalUID,
+              title: calendarEvent.title,
+              description: calendarEvent.description,
+              startsAt: calendarEvent.startsAt,
+              endsAt: calendarEvent.endsAt,
+              location: calendarEvent.location,
+              isFullDay: calendarEvent.isFullDay,
+              isCanceled: calendarEvent.isCanceled,
+              conferenceSolution: calendarEvent.conferenceSolution,
+              conferenceLink: {
+                primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+              },
+              externalCreatedAt: calendarEvent.externalCreatedAt,
+              externalUpdatedAt: calendarEvent.externalUpdatedAt,
+            }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+        ),
         {},
         transactionManager,
       );

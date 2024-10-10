@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconCode } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -65,7 +65,6 @@ export const SettingsDevelopersApiKeysNew = () => {
   const canSave = !!formValues.name && createOneApiKey;
   return (
     <SubMenuTopBarContainer
-      Icon={IconCode}
       title="New key"
       links={[
         {

@@ -48,6 +48,11 @@ export interface FindDuplicatesResolverArgs<
   data?: Data[];
 }
 
+export interface SearchResolverArgs {
+  searchInput?: string;
+  limit?: number;
+}
+
 export interface CreateOneResolverArgs<
   Data extends Partial<Record> = Partial<Record>,
 > {
@@ -123,4 +128,5 @@ export type ResolverArgs =
   | UpdateManyResolverArgs
   | UpdateOneResolverArgs
   | DestroyManyResolverArgs
-  | RestoreManyResolverArgs;
+  | RestoreManyResolverArgs
+  | SearchResolverArgs;

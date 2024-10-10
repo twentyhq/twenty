@@ -15,7 +15,7 @@ import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkfl
 export const RecordShowPageWorkflowHeader = ({
   workflowId,
 }: {
-  workflowId: string | undefined;
+  workflowId: string;
 }) => {
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 

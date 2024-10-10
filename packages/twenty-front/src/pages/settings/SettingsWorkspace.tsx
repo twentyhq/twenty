@@ -1,4 +1,4 @@
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
@@ -9,10 +9,10 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 
 export const SettingsWorkspace = () => (
   <SubMenuTopBarContainer
-    Icon={IconSettings}
     title="General"
     links={[
       {
@@ -40,6 +40,9 @@ export const SettingsWorkspace = () => (
       </Section>
       <Section>
         <DeleteWorkspace />
+      </Section>
+      <Section>
+        <GithubVersionLink />
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>

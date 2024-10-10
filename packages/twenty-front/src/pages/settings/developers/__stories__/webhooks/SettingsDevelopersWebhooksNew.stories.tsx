@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
-import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
+import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew';
 import {
   PageDecorator,
   PageDecoratorArgs,

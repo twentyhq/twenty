@@ -1,5 +1,5 @@
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { normalizeGQLField } from '~/utils/normalizeGQLField';
 
 const personObjectMetadataItem = generatedMockObjectMetadataItems.find(

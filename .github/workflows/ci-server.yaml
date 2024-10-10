@@ -54,7 +54,7 @@ jobs:
       - name: Server / Write .env
         run: npx nx reset:env twenty-server
       - name: Worker / Run
-        run: MESSAGE_QUEUE_TYPE=sync npx nx worker twenty-server
+        run: npx nx run twenty-server:worker:ci
 
   server-test:
     runs-on: ubuntu-latest

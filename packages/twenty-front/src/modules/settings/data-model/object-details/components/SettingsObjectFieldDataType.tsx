@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { IconComponent, IconTwentyStar } from 'twenty-ui';
 
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -11,11 +11,11 @@ type SettingsObjectFieldDataTypeProps = {
   to?: string;
   Icon?: IconComponent;
   label?: string;
-  value: SettingsSupportedFieldType;
+  value: SettingsFieldType;
 };
 
 const StyledDataType = styled.div<{
-  value: SettingsSupportedFieldType;
+  value: SettingsFieldType;
   to?: string;
 }>`
   align-items: center;

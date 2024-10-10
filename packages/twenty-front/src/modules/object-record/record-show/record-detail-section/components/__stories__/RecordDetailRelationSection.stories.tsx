@@ -9,14 +9,22 @@ import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 import { getPeopleMock } from '~/testing/mock-data/people';
 
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
 
 const companiesMock = getCompaniesMock();
 
 const peopleMock = getPeopleMock();
+
+const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+);
+
+if (!mockedCompanyObjectMetadataItem) {
+  throw new Error('Company object metadata item not found');
+}
 
 const meta: Meta<typeof RecordDetailRelationSection> = {
   title:
