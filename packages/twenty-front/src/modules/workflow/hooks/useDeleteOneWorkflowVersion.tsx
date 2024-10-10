@@ -5,6 +5,7 @@ export const useDeleteOneWorkflowVersion = () => {
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
+
   const deleteOneWorkflowVersion = async ({
     workflowVersionId,
   }: {

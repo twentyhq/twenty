@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/activateWorkflowVersion';
+import { WorkflowVersion } from '@/workflow/types/Workflow';
 import {
   ActivateWorkflowVersionMutation,
   ActivateWorkflowVersionMutationVariables,
@@ -25,7 +26,13 @@ export const useActivateWorkflowVersion = () => {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const activateWorkflowVersion = async (workflowVersionId: string) => {
+  const activateWorkflowVersion = async ({
+    workflowVersionId,
+    workflowId,
+  }: {
+    workflowVersionId: string;
+    workflowId: string;
+  }) => {
     await mutate({
       variables: {
         workflowVersionId,
@@ -39,6 +46,29 @@ export const useActivateWorkflowVersion = () => {
             status: () => 'ACTIVE',
           },
         });
+
+        const cacheSnapshot = apolloClient.cache.extract();
+        const allWorkflowVersions: Array<WorkflowVersion> = Object.values(
+          cacheSnapshot,
+        ).filter(
+          (item) =>
+            item.__typename === 'WorkflowVersion' &&
+            item.workflowId === workflowId,
+        );
+
+        for (const workflowVersion of allWorkflowVersions) {
+          apolloClient.cache.modify({
+            id: apolloClient.cache.identify(workflowVersion),
+            fields: {
+              status: () => {
+                return workflowVersion.id !== workflowVersionId &&
+                  workflowVersion.status === 'ACTIVE'
+                  ? 'ARCHIVED'
+                  : workflowVersion.status;
+              },
+            },
+          });
+        }
       },
     });
   };
