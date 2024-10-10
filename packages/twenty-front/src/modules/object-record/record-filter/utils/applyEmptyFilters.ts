@@ -32,8 +32,6 @@ export const applyEmptyFilters = (
 
   switch (definition.type) {
     case 'TEXT':
-    case 'EMAIL':
-    case 'PHONE':
       emptyRecordFilter = {
         or: [
           { [correspondingField.name]: { ilike: '' } as StringFilter },
@@ -113,16 +111,6 @@ export const applyEmptyFilters = (
       }
       break;
     }
-    case 'LINK':
-      emptyRecordFilter = {
-        or: [
-          { [correspondingField.name]: { url: { ilike: '' } } as URLFilter },
-          {
-            [correspondingField.name]: { url: { is: 'NULL' } } as URLFilter,
-          },
-        ],
-      };
-      break;
     case 'LINKS': {
       if (!isCompositeField) {
         const linksFilters = generateILikeFiltersForCompositeFields(

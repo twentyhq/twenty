@@ -21,8 +21,6 @@ import {
 export type BasicFieldMetadataType =
   | FieldMetadataType.UUID
   | FieldMetadataType.TEXT
-  | FieldMetadataType.PHONE
-  | FieldMetadataType.EMAIL
   | FieldMetadataType.NUMERIC
   | FieldMetadataType.NUMBER
   | FieldMetadataType.BOOLEAN

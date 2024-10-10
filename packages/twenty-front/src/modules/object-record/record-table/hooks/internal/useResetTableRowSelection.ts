@@ -1,7 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useResetTableRowSelection = (recordTableId?: string) => {
   const {
@@ -20,7 +22,19 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
         }
 
         set(hasUserSelectedAllRowsState, false);
+
+        const isActionMenuDropdownOpenState = extractComponentState(
+          isDropdownOpenComponentState,
+          `action-menu-dropdown-${recordTableId}`,
+        );
+
+        set(isActionMenuDropdownOpenState, false);
       },
-    [tableRowIdsState, isRowSelectedFamilyState, hasUserSelectedAllRowsState],
+    [
+      tableRowIdsState,
+      hasUserSelectedAllRowsState,
+      recordTableId,
+      isRowSelectedFamilyState,
+    ],
   );
 };

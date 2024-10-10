@@ -23,7 +23,6 @@ export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.CURRENCY
   | FieldMetadataType.FULL_NAME
-  | FieldMetadataType.LINK
   | FieldMetadataType.LINKS
   | FieldMetadataType.EMAILS
   | FieldMetadataType.PHONES;
