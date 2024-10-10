@@ -26,10 +26,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
   const fieldIsSimpleValue = [
     FieldMetadataType.Uuid,
     FieldMetadataType.Text,
-    FieldMetadataType.Phone,
     FieldMetadataType.DateTime,
     FieldMetadataType.Date,
-    FieldMetadataType.Email,
     FieldMetadataType.Number,
     FieldMetadataType.Boolean,
     FieldMetadataType.Rating,

@@ -18,8 +18,6 @@ export const mapFieldMetadataToGraphqlQuery = (
   const fieldIsSimpleValue = [
     FieldMetadataType.UUID,
     FieldMetadataType.TEXT,
-    FieldMetadataType.PHONE,
-    FieldMetadataType.EMAIL,
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
     FieldMetadataType.BOOLEAN,
