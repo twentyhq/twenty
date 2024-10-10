@@ -5,10 +5,8 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
-import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
-import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
@@ -33,13 +31,9 @@ export const computeDraftValueFromString = <FieldValue>({
     isFieldText(fieldDefinition) ||
     isFieldDateTime(fieldDefinition) ||
     isFieldNumber(fieldDefinition) ||
-    isFieldEmail(fieldDefinition) ||
     isFieldRelation(fieldDefinition)
   ) {
     return value as FieldInputDraftValue<FieldValue>;
-  }
-  if (isFieldLink(fieldDefinition)) {
-    return { url: value, label: value } as FieldInputDraftValue<FieldValue>;
   }
 
   if (isFieldCurrency(fieldDefinition)) {

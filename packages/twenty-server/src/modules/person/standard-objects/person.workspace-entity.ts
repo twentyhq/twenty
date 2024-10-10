@@ -64,16 +64,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   [NAME_FIELD_NAME]: FullNameMetadata | null;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.email,
-    type: FieldMetadataType.EMAIL,
-    label: 'Email',
-    description: 'Contact’s Email',
-    icon: 'IconMail',
-  })
-  @WorkspaceIsDeprecated()
-  email: string;
-
-  @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.emails,
     type: FieldMetadataType.EMAILS,
     label: 'Emails',

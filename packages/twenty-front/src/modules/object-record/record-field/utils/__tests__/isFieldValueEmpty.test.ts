@@ -2,7 +2,6 @@ import {
   booleanFieldDefinition,
   fieldMetadataId,
   fullNameFieldDefinition,
-  linkFieldDefinition,
   relationFieldDefinition,
   selectFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
@@ -98,21 +97,6 @@ describe('isFieldValueEmpty', () => {
       isFieldValueEmpty({
         fieldDefinition: fullNameFieldDefinition,
         fieldValue: { firstName: 'Sheldon', lastName: '' },
-      }),
-    ).toBe(false);
-  });
-
-  it('should return correct value for link field', () => {
-    expect(
-      isFieldValueEmpty({
-        fieldDefinition: linkFieldDefinition,
-        fieldValue: { url: '', label: '' },
-      }),
-    ).toBe(true);
-    expect(
-      isFieldValueEmpty({
-        fieldDefinition: linkFieldDefinition,
-        fieldValue: { url: 'https://linkedin.com/user-slug', label: '' },
       }),
     ).toBe(false);
   });

@@ -10,7 +10,6 @@ import {
   RecordGqlOperationFilter,
   RelationFilter,
   StringFilter,
-  URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
@@ -371,43 +370,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               [correspondingField.name]: {
                 amountMicros: { lte: parseFloat(rawUIFilter.value) * 1000000 },
               } as CurrencyFilter,
-            });
-            break;
-          case ViewFilterOperand.IsEmpty:
-          case ViewFilterOperand.IsNotEmpty:
-            applyEmptyFilters(
-              rawUIFilter.operand,
-              correspondingField,
-              objectRecordFilters,
-              rawUIFilter.definition,
-            );
-            break;
-          default:
-            throw new Error(
-              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
-            );
-        }
-        break;
-      case 'LINK':
-        switch (rawUIFilter.operand) {
-          case ViewFilterOperand.Contains:
-            objectRecordFilters.push({
-              [correspondingField.name]: {
-                url: {
-                  ilike: `%${rawUIFilter.value}%`,
-                },
-              } as URLFilter,
-            });
-            break;
-          case ViewFilterOperand.DoesNotContain:
-            objectRecordFilters.push({
-              not: {
-                [correspondingField.name]: {
-                  url: {
-                    ilike: `%${rawUIFilter.value}%`,
-                  },
-                } as URLFilter,
-              },
             });
             break;
           case ViewFilterOperand.IsEmpty:
