@@ -11,10 +11,6 @@
     "skipLibCheck": true
   },
   "exclude": [
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/*.spec.tsx",
-    "**/*.test.tsx",
     "jest.config.ts"
   ]
 }
