@@ -17,7 +17,8 @@ const StyledCardsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(6)};
-  @media (max-width: ${MOBILE_VIEWPORT}) {
+
+  @media (max-width: ${MOBILE_VIEWPORT}pxF) {
     flex-direction: column;
   }
 `;
