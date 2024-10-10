@@ -25,6 +25,7 @@
     "convertedByCLIVersion": "15.4.1"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "zapier-platform-core": "15.5.1"
   },
   "devDependencies": {
