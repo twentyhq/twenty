@@ -179,7 +179,7 @@ export class AuthResolver {
       return {
         success: true,
         reason: 'WORKSPACE_USE_SSO_AUTH',
-        payload: result.availableSSOIdentityProviders.map((idp) => ({
+        availableSSOIDPs: result.availableSSOIdentityProviders.map((idp) => ({
           ...idp,
           workspace: {
             id: result.workspace.id,
@@ -192,7 +192,7 @@ export class AuthResolver {
     return {
       success: true,
       reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH',
-      payload: await this.tokenService.generateSwitchWorkspaceToken(
+      authTokens: await this.tokenService.generateSwitchWorkspaceToken(
         user,
         result.workspace,
       ),

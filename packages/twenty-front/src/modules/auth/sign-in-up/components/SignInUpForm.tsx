@@ -94,7 +94,7 @@ export const SignInUpForm = () => {
           form.handleSubmit(submitCredentials)();
         }
       } else if (signInUpStep === SignInUpStep.EmailSSO) {
-        console.log('>>>>>>>>>>>>>> redirect to SSO List selection');
+        submitSSOEmail(form.getValues('email'));
       }
     }
   };
@@ -285,60 +285,60 @@ export const SignInUpForm = () => {
               />
             </StyledForm>
           )}
-        <StyledForm
-          onSubmit={(event) => {
-            event.preventDefault();
-          }}
-        >
-          {signInUpStep === SignInUpStep.EmailSSO && (
-            <>
-              <StyledFullWidthMotionDiv
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 800,
-                  damping: 35,
-                }}
-              >
-                <Controller
-                  name="email"
-                  control={form.control}
-                  render={({
-                    field: { onChange, onBlur, value },
-                    fieldState: { error },
-                  }) => (
-                    <StyledInputContainer>
-                      <TextInput
-                        autoFocus
-                        value={value}
-                        placeholder="Email"
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        error={showErrors ? error?.message : undefined}
-                        fullWidth
-                        disableHotkeys
-                        onKeyDown={handleKeyDown}
-                      />
-                    </StyledInputContainer>
-                  )}
-                />
-              </StyledFullWidthMotionDiv>
-              <MainButton
-                variant="secondary"
-                title={buttonTitle}
-                type="submit"
-                onClick={async () => {
-                  setShowErrors(true);
-                  submitSSOEmail(form.getValues('email'));
-                }}
-                Icon={() => form.formState.isSubmitting && <Loader />}
-                disabled={isSubmitButtonDisabled}
-                fullWidth
-              />
-            </>
-          )}
-        </StyledForm>
+        {/*<StyledForm*/}
+        {/*  onSubmit={(event) => {*/}
+        {/*    event.preventDefault();*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  {signInUpStep === SignInUpStep.EmailSSO && (*/}
+        {/*    <>*/}
+        {/*      <StyledFullWidthMotionDiv*/}
+        {/*        initial={{ opacity: 0, height: 0 }}*/}
+        {/*        animate={{ opacity: 1, height: 'auto' }}*/}
+        {/*        transition={{*/}
+        {/*          type: 'spring',*/}
+        {/*          stiffness: 800,*/}
+        {/*          damping: 35,*/}
+        {/*        }}*/}
+        {/*      >*/}
+        {/*        <Controller*/}
+        {/*          name="email"*/}
+        {/*          control={form.control}*/}
+        {/*          render={({*/}
+        {/*            field: { onChange, onBlur, value },*/}
+        {/*            fieldState: { error },*/}
+        {/*          }) => (*/}
+        {/*            <StyledInputContainer>*/}
+        {/*              <TextInput*/}
+        {/*                autoFocus*/}
+        {/*                value={value}*/}
+        {/*                placeholder="Email"*/}
+        {/*                onBlur={onBlur}*/}
+        {/*                onChange={onChange}*/}
+        {/*                error={showErrors ? error?.message : undefined}*/}
+        {/*                fullWidth*/}
+        {/*                disableHotkeys*/}
+        {/*                onKeyDown={handleKeyDown}*/}
+        {/*              />*/}
+        {/*            </StyledInputContainer>*/}
+        {/*          )}*/}
+        {/*        />*/}
+        {/*      </StyledFullWidthMotionDiv>*/}
+        {/*      <MainButton*/}
+        {/*        variant="secondary"*/}
+        {/*        title={buttonTitle}*/}
+        {/*        type="submit"*/}
+        {/*        onClick={async () => {*/}
+        {/*          setShowErrors(true);*/}
+        {/*          submitSSOEmail(form.getValues('email'));*/}
+        {/*        }}*/}
+        {/*        Icon={() => form.formState.isSubmitting && <Loader />}*/}
+        {/*        disabled={isSubmitButtonDisabled}*/}
+        {/*        fullWidth*/}
+        {/*      />*/}
+        {/*    </>*/}
+        {/*  )}*/}
+        {/*</StyledForm>*/}
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
