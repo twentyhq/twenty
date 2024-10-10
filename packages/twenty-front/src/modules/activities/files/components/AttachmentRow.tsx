@@ -18,6 +18,7 @@ import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
+import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -62,17 +63,12 @@ const StyledLinkContainer = styled.div`
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
-  const getFileNameAndExtension = (filename: string) => {
-    const lastDotIndex = filename.lastIndexOf('.');
-    return {
-      name: filename.substring(0, lastDotIndex),
-      extension: filename.substring(lastDotIndex),
-    };
-  };
 
-  const { name: originalName, extension: fileExtension } =
+  const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
-  const [attachmentName, setAttachmentName] = useState(originalName);
+
+  const [attachmentFileName, setAttachmentFileName] =
+    useState(originalFileName);
 
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
@@ -94,9 +90,12 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const handleRename = () => {
     setIsEditing(true);
   };
+
   const saveAttachmentName = () => {
     setIsEditing(false);
-    const newFileName = `${attachmentName}${fileExtension}`;
+
+    const newFileName = `${attachmentFileName}${attachmentFileExtension}`;
+
     updateOneAttachment({
       idToUpdate: attachment.id,
       updateOneRecordInput: { name: newFileName },
@@ -107,14 +106,21 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     saveAttachmentName();
   };
 
-  const handleOnChange = (newName: string) => {
-    setAttachmentName(newName);
+  const handleOnChange = (newFileName: string) => {
+    setAttachmentFileName(newFileName);
   };
 
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       saveAttachmentName();
     }
+  };
+
+  const handleDownload = () => {
+    downloadFile(
+      attachment.fullPath,
+      `${attachmentFileName}${attachmentFileExtension}`,
+    );
   };
 
   return (
@@ -124,7 +130,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
             <TextInput
-              value={attachmentName}
+              value={attachmentFileName}
               onChange={handleOnChange}
               onBlur={handleOnBlur}
               autoFocus
@@ -149,12 +155,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           <AttachmentDropdown
             scopeKey={attachment.id}
             onDelete={handleDelete}
-            onDownload={() => {
-              downloadFile(
-                attachment.fullPath,
-                `${attachmentName}${fileExtension}`,
-              );
-            }}
+            onDownload={handleDownload}
             onRename={handleRename}
           />
         </StyledRightContent>
