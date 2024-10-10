@@ -32,8 +32,10 @@ export class IndexMetadataService {
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
+    isUnique: boolean,
     isCustom: boolean,
     indexType?: IndexType,
+    indexWhereClause?: string,
   ) {
     const tableName = computeObjectTargetTable(objectMetadata);
 
@@ -82,6 +84,8 @@ export class IndexMetadataService {
           action: WorkspaceMigrationIndexActionType.CREATE,
           columns: columnNames,
           name: indexName,
+          isUnique,
+          where: indexWhereClause,
           type: indexType,
         },
       ],

@@ -1,3 +1,5 @@
+import { IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
+
 import { FieldMetadataInterface } from './field-metadata.interface';
 import { RelationMetadataInterface } from './relation-metadata.interface';
 
@@ -13,6 +15,7 @@ export interface ObjectMetadataInterface {
   fromRelations: RelationMetadataInterface[];
   toRelations: RelationMetadataInterface[];
   fields: FieldMetadataInterface[];
+  indexMetadatas: IndexMetadataInterface[];
   isSystem: boolean;
   isCustom: boolean;
   isActive: boolean;

@@ -38,7 +38,7 @@ export class SearchResolverFactory
 
         return await this.graphqlQueryRunnerService.search(args, options);
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }
     };
   }

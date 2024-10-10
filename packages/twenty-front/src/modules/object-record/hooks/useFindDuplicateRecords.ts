@@ -53,12 +53,9 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
             `useFindDuplicateRecords for "${objectMetadataItem.nameSingular}" error : ` +
               error,
           );
-          enqueueSnackBar(
-            `Error during useFindDuplicateRecords for "${objectMetadataItem.nameSingular}", ${error.message}`,
-            {
-              variant: SnackBarVariant.Error,
-            },
-          );
+          enqueueSnackBar(`Error finding duplicates:", ${error.message}`, {
+            variant: SnackBarVariant.Error,
+          });
         },
       },
     );

@@ -30,6 +30,7 @@ export interface WorkspaceMigrationColumnDefinition {
   enum?: WorkspaceMigrationEnum[];
   isArray?: boolean;
   isNullable: boolean;
+  isUnique?: boolean;
   defaultValue: any;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
@@ -39,6 +40,8 @@ export interface WorkspaceMigrationIndexAction {
   action: WorkspaceMigrationIndexActionType;
   name: string;
   columns: string[];
+  isUnique: boolean;
+  where?: string | null;
   type?: IndexType;
 }
 

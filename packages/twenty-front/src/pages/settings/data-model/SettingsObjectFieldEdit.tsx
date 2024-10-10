@@ -223,7 +223,17 @@ export const SettingsObjectFieldEdit = () => {
               />
             </Section>
             <Section>
-              <H2Title title="Values" description="The values of this field" />
+              {fieldMetadataItem.isUnique ? (
+                <H2Title
+                  title="Values"
+                  description="The values of this field must be unique"
+                />
+              ) : (
+                <H2Title
+                  title="Values"
+                  description="The values of this field"
+                />
+              )}
               <SettingsDataModelFieldSettingsFormCard
                 fieldMetadataItem={fieldMetadataItem}
                 objectMetadataItem={objectMetadataItem}

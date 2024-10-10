@@ -673,6 +673,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata,
       [searchVectorFieldMetadata],
       false,
+      false,
       IndexType.GIN,
     );
   }

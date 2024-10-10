@@ -11,6 +11,8 @@ import { DeleteNameColumnStandardObjectTablesCommand } from 'src/database/comman
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
+import { EnforceUniqueConstraintsCommand } from './0-31-enforce-unique-constraints.command';
+
 interface UpdateTo0_31CommandOptions {
   workspaceId?: string;
 }
@@ -27,6 +29,7 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
     private readonly backfillWorkspaceFavoritesCommand: BackfillWorkspaceFavoritesCommand,
     private readonly cleanViewsAssociatedWithOutdatedObjectsCommand: CleanViewsAssociatedWithOutdatedObjectsCommand,
     private readonly addIndexKeyToTasksAndNotesViewsCommand: AddIndexKeyToTasksAndNotesViewsCommand,
+    private readonly enforceUniqueConstraintsCommand: EnforceUniqueConstraintsCommand,
     private readonly deleteNameColumnStandardObjectTablesCommand: DeleteNameColumnStandardObjectTablesCommand,
   ) {
     super(workspaceRepository);
@@ -56,6 +59,11 @@ export class UpgradeTo0_31Command extends ActiveWorkspacesCommandRunner {
       workspaceIds,
     );
     await this.backfillWorkspaceFavoritesCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+    await this.enforceUniqueConstraintsCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,

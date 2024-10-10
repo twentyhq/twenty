@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import {
   QueryRunner,
   Table,
@@ -9,6 +10,7 @@ import {
   TableUnique,
 } from 'typeorm';
 
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
@@ -27,7 +29,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
-import { isDefined } from 'src/utils/is-defined';
 
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
@@ -200,7 +201,7 @@ export class WorkspaceMigrationRunnerService {
     for (const index of indexes) {
       switch (index.action) {
         case WorkspaceMigrationIndexActionType.CREATE:
-          if (isDefined(index.type)) {
+          if (isDefined(index.type) && index.type !== IndexType.BTREE) {
             const quotedColumns = index.columns.map((column) => `"${column}"`);
 
             await queryRunner.query(`
@@ -212,6 +213,8 @@ export class WorkspaceMigrationRunnerService {
               new TableIndex({
                 name: index.name,
                 columnNames: index.columns,
+                isUnique: index.isUnique,
+                where: index.where ?? undefined,
               }),
             );
           }
@@ -404,6 +407,7 @@ export class WorkspaceMigrationRunnerService {
         enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
+        isUnique: migrationColumn.isUnique,
         asExpression: migrationColumn.asExpression,
         generatedType: migrationColumn.generatedType,
       }),
@@ -459,6 +463,7 @@ export class WorkspaceMigrationRunnerService {
         ),
         isArray: migrationColumn.currentColumnDefinition.isArray,
         isNullable: migrationColumn.currentColumnDefinition.isNullable,
+        isUnique: migrationColumn.currentColumnDefinition.isUnique,
       }),
       new TableColumn({
         name: migrationColumn.alteredColumnDefinition.columnName,
@@ -469,6 +474,7 @@ export class WorkspaceMigrationRunnerService {
         ),
         isArray: migrationColumn.alteredColumnDefinition.isArray,
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
+        isUnique: migrationColumn.alteredColumnDefinition.isUnique,
       }),
     );
   }

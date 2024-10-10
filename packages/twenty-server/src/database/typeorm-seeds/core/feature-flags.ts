@@ -43,7 +43,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsWorkflowEnabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
@@ -53,7 +53,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsWorkspaceFavoriteEnabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IsSearchEnabled,

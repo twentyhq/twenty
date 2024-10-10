@@ -107,6 +107,7 @@ export class GraphqlQueryCreateManyResolverService
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItem);
+
     args.data.forEach((record) => {
       if (record?.id) {
         assertIsValidUuid(record.id);

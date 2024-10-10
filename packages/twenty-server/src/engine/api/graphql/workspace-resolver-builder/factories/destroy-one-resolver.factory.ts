@@ -40,7 +40,7 @@ export class DestroyOneResolverFactory
 
         return await this.graphQLQueryRunnerService.destroyOne(args, options);
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }
     };
   }

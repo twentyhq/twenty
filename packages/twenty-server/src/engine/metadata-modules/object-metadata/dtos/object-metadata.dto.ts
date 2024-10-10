@@ -11,6 +11,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-delete-one-object.hook';
 
 @ObjectType('object')
@@ -26,6 +27,7 @@ import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metada
 })
 @BeforeDeleteOne(BeforeDeleteOneObject)
 @CursorConnection('fields', () => FieldMetadataDTO)
+@CursorConnection('indexMetadatas', () => IndexMetadataDTO)
 export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;

@@ -23,6 +23,12 @@ export class IndexMetadataEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+
   @Column({ nullable: false })
   name: string;
 
@@ -32,7 +38,7 @@ export class IndexMetadataEntity {
   @Column({ nullable: false, type: 'uuid' })
   objectMetadataId: string;
 
-  @ManyToOne(() => ObjectMetadataEntity, (object) => object.indexes, {
+  @ManyToOne(() => ObjectMetadataEntity, (object) => object.indexMetadatas, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
@@ -48,14 +54,14 @@ export class IndexMetadataEntity {
   )
   indexFieldMetadatas: Relation<IndexFieldMetadataEntity[]>;
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
-
   @Column({ default: false })
   isCustom: boolean;
+
+  @Column({ nullable: false, default: false })
+  isUnique: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  indexWhereClause: string | null;
 
   @Column({
     type: 'enum',

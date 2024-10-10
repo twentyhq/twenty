@@ -156,6 +156,11 @@ export type FieldPhonesMetadata = {
   fieldName: string;
 };
 
+export type FieldTsVectorMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -174,8 +179,8 @@ export type FieldMetadata =
   | FieldUuidMetadata
   | FieldAddressMetadata
   | FieldActorMetadata
-  | FieldArrayMetadata;
-
+  | FieldArrayMetadata
+  | FieldTsVectorMetadata;
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
 export type FieldDateTimeValue = string | null;

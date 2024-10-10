@@ -220,7 +220,7 @@ describe('useTableData', () => {
               delayMs: 0,
               viewType: ViewType.Kanban,
             }),
-            setKanbanFieldName: useRecordBoard(recordIndexId),
+            useRecordBoardHook: useRecordBoard(recordIndexId),
             kanbanFieldName: useRecoilValue(kanbanFieldNameState),
             kanbanData: useRecordIndexOptionsForBoard({
               objectNameSingular,
@@ -243,7 +243,7 @@ describe('useTableData', () => {
       );
 
       await act(async () => {
-        result.current.setKanbanFieldName.setKanbanFieldMetadataName(
+        result.current.useRecordBoardHook.setKanbanFieldMetadataName(
           updatedAtFieldMetadataItem?.name,
         );
       });
@@ -278,10 +278,14 @@ describe('useTableData', () => {
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,
                 targetFieldMetadataName: '',
-                settings: {},
+                settings: {
+                  displayAsRelativeDate: true,
+                },
               },
-              position: 7,
-              settings: {},
+              position: expect.any(Number),
+              settings: {
+                displayAsRelativeDate: true,
+              },
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',

@@ -32,6 +32,7 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
         columnName: computeColumnName(fieldMetadata),
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
         isNullable: fieldMetadata.isNullable ?? true,
+        isUnique: fieldMetadata.isUnique ?? false,
         defaultValue: undefined,
         generatedType: fieldMetadata.generatedType,
         asExpression: fieldMetadata.asExpression,

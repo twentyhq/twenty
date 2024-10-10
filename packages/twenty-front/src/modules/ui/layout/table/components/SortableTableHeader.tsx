@@ -2,7 +2,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useRecoilState } from 'recoil';
-import { IconArrowDown, IconArrowUp } from 'twenty-ui';
+import { IconArrowDown, IconArrowUp, IconComponent } from 'twenty-ui';
 
 export const SortableTableHeader = ({
   tableId,
@@ -10,12 +10,14 @@ export const SortableTableHeader = ({
   label,
   align = 'left',
   initialSort,
+  Icon,
 }: {
   tableId: string;
   fieldName: string;
   label: string;
   align?: 'left' | 'center' | 'right';
   initialSort?: TableSortValue;
+  Icon?: IconComponent;
 }) => {
   const [sortedFieldByTable, setSortedFieldByTable] = useRecoilState(
     sortedFieldByTableFamilyState({ tableId }),
@@ -54,6 +56,7 @@ export const SortableTableHeader = ({
           <IconArrowDown size="14" />
         )
       ) : null}
+      {Icon && <Icon size={14} />}
       {label}
       {isSortActive && align === 'left' ? (
         isAsc ? (

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { indexMetadataItemSchema } from '@/object-metadata/validation-schemas/indexMetadataItemSchema';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
@@ -11,6 +12,7 @@ export const objectMetadataItemSchema = z.object({
   dataSourceId: z.string().uuid(),
   description: z.string().trim().nullable().optional(),
   fields: z.array(fieldMetadataItemSchema()),
+  indexMetadatas: z.array(indexMetadataItemSchema),
   icon: z.string().startsWith('Icon').trim(),
   id: z.string().uuid(),
   imageIdentifierFieldMetadataId: z.string().uuid().nullable(),

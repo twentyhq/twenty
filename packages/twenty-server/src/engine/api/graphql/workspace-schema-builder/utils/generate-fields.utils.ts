@@ -46,10 +46,7 @@ export const generateFields = <
   const fields = {};
 
   for (const fieldMetadata of objectMetadata.fields) {
-    if (
-      isRelationFieldMetadataType(fieldMetadata.type) ||
-      fieldMetadata.type === FieldMetadataType.TS_VECTOR
-    ) {
+    if (isRelationFieldMetadataType(fieldMetadata.type)) {
       continue;
     }
 

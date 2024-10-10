@@ -19,12 +19,9 @@ export const useHandleFindManyRecordsError = ({
       `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
         error,
     );
-    enqueueSnackBar(
-      `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
-      {
-        variant: SnackBarVariant.Error,
-      },
-    );
+    enqueueSnackBar(`${error.message}`, {
+      variant: SnackBarVariant.Error,
+    });
     handleError?.(error);
   };
 

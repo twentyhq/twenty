@@ -154,6 +154,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       toObjectMetadata,
       [foreignKeyFieldMetadata, deletedFieldMetadata],
       false,
+      false,
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(

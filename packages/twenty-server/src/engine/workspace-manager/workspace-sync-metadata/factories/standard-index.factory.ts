@@ -88,7 +88,9 @@ export class StandardIndexFactory {
           objectMetadataId: objectMetadata.id,
           name: workspaceIndexMetadataArgs.name,
           columns: workspaceIndexMetadataArgs.columns,
+          isUnique: workspaceIndexMetadataArgs.isUnique,
           isCustom: false,
+          indexWhereClause: workspaceIndexMetadataArgs.whereClause,
           indexType: workspaceIndexMetadataArgs.type,
         };
 
@@ -130,7 +132,9 @@ export class StandardIndexFactory {
               name: `IDX_${generateDeterministicIndexName([computeTableName(customObjectName, true), ...workspaceIndexMetadataArgs.columns])}`,
               columns: workspaceIndexMetadataArgs.columns,
               isCustom: false,
+              isUnique: workspaceIndexMetadataArgs.isUnique,
               indexType: workspaceIndexMetadataArgs.type,
+              indexWhereClause: workspaceIndexMetadataArgs.whereClause,
             };
 
             return indexMetadata;

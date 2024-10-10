@@ -15,6 +15,7 @@ export const getDevSeedCompanyCustomFields = (
       icon: 'IconAdCircle',
       isActive: true,
       isNullable: false,
+      isUnique: false,
       defaultValue: "''",
       objectMetadataId,
     },
@@ -27,6 +28,7 @@ export const getDevSeedCompanyCustomFields = (
       icon: 'IconVideo',
       isActive: true,
       isNullable: true,
+      isUnique: false,
       objectMetadataId,
     },
     {
@@ -38,6 +40,7 @@ export const getDevSeedCompanyCustomFields = (
       icon: 'IconHome',
       isActive: true,
       isNullable: true,
+      isUnique: false,
       objectMetadataId,
       options: [
         {
@@ -69,6 +72,7 @@ export const getDevSeedCompanyCustomFields = (
       icon: 'IconBrandVisa',
       isActive: true,
       isNullable: true,
+      isUnique: false,
       objectMetadataId,
       defaultValue: false,
     },
@@ -89,6 +93,7 @@ export const getDevSeedPeopleCustomFields = (
       icon: 'IconNote',
       isActive: true,
       isNullable: true,
+      isUnique: false,
       objectMetadataId,
     },
     {
@@ -100,6 +105,7 @@ export const getDevSeedPeopleCustomFields = (
       icon: 'IconBrandWhatsapp',
       isActive: true,
       isNullable: false,
+      isUnique: false,
       defaultValue: [
         {
           primaryPhoneNumber: '',
@@ -118,6 +124,7 @@ export const getDevSeedPeopleCustomFields = (
       icon: 'IconHome',
       isActive: true,
       isNullable: true,
+      isUnique: false,
       objectMetadataId,
       options: [
         {
@@ -149,6 +156,7 @@ export const getDevSeedPeopleCustomFields = (
       icon: 'IconStars',
       isActive: true,
       isNullable: true,
+      isUnique: false,
       objectMetadataId,
       options: [
         {

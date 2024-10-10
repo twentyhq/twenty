@@ -5,9 +5,9 @@ export interface WorkspaceTableStructure {
   dataType: string;
   columnDefault: string;
   isNullable: boolean;
+  isUnique: boolean;
   isPrimaryKey: boolean;
   isForeignKey: boolean;
-  isUnique: boolean;
   isArray: boolean;
   onUpdateAction: string;
   onDeleteAction: string;

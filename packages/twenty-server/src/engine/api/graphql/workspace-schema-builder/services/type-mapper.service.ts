@@ -79,6 +79,7 @@ export class TypeMapperService {
         StringArrayScalarType as unknown as GraphQLScalarType,
       ],
       [FieldMetadataType.RICH_TEXT, GraphQLString],
+      [FieldMetadataType.TS_VECTOR, GraphQLString],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);

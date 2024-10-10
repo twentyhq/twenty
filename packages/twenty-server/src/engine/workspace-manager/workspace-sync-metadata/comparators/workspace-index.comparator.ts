@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import diff from 'microdiff';
 
 import {
-  IndexComparatorResult,
   ComparatorAction,
+  IndexComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
