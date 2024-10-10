@@ -1,8 +1,9 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/deactivateWorkflowVersion';
 import {
   ActivateWorkflowVersionMutation,
@@ -10,9 +11,8 @@ import {
 } from '~/generated/graphql';
 
 export const useDeactivateWorkflowVersion = () => {
-  const apolloClient = useApolloClient();
-
   const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
   const [mutate] = useMutation<
     ActivateWorkflowVersionMutation,
     ActivateWorkflowVersionMutationVariables
@@ -20,8 +20,8 @@ export const useDeactivateWorkflowVersion = () => {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const { findOneRecordQuery: findOneWorkflowVersionQuery } =
-    useFindOneRecordQuery({
+  const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
@@ -30,14 +30,16 @@ export const useDeactivateWorkflowVersion = () => {
       variables: {
         workflowVersionId,
       },
-    });
-
-    await apolloClient.query({
-      query: findOneWorkflowVersionQuery,
-      variables: {
-        objectRecordId: workflowVersionId,
+      update: () => {
+        modifyRecordFromCache({
+          cache: apolloClient.cache,
+          recordId: workflowVersionId,
+          objectMetadataItem: objectMetadataItemWorkflowVersion,
+          fieldModifiers: {
+            status: () => 'DEACTIVATED',
+          },
+        });
       },
-      fetchPolicy: 'network-only',
     });
   };
 

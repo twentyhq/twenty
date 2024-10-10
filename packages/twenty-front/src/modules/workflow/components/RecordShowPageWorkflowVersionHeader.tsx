@@ -108,7 +108,10 @@ export const RecordShowPageWorkflowVersionHeader = ({
           Icon={IconPower}
           disabled={isWaitingForWorkflowVersion}
           onClick={() => {
-            return activateWorkflowVersion(workflowVersion.id);
+            return activateWorkflowVersion({
+              workflowVersionId: workflowVersion.id,
+              workflowId: workflowVersion.workflowId,
+            });
           }}
         />
       ) : workflowVersion?.status === 'ACTIVE' ? (

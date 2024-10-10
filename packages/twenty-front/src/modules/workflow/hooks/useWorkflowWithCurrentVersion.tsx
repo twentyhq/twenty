@@ -41,7 +41,6 @@ export const useWorkflowWithCurrentVersion = (
         createdAt: 'DescNullsLast',
       },
     ],
-    limit: 1,
     skip: !isDefined(workflowId),
   });
 
@@ -50,7 +49,16 @@ export const useWorkflowWithCurrentVersion = (
       return undefined;
     }
 
-    const currentVersion = mostRecentWorkflowVersions?.[0];
+    const draftVersion = mostRecentWorkflowVersions.find(
+      (workflowVersion) => workflowVersion.status === 'DRAFT',
+    );
+    const latestVersion = mostRecentWorkflowVersions[0];
+
+    const currentVersion = draftVersion ?? latestVersion;
+
+    if (!isDefined(currentVersion)) {
+      return undefined;
+    }
 
     return {
       ...workflow,
