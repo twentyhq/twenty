@@ -36,7 +36,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '2',
           iconName: 'Icon123',
           label: 'Email',
-          type: FieldMetadataType.Email,
+          type: FieldMetadataType.Emails,
         },
         {
           fieldMetadataId: '3',

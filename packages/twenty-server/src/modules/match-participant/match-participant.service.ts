@@ -7,7 +7,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -60,35 +59,19 @@ export class MatchParticipantService<
       ...new Set(participants.map((participant) => participant.handle)),
     ];
 
-    const emailsFieldMetadata = await this.fieldMetadataRepository.findOne({
-      where: {
-        workspaceId: workspaceId,
-        standardId: PERSON_STANDARD_FIELD_IDS.emails,
-      },
-    });
-
     const personRepository =
       await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
         'person',
       );
 
-    const people = emailsFieldMetadata
-      ? await personRepository.find(
-          {
-            where: {
-              emails: Any(uniqueParticipantsHandles),
-            },
-          },
-          transactionManager,
-        )
-      : await personRepository.find(
-          {
-            where: {
-              email: Any(uniqueParticipantsHandles),
-            },
-          },
-          transactionManager,
-        );
+    const people = await personRepository.find(
+      {
+        where: {
+          emails: Any(uniqueParticipantsHandles),
+        },
+      },
+      transactionManager,
+    );
 
     const workspaceMemberRepository =
       await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -105,10 +88,8 @@ export class MatchParticipantService<
     );
 
     for (const handle of uniqueParticipantsHandles) {
-      const person = people.find((person) =>
-        emailsFieldMetadata
-          ? person.emails?.primaryEmail === handle
-          : person.email === handle,
+      const person = people.find(
+        (person) => person.emails?.primaryEmail === handle,
       );
 
       const workspaceMember = workspaceMembers.find(

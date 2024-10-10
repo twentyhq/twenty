@@ -20,9 +20,7 @@ export const useDeleteOneStep = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion({
-    workflowId: workflow.id,
-  });
+  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
   const deleteOneStep = async () => {
     if (workflow.currentVersion.status !== 'DRAFT') {
@@ -30,6 +28,7 @@ export const useDeleteOneStep = ({
 
       if (stepId === TRIGGER_STEP_ID) {
         await createNewWorkflowVersion({
+          workflowId: workflow.id,
           name: newVersionName,
           status: 'DRAFT',
           trigger: null,
@@ -37,6 +36,7 @@ export const useDeleteOneStep = ({
         });
       } else {
         await createNewWorkflowVersion({
+          workflowId: workflow.id,
           name: newVersionName,
           status: 'DRAFT',
           trigger: workflow.currentVersion.trigger,

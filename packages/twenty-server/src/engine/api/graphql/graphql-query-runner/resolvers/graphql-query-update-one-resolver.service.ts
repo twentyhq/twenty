@@ -103,12 +103,12 @@ export class GraphqlQueryUpdateOneResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
-    return typeORMObjectRecordsParser.processRecord<ObjectRecord>(
-      updatedRecord,
-      objectMetadataMapItem.nameSingular,
-      1,
-      1,
-    );
+    return typeORMObjectRecordsParser.processRecord<ObjectRecord>({
+      objectRecord: updatedRecord,
+      objectName: objectMetadataMapItem.nameSingular,
+      take: 1,
+      totalCount: 1,
+    });
   }
 
   async validate<ObjectRecord extends IRecord = IRecord>(

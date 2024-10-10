@@ -7,4 +7,5 @@ export const RIGHT_DRAWER_PAGE_TITLES = {
   [RightDrawerPages.Copilot]: 'Copilot',
   [RightDrawerPages.WorkflowStepEdit]: 'Workflow',
   [RightDrawerPages.WorkflowStepSelectAction]: 'Workflow',
+  [RightDrawerPages.WorkflowStepView]: 'Workflow',
 };
