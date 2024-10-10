@@ -16,6 +16,6 @@ Your turn 👇
 
 ////////////////////////////
 
-» 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) Logo Link: [logo](https://twenty.com/) tweet Link: [tweet](https://x.com)
+» 08-October-2024 by [adityadeshlahre](https://oss.gg/adityadeshlahre) Logo Link: [logo](https://drive.google.com/drive/folders/13k22xMnX2fhnWK94vas_hO1t-ImqXcHZ?usp=drive_link) » tweet Link: [tweet](https://x.com/adityadeshlahre/status/1843354963176718374)
 
 ---

@@ -174,7 +174,6 @@ export const SettingsWorkspaceMembers = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconUsers}
       title="Members"
       links={[
         {

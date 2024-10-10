@@ -1,20 +1,8 @@
-import {
-  fields,
-  objectMetadataItemMock,
-} from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
-  it('should test all non-deprecated field types', () => {
-    expect(fields.map((field) => field.type)).toEqual(
-      Object.keys(FieldMetadataType).filter(
-        (key) =>
-          key !== FieldMetadataType.LINK && key !== FieldMetadataType.TS_VECTOR,
-      ),
-    );
-  });
   it('should compute schema components', () => {
     expect(
       computeSchemaComponents([
@@ -32,9 +20,6 @@ describe('computeSchemaComponents', () => {
           fieldText: {
             type: 'string',
           },
-          fieldPhone: {
-            type: 'string',
-          },
           fieldPhones: {
             properties: {
               additionalPhones: {
@@ -48,10 +33,6 @@ describe('computeSchemaComponents', () => {
               },
             },
             type: 'object',
-          },
-          fieldEmail: {
-            type: 'string',
-            format: 'email',
           },
           fieldEmails: {
             type: 'object',
@@ -216,9 +197,6 @@ describe('computeSchemaComponents', () => {
           fieldText: {
             type: 'string',
           },
-          fieldPhone: {
-            type: 'string',
-          },
           fieldPhones: {
             properties: {
               additionalPhones: {
@@ -232,10 +210,6 @@ describe('computeSchemaComponents', () => {
               },
             },
             type: 'object',
-          },
-          fieldEmail: {
-            type: 'string',
-            format: 'email',
           },
           fieldEmails: {
             type: 'object',
@@ -399,9 +373,6 @@ describe('computeSchemaComponents', () => {
           fieldText: {
             type: 'string',
           },
-          fieldPhone: {
-            type: 'string',
-          },
           fieldPhones: {
             properties: {
               additionalPhones: {
@@ -415,10 +386,6 @@ describe('computeSchemaComponents', () => {
               },
             },
             type: 'object',
-          },
-          fieldEmail: {
-            type: 'string',
-            format: 'email',
           },
           fieldEmails: {
             type: 'object',

@@ -71,7 +71,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 <ArticleTable options={[
     ['MESSAGING_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Gmail API connection'],
     ['CALENDAR_PROVIDER_GOOGLE_ENABLED', 'false', 'Enable Google Calendar API connection'],
-    ['AUTH_GOOGLE_APIS_CALLBACK_URL', '', 'Google APIs auth callback'],
+    ['AUTH_GOOGLE_APIS_CALLBACK_URL', 'http://[YourDomain]/auth/google/redirect', 'Google APIs auth callback'],
     ['AUTH_PASSWORD_ENABLED', 'false', 'Enable Email/Password login'],
     ['AUTH_GOOGLE_ENABLED', 'false', 'Enable Google SSO login'],
     ['AUTH_GOOGLE_CLIENT_ID', '', 'Google client ID'],
@@ -81,7 +81,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['AUTH_MICROSOFT_CLIENT_ID', '', 'Microsoft client ID'],
     ['AUTH_MICROSOFT_TENANT_ID', '', 'Microsoft tenant ID'],
     ['AUTH_MICROSOFT_CLIENT_SECRET', '', 'Microsoft client secret'],
-    ['AUTH_MICROSOFT_CALLBACK_URL', '', 'Microsoft auth callback'],
+    ['AUTH_MICROSOFT_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft/redirect', 'Microsoft auth callback'],
     ['FRONT_AUTH_CALLBACK_URL', 'http://localhost:3001/verify ', 'Callback used for Login page'],
     ['IS_SIGN_UP_DISABLED', 'false', 'Disable sign-up'],
     ['PASSWORD_RESET_TOKEN_EXPIRES_IN', '5m', 'Password reset token expiration time'],

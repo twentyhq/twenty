@@ -23,15 +23,7 @@ export const getTsVectorColumnExpressionFromFields = (
   );
   const concatenatedExpression = columnExpressions.join(" || ' ' || ");
 
-  const tsVectorExpression = `to_tsvector('simple', ${concatenatedExpression})`;
-
-  return `
-    CASE 
-      WHEN "deletedAt" IS NULL THEN 
-        ${tsVectorExpression}
-      ELSE NULL
-    END
-  `;
+  return `to_tsvector('simple', ${concatenatedExpression})`;
 };
 
 const getColumnExpressionsFromField = (
