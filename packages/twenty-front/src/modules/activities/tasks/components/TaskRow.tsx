@@ -130,6 +130,14 @@ export const TaskRow = ({ task }: { task: Task }) => {
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
+        {task.dueAt && (
+          <StyledDueDate
+            isPast={hasDatePassed(task.dueAt) && task.status === 'TODO'}
+          >
+            <IconCalendar size={theme.icon.size.md} />
+            {beautifyExactDate(task.dueAt)}
+          </StyledDueDate>
+        )}
         {TaskTargetsContextProvider && (
           <TaskTargetsContextProvider>
             <ActivityTargetsInlineCell
@@ -141,14 +149,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
             />
           </TaskTargetsContextProvider>
         )}
-        <StyledDueDate
-          isPast={
-            !!task.dueAt && hasDatePassed(task.dueAt) && task.status === 'TODO'
-          }
-        >
-          <IconCalendar size={theme.icon.size.md} />
-          {task.dueAt && beautifyExactDate(task.dueAt)}
-        </StyledDueDate>
       </StyledRightSideContainer>
     </StyledContainer>
   );
