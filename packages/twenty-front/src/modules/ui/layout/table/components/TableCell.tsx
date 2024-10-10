@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 type TableCellProps = {
   align?: 'left' | 'center' | 'right';
   color?: string;
+  width?:string;
 };
 
 const StyledTableCell = styled.div<TableCellProps>`
@@ -17,6 +18,7 @@ const StyledTableCell = styled.div<TableCellProps>`
         ? 'center'
         : 'flex-start'};
   padding: 0 ${({ theme }) => theme.spacing(2)};
+  width: ${({ width }) => width ?? width};
   text-align: ${({ align }) => align ?? 'left'};
 `;
 

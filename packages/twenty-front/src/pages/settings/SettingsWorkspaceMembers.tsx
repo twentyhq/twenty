@@ -4,12 +4,15 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  AppTooltip,
   Avatar,
   H2Title,
   IconMail,
   IconReload,
   IconTrash,
+  IconUsers,
   MOBILE_VIEWPORT,
+  TooltipDelay
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -78,10 +81,15 @@ const StyledIconWrapper = styled.div`
 `;
 
 const StyledScrollableTextContainer = styled.div`
-  max-width: 100%;
-  overflow-x: auto;
-  white-space: pre-line;
+  max-width: 90px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  @media (max-width: ${MOBILE_VIEWPORT}px) { 
+    max-width: 60px;
+  }
 `;
+
 
 const StyledTextContainer = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -203,7 +211,7 @@ export const SettingsWorkspaceMembers = () => {
             {workspaceMembers?.map((workspaceMember) => (
               <StyledTable key={workspaceMember.id}>
                 <TableRow>
-                  <TableCell>
+                  <TableCell width='fit-content'>
                     <StyledIconWrapper>
                       <Avatar
                         avatarUrl={workspaceMember.avatarUrl}
@@ -213,11 +221,19 @@ export const SettingsWorkspaceMembers = () => {
                         size="sm"
                       />
                     </StyledIconWrapper>
-                    <StyledScrollableTextContainer>
-                      {workspaceMember.name.firstName +
-                        ' ' +
-                        workspaceMember.name.lastName}
+                    <StyledScrollableTextContainer
+                      id={`hover-text-${workspaceMember.id}`}
+                    >
+                      {workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName}
                     </StyledScrollableTextContainer>
+                    <AppTooltip
+                      anchorSelect={`#hover-text-${workspaceMember.id}`}
+                      content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                      noArrow
+                      place="top"
+                      positionStrategy="fixed"
+                      delay={TooltipDelay.shortDelay}
+                    />
                   </TableCell>
                   <TableCell>
                     <StyledTextContainer>
