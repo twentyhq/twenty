@@ -24,6 +24,7 @@ const objectMetadataItem: ObjectMetadataItem = {
   isRemote: false,
   labelPlural: 'object1s',
   labelSingular: 'object1',
+  areLabelAndNameSync: true,
 };
 
 describe('turnSortsIntoOrderBy', () => {
