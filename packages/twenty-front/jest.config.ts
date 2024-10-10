@@ -25,9 +25,9 @@ const jestConfig: JestConfigWithTsJest = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 59,
+      statements: 60,
       lines: 55,
-      functions: 49,
+      functions: 50,
     },
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
