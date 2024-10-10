@@ -22,6 +22,8 @@ Migrating a CRM is a bit trickier than migrating a traditional software, because
 
 ## v0.21.0 to v0.22.0
 
+Upgrade your Twenty instance to use v0.22.0 image
+
 Run the following commands:
 
 ```
@@ -36,6 +38,8 @@ The `yarn command:prod upgrade-0.22` command will apply specific data transforma
 
 ## v0.22.0 to v0.23.0
 
+Upgrade your Twenty instance to use v0.23.0 image
+
 Run the following commands:
 
 ```
@@ -48,6 +52,8 @@ The `yarn command:prod upgrade-0.23` takes care of the data migration, including
 
 ## v0.23.0 to v0.24.0
 
+Upgrade your Twenty instance to use v0.24.0 image
+
 Run the following commands:
 
 ```
@@ -57,5 +63,40 @@ yarn command:prod upgrade-0.24
 
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
+
+# v0.24.0 to v0.30.0
+
+Upgrade your Twenty instance to use v0.30.0 image
+
+**Breaking change**: 
+To enhance performances, Twenty now requires redis cache to be configured. We have updated our [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) to reflect this.
+Make sure to update your configuration and to update your environment variables accordingly:
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**Schema and data migration**: 
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-30` takes care of the data migration of all workspaces.
+
+# v0.30.0 to v0.31.0
+
+Upgrade your Twenty instance to use v0.31.0 image
+
+**Schema and data migration**: 
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-31` takes care of the data migration of all workspaces.
 
 <ArticleEditContent></ArticleEditContent>

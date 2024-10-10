@@ -27,18 +27,15 @@ import { TaskList } from './TaskList';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 type TaskGroupsProps = {
   filterDropdownId?: string;
   targetableObjects?: ActivityTargetableObject[];
-  showAddButton?: boolean;
 };
 
-export const TaskGroups = ({
-  targetableObjects,
-  showAddButton,
-}: TaskGroupsProps) => {
+export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
   const { tasks, tasksLoading } = useTasks({
     targetableObjects: targetableObjects ?? [],
   });
@@ -93,7 +90,11 @@ export const TaskGroups = ({
 
   const sortedTasksByStatus = Object.entries(
     groupBy(tasks, ({ status }) => status),
-  ).toSorted(([statusA], [statusB]) => statusB.localeCompare(statusA));
+  ).sort(([statusA], [statusB]) => statusB.localeCompare(statusA));
+
+  const hasTodoStatus = sortedTasksByStatus.some(
+    ([status]) => status === 'TODO',
+  );
 
   return (
     <StyledContainer>
@@ -103,7 +104,7 @@ export const TaskGroups = ({
           title={status}
           tasks={tasksByStatus}
           button={
-            showAddButton && (
+            (status === 'TODO' || !hasTodoStatus) && (
               <AddTaskButton activityTargetableObjects={targetableObjects} />
             )
           }

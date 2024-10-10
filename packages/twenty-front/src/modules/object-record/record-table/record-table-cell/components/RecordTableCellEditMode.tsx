@@ -1,7 +1,6 @@
-import { ReactElement } from 'react';
-import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
+import { ReactElement } from 'react';
 
 const StyledEditableCellEditModeContainer = styled.div<RecordTableCellEditModeProps>`
   position: absolute;
@@ -44,12 +43,9 @@ export const RecordTableCellEditMode = ({
       ref={refs.setReference}
       data-testid="editable-cell-edit-mode-container"
     >
-      {createPortal(
-        <StyledTableCellInput ref={refs.setFloating} style={floatingStyles}>
-          {children}
-        </StyledTableCellInput>,
-        document.body,
-      )}
+      <StyledTableCellInput ref={refs.setFloating} style={floatingStyles}>
+        {children}
+      </StyledTableCellInput>
     </StyledEditableCellEditModeContainer>
   );
 };

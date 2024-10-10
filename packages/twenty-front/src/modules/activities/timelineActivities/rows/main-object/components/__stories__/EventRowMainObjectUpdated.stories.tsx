@@ -5,7 +5,7 @@ import { EventRowMainObjectUpdated } from '@/activities/timelineActivities/rows/
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof EventRowMainObjectUpdated> = {
   title: 'Modules/TimelineActivities/Rows/MainObject/EventRowMainObjectUpdated',
@@ -35,7 +35,9 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
         },
       },
     } as TimelineActivity,
-    mainObjectMetadataItem: mockedPersonObjectMetadataItem,
+    mainObjectMetadataItem: generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'person',
+    ),
   },
   decorators: [
     ComponentDecorator,

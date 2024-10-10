@@ -30,7 +30,11 @@ export const RecordBoardColumnNewButton = ({
   const { newRecord, handleNewButtonClick, handleCreateSuccess } =
     useColumnNewCardActions(columnId);
 
-  if (newRecord.isCreating && newRecord.position === 'last') {
+  if (
+    newRecord.isCreating &&
+    newRecord.position === 'last' &&
+    !newRecord.isOpportunity
+  ) {
     return (
       <RecordBoardCard
         isCreating={true}
@@ -41,7 +45,7 @@ export const RecordBoardColumnNewButton = ({
   }
 
   return (
-    <StyledNewButton onClick={() => handleNewButtonClick('last')}>
+    <StyledNewButton onClick={() => handleNewButtonClick('last', false)}>
       <IconPlus size={theme.icon.size.md} />
       New
     </StyledNewButton>

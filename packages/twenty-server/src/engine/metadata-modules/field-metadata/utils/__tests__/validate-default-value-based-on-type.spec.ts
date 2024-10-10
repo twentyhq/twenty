@@ -40,32 +40,6 @@ describe('validateDefaultValueForType', () => {
     ).toBe(false);
   });
 
-  it('should validate string default value for PHONE type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.PHONE, "'+123456789'")
-        .isValid,
-    ).toBe(true);
-  });
-
-  it('should return false for invalid string default value for PHONE type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.PHONE, 123).isValid,
-    ).toBe(false);
-  });
-
-  it('should validate string default value for EMAIL type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.EMAIL, "'test@example.com'")
-        .isValid,
-    ).toBe(true);
-  });
-
-  it('should return false for invalid string default value for EMAIL type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.EMAIL, 123).isValid,
-    ).toBe(false);
-  });
-
   it('should validate number default value for NUMBER type', () => {
     expect(
       validateDefaultValueForType(FieldMetadataType.NUMBER, 100).isValid,
@@ -87,27 +61,6 @@ describe('validateDefaultValueForType', () => {
   it('should return false for invalid boolean default value for BOOLEAN type', () => {
     expect(
       validateDefaultValueForType(FieldMetadataType.BOOLEAN, 'true').isValid,
-    ).toBe(false);
-  });
-
-  // LINK type
-  it('should validate LINK default value', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.LINK, {
-        label: "'http://example.com'",
-        url: "'Example'",
-      }).isValid,
-    ).toBe(true);
-  });
-
-  it('should return false for invalid LINK default value', () => {
-    expect(
-      validateDefaultValueForType(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error Just for testing purposes
-        { label: 123, url: {} },
-        FieldMetadataType.LINK,
-      ).isValid,
     ).toBe(false);
   });
 

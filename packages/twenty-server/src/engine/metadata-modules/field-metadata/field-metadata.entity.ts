@@ -24,16 +24,13 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
 export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
-  PHONE = 'PHONE',
   PHONES = 'PHONES',
-  EMAIL = 'EMAIL',
   EMAILS = 'EMAILS',
   DATE_TIME = 'DATE_TIME',
   DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
-  LINK = 'LINK',
   LINKS = 'LINKS',
   CURRENCY = 'CURRENCY',
   FULL_NAME = 'FULL_NAME',
@@ -47,6 +44,7 @@ export enum FieldMetadataType {
   RICH_TEXT = 'RICH_TEXT',
   ACTOR = 'ACTOR',
   ARRAY = 'ARRAY',
+  TS_VECTOR = 'TS_VECTOR',
 }
 
 @Entity('fieldMetadata')

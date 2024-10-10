@@ -7,7 +7,7 @@ const jestConfig: JestConfigWithTsJest = {
   displayName: 'twenty-server',
   rootDir: './',
   testEnvironment: 'node',
-  transformIgnorePatterns: ['../../node_modules/'],
+  transformIgnorePatterns: ['/node_modules/'],
   testRegex: '.*\\.spec\\.ts$',
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',

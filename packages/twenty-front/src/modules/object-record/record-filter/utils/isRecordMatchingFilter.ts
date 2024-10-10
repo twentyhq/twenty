@@ -17,7 +17,6 @@ import {
   PhonesFilter,
   RecordGqlOperationFilter,
   StringFilter,
-  URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
@@ -144,8 +143,6 @@ export const isRecordMatchingFilter = ({
     }
 
     switch (objectMetadataField.type) {
-      case FieldMetadataType.Email:
-      case FieldMetadataType.Phone:
       case FieldMetadataType.Select:
       case FieldMetadataType.Rating:
       case FieldMetadataType.MultiSelect:
@@ -154,22 +151,6 @@ export const isRecordMatchingFilter = ({
           stringFilter: filterValue as StringFilter,
           value: record[filterKey],
         });
-      }
-      case FieldMetadataType.Link: {
-        const urlFilter = filterValue as URLFilter;
-
-        return (
-          (urlFilter.url === undefined ||
-            isMatchingStringFilter({
-              stringFilter: urlFilter.url,
-              value: record[filterKey].url,
-            })) &&
-          (urlFilter.label === undefined ||
-            isMatchingStringFilter({
-              stringFilter: urlFilter.label,
-              value: record[filterKey].label,
-            }))
-        );
       }
       case FieldMetadataType.FullName: {
         const fullNameFilter = filterValue as FullNameFilter;

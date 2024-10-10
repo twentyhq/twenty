@@ -40,4 +40,11 @@ export class FileStorageService implements StorageDriver {
   }): Promise<void> {
     return this.driver.copy(params);
   }
+
+  download(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    return this.driver.download(params);
+  }
 }

@@ -99,6 +99,16 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   })
   handleAliases: string;
 
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,
+    type: FieldMetadataType.ARRAY,
+    label: 'Scopes',
+    description: 'Scopes',
+    icon: 'IconSettings',
+  })
+  @WorkspaceIsNullable()
+  scopes: string[] | null;
+
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
     type: RelationMetadataType.MANY_TO_ONE,
