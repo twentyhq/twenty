@@ -87,14 +87,6 @@ export const mapFieldMetadataToGraphqlQuery = (
           }
         }
       }`;
-  } else if (fieldType === FieldMetadataType.LINK) {
-    return `
-      ${field.name}
-      {
-        label
-        url
-      }
-    `;
   } else if (fieldType === FieldMetadataType.LINKS) {
     return `
       ${field.name}

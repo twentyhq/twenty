@@ -136,7 +136,6 @@ const getSchemaComponentsProperties = ({
           enum: field.options.map((option: { value: string }) => option.value),
         };
         break;
-      case FieldMetadataType.LINK:
       case FieldMetadataType.LINKS:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
