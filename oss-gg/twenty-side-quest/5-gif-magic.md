@@ -17,7 +17,7 @@ Your turn 👇
 
 ////////////////////////////
 
-» 01-October-2024 by YOUR NAME
-» Link to gif: https://giphy.com/...
+» 10-October-2024 by Teddy ASSIH
+» Link to gif: https://giphy.com/gifs/oss-crm-twenty-VWDHAIlGTbc6Nqdza9
 
 ---
