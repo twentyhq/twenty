@@ -142,6 +142,8 @@ describe('computeInputFields', () => {
         helpText:
           'Annual Salary of the Person: Amount Micros. eg: set 3210000 for 3.21$',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'annualSalary__currencyCode',
@@ -150,6 +152,8 @@ describe('computeInputFields', () => {
         helpText:
           'Annual Salary of the Person: Currency Code. eg: USD, EUR, etc...',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'jobTitle',
@@ -157,6 +161,8 @@ describe('computeInputFields', () => {
         type: 'string',
         helpText: 'Contact’s job title',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'updatedAt',
@@ -164,6 +170,8 @@ describe('computeInputFields', () => {
         type: 'datetime',
         helpText: null,
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'name__firstName',
@@ -171,6 +179,8 @@ describe('computeInputFields', () => {
         type: 'string',
         helpText: 'Contact’s name: First Name',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'name__lastName',
@@ -178,6 +188,8 @@ describe('computeInputFields', () => {
         type: 'string',
         helpText: 'Contact’s name: Last Name',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'recordPosition',
@@ -185,6 +197,8 @@ describe('computeInputFields', () => {
         type: 'integer',
         helpText: 'Record Position',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'xLink__url',
@@ -192,6 +206,8 @@ describe('computeInputFields', () => {
         type: 'string',
         helpText: 'Contact’s X/Twitter account: Link Url',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'xLink__label',
@@ -199,27 +215,35 @@ describe('computeInputFields', () => {
         type: 'string',
         helpText: 'Contact’s X/Twitter account: Link Label',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
-        key: 'whatsapp__url',
-        label: 'Whatsapp: Url',
+        key: 'whatsapp__primaryLinkLabel',
+        label: 'Whatsapp: Primary Link Label',
         type: 'string',
-        helpText: 'Contact’s Whatsapp account: Link Url',
+        helpText: 'Contact’s Whatsapp account: Primary Link Label',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
-        key: 'whatsapp__label',
-        label: 'Whatsapp: Label',
+        key: 'whatsapp__primaryLinkUrl',
+        label: 'Whatsapp: Primary Link Url',
         type: 'string',
-        helpText: 'Contact’s Whatsapp account: Link Label',
+        helpText: 'Contact’s Whatsapp account: Primary Link Url',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'whatsapp__secondaryLinks',
-        label: 'Whatsapp: Secondary Lings',
+        label: 'Whatsapp: Secondary Links',
         type: 'string',
-        helpText: 'Contact’s Whatsapp account: Link Label',
+        helpText: 'Contact’s Whatsapp account: Secondary Links',
         required: false,
+        list: true,
+        placeholder: '{ url: "", label: "" }',
       },
       {
         key: 'email',
@@ -227,6 +251,8 @@ describe('computeInputFields', () => {
         type: 'string',
         helpText: 'Contact’s Email',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
       {
         key: 'companyId',
@@ -234,6 +260,8 @@ describe('computeInputFields', () => {
         type: 'string',
         helpText: 'Contact’s company id foreign key',
         required: false,
+        list: false,
+        placeholder: undefined,
       },
     ];
     const idInputField: InputField = {
@@ -241,6 +269,8 @@ describe('computeInputFields', () => {
       label: 'Id',
       type: 'string',
       helpText: null,
+      list: false,
+      placeholder: undefined,
       required: false,
     };
     const expectedResult = [idInputField].concat(baseExpectedResult);
