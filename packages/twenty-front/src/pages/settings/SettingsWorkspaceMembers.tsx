@@ -212,7 +212,7 @@ export const SettingsWorkspaceMembers = () => {
             {workspaceMembers?.map((workspaceMember) => (
               <StyledTable key={workspaceMember.id}>
                 <TableRow>
-                  <TableCell>
+                  <TableCell width='fit-content'>
                     <StyledIconWrapper>
                       <Avatar
                         avatarUrl={workspaceMember.avatarUrl}
