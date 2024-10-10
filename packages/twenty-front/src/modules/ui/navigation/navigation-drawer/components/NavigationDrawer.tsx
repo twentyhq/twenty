@@ -45,7 +45,9 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
       : ''}
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 95%;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 `;
 
