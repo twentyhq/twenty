@@ -18,11 +18,12 @@ const StyledObjectSummary = styled.div`
   justify-content: space-between;
 `;
 
-const StyledObjectName = styled.div`
-  align-items: center;
-  display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
+const StyledEllipsisParagraph = styled.p`
+  max-width: 80px;      
+  white-space: nowrap;  
+  overflow: hidden;     
+  text-overflow: ellipsis; 
+  margin: 0;
 `;
 
 export const SettingsDataModelObjectSummary = ({
@@ -37,10 +38,9 @@ export const SettingsDataModelObjectSummary = ({
 
   return (
     <StyledObjectSummary className={className}>
-      <StyledObjectName>
-        <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
+      <StyledEllipsisParagraph>
         {objectMetadataItem.labelPlural}
-      </StyledObjectName>
+      </StyledEllipsisParagraph>
       <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
     </StyledObjectSummary>
   );

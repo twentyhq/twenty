@@ -130,7 +130,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
-
   if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
     return (
       <SettingsDataModelFieldBooleanSettingsFormCard
