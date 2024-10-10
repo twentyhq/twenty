@@ -12,6 +12,8 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { NavigationDrawerCollapsedGreyBox } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapsedGreyBox';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
@@ -39,7 +41,9 @@ export const CurrentWorkspaceMemberFavorites = () => {
 
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
-
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
@@ -58,55 +62,65 @@ export const CurrentWorkspaceMemberFavorites = () => {
   )
     return <></>;
 
+  const draggableListContent = (
+    <DraggableList
+      onDragEnd={handleReorderFavorite}
+      draggableItems={
+        <>
+          {currentWorkspaceMemberFavorites.map((favorite, index) => {
+            const {
+              id,
+              labelIdentifier,
+              avatarUrl,
+              avatarType,
+              link,
+              recordId,
+            } = favorite;
+
+            return (
+              <DraggableItem
+                key={id}
+                draggableId={id}
+                index={index}
+                itemComponent={
+                  <StyledNavigationDrawerItem
+                    key={id}
+                    label={labelIdentifier}
+                    Icon={() => (
+                      <StyledAvatar
+                        placeholderColorSeed={recordId}
+                        avatarUrl={avatarUrl}
+                        type={avatarType}
+                        placeholder={labelIdentifier}
+                        className="fav-avatar"
+                      />
+                    )}
+                    to={link}
+                  />
+                }
+              />
+            );
+          })}
+        </>
+      }
+    />
+  );
+
   return (
     <StyledContainer>
       <NavigationDrawerSectionTitle
         label="Favorites"
         onClick={() => toggleNavigationSection()}
       />
-      {isNavigationSectionOpen && (
-        <DraggableList
-          onDragEnd={handleReorderFavorite}
-          draggableItems={
-            <>
-              {currentWorkspaceMemberFavorites.map((favorite, index) => {
-                const {
-                  id,
-                  labelIdentifier,
-                  avatarUrl,
-                  avatarType,
-                  link,
-                  recordId,
-                } = favorite;
 
-                return (
-                  <DraggableItem
-                    key={id}
-                    draggableId={id}
-                    index={index}
-                    itemComponent={
-                      <StyledNavigationDrawerItem
-                        key={id}
-                        label={labelIdentifier}
-                        Icon={() => (
-                          <StyledAvatar
-                            placeholderColorSeed={recordId}
-                            avatarUrl={avatarUrl}
-                            type={avatarType}
-                            placeholder={labelIdentifier}
-                            className="fav-avatar"
-                          />
-                        )}
-                        to={link}
-                      />
-                    }
-                  />
-                );
-              })}
-            </>
-          }
-        />
-      )}
+      {isNavigationSectionOpen &&
+        (isNavigationDrawerExpanded ? (
+          draggableListContent
+        ) : (
+          <NavigationDrawerCollapsedGreyBox>
+            {draggableListContent}
+          </NavigationDrawerCollapsedGreyBox>
+        ))}
     </StyledContainer>
   );
 };

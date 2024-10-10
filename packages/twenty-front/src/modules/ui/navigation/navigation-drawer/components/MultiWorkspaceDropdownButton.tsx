@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconChevronDown } from 'twenty-ui';
 
@@ -14,6 +14,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MulitWorkspaceDropdownId';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 const StyledLogo = styled.div<{ logo: string }>`
@@ -78,7 +79,11 @@ export const MultiWorkspaceDropdownButton = ({
     await switchWorkspace(workspaceId);
   };
 
-  return (
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
+
+  return isNavigationDrawerExpanded ? (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
       dropdownHotkeyScope={{
@@ -126,5 +131,17 @@ export const MultiWorkspaceDropdownButton = ({
         </DropdownMenuItemsContainer>
       }
     />
+  ) : (
+    <StyledContainer data-testid="workspace-dropdown">
+      <StyledLogo
+        logo={
+          getImageAbsoluteURI(
+            currentWorkspace?.logo === null
+              ? DEFAULT_WORKSPACE_LOGO
+              : currentWorkspace?.logo,
+          ) ?? ''
+        }
+      />
+    </StyledContainer>
   );
 };

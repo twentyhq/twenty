@@ -1,9 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconX } from 'twenty-ui';
 
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 type NavigationDrawerBackButtonProps = {
@@ -43,9 +45,22 @@ export const NavigationDrawerBackButton = ({
   const theme = useTheme();
   const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
 
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
+    isNavigationDrawerExpandedState,
+  );
+  const navigationDrawerExpandedMemorized = useRecoilValue(
+    navigationDrawerExpandedMemorizedState,
+  );
+
   return (
     <StyledContainer>
-      <UndecoratedLink to={navigationMemorizedUrl} replace>
+      <UndecoratedLink
+        to={navigationMemorizedUrl}
+        replace
+        onClick={() =>
+          setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized)
+        }
+      >
         <StyledIconAndButtonContainer>
           <IconX
             size={theme.icon.size.md}

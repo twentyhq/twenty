@@ -8,7 +8,7 @@ import {
   NavigationDrawer,
   NavigationDrawerProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
+
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
@@ -16,6 +16,7 @@ import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
 import { AdvancedSettingsToggle } from '@/ui/navigation/link/components/AdvancedSettingsToggle';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { MainNavigationDrawerItems } from './MainNavigationDrawerItems';
 
 export type AppNavigationDrawerProps = {
@@ -30,8 +31,8 @@ export const AppNavigationDrawer = ({
   const currentMobileNavigationDrawer = useRecoilValue(
     currentMobileNavigationDrawerState,
   );
-  const setIsNavigationDrawerOpen = useSetRecoilState(
-    isNavigationDrawerOpenState,
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
+    isNavigationDrawerExpandedState,
   );
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -57,8 +58,8 @@ export const AppNavigationDrawer = ({
       };
 
   useEffect(() => {
-    setIsNavigationDrawerOpen(!isMobile);
-  }, [isMobile, setIsNavigationDrawerOpen]);
+    setIsNavigationDrawerExpanded(!isMobile);
+  }, [isMobile, setIsNavigationDrawerExpanded]);
 
   return (
     <NavigationDrawer

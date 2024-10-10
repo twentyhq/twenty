@@ -5,12 +5,12 @@ import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
 
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -28,13 +28,17 @@ const StyledAnimatedContainer = styled(motion.div)`
   justify-content: end;
 `;
 
-const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
+const StyledContainer = styled.div<{
+  isSubMenu?: boolean;
+  isExpanded: boolean;
+}>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
-  min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
+  min-width: ${({ isExpanded }) =>
+    isExpanded ? `${DESKTOP_NAV_DRAWER_WIDTHS.menu}px` : 'auto'};
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
@@ -68,7 +72,9 @@ export const NavigationDrawer = ({
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
   const theme = useTheme();
-  const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
   const isSettingsPage = useIsSettingsPage();
 
   const handleHover = () => {
@@ -79,11 +85,11 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const desktopWidth = !isNavigationDrawerOpen
-    ? 12
+  const desktopWidth = !isNavigationDrawerExpanded
+    ? 42
     : DESKTOP_NAV_DRAWER_WIDTHS.menu;
 
-  const mobileWidth = isNavigationDrawerOpen ? '100%' : 0;
+  const mobileWidth = isNavigationDrawerExpanded ? '100%' : 0;
 
   return (
     <StyledAnimatedContainer
@@ -91,7 +97,6 @@ export const NavigationDrawer = ({
       initial={false}
       animate={{
         width: isMobile ? mobileWidth : desktopWidth,
-        opacity: isNavigationDrawerOpen || isSettingsPage ? 1 : 0,
       }}
       transition={{
         duration: theme.animation.duration.normal,
@@ -101,6 +106,7 @@ export const NavigationDrawer = ({
         isSubMenu={isSubMenu}
         onMouseEnter={handleHover}
         onMouseLeave={handleMouseLeave}
+        isExpanded={isNavigationDrawerExpanded || isSettingsPage}
       >
         {isSubMenu && title ? (
           !isMobile && <NavigationDrawerBackButton title={title} />
