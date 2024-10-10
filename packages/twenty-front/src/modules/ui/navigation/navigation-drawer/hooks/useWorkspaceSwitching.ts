@@ -30,7 +30,10 @@ export const useWorkspaceSwitching = () => {
       throw new Error('could not create token');
     }
 
-    if (jwt.data.generateJWT.reason === 'WORKSPACE_USE_SSO_AUTH') {
+    if (
+      jwt.data.generateJWT.reason === 'WORKSPACE_USE_SSO_AUTH' &&
+      'availableSSOIDPs' in jwt.data.generateJWT
+    ) {
       if (jwt.data.generateJWT.availableSSOIDPs.length === 1) {
         redirectToSSOLoginPage(jwt.data.generateJWT.availableSSOIDPs[0].id);
       }
@@ -42,10 +45,15 @@ export const useWorkspaceSwitching = () => {
       return;
     }
 
-    const { tokens } = jwt.data.generateJWT.authTokens;
-    setTokenPair(tokens);
-    await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
-    window.location.href = AppPath.Index;
+    if (
+      jwt.data.generateJWT.reason === 'WORKSPACE_USE_SSO_AUTH' &&
+      'authTokens' in jwt.data.generateJWT
+    ) {
+      const { tokens } = jwt.data.generateJWT.authTokens;
+      setTokenPair(tokens);
+      await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
+      window.location.href = AppPath.Index;
+    }
   };
 
   return { switchWorkspace };

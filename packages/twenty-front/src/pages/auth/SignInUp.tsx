@@ -10,7 +10,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import { isDefined } from '~/utils/isDefined';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
-import { SSOWorkspaceSelection } from '~/pages/auth/SSOWorkspaceSelection';
 import { IconLockCustom } from '@ui/display/icon/components/IconLock';
 
 export const SignInUp = () => {
@@ -48,11 +47,11 @@ export const SignInUp = () => {
         )}
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
-      {signInUpStep === SignInUpStep.SSOWorkspaceSelection ? (
-        <SSOWorkspaceSelection />
-      ) : (
-        <SignInUpForm />
-      )}
+      {/*{signInUpStep === SignInUpStep.SSOWorkspaceSelection ? (*/}
+      {/*  <SSOWorkspaceSelection />*/}
+      {/*) : (*/}
+      <SignInUpForm />
+      {/*)}*/}
     </>
   );
 };

@@ -12,7 +12,7 @@ export class GenerateJWTOutputWithAuthTokens {
   reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH';
 
   @Field(() => AuthTokens)
-  payload: AuthTokens;
+  authTokens: AuthTokens;
 }
 
 @ObjectType()
@@ -24,7 +24,7 @@ export class GenerateJWTOutputWithSSOAUTH {
   reason: 'WORKSPACE_USE_SSO_AUTH';
 
   @Field(() => [FindAvailableSSOIDPOutput])
-  payload: Array<FindAvailableSSOIDPOutput>;
+  availableSSOIDPs: Array<FindAvailableSSOIDPOutput>;
 }
 
 export const GenerateJWTOutput = createUnionType({
