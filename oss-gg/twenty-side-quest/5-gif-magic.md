@@ -20,4 +20,7 @@ Your turn 👇
 » 10-October-2024 by Teddy ASSIH
 » Link to gif: https://giphy.com/gifs/oss-crm-twenty-VWDHAIlGTbc6Nqdza9
 
+» 11-October-2024 by Bhavesh Mishra
+» Link to gif: https://shorturl.at/yln9H
+
 ---
