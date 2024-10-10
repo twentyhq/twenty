@@ -1,4 +1,4 @@
-**Side Quest**: Create a bug report.
+**Side Quest**: Create a bug report. Use the Twenty bug issue template to report a bug in detail, including steps to reproduce it.
 **Points**: 50-150 Points
 **Proof**: Add a link to your bug report in the list below.
 
