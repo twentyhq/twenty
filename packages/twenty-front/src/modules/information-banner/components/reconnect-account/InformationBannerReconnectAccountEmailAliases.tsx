@@ -1,6 +1,6 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { InformationBannerKeys } from '@/information-banner/enums/InformationBannerKeys.enum';
 import { useAccountToReconnect } from '@/information-banner/hooks/useAccountToReconnect';
+import { InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { IconRefresh } from 'twenty-ui';
 
