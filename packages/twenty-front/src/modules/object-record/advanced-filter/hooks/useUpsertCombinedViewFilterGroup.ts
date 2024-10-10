@@ -6,7 +6,7 @@ import { unsavedToUpsertViewFilterGroupsComponentFamilyState } from '@/views/sta
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { useRecoilCallback } from 'recoil';
 
-export const useUpsertViewFilterGroup = () => {
+export const useUpsertCombinedViewFilterGroup = () => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     ViewComponentInstanceContext,
     undefined, // TODO: Find out what to pass here
@@ -18,7 +18,7 @@ export const useUpsertViewFilterGroup = () => {
       instanceId,
     );
 
-  const upsertViewFilterGroup = useRecoilCallback(
+  const upsertCombinedViewFilterGroup = useRecoilCallback(
     ({ snapshot, set }) =>
       async (newViewFilterGroup: Omit<ViewFilterGroup, '__typename'>) => {
         const currentViewUnsavedToUpsertViewFilterGroups =
@@ -51,5 +51,5 @@ export const useUpsertViewFilterGroup = () => {
     [unsavedToUpsertViewFilterGroupsCallbackState],
   );
 
-  return { createViewFilterGroup: upsertViewFilterGroup };
+  return { upsertCombinedViewFilterGroup };
 };

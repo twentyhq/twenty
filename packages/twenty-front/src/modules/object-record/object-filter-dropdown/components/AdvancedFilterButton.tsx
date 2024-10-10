@@ -1,4 +1,4 @@
-import { useUpsertViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertViewFilterGroup';
+import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -47,8 +47,7 @@ export const AdvancedFilterButton = () => {
 
   const { currentViewId } = useGetCurrentView();
 
-  const { createViewFilterGroup: upsertCombinedViewFilterGroup } =
-    useUpsertViewFilterGroup();
+  const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
