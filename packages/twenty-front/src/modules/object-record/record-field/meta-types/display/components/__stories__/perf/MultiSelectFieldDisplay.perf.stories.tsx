@@ -23,7 +23,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/MultiSelectFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('company', 'testMultiSelect', [
+    getFieldDecorator('company', 'workPolicy', [
       'Option 1',
       'Option 2',
       'Option 3',

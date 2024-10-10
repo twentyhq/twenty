@@ -49,12 +49,10 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
     width: 100%;
   }
 `;
-const StyledItemsContainer = styled.div<{ isSubMenu?: boolean }>`
+const StyledItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow-y: auto;
-  ${({ isSubMenu, theme }) => !isSubMenu && `gap: ${theme.spacing(3)}`}
 `;
 
 export const NavigationDrawer = ({
@@ -111,9 +109,7 @@ export const NavigationDrawer = ({
             showCollapseButton={isHovered}
           />
         )}
-        <StyledItemsContainer isSubMenu={isSubMenu}>
-          {children}
-        </StyledItemsContainer>
+        <StyledItemsContainer>{children}</StyledItemsContainer>
         {footer}
       </StyledContainer>
     </StyledAnimatedContainer>

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 
+import { ActivityList } from '@/activities/components/ActivityList';
 import { Task } from '@/activities/types/Task';
 import { TaskRow } from './TaskRow';
 
@@ -12,11 +13,14 @@ type TaskListProps = {
 
 const StyledContainer = styled.div`
   align-items: flex-start;
+  width: 100%;
   align-self: stretch;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 8px 24px;
+  padding: 8px ${({ theme }) => theme.spacing(6)};
+
+  width: calc(100% - ${({ theme }) => theme.spacing(12)});
 `;
 
 const StyledTitleBar = styled.div`
@@ -38,13 +42,6 @@ const StyledCount = styled.span`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTaskRows = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  width: 100%;
-`;
-
 export const TaskList = ({ title, tasks, button }: TaskListProps) => (
   <>
     {tasks && tasks.length > 0 && (
@@ -57,11 +54,11 @@ export const TaskList = ({ title, tasks, button }: TaskListProps) => (
           )}
           {button}
         </StyledTitleBar>
-        <StyledTaskRows>
+        <ActivityList>
           {tasks.map((task) => (
             <TaskRow key={task.id} task={task} />
           ))}
-        </StyledTaskRows>
+        </ActivityList>
       </StyledContainer>
     )}
   </>

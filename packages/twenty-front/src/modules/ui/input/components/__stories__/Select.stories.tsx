@@ -4,6 +4,7 @@ import { userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { Select, SelectProps } from '../Select';
+import { IconPlus } from 'packages/twenty-ui';
 
 type RenderProps = SelectProps<string | number | null>;
 
@@ -55,4 +56,14 @@ export const Disabled: Story = {
 
 export const WithSearch: Story = {
   args: { withSearchInput: true },
+};
+
+export const CallToActionButton: Story = {
+  args: {
+    callToActionButton: {
+      onClick: () => {},
+      Icon: IconPlus,
+      text: 'Add action',
+    },
+  },
 };

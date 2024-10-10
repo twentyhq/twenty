@@ -33,6 +33,7 @@ import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
+import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   FieldMetadataType,
@@ -47,6 +48,7 @@ type RecordShowContainerProps = {
   objectRecordId: string;
   loading: boolean;
   isInRightDrawer?: boolean;
+  isNewRightDrawerItemLoading?: boolean;
 };
 
 export const RecordShowContainer = ({
@@ -54,6 +56,7 @@ export const RecordShowContainer = ({
   objectRecordId,
   loading,
   isInRightDrawer = false,
+  isNewRightDrawerItemLoading = false,
 }: RecordShowContainerProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -80,7 +83,6 @@ export const RecordShowContainer = ({
       recordId: objectRecordId,
     }),
   );
-
   const [uploadImage] = useUploadImageMutation();
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
 
@@ -163,52 +165,53 @@ export const RecordShowContainer = ({
   const isMobile = useIsMobile() || isInRightDrawer;
   const isPrefetchLoading = useIsPrefetchLoading();
 
-  const summaryCard = isDefined(recordFromStore) ? (
-    <ShowPageSummaryCard
-      isMobile={isMobile}
-      id={objectRecordId}
-      logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
-      icon={Icon}
-      iconColor={IconColor}
-      avatarPlaceholder={recordIdentifier?.name ?? ''}
-      date={recordFromStore.createdAt ?? ''}
-      loading={isPrefetchLoading || loading || recordLoading}
-      title={
-        <FieldContext.Provider
-          value={{
-            recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
-            isLabelIdentifier: false,
-            fieldDefinition: {
-              type:
-                labelIdentifierFieldMetadataItem?.type ||
-                FieldMetadataType.Text,
-              iconName: '',
-              fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
-              label: labelIdentifierFieldMetadataItem?.label || '',
-              metadata: {
-                fieldName: labelIdentifierFieldMetadataItem?.name || '',
-                objectMetadataNameSingular: objectNameSingular,
+  const summaryCard =
+    !isNewRightDrawerItemLoading && isDefined(recordFromStore) ? (
+      <ShowPageSummaryCard
+        isMobile={isMobile}
+        id={objectRecordId}
+        logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+        icon={Icon}
+        iconColor={IconColor}
+        avatarPlaceholder={recordIdentifier?.name ?? ''}
+        date={recordFromStore.createdAt ?? ''}
+        loading={isPrefetchLoading || loading || recordLoading}
+        title={
+          <FieldContext.Provider
+            value={{
+              recordId: objectRecordId,
+              recoilScopeId:
+                objectRecordId + labelIdentifierFieldMetadataItem?.id,
+              isLabelIdentifier: false,
+              fieldDefinition: {
+                type:
+                  labelIdentifierFieldMetadataItem?.type ||
+                  FieldMetadataType.Text,
+                iconName: '',
+                fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
+                label: labelIdentifierFieldMetadataItem?.label || '',
+                metadata: {
+                  fieldName: labelIdentifierFieldMetadataItem?.name || '',
+                  objectMetadataNameSingular: objectNameSingular,
+                },
+                defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
               },
-              defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
-            },
-            useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
-            isCentered: true,
-          }}
-        >
-          <RecordInlineCell readonly={isReadOnly} isCentered={true} />
-        </FieldContext.Provider>
-      }
-      avatarType={recordIdentifier?.avatarType ?? 'rounded'}
-      onUploadPicture={
-        objectNameSingular === 'person' ? onUploadPicture : undefined
-      }
-    />
-  ) : (
-    <></>
-  );
+              useUpdateRecord: useUpdateOneObjectRecordMutation,
+              hotkeyScope: InlineCellHotkeyScope.InlineCell,
+              isCentered: !isMobile,
+            }}
+          >
+            <RecordInlineCell readonly={isReadOnly} />
+          </FieldContext.Provider>
+        }
+        avatarType={recordIdentifier?.avatarType ?? 'rounded'}
+        onUploadPicture={
+          objectNameSingular === 'person' ? onUploadPicture : undefined
+        }
+      />
+    ) : (
+      <ShowPageSummaryCardSkeletonLoader />
+    );
 
   const fieldsBox = (
     <>

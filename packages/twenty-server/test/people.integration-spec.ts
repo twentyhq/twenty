@@ -27,7 +27,7 @@ describe('peopleResolver (integration)', () => {
                 whatsapp {
                   primaryPhoneNumber
                 }
-                workPrefereance
+                workPreference
                 performanceRating
               }
             }
@@ -69,7 +69,7 @@ describe('peopleResolver (integration)', () => {
           expect(people).toHaveProperty('companyId');
           expect(people).toHaveProperty('intro');
           expect(people).toHaveProperty('whatsapp');
-          expect(people).toHaveProperty('workPrefereance');
+          expect(people).toHaveProperty('workPreference');
           expect(people).toHaveProperty('performanceRating');
         }
       });

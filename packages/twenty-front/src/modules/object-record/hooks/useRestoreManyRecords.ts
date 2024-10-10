@@ -62,22 +62,27 @@ export const useRestoreManyRecords = ({
         objectMetadataItem.namePlural,
       )}`;
 
-      const restoredRecordsResponse = await apolloClient.mutate({
-        mutation: restoreManyRecordsMutation,
-        refetchQueries: [findOneQueryName, findManyQueryName],
-        variables: {
-          filter: { id: { in: batchIds } },
-        },
-        optimisticResponse: options?.skipOptimisticEffect
-          ? undefined
-          : {
-              [mutationResponseField]: batchIds.map((idToRestore) => ({
-                __typename: capitalize(objectNameSingular),
-                id: idToRestore,
-                deletedAt: null,
-              })),
-            },
-      });
+      const restoredRecordsResponse = await apolloClient
+        .mutate({
+          mutation: restoreManyRecordsMutation,
+          refetchQueries: [findOneQueryName, findManyQueryName],
+          variables: {
+            filter: { id: { in: batchIds } },
+          },
+          optimisticResponse: options?.skipOptimisticEffect
+            ? undefined
+            : {
+                [mutationResponseField]: batchIds.map((idToRestore) => ({
+                  __typename: capitalize(objectNameSingular),
+                  id: idToRestore,
+                  deletedAt: null,
+                })),
+              },
+        })
+        .catch((error: Error) => {
+          // TODO: revert optimistic effect (once optimistic effect is fixed)
+          throw error;
+        });
 
       const restoredRecordsForThisBatch =
         restoredRecordsResponse.data?.[mutationResponseField] ?? [];

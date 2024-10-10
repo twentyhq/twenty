@@ -15,6 +15,7 @@ export const getDevSeedCompanyCustomFields = (
       icon: 'IconAdCircle',
       isActive: true,
       isNullable: false,
+      defaultValue: "''",
       objectMetadataId,
     },
     {
@@ -99,12 +100,19 @@ export const getDevSeedPeopleCustomFields = (
       icon: 'IconBrandWhatsapp',
       isActive: true,
       isNullable: false,
+      defaultValue: [
+        {
+          primaryPhoneNumber: '',
+          primaryPhoneCountryCode: '',
+          additionalPhones: {},
+        },
+      ],
       objectMetadataId,
     },
     {
       workspaceId,
       type: FieldMetadataType.MULTI_SELECT,
-      name: 'workPrefereance',
+      name: 'workPreference',
       label: 'Work Preference',
       description: "Person's Work Preference",
       icon: 'IconHome',

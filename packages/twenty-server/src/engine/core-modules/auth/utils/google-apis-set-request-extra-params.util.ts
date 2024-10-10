@@ -9,6 +9,7 @@ type GoogleAPIsRequestExtraParams = {
   redirectLocation?: string;
   calendarVisibility?: string;
   messageVisibility?: string;
+  loginHint?: string;
 };
 
 export const setRequestExtraParams = (
@@ -20,6 +21,7 @@ export const setRequestExtraParams = (
     redirectLocation,
     calendarVisibility,
     messageVisibility,
+    loginHint,
   } = params;
 
   if (!transientToken) {
@@ -41,5 +43,8 @@ export const setRequestExtraParams = (
 
   if (messageVisibility) {
     request.params.messageVisibility = messageVisibility;
+  }
+  if (loginHint) {
+    request.params.loginHint = loginHint;
   }
 };

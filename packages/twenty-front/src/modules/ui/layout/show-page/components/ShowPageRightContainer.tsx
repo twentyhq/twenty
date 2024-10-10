@@ -7,6 +7,7 @@ import { TimelineActivities } from '@/activities/timelineActivities/components/T
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Button } from '@/ui/input/button/components/Button';
@@ -14,7 +15,10 @@ import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/Show
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Workflow } from '@/workflow/components/Workflow';
+import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
+import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
+import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
+import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualizerEffect';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -33,12 +37,12 @@ import {
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
-  flex: 1 0 0;
   flex-direction: column;
   height: 100%;
   justify-content: start;
   width: 100%;
-  position: relative;
+  height: 100%;
+  overflow: auto;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -129,11 +133,19 @@ export const ShowPageRightContainer = ({
     isWorkflowEnabled &&
     targetableObject.targetObjectNameSingular ===
       CoreObjectNameSingular.Workflow;
+  const isWorkflowVersion =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.WorkflowVersion;
 
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
   const isMobile = useIsMobile();
+
+  const isNewViewableRecordLoading = useRecoilValue(
+    isNewViewableRecordLoadingState,
+  );
 
   const tabs = [
     {
@@ -157,7 +169,7 @@ export const ShowPageRightContainer = ({
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isInRightDrawer || isWorkflow,
+      hide: !timeline || isInRightDrawer || isWorkflow || isWorkflowVersion,
     },
     {
       id: 'tasks',
@@ -169,7 +181,8 @@ export const ShowPageRightContainer = ({
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Task ||
-        isWorkflow,
+        isWorkflow ||
+        isWorkflowVersion,
     },
     {
       id: 'notes',
@@ -181,13 +194,14 @@ export const ShowPageRightContainer = ({
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Task ||
-        isWorkflow,
+        isWorkflow ||
+        isWorkflowVersion,
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: !notes || isWorkflow,
+      hide: !notes || isWorkflow || isWorkflowVersion,
     },
     {
       id: 'emails',
@@ -206,6 +220,12 @@ export const ShowPageRightContainer = ({
       title: 'Workflow',
       Icon: IconSettings,
       hide: !isWorkflow,
+    },
+    {
+      id: 'workflowVersion',
+      title: 'Workflow Version',
+      Icon: IconSettings,
+      hide: !isWorkflowVersion,
     },
   ];
   const renderActiveTabContent = () => {
@@ -246,7 +266,25 @@ export const ShowPageRightContainer = ({
       case 'calendar':
         return <Calendar targetableObject={targetableObject} />;
       case 'workflow':
-        return <Workflow targetableObject={targetableObject} />;
+        return (
+          <>
+            <WorkflowVisualizerEffect workflowId={targetableObject.id} />
+
+            <WorkflowVisualizer targetableObject={targetableObject} />
+          </>
+        );
+      case 'workflowVersion':
+        return (
+          <>
+            <WorkflowVersionVisualizerEffect
+              workflowVersionId={targetableObject.id}
+            />
+
+            <WorkflowVersionVisualizer
+              workflowVersionId={targetableObject.id}
+            />
+          </>
+        );
       default:
         return <></>;
     }
@@ -272,7 +310,7 @@ export const ShowPageRightContainer = ({
     <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
-          loading={loading}
+          loading={loading || isNewViewableRecordLoading}
           tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
           tabs={tabs}
         />

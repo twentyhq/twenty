@@ -109,7 +109,8 @@ const getSchemaComponentsProperties = ({
   return item.fields.reduce((node, field) => {
     if (
       !isFieldAvailable(field, forResponse) ||
-      field.type === FieldMetadataType.RELATION
+      field.type === FieldMetadataType.RELATION ||
+      field.type === FieldMetadataType.TS_VECTOR
     ) {
       return node;
     }

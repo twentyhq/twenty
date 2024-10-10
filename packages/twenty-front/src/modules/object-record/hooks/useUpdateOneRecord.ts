@@ -108,26 +108,48 @@ export const useUpdateOneRecord = <
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
 
-    const updatedRecord = await apolloClient.mutate({
-      mutation: updateOneRecordMutation,
-      variables: {
-        idToUpdate,
-        input: sanitizedInput,
-      },
-      update: (cache, { data }) => {
-        const record = data?.[mutationResponseField];
+    const updatedRecord = await apolloClient
+      .mutate({
+        mutation: updateOneRecordMutation,
+        variables: {
+          idToUpdate,
+          input: sanitizedInput,
+        },
+        update: (cache, { data }) => {
+          const record = data?.[mutationResponseField];
 
-        if (!record || !cachedRecord) return;
+          if (!record || !cachedRecord) return;
+
+          triggerUpdateRecordOptimisticEffect({
+            cache,
+            objectMetadataItem,
+            currentRecord: cachedRecord,
+            updatedRecord: record,
+            objectMetadataItems,
+          });
+        },
+      })
+      .catch((error: Error) => {
+        if (!cachedRecord) {
+          throw error;
+        }
+        updateRecordFromCache({
+          objectMetadataItems,
+          objectMetadataItem,
+          cache: apolloClient.cache,
+          record: cachedRecord,
+        });
 
         triggerUpdateRecordOptimisticEffect({
-          cache,
+          cache: apolloClient.cache,
           objectMetadataItem,
-          currentRecord: cachedRecord,
-          updatedRecord: record,
+          currentRecord: optimisticRecordWithConnection,
+          updatedRecord: cachedRecordWithConnection,
           objectMetadataItems,
         });
-      },
-    });
+
+        throw error;
+      });
 
     return updatedRecord?.data?.[mutationResponseField] ?? null;
   };
