@@ -146,6 +146,7 @@ export class MessageChannelSyncStatusService {
       syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
       throttleFailureCount: 0,
       syncStageStartedAt: null,
+      syncedAt: new Date().toISOString(),
     });
   }
 
@@ -161,6 +162,7 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+      syncStageStartedAt: new Date().toISOString(),
     });
   }
 

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { IMaskInput, IMaskInputProps } from 'react-imask';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { IMaskInput, IMaskInputProps } from 'react-imask';
 import { IconComponent, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
@@ -138,13 +138,13 @@ export const CurrencyInput = ({
         mask={Number}
         thousandsSeparator={','}
         radix="."
-        unmask="typed"
         onAccept={(value: string) => handleChange(value)}
         inputRef={wrapperRef}
         autoComplete="off"
         placeholder={placeholder}
         autoFocus={autoFocus}
         value={value}
+        unmask
       />
     </StyledContainer>
   );

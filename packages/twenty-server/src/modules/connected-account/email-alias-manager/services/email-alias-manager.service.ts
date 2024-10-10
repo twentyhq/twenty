@@ -1,21 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/google-email-alias-manager.service';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class EmailAliasManagerService {
   constructor(
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly googleEmailAliasManagerService: GoogleEmailAliasManagerService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async refreshHandleAliases(
     connectedAccount: ConnectedAccountWorkspaceEntity,
-    workspaceId: string,
   ) {
     let handleAliases: string[];
 
@@ -32,10 +29,16 @@ export class EmailAliasManagerService {
         );
     }
 
-    await this.connectedAccountRepository.updateHandleAliases(
-      handleAliases,
-      connectedAccount.id,
-      workspaceId,
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    await connectedAccountRepository.update(
+      { id: connectedAccount.id },
+      {
+        handleAliases: handleAliases.join(','), // TODO: modify handleAliases to be of fieldmetadatatype array
+      },
     );
   }
 }

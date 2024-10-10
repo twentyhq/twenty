@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { JSX, ReactNode } from 'react';
-import { IconComponent } from 'twenty-ui';
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import {
@@ -14,7 +13,6 @@ type SubMenuTopBarContainerProps = {
   children: JSX.Element | JSX.Element[];
   title?: string;
   actionButton?: ReactNode;
-  Icon: IconComponent;
   className?: string;
   links: BreadcrumbProps['links'];
 };

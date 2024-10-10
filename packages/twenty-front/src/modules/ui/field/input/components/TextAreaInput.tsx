@@ -36,10 +36,10 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 const StyledTextAreaContainer = styled.div`
-  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   position: relative;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(0)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   background: ${({ theme }) => theme.background.primary};
 `;
