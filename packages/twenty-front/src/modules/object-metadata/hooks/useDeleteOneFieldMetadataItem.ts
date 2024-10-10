@@ -30,6 +30,13 @@ export const useDeleteOneFieldMetadataItem = () => {
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      optimisticResponse: {
+        deleteOneField: {
+          id: idToDelete,
+          __typename: 'field',
+          name: '',
+        } as DeleteOneFieldMetadataItemMutation['deleteOneField'],
+      },
     });
   };
 
