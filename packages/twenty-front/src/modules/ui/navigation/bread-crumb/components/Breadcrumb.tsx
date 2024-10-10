@@ -44,7 +44,7 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
   const isMobile = useIsMobile();
 
   if (isMobile && links.length > 0) {
-    <MobileBreadcrumb className={className} links={links} />;
+    return <MobileBreadcrumb className={className} links={links} />;
   }
 
   return (
