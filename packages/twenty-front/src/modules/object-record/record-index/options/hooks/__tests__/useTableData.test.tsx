@@ -278,10 +278,14 @@ describe('useTableData', () => {
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,
                 targetFieldMetadataName: '',
-                settings: {},
+                settings: {
+                  displayAsRelativeDate: true,
+                },
               },
-              position: 7,
-              settings: {},
+              position: 17,
+              settings: {
+                displayAsRelativeDate: true,
+              },
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',

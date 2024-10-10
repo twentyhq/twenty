@@ -37,9 +37,6 @@ export class IndexFieldMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @IsUUID()
-  @IsNotEmpty()
-  @FilterableField(() => UUIDScalarType)
   indexMetadataId: string;
 
   @IsUUID()

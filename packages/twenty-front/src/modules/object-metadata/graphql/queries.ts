@@ -28,6 +28,8 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             edges {
               node {
                 id
+                createdAt
+                updatedAt
                 name
                 indexWhereClause
                 indexType
@@ -36,6 +38,8 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                   edges {
                     node {
                       id
+                      createdAt
+                      updatedAt
                       order
                       fieldMetadataId
                     }

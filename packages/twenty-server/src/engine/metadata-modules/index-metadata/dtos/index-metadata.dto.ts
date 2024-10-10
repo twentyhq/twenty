@@ -78,9 +78,6 @@ export class IndexMetadataDTO {
   @Field(() => IndexType)
   indexType: IndexType;
 
-  @IsUUID()
-  @IsNotEmpty()
-  @FilterableField(() => UUIDScalarType)
   objectMetadataId: string;
 
   @IsDateString()
