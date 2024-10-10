@@ -131,7 +131,6 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               },
             ];
           }
-          case FieldMetadataType.Link:
           case FieldMetadataType.Links:
           case FieldMetadataType.Address:
           case FieldMetadataType.FullName:

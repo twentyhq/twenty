@@ -183,13 +183,10 @@ export type FieldDateValue = string | null;
 export type FieldNumberValue = number | null;
 export type FieldBooleanValue = boolean;
 
-export type FieldPhoneValue = string;
-export type FieldEmailValue = string;
 export type FieldEmailsValue = {
   primaryEmail: string;
   additionalEmails: string[] | null;
 };
-export type FieldLinkValue = { url: string; label: string };
 export type FieldLinksValue = {
   primaryLinkLabel: string;
   primaryLinkUrl: string;

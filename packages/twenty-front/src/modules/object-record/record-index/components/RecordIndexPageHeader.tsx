@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -30,8 +31,11 @@ export const RecordIndexPageHeader = () => {
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
-  const isTable =
-    recordIndexViewType === ViewType.Table && !objectMetadataItem?.isRemote;
+  const shouldDisplayAddButton = objectMetadataItem
+    ? !isObjectMetadataReadOnly(objectMetadataItem)
+    : false;
+
+  const isTable = recordIndexViewType === ViewType.Table;
 
   const pageHeaderTitle =
     objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
@@ -43,11 +47,12 @@ export const RecordIndexPageHeader = () => {
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
-      {isTable ? (
-        <PageAddButton onClick={handleAddButtonClick} />
-      ) : (
-        <RecordIndexPageKanbanAddButton />
-      )}
+      {shouldDisplayAddButton &&
+        (isTable ? (
+          <PageAddButton onClick={handleAddButtonClick} />
+        ) : (
+          <RecordIndexPageKanbanAddButton />
+        ))}
     </PageHeader>
   );
 };

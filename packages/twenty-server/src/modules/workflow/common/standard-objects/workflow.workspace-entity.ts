@@ -109,7 +109,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Workflow versions linked to the workflow.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   versions: Relation<WorkflowVersionWorkspaceEntity[]>;
@@ -121,7 +121,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Workflow runs linked to the workflow.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   runs: Relation<WorkflowRunWorkspaceEntity>;
@@ -133,7 +133,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Workflow event listeners linked to the workflow.',
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowEventListenerWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   eventListeners: Relation<WorkflowEventListenerWorkspaceEntity[]>;

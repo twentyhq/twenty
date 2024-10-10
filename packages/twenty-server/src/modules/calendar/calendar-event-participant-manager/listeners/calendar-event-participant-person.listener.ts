@@ -32,10 +32,7 @@ export class CalendarEventParticipantPersonListener {
     >,
   ) {
     for (const eventPayload of payload.events) {
-      if (
-        eventPayload.properties.after.emails?.primaryEmail === null &&
-        eventPayload.properties.after.email === null
-      ) {
+      if (eventPayload.properties.after.emails?.primaryEmail === null) {
         continue;
       }
 
@@ -44,9 +41,7 @@ export class CalendarEventParticipantPersonListener {
         CalendarEventParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email:
-            eventPayload.properties.after.emails?.primaryEmail ??
-            eventPayload.properties.after.email, // TODO
+          email: eventPayload.properties.after.emails?.primaryEmail,
           personId: eventPayload.recordId,
         },
       );
@@ -64,16 +59,14 @@ export class CalendarEventParticipantPersonListener {
         objectRecordUpdateEventChangedProperties(
           eventPayload.properties.before,
           eventPayload.properties.after,
-        ).includes('email')
+        ).includes('emails')
       ) {
         // TODO: modify this job to take an array of participants to match
         await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
           CalendarEventParticipantUnmatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email:
-              eventPayload.properties.before.emails?.primaryEmail ??
-              eventPayload.properties.before.email,
+            email: eventPayload.properties.before.emails?.primaryEmail,
             personId: eventPayload.recordId,
           },
         );
@@ -82,9 +75,7 @@ export class CalendarEventParticipantPersonListener {
           CalendarEventParticipantMatchParticipantJob.name,
           {
             workspaceId: payload.workspaceId,
-            email:
-              eventPayload.properties.after.emails?.primaryEmail ??
-              eventPayload.properties.after.email,
+            email: eventPayload.properties.after.emails?.primaryEmail,
             personId: eventPayload.recordId,
           },
         );

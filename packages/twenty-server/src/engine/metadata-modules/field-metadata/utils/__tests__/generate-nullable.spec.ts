@@ -4,16 +4,10 @@ import { generateNullable } from 'src/engine/metadata-modules/field-metadata/uti
 describe('generateNullable', () => {
   it('should generate a nullable value false for TEXT, EMAIL, PHONE no matter what the input is', () => {
     expect(generateNullable(FieldMetadataType.TEXT, false)).toEqual(false);
-    expect(generateNullable(FieldMetadataType.PHONE, false)).toEqual(false);
-    expect(generateNullable(FieldMetadataType.EMAIL, false)).toEqual(false);
 
     expect(generateNullable(FieldMetadataType.TEXT, true)).toEqual(false);
-    expect(generateNullable(FieldMetadataType.PHONE, true)).toEqual(false);
-    expect(generateNullable(FieldMetadataType.EMAIL, true)).toEqual(false);
 
     expect(generateNullable(FieldMetadataType.TEXT)).toEqual(false);
-    expect(generateNullable(FieldMetadataType.PHONE)).toEqual(false);
-    expect(generateNullable(FieldMetadataType.EMAIL)).toEqual(false);
   });
 
   it('should should return true if no input is given', () => {
