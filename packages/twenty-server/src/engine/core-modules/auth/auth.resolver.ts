@@ -24,6 +24,11 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import {
+  GenerateJWTOutput,
+  GenerateJWTOutputWithAuthTokens,
+  GenerateJWTOutputWithSSOAUTH,
+} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -38,11 +43,6 @@ import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.enti
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 import { TokenService } from './token/services/token.service';
-import {
-  GenerateJWTOutput,
-  GenerateJWTOutputWithAuthTokens,
-  GenerateJWTOutputWithSSOAUTH,
-} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
