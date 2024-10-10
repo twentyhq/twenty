@@ -2,6 +2,7 @@ import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCre
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -47,6 +48,7 @@ export const SettingsObjectNewFieldConfigure = () => {
 
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
+
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
@@ -66,6 +68,13 @@ export const SettingsObjectNewFieldConfigure = () => {
       description: '',
     },
   });
+
+  const fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> =
+    {
+      icon: formConfig.watch('icon'),
+      label: formConfig.watch('label') || 'Employees',
+      type: formConfig.watch('type'),
+    };
 
   const [, setObjectViews] = useState<View[]>([]);
   const [, setRelationObjectViews] = useState<View[]>([]);
@@ -200,11 +209,7 @@ export const SettingsObjectNewFieldConfigure = () => {
               <H2Title title="Values" description="The values of this field" />
               <SettingsDataModelFieldSettingsFormCard
                 isCreatingField
-                fieldMetadataItem={{
-                  icon: formConfig.watch('icon'),
-                  label: formConfig.watch('label') || 'New Field',
-                  type: fieldType as FieldMetadataType,
-                }}
+                fieldMetadataItem={fieldMetadataItem}
                 objectMetadataItem={activeObjectMetadataItem}
               />
             </Section>
