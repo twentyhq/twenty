@@ -26,7 +26,7 @@ export function WorkspaceIsUnique(): PropertyDecorator {
       target: target.constructor,
       gate,
       isUnique: true,
-      whereClause: `"deletedAt" IS NULL AND "${propertyKey.toString}" != ''`,
+      whereClause: null,
     });
 
     return (object, propertyKey) => {

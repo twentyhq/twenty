@@ -81,11 +81,8 @@ export class WorkspaceMigrationIndexFactory {
         objectMetadata.fields.map((field) => [field.id, field]),
       );
 
-      const indexes = indexMetadataCollection.map((indexMetadata) => ({
-        name: indexMetadata.name,
-        action: WorkspaceMigrationIndexActionType.CREATE,
-        isUnique: indexMetadata.isUnique,
-        columns: indexMetadata.indexFieldMetadatas
+      const indexes = indexMetadataCollection.map((indexMetadata) => {
+        const columns = indexMetadata.indexFieldMetadatas
           .sort((a, b) => a.order - b.order)
           .map((indexFieldMetadata) => {
             const fieldMetadata =
@@ -111,10 +108,21 @@ export class WorkspaceMigrationIndexFactory {
                 computeCompositeColumnName(fieldMetadata, property),
               );
           })
-          .flat(),
-        type: indexMetadata.indexType,
-        where: indexMetadata.indexWhereClause,
-      }));
+          .flat();
+
+        const defaultWhereClause = indexMetadata.isUnique
+          ? `${columns.map((column) => `"${column}"`).join(" != '' AND ")} != '' AND "deletedAt" IS NULL`
+          : null;
+
+        return {
+          name: indexMetadata.name,
+          action: WorkspaceMigrationIndexActionType.CREATE,
+          isUnique: indexMetadata.isUnique,
+          columns,
+          type: indexMetadata.indexType,
+          where: indexMetadata.indexWhereClause ?? defaultWhereClause,
+        };
+      });
 
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,

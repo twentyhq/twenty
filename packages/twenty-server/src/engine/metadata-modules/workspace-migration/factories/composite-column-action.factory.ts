@@ -69,6 +69,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
         columnType: fieldMetadataTypeToColumnType(property.type),
         enum: enumOptions,
         isNullable: fieldMetadata.isNullable || !property.isRequired,
+        isUnique: fieldMetadata.isUnique,
         defaultValue: serializedDefaultValue,
         isArray:
           property.type === FieldMetadataType.MULTI_SELECT || property.isArray,

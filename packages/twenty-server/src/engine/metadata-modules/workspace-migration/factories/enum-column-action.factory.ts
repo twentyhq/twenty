@@ -46,6 +46,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
         enum: enumOptions,
         isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
         isNullable: fieldMetadata.isNullable ?? true,
+        isUnique: fieldMetadata.isUnique ?? false,
         defaultValue: serializedDefaultValue,
       },
     ];

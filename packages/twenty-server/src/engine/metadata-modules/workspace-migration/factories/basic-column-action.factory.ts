@@ -83,6 +83,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
           columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
           isArray: currentFieldMetadata.type === FieldMetadataType.ARRAY,
           isNullable: currentFieldMetadata.isNullable ?? true,
+          isUnique: currentFieldMetadata.isUnique ?? false,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue,
           ),
@@ -92,6 +93,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
           columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
           isArray: alteredFieldMetadata.type === FieldMetadataType.ARRAY,
           isNullable: alteredFieldMetadata.isNullable ?? true,
+          isUnique: alteredFieldMetadata.isUnique ?? false,
           defaultValue: serializedDefaultValue,
         },
       },
