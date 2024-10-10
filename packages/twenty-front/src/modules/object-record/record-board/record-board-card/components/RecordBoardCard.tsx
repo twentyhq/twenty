@@ -234,7 +234,7 @@ export const RecordBoardCard = ({
 
   const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
 
-  const { ref: cardRef, inView } = useInView({
+  const { ref: cardRef } = useInView({
     root: scrollWrapperRef?.ref.current,
     rootMargin: '1000px',
   });
@@ -358,11 +358,9 @@ export const RecordBoardCard = ({
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  {inView ? (
-                    <RecordInlineCell />
-                  ) : (
-                    <StyledRecordInlineCellPlaceholder />
-                  )}
+            
+                        <RecordInlineCell />
+                       
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
             ))}
