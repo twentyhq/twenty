@@ -333,14 +333,14 @@ export type GenerateJwt = GenerateJwtOutputWithAuthTokens | GenerateJwtOutputWit
 
 export type GenerateJwtOutputWithAuthTokens = {
   __typename?: 'GenerateJWTOutputWithAuthTokens';
-  payload: AuthTokens;
+  authTokens: AuthTokens;
   reason: Scalars['String'];
   success: Scalars['Boolean'];
 };
 
 export type GenerateJwtOutputWithSsoauth = {
   __typename?: 'GenerateJWTOutputWithSSOAUTH';
-  payload: Array<FindAvailableSsoidpOutput>;
+  availableSSOIDPs: Array<FindAvailableSsoidpOutput>;
   reason: Scalars['String'];
   success: Scalars['Boolean'];
 };
@@ -2404,7 +2404,7 @@ export const GenerateJwtDocument = gql`
     ... on GenerateJWTOutputWithAuthTokens {
       success
       reason
-      authTokens: payload {
+      authTokens {
         tokens {
           ...AuthTokensFragment
         }
@@ -2413,7 +2413,7 @@ export const GenerateJwtDocument = gql`
     ... on GenerateJWTOutputWithSSOAUTH {
       success
       reason
-      availableSSOIDPs: payload {
+      availableSSOIDPs {
         id
         issuer
         name

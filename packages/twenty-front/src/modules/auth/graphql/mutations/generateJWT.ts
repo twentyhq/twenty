@@ -6,7 +6,7 @@ export const GENERATE_JWT = gql`
       ... on GenerateJWTOutputWithAuthTokens {
         success
         reason
-        authTokens: payload {
+        authTokens {
           tokens {
             ...AuthTokensFragment
           }
@@ -15,15 +15,8 @@ export const GENERATE_JWT = gql`
       ... on GenerateJWTOutputWithSSOAUTH {
         success
         reason
-        availableSSOIDPs: payload {
-          id
-          issuer
-          name
-          status
-          workspace {
-            id
-            displayName
-          }
+        availableSSOIDPs {
+          ...AvailableSSOIdentityProvidersFragment
         }
       }
     }
