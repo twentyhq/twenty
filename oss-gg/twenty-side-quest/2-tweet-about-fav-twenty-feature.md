@@ -1,6 +1,6 @@
-**Side Quest**: Meme Magic - Craft a meme where a brick plays a role. Tweet it, and tag us @papermarkio to submit.
-**Points**: 150 Points
-**Proof**: Add a screenshot of meme to the PR description. Add a link to your tweet in the list below.
+**Side Quest**: Share a tweet about your favorite feature in Twenty. Tweet about your favorite feature in Twenty and mention @twentycrm.
+**Points**: 50 Points
+**Proof**: Add a screenshot of the tweet to the PR description. Add a link to your tweet in the list below.
 
 Please follow the following schema:
 

@@ -1,4 +1,4 @@
-**Side Quest**: Meme Magic - Craft a meme where a brick plays a role. Tweet it, and tag us @papermarkio to submit.
+**Side Quest**: Meme Magic: Craft a meme where the number twenty plays a role. Tweet it, and tag @twentycrm.
 **Points**: 150 Points
 **Proof**: Add a screenshot of meme to the PR description. Add a link to your tweet in the list below.
 
