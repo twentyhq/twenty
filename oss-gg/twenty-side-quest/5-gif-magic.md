@@ -17,7 +17,7 @@ Your turn 👇
 
 ////////////////////////////
 
-» 01-October-2024 by YOUR NAME
-» Link to gif: https://giphy.com/...
+» 10-October-2024 by Teddy ASSIH
+» Link to gif: [https://giphy.com/...](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3NlZDlieDdpbnJ4bTlhdmU4N3MwaXFxMnRobTd3NGsxMHZqaDZjbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VWDHAIlGTbc6Nqdza9/giphy.gif)
 
 ---
