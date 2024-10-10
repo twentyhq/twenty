@@ -2,4 +2,3 @@ dist/*
 .local-storage
 logs/**/*
 *.log
-node_modules
