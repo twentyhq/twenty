@@ -152,16 +152,18 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       />
       <StyledOptionInput
         value={option.label}
-        onChange={(label) =>
+        onChange={(label) => {
+          const optionNameHasBeenEdited = !(
+            option.value === getOptionValueFromLabel(option.label)
+          );
           onChange({
             ...option,
             label,
-            value:
-              option.value === getOptionValueFromLabel(option.label)
-                ? getOptionValueFromLabel(label)
-                : option.value,
-          })
-        }
+            value: optionNameHasBeenEdited
+              ? option.value
+              : getOptionValueFromLabel(label),
+          });
+        }}
         RightIcon={isDefault ? IconCheck : undefined}
         maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
         onInputEnter={handleInputEnter}
