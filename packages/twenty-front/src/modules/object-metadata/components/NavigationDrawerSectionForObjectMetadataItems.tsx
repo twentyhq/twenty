@@ -12,7 +12,7 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-
+import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 const ORDERED_STANDARD_OBJECTS = [
   'person',
   'company',
@@ -97,7 +97,9 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
       const subItemArrayLength = sortedObjectMetadataViews.length;
 
       return (
-        <>
+        <NavigationDrawerItemsCollapsedContainer
+          isGroup={shouldSubItemsBeDisplayed}
+        >
           <NavigationDrawerItem
             key={objectMetadataItem.id}
             label={objectMetadataItem.labelPlural}
@@ -120,7 +122,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
                 key={view.id}
               />
             ))}
-        </>
+        </NavigationDrawerItemsCollapsedContainer>
       );
     });
   };

@@ -204,6 +204,7 @@ export const NavigationDrawerItem = ({
             style={{ minWidth: theme.icon.size.md }}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.md}
+            color={showBreadcrumb ? theme.font.color.light : 'currentColor'}
           />
         )}
 
