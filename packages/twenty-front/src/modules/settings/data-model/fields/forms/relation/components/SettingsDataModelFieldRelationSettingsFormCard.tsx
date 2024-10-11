@@ -114,7 +114,6 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
       form={
         <SettingsDataModelFieldRelationForm
           fieldMetadataItem={fieldMetadataItem}
-          objectMetadataItem={objectMetadataItem}
         />
       }
     />

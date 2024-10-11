@@ -2,17 +2,15 @@ import { useMemo } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const useRelationSettingsFormInitialValues = ({
   fieldMetadataItem,
-  objectMetadataItem,
 }: {
   fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
-  objectMetadataItem?: SettingsDataModelFieldPreviewCardProps['objectMetadataItem'];
 }) => {
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -30,13 +28,11 @@ export const useRelationSettingsFormInitialValues = ({
   const initialRelationObjectMetadataItem = useMemo(
     () =>
       relationObjectMetadataItemFromFieldMetadata ??
-      objectMetadataItem ??
+      objectMetadataItems.find(
+        ({ nameSingular }) => nameSingular === CoreObjectNameSingular.Person,
+      ) ??
       objectMetadataItems.filter(isObjectMetadataAvailableForRelation)[0],
-    [
-      objectMetadataItem,
-      objectMetadataItems,
-      relationObjectMetadataItemFromFieldMetadata,
-    ],
+    [objectMetadataItems, relationObjectMetadataItemFromFieldMetadata],
   );
 
   const initialRelationType =
@@ -48,12 +44,7 @@ export const useRelationSettingsFormInitialValues = ({
     disableRelationEdition: !!relationFieldMetadataItem,
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
-      label: [
-        RelationDefinitionType.ManyToMany,
-        RelationDefinitionType.ManyToOne,
-      ].includes(initialRelationType)
-        ? initialRelationObjectMetadataItem.labelPlural
-        : initialRelationObjectMetadataItem.labelSingular,
+      label: '',
     },
     initialRelationObjectMetadataItem,
     initialRelationType,
