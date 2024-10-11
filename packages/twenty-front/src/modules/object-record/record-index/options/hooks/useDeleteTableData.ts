@@ -36,21 +36,7 @@ export const useDeleteTableData = ({
   });
   const { favorites, deleteFavorite } = useFavorites();
 
-  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
-
   const deleteRecords = async (recordIdsToDelete: string[]) => {
-    if (hasUserSelectedAllRows) {
-      const allRecordIds = await fetchAllRecordIds();
-
-      const unselectedRecordIds = tableRowIds.filter(
-        (recordId) => !recordIdsToDelete.includes(recordId),
-      );
-
-      recordIdsToDelete = allRecordIds.filter(
-        (recordId) => !unselectedRecordIds.includes(recordId),
-      );
-    }
-
     resetTableRowSelection();
 
     for (const recordIdToDelete of recordIdsToDelete) {
