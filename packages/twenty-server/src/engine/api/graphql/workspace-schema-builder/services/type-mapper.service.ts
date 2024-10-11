@@ -61,8 +61,6 @@ export class TypeMapperService {
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
       [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
-      [FieldMetadataType.PHONE, GraphQLString],
-      [FieldMetadataType.EMAIL, GraphQLString],
       [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
       [FieldMetadataType.DATE, GraphQLISODateTime],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
@@ -101,8 +99,6 @@ export class TypeMapperService {
     >([
       [FieldMetadataType.UUID, IDFilterType],
       [FieldMetadataType.TEXT, StringFilterType],
-      [FieldMetadataType.PHONE, StringFilterType],
-      [FieldMetadataType.EMAIL, StringFilterType],
       [FieldMetadataType.DATE_TIME, DateFilterType],
       [FieldMetadataType.DATE, DateFilterType],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
@@ -129,8 +125,6 @@ export class TypeMapperService {
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],
-      [FieldMetadataType.PHONE, OrderByDirectionType],
-      [FieldMetadataType.EMAIL, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
       [FieldMetadataType.DATE, OrderByDirectionType],
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],

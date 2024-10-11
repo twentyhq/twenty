@@ -1,4 +1,4 @@
-**Side Quest**: Complete all papermarkio side quests
+**Side Quest**: Complete all Twenty side quests
 **Points**: 300 Points
 **Proof**: Add screenshots for each side quest to the PR description. Add your name to the list below.
 

@@ -1,6 +1,7 @@
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
@@ -29,12 +30,16 @@ export const ObjectFilterDropdownButton = ({
   }
 
   return (
-    <ObjectFilterDropdownScope filterScopeId={filterDropdownId}>
-      {hasOnlyOneEntityFilter ? (
-        <SingleEntityObjectFilterDropdownButton hotkeyScope={hotkeyScope} />
-      ) : (
-        <MultipleFiltersDropdownButton hotkeyScope={hotkeyScope} />
-      )}
-    </ObjectFilterDropdownScope>
+    <ObjectFilterDropdownComponentInstanceContext.Provider
+      value={{ instanceId: filterDropdownId }}
+    >
+      <ObjectFilterDropdownScope filterScopeId={filterDropdownId}>
+        {hasOnlyOneEntityFilter ? (
+          <SingleEntityObjectFilterDropdownButton hotkeyScope={hotkeyScope} />
+        ) : (
+          <MultipleFiltersDropdownButton hotkeyScope={hotkeyScope} />
+        )}
+      </ObjectFilterDropdownScope>
+    </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };
