@@ -33,11 +33,9 @@ const StyledButton = styled.button<
           case 'default':
             return css`
               background: ${theme.background.secondary};
-              border-color: ${!disabled
-                ? focus
-                  ? theme.color.blue
-                  : theme.background.transparent.light
-                : 'transparent'};
+              border-color: ${focus
+                ? theme.color.blue
+                : theme.background.transparent.light};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.accent.tertiary}`
