@@ -1,5 +1,5 @@
-import { MultipleRecordsActions } from '@/action-menu/actions/record-actions/components/MultipleRecordsActions';
-import { SingleRecordActions } from '@/action-menu/actions/record-actions/components/SingleRecordActions';
+import { MultipleRecordsActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/MultipleRecordsActionMenuEntriesSetter';
+import { SingleRecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/SingleRecordActionMenuEntriesSetter';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useRecoilValue } from 'recoil';
 
@@ -13,8 +13,8 @@ export const RecordActionMenuEntriesSetter = () => {
   }
 
   if (contextStoreTargetedRecordIds.length === 1) {
-    return <SingleRecordActions />;
+    return <SingleRecordActionMenuEntriesSetter />;
   }
 
-  return <MultipleRecordsActions />;
+  return <MultipleRecordsActionMenuEntriesSetter />;
 };

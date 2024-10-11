@@ -1,64 +1,59 @@
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
-import {
-  displayedExportProgress,
-  useExportTableData,
-} from '@/object-record/record-index/options/hooks/useExportTableData';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useCallback, useMemo, useState } from 'react';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconFileExport, IconTrash, isDefined } from 'twenty-ui';
+import { IconTrash } from 'twenty-ui';
 
-export const useComputeActionsBasedOnContextStore = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const DeleteRecordsActionEffect = () => {
+  const setActionMenuEntries = useSetRecoilComponentStateV2(
+    actionMenuEntriesComponentState,
+  );
+
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
   );
 
+  const contextStoreCurrentObjectMetadataId = useRecoilValue(
+    contextStoreCurrentObjectMetadataIdState,
+  );
+
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: contextStoreCurrentObjectMetadataId,
+  });
+
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 
-  const baseTableDataParams = {
-    delayMs: 100,
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordIndexId: objectMetadataItem.namePlural,
-  };
-
-  const { deleteTableData } = useDeleteTableData(baseTableDataParams);
+  const { deleteTableData } = useDeleteTableData({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+    recordIndexId: objectMetadataItem?.namePlural ?? '',
+  });
 
   const handleDeleteClick = useCallback(() => {
     deleteTableData(contextStoreTargetedRecordIds);
   }, [deleteTableData, contextStoreTargetedRecordIds]);
 
-  const { progress, download } = useExportTableData({
-    ...baseTableDataParams,
-    filename: `${objectMetadataItem.nameSingular}.csv`,
-  });
-
-  const isRemoteObject = objectMetadataItem.isRemote;
+  const isRemoteObject = objectMetadataItem?.isRemote ?? false;
 
   const numberOfSelectedRecords = contextStoreTargetedRecordIds.length;
 
   const canDelete =
     !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
 
-  const menuActions: ActionMenuEntry[] = useMemo(
-    () =>
-      [
-        {
-          label: displayedExportProgress(progress),
-          Icon: IconFileExport,
-          accent: 'default',
-          onClick: () => download(),
-        } satisfies ActionMenuEntry,
-        canDelete
-          ? ({
+  useEffect(() => {
+    if (canDelete) {
+      setActionMenuEntries((prevEntries) => {
+        return new Map([
+          ...prevEntries,
+          [
+            'delete',
+            {
               label: 'Delete',
               Icon: IconTrash,
               accent: 'danger',
@@ -85,20 +80,32 @@ export const useComputeActionsBasedOnContextStore = ({
                   }`}
                 />
               ),
-            } satisfies ActionMenuEntry)
-          : undefined,
-      ].filter(isDefined),
-    [
-      download,
-      progress,
-      canDelete,
-      handleDeleteClick,
-      isDeleteRecordsModalOpen,
-      numberOfSelectedRecords,
-    ],
-  );
+            },
+          ],
+        ]);
+      });
+    } else {
+      setActionMenuEntries((currentActionMenuEntries) => {
+        const newMap = new Map(currentActionMenuEntries);
+        newMap.delete('manage-favorites');
+        return newMap;
+      });
+    }
 
-  return {
-    availableActionsInContext: [...menuActions],
-  };
+    return () => {
+      setActionMenuEntries((currentActionMenuEntries) => {
+        const newMap = new Map(currentActionMenuEntries);
+        newMap.delete('delete');
+        return newMap;
+      });
+    };
+  }, [
+    canDelete,
+    handleDeleteClick,
+    isDeleteRecordsModalOpen,
+    numberOfSelectedRecords,
+    setActionMenuEntries,
+  ]);
+
+  return <></>;
 };

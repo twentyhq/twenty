@@ -31,7 +31,7 @@ describe('useObjectMetadataItemById', () => {
 
     const { objectMetadataItem } = result.current;
 
-    expect(objectMetadataItem.id).toBe(opportunityObjectMetadata.id);
+    expect(objectMetadataItem?.id).toBe(opportunityObjectMetadata.id);
   });
 
   it('should throw an error when invalid ID is provided', async () => {
