@@ -14,8 +14,8 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MulitWorkspaceDropdownId';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
@@ -38,8 +38,6 @@ const StyledContainer = styled.div`
   padding: calc(${({ theme }) => theme.spacing(1)} - 1px);
   width: 100%;
 
-  gap: ${({ theme }) => theme.spacing(1)};
-
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -49,6 +47,7 @@ const StyledContainer = styled.div`
 const StyledLabel = styled.div`
   align-items: center;
   display: flex;
+  margin: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
@@ -79,11 +78,7 @@ export const MultiWorkspaceDropdownButton = ({
     await switchWorkspace(workspaceId);
   };
 
-  const isNavigationDrawerExpanded = useRecoilValue(
-    isNavigationDrawerExpandedState,
-  );
-
-  return isNavigationDrawerExpanded ? (
+  return (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
       dropdownHotkeyScope={{
@@ -100,7 +95,9 @@ export const MultiWorkspaceDropdownButton = ({
               ) ?? ''
             }
           />
-          <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
+          </NavigationDrawerAnimatedCollapseWrapper>
           <StyledIconChevronDown
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
@@ -131,17 +128,5 @@ export const MultiWorkspaceDropdownButton = ({
         </DropdownMenuItemsContainer>
       }
     />
-  ) : (
-    <StyledContainer data-testid="workspace-dropdown">
-      <StyledLogo
-        logo={
-          getImageAbsoluteURI(
-            currentWorkspace?.logo === null
-              ? DEFAULT_WORKSPACE_LOGO
-              : currentWorkspace?.logo,
-          ) ?? ''
-        }
-      />
-    </StyledContainer>
   );
 };

@@ -10,14 +10,16 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 
-const StyledContainer = styled.div<{ isMultiWorkspace: boolean }>`
+const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme, isMultiWorkspace }) =>
-    !isMultiWorkspace ? theme.spacing(2) : null};
   height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
+`;
+const StyledSingleWorkspaceContainer = styled(StyledContainer)`
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledLogo = styled.div<{ logo: string }>`
@@ -63,18 +65,19 @@ export const NavigationDrawerHeader = ({
   );
 
   return (
-    <StyledContainer isMultiWorkspace={isMultiWorkspace}>
+    <StyledContainer>
       {isMultiWorkspace ? (
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
-        <>
+        <StyledSingleWorkspaceContainer>
           <StyledLogo
             logo={isNonEmptyString(logo) ? logo : DEFAULT_WORKSPACE_LOGO}
           />
-          {isNavigationDrawerExpanded && <StyledName>{name}</StyledName>}
-        </>
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <StyledName>{name}</StyledName>
+          </NavigationDrawerAnimatedCollapseWrapper>
+        </StyledSingleWorkspaceContainer>
       )}
-
       {!isMobile && isNavigationDrawerExpanded && (
         <StyledNavigationDrawerCollapseButton
           direction="left"

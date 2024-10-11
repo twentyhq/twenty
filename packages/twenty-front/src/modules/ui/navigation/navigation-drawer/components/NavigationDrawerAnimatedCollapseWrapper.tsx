@@ -26,11 +26,11 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
     <StyledAnimatedContainer
       animate={
         isNavigationDrawerExpanded
-          ? { opacity: 1, height: 'auto', width: 'auto' }
-          : { opacity: 0, height: 0, width: 0 }
+          ? { opacity: 1, height: 'auto', width: 'auto', pointerEvents: 'auto' }
+          : { opacity: 0, height: 0, width: 0, pointerEvents: 'none' }
       }
       transition={{
-        duration: theme.animation.duration.normal + 2,
+        duration: theme.animation.duration.normal,
       }}
     >
       {children}
