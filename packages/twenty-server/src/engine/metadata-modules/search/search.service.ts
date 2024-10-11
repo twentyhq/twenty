@@ -164,5 +164,14 @@ export class SearchService {
         },
       ],
     );
+
+    // index needs to be recreated as typeorm deletes then recreates searchVector column at alter
+    await this.indexMetadataService.createIndex(
+      workspaceId,
+      objectMetadata,
+      [existingSearchVectorFieldMetadata],
+      false,
+      IndexType.GIN,
+    );
   }
 }
