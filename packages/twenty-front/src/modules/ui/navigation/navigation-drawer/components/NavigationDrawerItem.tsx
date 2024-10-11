@@ -1,4 +1,3 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -9,7 +8,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import {
   IconComponent,
   MOBILE_VIEWPORT,
@@ -40,15 +39,11 @@ export type NavigationDrawerItemProps = {
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
   'active' | 'danger' | 'indentationLevel' | 'soon' | 'to'
-> & {
-  isNavigationDrawerExpanded: boolean;
-};
+>;
 
 const StyledItem = styled('div', {
   shouldForwardProp: (prop) =>
-    !['active', 'danger', 'soon', 'isNavigationDrawerExpanded'].includes(
-      prop,
-    ) && isPropValid(prop),
+    !['active', 'danger', 'soon'].includes(prop) && isPropValid(prop),
 })<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
@@ -84,7 +79,7 @@ const StyledItem = styled('div', {
     indentationLevel === 2 ? '2px' : '0'};
 
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
-  width: ${(props) => (props.isNavigationDrawerExpanded ? '100%' : 'auto')};
+  width: 100%;
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
@@ -158,8 +153,9 @@ export const NavigationDrawerItem = ({
   const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilState(isNavigationDrawerExpandedState);
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
+    isNavigationDrawerExpandedState,
+  );
   const showBreadcrumb = indentationLevel === 2;
 
   const handleItemClick = () => {
@@ -189,7 +185,6 @@ export const NavigationDrawerItem = ({
         as={to ? Link : 'div'}
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
-        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       >
         <>
           <NavigationDrawerAnimatedCollapseWrapper>

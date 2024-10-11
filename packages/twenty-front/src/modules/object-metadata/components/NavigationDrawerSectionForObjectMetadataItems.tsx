@@ -6,7 +6,6 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
@@ -39,9 +38,6 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
-  const isNavigationDrawerExpanded = useRecoilValue(
-    isNavigationDrawerExpandedState,
-  );
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
   const renderObjectMetadataItems = () => {

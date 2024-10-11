@@ -12,7 +12,6 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useFavorites } from '../hooks/useFavorites';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 
@@ -41,9 +40,6 @@ export const CurrentWorkspaceMemberFavorites = () => {
 
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
-  const isNavigationDrawerExpanded = useRecoilValue(
-    isNavigationDrawerExpandedState,
-  );
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);

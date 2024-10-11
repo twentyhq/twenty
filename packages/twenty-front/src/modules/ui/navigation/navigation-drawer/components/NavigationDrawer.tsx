@@ -69,7 +69,6 @@ export const NavigationDrawer = ({
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
-  const theme = useTheme();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
