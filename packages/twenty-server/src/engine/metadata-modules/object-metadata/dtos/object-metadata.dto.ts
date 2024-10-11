@@ -1,12 +1,12 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
-    Authorize,
-    BeforeDeleteOne,
-    CursorConnection,
-    FilterableField,
-    IDField,
-    QueryOptions,
+  Authorize,
+  BeforeDeleteOne,
+  CursorConnection,
+  FilterableField,
+  IDField,
+  QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
