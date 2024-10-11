@@ -1010,7 +1010,7 @@ export type UpdateBillingEntity = {
 };
 
 export type UpdateObjectPayload = {
-  areLabelAndNameSync?: InputMaybe<Scalars['Boolean']>;
+  shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
@@ -1244,7 +1244,7 @@ export type FieldFilter = {
 
 export type Object = {
   __typename?: 'object';
-  areLabelAndNameSync: Scalars['Boolean'];
+  shouldSyncLabelAndName: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;

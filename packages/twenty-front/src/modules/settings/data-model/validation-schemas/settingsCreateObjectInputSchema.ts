@@ -5,7 +5,7 @@ export const settingsCreateObjectInputSchema = objectMetadataItemSchema.pick({
   icon: true,
   labelPlural: true,
   labelSingular: true,
-  areLabelAndNameSync: true,
+  shouldSyncLabelAndName: true,
   namePlural: true,
   nameSingular: true,
 });

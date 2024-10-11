@@ -30,7 +30,7 @@ export const settingsDataModelObjectAboutFormSchema =
     icon: true,
     labelPlural: true,
     labelSingular: true,
-    areLabelAndNameSync: true,
+    shouldSyncLabelAndName: true,
     nameSingular: true,
     namePlural: true,
   });
@@ -87,6 +87,8 @@ const StyledIconTool = styled(IconTool)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
+const infoCircleElementId = 'info-circle-id';
+
 export const SettingsDataModelObjectAboutForm = ({
   disabled,
   disableNameEdit,
@@ -99,39 +101,38 @@ export const SettingsDataModelObjectAboutForm = ({
   const { contentRef, motionAnimationVariants } = useExpandedHeightAnimation(
     isAdvancedModeEnabled,
   );
-  const infoCircleElementId = `info-circle-id-${Math.random().toString(36).slice(2)}`;
 
-  const areLabelAndNameSync = watch('areLabelAndNameSync');
+  const shouldSyncLabelAndName = watch('shouldSyncLabelAndName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
-  const apiNameTooltipText = areLabelAndNameSync
+  const apiNameTooltipText = shouldSyncLabelAndName
     ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
     : 'Input must be in camel case and cannot start with a number';
 
   useEffect(() => {
-    if (areLabelAndNameSync) {
+    if (shouldSyncLabelAndName === true) {
       labelPlural &&
         setValue(
           'namePlural',
           computeMetadataNameFromLabelOrThrow(labelPlural),
-          { shouldDirty: true },
+          { shouldDirty: false },
         );
     }
 
     labelPlural &&
       setValue('labelSingular', singular(labelPlural), { shouldDirty: true });
-  }, [areLabelAndNameSync, labelPlural, setValue]);
+  }, [shouldSyncLabelAndName, labelPlural, setValue]);
 
   useEffect(() => {
-    if (areLabelAndNameSync) {
+    if (shouldSyncLabelAndName === true) {
       labelSingular &&
         setValue(
           'nameSingular',
           computeMetadataNameFromLabelOrThrow(labelSingular),
-          { shouldDirty: true },
+          { shouldDirty: false },
         );
     }
-  }, [areLabelAndNameSync, labelSingular, setValue]);
+  }, [shouldSyncLabelAndName, labelSingular, setValue]);
 
   return (
     <>
@@ -212,7 +213,7 @@ export const SettingsDataModelObjectAboutForm = ({
                     placeholder: 'listing',
                     defaultValue: objectMetadataItem?.nameSingular,
                     disabled:
-                      disabled || disableNameEdit || areLabelAndNameSync,
+                      disabled || disableNameEdit || shouldSyncLabelAndName,
                     tooltip: apiNameTooltipText,
                   },
                   {
@@ -221,7 +222,7 @@ export const SettingsDataModelObjectAboutForm = ({
                     placeholder: 'listings',
                     defaultValue: objectMetadataItem?.namePlural,
                     disabled:
-                      disabled || disableNameEdit || areLabelAndNameSync,
+                      disabled || disableNameEdit || shouldSyncLabelAndName,
                     tooltip: apiNameTooltipText,
                   },
                 ].map(
@@ -279,9 +280,11 @@ export const SettingsDataModelObjectAboutForm = ({
                   ),
                 )}
                 <Controller
-                  name="areLabelAndNameSync"
+                  name="shouldSyncLabelAndName"
                   control={control}
-                  defaultValue={objectMetadataItem?.areLabelAndNameSync ?? true}
+                  defaultValue={
+                    objectMetadataItem?.shouldSyncLabelAndName ?? true
+                  }
                   render={({ field: { onChange, value } }) => (
                     <SyncObjectLabelAndNameToggle
                       value={value}

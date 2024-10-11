@@ -76,7 +76,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   imageIdentifierFieldMetadataId?: string | null;
 
   @Column({ default: true })
-  areLabelAndNameSync: boolean;
+  shouldSyncLabelAndName: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

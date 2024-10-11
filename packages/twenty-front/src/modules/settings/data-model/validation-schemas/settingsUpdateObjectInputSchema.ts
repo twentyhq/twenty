@@ -9,7 +9,7 @@ export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
     labelIdentifierFieldMetadataId: true,
     labelPlural: true,
     labelSingular: true,
-    areLabelAndNameSync: true,
+    shouldSyncLabelAndName: true,
     namePlural: true,
     nameSingular: true,
   })

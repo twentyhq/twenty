@@ -14,7 +14,7 @@ describe('settingsCreateObjectInputSchema', () => {
       labelSingular: 'Label ',
       namePlural: 'namePlural',
       nameSingular: 'nameSingular',
-      areLabelAndNameSync: false,
+      shouldSyncLabelAndName: false,
     };
 
     // When
@@ -29,7 +29,7 @@ describe('settingsCreateObjectInputSchema', () => {
       labelSingular: 'Label',
       namePlural: 'namePlural',
       nameSingular: 'nameSingular',
-      areLabelAndNameSync: false,
+      shouldSyncLabelAndName: false,
     });
   });
 

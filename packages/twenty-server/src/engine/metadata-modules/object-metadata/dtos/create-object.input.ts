@@ -2,11 +2,11 @@ import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
 import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
+    IsBoolean,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -85,5 +85,5 @@ export class CreateObjectInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  areLabelAndNameSync?: boolean;
+  shouldSyncLabelAndName?: boolean;
 }
