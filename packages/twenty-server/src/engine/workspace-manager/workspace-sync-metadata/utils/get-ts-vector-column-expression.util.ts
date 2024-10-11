@@ -14,7 +14,7 @@ import {
   SearchableFieldType,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
-type FieldTypeAndNameMetadata = {
+export type FieldTypeAndNameMetadata = {
   name: string;
   type: SearchableFieldType;
 };

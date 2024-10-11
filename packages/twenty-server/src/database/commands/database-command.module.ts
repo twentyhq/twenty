@@ -8,6 +8,7 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeTo0_31CommandModule } from 'src/database/commands/upgrade-version/0-31/0-31-upgrade-version.module';
+import { SimplifySearchVectorExpressionCommandModule } from 'src/database/commands/upgrade-version/0-31/0-32/0-32-simplify-search-vector-expression.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -47,6 +48,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     WorkspaceCacheStorageModule,
     WorkspaceMetadataVersionModule,
     UpgradeTo0_31CommandModule,
+    SimplifySearchVectorExpressionCommandModule,
     FeatureFlagModule,
   ],
   providers: [

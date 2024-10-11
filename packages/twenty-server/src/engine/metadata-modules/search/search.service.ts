@@ -25,11 +25,11 @@ import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import {
-  isSearchableFieldType,
-  SearchableFieldType,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { SearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
@@ -45,7 +45,7 @@ export class SearchService {
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {}
 
-  public async createSearchVectorField(
+  public async createSearchVectorFieldForObject(
     objectMetadataInput: CreateObjectInput,
     createdObjectMetadata: ObjectMetadataEntity,
   ) {
@@ -114,18 +114,9 @@ export class SearchService {
 
   public async updateSearchVector(
     objectMetadataId: string,
-    labelIdentifierFieldMetadataId: string,
+    fieldMetadataNameAndTypeForSearch: FieldTypeAndNameMetadata[],
     workspaceId: string,
   ) {
-    const newLabelIdentifierField =
-      await this.fieldMetadataRepository.findOneByOrFail({
-        id: labelIdentifierFieldMetadataId,
-      });
-
-    if (!isSearchableFieldType(newLabelIdentifierField.type)) {
-      return;
-    }
-
     const objectMetadata = await this.objectMetadataRepository.findOneByOrFail({
       id: objectMetadataId,
     });
@@ -151,12 +142,9 @@ export class SearchService {
             existingSearchVectorFieldMetadata,
             {
               ...existingSearchVectorFieldMetadata,
-              asExpression: getTsVectorColumnExpressionFromFields([
-                {
-                  type: newLabelIdentifierField.type as SearchableFieldType,
-                  name: newLabelIdentifierField.name,
-                },
-              ]),
+              asExpression: getTsVectorColumnExpressionFromFields(
+                fieldMetadataNameAndTypeForSearch,
+              ),
               generatedType: 'STORED', // Not stored on fieldMetadata
               options: undefined,
             },

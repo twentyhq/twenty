@@ -63,6 +63,7 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
@@ -365,7 +366,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       if (isSearchEnabled) {
-        await this.searchService.createSearchVectorField(
+        await this.searchService.createSearchVectorFieldForObject(
           objectMetadataInput,
           createdObjectMetadata,
         );
@@ -447,11 +448,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         );
 
       if (isSearchEnabled && isWorkspaceMigratedForSearch) {
-        await this.searchService.updateSearchVector(
-          input.id,
-          input.update.labelIdentifierFieldMetadataId,
-          workspaceId,
-        );
+        const labelIdentifierFieldMetadata =
+          await this.fieldMetadataRepository.findOneByOrFail({
+            id: input.update.labelIdentifierFieldMetadataId,
+            objectMetadataId: input.id,
+          });
+
+        if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
+          await this.searchService.updateSearchVector(
+            input.id,
+            [
+              {
+                name: labelIdentifierFieldMetadata.name,
+                type: labelIdentifierFieldMetadata.type,
+              },
+            ],
+            workspaceId,
+          );
+        }
       }
 
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
