@@ -29,6 +29,7 @@ import {
 
 import { GraphqlQueryResolverFactory } from 'src/engine/api/graphql/graphql-query-runner/factories/graphql-query-resolver.factory';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
@@ -47,6 +48,7 @@ export class GraphqlQueryRunnerService {
   constructor(
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
+    private readonly queryResultGettersFactory: QueryResultGettersFactory,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly graphqlQueryResolverFactory: GraphqlQueryResolverFactory,
@@ -353,20 +355,28 @@ export class GraphqlQueryRunnerService {
 
     const results = await resolver.resolve(computedArgs as Input, options);
 
+    const resultWithGetters = await this.queryResultGettersFactory.create(
+      results,
+      objectMetadataItem,
+      authContext.workspace.id,
+    );
+
     await this.workspaceQueryHookService.executePostQueryHooks(
       authContext,
       objectMetadataItem.nameSingular,
       operationName,
-      Array.isArray(results) ? results : [results],
+      Array.isArray(resultWithGetters)
+        ? resultWithGetters
+        : [resultWithGetters],
     );
 
     const jobOperation = this.operationNameToJobOperation(operationName);
 
     if (jobOperation) {
-      await this.triggerWebhooks(results, jobOperation, options);
+      await this.triggerWebhooks(resultWithGetters, jobOperation, options);
     }
 
-    return results;
+    return resultWithGetters;
   }
 
   private operationNameToJobOperation(
