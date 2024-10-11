@@ -72,7 +72,7 @@ const StyledItem = styled('div', {
   }};
   cursor: ${(props) => (props.soon ? 'default' : 'pointer')};
   display: flex;
-  font-family: 'Inter';
+  font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme, isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? theme.spacing(2) : 'none'};
@@ -120,7 +120,6 @@ const StyledItemCount = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-
   height: 16px;
   justify-content: center;
   margin-left: auto;
