@@ -63,18 +63,20 @@ export const useRestoreManyRecords = ({
     const restoredRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchIds = idsToRestore.slice(
+      const batchedIdsToRestore = idsToRestore.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const cachedRecords = idsToRestore.map((idToRestore) =>
-        getRecordFromCache(idToRestore, apolloClient.cache),
-      );
+      const cachedRecords = batchedIdsToRestore
+        .map((idToRestore) =>
+          getRecordFromCache(idToRestore, apolloClient.cache),
+        )
+        .filter(isDefined);
 
       if (!options?.skipOptimisticEffect) {
         cachedRecords.forEach((cachedRecord) => {
-          if (!cachedRecord) {
+          if (!cachedRecord || !cachedRecord.id) {
             return;
           }
 
@@ -125,7 +127,7 @@ export const useRestoreManyRecords = ({
         .mutate({
           mutation: restoreManyRecordsMutation,
           variables: {
-            filter: { id: { in: batchIds } },
+            filter: { id: { in: batchedIdsToRestore } },
           },
         })
         .catch((error: Error) => {

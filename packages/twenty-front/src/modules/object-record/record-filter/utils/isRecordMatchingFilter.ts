@@ -128,7 +128,7 @@ export const isRecordMatchingFilter = ({
   }
 
   if (isLeafFilter(filter)) {
-    if (record.deletedAt !== null && filter.deletedAt === undefined) {
+    if (isDefined(record.deletedAt) && filter.deletedAt === undefined) {
       return false;
     }
   }

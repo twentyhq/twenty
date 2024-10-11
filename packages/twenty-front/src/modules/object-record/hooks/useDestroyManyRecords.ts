@@ -61,12 +61,12 @@ export const useDestroyManyRecords = ({
     const destroyedRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchIds = idsToDestroy.slice(
+      const batchedIdToDestroy = idsToDestroy.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const originalRecords = idsToDestroy
+      const originalRecords = batchedIdToDestroy
         .map((recordId) => getRecordFromCache(recordId, apolloClient.cache))
         .filter(isDefined);
 
@@ -74,15 +74,17 @@ export const useDestroyManyRecords = ({
         .mutate({
           mutation: destroyManyRecordsMutation,
           variables: {
-            filter: { id: { in: batchIds } },
+            filter: { id: { in: batchedIdToDestroy } },
           },
           optimisticResponse: options?.skipOptimisticEffect
             ? undefined
             : {
-                [mutationResponseField]: batchIds.map((idToDestroy) => ({
-                  __typename: capitalize(objectNameSingular),
-                  id: idToDestroy,
-                })),
+                [mutationResponseField]: batchedIdToDestroy.map(
+                  (idToDestroy) => ({
+                    __typename: capitalize(objectNameSingular),
+                    id: idToDestroy,
+                  }),
+                ),
               },
           update: options?.skipOptimisticEffect
             ? undefined

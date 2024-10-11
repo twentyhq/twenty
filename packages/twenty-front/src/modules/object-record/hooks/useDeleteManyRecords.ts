@@ -63,20 +63,21 @@ export const useDeleteManyRecords = ({
     const deletedRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchIds = idsToDelete.slice(
+      const batchedIdsToDelete = idsToDelete.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
 
       const currentTimestamp = new Date().toISOString();
 
-      const cachedRecords = idsToDelete.map((idToDelete) =>
-        getRecordFromCache(idToDelete, apolloClient.cache),
-      );
+      const cachedRecords = batchedIdsToDelete
+        .map((idToDelete) => getRecordFromCache(idToDelete, apolloClient.cache))
+        .filter(isDefined);
 
       if (!options?.skipOptimisticEffect) {
         cachedRecords.forEach((cachedRecord) => {
-          if (!cachedRecord) {
+          console.log('cachedRecord', cachedRecord);
+          if (!cachedRecord || !cachedRecord.id) {
             return;
           }
 
@@ -127,7 +128,7 @@ export const useDeleteManyRecords = ({
         .mutate({
           mutation: deleteManyRecordsMutation,
           variables: {
-            filter: { id: { in: batchIds } },
+            filter: { id: { in: batchedIdsToDelete } },
           },
         })
         .catch((error: Error) => {
