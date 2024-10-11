@@ -290,7 +290,9 @@ export const isRecordMatchingFilter = ({
         );
       }
       default: {
-        throw new Error('Not implemented yet');
+        throw new Error(
+          `Not implemented yet for field type "${objectMetadataField.type}"`,
+        );
       }
     }
   });
