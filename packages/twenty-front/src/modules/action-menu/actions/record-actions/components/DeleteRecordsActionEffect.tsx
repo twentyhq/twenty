@@ -90,5 +90,5 @@ export const DeleteRecordsActionEffect = ({
     position,
   ]);
 
-  return <></>;
+  return null;
 };

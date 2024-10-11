@@ -49,5 +49,5 @@ export const ExportRecordsActionEffect = ({
       removeActionMenuEntry('export');
     };
   }, [download, progress, addActionMenuEntry, removeActionMenuEntry, position]);
-  return <></>;
+  return null;
 };
