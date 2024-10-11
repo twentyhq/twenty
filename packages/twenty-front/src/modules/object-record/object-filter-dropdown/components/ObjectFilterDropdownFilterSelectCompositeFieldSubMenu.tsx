@@ -1,4 +1,3 @@
-import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
@@ -17,7 +16,7 @@ import { useState } from 'react';
 import { IconApps, IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
-  const [searchText, setSearchText] = useState('');
+  const [searchText] = useState('');
 
   const { getIcon } = useIcons();
 
@@ -95,14 +94,14 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       >
         {getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)}
       </DropdownMenuHeader>
-      <StyledInput
+      {/* <StyledInput
         value={searchText}
         autoFocus
         placeholder="Search fields"
         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           setSearchText(event.target.value)
         }
-      />
+      /> */}
       <DropdownMenuItemsContainer>
         <MenuItem
           key={`select-filter-${-1}`}
