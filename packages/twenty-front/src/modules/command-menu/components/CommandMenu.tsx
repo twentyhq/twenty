@@ -34,6 +34,7 @@ import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
+import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
@@ -139,7 +140,21 @@ export const CommandMenu = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
   );
+  // Use useDeferredValue to delay the search results update
+  // const deferredCommandMenuSearch = useDeferredValue(commandMenuSearch);
+  const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
+  // const [previousResults, setPreviousResults] = useState<{
+  //   people: Person[];
+  //   companies: Company[];
+  //   notes: Note[];
+  //   opportunities: Opportunity[];
+  // }>({
+  //   people: [],
+  //   companies: [],
+  //   notes: [],
+  //   opportunities: [],
+  // });
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,46 +189,58 @@ export const CommandMenu = () => {
   const isSearchEnabled =
     useIsFeatureEnabled('IS_SEARCH_ENABLED') && isWorkspaceMigratedForSearch;
 
-  const { records: peopleFromFindMany } = useFindManyRecords<Person>({
-    skip: !isCommandMenuOpened || isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Person,
-    filter: commandMenuSearch
-      ? makeOrFilterVariables([
-          ...generateILikeFiltersForCompositeFields(commandMenuSearch, 'name', [
-            'firstName',
-            'lastName',
-          ]),
-          ...generateILikeFiltersForCompositeFields(
-            commandMenuSearch,
-            'emails',
-            ['primaryEmail'],
-          ),
-        ])
-      : undefined,
-    limit: 3,
-  });
-  const { records: peopleFromSearch } = useSearchRecords<Person>({
-    skip: !isCommandMenuOpened || !isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Person,
-    limit: 3,
-    searchInput: commandMenuSearch ?? undefined,
-  });
+  const { records: peopleFromFindMany, loading: isPeopleFromFindManyLoading } =
+    useFindManyRecords<Person>({
+      skip: !isCommandMenuOpened || isSearchEnabled,
+      objectNameSingular: CoreObjectNameSingular.Person,
+      filter: deferredCommandMenuSearch
+        ? makeOrFilterVariables([
+            ...generateILikeFiltersForCompositeFields(
+              deferredCommandMenuSearch,
+              'name',
+              ['firstName', 'lastName'],
+            ),
+            ...generateILikeFiltersForCompositeFields(
+              deferredCommandMenuSearch,
+              'emails',
+              ['primaryEmail'],
+            ),
+          ])
+        : undefined,
+      limit: 3,
+    });
+  const { records: peopleFromSearch, loading: isPeopleFromSearchLoading } =
+    useSearchRecords<Person>({
+      skip: !isCommandMenuOpened || !isSearchEnabled,
+      objectNameSingular: CoreObjectNameSingular.Person,
+      limit: 3,
+      searchInput: deferredCommandMenuSearch ?? undefined,
+    });
 
   const people = isSearchEnabled ? peopleFromSearch : peopleFromFindMany;
+  const isPeopleLoading = isSearchEnabled
+    ? isPeopleFromSearchLoading
+    : isPeopleFromFindManyLoading;
 
-  const { records: companiesFromSearch } = useSearchRecords<Company>({
+  const {
+    records: companiesFromSearch,
+    loading: isCompaniesFromSearchLoading,
+  } = useSearchRecords<Company>({
     skip: !isCommandMenuOpened || !isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Company,
     limit: 3,
-    searchInput: commandMenuSearch ?? undefined,
+    searchInput: deferredCommandMenuSearch ?? undefined,
   });
 
-  const { records: companiesFromFindMany } = useFindManyRecords<Company>({
+  const {
+    records: companiesFromFindMany,
+    loading: isCompaniesFromFindManyLoading,
+  } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened || isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Company,
-    filter: commandMenuSearch
+    filter: deferredCommandMenuSearch
       ? {
-          name: { ilike: `%${commandMenuSearch}%` },
+          name: { ilike: `%${deferredCommandMenuSearch}%` },
         }
       : undefined,
     limit: 3,
@@ -223,39 +250,52 @@ export const CommandMenu = () => {
     ? companiesFromSearch
     : companiesFromFindMany;
 
-  const { records: notes } = useFindManyRecords<Note>({
+  const isCompaniesLoading = isSearchEnabled
+    ? isCompaniesFromSearchLoading
+    : isCompaniesFromFindManyLoading;
+
+  const { records: notes, loading: isNotesLoading } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
-    filter: commandMenuSearch
+    filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
-          { title: { ilike: `%${commandMenuSearch}%` } },
-          { body: { ilike: `%${commandMenuSearch}%` } },
+          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
+          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,
   });
 
-  const { records: opportunitiesFromFindMany } = useFindManyRecords({
+  const {
+    records: opportunitiesFromFindMany,
+    loading: isOpportunitiesFromFindManyLoading,
+  } = useFindManyRecords({
     skip: !isCommandMenuOpened || isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Opportunity,
-    filter: commandMenuSearch
+    filter: deferredCommandMenuSearch
       ? {
-          name: { ilike: `%${commandMenuSearch}%` },
+          name: { ilike: `%${deferredCommandMenuSearch}%` },
         }
       : undefined,
     limit: 3,
   });
 
-  const { records: opportunitiesFromSearch } = useSearchRecords<Opportunity>({
+  const {
+    records: opportunitiesFromSearch,
+    loading: isOpportunitiesFromSearchLoading,
+  } = useSearchRecords<Opportunity>({
     skip: !isCommandMenuOpened || !isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Opportunity,
     limit: 3,
-    searchInput: commandMenuSearch ?? undefined,
+    searchInput: deferredCommandMenuSearch ?? undefined,
   });
 
   const opportunities = isSearchEnabled
     ? opportunitiesFromSearch
     : opportunitiesFromFindMany;
+  const isOpportunitiesLoading = isSearchEnabled
+    ? isOpportunitiesFromSearchLoading
+    : isOpportunitiesFromFindManyLoading;
 
   const peopleCommands = useMemo(
     () =>
@@ -322,17 +362,17 @@ export const CommandMenu = () => {
 
   const matchingNavigateCommand = commandMenuCommands.filter(
     (cmd) =>
-      (commandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, commandMenuSearch) ||
-          checkInLabels(cmd, commandMenuSearch)
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
         : true) && cmd.type === CommandType.Navigate,
   );
 
   const matchingCreateCommand = commandMenuCommands.filter(
     (cmd) =>
-      (commandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, commandMenuSearch) ||
-          checkInLabels(cmd, commandMenuSearch)
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
         : true) && cmd.type === CommandType.Create,
   );
 
@@ -352,7 +392,7 @@ export const CommandMenu = () => {
     label: 'Open Copilot',
     type: CommandType.Navigate,
     onCommandClick: () => {
-      setCopilotQuery(commandMenuSearch);
+      setCopilotQuery(deferredCommandMenuSearch);
       openCopilotRightDrawer();
     },
   };
@@ -368,6 +408,18 @@ export const CommandMenu = () => {
     .concat(opportunities.map((opportunity) => opportunity.id))
     .concat(notes.map((note) => note.id));
 
+  const isNoResults =
+    !matchingCreateCommand.length &&
+    !matchingNavigateCommand.length &&
+    !people.length &&
+    !companies.length &&
+    !notes.length &&
+    !opportunities.length;
+  const isLoading =
+    isPeopleLoading ||
+    isCompaniesLoading ||
+    isNotesLoading ||
+    isOpportunitiesLoading;
   return (
     <>
       {isCommandMenuOpened && (
@@ -410,14 +462,9 @@ export const CommandMenu = () => {
                     }
                   }}
                 >
-                  {!matchingCreateCommand.length &&
-                    !matchingNavigateCommand.length &&
-                    !people.length &&
-                    !companies.length &&
-                    !notes.length &&
-                    !opportunities.length && (
-                      <StyledEmpty>No results found</StyledEmpty>
-                    )}
+                  {isNoResults && !isLoading && (
+                    <StyledEmpty>No results found</StyledEmpty>
+                  )}
                   {isCopilotEnabled && (
                     <CommandGroup heading="Copilot">
                       <SelectableItem itemId={copilotCommand.id}>
@@ -425,8 +472,8 @@ export const CommandMenu = () => {
                           id={copilotCommand.id}
                           Icon={copilotCommand.Icon}
                           label={`${copilotCommand.label} ${
-                            commandMenuSearch.length > 2
-                              ? `"${commandMenuSearch}"`
+                            deferredCommandMenuSearch.length > 2
+                              ? `"${deferredCommandMenuSearch}"`
                               : ''
                           }`}
                           onClick={copilotCommand.onCommandClick}
