@@ -98,10 +98,12 @@ export const MultiWorkspaceDropdownButton = ({
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
           </NavigationDrawerAnimatedCollapseWrapper>
-          <StyledIconChevronDown
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <StyledIconChevronDown
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          </NavigationDrawerAnimatedCollapseWrapper>
         </StyledContainer>
       }
       dropdownComponents={
