@@ -33,6 +33,7 @@ export type NavigationDrawerItemProps = {
   soon?: boolean;
   count?: number;
   keyboard?: string[];
+  role?: string;
 };
 
 type StyledItemProps = Pick<
@@ -148,6 +149,7 @@ export const NavigationDrawerItem = ({
   count,
   keyboard,
   subItemState,
+  role,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -185,6 +187,7 @@ export const NavigationDrawerItem = ({
         as={to ? Link : 'div'}
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
+        role={role}
       >
         {showBreadcrumb && (
           <NavigationDrawerItemBreadcrumb state={subItemState} />
