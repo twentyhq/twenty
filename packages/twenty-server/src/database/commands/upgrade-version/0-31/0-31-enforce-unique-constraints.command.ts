@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -10,6 +10,14 @@ import {
 } from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+
+interface EnforceUniqueConstraintsCommandOptions
+  extends ActiveWorkspacesCommandOptions {
+  person?: boolean;
+  company?: boolean;
+  viewField?: boolean;
+  viewSort?: boolean;
+}
 
 @Command({
   name: 'upgrade-0.31:enforce-unique-constraints',
@@ -25,9 +33,41 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
     super(workspaceRepository);
   }
 
+  @Option({
+    flags: '--person',
+    description: 'Enforce unique constraints on person emailsPrimaryEmail',
+  })
+  parsePerson() {
+    return true;
+  }
+
+  @Option({
+    flags: '--company',
+    description: 'Enforce unique constraints on company domainName',
+  })
+  parseCompany() {
+    return true;
+  }
+
+  @Option({
+    flags: '--view-field',
+    description: 'Enforce unique constraints on ViewField',
+  })
+  parseViewField() {
+    return true;
+  }
+
+  @Option({
+    flags: '--view-sort',
+    description: 'Enforce unique constraints on ViewSort',
+  })
+  parseViewSort() {
+    return true;
+  }
+
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    _options: ActiveWorkspacesCommandOptions,
+    options: EnforceUniqueConstraintsCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log('Running command to enforce unique constraints');
@@ -38,7 +78,8 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       try {
         await this.enforceUniqueConstraintsForWorkspace(
           workspaceId,
-          _options.dryRun ?? false,
+          options.dryRun ?? false,
+          options,
         );
 
         await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
@@ -47,7 +88,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       } catch (error) {
         this.logger.log(
           chalk.red(
-            `Running command on workspace ${workspaceId} failed with error: ${error}`,
+            `Running command on workspace ${workspaceId} failed with error: ${error}, ${error.stack}`,
           ),
         );
         continue;
@@ -64,11 +105,20 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
   private async enforceUniqueConstraintsForWorkspace(
     workspaceId: string,
     dryRun: boolean,
+    options: EnforceUniqueConstraintsCommandOptions,
   ): Promise<void> {
-    await this.enforceUniqueCompanyDomainName(workspaceId, dryRun);
-    await this.enforceUniquePersonEmail(workspaceId, dryRun);
-    await this.enforceUniqueViewField(workspaceId, dryRun);
-    await this.enforceUniqueViewSort(workspaceId, dryRun);
+    if (options.company) {
+      await this.enforceUniqueCompanyDomainName(workspaceId, dryRun);
+    }
+    if (options.person) {
+      await this.enforceUniquePersonEmail(workspaceId, dryRun);
+    }
+    if (options.viewField) {
+      await this.enforceUniqueViewField(workspaceId, dryRun);
+    }
+    if (options.viewSort) {
+      await this.enforceUniqueViewSort(workspaceId, dryRun);
+    }
   }
 
   private async enforceUniqueCompanyDomainName(
@@ -87,19 +137,25 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       .addSelect('COUNT(*)', 'count')
       .where('company.deletedAt IS NULL')
       .where('company.domainNamePrimaryLinkUrl IS NOT NULL')
+      .where("company.domainNamePrimaryLinkUrl != ''")
       .groupBy('company.domainNamePrimaryLinkUrl')
       .having('COUNT(*) > 1')
       .getRawMany();
 
     for (const duplicate of duplicates) {
-      const { domainNamePrimaryLinkUrl } = duplicate;
+      const { company_domainNamePrimaryLinkUrl } = duplicate;
       const companies = await companyRepository.find({
-        where: { domainNamePrimaryLinkUrl, deletedAt: IsNull() },
+        where: {
+          domainName: {
+            primaryLinkUrl: company_domainNamePrimaryLinkUrl,
+          },
+          deletedAt: IsNull(),
+        },
         order: { createdAt: 'DESC' },
       });
 
       for (let i = 1; i < companies.length; i++) {
-        const newdomainNamePrimaryLinkUrl = `${domainNamePrimaryLinkUrl}${i}`;
+        const newdomainNamePrimaryLinkUrl = `${company_domainNamePrimaryLinkUrl}${i}`;
 
         if (!dryRun) {
           await companyRepository.update(companies[i].id, {
@@ -108,7 +164,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
         }
         this.logger.log(
           chalk.yellow(
-            `Updated company ${companies[i].id} domainName from ${domainNamePrimaryLinkUrl} to ${newdomainNamePrimaryLinkUrl}`,
+            `Updated company ${companies[i].id} domainName from ${company_domainNamePrimaryLinkUrl} to ${newdomainNamePrimaryLinkUrl}`,
           ),
         );
       }
@@ -131,19 +187,27 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       .addSelect('COUNT(*)', 'count')
       .where('person.deletedAt IS NULL')
       .where('person.emailsPrimaryEmail IS NOT NULL')
+      .where("person.emailsPrimaryEmail != ''")
       .groupBy('person.emailsPrimaryEmail')
       .having('COUNT(*) > 1')
       .getRawMany();
 
     for (const duplicate of duplicates) {
-      const { emailsPrimaryEmail } = duplicate;
+      const { person_emailsPrimaryEmail } = duplicate;
       const persons = await personRepository.find({
-        where: { emailsPrimaryEmail, deletedAt: IsNull() },
+        where: {
+          emails: {
+            primaryEmail: person_emailsPrimaryEmail,
+          },
+          deletedAt: IsNull(),
+        },
         order: { createdAt: 'DESC' },
       });
 
       for (let i = 1; i < persons.length; i++) {
-        const newEmail = `${emailsPrimaryEmail.split('@')[0]}+${i}@${emailsPrimaryEmail.split('@')[1]}`;
+        const newEmail = person_emailsPrimaryEmail?.includes('@')
+          ? `${person_emailsPrimaryEmail.split('@')[0]}+${i}@${person_emailsPrimaryEmail.split('@')[1]}`
+          : `${person_emailsPrimaryEmail}+${i}`;
 
         if (!dryRun) {
           await personRepository.update(persons[i].id, {
@@ -152,7 +216,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
         }
         this.logger.log(
           chalk.yellow(
-            `Updated person ${persons[i].id} emailsPrimaryEmail from ${emailsPrimaryEmail} to ${newEmail}`,
+            `Updated person ${persons[i].id} emailsPrimaryEmail from ${person_emailsPrimaryEmail} to ${newEmail}`,
           ),
         );
       }
