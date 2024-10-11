@@ -101,10 +101,6 @@ describe('useFavorites', () => {
 
     result.current.deleteFavorite(favoriteId);
 
-    // If the mock wasn't called, log some debugging information
-    console.error('Mock not called. Current mocks:', mocks[1]);
-    console.error('Favorite ID used:', favoriteId);
-
     await waitFor(() => {
       expect(mocks[1].result).toHaveBeenCalled();
     });
