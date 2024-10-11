@@ -157,6 +157,7 @@ export class SearchService {
                   name: newLabelIdentifierField.name,
                 },
               ]),
+              generatedType: 'STORED', // Not stored on fieldMetadata
               options: undefined,
             },
           ),

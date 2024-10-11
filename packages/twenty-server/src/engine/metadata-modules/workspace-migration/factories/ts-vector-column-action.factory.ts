@@ -53,6 +53,7 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
           isNullable: alteredFieldMetadata.isNullable ?? true,
           defaultValue: undefined,
           asExpression: alteredFieldMetadata.asExpression,
+          generatedType: alteredFieldMetadata.generatedType,
         },
       },
     ];
