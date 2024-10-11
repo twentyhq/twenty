@@ -76,7 +76,6 @@ export const useDeleteManyRecords = ({
 
       if (!options?.skipOptimisticEffect) {
         cachedRecords.forEach((cachedRecord) => {
-          console.log('cachedRecord', cachedRecord);
           if (!cachedRecord || !cachedRecord.id) {
             return;
           }
