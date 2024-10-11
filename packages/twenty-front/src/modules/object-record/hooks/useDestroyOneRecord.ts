@@ -68,7 +68,7 @@ export const useDestroyOneRecord = ({
             triggerDestroyRecordsOptimisticEffect({
               cache,
               objectMetadataItem,
-              recordsToDelete: [cachedRecord],
+              recordsToDestroy: [cachedRecord],
               objectMetadataItems,
             });
           },

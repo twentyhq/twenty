@@ -125,7 +125,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           triggerDestroyRecordsOptimisticEffect({
             cache,
             objectMetadataItem: fullTargetObjectMetadataItem,
-            recordsToDelete: targetRecordsToDetachFrom,
+            recordsToDestroy: targetRecordsToDetachFrom,
             objectMetadataItems,
           });
         } else {

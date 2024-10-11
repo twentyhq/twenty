@@ -122,19 +122,19 @@ export const useCreateManyRecords = <
         },
       })
       .catch((error: Error) => {
-        recordsCreatedInCache.forEach((recordToDelete) => {
+        recordsCreatedInCache.forEach((recordToDestroy) => {
           deleteRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
-            recordToDelete,
+            recordToDestroy,
           });
         });
 
         triggerDestroyRecordsOptimisticEffect({
           cache: apolloClient.cache,
           objectMetadataItem,
-          recordsToDelete: recordsCreatedInCache,
+          recordsToDestroy: recordsCreatedInCache,
           objectMetadataItems,
         });
 

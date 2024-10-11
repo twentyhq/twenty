@@ -129,7 +129,7 @@ export const usePersistViewSortRecords = () => {
               idToDestroy: viewSortId,
             },
             update: (cache, { data }) => {
-              const record = data?.['deleteViewSort'];
+              const record = data?.['destroyViewSort'];
 
               if (!record) return;
 
@@ -140,7 +140,7 @@ export const usePersistViewSortRecords = () => {
               triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,
-                recordsToDelete: [cachedRecord],
+                recordsToDestroy: [cachedRecord],
                 objectMetadataItems,
               });
             },

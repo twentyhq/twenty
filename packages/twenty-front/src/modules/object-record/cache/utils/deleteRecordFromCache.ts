@@ -8,21 +8,21 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 export const deleteRecordFromCache = ({
   objectMetadataItem,
   objectMetadataItems,
-  recordToDelete,
+  recordToDestroy,
   cache,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
-  recordToDelete: ObjectRecord;
+  recordToDestroy: ObjectRecord;
   cache: ApolloCache<object>;
 }) => {
   triggerDestroyRecordsOptimisticEffect({
     cache,
     objectMetadataItem,
     objectMetadataItems,
-    recordsToDelete: [
+    recordsToDestroy: [
       {
-        ...recordToDelete,
+        ...recordToDestroy,
         __typename: getObjectTypename(objectMetadataItem.nameSingular),
       },
     ],

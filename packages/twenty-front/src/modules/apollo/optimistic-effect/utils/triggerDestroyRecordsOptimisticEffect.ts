@@ -10,12 +10,12 @@ import { isDefined } from '~/utils/isDefined';
 export const triggerDestroyRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
-  recordsToDelete,
+  recordsToDestroy,
   objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  recordsToDelete: RecordGqlNode[];
+  recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
   cache.modify<StoreObject>({
@@ -36,7 +36,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
-        const recordIdsToDelete = recordsToDelete.map(({ id }) => id);
+        const recordIdsToDelete = recordsToDestroy.map(({ id }) => id);
 
         const cachedEdges = readField<RecordGqlRefEdge[]>(
           'edges',
@@ -69,15 +69,15 @@ export const triggerDestroyRecordsOptimisticEffect = ({
     },
   });
 
-  recordsToDelete.forEach((recordToDelete) => {
+  recordsToDestroy.forEach((recordToDestroy) => {
     triggerUpdateRelationsOptimisticEffect({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
-      currentSourceRecord: recordToDelete,
+      currentSourceRecord: recordToDestroy,
       updatedSourceRecord: null,
       objectMetadataItems,
     });
 
-    cache.evict({ id: cache.identify(recordToDelete) });
+    cache.evict({ id: cache.identify(recordToDestroy) });
   });
 };

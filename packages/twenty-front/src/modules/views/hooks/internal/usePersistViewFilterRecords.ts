@@ -134,7 +134,7 @@ export const usePersistViewFilterRecords = () => {
               idToDestroy: viewFilterId,
             },
             update: (cache, { data }) => {
-              const record = data?.['deleteViewFilter'];
+              const record = data?.['destroyViewFilter'];
 
               if (!record) return;
 
@@ -145,7 +145,7 @@ export const usePersistViewFilterRecords = () => {
               triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,
-                recordsToDelete: [cachedRecord],
+                recordsToDestroy: [cachedRecord],
                 objectMetadataItems,
               });
             },

@@ -118,13 +118,13 @@ export const useCreateOneRecord = <
           objectMetadataItems,
           objectMetadataItem,
           cache: apolloClient.cache,
-          recordToDelete: recordCreatedInCache,
+          recordToDestroy: recordCreatedInCache,
         });
 
         triggerDestroyRecordsOptimisticEffect({
           cache: apolloClient.cache,
           objectMetadataItem,
-          recordsToDelete: [recordCreatedInCache],
+          recordsToDestroy: [recordCreatedInCache],
           objectMetadataItems,
         });
 
