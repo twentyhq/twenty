@@ -87,6 +87,7 @@ const StyledItem = styled('div', {
 
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   width: 100%;
+  overflow: hidden;
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
@@ -198,6 +199,7 @@ export const NavigationDrawerItem = ({
             <NavigationDrawerItemBreadcrumb state={subItemState} />
           </NavigationDrawerAnimatedCollapseWrapper>
         )}
+
         {Icon && (
           <Icon
             style={{ minWidth: theme.icon.size.md }}
@@ -205,22 +207,30 @@ export const NavigationDrawerItem = ({
             stroke={theme.icon.stroke.md}
           />
         )}
+
         <NavigationDrawerAnimatedCollapseWrapper>
           <StyledItemLabel>{label}</StyledItemLabel>
         </NavigationDrawerAnimatedCollapseWrapper>
-        <NavigationDrawerAnimatedCollapseWrapper>
-          {soon && <Pill label="Soon" />}
-        </NavigationDrawerAnimatedCollapseWrapper>
-        <NavigationDrawerAnimatedCollapseWrapper>
-          {!!count && <StyledItemCount>{count}</StyledItemCount>}
-        </NavigationDrawerAnimatedCollapseWrapper>
-        <NavigationDrawerAnimatedCollapseWrapper>
-          {keyboard && (
+
+        {soon && (
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <Pill label="Soon" />
+          </NavigationDrawerAnimatedCollapseWrapper>
+        )}
+
+        {!!count && (
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <StyledItemCount>{count}</StyledItemCount>
+          </NavigationDrawerAnimatedCollapseWrapper>
+        )}
+
+        {keyboard && (
+          <NavigationDrawerAnimatedCollapseWrapper>
             <StyledKeyBoardShortcut className="keyboard-shortcuts">
               {keyboard}
             </StyledKeyBoardShortcut>
-          )}
-        </NavigationDrawerAnimatedCollapseWrapper>
+          </NavigationDrawerAnimatedCollapseWrapper>
+        )}
       </StyledItem>
     </StyledNavigationDrawerItemContainer>
   );

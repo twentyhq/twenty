@@ -5,7 +5,9 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useTheme } from '@emotion/react';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
-const StyledAnimatedContainer = styled(motion.div)``;
+const StyledAnimatedContainer = styled(motion.div)`
+  overflow: hidden;
+`;
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,
