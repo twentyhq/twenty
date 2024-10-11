@@ -75,6 +75,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IsUniqueIndexesEnabled,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };

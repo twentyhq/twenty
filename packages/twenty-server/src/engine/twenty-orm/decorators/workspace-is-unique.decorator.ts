@@ -29,13 +29,11 @@ export function WorkspaceIsUnique(): PropertyDecorator {
       whereClause: null,
     });
 
-    return (object, propertyKey) => {
-      TypedReflect.defineMetadata(
-        'workspace:is-unique-metadata-args',
-        true,
-        object,
-        propertyKey.toString(),
-      );
-    };
+    return TypedReflect.defineMetadata(
+      'workspace:is-unique-metadata-args',
+      true,
+      target,
+      propertyKey.toString(),
+    );
   };
 }
