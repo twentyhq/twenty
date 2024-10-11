@@ -1,6 +1,6 @@
 import { ApolloCache } from '@apollo/client';
 
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -16,7 +16,7 @@ export const deleteRecordFromCache = ({
   recordToDelete: ObjectRecord;
   cache: ApolloCache<object>;
 }) => {
-  triggerDeleteRecordsOptimisticEffect({
+  triggerDestroyRecordsOptimisticEffect({
     cache,
     objectMetadataItem,
     objectMetadataItems,

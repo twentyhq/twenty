@@ -7,7 +7,7 @@ import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/is
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isDefined } from '~/utils/isDefined';
 
-export const triggerDeleteRecordsOptimisticEffect = ({
+export const triggerDestroyRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
   recordsToDelete,
@@ -78,11 +78,6 @@ export const triggerDeleteRecordsOptimisticEffect = ({
       objectMetadataItems,
     });
 
-    cache.modify({
-      id: cache.identify(recordToDelete),
-      fields: {
-        deletedAt: () => recordToDelete.deletedAt,
-      },
-    });
+    cache.evict({ id: cache.identify(recordToDelete) });
   });
 };

@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -95,7 +95,7 @@ export const useDestroyManyRecords = ({
                   .map((record) => getRecordFromCache(record.id, cache))
                   .filter(isDefined);
 
-                triggerDeleteRecordsOptimisticEffect({
+                triggerDestroyRecordsOptimisticEffect({
                   cache,
                   objectMetadataItem,
                   recordsToDelete: cachedRecords,

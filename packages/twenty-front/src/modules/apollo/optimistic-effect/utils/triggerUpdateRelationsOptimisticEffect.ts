@@ -1,7 +1,7 @@
 import { ApolloCache } from '@apollo/client';
 
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -122,7 +122,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           );
 
         if (shouldCascadeDeleteTargetRecords) {
-          triggerDeleteRecordsOptimisticEffect({
+          triggerDestroyRecordsOptimisticEffect({
             cache,
             objectMetadataItem: fullTargetObjectMetadataItem,
             recordsToDelete: targetRecordsToDetachFrom,
