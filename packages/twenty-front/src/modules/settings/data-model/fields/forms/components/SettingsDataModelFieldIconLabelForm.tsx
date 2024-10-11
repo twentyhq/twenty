@@ -58,7 +58,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
   const [iconEditedManually, setIconEditedManually] = useState(false);
 
   useEffect(() => {
-    if (labelEditedManually) return;
+    if (labelEditedManually || !relationType) return;
     const label = [
       RelationDefinitionType.ManyToOne,
       RelationDefinitionType.ManyToMany,
