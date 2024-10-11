@@ -12,9 +12,9 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { NavigationDrawerCollapsedGreyBox } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapsedGreyBox';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useFavorites } from '../hooks/useFavorites';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
@@ -108,19 +108,14 @@ export const CurrentWorkspaceMemberFavorites = () => {
 
   return (
     <StyledContainer>
-      <NavigationDrawerSectionTitle
-        label="Favorites"
-        onClick={() => toggleNavigationSection()}
-      />
+      <NavigationDrawerAnimatedCollapseWrapper>
+        <NavigationDrawerSectionTitle
+          label="Favorites"
+          onClick={() => toggleNavigationSection()}
+        />
+      </NavigationDrawerAnimatedCollapseWrapper>
 
-      {isNavigationSectionOpen &&
-        (isNavigationDrawerExpanded ? (
-          draggableListContent
-        ) : (
-          <NavigationDrawerCollapsedGreyBox>
-            {draggableListContent}
-          </NavigationDrawerCollapsedGreyBox>
-        ))}
+      {isNavigationSectionOpen && draggableListContent}
     </StyledContainer>
   );
 };

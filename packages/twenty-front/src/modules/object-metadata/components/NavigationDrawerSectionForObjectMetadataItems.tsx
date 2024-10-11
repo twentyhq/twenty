@@ -1,9 +1,8 @@
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { NavigationDrawerCollapsedGreyBox } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapsedGreyBox';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
@@ -13,6 +12,7 @@ import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemV
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 const ORDERED_STANDARD_OBJECTS = [
   'person',
@@ -100,7 +100,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 
       const subItemArrayLength = sortedObjectMetadataViews.length;
 
-      const content = (
+      return (
         <>
           <NavigationDrawerItem
             key={objectMetadataItem.id}
@@ -126,28 +126,18 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             ))}
         </>
       );
-
-      return (
-        <div key={objectMetadataItem.id}>
-          {!isNavigationDrawerExpanded && isActive ? (
-            <NavigationDrawerCollapsedGreyBox>
-              {content}
-            </NavigationDrawerCollapsedGreyBox>
-          ) : (
-            content
-          )}
-        </div>
-      );
     });
   };
 
   return (
     objectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle
-          label={sectionTitle}
-          onClick={() => toggleNavigationSection()}
-        />
+        <NavigationDrawerAnimatedCollapseWrapper>
+          <NavigationDrawerSectionTitle
+            label={sectionTitle}
+            onClick={() => toggleNavigationSection()}
+          />
+        </NavigationDrawerAnimatedCollapseWrapper>
         {isNavigationSectionOpen && renderObjectMetadataItems()}
       </NavigationDrawerSection>
     )

@@ -90,34 +90,34 @@ export const NavigationDrawer = ({
   const mobileWidth = isNavigationDrawerExpanded ? '100%' : 0;
 
   return (
-    <StyledAnimatedContainer
+    /*<StyledAnimatedContainer
       className={className}
       initial={false}
       animate={{
-        width: isMobile ? mobileWidth : desktopWidth,
+        width: isMobile ? mobileWidth : 'auto',
       }}
       transition={{
         duration: theme.animation.duration.normal,
       }}
+    >*/
+    <StyledContainer
+      isSubMenu={isSubMenu}
+      onMouseEnter={handleHover}
+      onMouseLeave={handleMouseLeave}
+      isExpanded={isNavigationDrawerExpanded || isSettingsPage}
     >
-      <StyledContainer
-        isSubMenu={isSubMenu}
-        onMouseEnter={handleHover}
-        onMouseLeave={handleMouseLeave}
-        isExpanded={isNavigationDrawerExpanded || isSettingsPage}
-      >
-        {isSubMenu && title ? (
-          !isMobile && <NavigationDrawerBackButton title={title} />
-        ) : (
-          <NavigationDrawerHeader
-            name={title}
-            logo={logo}
-            showCollapseButton={isHovered}
-          />
-        )}
-        <StyledItemsContainer>{children}</StyledItemsContainer>
-        {footer}
-      </StyledContainer>
-    </StyledAnimatedContainer>
+      {isSubMenu && title ? (
+        !isMobile && <NavigationDrawerBackButton title={title} />
+      ) : (
+        <NavigationDrawerHeader
+          name={title}
+          logo={logo}
+          showCollapseButton={isHovered}
+        />
+      )}
+      <StyledItemsContainer>{children}</StyledItemsContainer>
+      {footer}
+    </StyledContainer>
+    /*</StyledAnimatedContainer>*/
   );
 };

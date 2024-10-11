@@ -3,6 +3,7 @@ import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawe
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -159,7 +160,6 @@ export const NavigationDrawerItem = ({
   const navigate = useNavigate();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
-  const isSettingsPage = useIsSettingsPage();
   const showBreadcrumb = indentationLevel === 2;
 
   const handleItemClick = () => {
@@ -191,19 +191,21 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       >
-        {isNavigationDrawerExpanded || isSettingsPage ? (
-          <>
+        <>
+          <NavigationDrawerAnimatedCollapseWrapper>
             {' '}
             {showBreadcrumb && (
               <NavigationDrawerItemBreadcrumb state={subItemState} />
             )}
-            {Icon && (
-              <Icon
-                style={{ minWidth: theme.icon.size.md }}
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.md}
-              />
-            )}
+          </NavigationDrawerAnimatedCollapseWrapper>
+          {Icon && (
+            <Icon
+              style={{ minWidth: theme.icon.size.md }}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.md}
+            />
+          )}
+          <NavigationDrawerAnimatedCollapseWrapper>
             <StyledItemLabel>{label}</StyledItemLabel>
             {soon && <Pill label="Soon" />}
             {!!count && <StyledItemCount>{count}</StyledItemCount>}
@@ -212,16 +214,8 @@ export const NavigationDrawerItem = ({
                 {keyboard}
               </StyledKeyBoardShortcut>
             )}
-          </>
-        ) : (
-          Icon && (
-            <Icon
-              style={{ minWidth: theme.icon.size.md }}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.md}
-            />
-          )
-        )}
+          </NavigationDrawerAnimatedCollapseWrapper>
+        </>
       </StyledItem>
     </StyledNavigationDrawerItemContainer>
   );
