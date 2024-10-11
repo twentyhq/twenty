@@ -1,13 +1,11 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
-import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isDefined } from '~/utils/isDefined';
-import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 export const triggerDeleteRecordsOptimisticEffect = ({
   cache,
@@ -24,7 +22,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
     fields: {
       [objectMetadataItem.namePlural]: (
         rootQueryCachedResponse,
-        { DELETE, readField, storeFieldName },
+        { readField },
       ) => {
         const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
           !isObjectRecordConnectionWithRefs(
@@ -37,11 +35,6 @@ export const triggerDeleteRecordsOptimisticEffect = ({
         }
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
-
-        const { fieldVariables: rootQueryVariables } =
-          parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
-            storeFieldName,
-          );
 
         const recordIdsToDelete = recordsToDelete.map(({ id }) => id);
 
@@ -64,14 +57,6 @@ export const triggerDeleteRecordsOptimisticEffect = ({
 
         if (nextCachedEdges.length === cachedEdges?.length)
           return rootQueryCachedObjectRecordConnection;
-
-        // TODO: same as in update, should we trigger DELETE ?
-        if (
-          isDefined(rootQueryVariables?.first) &&
-          cachedEdges?.length === rootQueryVariables.first
-        ) {
-          return DELETE;
-        }
 
         return {
           ...rootQueryCachedObjectRecordConnection,
