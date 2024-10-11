@@ -8,8 +8,8 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
+import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
-import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 
 @Injectable()
 export class DestroyManyResolverFactory
@@ -18,7 +18,7 @@ export class DestroyManyResolverFactory
   public static methodName = 'destroyMany' as const;
 
   constructor(
-    private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
+    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
   ) {}
 
   create(
@@ -38,10 +38,7 @@ export class DestroyManyResolverFactory
           objectMetadataMapItem: internalContext.objectMetadataMapItem,
         };
 
-        return await this.workspaceQueryRunnerService.destroyMany(
-          args,
-          options,
-        );
+        return await this.graphqlQueryRunnerService.destroyMany(args, options);
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error);
       }

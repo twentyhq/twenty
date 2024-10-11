@@ -1,5 +1,3 @@
-import { IconSettings } from 'twenty-ui';
-
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationDatabaseConnectionShowContainer } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionShowContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -9,7 +7,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 export const SettingsIntegrationShowDatabaseConnection = () => {
   return (
     <SubMenuTopBarContainer
-      Icon={IconSettings}
       title="Database Connection"
       links={[
         {

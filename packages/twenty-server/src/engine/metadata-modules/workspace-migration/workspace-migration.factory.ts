@@ -52,24 +52,6 @@ export class WorkspaceMigrationFactory {
           },
         },
       ],
-      [
-        FieldMetadataType.PHONE,
-        {
-          factory: this.basicColumnActionFactory,
-          options: {
-            defaultValue: '',
-          },
-        },
-      ],
-      [
-        FieldMetadataType.EMAIL,
-        {
-          factory: this.basicColumnActionFactory,
-          options: {
-            defaultValue: '',
-          },
-        },
-      ],
       [FieldMetadataType.NUMERIC, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.NUMBER, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.POSITION, { factory: this.basicColumnActionFactory }],
@@ -84,7 +66,6 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.MULTI_SELECT,
         { factory: this.enumColumnActionFactory },
       ],
-      [FieldMetadataType.LINK, { factory: this.compositeColumnActionFactory }],
       [
         FieldMetadataType.CURRENCY,
         { factory: this.compositeColumnActionFactory },

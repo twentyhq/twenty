@@ -8,18 +8,33 @@ import {
 import { GoogleAPIsOauthExchangeCodeForTokenStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 
 @Injectable()
 export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
   'google-apis',
 ) {
-  constructor(private readonly environmentService: EnvironmentService) {
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly tokenService: TokenService,
+  ) {
     super();
   }
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const state = JSON.parse(request.query.state);
+    const { workspaceId } = await this.tokenService.verifyTransientToken(
+      state.transientToken,
+    );
+    const isGmailSendEmailScopeEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsGmailSendEmailScopeEnabled,
+        workspaceId,
+      );
 
     if (
       !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
@@ -34,6 +49,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
     new GoogleAPIsOauthExchangeCodeForTokenStrategy(
       this.environmentService,
       {},
+      isGmailSendEmailScopeEnabled,
     );
 
     setRequestExtraParams(request, {

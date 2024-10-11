@@ -55,6 +55,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import {
@@ -144,28 +145,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.options = generateRatingOptions();
       }
 
-      if (fieldMetadataInput.type === FieldMetadataType.LINK) {
-        throw new FieldMetadataException(
-          '"Link" field types are being deprecated, please use Links type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      if (fieldMetadataInput.type === FieldMetadataType.EMAIL) {
-        throw new FieldMetadataException(
-          '"Email" field types are being deprecated, please use Emails type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      this.validateFieldMetadataInput<CreateFieldInput>(
-        fieldMetadataInput.type,
-        fieldMetadataInput,
-        objectMetadata,
-      );
-
-      console.time('createOne save');
-      const createdFieldMetadata = await fieldMetadataRepository.save({
+      const fieldMetadataForCreate = {
         id: v4(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -186,7 +166,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           : undefined,
         isActive: true,
         isCustom: true,
-      });
+      };
+
+      this.validateFieldMetadata<CreateFieldInput>(
+        fieldMetadataForCreate.type,
+        fieldMetadataForCreate,
+        objectMetadata,
+      );
+
+      console.time('createOne save');
+      const createdFieldMetadata = await fieldMetadataRepository.save(
+        fieldMetadataForCreate,
+      );
 
       console.timeEnd('createOne save');
 
@@ -393,12 +384,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         }
       }
 
-      this.validateFieldMetadataInput<UpdateFieldInput>(
-        existingFieldMetadata.type,
-        fieldMetadataInput,
-        objectMetadata,
-      );
-
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
           ? this.buildUpdatableStandardFieldInput(
@@ -407,21 +392,22 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             )
           : fieldMetadataInput;
 
-      // We're running field update under a transaction, so we can rollback if migration fails
-      await fieldMetadataRepository.update(id, {
+      const fieldMetadataForUpdate = {
         ...updatableFieldInput,
         defaultValue:
-          // Todo: we handle default value for all field types.
-          ![
-            FieldMetadataType.SELECT,
-            FieldMetadataType.MULTI_SELECT,
-            FieldMetadataType.BOOLEAN,
-          ].includes(existingFieldMetadata.type)
-            ? existingFieldMetadata.defaultValue
-            : updatableFieldInput.defaultValue !== null
-              ? updatableFieldInput.defaultValue
-              : null,
-      });
+          updatableFieldInput.defaultValue !== undefined
+            ? updatableFieldInput.defaultValue
+            : existingFieldMetadata.defaultValue,
+      };
+
+      this.validateFieldMetadata<UpdateFieldInput>(
+        existingFieldMetadata.type,
+        fieldMetadataForUpdate,
+        objectMetadata,
+      );
+
+      // We're running field update under a transaction, so we can rollback if migration fails
+      await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
 
       const updatedFieldMetadata = await fieldMetadataRepository.findOne({
         where: { id },
@@ -709,9 +695,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
   }
 
-  private validateFieldMetadataInput<
-    T extends UpdateFieldInput | CreateFieldInput,
-  >(
+  private validateFieldMetadata<T extends UpdateFieldInput | CreateFieldInput>(
     fieldMetadataType: FieldMetadataType,
     fieldMetadataInput: T,
     objectMetadata: ObjectMetadataEntity,
@@ -742,6 +726,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         } else {
           throw error;
         }
+      }
+    }
+
+    if (fieldMetadataInput.isNullable === false) {
+      if (!isDefined(fieldMetadataInput.defaultValue)) {
+        throw new FieldMetadataException(
+          'Default value is required for non nullable fields',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
       }
     }
 

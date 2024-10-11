@@ -14,12 +14,9 @@ export const getOperandsForFilterDefinition = (
 
   switch (filterDefinition.type) {
     case 'TEXT':
-    case 'EMAIL':
     case 'EMAILS':
     case 'FULL_NAME':
     case 'ADDRESS':
-    case 'PHONE':
-    case 'LINK':
     case 'LINKS':
     case 'ARRAY':
     case 'PHONES':

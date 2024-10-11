@@ -33,6 +33,9 @@ import {
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -44,6 +47,7 @@ export class GoogleAPIsService {
     private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -95,6 +99,13 @@ export class GoogleAPIsService {
     const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
 
+    const isGmailSendEmailScopeEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsGmailSendEmailScopeEnabled,
+        workspaceId,
+      );
+    const scopes = getGoogleApisOauthScopes(isGmailSendEmailScopeEnabled);
+
     await workspaceDataSource.transaction(async (manager: EntityManager) => {
       if (!existingAccountId) {
         await connectedAccountRepository.save(
@@ -105,6 +116,7 @@ export class GoogleAPIsService {
             accessToken: input.accessToken,
             refreshToken: input.refreshToken,
             accountOwnerId: workspaceMemberId,
+            scopes,
           },
           {},
           manager,
@@ -146,6 +158,7 @@ export class GoogleAPIsService {
           {
             accessToken: input.accessToken,
             refreshToken: input.refreshToken,
+            scopes,
           },
           manager,
         );

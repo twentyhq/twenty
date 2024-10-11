@@ -46,7 +46,7 @@ export const RecordTableInternalEffect = ({
 
   useListenClickOutsideByClassName({
     classNames: ['entity-table-cell'],
-    excludeClassNames: ['action-bar', 'context-menu'],
+    excludeClassNames: ['bottom-bar', 'context-menu'],
     callback: () => {
       resetTableRowSelection();
     },

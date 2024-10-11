@@ -82,62 +82,62 @@ export class GraphqlQueryFilterFieldParser {
     switch (operator) {
       case 'eq':
         return {
-          sql: `${objectNameSingular}.${key} = :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" = :${key}${uuid}`,
           params: { [`${key}${uuid}`]: value },
         };
       case 'neq':
         return {
-          sql: `${objectNameSingular}.${key} != :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" != :${key}${uuid}`,
           params: { [`${key}${uuid}`]: value },
         };
       case 'gt':
         return {
-          sql: `${objectNameSingular}.${key} > :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" > :${key}${uuid}`,
           params: { [`${key}${uuid}`]: value },
         };
       case 'gte':
         return {
-          sql: `${objectNameSingular}.${key} >= :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" >= :${key}${uuid}`,
           params: { [`${key}${uuid}`]: value },
         };
       case 'lt':
         return {
-          sql: `${objectNameSingular}.${key} < :${key}${uuid}`,
+          sql: `"${objectNameSingular}".${key} < :${key}${uuid}`,
           params: { [`${key}${uuid}`]: value },
         };
       case 'lte':
         return {
-          sql: `${objectNameSingular}.${key} <= :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" <= :${key}${uuid}`,
           params: { [`${key}${uuid}`]: value },
         };
       case 'in':
         return {
-          sql: `${objectNameSingular}.${key} IN (:...${key}${uuid})`,
+          sql: `"${objectNameSingular}"."${key}" IN (:...${key}${uuid})`,
           params: { [`${key}${uuid}`]: value },
         };
       case 'is':
         return {
-          sql: `${objectNameSingular}.${key} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
+          sql: `"${objectNameSingular}"."${key}" IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
           params: {},
         };
       case 'like':
         return {
-          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
           params: { [`${key}${uuid}`]: `${value}` },
         };
       case 'ilike':
         return {
-          sql: `${objectNameSingular}.${key} ILIKE :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" ILIKE :${key}${uuid}`,
           params: { [`${key}${uuid}`]: `${value}` },
         };
       case 'startsWith':
         return {
-          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
           params: { [`${key}${uuid}`]: `${value}` },
         };
       case 'endsWith':
         return {
-          sql: `${objectNameSingular}.${key} LIKE :${key}${uuid}`,
+          sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
           params: { [`${key}${uuid}`]: `${value}` },
         };
       default:

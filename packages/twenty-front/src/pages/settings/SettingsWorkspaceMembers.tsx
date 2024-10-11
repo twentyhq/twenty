@@ -1,17 +1,16 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  H2Title,
-  IconTrash,
-  IconUsers,
-  IconReload,
-  IconMail,
-  StyledText,
   Avatar,
+  H2Title,
+  IconMail,
+  IconReload,
+  IconTrash,
+  MOBILE_VIEWPORT,
 } from 'twenty-ui';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { useTheme } from '@emotion/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -21,26 +20,26 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
-import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
-import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
-import { Status } from '../../modules/ui/display/status/components/Status';
 import { formatDistanceToNow } from 'date-fns';
-import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
+import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { Status } from '../../modules/ui/display/status/components/Status';
+import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
+import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
+import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
+import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -53,6 +52,47 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
+const StyledTableRow = styled(TableRow)`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: grid;
+    grid-template-columns: 3fr;
+  }
+`;
+const StyledTableCell = styled(TableCell)`
+  padding: ${({ theme }) => theme.spacing(1)};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    &:first-child {
+      max-width: 100%;
+      padding-top: 2px;
+      white-space: nowrap;
+      overflow: scroll;
+      scroll-behavior: smooth;
+    }
+  }
+`;
+const StyledIconWrapper = styled.div`
+  left: 2px;
+  margin-right: ${({ theme }) => theme.spacing(2)};
+  position: relative;
+  top: 1px;
+`;
+
+const StyledScrollableTextContainer = styled.div`
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-line;
+`;
+
+const StyledTextContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  max-width: max-content;
+  overflow-x: auto;
+  position: absolute;
+  @media (min-width: 360px) and (max-width: 420px) {
+    max-width: 150px;
+    margin-top: ${({ theme }) => theme.spacing(1)};
+  }
+`;
 const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
 `;
@@ -126,7 +166,6 @@ export const SettingsWorkspaceMembers = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconUsers}
       title="Members"
       links={[
         {
@@ -165,28 +204,25 @@ export const SettingsWorkspaceMembers = () => {
               <StyledTable key={workspaceMember.id}>
                 <TableRow>
                   <TableCell>
-                    <StyledText
-                      PrefixComponent={
-                        <Avatar
-                          avatarUrl={workspaceMember.avatarUrl}
-                          placeholderColorSeed={workspaceMember.id}
-                          placeholder={workspaceMember.name.firstName ?? ''}
-                          type="rounded"
-                          size="sm"
-                        />
-                      }
-                      text={
-                        workspaceMember.name.firstName +
+                    <StyledIconWrapper>
+                      <Avatar
+                        avatarUrl={workspaceMember.avatarUrl}
+                        placeholderColorSeed={workspaceMember.id}
+                        placeholder={workspaceMember.name.firstName ?? ''}
+                        type="rounded"
+                        size="sm"
+                      />
+                    </StyledIconWrapper>
+                    <StyledScrollableTextContainer>
+                      {workspaceMember.name.firstName +
                         ' ' +
-                        workspaceMember.name.lastName
-                      }
-                    />
+                        workspaceMember.name.lastName}
+                    </StyledScrollableTextContainer>
                   </TableCell>
                   <TableCell>
-                    <StyledText
-                      text={workspaceMember.userEmail}
-                      color={theme.font.color.secondary}
-                    />
+                    <StyledTextContainer>
+                      {workspaceMember.userEmail}
+                    </StyledTextContainer>
                   </TableCell>
                   <TableCell align={'right'}>
                     {currentWorkspaceMember?.id !== workspaceMember.id && (
@@ -225,25 +261,27 @@ export const SettingsWorkspaceMembers = () => {
               </StyledTableHeaderRow>
               {workspaceInvitations?.map((workspaceInvitation) => (
                 <StyledTable key={workspaceInvitation.id}>
-                  <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
-                    <TableCell>
-                      <StyledText
-                        PrefixComponent={
-                          <IconMail
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
-                          />
-                        }
-                        text={workspaceInvitation.email}
-                      />
-                    </TableCell>
-                    <TableCell align={'right'}>
+                  <StyledTableRow
+                    gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}
+                  >
+                    <StyledTableCell>
+                      <StyledIconWrapper>
+                        <IconMail
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      </StyledIconWrapper>
+                      <StyledScrollableTextContainer>
+                        {workspaceInvitation.email}
+                      </StyledScrollableTextContainer>
+                    </StyledTableCell>
+                    <StyledTableCell align={'right'}>
                       <Status
                         color={'gray'}
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}
                       />
-                    </TableCell>
-                    <TableCell align={'right'}>
+                    </StyledTableCell>
+                    <StyledTableCell align={'right'}>
                       <StyledButtonContainer>
                         <IconButton
                           onClick={() => {
@@ -266,8 +304,8 @@ export const SettingsWorkspaceMembers = () => {
                           Icon={IconTrash}
                         />
                       </StyledButtonContainer>
-                    </TableCell>
-                  </TableRow>
+                    </StyledTableCell>
+                  </StyledTableRow>
                 </StyledTable>
               ))}
             </Table>
