@@ -76,6 +76,10 @@ export const SignInUpForm = () => {
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
       } else if (signInUpStep === SignInUpStep.Email) {
+        if (form?.formState?.errors?.email) {
+          setShowErrors(true);
+          return;
+        }
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         if (!form.formState.isSubmitting) {
@@ -107,7 +111,9 @@ export const SignInUpForm = () => {
 
   const isEmailStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Email &&
-    (form.watch('email')?.length === 0 || shouldWaitForCaptchaToken);
+    (form.watch('email')?.length === 0 ||
+      Boolean(form?.formState?.errors?.email) ||
+      shouldWaitForCaptchaToken);
 
   // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
   // We make the isValid check synchronous and update a reactState to make sure this does not happen
@@ -179,6 +185,9 @@ export const SignInUpForm = () => {
                         onBlur={onBlur}
                         onChange={(value: string) => {
                           onChange(value);
+                          if (form?.formState?.errors?.email) {
+                            setShowErrors(true);
+                          }
                           if (signInUpStep === SignInUpStep.Password) {
                             continueWithEmail();
                           }
