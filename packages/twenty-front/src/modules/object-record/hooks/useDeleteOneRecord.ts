@@ -9,6 +9,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
@@ -77,7 +78,7 @@ export const useDeleteOneRecord = ({
             apolloClient.cache,
           );
 
-          if (!cachedRecord) {
+          if (isUndefinedOrNull(cachedRecord?.id)) {
             throw error;
           }
 
