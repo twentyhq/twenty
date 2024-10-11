@@ -3,11 +3,16 @@ import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/
 import { ManageFavoritesActionEffect } from '@/action-menu/actions/record-actions/components/ManageFavoritesActionEffect';
 
 export const SingleRecordActionMenuEntriesSetter = () => {
+  const actionEffects = [
+    ExportRecordsActionEffect,
+    DeleteRecordsActionEffect,
+    ManageFavoritesActionEffect,
+  ];
   return (
     <>
-      <ExportRecordsActionEffect />
-      <DeleteRecordsActionEffect />
-      <ManageFavoritesActionEffect />
+      {actionEffects.map((ActionEffect, index) => (
+        <ActionEffect key={index} position={index} />
+      ))}
     </>
   );
 };

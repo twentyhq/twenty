@@ -9,7 +9,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconTrash } from 'twenty-ui';
 
-export const DeleteRecordsActionEffect = () => {
+export const DeleteRecordsActionEffect = ({
+  position,
+}: {
+  position: number;
+}) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const contextStoreTargetedRecordIds = useRecoilValue(
@@ -48,6 +52,7 @@ export const DeleteRecordsActionEffect = () => {
       addActionMenuEntry({
         key: 'delete',
         label: 'Delete',
+        position,
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => {
@@ -82,6 +87,7 @@ export const DeleteRecordsActionEffect = () => {
     isDeleteRecordsModalOpen,
     numberOfSelectedRecords,
     handleDeleteClick,
+    position,
   ]);
 
   return <></>;

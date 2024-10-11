@@ -16,5 +16,7 @@ export const actionMenuEntriesComponentSelector = createComponentSelectorV2<
         get(
           actionMenuEntriesComponentState.atomFamily({ instanceId }),
         ).values(),
-      ).filter(isDefined),
+      )
+        .filter(isDefined)
+        .sort((a, b) => a.position - b.position),
 });

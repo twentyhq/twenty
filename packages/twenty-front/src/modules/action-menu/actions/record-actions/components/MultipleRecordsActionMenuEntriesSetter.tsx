@@ -2,10 +2,12 @@ import { DeleteRecordsActionEffect } from '@/action-menu/actions/record-actions/
 import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/components/ExportRecordsActionEffect';
 
 export const MultipleRecordsActionMenuEntriesSetter = () => {
+  const actionEffects = [ExportRecordsActionEffect, DeleteRecordsActionEffect];
   return (
     <>
-      <ExportRecordsActionEffect />
-      <DeleteRecordsActionEffect />
+      {actionEffects.map((ActionEffect, index) => (
+        <ActionEffect key={index} position={index} />
+      ))}
     </>
   );
 };

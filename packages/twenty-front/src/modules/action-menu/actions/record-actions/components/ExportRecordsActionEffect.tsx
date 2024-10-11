@@ -9,7 +9,11 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconFileExport } from 'twenty-ui';
 
-export const ExportRecordsActionEffect = () => {
+export const ExportRecordsActionEffect = ({
+  position,
+}: {
+  position: number;
+}) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
@@ -34,6 +38,7 @@ export const ExportRecordsActionEffect = () => {
   useEffect(() => {
     addActionMenuEntry({
       key: 'export',
+      position,
       label: displayedExportProgress(progress),
       Icon: IconFileExport,
       accent: 'default',
@@ -43,6 +48,6 @@ export const ExportRecordsActionEffect = () => {
     return () => {
       removeActionMenuEntry('export');
     };
-  }, [download, progress, addActionMenuEntry, removeActionMenuEntry]);
+  }, [download, progress, addActionMenuEntry, removeActionMenuEntry, position]);
   return <></>;
 };

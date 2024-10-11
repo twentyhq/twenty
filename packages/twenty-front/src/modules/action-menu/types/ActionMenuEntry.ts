@@ -6,6 +6,7 @@ import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 export type ActionMenuEntry = {
   key: string;
   label: string;
+  position: number;
   Icon: IconComponent;
   accent?: MenuItemAccent;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;

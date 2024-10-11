@@ -8,7 +8,11 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
 
-export const ManageFavoritesActionEffect = () => {
+export const ManageFavoritesActionEffect = ({
+  position,
+}: {
+  position: number;
+}) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const contextStoreTargetedRecordIds = useRecoilValue(
@@ -44,6 +48,7 @@ export const ManageFavoritesActionEffect = () => {
     addActionMenuEntry({
       key: 'manage-favorites',
       label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
+      position,
       Icon: isFavorite ? IconHeartOff : IconHeart,
       onClick: () => {
         if (isFavorite && isDefined(foundFavorite?.id)) {
@@ -64,6 +69,7 @@ export const ManageFavoritesActionEffect = () => {
     foundFavorite?.id,
     isFavorite,
     objectMetadataItem,
+    position,
     removeActionMenuEntry,
     selectedRecord,
   ]);
