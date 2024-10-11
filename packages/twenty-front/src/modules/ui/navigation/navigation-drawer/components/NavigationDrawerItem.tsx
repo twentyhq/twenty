@@ -1,8 +1,10 @@
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
+import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -16,8 +18,6 @@ import {
   TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -36,6 +36,7 @@ export type NavigationDrawerItemProps = {
   soon?: boolean;
   count?: number;
   keyboard?: string[];
+  role?: string;
 };
 
 type StyledItemProps = Pick<
@@ -158,6 +159,7 @@ export const NavigationDrawerItem = ({
   count,
   keyboard,
   subItemState,
+  role,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -195,6 +197,7 @@ export const NavigationDrawerItem = ({
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
+        role={role}
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
