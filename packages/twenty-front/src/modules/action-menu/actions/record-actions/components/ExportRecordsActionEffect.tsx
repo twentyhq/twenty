@@ -1,19 +1,17 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import {
   displayedExportProgress,
   useExportTableData,
 } from '@/object-record/record-index/options/hooks/useExportTableData';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconFileExport } from 'twenty-ui';
 
 export const ExportRecordsActionEffect = () => {
-  const setActionMenuEntries = useSetRecoilComponentStateV2(
-    actionMenuEntriesComponentState,
-  );
+  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
     contextStoreCurrentObjectMetadataIdState,
   );
@@ -34,16 +32,17 @@ export const ExportRecordsActionEffect = () => {
   });
 
   useEffect(() => {
-    setActionMenuEntries((prev) => {
-      const newEntries = new Map(prev);
-      newEntries.set('export', {
-        label: displayedExportProgress(progress),
-        Icon: IconFileExport,
-        accent: 'default',
-        onClick: () => download(),
-      });
-      return newEntries;
+    addActionMenuEntry({
+      key: 'export',
+      label: displayedExportProgress(progress),
+      Icon: IconFileExport,
+      accent: 'default',
+      onClick: () => download(),
     });
-  }, [download, progress, setActionMenuEntries]);
+
+    return () => {
+      removeActionMenuEntry('export');
+    };
+  }, [download, progress, addActionMenuEntry, removeActionMenuEntry]);
   return <></>;
 };
