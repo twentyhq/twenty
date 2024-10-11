@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-ui';
 
 const transitionValues = {
   transition: {
-    opactity: { duration: 0.2 },
+    opacity: { duration: 0.2 },
     height: { duration: 0.4 },
   },
 };
