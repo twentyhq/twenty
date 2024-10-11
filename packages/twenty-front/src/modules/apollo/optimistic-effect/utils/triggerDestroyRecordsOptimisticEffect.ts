@@ -7,15 +7,15 @@ import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/is
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isDefined } from '~/utils/isDefined';
 
-export const triggerDeleteRecordsOptimisticEffect = ({
+export const triggerDestroyRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
-  recordsToDelete,
+  recordsToDestroy,
   objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  recordsToDelete: RecordGqlNode[];
+  recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
   cache.modify<StoreObject>({
@@ -36,7 +36,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
-        const recordIdsToDelete = recordsToDelete.map(({ id }) => id);
+        const recordIdsToDelete = recordsToDestroy.map(({ id }) => id);
 
         const cachedEdges = readField<RecordGqlRefEdge[]>(
           'edges',
@@ -69,20 +69,15 @@ export const triggerDeleteRecordsOptimisticEffect = ({
     },
   });
 
-  recordsToDelete.forEach((recordToDelete) => {
+  recordsToDestroy.forEach((recordToDestroy) => {
     triggerUpdateRelationsOptimisticEffect({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
-      currentSourceRecord: recordToDelete,
+      currentSourceRecord: recordToDestroy,
       updatedSourceRecord: null,
       objectMetadataItems,
     });
 
-    cache.modify({
-      id: cache.identify(recordToDelete),
-      fields: {
-        deletedAt: () => recordToDelete.deletedAt,
-      },
-    });
+    cache.evict({ id: cache.identify(recordToDestroy) });
   });
 };
