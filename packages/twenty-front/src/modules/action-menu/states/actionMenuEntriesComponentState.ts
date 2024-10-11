@@ -3,7 +3,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 import { ActionMenuEntry } from '../types/ActionMenuEntry';
 
 export const actionMenuEntriesComponentState = createComponentStateV2<
-  Map<string, ActionMenuEntry | undefined>
+  Map<string, ActionMenuEntry>
 >({
   key: 'actionMenuEntriesComponentState',
   defaultValue: new Map(),
