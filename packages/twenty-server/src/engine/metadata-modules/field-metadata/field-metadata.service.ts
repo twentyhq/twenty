@@ -400,9 +400,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataType.BOOLEAN,
         ].includes(existingFieldMetadata.type)
           ? existingFieldMetadata.defaultValue
-          : updatableFieldInput.defaultValue !== null
-            ? updatableFieldInput.defaultValue
-            : null,
+          : updatableFieldInput.defaultValue,
       };
 
       this.validateFieldMetadata<UpdateFieldInput>(
