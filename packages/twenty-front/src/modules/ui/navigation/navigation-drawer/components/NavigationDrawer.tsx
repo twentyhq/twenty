@@ -23,11 +23,6 @@ export type NavigationDrawerProps = {
   title?: string;
 };
 
-const StyledAnimatedContainer = styled(motion.div)`
-  display: flex;
-  justify-content: end;
-`;
-
 const StyledContainer = styled.div<{
   isSubMenu?: boolean;
   isExpanded: boolean;
@@ -37,7 +32,7 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
-  min-width: ${({ isExpanded }) =>
+  width: ${({ isExpanded }) =>
     isExpanded ? `${DESKTOP_NAV_DRAWER_WIDTHS.menu}px` : 'auto'};
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
@@ -82,24 +77,9 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const desktopWidth = !isNavigationDrawerExpanded
-    ? 42
-    : DESKTOP_NAV_DRAWER_WIDTHS.menu;
-
-  const mobileWidth = isNavigationDrawerExpanded ? '100%' : 0;
-
   return (
-    /*<StyledAnimatedContainer
-      className={className}
-      initial={false}
-      animate={{
-        width: isMobile ? mobileWidth : 'auto',
-      }}
-      transition={{
-        duration: theme.animation.duration.normal,
-      }}
-    >*/
     <StyledContainer
+      className={className}
       isSubMenu={isSubMenu}
       onMouseEnter={handleHover}
       onMouseLeave={handleMouseLeave}
@@ -117,6 +97,5 @@ export const NavigationDrawer = ({
       <StyledItemsContainer>{children}</StyledItemsContainer>
       {footer}
     </StyledContainer>
-    /*</StyledAnimatedContainer>*/
   );
 };
