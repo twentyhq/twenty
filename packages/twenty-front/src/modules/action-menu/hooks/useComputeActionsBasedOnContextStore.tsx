@@ -3,6 +3,7 @@ import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
 import {
@@ -55,12 +56,13 @@ export const useComputeActionsBasedOnContextStore = ({
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  const isRemoteObject = objectMetadataItem.isRemote;
+  const isRemote = objectMetadataItem.isRemote;
 
   const numberOfSelectedRecords = contextStoreTargetedRecordIds.length;
 
   const canDelete =
-    !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
+    !isObjectMetadataReadOnly(objectMetadataItem) &&
+    numberOfSelectedRecords < DELETE_MAX_COUNT;
 
   const menuActions: ActionMenuEntry[] = useMemo(
     () =>
@@ -125,7 +127,7 @@ export const useComputeActionsBasedOnContextStore = ({
   return {
     availableActionsInContext: [
       ...menuActions,
-      ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
+      ...(!isRemote && isFavorite && hasOnlyOneRecordSelected
         ? [
             {
               label: 'Remove from favorites',
@@ -134,7 +136,7 @@ export const useComputeActionsBasedOnContextStore = ({
             },
           ]
         : []),
-      ...(!isRemoteObject && !isFavorite && hasOnlyOneRecordSelected
+      ...(!isRemote && !isFavorite && hasOnlyOneRecordSelected
         ? [
             {
               label: 'Add to favorites',

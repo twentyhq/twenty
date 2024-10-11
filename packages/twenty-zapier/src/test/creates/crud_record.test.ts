@@ -15,9 +15,18 @@ describe('creates.create_company', () => {
       crudZapierOperation: Operation.create,
       name: 'Company Name',
       address: { addressCity: 'Paris' },
-      domainName: 'Company Domain Name',
-      linkedinLink: { url: '/linkedin_url', label: 'Test linkedinUrl' },
-      xLink: { url: '/x_url', label: 'Test xUrl' },
+      linkedinLink: {
+        primaryLinkUrl: '/linkedin_url',
+        primaryLinkLabel: 'Test linkedinUrl',
+        secondaryLinks: [
+          '{ url: "/linkedin_url2", label: "Test linkedinUrl2" }',
+        ],
+      },
+      xLink: {
+        primaryLinkUrl: '/x_url',
+        primaryLinkLabel: 'Test xUrl',
+        secondaryLinks: ['{ url: "/x_url2", label: "Test xUrl2" }'],
+      },
       annualRecurringRevenue: {
         amountMicros: 100000000000,
         currencyCode: 'USD',
@@ -49,8 +58,11 @@ describe('creates.create_company', () => {
       nameSingular: 'Person',
       crudZapierOperation: Operation.create,
       name: { firstName: 'John', lastName: 'Doe' },
-      email: 'johndoe@gmail.com',
-      phone: '+33610203040',
+      phones: {
+        primaryPhoneNumber: '610203040',
+        primaryPhoneCountryCode: '+33',
+        additionalPhones: ['{number: "610203041", countryCode: "+33"}'],
+      },
       city: 'Paris',
     });
     const result = await appTester(
@@ -64,11 +76,13 @@ describe('creates.create_company', () => {
         requestDb(
           z,
           bundle,
-          `query findPerson {person(filter: {id: {eq: "${result.data.createPerson.id}"}}){phone}}`,
+          `query findPerson {person(filter: {id: {eq: "${result.data.createPerson.id}"}}){phones{primaryPhoneNumber}}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.person.phone).toEqual('+33610203040');
+    expect(checkDbResult.data.person.phones.primaryPhoneNumber).toEqual(
+      '610203040',
+    );
   });
 });
 
