@@ -7,9 +7,8 @@ import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
+import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
@@ -23,17 +22,17 @@ export type NavigationDrawerProps = {
   title?: string;
 };
 
+const StyledAnimatedContainer = styled(motion.div)``;
+
 const StyledContainer = styled.div<{
   isSubMenu?: boolean;
-  isExpanded: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  width: ${NAV_DRAWER_WIDTHS.menu.desktop.expanded}px;
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
-  width: ${({ isExpanded }) =>
-    isExpanded ? `${DESKTOP_NAV_DRAWER_WIDTHS.menu}px` : 'auto'};
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
@@ -64,10 +63,10 @@ export const NavigationDrawer = ({
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
+  const theme = useTheme();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
-  const isSettingsPage = useIsSettingsPage();
 
   const handleHover = () => {
     setIsHovered(true);
@@ -77,25 +76,43 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
+  const desktopWidth = isNavigationDrawerExpanded
+    ? NAV_DRAWER_WIDTHS.menu.desktop.expanded
+    : NAV_DRAWER_WIDTHS.menu.desktop.collapsed;
+
+  const mobileWidth = isNavigationDrawerExpanded
+    ? NAV_DRAWER_WIDTHS.menu.mobile.expanded
+    : NAV_DRAWER_WIDTHS.menu.mobile.collapsed;
+
+  const navigationDrawerWidth = isMobile ? mobileWidth : desktopWidth;
+
   return (
-    <StyledContainer
-      className={className}
-      isSubMenu={isSubMenu}
-      onMouseEnter={handleHover}
-      onMouseLeave={handleMouseLeave}
-      isExpanded={isNavigationDrawerExpanded || isSettingsPage}
+    <StyledAnimatedContainer
+      animate={{
+        width: navigationDrawerWidth,
+      }}
+      transition={{
+        duration: theme.animation.duration.normal,
+      }}
     >
-      {isSubMenu && title ? (
-        !isMobile && <NavigationDrawerBackButton title={title} />
-      ) : (
-        <NavigationDrawerHeader
-          name={title}
-          logo={logo}
-          showCollapseButton={isHovered}
-        />
-      )}
-      <StyledItemsContainer>{children}</StyledItemsContainer>
-      {footer}
-    </StyledContainer>
+      <StyledContainer
+        className={className}
+        isSubMenu={isSubMenu}
+        onMouseEnter={handleHover}
+        onMouseLeave={handleMouseLeave}
+      >
+        {isSubMenu && title ? (
+          !isMobile && <NavigationDrawerBackButton title={title} />
+        ) : (
+          <NavigationDrawerHeader
+            name={title}
+            logo={logo}
+            showCollapseButton={isHovered}
+          />
+        )}
+        <StyledItemsContainer>{children}</StyledItemsContainer>
+        {footer}
+      </StyledContainer>
+    </StyledAnimatedContainer>
   );
 };
