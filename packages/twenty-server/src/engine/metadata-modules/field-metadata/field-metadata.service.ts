@@ -394,13 +394,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const fieldMetadataForUpdate = {
         ...updatableFieldInput,
-        defaultValue: ![
-          FieldMetadataType.SELECT,
-          FieldMetadataType.MULTI_SELECT,
-          FieldMetadataType.BOOLEAN,
-        ].includes(existingFieldMetadata.type)
-          ? existingFieldMetadata.defaultValue
-          : updatableFieldInput.defaultValue,
+        defaultValue:
+          updatableFieldInput.defaultValue !== undefined
+            ? updatableFieldInput.defaultValue
+            : existingFieldMetadata.defaultValue,
       };
 
       this.validateFieldMetadata<UpdateFieldInput>(
