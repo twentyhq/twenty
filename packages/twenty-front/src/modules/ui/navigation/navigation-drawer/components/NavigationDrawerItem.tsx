@@ -16,6 +16,7 @@ import {
   TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -159,6 +160,7 @@ export const NavigationDrawerItem = ({
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
+  const isSettingsPage = useIsSettingsPage();
   const navigate = useNavigate();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
@@ -204,7 +206,11 @@ export const NavigationDrawerItem = ({
             style={{ minWidth: theme.icon.size.md }}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.md}
-            color={showBreadcrumb ? theme.font.color.light : 'currentColor'}
+            color={
+              showBreadcrumb && !isSettingsPage && !isNavigationDrawerExpanded
+                ? theme.font.color.light
+                : 'currentColor'
+            }
           />
         )}
 

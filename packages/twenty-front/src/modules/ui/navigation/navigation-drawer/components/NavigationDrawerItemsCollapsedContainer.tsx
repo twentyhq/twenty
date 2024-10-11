@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
 const StyledBaseContainer = styled.div`
   width: 24px;
@@ -22,10 +23,11 @@ export const NavigationDrawerItemsCollapsedContainer = ({
   isGroup = false,
   children,
 }: NavigationDrawerItemsCollapsedContainerProps) => {
+  const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
-  if (isNavigationDrawerExpanded) {
+  if (isNavigationDrawerExpanded || isSettingsPage) {
     return children;
   }
   if (!isGroup) {

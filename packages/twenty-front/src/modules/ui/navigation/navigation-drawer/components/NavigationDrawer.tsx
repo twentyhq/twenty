@@ -88,6 +88,8 @@ export const NavigationDrawer = ({
 
   return (
     <StyledAnimatedContainer
+      className={className}
+      initial={false}
       animate={{
         width: navigationDrawerWidth,
       }}
@@ -96,7 +98,6 @@ export const NavigationDrawer = ({
       }}
     >
       <StyledContainer
-        className={className}
         isSubMenu={isSubMenu}
         onMouseEnter={handleHover}
         onMouseLeave={handleMouseLeave}
