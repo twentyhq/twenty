@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { PositionType } from '../types/PositionType';
 
 import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -36,7 +36,7 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
 
 export const ActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentState,
+    actionMenuEntriesComponentSelector,
   );
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
@@ -49,6 +49,10 @@ export const ActionMenuDropdown = () => {
       `action-menu-dropdown-${actionMenuId}`,
     ),
   );
+
+  if (actionMenuEntries.length === 0) {
+    return null;
+  }
 
   //TODO: remove this
   const width = actionMenuEntries.some(

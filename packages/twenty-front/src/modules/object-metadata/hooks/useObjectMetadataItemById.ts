@@ -1,13 +1,12 @@
 import { useRecoilValue } from 'recoil';
 
-import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isDefined } from '~/utils/isDefined';
 
 export const useObjectMetadataItemById = ({
   objectId,
 }: {
-  objectId: string;
+  objectId: string | null;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -16,7 +15,9 @@ export const useObjectMetadataItemById = ({
   );
 
   if (!isDefined(objectMetadataItem)) {
-    throw new ObjectMetadataItemNotFoundError(objectId, objectMetadataItems);
+    return {
+      objectMetadataItem: null,
+    };
   }
 
   return {

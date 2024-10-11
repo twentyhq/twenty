@@ -7,7 +7,10 @@ import { tableRowIdsComponentState } from '@/object-record/record-table/states/t
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { useRecoilValue } from 'recoil';
 
-type UseDeleteTableDataOptions = Omit<UseTableDataOptions, 'callback'>;
+type UseDeleteTableDataOptions = Pick<
+  UseTableDataOptions,
+  'objectNameSingular' | 'recordIndexId'
+>;
 
 export const useDeleteTableData = ({
   objectNameSingular,
