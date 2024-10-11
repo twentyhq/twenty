@@ -1,3 +1,7 @@
+import { AdvancedFilterViewFilterFieldSelect } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterFieldSelect';
+import { AdvancedFilterViewFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterOperandSelect';
+import { AdvancedFilterViewFilterValueInput } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterValueInput';
+import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -25,5 +29,26 @@ export const AdvancedFilterViewFilter = (
     availableFilterDefinitions,
   );
 
-  return <StyledRow>AdvancedFilterViewFilter</StyledRow>;
+  return (
+    <StyledRow>
+      <AdvancedFilterViewFilterFieldSelect
+        viewFilter={props.viewFilter}
+        selectedFieldLabel={filter?.definition?.label ?? 'Select field'}
+      />
+      <AdvancedFilterViewFilterOperandSelect
+        viewFilter={props.viewFilter}
+        filterDefinition={filter?.definition}
+        isDisabled={!props.viewFilter.fieldMetadataId}
+      />
+      {configurableViewFilterOperands.has(props.viewFilter.operand) && (
+        <AdvancedFilterViewFilterValueInput
+          viewFilter={props.viewFilter}
+          filterDefinition={filter?.definition}
+          isDisabled={
+            !props.viewFilter.fieldMetadataId || !props.viewFilter.operand
+          }
+        />
+      )}
+    </StyledRow>
+  );
 };

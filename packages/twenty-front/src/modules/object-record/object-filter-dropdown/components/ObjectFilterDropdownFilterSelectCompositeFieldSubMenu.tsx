@@ -16,12 +16,14 @@ type ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps = {
   fieldType: CompositeFilterableFieldType;
   firstLevelFieldDefinition: FilterDefinition | null;
   onBack: () => void;
+  onSelectField?: (filterDefinition: FilterDefinition) => void;
 };
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
   fieldType,
   firstLevelFieldDefinition,
   onBack,
+  onSelectField,
 }: ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps) => {
   const [searchText, setSearchText] = useState('');
 
@@ -35,6 +37,10 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
 
   const handleSelectFilter = (definition: FilterDefinition | null) => {
     if (definition !== null) {
+      if (onSelectField !== undefined) {
+        onSelectField(definition);
+      }
+
       setFilterDefinitionUsedInDropdown(definition);
 
       setSelectedOperandInDropdown(

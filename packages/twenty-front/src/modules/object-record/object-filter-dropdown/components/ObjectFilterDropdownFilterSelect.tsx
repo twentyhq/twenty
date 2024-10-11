@@ -50,7 +50,13 @@ export const StyledInput = styled.input`
   }
 `;
 
-export const ObjectFilterDropdownFilterSelect = () => {
+interface ObjectFilterDropdownFilterSelectProps {
+  onSelectField?: (filterDefinition: FilterDefinition) => void;
+}
+
+export const ObjectFilterDropdownFilterSelect = (
+  props: ObjectFilterDropdownFilterSelectProps,
+) => {
   const [subMenuFieldType, setSubMenuFieldType] =
     useState<CompositeFilterableFieldType | null>(null);
 
@@ -106,6 +112,10 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const { getIcon } = useIcons();
 
   const handleSelectFilter = (availableFilterDefinition: FilterDefinition) => {
+    if (props.onSelectField !== undefined) {
+      props.onSelectField(availableFilterDefinition);
+    }
+
     setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
     if (
@@ -191,6 +201,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
           fieldType={subMenuFieldType}
           firstLevelFieldDefinition={firstLevelFilterDefinition}
           onBack={handleSubMenuBack}
+          onSelectField={props.onSelectField}
         />
       )}
     </>
