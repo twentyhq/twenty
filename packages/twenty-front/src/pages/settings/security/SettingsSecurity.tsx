@@ -7,6 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCard';
+import { SettingsSecurityOptionsList } from '@/settings/security/components/SettingsSecurityOptionsList';
 
 export const SettingsSecurity = () => {
   return (
@@ -31,6 +32,7 @@ export const SettingsSecurity = () => {
             title="Other"
             description="Customize your workspace security"
           />
+          <SettingsSecurityOptionsList />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

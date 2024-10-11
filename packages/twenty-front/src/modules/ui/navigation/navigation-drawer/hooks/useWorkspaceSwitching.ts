@@ -7,12 +7,23 @@ import { useGenerateJwtMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
+import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
+import { useAuth } from '@/auth/hooks/useAuth';
 
 export const useWorkspaceSwitching = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const [generateJWT] = useGenerateJwtMutation();
   const { redirectToSSOLoginPage } = useSSO();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const setAvailableWorkspacesForSSOState = useSetRecoilState(
+    availableSSOIdentityProvidersState,
+  );
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const { signOut } = useAuth();
 
   const switchWorkspace = async (workspaceId: string) => {
     if (currentWorkspace?.id === workspaceId) return;
@@ -39,7 +50,11 @@ export const useWorkspaceSwitching = () => {
       }
 
       if (jwt.data.generateJWT.availableSSOIDPs.length > 1) {
-        // TODO: redirect to idp selection page
+        await signOut();
+        setAvailableWorkspacesForSSOState(
+          jwt.data.generateJWT.availableSSOIDPs,
+        );
+        setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
       }
 
       return;
