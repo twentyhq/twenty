@@ -29,7 +29,9 @@ const meta: Meta<typeof ActionMenuBar> = {
               [
                 'delete',
                 {
+                  key: 'delete',
                   label: 'Delete',
+                  position: 0,
                   Icon: IconTrash,
                   onClick: deleteMock,
                 },
@@ -37,7 +39,9 @@ const meta: Meta<typeof ActionMenuBar> = {
               [
                 'markAsDone',
                 {
+                  key: 'markAsDone',
                   label: 'Mark as done',
+                  position: 1,
                   Icon: IconCheckbox,
                   onClick: markAsDoneMock,
                 },

@@ -37,7 +37,9 @@ const meta: Meta<typeof ActionMenuDropdown> = {
               [
                 'delete',
                 {
+                  key: 'delete',
                   label: 'Delete',
+                  position: 0,
                   Icon: IconTrash,
                   onClick: deleteMock,
                 },
@@ -45,7 +47,9 @@ const meta: Meta<typeof ActionMenuDropdown> = {
               [
                 'markAsDone',
                 {
+                  key: 'markAsDone',
                   label: 'Mark as done',
+                  position: 1,
                   Icon: IconCheckbox,
                   onClick: markAsDoneMock,
                 },
@@ -53,7 +57,9 @@ const meta: Meta<typeof ActionMenuDropdown> = {
               [
                 'addToFavorites',
                 {
+                  key: 'addToFavorites',
                   label: 'Add to favorites',
+                  position: 2,
                   Icon: IconHeart,
                   onClick: addToFavoritesMock,
                 },
