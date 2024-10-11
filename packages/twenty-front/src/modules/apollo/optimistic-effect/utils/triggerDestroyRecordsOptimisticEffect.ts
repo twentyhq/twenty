@@ -36,8 +36,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
-        const recordIdsToDelete = recordsToDestroy.map(({ id }) => id);
-
+        const recordIdsToDestroy = recordsToDestroy.map(({ id }) => id);
         const cachedEdges = readField<RecordGqlRefEdge[]>(
           'edges',
           rootQueryCachedObjectRecordConnection,
@@ -52,7 +51,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
           cachedEdges?.filter((cachedEdge) => {
             const nodeId = readField<string>('id', cachedEdge.node);
 
-            return nodeId && !recordIdsToDelete.includes(nodeId);
+            return nodeId && !recordIdsToDestroy.includes(nodeId);
           }) || [];
 
         if (nextCachedEdges.length === cachedEdges?.length)
@@ -62,7 +61,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
           ...rootQueryCachedObjectRecordConnection,
           edges: nextCachedEdges,
           totalCount: isDefined(totalCount)
-            ? totalCount - recordIdsToDelete.length
+            ? totalCount - recordIdsToDestroy.length
             : undefined,
         };
       },
