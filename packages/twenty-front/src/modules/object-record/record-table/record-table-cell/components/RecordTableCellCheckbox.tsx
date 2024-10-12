@@ -19,7 +19,7 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordTableCellCheckbox = () => {
-  const { isSelected } = useContext(RecordTableRowContext);
+  const { isSelected, isDragging } = useContext(RecordTableRowContext);
 
   const { recordId } = useContext(RecordTableRowContext);
   const { isRowSelectedFamilyState } = useRecordTableStates();
@@ -29,6 +29,10 @@ export const RecordTableCellCheckbox = () => {
   const handleClick = useCallback(() => {
     setCurrentRowSelected(!currentRowSelected);
   }, [currentRowSelected, setCurrentRowSelected]);
+
+  if (isDragging) {
+    return <></>;
+  }
 
   return (
     <RecordTableTd isSelected={isSelected} hasRightBorder={false}>
