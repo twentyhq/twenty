@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-
+import { useTheme } from '@emotion/react';
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 type SettingsAccountsBlocklistTableProps = {
   blocklist: BlocklistItem[];
@@ -16,10 +16,19 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledTableBody = styled(TableBody)`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+const StyledTableHeader = styled(TableHeader)`
+  width: 100%;
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    white-space: pre;
+    margin-left: ${({ theme }) => theme.spacing(6)};
+  }
 `;
 
+const StyledTableBody = styled.tbody`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    max-width: 60%;
+  }
+`;
 export const SettingsAccountsBlocklistTable = ({
   blocklist,
   handleBlockedEmailRemove,
@@ -30,7 +39,9 @@ export const SettingsAccountsBlocklistTable = ({
         <StyledTable>
           <TableRow>
             <TableHeader>Email/Domain</TableHeader>
-            <TableHeader>Added to blocklist</TableHeader>
+            <StyledTableHeader align={'right'}>
+              Added to blocklist
+            </StyledTableHeader>
             <TableHeader></TableHeader>
           </TableRow>
           <StyledTableBody>
