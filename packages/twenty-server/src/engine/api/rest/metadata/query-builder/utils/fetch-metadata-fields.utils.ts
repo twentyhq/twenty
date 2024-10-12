@@ -65,6 +65,7 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
           createdAt
           updatedAt
           labelIdentifierFieldMetadataId
+          imageIdentifier
           imageIdentifierFieldMetadataId
           fields(paging: { first: 1000 }) {
             edges {

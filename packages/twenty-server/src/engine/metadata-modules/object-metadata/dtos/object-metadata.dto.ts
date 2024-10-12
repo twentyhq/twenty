@@ -75,6 +75,9 @@ export class ObjectMetadataDTO {
   @Field(() => String, { nullable: true })
   labelIdentifierFieldMetadataId?: string | null;
 
+  @Field({ nullable: true })
+  imageIdentifier: string;
+
   @Field(() => String, { nullable: true })
   imageIdentifierFieldMetadataId?: string | null;
 }

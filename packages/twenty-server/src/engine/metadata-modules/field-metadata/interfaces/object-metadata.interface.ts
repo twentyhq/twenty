@@ -19,5 +19,6 @@ export interface ObjectMetadataInterface {
   isRemote: boolean;
   isAuditLogged: boolean;
   labelIdentifierFieldMetadataId?: string | null;
+  imageIdentifier?: string | null;
   imageIdentifierFieldMetadataId?: string | null;
 }

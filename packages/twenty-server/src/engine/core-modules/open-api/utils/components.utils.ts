@@ -331,6 +331,9 @@ export const computeMetadataSchemaComponents = (
                 type: 'string',
                 format: 'uuid',
               },
+              imageIdentifier: {
+                type: 'string',
+              },
               imageIdentifierFieldMetadataId: {
                 type: 'string',
                 format: 'uuid',

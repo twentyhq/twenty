@@ -1012,6 +1012,7 @@ export type UpdateBillingEntity = {
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
+  imageIdentifier: Scalars['String'];
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
   labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
@@ -1249,6 +1250,7 @@ export type Object = {
   fields: ObjectFieldsConnection;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  imageIdentifier: Scalars['String'];
   imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];

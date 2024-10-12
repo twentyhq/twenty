@@ -16,6 +16,7 @@ export const query = gql`
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
+      imageIdentifier
       imageIdentifierFieldMetadataId
     }
   }
@@ -37,5 +38,6 @@ export const responseData = {
   createdAt: '',
   updatedAt: '',
   labelIdentifierFieldMetadataId: '',
+  imageIdentifier: '',
   imageIdentifierFieldMetadataId: '',
 };

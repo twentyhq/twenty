@@ -13,6 +13,7 @@ export const objectMetadataItemSchema = z.object({
   fields: z.array(fieldMetadataItemSchema()),
   icon: z.string().startsWith('Icon').trim(),
   id: z.string().uuid(),
+  imageIdentifier: z.string().startsWith('image').trim(),
   imageIdentifierFieldMetadataId: z.string().uuid().nullable(),
   isActive: z.boolean(),
   isCustom: z.boolean(),
