@@ -17,6 +17,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Opportunity } from '@/opportunities/Opportunity';
 import { Person } from '@/people/types/Person';
@@ -30,7 +31,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
@@ -130,9 +131,27 @@ const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
+  // To store previous search results
+  const [previousPeopleSearch, setPreviousPeopleSearch] = useState<Person[]>(
+    [],
+  );
+  const [previousCompaniesSearch, setPreviousCompaniesSearch] = useState<
+    Company[]
+  >([]);
+  const [previousOpportunitiesSearch, setPreviousOpportunitiesSearch] =
+    useState<Opportunity[]>([]);
+
+  const [previousPeopleFind, setPreviousPeopleFind] = useState<Person[]>([]);
+  const [previousCompaniesFind, setPreviousCompaniesFind] = useState<Company[]>(
+    [],
+  );
+  const [previousOpportunitiesFind, setPreviousOpportunitiesFind] = useState<
+    ObjectRecord[]
+  >([]);
+  const [previousNotesFind, setPreviousNotesFind] = useState<Note[]>([]);
+
   const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
-
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -140,23 +159,9 @@ export const CommandMenu = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
   );
-  // Use useDeferredValue to delay the search results update
-  // const deferredCommandMenuSearch = useDeferredValue(commandMenuSearch);
-  const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
+  const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
-  // const [previousResults, setPreviousResults] = useState<{
-  //   people: Person[];
-  //   companies: Company[];
-  //   notes: Note[];
-  //   opportunities: Opportunity[];
-  // }>({
-  //   people: [],
-  //   companies: [],
-  //   notes: [],
-  //   opportunities: [],
-  // });
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };
@@ -189,7 +194,7 @@ export const CommandMenu = () => {
   const isSearchEnabled =
     useIsFeatureEnabled('IS_SEARCH_ENABLED') && isWorkspaceMigratedForSearch;
 
-  const { records: peopleFromFindMany, loading: isPeopleFromFindManyLoading } =
+  const { loading: isPeopleFromFindManyLoading, records: peopleFromFindMany } =
     useFindManyRecords<Person>({
       skip: !isCommandMenuOpened || isSearchEnabled,
       objectNameSingular: CoreObjectNameSingular.Person,
@@ -208,33 +213,37 @@ export const CommandMenu = () => {
           ])
         : undefined,
       limit: 3,
+      onCompleted: (newPeople) => {
+        setPreviousPeopleFind(newPeople);
+      },
     });
-  const { records: peopleFromSearch, loading: isPeopleFromSearchLoading } =
+  const { loading: isPeopleFromSearchLoading, records: peopleFromSearch } =
     useSearchRecords<Person>({
       skip: !isCommandMenuOpened || !isSearchEnabled,
       objectNameSingular: CoreObjectNameSingular.Person,
       limit: 3,
       searchInput: deferredCommandMenuSearch ?? undefined,
+      onCompleted: (newPeopleFromSearch) => {
+        setPreviousPeopleSearch(newPeopleFromSearch);
+      },
     });
 
-  const people = isSearchEnabled ? peopleFromSearch : peopleFromFindMany;
-  const isPeopleLoading = isSearchEnabled
-    ? isPeopleFromSearchLoading
-    : isPeopleFromFindManyLoading;
-
   const {
-    records: companiesFromSearch,
     loading: isCompaniesFromSearchLoading,
+    records: companiesFromSearch,
   } = useSearchRecords<Company>({
     skip: !isCommandMenuOpened || !isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Company,
     limit: 3,
     searchInput: deferredCommandMenuSearch ?? undefined,
+    onCompleted: (newCompainesFromSearch) => {
+      setPreviousCompaniesSearch(newCompainesFromSearch);
+    },
   });
 
   const {
-    records: companiesFromFindMany,
     loading: isCompaniesFromFindManyLoading,
+    records: companiesFromFindMany,
   } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened || isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Company,
@@ -244,31 +253,30 @@ export const CommandMenu = () => {
         }
       : undefined,
     limit: 3,
+    onCompleted: (newCompaines) => {
+      setPreviousCompaniesFind(newCompaines);
+    },
   });
 
-  const companies = isSearchEnabled
-    ? companiesFromSearch
-    : companiesFromFindMany;
-
-  const isCompaniesLoading = isSearchEnabled
-    ? isCompaniesFromSearchLoading
-    : isCompaniesFromFindManyLoading;
-
-  const { records: notes, loading: isNotesLoading } = useFindManyRecords<Note>({
-    skip: !isCommandMenuOpened,
-    objectNameSingular: CoreObjectNameSingular.Note,
-    filter: deferredCommandMenuSearch
-      ? makeOrFilterVariables([
-          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
-        ])
-      : undefined,
-    limit: 3,
-  });
+  const { loading: isNotesLoading, records: notesFromFindMany } =
+    useFindManyRecords<Note>({
+      skip: !isCommandMenuOpened,
+      objectNameSingular: CoreObjectNameSingular.Note,
+      filter: deferredCommandMenuSearch
+        ? makeOrFilterVariables([
+            { title: { ilike: `%${deferredCommandMenuSearch}%` } },
+            { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+          ])
+        : undefined,
+      limit: 3,
+      onCompleted: (newNotes) => {
+        setPreviousNotesFind(newNotes);
+      },
+    });
 
   const {
-    records: opportunitiesFromFindMany,
     loading: isOpportunitiesFromFindManyLoading,
+    records: opportunitiesFromFindMany,
   } = useFindManyRecords({
     skip: !isCommandMenuOpened || isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Opportunity,
@@ -278,28 +286,58 @@ export const CommandMenu = () => {
         }
       : undefined,
     limit: 3,
+    onCompleted: (newOpportunities) => {
+      setPreviousOpportunitiesFind(newOpportunities);
+    },
   });
 
   const {
-    records: opportunitiesFromSearch,
     loading: isOpportunitiesFromSearchLoading,
+    records: opportunitiesFromSearch,
   } = useSearchRecords<Opportunity>({
     skip: !isCommandMenuOpened || !isSearchEnabled,
     objectNameSingular: CoreObjectNameSingular.Opportunity,
     limit: 3,
     searchInput: deferredCommandMenuSearch ?? undefined,
+    onCompleted: (newOpportunitiesFromSearch) => {
+      setPreviousOpportunitiesSearch(newOpportunitiesFromSearch);
+    },
   });
-
+  const people = isSearchEnabled
+    ? isPeopleFromSearchLoading
+      ? previousPeopleSearch
+      : peopleFromSearch
+    : isPeopleFromFindManyLoading
+      ? previousPeopleFind
+      : peopleFromFindMany;
+  const companies = isSearchEnabled
+    ? isCompaniesFromSearchLoading
+      ? previousCompaniesSearch
+      : companiesFromSearch
+    : isCompaniesFromFindManyLoading
+      ? previousCompaniesFind
+      : companiesFromFindMany;
   const opportunities = isSearchEnabled
-    ? opportunitiesFromSearch
-    : opportunitiesFromFindMany;
-  const isOpportunitiesLoading = isSearchEnabled
+    ? isOpportunitiesFromSearchLoading
+      ? previousOpportunitiesSearch
+      : opportunitiesFromSearch
+    : isOpportunitiesFromFindManyLoading
+      ? previousOpportunitiesFind
+      : opportunitiesFromFindMany;
+  const notes = isNotesLoading ? previousNotesFind : notesFromFindMany;
+  const peopleLoading = isSearchEnabled
+    ? isPeopleFromSearchLoading
+    : isPeopleFromFindManyLoading;
+  const companiesLoading = isSearchEnabled
+    ? isCompaniesFromSearchLoading
+    : isCompaniesFromFindManyLoading;
+  const opportunitiesLoading = isSearchEnabled
     ? isOpportunitiesFromSearchLoading
     : isOpportunitiesFromFindManyLoading;
 
   const peopleCommands = useMemo(
     () =>
-      people.map(({ id, name: { firstName, lastName } }) => ({
+      people?.map(({ id, name: { firstName, lastName } }) => ({
         id,
         label: `${firstName} ${lastName}`,
         to: `object/person/${id}`,
@@ -309,7 +347,7 @@ export const CommandMenu = () => {
 
   const companyCommands = useMemo(
     () =>
-      companies.map(({ id, name }) => ({
+      companies?.map(({ id, name }) => ({
         id,
         label: name ?? '',
         to: `object/company/${id}`,
@@ -319,7 +357,7 @@ export const CommandMenu = () => {
 
   const opportunityCommands = useMemo(
     () =>
-      opportunities.map(({ id, name }) => ({
+      opportunities?.map(({ id, name }) => ({
         id,
         label: name ?? '',
         to: `object/opportunity/${id}`,
@@ -329,7 +367,7 @@ export const CommandMenu = () => {
 
   const noteCommands = useMemo(
     () =>
-      notes.map((note) => ({
+      notes?.map((note) => ({
         id: note.id,
         label: note.title ?? '',
         to: '',
@@ -339,12 +377,20 @@ export const CommandMenu = () => {
   );
 
   const otherCommands = useMemo(() => {
-    return [
-      ...peopleCommands,
-      ...companyCommands,
-      ...opportunityCommands,
-      ...noteCommands,
-    ] as Command[];
+    const commandsArray: Command[] = [];
+    if (peopleCommands?.length > 0) {
+      commandsArray.push(...(peopleCommands as Command[]));
+    }
+    if (companyCommands?.length > 0) {
+      commandsArray.push(...(companyCommands as Command[]));
+    }
+    if (opportunityCommands?.length > 0) {
+      commandsArray.push(...(opportunityCommands as Command[]));
+    }
+    if (noteCommands?.length > 0) {
+      commandsArray.push(...(noteCommands as Command[]));
+    }
+    return commandsArray;
   }, [peopleCommands, companyCommands, noteCommands, opportunityCommands]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
@@ -403,23 +449,20 @@ export const CommandMenu = () => {
     .map((cmd) => cmd.id)
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
-    .concat(people.map((person) => person.id))
-    .concat(companies.map((company) => company.id))
-    .concat(opportunities.map((opportunity) => opportunity.id))
-    .concat(notes.map((note) => note.id));
+    .concat(people?.map((person) => person.id))
+    .concat(companies?.map((company) => company.id))
+    .concat(opportunities?.map((opportunity) => opportunity.id))
+    .concat(notes?.map((note) => note.id));
 
   const isNoResults =
     !matchingCreateCommand.length &&
     !matchingNavigateCommand.length &&
-    !people.length &&
-    !companies.length &&
-    !notes.length &&
-    !opportunities.length;
+    !people?.length &&
+    !companies?.length &&
+    !notes?.length &&
+    !opportunities?.length;
   const isLoading =
-    isPeopleLoading ||
-    isCompaniesLoading ||
-    isNotesLoading ||
-    isOpportunitiesLoading;
+    peopleLoading || isNotesLoading || opportunitiesLoading || companiesLoading;
   return (
     <>
       {isCommandMenuOpened && (
@@ -514,7 +557,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="People">
-                    {people.map((person) => (
+                    {people?.map((person) => (
                       <SelectableItem itemId={person.id} key={person.id}>
                         <CommandMenuItem
                           id={person.id}
@@ -540,7 +583,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Companies">
-                    {companies.map((company) => (
+                    {companies?.map((company) => (
                       <SelectableItem itemId={company.id} key={company.id}>
                         <CommandMenuItem
                           id={company.id}
@@ -561,7 +604,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Opportunities">
-                    {opportunities.map((opportunity) => (
+                    {opportunities?.map((opportunity) => (
                       <SelectableItem
                         itemId={opportunity.id}
                         key={opportunity.id}
@@ -584,7 +627,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Notes">
-                    {notes.map((note) => (
+                    {notes?.map((note) => (
                       <SelectableItem itemId={note.id} key={note.id}>
                         <CommandMenuItem
                           id={note.id}
