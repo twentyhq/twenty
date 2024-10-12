@@ -141,10 +141,6 @@ const StyledCompactIconContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledRecordInlineCellPlaceholder = styled.div`
-  height: 24px;
-`;
-
 export const RecordBoardCard = ({
   isCreating = false,
   onCreateSuccess,
