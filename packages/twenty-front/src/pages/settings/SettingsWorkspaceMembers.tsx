@@ -81,14 +81,12 @@ const StyledIconWrapper = styled.div`
 `;
 
 const StyledScrollableTextContainer = styled.div`
-  max-width: 90px; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  @media (max-width: ${MOBILE_VIEWPORT}px) { 
-    max-width: 60px;
-  }
+  width: content-fit;
 `;
+
 
 
 const StyledTextContainer = styled.div`
@@ -104,6 +102,26 @@ const StyledTextContainer = styled.div`
 const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
 `;
+
+const StyledTableRowForMemberList = styled(TableRow)`
+  gap: 16px;
+  @media (max-width: 768px) {
+      grid-auto-columns: 160px 2fr 1fr
+  }
+  @media (max-width: 450px) {
+      grid-auto-columns: 130px 2fr 1fr
+  }
+  @media (max-width: 409px) {
+      grid-auto-columns: 100px 2fr 1fr
+  }
+  @media (max-width: 390px) {
+      grid-auto-columns: 90px 2fr 1fr
+  }
+  @media (max-width: 370px) {
+      grid-auto-columns: 60px 2fr 1fr
+  }
+
+`
 
 export const SettingsWorkspaceMembers = () => {
   const { enqueueSnackBar } = useSnackBar();
@@ -203,16 +221,16 @@ export const SettingsWorkspaceMembers = () => {
           />
           <Table>
             <StyledTableHeaderRow>
-              <TableRow>
+              <StyledTableRowForMemberList gridAutoColumns="150px 2fr 1fr">
                 <TableHeader>Name</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader align={'right'}></TableHeader>
-              </TableRow>
+              </StyledTableRowForMemberList>
             </StyledTableHeaderRow>
             {workspaceMembers?.map((workspaceMember) => (
               <StyledTable key={workspaceMember.id}>
-                <TableRow>
-                  <TableCell width='fit-content'>
+                <StyledTableRowForMemberList gridAutoColumns="150px 2fr 1fr">
+                  <TableCell >
                     <StyledIconWrapper>
                       <Avatar
                         avatarUrl={workspaceMember.avatarUrl}
@@ -256,7 +274,7 @@ export const SettingsWorkspaceMembers = () => {
                       </StyledButtonContainer>
                     )}
                   </TableCell>
-                </TableRow>
+                </StyledTableRowForMemberList>
               </StyledTable>
             ))}
           </Table>
