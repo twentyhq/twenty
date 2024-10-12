@@ -11,8 +11,8 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.apiKey,
   namePlural: 'apiKeys',
-  labelSingular: 'Api Key',
-  labelPlural: 'Api Keys',
+  labelSingular: 'API Key',
+  labelPlural: 'API Keys',
   description: 'An api key',
   icon: 'IconRobot',
   labelIdentifierStandardId: API_KEY_STANDARD_FIELD_IDS.name,
