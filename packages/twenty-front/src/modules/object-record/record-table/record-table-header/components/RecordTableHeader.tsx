@@ -73,7 +73,11 @@ const StyledTableHead = styled.thead<{
   }
 `;
 
-export const RecordTableHeader = () => {
+export const RecordTableHeader = ({
+  objectMetadataNameSingular,
+}: {
+  objectMetadataNameSingular: string;
+}) => {
   const { visibleTableColumnsSelector } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
@@ -84,7 +88,11 @@ export const RecordTableHeader = () => {
         <RecordTableHeaderDragDropColumn />
         <RecordTableHeaderCheckboxColumn />
         {visibleTableColumns.map((column) => (
-          <RecordTableHeaderCell key={column.fieldMetadataId} column={column} />
+          <RecordTableHeaderCell
+            key={column.fieldMetadataId}
+            column={column}
+            objectMetadataNameSingular={objectMetadataNameSingular}
+          />
         ))}
         <RecordTableHeaderLastColumn />
       </tr>

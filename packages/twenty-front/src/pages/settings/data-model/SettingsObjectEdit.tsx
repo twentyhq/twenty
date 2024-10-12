@@ -5,7 +5,7 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconHierarchy2 } from 'twenty-ui';
+import { H2Title, IconArchive } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -107,7 +107,6 @@ export const SettingsObjectEdit = () => {
     <RecordFieldValueSelectorContextProvider>
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
-          Icon={IconHierarchy2}
           title="Edit"
           links={[
             {

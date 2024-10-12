@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconApps, IconComponent, useIcons } from 'twenty-ui';
 
@@ -147,6 +147,8 @@ export const IconPicker = ({
     [matchingSearchIconKeys],
   );
 
+  const icon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
+
   return (
     <div className={className}>
       <Dropdown
@@ -160,7 +162,7 @@ export const IconPicker = ({
                 : `(no icon selected)`
             }`}
             disabled={disabled}
-            Icon={selectedIconKey ? getIcon(selectedIconKey) : IconApps}
+            Icon={icon}
             variant={variant}
           />
         }

@@ -23,6 +23,13 @@ import { RecordIndexRootPropsContext } from '@/object-record/record-index/contex
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
+
+import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
+import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
+import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
+import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
+import { ActionMenuEntriesProvider } from '@/action-menu/components/ActionMenuEntriesProvider';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -191,6 +198,15 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: recordIndexId }}
+          >
+            <ActionMenuEffect />
+            <ActionMenuEntriesProvider />
+            <ActionMenuBar />
+            <ActionMenuDropdown />
+            <ActionMenuConfirmationModals />
+          </ActionMenuComponentInstanceContext.Provider>
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>
