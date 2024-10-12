@@ -73,9 +73,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     const fields = [nameFullNameField, jobTitleTextField, emailsEmailsField];
     const result = getTsVectorColumnExpressionFromFields(fields);
     const expected = `
-    CASE 
-      WHEN "deletedAt" IS NULL THEN 
-        to_tsvector('simple', COALESCE("nameFirstName", '') || ' ' || COALESCE("nameLastName", '') || ' ' || COALESCE("jobTitle", '') || ' ' || 
+    to_tsvector('simple', COALESCE("nameFirstName", '') || ' ' || COALESCE("nameLastName", '') || ' ' || COALESCE("jobTitle", '') || ' ' || 
       COALESCE(
         replace(
           "emailsPrimaryEmail",
@@ -85,19 +83,8 @@ describe('getTsVectorColumnExpressionFromFields', () => {
         ''
       )
     )
-      ELSE NULL
-    END
   `.trim();
 
     expect(result.trim()).toBe(expected);
-  });
-
-  it('should include CASE statement for handling deletedAt', () => {
-    const fields = [nameTextField];
-    const result = getTsVectorColumnExpressionFromFields(fields);
-
-    expect(result).toContain('CASE');
-    expect(result).toContain('WHEN "deletedAt" IS NULL THEN');
-    expect(result).toContain('ELSE NULL');
   });
 });

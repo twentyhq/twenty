@@ -1,9 +1,15 @@
 import { useApolloClient } from '@apollo/client';
 
+import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
@@ -34,9 +40,15 @@ export const useRestoreManyRecords = ({
     objectNameSingular,
   });
 
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular,
+  });
+
   const { restoreManyRecordsMutation } = useRestoreManyRecordsMutation({
     objectNameSingular,
   });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const mutationResponseField = getRestoreManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -51,36 +63,124 @@ export const useRestoreManyRecords = ({
     const restoredRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchIds = idsToRestore.slice(
+      const batchedIdsToRestore = idsToRestore.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
 
-      // TODO: fix optimistic effect
-      const findOneQueryName = `FindOne${capitalize(objectNameSingular)}`;
-      const findManyQueryName = `FindMany${capitalize(
-        objectMetadataItem.namePlural,
-      )}`;
+      const cachedRecords = batchedIdsToRestore
+        .map((idToRestore) =>
+          getRecordFromCache(idToRestore, apolloClient.cache),
+        )
+        .filter(isDefined);
+
+      if (!options?.skipOptimisticEffect) {
+        cachedRecords.forEach((cachedRecord) => {
+          if (!cachedRecord || !cachedRecord.id) {
+            return;
+          }
+
+          const cachedRecordWithConnection =
+            getRecordNodeFromRecord<ObjectRecord>({
+              record: cachedRecord,
+              objectMetadataItem,
+              objectMetadataItems,
+              computeReferences: true,
+            });
+
+          const computedOptimisticRecord = {
+            ...cachedRecord,
+            ...{ id: cachedRecord.id, deletedAt: null },
+            ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+          };
+
+          const optimisticRecordWithConnection =
+            getRecordNodeFromRecord<ObjectRecord>({
+              record: computedOptimisticRecord,
+              objectMetadataItem,
+              objectMetadataItems,
+              computeReferences: true,
+            });
+
+          if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
+            return null;
+          }
+
+          updateRecordFromCache({
+            objectMetadataItems,
+            objectMetadataItem,
+            cache: apolloClient.cache,
+            record: computedOptimisticRecord,
+          });
+
+          triggerUpdateRecordOptimisticEffect({
+            cache: apolloClient.cache,
+            objectMetadataItem,
+            currentRecord: cachedRecordWithConnection,
+            updatedRecord: optimisticRecordWithConnection,
+            objectMetadataItems,
+          });
+        });
+      }
 
       const restoredRecordsResponse = await apolloClient
         .mutate({
           mutation: restoreManyRecordsMutation,
-          refetchQueries: [findOneQueryName, findManyQueryName],
           variables: {
-            filter: { id: { in: batchIds } },
+            filter: { id: { in: batchedIdsToRestore } },
           },
-          optimisticResponse: options?.skipOptimisticEffect
-            ? undefined
-            : {
-                [mutationResponseField]: batchIds.map((idToRestore) => ({
-                  __typename: capitalize(objectNameSingular),
-                  id: idToRestore,
-                  deletedAt: null,
-                })),
-              },
         })
         .catch((error: Error) => {
-          // TODO: revert optimistic effect (once optimistic effect is fixed)
+          cachedRecords.forEach((cachedRecord) => {
+            if (!cachedRecord) {
+              return;
+            }
+
+            updateRecordFromCache({
+              objectMetadataItems,
+              objectMetadataItem,
+              cache: apolloClient.cache,
+              record: cachedRecord,
+            });
+
+            const cachedRecordWithConnection =
+              getRecordNodeFromRecord<ObjectRecord>({
+                record: cachedRecord,
+                objectMetadataItem,
+                objectMetadataItems,
+                computeReferences: true,
+              });
+
+            const computedOptimisticRecord = {
+              ...cachedRecord,
+              ...{ id: cachedRecord.id, deletedAt: null },
+              ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+            };
+
+            const optimisticRecordWithConnection =
+              getRecordNodeFromRecord<ObjectRecord>({
+                record: computedOptimisticRecord,
+                objectMetadataItem,
+                objectMetadataItems,
+                computeReferences: true,
+              });
+
+            if (
+              !optimisticRecordWithConnection ||
+              !cachedRecordWithConnection
+            ) {
+              return null;
+            }
+
+            triggerUpdateRecordOptimisticEffect({
+              cache: apolloClient.cache,
+              objectMetadataItem,
+              currentRecord: optimisticRecordWithConnection,
+              updatedRecord: cachedRecordWithConnection,
+              objectMetadataItems,
+            });
+          });
+
           throw error;
         });
 

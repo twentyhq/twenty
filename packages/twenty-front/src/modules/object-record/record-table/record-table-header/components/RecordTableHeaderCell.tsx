@@ -3,6 +3,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
@@ -91,10 +93,16 @@ const StyledHeaderIcon = styled.div`
 
 export const RecordTableHeaderCell = ({
   column,
+  objectMetadataNameSingular,
 }: {
   column: ColumnDefinition<FieldMetadata>;
+  objectMetadataNameSingular: string;
 }) => {
   const { resizeFieldOffsetState, tableColumnsState } = useRecordTableStates();
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectMetadataNameSingular,
+  });
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
@@ -190,6 +198,8 @@ export const RecordTableHeaderCell = ({
     createNewTableRecord();
   };
 
+  const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
+
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -205,16 +215,18 @@ export const RecordTableHeaderCell = ({
     >
       <StyledColumnHeadContainer>
         <RecordTableColumnHeadWithDropdown column={column} />
-        {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
-          <StyledHeaderIcon>
-            <LightIconButton
-              Icon={IconPlus}
-              size="small"
-              accent="tertiary"
-              onClick={handlePlusButtonClick}
-            />
-          </StyledHeaderIcon>
-        )}
+        {(useIsMobile() || iconVisibility) &&
+          !!column.isLabelIdentifier &&
+          !isReadOnly && (
+            <StyledHeaderIcon>
+              <LightIconButton
+                Icon={IconPlus}
+                size="small"
+                accent="tertiary"
+                onClick={handlePlusButtonClick}
+              />
+            </StyledHeaderIcon>
+          )}
       </StyledColumnHeadContainer>
       {!disableColumnResize && (
         <StyledResizeHandler

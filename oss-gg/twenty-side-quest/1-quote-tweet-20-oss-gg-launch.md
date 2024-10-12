@@ -1,6 +1,6 @@
-**Side Quest**: Meme Magic - Craft a meme where a brick plays a role. Tweet it, and tag us @papermarkio to submit.
-**Points**: 150 Points
-**Proof**: Add a screenshot of meme to the PR description. Add a link to your tweet in the list below.
+**Side Quest**: Like & Re-Tweet oss.gg Launch Tweet. Quote-tweet it tagging @twentycrm to say you’ll be contributing.
+**Points**: 50 Points
+**Proof**: Add a screenshot of the retweet to the PR description. Add a link to your retweet in the list below.
 
 Please follow the following schema:
 
@@ -17,7 +17,14 @@ Your turn 👇
 
 ////////////////////////////
 
-» 01-October-2024 by YOUR NAME
-» Link to Tweet: https://x.com/...
+» 10-October-2024 by Devansh Baghel
+» Link to Tweet: https://x.com/DevanshBaghel5/status/1844359648037748954
 
----
+» 11-October-2024 by Bhavesh Mishra
+» Link to Tweet: https://x.com/thefool1135/status/1844453425188405326
+
+» 11-October-2024 by Chirag Arora
+» Link to Tweet: https://x.com/Chirag8023/status/1844689900668682699
+
+» 11-October-2024 by Aritra Sadhukhan
+» Link to Tweet: https://x.com/AritraDevelops/status/1844670236512878646

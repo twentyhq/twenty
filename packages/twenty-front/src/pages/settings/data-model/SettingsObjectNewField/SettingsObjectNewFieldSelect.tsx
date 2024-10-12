@@ -43,12 +43,9 @@ export const SettingsObjectNewFieldSelect = () => {
   });
   const excludedFieldTypes: SettingsFieldType[] = (
     [
-      FieldMetadataType.Link,
       FieldMetadataType.Numeric,
       FieldMetadataType.RichText,
       FieldMetadataType.Actor,
-      FieldMetadataType.Email,
-      FieldMetadataType.Phone,
     ] as const
   ).filter(isDefined);
 

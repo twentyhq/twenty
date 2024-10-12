@@ -6,9 +6,7 @@ import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
@@ -79,8 +77,6 @@ export const RecordIndexBoardDataLoaderEffect = ({
     setNavigationMemorizedUrl,
   ]);
 
-  const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
-
   useEffect(() => {
     setObjectSingularName(objectNameSingular);
   }, [objectNameSingular, setObjectSingularName]);
@@ -125,12 +121,6 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
-    objectMetadataItem,
-    selectedRecordIds,
-    callback: resetRecordSelection,
-  });
-
   const setContextStoreTargetedRecordIds = useSetRecoilState(
     contextStoreTargetedRecordIdsState,
   );
@@ -140,9 +130,8 @@ export const RecordIndexBoardDataLoaderEffect = ({
   );
 
   useEffect(() => {
-    setActionBarEntries?.();
-    setContextMenuEntries?.();
-  }, [setActionBarEntries, setContextMenuEntries]);
+    setContextStoreTargetedRecordIds(selectedRecordIds);
+  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
 
   useEffect(() => {
     setContextStoreTargetedRecordIds(selectedRecordIds);
