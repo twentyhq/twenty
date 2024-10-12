@@ -138,10 +138,6 @@ export const RichTextEditor = ({
     });
     const uploadedFileData = result?.data?.uploadFile;
 
-  if (!uploadedFileData) {
-    throw new Error("Couldn't upload Image");
-  }
-
   if (!result?.data?.uploadFile) {
     throw new Error("Couldn't upload Image");
   }
@@ -151,7 +147,7 @@ export const RichTextEditor = ({
   // Step 2: Update attachment table with file metadata
   await addAttachmentMutation({
     variables: {
-      fileId: result.data.uploadFile, // Assuming file ID is returned from the upload
+      fileId: result.data.uploadFile.id, // Assuming file ID is returned from the upload
       fileName: file.name,
       fileUrl: uploadedFileUrl,
     },
