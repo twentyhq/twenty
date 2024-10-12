@@ -26,7 +26,7 @@ import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { AvatarChipVariant, IconEye, IconEyeOff } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
@@ -234,7 +234,7 @@ export const RecordBoardCard = ({
 
   const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
 
-  const { ref: cardRef, inView } = useInView({
+  const { ref: cardRef } = useInView({
     root: scrollWrapperRef?.ref.current,
     rootMargin: '1000px',
   });
@@ -250,125 +250,123 @@ export const RecordBoardCard = ({
   return (
     <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
       {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
-      <StyledBoardCard
-        ref={cardRef}
-        selected={isCurrentCardSelected}
-        onMouseLeave={onMouseLeaveBoard}
-        onClick={() => {
-          if (!isCreating) {
-            setIsCurrentCardSelected(!isCurrentCardSelected);
-          }
-        }}
-      >
-        <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-          {isCreating && position !== undefined ? (
-            <RecordInlineCellEditMode>
-              <StyledTextInput
-                autoFocus
-                value={newLabelValue}
-                onInputEnter={() =>
-                  handleInputEnter(
-                    labelIdentifierField?.label ?? '',
-                    newLabelValue,
-                    position,
-                    onCreateSuccess,
-                  )
-                }
-                onBlur={() =>
-                  handleBlur(
-                    labelIdentifierField?.label ?? '',
-                    newLabelValue,
-                    position,
-                    onCreateSuccess,
-                  )
-                }
-                onChange={(text: string) => setNewLabelValue(text)}
-                placeholder={labelIdentifierField?.label}
-              />
-            </RecordInlineCellEditMode>
-          ) : (
-            <RecordIdentifierChip
-              objectNameSingular={objectMetadataItem.nameSingular}
-              record={record as ObjectRecord}
-              variant={AvatarChipVariant.Transparent}
-            />
-          )}
-
-          {!isCreating && (
-            <>
-              {isCompactModeActive && (
-                <StyledCompactIconContainer className="compact-icon-container">
-                  <LightIconButton
-                    Icon={isCardExpanded ? IconEyeOff : IconEye}
-                    accent="tertiary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsCardExpanded((prev) => !prev);
-                    }}
-                  />
-                </StyledCompactIconContainer>
-              )}
-
-              <StyledCheckboxContainer className="checkbox-container">
-                <Checkbox
-                  hoverable
-                  checked={isCurrentCardSelected}
-                  onChange={() =>
-                    setIsCurrentCardSelected(!isCurrentCardSelected)
-                  }
-                  variant={CheckboxVariant.Secondary}
-                />
-              </StyledCheckboxContainer>
-            </>
-          )}
-        </StyledBoardCardHeader>
-
-        <AnimatedEaseInOut
-          isOpen={isCardExpanded || !isCompactModeActive}
-          initial={false}
+      <InView>
+        <StyledBoardCard
+          ref={cardRef}
+          selected={isCurrentCardSelected}
+          onMouseLeave={onMouseLeaveBoard}
+          onClick={() => {
+            if (!isCreating) {
+              setIsCurrentCardSelected(!isCurrentCardSelected);
+            }
+          }}
         >
-          <StyledBoardCardBody>
-            {visibleFieldDefinitionsFiltered.map((fieldDefinition) => (
-              <PreventSelectOnClickContainer
-                key={fieldDefinition.fieldMetadataId}
-              >
-                <FieldContext.Provider
-                  value={{
-                    recordId: isCreating ? '' : recordId,
-                    maxWidth: 156,
-                    recoilScopeId:
-                      (isCreating ? 'new' : recordId) +
-                      fieldDefinition.fieldMetadataId,
-                    isLabelIdentifier: false,
-                    fieldDefinition: {
-                      disableTooltip: false,
-                      fieldMetadataId: fieldDefinition.fieldMetadataId,
-                      label: fieldDefinition.label,
-                      iconName: fieldDefinition.iconName,
-                      type: fieldDefinition.type,
-                      metadata: fieldDefinition.metadata,
-                      defaultValue: fieldDefinition.defaultValue,
-                      editButtonIcon: getFieldButtonIcon({
-                        metadata: fieldDefinition.metadata,
-                        type: fieldDefinition.type,
-                      }),
-                      settings: fieldDefinition.settings,
-                    },
-                    useUpdateRecord: useUpdateOneRecordHook,
-                    hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                  }}
+          <StyledBoardCardHeader showCompactView={isCompactModeActive}>
+            {isCreating && position !== undefined ? (
+              <RecordInlineCellEditMode>
+                <StyledTextInput
+                  autoFocus
+                  value={newLabelValue}
+                  onInputEnter={() =>
+                    handleInputEnter(
+                      labelIdentifierField?.label ?? '',
+                      newLabelValue,
+                      position,
+                      onCreateSuccess,
+                    )
+                  }
+                  onBlur={() =>
+                    handleBlur(
+                      labelIdentifierField?.label ?? '',
+                      newLabelValue,
+                      position,
+                      onCreateSuccess,
+                    )
+                  }
+                  onChange={(text: string) => setNewLabelValue(text)}
+                  placeholder={labelIdentifierField?.label}
+                />
+              </RecordInlineCellEditMode>
+            ) : (
+              <RecordIdentifierChip
+                objectNameSingular={objectMetadataItem.nameSingular}
+                record={record as ObjectRecord}
+                variant={AvatarChipVariant.Transparent}
+              />
+            )}
+
+            {!isCreating && (
+              <>
+                {isCompactModeActive && (
+                  <StyledCompactIconContainer className="compact-icon-container">
+                    <LightIconButton
+                      Icon={isCardExpanded ? IconEyeOff : IconEye}
+                      accent="tertiary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsCardExpanded((prev) => !prev);
+                      }}
+                    />
+                  </StyledCompactIconContainer>
+                )}
+
+                <StyledCheckboxContainer className="checkbox-container">
+                  <Checkbox
+                    hoverable
+                    checked={isCurrentCardSelected}
+                    onChange={() =>
+                      setIsCurrentCardSelected(!isCurrentCardSelected)
+                    }
+                    variant={CheckboxVariant.Secondary}
+                  />
+                </StyledCheckboxContainer>
+              </>
+            )}
+          </StyledBoardCardHeader>
+
+          <AnimatedEaseInOut
+            isOpen={isCardExpanded || !isCompactModeActive}
+            initial={false}
+          >
+            <StyledBoardCardBody>
+              {visibleFieldDefinitionsFiltered.map((fieldDefinition) => (
+                <PreventSelectOnClickContainer
+                  key={fieldDefinition.fieldMetadataId}
                 >
-                  {inView ? (
+                  <FieldContext.Provider
+                    value={{
+                      recordId: isCreating ? '' : recordId,
+                      maxWidth: 156,
+                      recoilScopeId:
+                        (isCreating ? 'new' : recordId) +
+                        fieldDefinition.fieldMetadataId,
+                      isLabelIdentifier: false,
+                      fieldDefinition: {
+                        disableTooltip: false,
+                        fieldMetadataId: fieldDefinition.fieldMetadataId,
+                        label: fieldDefinition.label,
+                        iconName: fieldDefinition.iconName,
+                        type: fieldDefinition.type,
+                        metadata: fieldDefinition.metadata,
+                        defaultValue: fieldDefinition.defaultValue,
+                        editButtonIcon: getFieldButtonIcon({
+                          metadata: fieldDefinition.metadata,
+                          type: fieldDefinition.type,
+                        }),
+                        settings: fieldDefinition.settings,
+                      },
+                      useUpdateRecord: useUpdateOneRecordHook,
+                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                    }}
+                  >
                     <RecordInlineCell />
-                  ) : (
-                    <StyledRecordInlineCellPlaceholder />
-                  )}
-                </FieldContext.Provider>
-              </PreventSelectOnClickContainer>
-            ))}
-          </StyledBoardCardBody>
-        </AnimatedEaseInOut>
-      </StyledBoardCard>
+                  </FieldContext.Provider>
+                </PreventSelectOnClickContainer>
+              ))}
+            </StyledBoardCardBody>
+          </AnimatedEaseInOut>
+        </StyledBoardCard>
+      </InView>
     </StyledBoardCardWrapper>
   );
 };
