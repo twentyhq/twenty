@@ -16,6 +16,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
+      imageIdentifier
       imageIdentifierFieldMetadataId
     }
   }
@@ -98,6 +99,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
+      imageIdentifier
       imageIdentifierFieldMetadataId
     }
   }
@@ -119,6 +121,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
+      imageIdentifier
       imageIdentifierFieldMetadataId
     }
   }

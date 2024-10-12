@@ -23,6 +23,7 @@ export const query = gql`
           createdAt
           updatedAt
           labelIdentifierFieldMetadataId
+          imageIdentifier
           imageIdentifierFieldMetadataId
           fields(paging: { first: 1000 }, filter: $fieldFilter) {
             edges {

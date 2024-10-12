@@ -18,6 +18,7 @@ export const mockPerformance = {
     createdAt: '2024-05-16T10:54:27.788Z',
     updatedAt: '2024-05-16T10:54:27.788Z',
     primaryLinkLabelIdentifierFieldMetadataId: null,
+    imageIdentifier: 'imageUser',
     imageIdentifierFieldMetadataId: null,
     fields: [
       {

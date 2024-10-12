@@ -134,6 +134,7 @@ describe('useCommandMenu', () => {
           updatedAt: '2024-09-13T08:36:53.426Z',
           labelIdentifierFieldMetadataId:
             'ab7901eb-43e1-4dc7-8f3b-cdee2857eb9a',
+          imageIdentifier: '',
           imageIdentifierFieldMetadataId: null,
           fields: [],
         },

@@ -70,6 +70,7 @@ export class WorkspaceMetadataUpdaterService {
         'dataSourceId',
         'workspaceId',
         'labelIdentifierFieldMetadataId',
+        'imageIdentifier',
         'imageIdentifierFieldMetadataId',
       ],
     );

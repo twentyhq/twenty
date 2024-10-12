@@ -25,6 +25,7 @@ describe('objectsResolver (integration)', () => {
                 createdAt
                 updatedAt
                 labelIdentifierFieldMetadataId
+                imageIdentifier
                 imageIdentifierFieldMetadataId
               }
             }
@@ -68,6 +69,7 @@ describe('objectsResolver (integration)', () => {
           expect(objects).toHaveProperty('createdAt');
           expect(objects).toHaveProperty('updatedAt');
           expect(objects).toHaveProperty('labelIdentifierFieldMetadataId');
+          expect(objects).toHaveProperty('imageIdentifier');
           expect(objects).toHaveProperty('imageIdentifierFieldMetadataId');
         }
       });

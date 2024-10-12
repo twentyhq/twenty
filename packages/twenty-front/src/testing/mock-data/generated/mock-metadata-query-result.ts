@@ -36,6 +36,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
             updatedAt: '2024-09-25T13:45:32.757Z',
             labelIdentifierFieldMetadataId:
               'a8876650-a7b6-4a9f-95b4-9ec1d6c232cc',
+            image: 'imageRobot',
             imageIdentifierFieldMetadataId: null,
             fields: {
               __typename: 'ObjectFieldsConnection',
