@@ -21,7 +21,7 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
+import { FileFolder, useAddAttachmentMutation, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -34,6 +34,7 @@ import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
+
 
 type RichTextEditorProps = {
   activityId: string;
@@ -123,6 +124,8 @@ export const RichTextEditor = ({
 
   const [uploadFile] = useUploadFileMutation();
 
+  const [addAttachmentMutation] = useAddAttachmentMutation();
+
   const handleUploadAttachment = async (file: File): Promise<string> => {
     if (isUndefinedOrNull(file)) {
       return '';
@@ -133,10 +136,28 @@ export const RichTextEditor = ({
         fileFolder: FileFolder.Attachment,
       },
     });
-    if (!result?.data?.uploadFile) {
-      throw new Error("Couldn't upload Image");
-    }
-    return getFileAbsoluteURI(result.data.uploadFile);
+    const uploadedFileData = result?.data?.uploadFile;
+
+  if (!uploadedFileData) {
+    throw new Error("Couldn't upload Image");
+  }
+
+  if (!result?.data?.uploadFile) {
+    throw new Error("Couldn't upload Image");
+  }
+
+  const uploadedFileUrl = getFileAbsoluteURI(result.data.uploadFile);
+
+  // Step 2: Update attachment table with file metadata
+  await addAttachmentMutation({
+    variables: {
+      fileId: result.data.uploadFile, // Assuming file ID is returned from the upload
+      fileName: file.name,
+      fileUrl: uploadedFileUrl,
+    },
+  });
+
+  return uploadedFileUrl;
   };
 
   const prepareBody = (newStringifiedBody: string) => {
