@@ -33,11 +33,12 @@ export const SettingsAccountsBlocklistTable = ({
   blocklist,
   handleBlockedEmailRemove,
 }: SettingsAccountsBlocklistTableProps) => {
+  const theme = useTheme();
   return (
     <>
       {blocklist.length > 0 && (
         <StyledTable>
-          <TableRow>
+          <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(16)}`}>
             <TableHeader>Email/Domain</TableHeader>
             <StyledTableHeader align={'right'}>
               Added to blocklist
