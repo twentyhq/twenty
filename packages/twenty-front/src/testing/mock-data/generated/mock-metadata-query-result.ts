@@ -7564,7 +7564,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
             namePlural: 'apiKeys',
             labelSingular: 'API Key',
             labelPlural: 'API Keys',
-            description: 'An api key',
+            description: 'An API key',
             icon: 'IconRobot',
             isCustom: false,
             isRemote: false,

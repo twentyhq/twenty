@@ -13,7 +13,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
   namePlural: 'apiKeys',
   labelSingular: 'API Key',
   labelPlural: 'API Keys',
-  description: 'An api key',
+  description: 'An API key',
   icon: 'IconRobot',
   labelIdentifierStandardId: API_KEY_STANDARD_FIELD_IDS.name,
 })
