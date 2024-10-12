@@ -2,8 +2,6 @@ import { ObjectFilterDropdownFilterSelect } from '@/object-record/object-filter-
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -39,18 +37,11 @@ export const AdvancedFilterViewFilterFieldSelect = (
         />
       }
       dropdownComponents={
-        <DropdownMenu width="160px">
-          <DropdownMenuItemsContainer>
-            <ObjectFilterDropdownFilterSelect
-              onSelectField={handleSelectField}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+        <ObjectFilterDropdownFilterSelect onSelectField={handleSelectField} />
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
-      dropdownMenuWidth={280}
     />
   );
 };

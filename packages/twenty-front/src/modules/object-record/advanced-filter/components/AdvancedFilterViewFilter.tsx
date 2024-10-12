@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 const StyledRow = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  white-space: nowrap;
 `;
 
 interface AdvancedFilterViewFilterProps {

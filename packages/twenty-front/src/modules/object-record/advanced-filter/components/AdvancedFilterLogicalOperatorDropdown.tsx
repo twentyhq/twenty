@@ -22,6 +22,7 @@ export const AdvancedFilterLogicalOperatorDropdown = (
 
   return (
     <Select
+      disableBlur
       fullWidth
       dropdownId={`advanced-filter-logical-operator-${props.viewFilterGroup.id}`}
       value={props.viewFilterGroup.logicalOperator}

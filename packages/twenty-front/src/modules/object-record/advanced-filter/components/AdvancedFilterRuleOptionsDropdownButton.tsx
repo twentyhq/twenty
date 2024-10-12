@@ -15,5 +15,11 @@ export const AdvancedFilterRuleOptionsDropdownButton = (
     toggleDropdown();
   };
 
-  return <IconButton Icon={IconDotsVertical} onClick={handleClick} />;
+  return (
+    <IconButton
+      variant="tertiary"
+      Icon={IconDotsVertical}
+      onClick={handleClick}
+    />
+  );
 };

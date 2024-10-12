@@ -13,13 +13,19 @@ import { v4 } from 'uuid';
 
 const StyledRow = styled.div`
   display: flex;
+  align-items: start;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
+  background-color: ${({ theme, isGrayBackground }) =>
+    isGrayBackground ? theme.background.transparent.lighter : 'transparent'};
+  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 interface AdvancedFilterViewFilterGroupProps {
@@ -91,7 +97,7 @@ export const AdvancedFilterViewFilterGroup = (
   };
 
   return (
-    <StyledContainer>
+    <StyledContainer isGrayBackground={!!props.parentViewFilterGroupId}>
       {childViewFiltersAndViewFilterGroups?.map((child, i) =>
         child.__typename === 'ViewFilterGroup' ? (
           <StyledRow key={child.id}>
