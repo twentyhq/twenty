@@ -44,6 +44,7 @@ type SettingsNavigationItem = {
   path: SettingsPath;
   Icon: IconComponent;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
+  matchSubPages?: boolean;
 };
 
 const StyledIconContainer = styled.div`
@@ -106,7 +107,7 @@ export const SettingsNavigationDrawerItems = () => {
     return matchPath(
       {
         path: pathName,
-        end: true,
+        end: !accountSubSetting.matchSubPages ?? true,
       },
       currentPathName,
     );
