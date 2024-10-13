@@ -13,6 +13,7 @@ const sortDefinition: SortDefinition = {
 const objectMetadataItem: ObjectMetadataItem = {
   id: 'object1',
   fields: [],
+  indexMetadatas: [],
   createdAt: '2021-01-01',
   updatedAt: '2021-01-01',
   nameSingular: 'object1',

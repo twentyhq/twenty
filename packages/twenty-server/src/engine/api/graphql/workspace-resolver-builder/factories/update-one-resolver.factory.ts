@@ -40,7 +40,7 @@ export class UpdateOneResolverFactory
 
         return await this.graphqlQueryRunnerService.updateOne(args, options);
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }
     };
   }

@@ -19,10 +19,20 @@ export interface WorkspaceIndexMetadataArgs {
    */
   columns: string[];
 
+  /**
+   * Is index unique.
+   */
+  isUnique: boolean;
+
   /*
    * Index type. Defaults to Btree.
    */
   type?: IndexType;
+
+  /**
+   * Index where clause.
+   */
+  whereClause: string | null;
 
   /**
    * Field gate.
