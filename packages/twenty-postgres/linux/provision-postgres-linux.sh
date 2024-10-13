@@ -98,7 +98,7 @@ elif [ "$PACKAGE_MANAGER" = "pacman" ]; then
     sudo pacman -S postgresql postgresql-libs curl --noconfirm || handle_error "Failed to install PostgreSQL or curl."
 
     echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL on Arch..."
-    if ! yay -S --noconfirm pg_graphql; then
+    if ! yay -S --noconfirm pg_graphql && ! paru -S --noconfirm pg_graphql; then
         handle_error "Failed to install pg_graphql package from AUR."
     fi
 
