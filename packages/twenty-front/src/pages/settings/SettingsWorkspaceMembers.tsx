@@ -10,7 +10,6 @@ import {
   IconMail,
   IconReload,
   IconTrash,
-  MOBILE_VIEWPORT,
   TooltipDelay,
 } from 'twenty-ui';
 
@@ -54,40 +53,20 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const StyledTableCell = styled(TableCell)`
-  padding: ${({ theme }) => theme.spacing(1)};
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    &:first-child {
-      max-width: 100%;
-      padding-top: 2px;
-      white-space: nowrap;
-      overflow: scroll;
-      scroll-behavior: smooth;
-    }
-  }
-`;
-const StyledIconWrapper = styled.div`
-  left: 2px;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  position: relative;
-  top: 1px;
-`;
-
-const StyledScrollableTextContainer = styled.div`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: content-fit;
-`;
-
-const StyledTextContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  max-width: max-content;
-  overflow-x: auto;
-  position: absolute;
-`;
 const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+`;
+
+const StyledIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTextContainerWithEllipsis = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const SettingsWorkspaceMembers = () => {
@@ -187,7 +166,10 @@ export const SettingsWorkspaceMembers = () => {
           />
           <Table>
             <StyledTableHeaderRow>
-              <TableRow gridAutoColumns="150px 2fr 1fr">
+              <TableRow
+                gridAutoColumns="150px 1fr 1fr"
+                mobileGridAutoColumns="100px 1fr 1fr"
+              >
                 <TableHeader>Name</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader align={'right'}></TableHeader>
@@ -195,7 +177,10 @@ export const SettingsWorkspaceMembers = () => {
             </StyledTableHeaderRow>
             {workspaceMembers?.map((workspaceMember) => (
               <StyledTable key={workspaceMember.id}>
-                <TableRow gridAutoColumns="150px 2fr 1fr">
+                <TableRow
+                  gridAutoColumns="150px 1fr 1fr"
+                  mobileGridAutoColumns="100px 1fr 1fr"
+                >
                   <TableCell>
                     <StyledIconWrapper>
                       <Avatar
@@ -206,13 +191,13 @@ export const SettingsWorkspaceMembers = () => {
                         size="sm"
                       />
                     </StyledIconWrapper>
-                    <StyledScrollableTextContainer
+                    <StyledTextContainerWithEllipsis
                       id={`hover-text-${workspaceMember.id}`}
                     >
                       {workspaceMember.name.firstName +
                         ' ' +
                         workspaceMember.name.lastName}
-                    </StyledScrollableTextContainer>
+                    </StyledTextContainerWithEllipsis>
                     <AppTooltip
                       anchorSelect={`#hover-text-${workspaceMember.id}`}
                       content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
@@ -223,9 +208,9 @@ export const SettingsWorkspaceMembers = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    <StyledTextContainer>
+                    <StyledTextContainerWithEllipsis>
                       {workspaceMember.userEmail}
-                    </StyledTextContainer>
+                    </StyledTextContainerWithEllipsis>
                   </TableCell>
                   <TableCell align={'right'}>
                     {currentWorkspaceMember?.id !== workspaceMember.id && (
@@ -256,7 +241,10 @@ export const SettingsWorkspaceMembers = () => {
           {isNonEmptyArray(workspaceInvitations) && (
             <Table>
               <StyledTableHeaderRow>
-                <TableRow gridAutoColumns={`1fr 1fr 1fr`}>
+                <TableRow
+                  gridAutoColumns="150px 1fr 1fr"
+                  mobileGridAutoColumns="100px 1fr 1fr"
+                >
                   <TableHeader>Email</TableHeader>
                   <TableHeader align={'right'}>Expires in</TableHeader>
                   <TableHeader></TableHeader>
@@ -264,25 +252,28 @@ export const SettingsWorkspaceMembers = () => {
               </StyledTableHeaderRow>
               {workspaceInvitations?.map((workspaceInvitation) => (
                 <StyledTable key={workspaceInvitation.id}>
-                  <TableRow gridAutoColumns={`1fr 1fr 1fr`}>
-                    <StyledTableCell>
+                  <TableRow
+                    gridAutoColumns="150px 1fr 1fr"
+                    mobileGridAutoColumns="100px 1fr 1fr"
+                  >
+                    <TableCell>
                       <StyledIconWrapper>
                         <IconMail
                           size={theme.icon.size.md}
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledIconWrapper>
-                      <StyledScrollableTextContainer>
+                      <StyledTextContainerWithEllipsis>
                         {workspaceInvitation.email}
-                      </StyledScrollableTextContainer>
-                    </StyledTableCell>
-                    <StyledTableCell align={'right'}>
+                      </StyledTextContainerWithEllipsis>
+                    </TableCell>
+                    <TableCell align={'right'}>
                       <Status
                         color={'gray'}
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}
                       />
-                    </StyledTableCell>
-                    <StyledTableCell align={'right'}>
+                    </TableCell>
+                    <TableCell align={'right'}>
                       <StyledButtonContainer>
                         <IconButton
                           onClick={() => {
@@ -305,7 +296,7 @@ export const SettingsWorkspaceMembers = () => {
                           Icon={IconTrash}
                         />
                       </StyledButtonContainer>
-                    </StyledTableCell>
+                    </TableCell>
                   </TableRow>
                 </StyledTable>
               ))}
