@@ -84,8 +84,7 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
     ).join('**, **')}**.  
     Default root conjunction is **${DEFAULT_CONJUNCTION}**.  
     To filter **null** values use **field[is]:NULL** or **field[is]:NOT_NULL**  
-    To filter using **boolean** values use **field[eq]:true** or **field[eq]:false**
-    `,
+    To filter using **boolean** values use **field[eq]:true** or **field[eq]:false**`,
 
     required: false,
     schema: {

@@ -1,9 +1,9 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const ActionMenuConfirmationModals = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentState,
+    actionMenuEntriesComponentSelector,
   );
 
   return (

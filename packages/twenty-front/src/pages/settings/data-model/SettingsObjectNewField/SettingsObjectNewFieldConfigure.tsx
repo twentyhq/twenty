@@ -2,7 +2,6 @@ import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCre
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -30,12 +29,15 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
   any;
+
+const DEFAULT_ICON_FOR_NEW_FIELD = 'IconUsers';
 
 export const SettingsObjectNewFieldConfigure = () => {
   const navigate = useNavigate();
@@ -48,7 +50,6 @@ export const SettingsObjectNewFieldConfigure = () => {
 
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
-
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
@@ -63,18 +64,19 @@ export const SettingsObjectNewFieldConfigure = () => {
     ),
     defaultValues: {
       type: fieldType,
-      icon: 'IconUsers',
+      icon:
+        DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
       label: '',
       description: '',
     },
   });
 
-  const fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> =
-    {
-      icon: formConfig.watch('icon'),
-      label: formConfig.watch('label') || 'Employees',
-      type: formConfig.watch('type'),
-    };
+  useEffect(() => {
+    formConfig.setValue(
+      'icon',
+      DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
+    );
+  }, [fieldType, formConfig]);
 
   const [, setObjectViews] = useState<View[]>([]);
   const [, setRelationObjectViews] = useState<View[]>([]);
@@ -209,7 +211,11 @@ export const SettingsObjectNewFieldConfigure = () => {
               <H2Title title="Values" description="The values of this field" />
               <SettingsDataModelFieldSettingsFormCard
                 isCreatingField
-                fieldMetadataItem={fieldMetadataItem}
+                fieldMetadataItem={{
+                  icon: formConfig.watch('icon'),
+                  label: formConfig.watch('label') || 'New Field',
+                  type: fieldType as FieldMetadataType,
+                }}
                 objectMetadataItem={activeObjectMetadataItem}
               />
             </Section>
