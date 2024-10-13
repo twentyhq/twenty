@@ -15,7 +15,7 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   height: 100%;
   max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
   overflow-y: auto;
-
+  overflow-x: hidden;
   padding: var(--padding);
 
   width: calc(100% - 2 * var(--padding));
