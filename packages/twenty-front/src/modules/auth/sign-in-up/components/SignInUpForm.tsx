@@ -76,7 +76,7 @@ export const SignInUpForm = () => {
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
       } else if (signInUpStep === SignInUpStep.Email) {
-        if (form?.formState?.errors?.email) {
+        if (isDefined(form?.formState?.errors?.email)) {
           setShowErrors(true);
           return;
         }
@@ -182,7 +182,7 @@ export const SignInUpForm = () => {
                         placeholder="Email"
                         onBlur={onBlur}
                         onChange={(value: string) => {
-                          onChange(value);                          
+                          onChange(value);
                           if (signInUpStep === SignInUpStep.Password) {
                             continueWithEmail();
                           }
@@ -242,7 +242,7 @@ export const SignInUpForm = () => {
                   return;
                 }
                 if (signInUpStep === SignInUpStep.Email) {
-                  if (form?.formState?.errors?.email) {
+                  if (isDefined(form?.formState?.errors?.email)) {
                     setShowErrors(true);
                     return;
                   }
