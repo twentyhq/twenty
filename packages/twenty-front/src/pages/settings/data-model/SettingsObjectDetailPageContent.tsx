@@ -8,10 +8,14 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { H2Title, IconPlus } from 'twenty-ui';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
+import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -39,6 +43,12 @@ export const SettingsObjectDetailPageContent = ({
   };
 
   const shouldDisplayAddFieldButton = !objectMetadataItem.isRemote;
+
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+
+  const isUniqueIndexesEnabled = useIsFeatureEnabled(
+    'IS_UNIQUE_INDEXES_ENABLED',
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -85,6 +95,15 @@ export const SettingsObjectDetailPageContent = ({
             </StyledDiv>
           )}
         </Section>
+        {isAdvancedModeEnabled && isUniqueIndexesEnabled && (
+          <Section>
+            <H2Title
+              title="Indexes"
+              description={`Advanced feature to improve the performance of queries and to enforce unicity constraints.`}
+            />
+            <SettingsObjectIndexTable objectMetadataItem={objectMetadataItem} />
+          </Section>
+        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
