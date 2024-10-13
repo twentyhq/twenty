@@ -1,15 +1,15 @@
-import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
+import { useCallback } from 'react';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
-import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
+import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -24,7 +24,7 @@ export const usePersistViewSortRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 
-  const { deleteOneRecordMutation } = useDeleteOneRecordMutation({
+  const { destroyOneRecordMutation } = useDestroyOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 
@@ -124,12 +124,12 @@ export const usePersistViewSortRecords = () => {
       return Promise.all(
         viewSortIdsToDelete.map((viewSortId) =>
           apolloClient.mutate({
-            mutation: deleteOneRecordMutation,
+            mutation: destroyOneRecordMutation,
             variables: {
-              idToDelete: viewSortId,
+              idToDestroy: viewSortId,
             },
             update: (cache, { data }) => {
-              const record = data?.['deleteViewSort'];
+              const record = data?.['destroyViewSort'];
 
               if (!record) return;
 
@@ -137,10 +137,10 @@ export const usePersistViewSortRecords = () => {
 
               if (!cachedRecord) return;
 
-              triggerDeleteRecordsOptimisticEffect({
+              triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,
-                recordsToDelete: [cachedRecord],
+                recordsToDestroy: [cachedRecord],
                 objectMetadataItems,
               });
             },
@@ -150,7 +150,7 @@ export const usePersistViewSortRecords = () => {
     },
     [
       apolloClient,
-      deleteOneRecordMutation,
+      destroyOneRecordMutation,
       getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,

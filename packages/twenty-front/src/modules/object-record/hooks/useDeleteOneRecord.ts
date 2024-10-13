@@ -1,13 +1,14 @@
 import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 
-import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -41,66 +42,85 @@ export const useDeleteOneRecord = ({
     async (idToDelete: string) => {
       const currentTimestamp = new Date().toISOString();
 
+      const cachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
+
+      const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
+        record: cachedRecord,
+        objectMetadataItem,
+        objectMetadataItems,
+        computeReferences: true,
+      });
+
+      const computedOptimisticRecord = {
+        ...cachedRecord,
+        ...{ id: idToDelete, deletedAt: currentTimestamp },
+        ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+      };
+
+      const optimisticRecordWithConnection =
+        getRecordNodeFromRecord<ObjectRecord>({
+          record: computedOptimisticRecord,
+          objectMetadataItem,
+          objectMetadataItems,
+          computeReferences: true,
+        });
+
+      if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
+        return null;
+      }
+
+      updateRecordFromCache({
+        objectMetadataItems,
+        objectMetadataItem,
+        cache: apolloClient.cache,
+        record: computedOptimisticRecord,
+      });
+
+      triggerUpdateRecordOptimisticEffect({
+        cache: apolloClient.cache,
+        objectMetadataItem,
+        currentRecord: cachedRecordWithConnection,
+        updatedRecord: optimisticRecordWithConnection,
+        objectMetadataItems,
+      });
+
       const deletedRecord = await apolloClient
         .mutate({
           mutation: deleteOneRecordMutation,
           variables: {
             idToDelete: idToDelete,
           },
-          optimisticResponse: {
-            [mutationResponseField]: {
-              __typename: capitalize(objectNameSingular),
-              id: idToDelete,
-              deletedAt: currentTimestamp,
-            },
-          },
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
 
-            if (!record) return;
+            if (!record || !cachedRecord) return;
 
-            const cachedRecord = getRecordFromCache(record.id, cache);
-
-            if (!cachedRecord) return;
-
-            triggerDeleteRecordsOptimisticEffect({
+            triggerUpdateRecordOptimisticEffect({
               cache,
               objectMetadataItem,
-              recordsToDelete: [cachedRecord],
+              currentRecord: cachedRecord,
+              updatedRecord: record,
               objectMetadataItems,
             });
           },
         })
         .catch((error: Error) => {
-          const cachedRecord = getRecordFromCache(
-            idToDelete,
-            apolloClient.cache,
-          );
-
           if (!cachedRecord) {
             throw error;
           }
-
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
-            record: {
-              ...cachedRecord,
-              deletedAt: null,
-            },
+            record: cachedRecord,
           });
 
-          triggerCreateRecordsOptimisticEffect({
+          triggerUpdateRecordOptimisticEffect({
             cache: apolloClient.cache,
             objectMetadataItem,
+            currentRecord: optimisticRecordWithConnection,
+            updatedRecord: cachedRecordWithConnection,
             objectMetadataItems,
-            recordsToCreate: [
-              {
-                ...cachedRecord,
-                deletedAt: null,
-              },
-            ],
           });
 
           throw error;
@@ -114,7 +134,6 @@ export const useDeleteOneRecord = ({
       getRecordFromCache,
       mutationResponseField,
       objectMetadataItem,
-      objectNameSingular,
       objectMetadataItems,
     ],
   );

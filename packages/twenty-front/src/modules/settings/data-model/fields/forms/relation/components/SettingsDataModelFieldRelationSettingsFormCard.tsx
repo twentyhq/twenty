@@ -60,7 +60,10 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
     initialRelationObjectMetadataItem,
     initialRelationType,
     initialRelationFieldMetadataItem,
-  } = useRelationSettingsFormInitialValues({ fieldMetadataItem });
+  } = useRelationSettingsFormInitialValues({
+    fieldMetadataItem,
+    objectMetadataItem,
+  });
 
   const relationObjectMetadataId = watchFormValue(
     'relation.objectMetadataId',

@@ -1,7 +1,7 @@
-import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
+import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { IconApps, IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
-  const [searchText, setSearchText] = useState('');
+  const [searchText] = useState('');
 
   const { getIcon } = useIcons();
 
@@ -30,6 +30,11 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [, setObjectFilterDropdownFilterIsSelected] = useRecoilComponentStateV2(
     objectFilterDropdownFilterIsSelectedComponentState,
   );
+
+  const [, setObjectFilterDropdownIsSelectingCompositeField] =
+    useRecoilComponentStateV2(
+      objectFilterDropdownIsSelectingCompositeFieldComponentState,
+    );
 
   const [
     objectFilterDropdownSubMenuFieldType,
@@ -62,6 +67,8 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     setFilterDefinitionUsedInDropdown(null);
     setObjectFilterDropdownSubMenuFieldType(null);
     setObjectFilterDropdownFirstLevelFilterDefinition(null);
+    setObjectFilterDropdownIsSelectingCompositeField(false);
+    setObjectFilterDropdownFilterIsSelected(false);
   };
 
   if (
@@ -87,14 +94,14 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       >
         {getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)}
       </DropdownMenuHeader>
-      <StyledInput
+      {/* <StyledInput
         value={searchText}
         autoFocus
         placeholder="Search fields"
         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           setSearchText(event.target.value)
         }
-      />
+      /> */}
       <DropdownMenuItemsContainer>
         <MenuItem
           key={`select-filter-${-1}`}
@@ -105,31 +112,33 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           LeftIcon={IconApps}
           text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
         />
-        {options.map((subFieldName, index) => (
-          <MenuItem
-            key={`select-filter-${index}`}
-            testId={`select-filter-${index}`}
-            onClick={() => {
-              if (isDefined(objectFilterDropdownFirstLevelFilterDefinition)) {
-                handleSelectFilter({
-                  ...objectFilterDropdownFirstLevelFilterDefinition,
-                  label: getCompositeSubFieldLabel(
-                    objectFilterDropdownSubMenuFieldType,
-                    subFieldName,
-                  ),
-                  compositeFieldName: subFieldName,
-                });
-              }
-            }}
-            text={getCompositeSubFieldLabel(
-              objectFilterDropdownSubMenuFieldType,
-              subFieldName,
-            )}
-            LeftIcon={getIcon(
-              objectFilterDropdownFirstLevelFilterDefinition?.iconName,
-            )}
-          />
-        ))}
+        {/* TODO: fix this with a backend field on ViewFilter for composite field filter */}
+        {objectFilterDropdownFirstLevelFilterDefinition.type === 'ACTOR' &&
+          options.map((subFieldName, index) => (
+            <MenuItem
+              key={`select-filter-${index}`}
+              testId={`select-filter-${index}`}
+              onClick={() => {
+                if (isDefined(objectFilterDropdownFirstLevelFilterDefinition)) {
+                  handleSelectFilter({
+                    ...objectFilterDropdownFirstLevelFilterDefinition,
+                    label: getCompositeSubFieldLabel(
+                      objectFilterDropdownSubMenuFieldType,
+                      subFieldName,
+                    ),
+                    compositeFieldName: subFieldName,
+                  });
+                }
+              }}
+              text={getCompositeSubFieldLabel(
+                objectFilterDropdownSubMenuFieldType,
+                subFieldName,
+              )}
+              LeftIcon={getIcon(
+                objectFilterDropdownFirstLevelFilterDefinition?.iconName,
+              )}
+            />
+          ))}
       </DropdownMenuItemsContainer>
     </>
   );

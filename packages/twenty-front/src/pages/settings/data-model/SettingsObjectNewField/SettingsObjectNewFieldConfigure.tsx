@@ -29,13 +29,15 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { defaultIconsByFieldType } from '~/pages/settings/data-model/constants/FieldTypeIcons';
+import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
   any;
+
+const DEFAULT_ICON_FOR_NEW_FIELD = 'IconUsers';
 
 export const SettingsObjectNewFieldConfigure = () => {
   const navigate = useNavigate();
@@ -62,14 +64,18 @@ export const SettingsObjectNewFieldConfigure = () => {
     ),
     defaultValues: {
       type: fieldType,
-      icon: defaultIconsByFieldType[fieldType] || 'IconUsers',
+      icon:
+        DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
       label: '',
       description: '',
     },
   });
 
   useEffect(() => {
-    formConfig.setValue('icon', defaultIconsByFieldType[fieldType] || 'IconUsers');
+    formConfig.setValue(
+      'icon',
+      DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
+    );
   }, [fieldType, formConfig]);
 
   const [, setObjectViews] = useState<View[]>([]);

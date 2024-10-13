@@ -1,19 +1,19 @@
-import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export class WorkspaceSyncStorage {
   // Object metadata
   private readonly _objectMetadataCreateCollection: Omit<
     ComputedPartialWorkspaceEntity,
-    'fields'
+    'fields' | 'indexMetadatas'
   >[] = [];
   private readonly _objectMetadataUpdateCollection: (Partial<
-    Omit<ComputedPartialWorkspaceEntity, 'fields'>
+    Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexMetadatas'>
   > & {
     id: string;
   })[] = [];
@@ -89,7 +89,7 @@ export class WorkspaceSyncStorage {
   }
 
   addCreateObjectMetadata(
-    object: Omit<ComputedPartialWorkspaceEntity, 'fields'>,
+    object: Omit<ComputedPartialWorkspaceEntity, 'fields' | 'indexMetadatas'>,
   ) {
     this._objectMetadataCreateCollection.push(object);
   }
