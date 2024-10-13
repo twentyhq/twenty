@@ -20,7 +20,7 @@ interface EnforceUniqueConstraintsCommandOptions
 }
 
 @Command({
-  name: 'upgrade-0.31:enforce-unique-constraints',
+  name: 'upgrade-0.32:enforce-unique-constraints',
   description:
     'Enforce unique constraints on company domainName, person emailsPrimaryEmail, ViewField, and ViewSort',
 })
