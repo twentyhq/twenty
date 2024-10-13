@@ -18,4 +18,8 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) poster Link: [poster](https://twenty.com/)
 
+» 11-October-2024 by [thefool76](https://oss.gg/thefool76) poster Link: [poster](https://drive.google.com/file/d/1cIC1eitvY6zKVTXKq2LnVrS_2Ho9H8-P/view?usp=sharing)
+
+» 12-October-2024 by [Ionfinisher](https://oss.gg/Ionfinisher) poster Link: [poster](https://x.com/ion_finisher/status/1845168965963628802)
+
 ---

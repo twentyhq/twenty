@@ -107,12 +107,9 @@ export class GraphqlQuerySearchResolverService
         options.authContext.workspace.id,
       );
 
-    const isQueryRunnerTwentyORMEnabled =
-      featureFlagsForWorkspace.IS_QUERY_RUNNER_TWENTY_ORM_ENABLED;
-
     const isSearchEnabled = featureFlagsForWorkspace.IS_SEARCH_ENABLED;
 
-    if (!isQueryRunnerTwentyORMEnabled || !isSearchEnabled) {
+    if (!isSearchEnabled) {
       throw new GraphqlQueryRunnerException(
         'This endpoint is not available yet, please use findMany instead.',
         GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,

@@ -1,5 +1,4 @@
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
-import { isDraftingAdvancedFilterComponentState } from '@/object-record/object-filter-dropdown/states/isDraftingAdvancedFilterComponentState';
 import { isObjectFilterDropdownOperandSelectUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownOperandSelectUnfoldedComponentState';
 import { isObjectFilterDropdownUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownUnfoldedComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
@@ -8,7 +7,6 @@ import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-re
 import { onFilterSelectComponentState } from '@/object-record/object-filter-dropdown/states/onFilterSelectComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useFilterDropdownStates = (scopeId: string) => {
@@ -58,11 +56,6 @@ export const useFilterDropdownStates = (scopeId: string) => {
     scopeId,
   );
 
-  const isDraftingAdvancedFilterState = useRecoilComponentValueV2(
-    isDraftingAdvancedFilterComponentState,
-    scopeId,
-  );
-
   return {
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
@@ -73,6 +66,5 @@ export const useFilterDropdownStates = (scopeId: string) => {
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
-    isDraftingAdvancedFilterState,
   };
 };

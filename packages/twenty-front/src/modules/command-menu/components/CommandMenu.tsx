@@ -167,18 +167,12 @@ export const CommandMenu = () => {
     [closeCommandMenu],
   );
 
-  const isTwentyOrmEnabled = useIsFeatureEnabled(
-    'IS_QUERY_RUNNER_TWENTY_ORM_ENABLED',
-  );
-
   const isWorkspaceMigratedForSearch = useIsFeatureEnabled(
     'IS_WORKSPACE_MIGRATED_FOR_SEARCH',
   );
 
   const isSearchEnabled =
-    useIsFeatureEnabled('IS_SEARCH_ENABLED') &&
-    isTwentyOrmEnabled &&
-    isWorkspaceMigratedForSearch;
+    useIsFeatureEnabled('IS_SEARCH_ENABLED') && isWorkspaceMigratedForSearch;
 
   const { records: peopleFromFindMany } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened || isSearchEnabled,

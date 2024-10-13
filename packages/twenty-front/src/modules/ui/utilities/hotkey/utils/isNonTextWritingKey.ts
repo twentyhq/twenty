@@ -35,7 +35,7 @@ export const isNonTextWritingKey = (key: string) => {
     'Delete',
     'End',
     'PageDown',
-    'ContextMenu',
+    'ActionMenuDropdown',
     'PrintScreen',
     'BrowserBack',
     'BrowserForward',

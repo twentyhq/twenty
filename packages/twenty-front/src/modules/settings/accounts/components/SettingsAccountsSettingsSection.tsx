@@ -1,5 +1,10 @@
 import styled from '@emotion/styled';
-import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui';
+import {
+  H2Title,
+  IconCalendarEvent,
+  IconMailCog,
+  MOBILE_VIEWPORT,
+} from 'twenty-ui';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -12,6 +17,10 @@ const StyledCardsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(6)};
+
+  @media (max-width: ${MOBILE_VIEWPORT}pxF) {
+    flex-direction: column;
+  }
 `;
 
 export const SettingsAccountsSettingsSection = () => {

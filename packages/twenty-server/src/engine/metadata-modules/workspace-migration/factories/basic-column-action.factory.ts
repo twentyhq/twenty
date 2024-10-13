@@ -21,8 +21,6 @@ import {
 export type BasicFieldMetadataType =
   | FieldMetadataType.UUID
   | FieldMetadataType.TEXT
-  | FieldMetadataType.PHONE
-  | FieldMetadataType.EMAIL
   | FieldMetadataType.NUMERIC
   | FieldMetadataType.NUMBER
   | FieldMetadataType.BOOLEAN
@@ -51,6 +49,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
         isArray: fieldMetadata.type === FieldMetadataType.ARRAY,
         isNullable: fieldMetadata.isNullable ?? true,
+        isUnique: fieldMetadata.isUnique ?? false,
         defaultValue: serializedDefaultValue,
       },
     ];
@@ -85,6 +84,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
           columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
           isArray: currentFieldMetadata.type === FieldMetadataType.ARRAY,
           isNullable: currentFieldMetadata.isNullable ?? true,
+          isUnique: currentFieldMetadata.isUnique ?? false,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue,
           ),
@@ -94,6 +94,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
           columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
           isArray: alteredFieldMetadata.type === FieldMetadataType.ARRAY,
           isNullable: alteredFieldMetadata.isNullable ?? true,
+          isUnique: alteredFieldMetadata.isUnique ?? false,
           defaultValue: serializedDefaultValue,
         },
       },

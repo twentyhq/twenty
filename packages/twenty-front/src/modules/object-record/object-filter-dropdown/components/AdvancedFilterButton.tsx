@@ -1,6 +1,5 @@
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
@@ -35,8 +34,6 @@ export const StyledPill = styled(Pill)`
 export const AdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
-  const { setIsDraftingAdvancedFilter } = useFilterDropdown();
-
   const { openDropdown: openAdvancedFilterDropdown } = useDropdown(
     ADVANCED_FILTER_DROPDOWN_ID,
   );
@@ -52,8 +49,6 @@ export const AdvancedFilterButton = () => {
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
   const handleClick = () => {
-    setIsDraftingAdvancedFilter(true);
-
     if (!currentViewId) {
       throw new Error('Missing current view id');
     }

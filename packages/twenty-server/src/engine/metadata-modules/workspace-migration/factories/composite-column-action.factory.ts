@@ -23,7 +23,6 @@ export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.CURRENCY
   | FieldMetadataType.FULL_NAME
-  | FieldMetadataType.LINK
   | FieldMetadataType.LINKS
   | FieldMetadataType.EMAILS
   | FieldMetadataType.PHONES;
@@ -70,6 +69,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
         columnType: fieldMetadataTypeToColumnType(property.type),
         enum: enumOptions,
         isNullable: fieldMetadata.isNullable || !property.isRequired,
+        isUnique: fieldMetadata.isUnique,
         defaultValue: serializedDefaultValue,
         isArray:
           property.type === FieldMetadataType.MULTI_SELECT || property.isArray,
@@ -169,6 +169,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
             : undefined,
           isNullable:
             currentFieldMetadata.isNullable || !currentProperty.isRequired,
+          isUnique: currentFieldMetadata.isUnique ?? false,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue?.[currentProperty.name],
           ),
@@ -182,6 +183,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
           enum: enumOptions,
           isNullable:
             alteredFieldMetadata.isNullable || !alteredProperty.isRequired,
+          isUnique: alteredFieldMetadata.isUnique ?? false,
           defaultValue: serializedDefaultValue,
           isArray:
             alteredProperty.type === FieldMetadataType.MULTI_SELECT ||

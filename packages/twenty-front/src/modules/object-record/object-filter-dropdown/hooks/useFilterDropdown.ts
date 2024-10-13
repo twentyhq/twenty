@@ -1,12 +1,10 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-import { isDraftingAdvancedFilterComponentState } from '@/object-record/object-filter-dropdown/states/isDraftingAdvancedFilterComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ObjectFilterDropdownScopeInternalContext } from '../scopes/scope-internal-context/ObjectFilterDropdownScopeInternalContext';
+import { ObjectFilterDropdownScopeInternalContext } from '@/object-record/object-filter-dropdown/scopes/scope-internal-context/ObjectFilterDropdownScopeInternalContext';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { Filter } from '../types/Filter';
 
 type UseFilterDropdownProps = {
@@ -29,7 +27,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
-    isDraftingAdvancedFilterState,
   } = useFilterDropdownStates(scopeId);
 
   const selectFilter = useRecoilCallback(
@@ -98,9 +95,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     isObjectFilterDropdownUnfoldedState,
   );
   const setOnFilterSelect = useSetRecoilState(onFilterSelectState);
-  const setIsDraftingAdvancedFilter = useSetRecoilComponentStateV2(
-    isDraftingAdvancedFilterComponentState,
-  );
 
   return {
     scopeId,
@@ -116,7 +110,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setIsObjectFilterDropdownOperandSelectUnfolded,
     setIsObjectFilterDropdownUnfolded,
     setOnFilterSelect,
-    setIsDraftingAdvancedFilter,
     emptyFilterButKeepDefinition,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,

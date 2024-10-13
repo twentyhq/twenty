@@ -3,7 +3,6 @@ import { ReactNode, useMemo } from 'react';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { isDraftingAdvancedFilterComponentState } from '@/object-record/object-filter-dropdown/states/isDraftingAdvancedFilterComponentState';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -52,7 +51,6 @@ const StyledChipcontainer = styled.div`
   overflow: scroll;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(0.5)};
   z-index: 1;
 `;
 
@@ -110,10 +108,6 @@ export const ViewBarDetails = ({
 
   const isViewBarExpanded = useRecoilComponentValueV2(
     isViewBarExpandedComponentState,
-  );
-
-  const isDraftingAdvancedFilter = useRecoilComponentValueV2(
-    isDraftingAdvancedFilterComponentState,
   );
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
@@ -178,17 +172,15 @@ export const ViewBarDetails = ({
     canPersistView ||
     ((currentViewWithCombinedFiltersAndSorts?.viewSorts?.length ||
       currentViewWithCombinedFiltersAndSorts?.viewFilters?.length) &&
-      isViewBarExpanded) ||
-    isDraftingAdvancedFilter;
+      isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
     return null;
   }
 
   const showAdvancedFilterDropdownButton =
-    isDraftingAdvancedFilter ||
-    (currentViewWithCombinedFiltersAndSorts?.viewFilterGroups &&
-      currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.length > 0);
+    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups &&
+    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.length > 0;
 
   return (
     <StyledBar>
