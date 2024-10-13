@@ -43842,6 +43842,7 @@ __metadata:
   resolution: "twenty-website@workspace:packages/twenty-website"
   dependencies:
     "@docsearch/react": "npm:^3.6.2"
+    "@nivo/calendar": "npm:^0.87.0"
     gray-matter: "npm:^4.0.3"
     next-runtime-env: "npm:^3.2.2"
     postgres: "npm:^3.4.3"
