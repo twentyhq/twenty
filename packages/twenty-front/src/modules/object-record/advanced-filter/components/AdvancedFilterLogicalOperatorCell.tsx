@@ -3,10 +3,16 @@ import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import styled from '@emotion/styled';
 import { capitalize } from '~/utils/string/capitalize';
 
+const StyledText = styled.div`
+  height: ${({ theme }) => theme.spacing(8)};
+  display: flex;
+  align-items: center;
+`;
+
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  min-width: ${({ theme }) => theme.spacing(22)};
+  min-width: ${({ theme }) => theme.spacing(20)};
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
@@ -20,13 +26,15 @@ export const AdvancedFilterLogicalOperatorCell = (
 ) => (
   <StyledContainer>
     {props.index === 0 ? (
-      'Where'
+      <StyledText>Where</StyledText>
     ) : props.index === 1 ? (
       <AdvancedFilterLogicalOperatorDropdown
         viewFilterGroup={props.viewFilterGroup}
       />
     ) : (
-      capitalize(props.viewFilterGroup.logicalOperator.toLowerCase())
+      <StyledText>
+        {capitalize(props.viewFilterGroup.logicalOperator.toLowerCase())}
+      </StyledText>
     )}
   </StyledContainer>
 );

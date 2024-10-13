@@ -2,7 +2,6 @@ import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filte
 import { Select } from '@/ui/input/components/Select';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
-import { IconCheck, IconX } from 'twenty-ui';
 
 interface AdvancedFilterLogicalOperatorDropdownProps {
   viewFilterGroup: ViewFilterGroup;
@@ -31,17 +30,14 @@ export const AdvancedFilterLogicalOperatorDropdown = (
         {
           value: ViewFilterGroupLogicalOperator.AND,
           label: 'And',
-          Icon: IconCheck,
         },
         {
           value: ViewFilterGroupLogicalOperator.OR,
           label: 'Or',
-          Icon: IconX,
         },
         {
           value: ViewFilterGroupLogicalOperator.NOT,
           label: 'Not',
-          Icon: IconX,
         },
       ]}
     />
