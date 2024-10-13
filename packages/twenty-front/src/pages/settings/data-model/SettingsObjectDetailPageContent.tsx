@@ -9,6 +9,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -44,6 +45,10 @@ export const SettingsObjectDetailPageContent = ({
   const shouldDisplayAddFieldButton = !objectMetadataItem.isRemote;
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+
+  const isUniqueIndexesEnabled = useIsFeatureEnabled(
+    'IS_UNIQUE_INDEXES_ENABLED',
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -90,7 +95,7 @@ export const SettingsObjectDetailPageContent = ({
             </StyledDiv>
           )}
         </Section>
-        {isAdvancedModeEnabled && (
+        {isAdvancedModeEnabled && isUniqueIndexesEnabled && (
           <Section>
             <H2Title
               title="Indexes"
