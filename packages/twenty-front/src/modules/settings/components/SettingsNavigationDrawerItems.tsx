@@ -208,12 +208,14 @@ export const SettingsNavigationDrawerItems = () => {
                   label="API & Webhooks"
                   path={SettingsPath.Developers}
                   Icon={IconCode}
+                  matchSubPages
                 />
                 {isFunctionSettingsEnabled && (
                   <SettingsNavigationDrawerItem
                     label="Functions"
                     path={SettingsPath.ServerlessFunctions}
                     Icon={IconFunction}
+                    matchSubPages
                   />
                 )}
               </NavigationDrawerSection>
