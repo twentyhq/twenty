@@ -17,6 +17,9 @@ Your turn 👇
 
 ////////////////////////////
 
+» 13-October-2024 by Utsav Bhattarai
+» Link to Tweet: https://x.com/utsavdotdev/status/1845417863462649900
+
 » 10-October-2024 by Devansh Baghel
 » Link to Tweet: https://x.com/DevanshBaghel5/status/1844359648037748954
 
