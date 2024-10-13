@@ -24,7 +24,6 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
@@ -677,81 +676,83 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       }
-      case 'ACTOR':
-        if (isActorSourceCompositeFilter(rawUIFilter.definition)) {
-          const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
+      // TODO: fix this with a new composite field in ViewFilter entity
+      case 'ACTOR': {
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Is: {
+            const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
-          switch (rawUIFilter.operand) {
-            case ViewFilterOperand.Is:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                source: {
+                  in: parsedRecordIds,
+                } as RelationFilter,
+              },
+            });
+
+            break;
+          }
+          case ViewFilterOperand.IsNot: {
+            const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
+
+            if (parsedRecordIds.length > 0) {
               objectRecordFilters.push({
-                [correspondingField.name]: {
-                  source: {
-                    in: parsedRecordIds,
-                  } as RelationFilter,
+                not: {
+                  [correspondingField.name]: {
+                    source: {
+                      in: parsedRecordIds,
+                    } as RelationFilter,
+                  },
                 },
               });
-
-              break;
-            case ViewFilterOperand.IsNot:
-              if (parsedRecordIds.length > 0) {
-                objectRecordFilters.push({
-                  not: {
-                    [correspondingField.name]: {
-                      source: {
-                        in: parsedRecordIds,
-                      } as RelationFilter,
-                    },
-                  },
-                });
-              }
-              break;
+            }
+            break;
           }
-        } else {
-          switch (rawUIFilter.operand) {
-            case ViewFilterOperand.Contains:
-              objectRecordFilters.push({
-                or: [
-                  {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: [
+                {
+                  [correspondingField.name]: {
+                    name: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as ActorFilter,
+                },
+              ],
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: [
+                {
+                  not: {
                     [correspondingField.name]: {
                       name: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as ActorFilter,
                   },
-                ],
-              });
-              break;
-            case ViewFilterOperand.DoesNotContain:
-              objectRecordFilters.push({
-                and: [
-                  {
-                    not: {
-                      [correspondingField.name]: {
-                        name: {
-                          ilike: `%${rawUIFilter.value}%`,
-                        },
-                      } as ActorFilter,
-                    },
-                  },
-                ],
-              });
-              break;
-            case ViewFilterOperand.IsEmpty:
-            case ViewFilterOperand.IsNotEmpty:
-              applyEmptyFilters(
-                rawUIFilter.operand,
-                correspondingField,
-                objectRecordFilters,
-                rawUIFilter.definition,
-              );
-              break;
-            default:
-              throw new Error(
-                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.label} filter`,
-              );
-          }
+                },
+              ],
+            });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition,
+            );
+            break;
+
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.label} filter`,
+            );
         }
         break;
+      }
       case 'EMAILS':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:

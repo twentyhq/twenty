@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -65,10 +65,10 @@ export const useDestroyOneRecord = ({
 
             if (!cachedRecord) return;
 
-            triggerDeleteRecordsOptimisticEffect({
+            triggerDestroyRecordsOptimisticEffect({
               cache,
               objectMetadataItem,
-              recordsToDelete: [cachedRecord],
+              recordsToDestroy: [cachedRecord],
               objectMetadataItems,
             });
           },
