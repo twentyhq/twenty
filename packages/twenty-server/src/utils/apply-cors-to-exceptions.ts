@@ -1,7 +1,7 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
 
@@ -32,7 +32,10 @@ export class ApplyCorsToExceptions implements ExceptionFilter {
 
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;
-
+    if (status===401 && exception.message === 'Unauthorized') {
+      response.redirect(`${process.env.FRONT_BASE_URL}`);
+      return;
+    }
     response.status(status).json(exception.response);
   }
 }
