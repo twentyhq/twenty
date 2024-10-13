@@ -36,12 +36,17 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 const StyledTextAreaContainer = styled.div`
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   position: relative;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(0)};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   background: ${({ theme }) => theme.background.primary};
+  @media (max-width: 768px) {
+    position: absolute;
+    left: -40px;
+    top: 10px;
+  }
 `;
 
 const StyledLightIconButtonContainer = styled.div`
