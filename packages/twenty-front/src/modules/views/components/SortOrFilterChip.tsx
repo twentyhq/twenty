@@ -39,9 +39,11 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
   flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(0.5) + ' ' + theme.spacing(2)};
   user-select: none;
   white-space: nowrap;
+
+  max-height: ${({ theme }) => theme.spacing(4.5)};
 `;
 
 const StyledIcon = styled.div`

@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 
-import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -31,14 +30,19 @@ describe('useObjectMetadataItemById', () => {
 
     const { objectMetadataItem } = result.current;
 
-    expect(objectMetadataItem.id).toBe(opportunityObjectMetadata.id);
+    expect(objectMetadataItem?.id).toBe(opportunityObjectMetadata.id);
   });
 
-  it('should throw an error when invalid ID is provided', async () => {
-    expect(() =>
-      renderHook(() => useObjectMetadataItemById({ objectId: 'invalid-id' }), {
+  it('should return null when invalid ID is provided', async () => {
+    const { result } = renderHook(
+      () => useObjectMetadataItemById({ objectId: 'invalid-id' }),
+      {
         wrapper: Wrapper,
-      }),
-    ).toThrow(ObjectMetadataItemNotFoundError);
+      },
+    );
+
+    const { objectMetadataItem } = result.current;
+
+    expect(objectMetadataItem).toBeNull();
   });
 });

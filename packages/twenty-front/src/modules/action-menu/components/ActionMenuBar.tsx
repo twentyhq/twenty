@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActionMenuBarEntry } from '@/action-menu/components/ActionMenuBarEntry';
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
@@ -28,8 +28,12 @@ export const ActionMenuBar = () => {
   );
 
   const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentState,
+    actionMenuEntriesComponentSelector,
   );
+
+  if (actionMenuEntries.length === 0) {
+    return null;
+  }
 
   return (
     <BottomBar
