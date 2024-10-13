@@ -124,7 +124,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
   <ArticleTab>
     All the following steps are to be run in the WSL terminal (within your virtual machine)
 
-    <b>Option 1 :</b> To provision your database locally:
+    <b>Option 1:</b> To provision your database locally:
     ```bash
     make postgres-on-linux
     ```
@@ -145,16 +145,33 @@ Twenty requires a redis cache to provide the best performances
 
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
+    <b>Option 1:</b> To provision your Redis locally:
     Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
-  </ArticleTab>
-  <ArticleTab>
-    To provision your database locally with `brew`:
+
+    <b>Option 2:</b> If you have docker installed:
     ```bash
-    brew install redis
+    docker run -d --name my-redis-stack -p 6379:6379 redis/redis-stack-server:latest
     ```
   </ArticleTab>
   <ArticleTab>
+    <b>Option 1:</b>To provision your Redis locally with `brew`:
+    ```bash
+    brew install redis
+    ```
+
+    <b>Option 2:</b> If you have docker installed:
+    ```bash
+    docker run -d --name my-redis-stack -p 6379:6379 redis/redis-stack-server:latest
+    ```
+  </ArticleTab>
+  <ArticleTab>
+    <b>Option 1:</b> To provision your Redis locally:
     Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    <b>Option 2:</b> If you have docker installed:
+    ```bash
+    docker run -d --name my-redis-stack -p 6379:6379 redis/redis-stack-server:latest
+    ```
   </ArticleTab>
 </ArticleTabs>
 
@@ -261,9 +278,5 @@ This should work out of the box with the eslint extension installed. If this doe
 
 }
 ```
-
-#### Docker container build
-
-To successfully build Docker images, ensure that your system has a minimum of 2GB of memory available. For users of Docker Desktop, please verify that you've allocated sufficient resources to Docker within the application's settings.
 
 <ArticleEditContent></ArticleEditContent>
