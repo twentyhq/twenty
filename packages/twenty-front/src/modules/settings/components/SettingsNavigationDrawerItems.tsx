@@ -107,7 +107,7 @@ export const SettingsNavigationDrawerItems = () => {
     return matchPath(
       {
         path: pathName,
-        end: !accountSubSetting.matchSubPages ?? true,
+        end: accountSubSetting.matchSubPages === false,
       },
       currentPathName,
     );
