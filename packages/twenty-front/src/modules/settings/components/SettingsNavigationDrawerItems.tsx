@@ -91,14 +91,12 @@ export const SettingsNavigationDrawerItems = () => {
       path: SettingsPath.AccountsEmails,
       Icon: IconMail,
       indentationLevel: 2,
-      matchSubPages: true,
     },
     {
       label: 'Calendars',
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
       indentationLevel: 2,
-      matchSubPages: true,
     },
   ];
 
