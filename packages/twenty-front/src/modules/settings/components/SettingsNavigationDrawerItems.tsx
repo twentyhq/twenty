@@ -180,6 +180,7 @@ export const SettingsNavigationDrawerItems = () => {
           label="Integrations"
           path={SettingsPath.Integrations}
           Icon={IconApps}
+          matchSubPages
         />
         {isCRMMigrationEnabled && (
           <SettingsNavigationDrawerItem
