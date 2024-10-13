@@ -43,7 +43,6 @@ type SettingsNavigationItem = {
   label: string;
   path: SettingsPath;
   Icon: IconComponent;
-  matchSubPages?: boolean;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
 };
 
@@ -90,14 +89,12 @@ export const SettingsNavigationDrawerItems = () => {
       label: 'Emails',
       path: SettingsPath.AccountsEmails,
       Icon: IconMail,
-      matchSubPages: true,
       indentationLevel: 2,
     },
     {
       label: 'Calendars',
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
-      matchSubPages: true,
       indentationLevel: 2,
     },
   ];
@@ -109,7 +106,7 @@ export const SettingsNavigationDrawerItems = () => {
     return matchPath(
       {
         path: pathName,
-        end: !accountSubSetting.matchSubPages,
+        end: true,
       },
       currentPathName,
     );
@@ -134,6 +131,7 @@ export const SettingsNavigationDrawerItems = () => {
             label="Accounts"
             path={SettingsPath.Accounts}
             Icon={IconAt}
+            matchSubPages={false}
           />
           {accountSubSettings.map((navigationItem, index) => (
             <SettingsNavigationDrawerItem
@@ -174,13 +172,11 @@ export const SettingsNavigationDrawerItems = () => {
           label="Data model"
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
-          matchSubPages
         />
         <SettingsNavigationDrawerItem
           label="Integrations"
           path={SettingsPath.Integrations}
           Icon={IconApps}
-          matchSubPages
         />
         {isCRMMigrationEnabled && (
           <SettingsNavigationDrawerItem
@@ -209,14 +205,12 @@ export const SettingsNavigationDrawerItems = () => {
                   label="API & Webhooks"
                   path={SettingsPath.Developers}
                   Icon={IconCode}
-                  matchSubPages
                 />
                 {isFunctionSettingsEnabled && (
                   <SettingsNavigationDrawerItem
                     label="Functions"
                     path={SettingsPath.ServerlessFunctions}
                     Icon={IconFunction}
-                    matchSubPages
                   />
                 )}
               </NavigationDrawerSection>
