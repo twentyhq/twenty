@@ -10,9 +10,8 @@ import {
   IconMail,
   IconReload,
   IconTrash,
-  IconUsers,
   MOBILE_VIEWPORT,
-  TooltipDelay
+  TooltipDelay,
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -55,12 +54,6 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const StyledTableRow = styled(TableRow)`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: grid;
-    grid-template-columns: 3fr;
-  }
-`;
 const StyledTableCell = styled(TableCell)`
   padding: ${({ theme }) => theme.spacing(1)};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -87,41 +80,15 @@ const StyledScrollableTextContainer = styled.div`
   width: content-fit;
 `;
 
-
-
 const StyledTextContainer = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   max-width: max-content;
   overflow-x: auto;
   position: absolute;
-  @media (min-width: 360px) and (max-width: 420px) {
-    max-width: 150px;
-    margin-top: ${({ theme }) => theme.spacing(1)};
-  }
 `;
 const StyledTableHeaderRow = styled(Table)`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
 `;
-
-const StyledTableRowForMemberList = styled(TableRow)`
-  gap: 16px;
-  @media (max-width: 768px) {
-      grid-auto-columns: 160px 2fr 1fr
-  }
-  @media (max-width: 450px) {
-      grid-auto-columns: 130px 2fr 1fr
-  }
-  @media (max-width: 409px) {
-      grid-auto-columns: 100px 2fr 1fr
-  }
-  @media (max-width: 390px) {
-      grid-auto-columns: 90px 2fr 1fr
-  }
-  @media (max-width: 370px) {
-      grid-auto-columns: 60px 2fr 1fr
-  }
-
-`
 
 export const SettingsWorkspaceMembers = () => {
   const { enqueueSnackBar } = useSnackBar();
@@ -220,16 +187,16 @@ export const SettingsWorkspaceMembers = () => {
           />
           <Table>
             <StyledTableHeaderRow>
-              <StyledTableRowForMemberList gridAutoColumns="150px 2fr 1fr">
+              <TableRow gridAutoColumns="150px 2fr 1fr">
                 <TableHeader>Name</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader align={'right'}></TableHeader>
-              </StyledTableRowForMemberList>
+              </TableRow>
             </StyledTableHeaderRow>
             {workspaceMembers?.map((workspaceMember) => (
               <StyledTable key={workspaceMember.id}>
-                <StyledTableRowForMemberList gridAutoColumns="150px 2fr 1fr">
-                  <TableCell >
+                <TableRow gridAutoColumns="150px 2fr 1fr">
+                  <TableCell>
                     <StyledIconWrapper>
                       <Avatar
                         avatarUrl={workspaceMember.avatarUrl}
@@ -242,7 +209,9 @@ export const SettingsWorkspaceMembers = () => {
                     <StyledScrollableTextContainer
                       id={`hover-text-${workspaceMember.id}`}
                     >
-                      {workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName}
+                      {workspaceMember.name.firstName +
+                        ' ' +
+                        workspaceMember.name.lastName}
                     </StyledScrollableTextContainer>
                     <AppTooltip
                       anchorSelect={`#hover-text-${workspaceMember.id}`}
@@ -273,7 +242,7 @@ export const SettingsWorkspaceMembers = () => {
                       </StyledButtonContainer>
                     )}
                   </TableCell>
-                </StyledTableRowForMemberList>
+                </TableRow>
               </StyledTable>
             ))}
           </Table>
@@ -287,7 +256,7 @@ export const SettingsWorkspaceMembers = () => {
           {isNonEmptyArray(workspaceInvitations) && (
             <Table>
               <StyledTableHeaderRow>
-                <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}>
+                <TableRow gridAutoColumns={`1fr 1fr 1fr`}>
                   <TableHeader>Email</TableHeader>
                   <TableHeader align={'right'}>Expires in</TableHeader>
                   <TableHeader></TableHeader>
@@ -295,9 +264,7 @@ export const SettingsWorkspaceMembers = () => {
               </StyledTableHeaderRow>
               {workspaceInvitations?.map((workspaceInvitation) => (
                 <StyledTable key={workspaceInvitation.id}>
-                  <StyledTableRow
-                    gridAutoColumns={`1fr 1fr ${theme.spacing(22)}`}
-                  >
+                  <TableRow gridAutoColumns={`1fr 1fr 1fr`}>
                     <StyledTableCell>
                       <StyledIconWrapper>
                         <IconMail
@@ -339,7 +306,7 @@ export const SettingsWorkspaceMembers = () => {
                         />
                       </StyledButtonContainer>
                     </StyledTableCell>
-                  </StyledTableRow>
+                  </TableRow>
                 </StyledTable>
               ))}
             </Table>
