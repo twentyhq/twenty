@@ -122,6 +122,7 @@ export const RecordBoardColumnCardsContainer = ({
           </div>
         )}
       </Draggable>
+      {droppableProvided?.placeholder}
     </StyledColumnCardsContainer>
   );
 };
