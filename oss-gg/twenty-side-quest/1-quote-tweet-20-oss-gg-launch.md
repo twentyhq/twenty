@@ -37,3 +37,6 @@ Your turn 👇
 
 » 13-October-2024 by Nabhag Motivaras
 » Link to Tweet: https://x.com/NabhagMotivaras/status/1845449144695218357
+
+» 13-October-2024 by Ali Yar Khan
+» Link to Tweet: https://x.com/Mr_Programmer14/status/1845527862549577860
