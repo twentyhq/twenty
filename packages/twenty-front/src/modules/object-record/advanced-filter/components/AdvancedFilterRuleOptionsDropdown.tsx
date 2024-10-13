@@ -28,6 +28,10 @@ export const AdvancedFilterRuleOptionsDropdown = (
     }
   };
 
+  const removeButtonLabel = props.viewFilterId
+    ? 'Remove rule'
+    : 'Remove rule group';
+
   return (
     <Dropdown
       disableBlur
@@ -39,13 +43,12 @@ export const AdvancedFilterRuleOptionsDropdown = (
       }
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          <MenuItem text="Remove filter rule" onClick={handleRemove} />
+          <MenuItem text={removeButtonLabel} onClick={handleRemove} />
         </DropdownMenuItemsContainer>
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
-      dropdownMenuWidth={280}
     />
   );
 };

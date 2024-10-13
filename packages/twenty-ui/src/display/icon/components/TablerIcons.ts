@@ -151,6 +151,7 @@ export {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
+  IconLibraryPlus,
   IconLink,
   IconLinkOff,
   IconList,
