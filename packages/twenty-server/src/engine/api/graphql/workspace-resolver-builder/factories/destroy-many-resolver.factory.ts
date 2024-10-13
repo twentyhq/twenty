@@ -40,7 +40,7 @@ export class DestroyManyResolverFactory
 
         return await this.graphqlQueryRunnerService.destroyMany(args, options);
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }
     };
   }

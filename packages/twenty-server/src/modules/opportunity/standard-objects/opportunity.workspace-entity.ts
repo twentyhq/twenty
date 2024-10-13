@@ -14,8 +14,8 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -96,7 +96,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: "'NEW'",
   })
-  @WorkspaceIndex()
+  @WorkspaceFieldIndex()
   stage: string;
 
   @WorkspaceField({
@@ -251,6 +251,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   [SEARCH_VECTOR_FIELD.name]: any;
 }
