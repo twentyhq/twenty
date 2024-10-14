@@ -153,6 +153,9 @@ export const ObjectFilterDropdownFilterSelect = ({
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
                   filterDefinition={visibleFilterDefinition}
+                  onClick={() => {
+                    onSelectField?.(visibleFilterDefinition);
+                  }}
                 />
               </SelectableItem>
             ),

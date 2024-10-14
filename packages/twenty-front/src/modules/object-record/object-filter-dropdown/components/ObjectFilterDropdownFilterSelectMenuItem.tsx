@@ -20,10 +20,12 @@ import { useIcons } from 'twenty-ui';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   filterDefinition: FilterDefinition;
+  onClick?: () => void;
 };
 
 export const ObjectFilterDropdownFilterSelectMenuItem = ({
   filterDefinition,
+  onClick,
 }: ObjectFilterDropdownFilterSelectMenuItemProps) => {
   const { selectFilter } = useSelectFilter();
 
@@ -85,6 +87,8 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   const { getIcon } = useIcons();
 
   const handleClick = () => {
+    onClick?.();
+
     resetSelectedItem();
 
     selectFilter({ filterDefinition });

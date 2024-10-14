@@ -1,7 +1,10 @@
 import { ObjectFilterDropdownFilterSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
+import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
+import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -24,6 +27,15 @@ export const AdvancedFilterViewFilterFieldSelect = (
     });
   };
 
+  const [objectFilterDropdownIsSelectingCompositeField] =
+    useRecoilComponentStateV2(
+      objectFilterDropdownIsSelectingCompositeFieldComponentState,
+      ADVANCED_FILTER_DROPDOWN_ID,
+    );
+
+  const shouldShowCompositeSelectionSubMenu =
+    objectFilterDropdownIsSelectingCompositeField;
+
   return (
     <Dropdown
       disableBlur
@@ -37,7 +49,13 @@ export const AdvancedFilterViewFilterFieldSelect = (
         />
       }
       dropdownComponents={
-        <ObjectFilterDropdownFilterSelect onSelectField={handleSelectField} />
+        shouldShowCompositeSelectionSubMenu ? (
+          <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu
+            onSelectField={handleSelectField} // This should probably be done using useFilterDropdown instead?
+          />
+        ) : (
+          <ObjectFilterDropdownFilterSelect onSelectField={handleSelectField} />
+        )
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
