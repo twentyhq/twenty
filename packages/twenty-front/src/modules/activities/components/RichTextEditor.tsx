@@ -129,13 +129,34 @@ export const RichTextEditor = ({
     if (isUndefinedOrNull(file)) {
       return '';
     }
-    const result = await uploadAttachment(file, FileFolder.Attachment);
-    if (!result) {
-      throw new Error("Couldn't upload Image");
-    }
-    const uploadedFileUrl = getFileAbsoluteURI(result);
-  
-    return uploadedFileUrl;
+    const result = await uploadFile({
+      variables: {
+        file,
+        fileFolder: FileFolder.Attachment,
+      },
+    });
+    const uploadedFileData = result?.data?.uploadFile;
+
+  if (!uploadedFileData) {
+    throw new Error("Couldn't upload Image");
+  }
+
+  if (!result?.data?.uploadFile) {
+    throw new Error("Couldn't upload Image");
+  }
+
+  const uploadedFileUrl = getFileAbsoluteURI(result.data.uploadFile);
+
+  // Step 2: Update attachment table with file metadata
+  await addAttachmentMutation({
+    variables: {
+      fileId: result.data.uploadFile, // Assuming file ID is returned from the upload
+      fileName: file.name,
+      fileUrl: uploadedFileUrl,
+    },
+  });
+
+  return uploadedFileUrl;
   };
 
   const prepareBody = (newStringifiedBody: string) => {
