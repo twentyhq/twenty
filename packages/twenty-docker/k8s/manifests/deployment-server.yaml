@@ -22,67 +22,78 @@ spec:
         app: twentycrm-server
     spec:
       volumes:
-      - name: twentycrm-server-data
-        persistentVolumeClaim:
-          claimName: twentycrm-server-pvc
+        - name: twentycrm-server-data
+          persistentVolumeClaim:
+            claimName: twentycrm-server-pvc
+        - name: twentycrm-docker-data
+          persistentVolumeClaim:
+            claimName: twentycrm-docker-data-pvc
       containers:
-      - env:
-        - name: PORT
-          value: 3000
-        - name: SERVER_URL
-          value: "https://crm.example.com:443"
-        - name: FRONT_BASE_URL
-          value: "https://crm.example.com:443"
-        - name: PG_DATABASE_URL
-          value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
-        - name: ENABLE_DB_MIGRATIONS
-          value: "true"
-        - name: SIGN_IN_PREFILLED
-          value: "true"
-        - name: STORAGE_TYPE
-          value: "local"
-        - name: "MESSAGE_QUEUE_TYPE"
-          value: "pg-boss"
-        - name: ACCESS_TOKEN_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: tokens
-              key: accessToken
-        - name: LOGIN_TOKEN_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: tokens
-              key: loginToken
-        - name: REFRESH_TOKEN_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: tokens
-              key: refreshToken
-        - name: FILE_TOKEN_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: tokens
-              key: fileToken
-      - image: twentycrm/twenty:latest
-        imagePullPolicy: Always
-        name: twentycrm
-        ports:
-        - containerPort: 3000
-          name: http-tcp
-          protocol: TCP
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "1024Mi"
-            cpu: "1000m"
-        stdin: true
-        tty: true
-        volumeMounts:
-        - mountPath: /app/docker-data
-          name: twentycrm-server-data
-        - mountPath: /app/.local-storage
-          name: twentycrm-server-data
+        - name: twentycrm
+          image: twentycrm/twenty:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: 3000
+            - name: SERVER_URL
+              value: "https://crm.example.com:443"
+            - name: FRONT_BASE_URL
+              value: "https://crm.example.com:443"
+            - name: "PG_DATABASE_URL"
+              value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
+            - name: "REDIS_HOST"
+              value: "twentycrm-redis.twentycrm.svc.cluster.local"
+            - name: "REDIS_PORT"
+              value: 6379
+            - name: ENABLE_DB_MIGRATIONS
+              value: "true"
+            - name: SIGN_IN_PREFILLED
+              value: "true"
+            - name: STORAGE_TYPE
+              value: "local"
+            - name: "MESSAGE_QUEUE_TYPE"
+              value: "bull-mq"
+            - name: "ACCESS_TOKEN_EXPIRES_IN"
+              value: "7d"
+            - name: "LOGIN_TOKEN_EXPIRES_IN"
+              value: "1h"
+            - name: ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tokens
+                  key: accessToken
+            - name: LOGIN_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tokens
+                  key: loginToken
+            - name: REFRESH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tokens
+                  key: refreshToken
+            - name: FILE_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tokens
+                  key: fileToken
+          ports:
+            - containerPort: 3000
+              name: http-tcp
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /app/docker-data
+              name: twentycrm-docker-data
+            - mountPath: /app/packages/twenty-server/.local-storage
+              name: twentycrm-server-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always

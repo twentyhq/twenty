@@ -1,11 +1,12 @@
-import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
-
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { objectMetadataItemSchema } from '../objectMetadataItemSchema';
 
 describe('objectMetadataItemSchema', () => {
   it('validates a valid object metadata item', () => {
     // Given
-    const validObjectMetadataItem = mockedCompanyObjectMetadataItem;
+    const validObjectMetadataItem = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'company',
+    );
 
     // When
     const result = objectMetadataItemSchema.parse(validObjectMetadataItem);

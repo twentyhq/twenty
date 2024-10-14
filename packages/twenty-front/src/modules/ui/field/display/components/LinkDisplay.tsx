@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { FieldLinkValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 import {
   LinkType,
@@ -8,7 +7,7 @@ import {
 } from '@/ui/navigation/link/components/SocialLink';
 
 type LinkDisplayProps = {
-  value?: FieldLinkValue;
+  value?: { url: string; label?: string };
 };
 
 export const LinkDisplay = ({ value }: LinkDisplayProps) => {

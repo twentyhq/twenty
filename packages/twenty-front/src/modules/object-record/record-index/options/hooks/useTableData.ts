@@ -9,6 +9,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { ViewType } from '@/views/types/ViewType';
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
@@ -43,7 +44,7 @@ export const useTableData = ({
   delayMs,
   maximumRequests = 100,
   objectNameSingular,
-  pageSize = 30,
+  pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   callback,
   viewType = ViewType.Table,

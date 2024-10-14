@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -49,11 +50,19 @@ export class DatabaseEventTriggerListener {
     await this.handleEvent(payload);
   }
 
+  @OnEvent('*.destroyed')
+  async handleObjectRecordDestroyEvent(
+    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent<any>>,
+  ) {
+    await this.handleEvent(payload);
+  }
+
   private async handleEvent(
     payload: WorkspaceEventBatch<
       | ObjectRecordCreateEvent<any>
       | ObjectRecordUpdateEvent<any>
       | ObjectRecordDeleteEvent<any>
+      | ObjectRecordDestroyEvent<any>
     >,
   ) {
     const workspaceId = payload.workspaceId;

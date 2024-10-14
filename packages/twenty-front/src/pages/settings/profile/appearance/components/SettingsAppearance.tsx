@@ -1,4 +1,4 @@
-import { H2Title, IconColorSwatch } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -14,7 +14,6 @@ export const SettingsAppearance = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconColorSwatch}
       title="Experience"
       links={[
         {

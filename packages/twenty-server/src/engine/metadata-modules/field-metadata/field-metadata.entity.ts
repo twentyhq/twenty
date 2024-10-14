@@ -24,16 +24,13 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
 export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
-  PHONE = 'PHONE',
   PHONES = 'PHONES',
-  EMAIL = 'EMAIL',
   EMAILS = 'EMAILS',
   DATE_TIME = 'DATE_TIME',
   DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
-  LINK = 'LINK',
   LINKS = 'LINKS',
   CURRENCY = 'CURRENCY',
   FULL_NAME = 'FULL_NAME',
@@ -47,6 +44,7 @@ export enum FieldMetadataType {
   RICH_TEXT = 'RICH_TEXT',
   ACTOR = 'ACTOR',
   ARRAY = 'ARRAY',
+  TS_VECTOR = 'TS_VECTOR',
 }
 
 @Entity('fieldMetadata')
@@ -110,6 +108,9 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, default: true })
   isNullable: boolean;
 
+  @Column({ nullable: true, default: false })
+  isUnique: boolean;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
@@ -128,7 +129,7 @@ export class FieldMetadataEntity<
   @OneToMany(
     () => IndexFieldMetadataEntity,
     (indexFieldMetadata: IndexFieldMetadataEntity) =>
-      indexFieldMetadata.fieldMetadata,
+      indexFieldMetadata.indexMetadata,
     {
       cascade: true,
     },

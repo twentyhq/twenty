@@ -1,6 +1,6 @@
 import { useDeleteOneRelationMetadataItem } from '@/object-metadata/hooks/useDeleteOneRelationMetadataItem';
-import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { Field } from '~/generated/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
@@ -18,7 +18,13 @@ export const useFieldMetadataItem = () => {
   const createMetadataField = (
     input: Pick<
       Field,
-      'label' | 'icon' | 'description' | 'defaultValue' | 'type' | 'options'
+      | 'label'
+      | 'icon'
+      | 'description'
+      | 'defaultValue'
+      | 'type'
+      | 'options'
+      | 'settings'
     > & {
       objectMetadataId: string;
     },

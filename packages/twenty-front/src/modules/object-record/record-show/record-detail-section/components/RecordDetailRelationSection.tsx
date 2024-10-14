@@ -12,9 +12,8 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldMetadataReadOnly';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
-import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
-import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -26,12 +25,15 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
@@ -71,7 +73,7 @@ export const RecordDetailRelationSection = ({
 
   // TODO: use new relation type
   const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
-  const isToManyObjects = RelationDefinitionType.OneToMany;
+  const isToManyObjects = relationType === RelationDefinitionType.OneToMany;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
@@ -121,32 +123,31 @@ export const RecordDetailRelationSection = ({
     scopeId: dropdownId,
   });
 
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+
+  const indexView = views.find(
+    (view) =>
+      view.key === 'INDEX' &&
+      view.objectMetadataId === relationObjectMetadataItem.id,
+  );
+
   const filterQueryParams: FilterQueryParams = {
     filter: {
       [relationFieldMetadataItem?.name || '']: {
         [ViewFilterOperand.Is]: [recordId],
       },
     },
+    view: indexView?.id,
   };
   const filterLinkHref = `/objects/${
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
 
   const showContent = () => {
-    if (loading) {
-      return (
-        <RecordDetailRelationSectionSkeletonLoader
-          numSkeletons={fieldName === 'people' ? 2 : 1}
-        />
-      );
-    }
-
-    return relationRecords.length ? (
-      <RecordDetailRelationRecordsList relationRecords={relationRecords} />
-    ) : (
-      <RecordDetailRelationRecordsListEmptyState
-        relationObjectMetadataItem={relationObjectMetadataItem}
-      />
+    return (
+      relationRecords.length > 0 && (
+        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+      )
     );
   };
 
@@ -158,6 +159,10 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
+  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
+
+  if (loading) return null;
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -166,55 +171,61 @@ export const RecordDetailRelationSection = ({
           isToManyObjects
             ? {
                 to: filterLinkHref,
-                label: `All (${relationRecords.length})`,
+                label:
+                  relationRecords.length > 0
+                    ? `All (${relationRecords.length})`
+                    : '',
               }
             : undefined
         }
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
+        areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
-          <DropdownScope dropdownScopeId={dropdownId}>
-            <StyledAddDropdown
-              dropdownId={dropdownId}
-              dropdownPlacement="right-start"
-              onClose={handleCloseRelationPickerDropdown}
-              clickableComponent={
-                <LightIconButton
-                  className="displayOnHover"
-                  Icon={isToOneObject ? IconPencil : IconPlus}
-                  accent="tertiary"
-                />
-              }
-              dropdownComponents={
-                <RelationPickerScope relationPickerScopeId={dropdownId}>
-                  {isToOneObject ? (
-                    <SingleEntitySelectMenuItemsWithSearch
-                      EmptyIcon={IconForbid}
-                      onEntitySelected={handleRelationPickerEntitySelected}
-                      selectedRelationRecordIds={relationRecordIds}
-                      relationObjectNameSingular={
-                        relationObjectMetadataNameSingular
-                      }
-                      relationPickerScopeId={dropdownId}
-                      onCreate={createNewRecordAndOpenRightDrawer}
-                    />
-                  ) : (
-                    <>
-                      <ObjectMetadataItemsRelationPickerEffect />
-                      <RelationFromManyFieldInputMultiRecordsEffect />
-                      <MultiRecordSelect
+          canEdit && (
+            <DropdownScope dropdownScopeId={dropdownId}>
+              <StyledAddDropdown
+                dropdownId={dropdownId}
+                dropdownPlacement="right-start"
+                onClose={handleCloseRelationPickerDropdown}
+                clickableComponent={
+                  <LightIconButton
+                    className="displayOnHover"
+                    Icon={isToOneObject ? IconPencil : IconPlus}
+                    accent="tertiary"
+                  />
+                }
+                dropdownComponents={
+                  <RelationPickerScope relationPickerScopeId={dropdownId}>
+                    {isToOneObject ? (
+                      <SingleEntitySelectMenuItemsWithSearch
+                        EmptyIcon={IconForbid}
+                        onEntitySelected={handleRelationPickerEntitySelected}
+                        selectedRelationRecordIds={relationRecordIds}
+                        relationObjectNameSingular={
+                          relationObjectMetadataNameSingular
+                        }
+                        relationPickerScopeId={dropdownId}
                         onCreate={createNewRecordAndOpenRightDrawer}
-                        onChange={updateRelation}
-                        onSubmit={closeDropdown}
                       />
-                    </>
-                  )}
-                </RelationPickerScope>
-              }
-              dropdownHotkeyScope={{
-                scope: dropdownId,
-              }}
-            />
-          </DropdownScope>
+                    ) : (
+                      <>
+                        <ObjectMetadataItemsRelationPickerEffect />
+                        <RelationFromManyFieldInputMultiRecordsEffect />
+                        <MultiRecordSelect
+                          onCreate={createNewRecordAndOpenRightDrawer}
+                          onChange={updateRelation}
+                          onSubmit={closeDropdown}
+                        />
+                      </>
+                    )}
+                  </RelationPickerScope>
+                }
+                dropdownHotkeyScope={{
+                  scope: dropdownId,
+                }}
+              />
+            </DropdownScope>
+          )
         }
       />
       {showContent()}

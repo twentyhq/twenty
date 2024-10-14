@@ -1,5 +1,3 @@
-import { isValidPhoneNumber } from 'libphonenumber-js';
-
 import { FieldValidationDefinition } from '@/spreadsheet-import/types';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -38,15 +36,6 @@ export const getSpreadSheetFieldValidationDefinitions = (
           rule: 'regex',
           value: '^\\d+$',
           errorMessage: fieldName + ' must be a number',
-          level: 'error',
-        },
-      ];
-    case FieldMetadataType.Phone:
-      return [
-        {
-          rule: 'function',
-          isValid: (value: string) => isValidPhoneNumber(value),
-          errorMessage: fieldName + ' is not valid',
           level: 'error',
         },
       ];

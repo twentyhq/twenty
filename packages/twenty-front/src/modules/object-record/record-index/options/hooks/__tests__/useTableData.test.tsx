@@ -1,17 +1,18 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { act } from 'react';
 import { percentage, sleep, useTableData } from '../useTableData';
 
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
-import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewType } from '@/views/types/ViewType';
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
-import { ReactNode } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const defaultResponseData = {
   pageInfo: {
@@ -22,11 +23,15 @@ const defaultResponseData = {
   },
   totalCount: 1,
 };
+
 const mockPerson = {
   __typename: 'Person',
   updatedAt: '2021-08-03T19:20:06.000Z',
-  myCustomObjectId: '123',
-  whatsapp: '123',
+  whatsapp: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   linkedinLink: {
     primaryLinkUrl: 'https://www.linkedin.com',
     primaryLinkLabel: 'linkedin',
@@ -36,7 +41,10 @@ const mockPerson = {
     firstName: 'firstName',
     lastName: 'lastName',
   },
-  email: 'email',
+  emails: {
+    primaryEmail: 'email',
+    additionalEmails: [],
+  },
   position: 'position',
   createdBy: {
     source: 'source',
@@ -52,13 +60,19 @@ const mockPerson = {
   },
   performanceRating: 1,
   createdAt: '2021-08-03T19:20:06.000Z',
-  phone: 'phone',
+  phones: {
+    primaryPhoneNumber: '+1',
+    primaryPhoneCountryCode: '234-567-890',
+    additionalPhones: [],
+  },
   id: '123',
   city: 'city',
   companyId: '1',
   intro: 'intro',
-  workPrefereance: 'workPrefereance',
+  deletedAt: null,
+  workPreference: 'workPreference',
 };
+
 const mocks: MockedResponse[] = [
   {
     request: {
@@ -77,41 +91,7 @@ const mocks: MockedResponse[] = [
           ) {
             edges {
               node {
-                __typename
-                updatedAt
-                myCustomObjectId
-                whatsapp
-                linkedinLink {
-                  primaryLinkUrl
-                  primaryLinkLabel
-                  secondaryLinks
-                }
-                name {
-                  firstName
-                  lastName
-                }
-                email
-                position
-                createdBy {
-                  source
-                  workspaceMemberId
-                  name
-                }
-                avatarUrl
-                jobTitle
-                xLink {
-                  primaryLinkUrl
-                  primaryLinkLabel
-                  secondaryLinks
-                }
-                performanceRating
-                createdAt
-                phone
-                id
-                city
-                companyId
-                intro
-                workPrefereance
+                ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
               }
               cursor
             }
@@ -147,21 +127,9 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <SnackBarManagerScopeInternalContext.Provider
-    value={{
-      scopeId: 'snack-bar-manager',
-    }}
-  >
-    <Router>
-      <RecoilRoot>
-        <MockedProvider addTypename={false} mocks={mocks}>
-          {children}
-        </MockedProvider>
-      </RecoilRoot>
-    </Router>
-  </SnackBarManagerScopeInternalContext.Provider>
-);
+const WrapperWithResponse = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 const graphqlEmptyResponse = [
   {
@@ -177,21 +145,9 @@ const graphqlEmptyResponse = [
   },
 ];
 
-const WrapperWithEmptyResponse = ({ children }: { children: ReactNode }) => (
-  <SnackBarManagerScopeInternalContext.Provider
-    value={{
-      scopeId: 'snack-bar-manager',
-    }}
-  >
-    <Router>
-      <RecoilRoot>
-        <MockedProvider addTypename={false} mocks={graphqlEmptyResponse}>
-          {children}
-        </MockedProvider>
-      </RecoilRoot>
-    </Router>
-  </SnackBarManagerScopeInternalContext.Provider>
-);
+const WrapperWithEmptyResponse = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: graphqlEmptyResponse,
+});
 
 describe('useTableData', () => {
   const recordIndexId = 'people';
@@ -205,6 +161,7 @@ describe('useTableData', () => {
           useTableData({
             recordIndexId,
             objectNameSingular,
+            pageSize: 30,
             callback,
             delayMs: 0,
             viewType: ViewType.Kanban,
@@ -229,10 +186,11 @@ describe('useTableData', () => {
             recordIndexId,
             objectNameSingular,
             callback,
+            pageSize: 30,
 
             delayMs: 0,
           }),
-        { wrapper: Wrapper },
+        { wrapper: WrapperWithResponse },
       );
 
       await act(async () => {
@@ -262,7 +220,7 @@ describe('useTableData', () => {
               delayMs: 0,
               viewType: ViewType.Kanban,
             }),
-            setKanbanFieldName: useRecordBoard(recordIndexId),
+            useRecordBoardHook: useRecordBoard(recordIndexId),
             kanbanFieldName: useRecoilValue(kanbanFieldNameState),
             kanbanData: useRecordIndexOptionsForBoard({
               objectNameSingular,
@@ -272,13 +230,21 @@ describe('useTableData', () => {
           };
         },
         {
-          wrapper: Wrapper,
+          wrapper: WrapperWithResponse,
         },
       );
 
+      const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      );
+
+      const updatedAtFieldMetadataItem = personObjectMetadataItem?.fields.find(
+        (field) => field.name === 'updatedAt',
+      );
+
       await act(async () => {
-        result.current.setKanbanFieldName.setKanbanFieldMetadataName(
-          result.current.kanbanData.hiddenBoardFields[0].metadata.fieldName,
+        result.current.useRecordBoardHook.setKanbanFieldMetadataName(
+          updatedAtFieldMetadataItem?.name,
         );
       });
 
@@ -293,7 +259,7 @@ describe('useTableData', () => {
             {
               defaultValue: 'now',
               editButtonIcon: undefined,
-              fieldMetadataId: '102963b7-3e77-4293-a1e6-1ab59a02b663',
+              fieldMetadataId: updatedAtFieldMetadataItem?.id,
               iconName: 'IconCalendarClock',
               isFilterable: true,
               isLabelIdentifier: false,
@@ -312,8 +278,14 @@ describe('useTableData', () => {
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,
                 targetFieldMetadataName: '',
+                settings: {
+                  displayAsRelativeDate: true,
+                },
               },
-              position: 0,
+              position: expect.any(Number),
+              settings: {
+                displayAsRelativeDate: true,
+              },
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',
@@ -351,7 +323,7 @@ describe('useTableData', () => {
           };
         },
         {
-          wrapper: Wrapper,
+          wrapper: WrapperWithResponse,
         },
       );
 

@@ -3,12 +3,10 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { IconAt } from 'twenty-ui';
 
 export const SettingsNewAccount = () => {
   return (
     <SubMenuTopBarContainer
-      Icon={IconAt}
       title="New Account"
       links={[
         {

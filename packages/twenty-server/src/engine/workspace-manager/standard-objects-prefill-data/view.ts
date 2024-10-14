@@ -9,6 +9,8 @@ import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
+import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
+import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 
 export const viewPrefillData = async (
@@ -18,14 +20,20 @@ export const viewPrefillData = async (
   isWorkflowEnabled: boolean,
 ) => {
   const viewDefinitions = [
-    await companiesAllView(objectMetadataMap),
-    await peopleAllView(objectMetadataMap),
-    await opportunitiesAllView(objectMetadataMap),
-    await opportunitiesByStageView(objectMetadataMap),
-    await notesAllView(objectMetadataMap),
-    await tasksAllView(objectMetadataMap),
-    await tasksByStatusView(objectMetadataMap),
-    ...(isWorkflowEnabled ? [await workflowsAllView(objectMetadataMap)] : []),
+    companiesAllView(objectMetadataMap),
+    peopleAllView(objectMetadataMap),
+    opportunitiesAllView(objectMetadataMap),
+    opportunitiesByStageView(objectMetadataMap),
+    notesAllView(objectMetadataMap),
+    tasksAllView(objectMetadataMap),
+    tasksByStatusView(objectMetadataMap),
+    ...(isWorkflowEnabled
+      ? [
+          workflowsAllView(objectMetadataMap),
+          workflowVersionsAllView(objectMetadataMap),
+          workflowRunsAllView(objectMetadataMap),
+        ]
+      : []),
   ];
 
   const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({

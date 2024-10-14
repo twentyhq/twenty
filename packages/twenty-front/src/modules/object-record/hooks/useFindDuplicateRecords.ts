@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -53,12 +53,9 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
             `useFindDuplicateRecords for "${objectMetadataItem.nameSingular}" error : ` +
               error,
           );
-          enqueueSnackBar(
-            `Error during useFindDuplicateRecords for "${objectMetadataItem.nameSingular}", ${error.message}`,
-            {
-              variant: SnackBarVariant.Error,
-            },
-          );
+          enqueueSnackBar(`Error finding duplicates:", ${error.message}`, {
+            variant: SnackBarVariant.Error,
+          });
         },
       },
     );

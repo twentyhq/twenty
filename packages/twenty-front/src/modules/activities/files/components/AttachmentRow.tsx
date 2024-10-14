@@ -1,3 +1,4 @@
+import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
@@ -13,26 +14,20 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { IconCalendar } from 'twenty-ui';
+import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
-
-const StyledRow = styled.div`
-  align-items: center;
-  align-self: stretch;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)};
-  height: 32px;
-`;
+import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledLeftContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
+
+  width: 100%;
+  overflow: auto;
+  flex: 1;
 `;
 
 const StyledRightContent = styled.div`
@@ -52,15 +47,28 @@ const StyledLink = styled.a`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   text-decoration: none;
+
+  width: 100%;
+
   :hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
 `;
 
+const StyledLinkContainer = styled.div`
+  overflow: auto;
+  width: 100%;
+`;
+
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
-  const [attachmentName, setAttachmentName] = useState(attachment.name);
+
+  const { name: originalFileName, extension: attachmentFileExtension } =
+    getFileNameAndExtension(attachment.name);
+
+  const [attachmentFileName, setAttachmentFileName] =
+    useState(originalFileName);
 
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
@@ -83,38 +91,60 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     setIsEditing(true);
   };
 
-  const handleOnBlur = () => {
+  const saveAttachmentName = () => {
     setIsEditing(false);
+
+    const newFileName = `${attachmentFileName}${attachmentFileExtension}`;
+
     updateOneAttachment({
       idToUpdate: attachment.id,
-      updateOneRecordInput: { name: attachmentName },
+      updateOneRecordInput: { name: newFileName },
     });
   };
 
-  const handleOnChange = (newName: string) => {
-    setAttachmentName(newName);
+  const handleOnBlur = () => {
+    saveAttachmentName();
+  };
+
+  const handleOnChange = (newFileName: string) => {
+    setAttachmentFileName(newFileName);
+  };
+
+  const handleOnKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveAttachmentName();
+    }
+  };
+
+  const handleDownload = () => {
+    downloadFile(
+      attachment.fullPath,
+      `${attachmentFileName}${attachmentFileExtension}`,
+    );
   };
 
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
-      <StyledRow>
+      <ActivityRow disabled>
         <StyledLeftContent>
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
             <TextInput
-              value={attachmentName}
+              value={attachmentFileName}
               onChange={handleOnChange}
               onBlur={handleOnBlur}
               autoFocus
-              fullWidth
+              onKeyDown={handleOnKeyDown}
             />
           ) : (
-            <StyledLink
-              href={getFileAbsoluteURI(attachment.fullPath)}
-              target="__blank"
-            >
-              {attachment.name}
-            </StyledLink>
+            <StyledLinkContainer>
+              <StyledLink
+                href={getFileAbsoluteURI(attachment.fullPath)}
+                target="__blank"
+              >
+                <OverflowingTextWithTooltip text={attachment.name} />
+              </StyledLink>
+            </StyledLinkContainer>
           )}
         </StyledLeftContent>
         <StyledRightContent>
@@ -125,13 +155,11 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           <AttachmentDropdown
             scopeKey={attachment.id}
             onDelete={handleDelete}
-            onDownload={() => {
-              downloadFile(attachment.fullPath, attachment.name);
-            }}
+            onDownload={handleDownload}
             onRename={handleRename}
           />
         </StyledRightContent>
-      </StyledRow>
+      </ActivityRow>
     </FieldContext.Provider>
   );
 };

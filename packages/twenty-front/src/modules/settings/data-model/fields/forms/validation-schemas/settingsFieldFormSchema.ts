@@ -1,14 +1,13 @@
-import { z } from 'zod';
-
 import { settingsDataModelFieldDescriptionFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { settingsDataModelFieldIconLabelFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { settingsDataModelFieldSettingsFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
-import { settingsDataModelFieldTypeFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
+import { z } from 'zod';
+import { settingsDataModelFieldTypeFormSchema } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
 
-export const settingsFieldFormSchema = (existingLabels?: string[]) => {
+export const settingsFieldFormSchema = (existingOtherLabels?: string[]) => {
   return z
     .object({})
-    .merge(settingsDataModelFieldIconLabelFormSchema(existingLabels))
+    .merge(settingsDataModelFieldIconLabelFormSchema(existingOtherLabels))
     .merge(settingsDataModelFieldDescriptionFormSchema())
     .merge(settingsDataModelFieldTypeFormSchema)
     .and(settingsDataModelFieldSettingsFormSchema);

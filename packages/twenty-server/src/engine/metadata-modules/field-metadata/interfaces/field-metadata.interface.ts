@@ -19,7 +19,10 @@ export interface FieldMetadataInterface<
   workspaceId?: string;
   description?: string;
   isNullable?: boolean;
+  isUnique?: boolean;
   fromRelationMetadata?: RelationMetadataEntity;
   toRelationMetadata?: RelationMetadataEntity;
   isCustom?: boolean;
+  generatedType?: 'STORED' | 'VIRTUAL';
+  asExpression?: string;
 }

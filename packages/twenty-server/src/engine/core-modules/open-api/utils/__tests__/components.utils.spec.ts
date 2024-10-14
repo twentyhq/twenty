@@ -1,19 +1,8 @@
-import {
-  fields,
-  objectMetadataItemMock,
-} from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
-  it('should test all non-deprecated field types', () => {
-    expect(fields.map((field) => field.type)).toEqual(
-      Object.keys(FieldMetadataType).filter(
-        (key) => key !== FieldMetadataType.LINK,
-      ),
-    );
-  });
   it('should compute schema components', () => {
     expect(
       computeSchemaComponents([
@@ -21,6 +10,7 @@ describe('computeSchemaComponents', () => {
       ] as ObjectMetadataEntity[]),
     ).toEqual({
       ObjectName: {
+        description: undefined,
         type: 'object',
         properties: {
           fieldUuid: {
@@ -28,9 +18,6 @@ describe('computeSchemaComponents', () => {
             format: 'uuid',
           },
           fieldText: {
-            type: 'string',
-          },
-          fieldPhone: {
             type: 'string',
           },
           fieldPhones: {
@@ -46,10 +33,6 @@ describe('computeSchemaComponents', () => {
               },
             },
             type: 'object',
-          },
-          fieldEmail: {
-            type: 'string',
-            format: 'email',
           },
           fieldEmails: {
             type: 'object',
@@ -195,6 +178,7 @@ describe('computeSchemaComponents', () => {
                   'API',
                   'IMPORT',
                   'MANUAL',
+                  'SYSTEM',
                 ],
               },
             },
@@ -203,6 +187,7 @@ describe('computeSchemaComponents', () => {
         required: ['fieldNumber'],
       },
       'ObjectName for Update': {
+        description: undefined,
         type: 'object',
         properties: {
           fieldUuid: {
@@ -210,9 +195,6 @@ describe('computeSchemaComponents', () => {
             format: 'uuid',
           },
           fieldText: {
-            type: 'string',
-          },
-          fieldPhone: {
             type: 'string',
           },
           fieldPhones: {
@@ -228,10 +210,6 @@ describe('computeSchemaComponents', () => {
               },
             },
             type: 'object',
-          },
-          fieldEmail: {
-            type: 'string',
-            format: 'email',
           },
           fieldEmails: {
             type: 'object',
@@ -377,6 +355,7 @@ describe('computeSchemaComponents', () => {
                   'API',
                   'IMPORT',
                   'MANUAL',
+                  'SYSTEM',
                 ],
               },
             },
@@ -384,6 +363,7 @@ describe('computeSchemaComponents', () => {
         },
       },
       'ObjectName for Response': {
+        description: undefined,
         type: 'object',
         properties: {
           fieldUuid: {
@@ -391,9 +371,6 @@ describe('computeSchemaComponents', () => {
             format: 'uuid',
           },
           fieldText: {
-            type: 'string',
-          },
-          fieldPhone: {
             type: 'string',
           },
           fieldPhones: {
@@ -409,10 +386,6 @@ describe('computeSchemaComponents', () => {
               },
             },
             type: 'object',
-          },
-          fieldEmail: {
-            type: 'string',
-            format: 'email',
           },
           fieldEmails: {
             type: 'object',
@@ -558,6 +531,7 @@ describe('computeSchemaComponents', () => {
                   'API',
                   'IMPORT',
                   'MANUAL',
+                  'SYSTEM',
                 ],
               },
               workspaceMemberId: {

@@ -1,12 +1,17 @@
-import path from 'path';
+import path, { join } from 'path';
 
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
+import { ASSET_PATH } from 'src/constants/assets-path';
 
-// Can only be used in src/engine/integrations/serverless/drivers/utils folder
 export const getLayerDependenciesDirName = (
   version: 'latest' | 'engine' | number,
 ): string => {
   const formattedVersion = version === 'latest' ? LAST_LAYER_VERSION : version;
 
-  return path.resolve(__dirname, `../layers/${formattedVersion}`);
+  const baseTypescriptProjectPath = join(
+    ASSET_PATH,
+    `engine/core-modules/serverless/drivers/layers/${formattedVersion}`,
+  );
+
+  return path.resolve(baseTypescriptProjectPath);
 };

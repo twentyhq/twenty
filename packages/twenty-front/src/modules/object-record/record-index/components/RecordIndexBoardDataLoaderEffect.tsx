@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
@@ -61,7 +62,22 @@ export const RecordIndexBoardDataLoaderEffect = ({
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
-  const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
+
+  const navigateToSelectSettings = useCallback(() => {
+    setNavigationMemorizedUrl(location.pathname + location.search);
+    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
+  }, [
+    navigate,
+    objectMetadataItem,
+    location.pathname,
+    location.search,
+    setNavigationMemorizedUrl,
+  ]);
 
   useEffect(() => {
     setObjectSingularName(objectNameSingular);
@@ -96,16 +112,32 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
-    objectMetadataItem,
-    selectedRecordIds,
-    callback: resetRecordSelection,
-  });
+  const setContextStoreTargetedRecordIds = useSetRecoilState(
+    contextStoreTargetedRecordIdsState,
+  );
+
+  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
+    contextStoreCurrentObjectMetadataIdState,
+  );
 
   useEffect(() => {
-    setActionBarEntries?.();
-    setContextMenuEntries?.();
-  }, [setActionBarEntries, setContextMenuEntries]);
+    setContextStoreTargetedRecordIds(selectedRecordIds);
+  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
+
+  useEffect(() => {
+    setContextStoreTargetedRecordIds(selectedRecordIds);
+    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+
+    return () => {
+      setContextStoreTargetedRecordIds([]);
+      setContextStoreCurrentObjectMetadataItem(null);
+    };
+  }, [
+    objectMetadataItem?.id,
+    selectedRecordIds,
+    setContextStoreCurrentObjectMetadataItem,
+    setContextStoreTargetedRecordIds,
+  ]);
 
   return <></>;
 };

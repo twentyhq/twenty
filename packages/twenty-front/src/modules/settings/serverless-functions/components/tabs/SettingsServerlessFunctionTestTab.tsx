@@ -44,28 +44,6 @@ export const SettingsServerlessFunctionTestTab = ({
     settingsServerlessFunctionOutput.error ||
     '';
 
-  const InputHeader = (
-    <CoreEditorHeader
-      title={'Input'}
-      rightNodes={[
-        <Button
-          title="Run Function"
-          variant="primary"
-          accent="blue"
-          size="small"
-          Icon={IconPlayerPlay}
-          onClick={handleExecute}
-        />,
-      ]}
-    />
-  );
-
-  const OutputHeader = (
-    <CoreEditorHeader
-      leftNodes={[<SettingsServerlessFunctionsOutputMetadataInfo />]}
-      rightNodes={[<LightCopyIconButton copyText={result} />]}
-    />
-  );
   const navigate = useNavigate();
   useHotkeyScopeOnMount(
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
@@ -86,20 +64,52 @@ export const SettingsServerlessFunctionTestTab = ({
         description='Insert a JSON input, then press "Run" to test your function.'
       />
       <StyledInputsContainer>
-        <CodeEditor
-          value={settingsServerlessFunctionInput}
-          height={200}
-          onChange={setSettingsServerlessFunctionInput}
-          language={'json'}
-          header={InputHeader}
-        />
-        <CodeEditor
-          value={result}
-          height={settingsServerlessFunctionCodeEditorOutputParams.height}
-          language={settingsServerlessFunctionCodeEditorOutputParams.language}
-          options={{ readOnly: true, domReadOnly: true }}
-          header={OutputHeader}
-        />
+        <div>
+          <CoreEditorHeader
+            title={'Input'}
+            rightNodes={[
+              <Button
+                title="Run Function"
+                variant="primary"
+                accent="blue"
+                size="small"
+                Icon={IconPlayerPlay}
+                onClick={handleExecute}
+              />,
+            ]}
+          />
+          <CodeEditor
+            files={[
+              {
+                content: settingsServerlessFunctionInput,
+                language: 'json',
+                path: 'input.json',
+              },
+            ]}
+            currentFilePath={'input.json'}
+            height={200}
+            onChange={setSettingsServerlessFunctionInput}
+          />
+        </div>
+        <div>
+          <CoreEditorHeader
+            leftNodes={[<SettingsServerlessFunctionsOutputMetadataInfo />]}
+            rightNodes={[<LightCopyIconButton copyText={result} />]}
+          />
+          <CodeEditor
+            files={[
+              {
+                content: result,
+                language:
+                  settingsServerlessFunctionCodeEditorOutputParams.language,
+                path: 'result.any',
+              },
+            ]}
+            currentFilePath={'result.any'}
+            height={settingsServerlessFunctionCodeEditorOutputParams.height}
+            options={{ readOnly: true, domReadOnly: true }}
+          />
+        </div>
       </StyledInputsContainer>
     </Section>
   );

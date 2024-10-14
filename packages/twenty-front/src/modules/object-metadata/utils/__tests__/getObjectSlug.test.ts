@@ -1,11 +1,9 @@
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('getObjectSlug', () => {
   it('should work as expected', () => {
-    const objectMetadataItem = mockObjectMetadataItems.find(
+    const objectMetadataItem = generatedMockObjectMetadataItems.find(
       (item) => item.nameSingular === 'person',
     )!;
 

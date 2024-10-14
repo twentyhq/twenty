@@ -15,8 +15,9 @@ export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauth
   constructor(
     environmentService: EnvironmentService,
     scopeConfig: GoogleAPIScopeConfig,
+    isGmailSendEmailScopeEnabled = false,
   ) {
-    super(environmentService, scopeConfig);
+    super(environmentService, scopeConfig, isGmailSendEmailScopeEnabled);
   }
 
   async validate(

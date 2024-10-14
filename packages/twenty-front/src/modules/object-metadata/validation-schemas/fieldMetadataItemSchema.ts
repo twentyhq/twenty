@@ -20,6 +20,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     isActive: z.boolean(),
     isCustom: z.boolean(),
     isNullable: z.boolean(),
+    isUnique: z.boolean(),
     isSystem: z.boolean(),
     label: metadataLabelSchema(existingLabels),
     name: camelCaseStringSchema,
@@ -35,6 +36,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
       )
       .nullable()
       .optional(),
+    settings: z.any().optional(),
     relationDefinition: z
       .object({
         __typename: z.literal('RelationDefinition').optional(),

@@ -55,8 +55,6 @@ export const standardObjectMetadataDefinitions = [
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
   FavoriteWorkspaceEntity,
-  OpportunityWorkspaceEntity,
-  PersonWorkspaceEntity,
   TimelineActivityWorkspaceEntity,
   ViewFieldWorkspaceEntity,
   ViewGroupWorkspaceEntity,
