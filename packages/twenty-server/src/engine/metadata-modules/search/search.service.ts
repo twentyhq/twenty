@@ -108,6 +108,7 @@ export class SearchService {
       createdObjectMetadata,
       [searchVectorFieldMetadata],
       false,
+      false,
       IndexType.GIN,
     );
   }
@@ -158,6 +159,7 @@ export class SearchService {
       workspaceId,
       objectMetadata,
       [existingSearchVectorFieldMetadata],
+      false,
       false,
       IndexType.GIN,
     );
