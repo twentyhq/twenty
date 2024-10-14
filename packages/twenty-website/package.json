@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@docsearch/react": "^3.6.2",
+    "@nivo/calendar": "^0.87.0",
     "gray-matter": "^4.0.3",
     "next-runtime-env": "^3.2.2",
     "postgres": "^3.4.3"
