@@ -147,7 +147,7 @@ export const RichTextEditor = ({
 
   const uploadedFileUrl = getFileAbsoluteURI(result.data.uploadFile);
 
-  // Step 2: Update attachment table with file metadata
+  
   await addAttachmentMutation({
     variables: {
       fileId: result.data.uploadFile, // Assuming file ID is returned from the upload
