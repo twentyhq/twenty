@@ -4,7 +4,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 import { AdvancedFilterViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
@@ -62,9 +61,7 @@ export const AdvancedFilterDropdownButton = (
         />
       }
       dropdownComponents={
-        <ObjectFilterDropdownScope filterScopeId={ADVANCED_FILTER_DROPDOWN_ID}>
-          <AdvancedFilterViewFilterGroup viewBarInstanceId={props.viewBarId} />
-        </ObjectFilterDropdownScope>
+        <AdvancedFilterViewFilterGroup viewBarInstanceId={props.viewBarId} />
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
