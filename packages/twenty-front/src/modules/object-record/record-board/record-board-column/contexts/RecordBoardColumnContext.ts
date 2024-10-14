@@ -7,6 +7,8 @@ type RecordBoardColumnContextProps = {
   isFirstColumn: boolean;
   isLastColumn: boolean;
   recordCount: number;
+  columnId: string;
+  recordIds: string[];
 };
 
 export const RecordBoardColumnContext =

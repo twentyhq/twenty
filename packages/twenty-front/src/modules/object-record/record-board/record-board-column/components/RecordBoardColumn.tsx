@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
-import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
 const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
@@ -18,6 +17,9 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   min-width: 200px;
 
   padding: ${({ theme }) => theme.spacing(2)};
+
+  padding-top: 0px;
+
   position: relative;
 `;
 
@@ -61,12 +63,13 @@ export const RecordBoardColumn = ({
         isFirstColumn: isFirstColumn,
         isLastColumn: isLastColumn,
         recordCount: recordIds.length,
+        columnId: recordBoardColumnId,
+        recordIds,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
         {(droppableProvided) => (
           <StyledColumn isFirstColumn={isFirstColumn}>
-            <RecordBoardColumnHeader />
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
               recordIds={recordIds}

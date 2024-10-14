@@ -2,8 +2,6 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexBoardDataLoader } from '@/object-record/record-index/components/RecordIndexBoardDataLoader';
 import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
@@ -45,7 +43,6 @@ const StyledContainer = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  overflow: auto;
 `;
 
 const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
@@ -58,17 +55,12 @@ export const RecordIndexContainer = () => {
     recordIndexViewTypeState,
   );
 
-  const { objectNamePlural, recordIndexId } = useContext(
-    RecordIndexRootPropsContext,
-  );
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
+  const {
     objectNamePlural,
-  });
-
-  const { objectMetadataItem } = useObjectMetadataItem({
+    recordIndexId,
+    objectMetadataItem,
     objectNameSingular,
-  });
+  } = useContext(RecordIndexRootPropsContext);
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
@@ -167,18 +159,13 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           </SpreadsheetImportProvider>
-
           {recordIndexViewType === ViewType.Table && (
             <>
               <RecordIndexTableContainer
                 recordTableId={recordIndexId}
                 viewBarId={recordIndexId}
               />
-              <RecordIndexTableContainerEffect
-                objectNameSingular={objectNameSingular}
-                recordTableId={recordIndexId}
-                viewBarId={recordIndexId}
-              />
+              <RecordIndexTableContainerEffect />
             </>
           )}
           {recordIndexViewType === ViewType.Kanban && (

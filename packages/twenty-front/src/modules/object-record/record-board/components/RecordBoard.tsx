@@ -4,6 +4,7 @@ import { useContext, useRef } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -19,17 +20,12 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
-export type RecordBoardProps = {
-  recordBoardId: string;
-};
-
 const StyledContainer = styled.div`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  overflow: auto;
   display: flex;
   flex: 1;
   flex-direction: row;
   min-height: calc(100% - 1px);
+  overflow: auto;
 `;
 
 const StyledWrapper = styled.div`
@@ -41,18 +37,13 @@ const StyledWrapper = styled.div`
   width: 100%;
 `;
 
-const StyledBoardHeader = styled.div`
-  position: relative;
-  z-index: 1;
-`;
-
 const RecordBoardScrollRestoreEffect = () => {
   useScrollRestoration();
   return null;
 };
 
-export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
-  const { updateOneRecord, selectFieldMetadataItem } =
+export const RecordBoard = () => {
+  const { updateOneRecord, selectFieldMetadataItem, recordBoardId } =
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -75,7 +66,7 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
 
   useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);
 
-  const onDragEnd: OnDragEndResponder = useRecoilCallback(
+  const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
       (result) => {
         if (!result.destination) return;
@@ -146,11 +137,11 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >
+      <RecordBoardHeader />
       <StyledWrapper>
-        <StyledBoardHeader />
         <ScrollWrapper contextProviderName="recordBoard">
           <StyledContainer ref={boardRef}>
-            <DragDropContext onDragEnd={onDragEnd}>
+            <DragDropContext onDragEnd={handleDragEnd}>
               {columnIds.map((columnId) => (
                 <RecordBoardColumn
                   key={columnId}
