@@ -1,5 +1,6 @@
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
@@ -14,6 +15,7 @@ export type GraphQLView = {
   isCompact: boolean;
   viewFields: ViewField[];
   viewFilters: ViewFilter[];
+  viewFilterGroups: ViewFilterGroup[];
   viewSorts: ViewSort[];
   position: number;
   icon: string;

@@ -12,7 +12,6 @@ import {
   StringFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
@@ -25,6 +24,8 @@ import {
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/applyEmptyFilters';
+import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
@@ -769,14 +770,107 @@ export const filterToRecordGqlOperationFilter = (
   }
 };
 
-export const filtersToRecordGqlOperationFilter = (
-  rawUIFilters: Filter[],
+const viewFilterGroupToRecordGqlOperationFilter = (
+  filters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
+  viewFilterGroups: ViewFilterGroup[],
+  viewFilterGroupId?: string,
 ): RecordGqlOperationFilter | undefined => {
-  const objectRecordFilters: (RecordGqlOperationFilter | undefined)[] =
-    rawUIFilters.map((rawUIFilter) =>
-      filterToRecordGqlOperationFilter(rawUIFilter, fields),
+  const viewFilterGroup = viewFilterGroups.find((viewFilterGroup) =>
+    viewFilterGroupId
+      ? viewFilterGroup.id === viewFilterGroupId
+      : !viewFilterGroup.parentViewFilterGroupId,
+  );
+
+  if (!viewFilterGroup) {
+    return undefined;
+  }
+
+  const groupFilters = filters.filter(
+    (filter) => filter.viewFilterGroupId === viewFilterGroupId,
+  );
+
+  const groupRecordGqlOperationFilters = groupFilters
+    .map((filter) => filterToRecordGqlOperationFilter(filter, fields))
+    .filter(isDefined);
+
+  const subGroupRecordGqlOperationFilters = viewFilterGroups
+    .filter(
+      (viewFilterGroup) =>
+        viewFilterGroup.parentViewFilterGroupId === viewFilterGroupId,
+    )
+    .map((subViewFilterGroup) =>
+      viewFilterGroupToRecordGqlOperationFilter(
+        filters,
+        fields,
+        viewFilterGroups,
+        subViewFilterGroup.id,
+      ),
+    )
+    .filter(isDefined);
+
+  if (viewFilterGroup.logicalOperator === ViewFilterGroupLogicalOperator.AND) {
+    return {
+      and: [
+        ...groupRecordGqlOperationFilters,
+        ...subGroupRecordGqlOperationFilters,
+      ],
+    };
+  } else if (
+    viewFilterGroup.logicalOperator === ViewFilterGroupLogicalOperator.OR
+  ) {
+    return {
+      or: [
+        ...groupRecordGqlOperationFilters,
+        ...subGroupRecordGqlOperationFilters,
+      ],
+    };
+  } else {
+    throw new Error(
+      `Unknown logical operator ${viewFilterGroup.logicalOperator}`,
+    );
+  }
+};
+
+export const filtersToRecordGqlOperationFilter = (
+  filters: Filter[],
+  fields: Pick<Field, 'id' | 'name'>[],
+  viewFilterGroups?: ViewFilterGroup[], // TODO: Make required
+): RecordGqlOperationFilter => {
+  if (!viewFilterGroups) {
+    throw new Error('viewFilterGroups are required');
+  }
+
+  const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] = filters
+    .filter((filter) => !filter.viewFilterGroupId)
+    .map((regularFilter) =>
+      filterToRecordGqlOperationFilter(regularFilter, fields),
+    )
+    .filter(isDefined);
+
+  const advancedRecordGqlOperationFilter =
+    viewFilterGroupToRecordGqlOperationFilter(
+      filters,
+      fields,
+      viewFilterGroups,
     );
 
-  return makeAndFilterVariables(objectRecordFilters);
+  const recordGqlOperationFilters = [
+    ...regularRecordGqlOperationFilter,
+    advancedRecordGqlOperationFilter,
+  ].filter(isDefined);
+
+  if (recordGqlOperationFilters.length === 0) {
+    return {};
+  }
+
+  if (recordGqlOperationFilters.length === 1) {
+    return recordGqlOperationFilters[0];
+  }
+
+  const recordGqlOperationFilter = {
+    and: recordGqlOperationFilters,
+  };
+
+  return recordGqlOperationFilter;
 };

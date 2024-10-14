@@ -82,7 +82,12 @@ export const RecordIndexContainer = () => {
     recordIndexKanbanFieldMetadataIdState,
   );
 
-  const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
+  const {
+    setTableViewFilterGroups,
+    setTableFilters,
+    setTableSorts,
+    setTableColumns,
+  } = useRecordTable({
     recordTableId: recordIndexId,
   });
 
@@ -136,6 +141,7 @@ export const RecordIndexContainer = () => {
                   }
 
                   onViewFieldsChange(view.viewFields);
+                  setTableViewFilterGroups(view.viewFilterGroups);
                   setTableFilters(
                     mapViewFiltersToFilters(
                       view.viewFilters,

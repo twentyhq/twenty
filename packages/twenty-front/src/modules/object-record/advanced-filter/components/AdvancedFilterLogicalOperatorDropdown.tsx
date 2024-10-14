@@ -35,10 +35,6 @@ export const AdvancedFilterLogicalOperatorDropdown = (
           value: ViewFilterGroupLogicalOperator.OR,
           label: 'Or',
         },
-        {
-          value: ViewFilterGroupLogicalOperator.NOT,
-          label: 'Not',
-        },
       ]}
     />
   );

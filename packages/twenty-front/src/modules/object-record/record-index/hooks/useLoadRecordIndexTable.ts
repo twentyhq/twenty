@@ -21,15 +21,17 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
-  const { tableFiltersState, tableSortsState } =
+  const { tableFiltersState, tableSortsState, tableViewFilterGroupsState } =
     useRecordTableStates(recordTableId);
 
+  const tableViewFilterGroups = useRecoilValue(tableViewFilterGroupsState);
   const tableFilters = useRecoilValue(tableFiltersState);
   const tableSorts = useRecoilValue(tableSortsState);
 
   const filter = filtersToRecordGqlOperationFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
+    tableViewFilterGroups,
   );
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
