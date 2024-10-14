@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
@@ -29,13 +27,14 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
+import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
-import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 const SEARCH_BAR_HEIGHT = 56;
 const SEARCH_BAR_PADDING = 3;
@@ -131,7 +130,6 @@ const StyledEmpty = styled.div`
 export const CommandMenu = () => {
   const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
-
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -139,9 +137,9 @@ export const CommandMenu = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
   );
+  const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };
@@ -167,99 +165,45 @@ export const CommandMenu = () => {
     [closeCommandMenu],
   );
 
-  const isWorkspaceMigratedForSearch = useIsFeatureEnabled(
-    'IS_WORKSPACE_MIGRATED_FOR_SEARCH',
-  );
+  const { loading: isPeopleLoading, records: people } =
+    useSearchRecords<Person>({
+      skip: !isCommandMenuOpened,
+      objectNameSingular: CoreObjectNameSingular.Person,
+      limit: 3,
+      searchInput: deferredCommandMenuSearch ?? undefined,
+    });
 
-  const isSearchEnabled =
-    useIsFeatureEnabled('IS_SEARCH_ENABLED') && isWorkspaceMigratedForSearch;
+  const { loading: isCompaniesLoading, records: companies } =
+    useSearchRecords<Company>({
+      skip: !isCommandMenuOpened,
+      objectNameSingular: CoreObjectNameSingular.Company,
+      limit: 3,
+      searchInput: deferredCommandMenuSearch ?? undefined,
+    });
 
-  const { records: peopleFromFindMany } = useFindManyRecords<Person>({
-    skip: !isCommandMenuOpened || isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Person,
-    filter: commandMenuSearch
-      ? makeOrFilterVariables([
-          ...generateILikeFiltersForCompositeFields(commandMenuSearch, 'name', [
-            'firstName',
-            'lastName',
-          ]),
-          ...generateILikeFiltersForCompositeFields(
-            commandMenuSearch,
-            'emails',
-            ['primaryEmail'],
-          ),
-        ])
-      : undefined,
-    limit: 3,
-  });
-  const { records: peopleFromSearch } = useSearchRecords<Person>({
-    skip: !isCommandMenuOpened || !isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Person,
-    limit: 3,
-    searchInput: commandMenuSearch ?? undefined,
-  });
-
-  const people = isSearchEnabled ? peopleFromSearch : peopleFromFindMany;
-
-  const { records: companiesFromSearch } = useSearchRecords<Company>({
-    skip: !isCommandMenuOpened || !isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Company,
-    limit: 3,
-    searchInput: commandMenuSearch ?? undefined,
-  });
-
-  const { records: companiesFromFindMany } = useFindManyRecords<Company>({
-    skip: !isCommandMenuOpened || isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Company,
-    filter: commandMenuSearch
-      ? {
-          name: { ilike: `%${commandMenuSearch}%` },
-        }
-      : undefined,
-    limit: 3,
-  });
-
-  const companies = isSearchEnabled
-    ? companiesFromSearch
-    : companiesFromFindMany;
-
-  const { records: notes } = useFindManyRecords<Note>({
+  const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
-    filter: commandMenuSearch
+    filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
-          { title: { ilike: `%${commandMenuSearch}%` } },
-          { body: { ilike: `%${commandMenuSearch}%` } },
+          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
+          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,
   });
 
-  const { records: opportunitiesFromFindMany } = useFindManyRecords({
-    skip: !isCommandMenuOpened || isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Opportunity,
-    filter: commandMenuSearch
-      ? {
-          name: { ilike: `%${commandMenuSearch}%` },
-        }
-      : undefined,
-    limit: 3,
-  });
-
-  const { records: opportunitiesFromSearch } = useSearchRecords<Opportunity>({
-    skip: !isCommandMenuOpened || !isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Opportunity,
-    limit: 3,
-    searchInput: commandMenuSearch ?? undefined,
-  });
-
-  const opportunities = isSearchEnabled
-    ? opportunitiesFromSearch
-    : opportunitiesFromFindMany;
+  const { loading: isOpportunitiesLoading, records: opportunities } =
+    useSearchRecords<Opportunity>({
+      skip: !isCommandMenuOpened,
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      limit: 3,
+      searchInput: deferredCommandMenuSearch ?? undefined,
+    });
 
   const peopleCommands = useMemo(
     () =>
-      people.map(({ id, name: { firstName, lastName } }) => ({
+      people?.map(({ id, name: { firstName, lastName } }) => ({
         id,
         label: `${firstName} ${lastName}`,
         to: `object/person/${id}`,
@@ -269,7 +213,7 @@ export const CommandMenu = () => {
 
   const companyCommands = useMemo(
     () =>
-      companies.map(({ id, name }) => ({
+      companies?.map(({ id, name }) => ({
         id,
         label: name ?? '',
         to: `object/company/${id}`,
@@ -279,7 +223,7 @@ export const CommandMenu = () => {
 
   const opportunityCommands = useMemo(
     () =>
-      opportunities.map(({ id, name }) => ({
+      opportunities?.map(({ id, name }) => ({
         id,
         label: name ?? '',
         to: `object/opportunity/${id}`,
@@ -289,7 +233,7 @@ export const CommandMenu = () => {
 
   const noteCommands = useMemo(
     () =>
-      notes.map((note) => ({
+      notes?.map((note) => ({
         id: note.id,
         label: note.title ?? '',
         to: '',
@@ -299,12 +243,20 @@ export const CommandMenu = () => {
   );
 
   const otherCommands = useMemo(() => {
-    return [
-      ...peopleCommands,
-      ...companyCommands,
-      ...opportunityCommands,
-      ...noteCommands,
-    ] as Command[];
+    const commandsArray: Command[] = [];
+    if (peopleCommands?.length > 0) {
+      commandsArray.push(...(peopleCommands as Command[]));
+    }
+    if (companyCommands?.length > 0) {
+      commandsArray.push(...(companyCommands as Command[]));
+    }
+    if (opportunityCommands?.length > 0) {
+      commandsArray.push(...(opportunityCommands as Command[]));
+    }
+    if (noteCommands?.length > 0) {
+      commandsArray.push(...(noteCommands as Command[]));
+    }
+    return commandsArray;
   }, [peopleCommands, companyCommands, noteCommands, opportunityCommands]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
@@ -322,17 +274,17 @@ export const CommandMenu = () => {
 
   const matchingNavigateCommand = commandMenuCommands.filter(
     (cmd) =>
-      (commandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, commandMenuSearch) ||
-          checkInLabels(cmd, commandMenuSearch)
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
         : true) && cmd.type === CommandType.Navigate,
   );
 
   const matchingCreateCommand = commandMenuCommands.filter(
     (cmd) =>
-      (commandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, commandMenuSearch) ||
-          checkInLabels(cmd, commandMenuSearch)
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
         : true) && cmd.type === CommandType.Create,
   );
 
@@ -352,7 +304,7 @@ export const CommandMenu = () => {
     label: 'Open Copilot',
     type: CommandType.Navigate,
     onCommandClick: () => {
-      setCopilotQuery(commandMenuSearch);
+      setCopilotQuery(deferredCommandMenuSearch);
       openCopilotRightDrawer();
     },
   };
@@ -363,10 +315,23 @@ export const CommandMenu = () => {
     .map((cmd) => cmd.id)
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
-    .concat(people.map((person) => person.id))
-    .concat(companies.map((company) => company.id))
-    .concat(opportunities.map((opportunity) => opportunity.id))
-    .concat(notes.map((note) => note.id));
+    .concat(people?.map((person) => person.id))
+    .concat(companies?.map((company) => company.id))
+    .concat(opportunities?.map((opportunity) => opportunity.id))
+    .concat(notes?.map((note) => note.id));
+
+  const isNoResults =
+    !matchingCreateCommand.length &&
+    !matchingNavigateCommand.length &&
+    !people?.length &&
+    !companies?.length &&
+    !notes?.length &&
+    !opportunities?.length;
+  const isLoading =
+    isPeopleLoading ||
+    isNotesLoading ||
+    isOpportunitiesLoading ||
+    isCompaniesLoading;
 
   return (
     <>
@@ -410,14 +375,9 @@ export const CommandMenu = () => {
                     }
                   }}
                 >
-                  {!matchingCreateCommand.length &&
-                    !matchingNavigateCommand.length &&
-                    !people.length &&
-                    !companies.length &&
-                    !notes.length &&
-                    !opportunities.length && (
-                      <StyledEmpty>No results found</StyledEmpty>
-                    )}
+                  {isNoResults && !isLoading && (
+                    <StyledEmpty>No results found</StyledEmpty>
+                  )}
                   {isCopilotEnabled && (
                     <CommandGroup heading="Copilot">
                       <SelectableItem itemId={copilotCommand.id}>
@@ -425,8 +385,8 @@ export const CommandMenu = () => {
                           id={copilotCommand.id}
                           Icon={copilotCommand.Icon}
                           label={`${copilotCommand.label} ${
-                            commandMenuSearch.length > 2
-                              ? `"${commandMenuSearch}"`
+                            deferredCommandMenuSearch.length > 2
+                              ? `"${deferredCommandMenuSearch}"`
                               : ''
                           }`}
                           onClick={copilotCommand.onCommandClick}
@@ -467,7 +427,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="People">
-                    {people.map((person) => (
+                    {people?.map((person) => (
                       <SelectableItem itemId={person.id} key={person.id}>
                         <CommandMenuItem
                           id={person.id}
@@ -493,7 +453,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Companies">
-                    {companies.map((company) => (
+                    {companies?.map((company) => (
                       <SelectableItem itemId={company.id} key={company.id}>
                         <CommandMenuItem
                           id={company.id}
@@ -514,7 +474,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Opportunities">
-                    {opportunities.map((opportunity) => (
+                    {opportunities?.map((opportunity) => (
                       <SelectableItem
                         itemId={opportunity.id}
                         key={opportunity.id}
@@ -522,14 +482,14 @@ export const CommandMenu = () => {
                         <CommandMenuItem
                           id={opportunity.id}
                           key={opportunity.id}
-                          label={opportunity.name}
+                          label={opportunity.name ?? ''}
                           to={`object/opportunity/${opportunity.id}`}
                           Icon={() => (
                             <Avatar
                               type="rounded"
                               avatarUrl={null}
                               placeholderColorSeed={opportunity.id}
-                              placeholder={opportunity.name}
+                              placeholder={opportunity.name ?? ''}
                             />
                           )}
                         />
@@ -537,7 +497,7 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Notes">
-                    {notes.map((note) => (
+                    {notes?.map((note) => (
                       <SelectableItem itemId={note.id} key={note.id}>
                         <CommandMenuItem
                           id={note.id}
