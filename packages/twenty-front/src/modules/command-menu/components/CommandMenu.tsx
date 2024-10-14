@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
@@ -17,7 +15,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Opportunity } from '@/opportunities/Opportunity';
 import { Person } from '@/people/types/Person';
@@ -30,14 +27,14 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
-import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 const SEARCH_BAR_HEIGHT = 56;
 const SEARCH_BAR_PADDING = 3;
@@ -131,25 +128,6 @@ const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  // To store previous search results
-  const [previousPeopleSearch, setPreviousPeopleSearch] = useState<Person[]>(
-    [],
-  );
-  const [previousCompaniesSearch, setPreviousCompaniesSearch] = useState<
-    Company[]
-  >([]);
-  const [previousOpportunitiesSearch, setPreviousOpportunitiesSearch] =
-    useState<Opportunity[]>([]);
-
-  const [previousPeopleFind, setPreviousPeopleFind] = useState<Person[]>([]);
-  const [previousCompaniesFind, setPreviousCompaniesFind] = useState<Company[]>(
-    [],
-  );
-  const [previousOpportunitiesFind, setPreviousOpportunitiesFind] = useState<
-    ObjectRecord[]
-  >([]);
-  const [previousNotesFind, setPreviousNotesFind] = useState<Note[]>([]);
-
   const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
   const openActivityRightDrawer = useOpenActivityRightDrawer({
@@ -187,153 +165,41 @@ export const CommandMenu = () => {
     [closeCommandMenu],
   );
 
-  const isWorkspaceMigratedForSearch = useIsFeatureEnabled(
-    'IS_WORKSPACE_MIGRATED_FOR_SEARCH',
-  );
-
-  const isSearchEnabled =
-    useIsFeatureEnabled('IS_SEARCH_ENABLED') && isWorkspaceMigratedForSearch;
-
-  const { loading: isPeopleFromFindManyLoading, records: peopleFromFindMany } =
-    useFindManyRecords<Person>({
-      skip: !isCommandMenuOpened || isSearchEnabled,
-      objectNameSingular: CoreObjectNameSingular.Person,
-      filter: deferredCommandMenuSearch
-        ? makeOrFilterVariables([
-            ...generateILikeFiltersForCompositeFields(
-              deferredCommandMenuSearch,
-              'name',
-              ['firstName', 'lastName'],
-            ),
-            ...generateILikeFiltersForCompositeFields(
-              deferredCommandMenuSearch,
-              'emails',
-              ['primaryEmail'],
-            ),
-          ])
-        : undefined,
-      limit: 3,
-      onCompleted: (newPeople) => {
-        setPreviousPeopleFind(newPeople);
-      },
-    });
-  const { loading: isPeopleFromSearchLoading, records: peopleFromSearch } =
+  const { loading: isPeopleLoading, records: people } =
     useSearchRecords<Person>({
-      skip: !isCommandMenuOpened || !isSearchEnabled,
+      skip: !isCommandMenuOpened,
       objectNameSingular: CoreObjectNameSingular.Person,
       limit: 3,
       searchInput: deferredCommandMenuSearch ?? undefined,
-      onCompleted: (newPeopleFromSearch) => {
-        setPreviousPeopleSearch(newPeopleFromSearch);
-      },
     });
 
-  const {
-    loading: isCompaniesFromSearchLoading,
-    records: companiesFromSearch,
-  } = useSearchRecords<Company>({
-    skip: !isCommandMenuOpened || !isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Company,
-    limit: 3,
-    searchInput: deferredCommandMenuSearch ?? undefined,
-    onCompleted: (newCompainesFromSearch) => {
-      setPreviousCompaniesSearch(newCompainesFromSearch);
-    },
-  });
-
-  const {
-    loading: isCompaniesFromFindManyLoading,
-    records: companiesFromFindMany,
-  } = useFindManyRecords<Company>({
-    skip: !isCommandMenuOpened || isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Company,
-    filter: deferredCommandMenuSearch
-      ? {
-          name: { ilike: `%${deferredCommandMenuSearch}%` },
-        }
-      : undefined,
-    limit: 3,
-    onCompleted: (newCompaines) => {
-      setPreviousCompaniesFind(newCompaines);
-    },
-  });
-
-  const { loading: isNotesLoading, records: notesFromFindMany } =
-    useFindManyRecords<Note>({
+  const { loading: isCompaniesLoading, records: companies } =
+    useSearchRecords<Company>({
       skip: !isCommandMenuOpened,
-      objectNameSingular: CoreObjectNameSingular.Note,
-      filter: deferredCommandMenuSearch
-        ? makeOrFilterVariables([
-            { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-            { body: { ilike: `%${deferredCommandMenuSearch}%` } },
-          ])
-        : undefined,
+      objectNameSingular: CoreObjectNameSingular.Company,
       limit: 3,
-      onCompleted: (newNotes) => {
-        setPreviousNotesFind(newNotes);
-      },
+      searchInput: deferredCommandMenuSearch ?? undefined,
     });
 
-  const {
-    loading: isOpportunitiesFromFindManyLoading,
-    records: opportunitiesFromFindMany,
-  } = useFindManyRecords({
-    skip: !isCommandMenuOpened || isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Opportunity,
+  const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
+    skip: !isCommandMenuOpened,
+    objectNameSingular: CoreObjectNameSingular.Note,
     filter: deferredCommandMenuSearch
-      ? {
-          name: { ilike: `%${deferredCommandMenuSearch}%` },
-        }
+      ? makeOrFilterVariables([
+          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
+          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+        ])
       : undefined,
     limit: 3,
-    onCompleted: (newOpportunities) => {
-      setPreviousOpportunitiesFind(newOpportunities);
-    },
   });
 
-  const {
-    loading: isOpportunitiesFromSearchLoading,
-    records: opportunitiesFromSearch,
-  } = useSearchRecords<Opportunity>({
-    skip: !isCommandMenuOpened || !isSearchEnabled,
-    objectNameSingular: CoreObjectNameSingular.Opportunity,
-    limit: 3,
-    searchInput: deferredCommandMenuSearch ?? undefined,
-    onCompleted: (newOpportunitiesFromSearch) => {
-      setPreviousOpportunitiesSearch(newOpportunitiesFromSearch);
-    },
-  });
-  const people = isSearchEnabled
-    ? isPeopleFromSearchLoading
-      ? previousPeopleSearch
-      : peopleFromSearch
-    : isPeopleFromFindManyLoading
-      ? previousPeopleFind
-      : peopleFromFindMany;
-  const companies = isSearchEnabled
-    ? isCompaniesFromSearchLoading
-      ? previousCompaniesSearch
-      : companiesFromSearch
-    : isCompaniesFromFindManyLoading
-      ? previousCompaniesFind
-      : companiesFromFindMany;
-  const opportunities = isSearchEnabled
-    ? isOpportunitiesFromSearchLoading
-      ? previousOpportunitiesSearch
-      : opportunitiesFromSearch
-    : isOpportunitiesFromFindManyLoading
-      ? previousOpportunitiesFind
-      : opportunitiesFromFindMany;
-  const notes = isNotesLoading ? previousNotesFind : notesFromFindMany;
-  const peopleLoading = isSearchEnabled
-    ? isPeopleFromSearchLoading
-    : isPeopleFromFindManyLoading;
-  const companiesLoading = isSearchEnabled
-    ? isCompaniesFromSearchLoading
-    : isCompaniesFromFindManyLoading;
-  const opportunitiesLoading = isSearchEnabled
-    ? isOpportunitiesFromSearchLoading
-    : isOpportunitiesFromFindManyLoading;
+  const { loading: isOpportunitiesLoading, records: opportunities } =
+    useSearchRecords<Opportunity>({
+      skip: !isCommandMenuOpened,
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      limit: 3,
+      searchInput: deferredCommandMenuSearch ?? undefined,
+    });
 
   const peopleCommands = useMemo(
     () =>
@@ -462,7 +328,11 @@ export const CommandMenu = () => {
     !notes?.length &&
     !opportunities?.length;
   const isLoading =
-    peopleLoading || isNotesLoading || opportunitiesLoading || companiesLoading;
+    isPeopleLoading ||
+    isNotesLoading ||
+    isOpportunitiesLoading ||
+    isCompaniesLoading;
+
   return (
     <>
       {isCommandMenuOpened && (
@@ -612,14 +482,14 @@ export const CommandMenu = () => {
                         <CommandMenuItem
                           id={opportunity.id}
                           key={opportunity.id}
-                          label={opportunity.name}
+                          label={opportunity.name ?? ''}
                           to={`object/opportunity/${opportunity.id}`}
                           Icon={() => (
                             <Avatar
                               type="rounded"
                               avatarUrl={null}
                               placeholderColorSeed={opportunity.id}
-                              placeholder={opportunity.name}
+                              placeholder={opportunity.name ?? ''}
                             />
                           )}
                         />

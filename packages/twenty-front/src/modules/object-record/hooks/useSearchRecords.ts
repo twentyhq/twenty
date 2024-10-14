@@ -1,11 +1,7 @@
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { RecordGqlOperationSearchResult } from '@/object-record/graphql/types/RecordGqlOperationSearchResult';
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
@@ -14,18 +10,18 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSearchRecordsQueryResponseField } from '@/object-record/utils/getSearchRecordsQueryResponseField';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
 import { logError } from '~/utils/logError';
 
-export type UseSearchRecordsParams<T> = ObjectMetadataItemIdentifier &
+export type UseSearchRecordsParams = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
     onError?: (error?: Error) => void;
     skip?: boolean;
     recordGqlFields?: RecordGqlOperationGqlRecordFields;
     fetchPolicy?: WatchQueryFetchPolicy;
     searchInput?: string;
-    onCompleted?: (data: T[]) => void;
   };
 
 export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -35,8 +31,7 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
   skip,
   recordGqlFields,
   fetchPolicy,
-  onCompleted,
-}: UseSearchRecordsParams<T>) => {
+}: UseSearchRecordsParams) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -47,22 +42,8 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
   });
 
   const { enqueueSnackBar } = useSnackBar();
-  const handleFindManyRecordsCompleted = (
-    data: RecordGqlOperationFindManyResult,
-  ) => {
-    if (!isDefined(data)) {
-      onCompleted?.([]);
-    }
-
-    const records = getRecordsFromRecordConnection({
-      recordConnection: data?.[objectMetadataItem.namePlural],
-    }) as T[];
-
-    onCompleted?.(records);
-  };
-  const { data, loading, error } = useQuery<RecordGqlOperationSearchResult>(
-    searchRecordsQuery,
-    {
+  const { data, loading, error, previousData } =
+    useQuery<RecordGqlOperationSearchResult>(searchRecordsQuery, {
       skip:
         skip || !objectMetadataItem || !currentWorkspaceMember || !searchInput,
       variables: {
@@ -82,15 +63,16 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
           },
         );
       },
-      onCompleted: handleFindManyRecordsCompleted,
-    },
-  );
+    });
+
+  // Use `previousData` if `data` is not available
+  const effectiveData = data ?? previousData;
 
   const queryResponseField = getSearchRecordsQueryResponseField(
     objectMetadataItem.namePlural,
   );
 
-  const result = data?.[queryResponseField];
+  const result = effectiveData?.[queryResponseField];
 
   const records = useMemo(
     () =>
