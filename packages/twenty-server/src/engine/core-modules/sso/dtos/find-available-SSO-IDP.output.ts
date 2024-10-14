@@ -8,8 +8,8 @@ import {
 
 @ObjectType()
 class WorkspaceNameAndId {
-  @Field(() => String)
-  displayName: string;
+  @Field(() => String, { nullable: true })
+  displayName?: string | null;
 
   @Field(() => String)
   id: string;

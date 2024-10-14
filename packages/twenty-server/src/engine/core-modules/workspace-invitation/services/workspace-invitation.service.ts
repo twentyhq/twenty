@@ -36,7 +36,7 @@ export class WorkspaceInvitationService {
     private readonly onboardingService: OnboardingService,
   ) {}
 
-  private async getOneWorkspaceInvitation(workspaceId: string, email: string) {
+  async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
       .where('"appToken"."workspaceId" = :workspaceId', {

@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import crypto from 'crypto';
-
 import { Repository } from 'typeorm';
-import { generators, Issuer } from 'openid-client';
+import { Issuer } from 'openid-client';
 
 import {
   IdpType,
@@ -27,6 +25,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -97,6 +96,7 @@ export class SSOService {
         id: idp.id,
         type: idp.type,
         name: idp.name,
+        status: idp.status,
         issuer: idp.issuer,
       };
     } catch (err) {
@@ -156,25 +156,27 @@ export class SSOService {
       ).reduce((acc, idp) => {
         if (idp.status === 'Inactive') return acc;
 
-        return [
-          ...acc,
-          {
-            id: idp.id,
-            name: idp.name ?? 'Unknown',
-            issuer: idp.issuer,
-            type: idp.type,
-            status: idp.status,
-            workspace: {
-              id: userWorkspace.workspaceId,
-              name: userWorkspace.workspace.displayName,
-            },
+        acc.push({
+          id: idp.id,
+          name: idp.name ?? 'Unknown',
+          issuer: idp.issuer,
+          type: idp.type,
+          status: idp.status,
+          workspace: {
+            id: userWorkspace.workspaceId,
+            displayName: userWorkspace.workspace.displayName,
           },
-        ];
-      }, []),
+        });
+
+        return acc;
+      }, [] as Array<FindAvailableSSOIDPOutput>),
     );
   }
 
-  async findSSOIdentityProviderById(idpId: string) {
+  async findSSOIdentityProviderById(idpId?: string) {
+    // if idpId is not provide, typeorm return a random idp instead of undefined
+    if (!idpId) return undefined;
+
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: idpId },
     })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | undefined;
@@ -183,14 +185,13 @@ export class SSOService {
   buildCallbackUrl(idp: WorkspaceSSOIdentityProvider) {
     const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
 
-    callbackURL.pathname =
-      idp.type === 'OIDC' ? '/auth/oidc/callback' : '/auth/saml/callback';
+    callbackURL.pathname = `/auth/${idp.type.toLowerCase()}/callback`;
 
     return callbackURL.toString();
   }
 
   buildIssuerURL(idp: WorkspaceSSOIdentityProvider) {
-    return `${this.environmentService.get('SERVER_URL')}/auth/saml/login/${idp.id}`;
+    return `${this.environmentService.get('SERVER_URL')}/auth/${idp.type.toLowerCase()}/login/${idp.id}`;
   }
 
   private isOIDCIdentityProvider(
@@ -235,55 +236,11 @@ export class SSOService {
       );
     }
 
-    if (idp.type === 'OIDC') {
-      return this.loginWithOIDC(idp);
-    }
-
-    if (idp.type === 'SAML') {
-      return {
-        id: idp.id,
-        authorizationURL: this.buildIssuerURL(idp),
-        type: idp.type,
-      };
-    }
-
-    throw new SSOException(
-      'Invalid Identity Provider type',
-      SSOExceptionCode.INVALID_IDP_TYPE,
-    );
-  }
-
-  async loginWithOIDC(idp: WorkspaceSSOIdentityProvider) {
-    if (this.isOIDCIdentityProvider(idp)) {
-      const issuer = await Issuer.discover(idp.issuer);
-      const code_verifier = generators.codeVerifier();
-
-      const codeVerifierId = crypto.randomUUID();
-
-      await this.cacheStorageService.set(codeVerifierId, code_verifier);
-
-      const code_challenge = generators.codeChallenge(code_verifier);
-
-      const client = this.getOIDCClient(idp, issuer);
-
-      const authorizationURL = client.authorizationUrl({
-        scope: 'openid email profile',
-        state: JSON.stringify({
-          idpId: idp.id,
-          codeVerifierId,
-        }),
-        code_challenge,
-        code_challenge_method: 'S256',
-      });
-
-      return {
-        id: idp.id,
-        authorizationURL,
-        type: idp.type,
-      };
-    }
-
-    return null;
+    return {
+      id: idp.id,
+      authorizationURL: this.buildIssuerURL(idp),
+      type: idp.type,
+    };
   }
 
   async listSSOIdentityProvidersByWorkspaceId(workspaceId: string) {
@@ -313,7 +270,9 @@ export class SSOService {
       );
     }
 
-    await this.workspaceSSOIdentityProviderRepository.delete(ssoIdp);
+    await this.workspaceSSOIdentityProviderRepository.delete({
+      id: ssoIdp.id,
+    });
 
     return { idpId: ssoIdp.id };
   }

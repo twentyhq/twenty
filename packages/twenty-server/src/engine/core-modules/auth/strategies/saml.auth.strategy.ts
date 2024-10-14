@@ -1,3 +1,7 @@
+/**
+ * @license
+ * Enterprise License
+ */
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
@@ -9,6 +13,8 @@ import {
   MultiStrategyConfig,
   VerifyWithRequest,
 } from '@node-saml/passport-saml';
+import { Request } from 'express';
+import { AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
@@ -33,17 +39,6 @@ export class SamlAuthStrategy extends PassportStrategy(
                 // TODO: Improve the feature by sign the response
                 wantAuthnResponseSigned: false,
                 signatureAlgorithm: 'sha256',
-                additionalParams: {
-                  RelayState: JSON.stringify({
-                    idpId: idp.id,
-                    ...(req.query.inviteHash
-                      ? { inviteHash: req.query.inviteHash }
-                      : {}),
-                    ...(req.query.inviteToken
-                      ? { inviteToken: req.query.inviteToken }
-                      : {}),
-                  }),
-                },
               };
 
               return callback(null, config);
@@ -61,6 +56,26 @@ export class SamlAuthStrategy extends PassportStrategy(
     } as PassportSamlConfig & MultiStrategyConfig);
   }
 
+  authenticate(req: Request, options: AuthenticateOptions) {
+    super.authenticate(req, {
+      ...options,
+      additionalParams: {
+        RelayState: JSON.stringify({
+          idpId: req.params.idpId,
+          ...(req.params.workspaceInviteHash
+            ? { workspaceInviteHash: req.params.workspaceInviteHash }
+            : {}),
+          ...(req.params.workspacePersonalInviteToken
+            ? {
+                workspacePersonalInviteToken:
+                  req.params.workspacePersonalInviteToken,
+              }
+            : {}),
+        }),
+      },
+    });
+  }
+
   validate: VerifyWithRequest = async (request, profile, done) => {
     if (!profile) {
       return done(new Error('Profile is must be provided'));
@@ -72,7 +87,10 @@ export class SamlAuthStrategy extends PassportStrategy(
       return done(new Error('Invalid email'));
     }
 
-    const user: Record<string, string> = { email };
+    const result: {
+      user: Record<string, string>;
+      identityProviderId?: string;
+    } = { user: { email } };
 
     if (
       'RelayState' in request.body &&
@@ -80,16 +98,9 @@ export class SamlAuthStrategy extends PassportStrategy(
     ) {
       const RelayState = JSON.parse(request.body.RelayState);
 
-      Object.assign(user, {
-        ...(RelayState.inviteHash
-          ? { workspaceInviteHash: RelayState.inviteHash }
-          : {}),
-        ...(RelayState.inviteToken
-          ? { workspacePersonalInviteToken: RelayState.inviteToken }
-          : {}),
-      });
+      result.identityProviderId = RelayState.idpId;
     }
 
-    done(null, user);
+    done(null, result);
   };
 }

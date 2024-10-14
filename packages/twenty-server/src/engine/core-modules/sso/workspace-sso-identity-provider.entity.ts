@@ -50,8 +50,8 @@ export class WorkspaceSSOIdentityProvider {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true })
-  name?: string;
+  @Column()
+  name: string;
 
   @Column({
     type: 'enum',
