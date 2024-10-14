@@ -179,13 +179,15 @@ export class AuthResolver {
       return {
         success: true,
         reason: 'WORKSPACE_USE_SSO_AUTH',
-        availableSSOIDPs: result.availableSSOIdentityProviders.map((idp) => ({
-          ...idp,
-          workspace: {
-            id: result.workspace.id,
-            displayName: result.workspace.displayName,
-          },
-        })),
+        availableSSOIDPs: result.availableSSOIdentityProviders.map(
+          (identityProvider) => ({
+            ...identityProvider,
+            workspace: {
+              id: result.workspace.id,
+              displayName: result.workspace.displayName,
+            },
+          }),
+        ),
       };
     }
 

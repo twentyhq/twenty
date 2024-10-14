@@ -240,12 +240,12 @@ const SettingsSecurity = lazy(() =>
   })),
 );
 
-const SettingsSecurityNewSSOIdentityProvider = lazy(() =>
-  import(
-    '~/pages/settings/security/SettingsSecurityCRUDSSOIdentityProvider'
-  ).then((module) => ({
-    default: module.SettingsSecurityCRUDSSOIdentityProvider,
-  })),
+const SettingsSecuritySSOIdentifyProvider = lazy(() =>
+  import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
+    (module) => ({
+      default: module.SettingsSecuritySSOIdentifyProvider,
+    }),
+  ),
 );
 
 type SettingsRoutesProps = {
@@ -378,7 +378,7 @@ export const SettingsRoutes = ({
           <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
           <Route
             path={SettingsPath.NewSSOIdentityProvider}
-            element={<SettingsSecurityNewSSOIdentityProvider />}
+            element={<SettingsSecuritySSOIdentifyProvider />}
           />
         </>
       )}

@@ -26,18 +26,18 @@ export const useSSO = () => {
   };
 
   const getAuthorizationUrlForSSO = async ({
-    idpId,
+    identityProviderId,
   }: GetAuthorizationUrlMutationVariables['input']) => {
     return await getAuthorizationUrlMutation({
       variables: {
-        input: { idpId },
+        input: { identityProviderId },
       },
     });
   };
 
-  const redirectToSSOLoginPage = async (idpId: string) => {
+  const redirectToSSOLoginPage = async (identityProviderId: string) => {
     const authorizationUrlForSSOResult = await getAuthorizationUrlForSSO({
-      idpId,
+      identityProviderId,
     });
 
     if (

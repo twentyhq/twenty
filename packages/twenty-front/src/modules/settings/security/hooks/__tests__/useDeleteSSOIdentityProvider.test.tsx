@@ -23,7 +23,7 @@ describe('useDeleteSsoIdentityProvider', () => {
     renderHook(
       () => {
         const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
-        deleteSSOIdentityProvider({ idpId: 'test' });
+        deleteSSOIdentityProvider({ identityProviderId: 'test' });
       },
       { wrapper: Wrapper },
     );
@@ -31,7 +31,7 @@ describe('useDeleteSsoIdentityProvider', () => {
     expect(mutationDeleteSSOIDPCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
       variables: {
-        input: { idpId: 'test' },
+        input: { identityProviderId: 'test' },
       },
     });
   });

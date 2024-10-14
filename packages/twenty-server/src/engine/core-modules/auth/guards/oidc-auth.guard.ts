@@ -21,8 +21,8 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   }
 
   private getIdentityProviderId(request: any): string {
-    if (request.params.idpId) {
-      return request.params.idpId;
+    if (request.params.identityProviderId) {
+      return request.params.identityProviderId;
     }
 
     if (
@@ -33,7 +33,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     ) {
       const state = JSON.parse(request.query.state);
 
-      return state.idpId;
+      return state.identityProviderId;
     }
 
     throw new Error('Invalid OIDC identity provider params');
@@ -43,20 +43,24 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     try {
       const request = context.switchToHttp().getRequest();
 
-      const idpId = this.getIdentityProviderId(request);
+      const identityProviderId = this.getIdentityProviderId(request);
 
-      const idp = await this.ssoService.findSSOIdentityProviderById(idpId);
+      const identityProvider =
+        await this.ssoService.findSSOIdentityProviderById(identityProviderId);
 
-      if (!idp) {
+      if (!identityProvider) {
         throw new AuthException(
           'Identity provider not found',
           AuthExceptionCode.INVALID_DATA,
         );
       }
 
-      const issuer = await Issuer.discover(idp.issuer);
+      const issuer = await Issuer.discover(identityProvider.issuer);
 
-      new OIDCAuthStrategy(this.ssoService.getOIDCClient(idp, issuer), idp.id);
+      new OIDCAuthStrategy(
+        this.ssoService.getOIDCClient(identityProvider, issuer),
+        identityProvider.id,
+      );
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {

@@ -6,5 +6,5 @@ import { IsString } from 'class-validator';
 export class GetAuthorizationUrlInput {
   @Field(() => String)
   @IsString()
-  idpId: string;
+  identityProviderId: string;
 }

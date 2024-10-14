@@ -27,14 +27,17 @@ export class SamlAuthStrategy extends PassportStrategy(
     super({
       getSamlOptions: (req, callback) => {
         this.sSOService
-          .findSSOIdentityProviderById(req.params.idpId)
-          .then((idp) => {
-            if (idp && this.sSOService.isSAMLIdentityProvider(idp)) {
+          .findSSOIdentityProviderById(req.params.identityProviderId)
+          .then((identityProvider) => {
+            if (
+              identityProvider &&
+              this.sSOService.isSAMLIdentityProvider(identityProvider)
+            ) {
               const config: SamlConfig = {
-                entryPoint: idp.ssoURL,
-                issuer: this.sSOService.buildIssuerURL(idp),
-                callbackUrl: this.sSOService.buildCallbackUrl(idp),
-                idpCert: idp.certificate,
+                entryPoint: identityProvider.ssoURL,
+                issuer: this.sSOService.buildIssuerURL(identityProvider),
+                callbackUrl: this.sSOService.buildCallbackUrl(identityProvider),
+                idpCert: identityProvider.certificate,
                 wantAssertionsSigned: false,
                 // TODO: Improve the feature by sign the response
                 wantAuthnResponseSigned: false,
@@ -61,16 +64,7 @@ export class SamlAuthStrategy extends PassportStrategy(
       ...options,
       additionalParams: {
         RelayState: JSON.stringify({
-          idpId: req.params.idpId,
-          ...(req.params.workspaceInviteHash
-            ? { workspaceInviteHash: req.params.workspaceInviteHash }
-            : {}),
-          ...(req.params.workspacePersonalInviteToken
-            ? {
-                workspacePersonalInviteToken:
-                  req.params.workspacePersonalInviteToken,
-              }
-            : {}),
+          identityProviderId: req.params.identityProviderId,
         }),
       },
     });
@@ -98,7 +92,7 @@ export class SamlAuthStrategy extends PassportStrategy(
     ) {
       const RelayState = JSON.parse(request.body.RelayState);
 
-      result.identityProviderId = RelayState.idpId;
+      result.identityProviderId = RelayState.identityProviderId;
     }
 
     done(null, result);

@@ -55,9 +55,9 @@ export class SSOResolver {
 
   @Mutation(() => GetAuthorizationUrlOutput)
   async getAuthorizationUrl(
-    @Args('input') { idpId }: GetAuthorizationUrlInput,
+    @Args('input') { identityProviderId }: GetAuthorizationUrlInput,
   ) {
-    return this.sSOService.getAuthorizationUrl(idpId);
+    return this.sSOService.getAuthorizationUrl(identityProviderId);
   }
 
   @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
@@ -75,10 +75,13 @@ export class SSOResolver {
   @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)
   @Mutation(() => DeleteSsoOutput)
   async deleteSSOIdentityProvider(
-    @Args('input') { idpId }: DeleteSsoInput,
+    @Args('input') { identityProviderId }: DeleteSsoInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.sSOService.deleteSSOIdentityProvider(idpId, workspaceId);
+    return this.sSOService.deleteSSOIdentityProvider(
+      identityProviderId,
+      workspaceId,
+    );
   }
 
   @UseGuards(WorkspaceAuthGuard, SSOProviderEnabledGuard)

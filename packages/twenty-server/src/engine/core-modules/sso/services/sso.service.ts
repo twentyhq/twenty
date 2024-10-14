@@ -83,21 +83,22 @@ export class SSOService {
         );
       }
 
-      const idp = await this.workspaceSSOIdentityProviderRepository.save({
-        type: IdpType.OIDC,
-        clientID: data.clientID,
-        clientSecret: data.clientSecret,
-        issuer: issuer.metadata.issuer,
-        name: data.name,
-        workspaceId,
-      });
+      const identityProvider =
+        await this.workspaceSSOIdentityProviderRepository.save({
+          type: IdpType.OIDC,
+          clientID: data.clientID,
+          clientSecret: data.clientSecret,
+          issuer: issuer.metadata.issuer,
+          name: data.name,
+          workspaceId,
+        });
 
       return {
-        id: idp.id,
-        type: idp.type,
-        name: idp.name,
-        status: idp.status,
-        issuer: idp.issuer,
+        id: identityProvider.id,
+        type: identityProvider.type,
+        name: identityProvider.name,
+        status: identityProvider.status,
+        issuer: identityProvider.issuer,
       };
     } catch (err) {
       if (err instanceof SSOException) {
@@ -120,18 +121,19 @@ export class SSOService {
   ) {
     await this.isSSOEnabled(workspaceId);
 
-    const idp = await this.workspaceSSOIdentityProviderRepository.save({
-      ...data,
-      type: IdpType.SAML,
-      workspaceId,
-    });
+    const identityProvider =
+      await this.workspaceSSOIdentityProviderRepository.save({
+        ...data,
+        type: IdpType.SAML,
+        workspaceId,
+      });
 
     return {
-      id: idp.id,
-      type: idp.type,
-      name: idp.name,
-      issuer: this.buildIssuerURL(idp),
-      status: idp.status,
+      id: identityProvider.id,
+      type: identityProvider.type,
+      name: identityProvider.name,
+      issuer: this.buildIssuerURL(identityProvider),
+      status: identityProvider.status,
     };
   }
 
@@ -153,15 +155,15 @@ export class SSOService {
       (
         userWorkspace.workspace
           .workspaceSSOIdentityProviders as Array<SSOConfiguration>
-      ).reduce((acc, idp) => {
-        if (idp.status === 'Inactive') return acc;
+      ).reduce((acc, identityProvider) => {
+        if (identityProvider.status === 'Inactive') return acc;
 
         acc.push({
-          id: idp.id,
-          name: idp.name ?? 'Unknown',
-          issuer: idp.issuer,
-          type: idp.type,
-          status: idp.status,
+          id: identityProvider.id,
+          name: identityProvider.name ?? 'Unknown',
+          issuer: identityProvider.issuer,
+          type: identityProvider.type,
+          status: identityProvider.status,
           workspace: {
             id: userWorkspace.workspaceId,
             displayName: userWorkspace.workspace.displayName,
@@ -173,41 +175,44 @@ export class SSOService {
     );
   }
 
-  async findSSOIdentityProviderById(idpId?: string) {
-    // if idpId is not provide, typeorm return a random idp instead of undefined
-    if (!idpId) return undefined;
+  async findSSOIdentityProviderById(identityProviderId?: string) {
+    // if identityProviderId is not provide, typeorm return a random idp instead of undefined
+    if (!identityProviderId) return undefined;
 
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
-      where: { id: idpId },
+      where: { id: identityProviderId },
     })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | undefined;
   }
 
-  buildCallbackUrl(idp: WorkspaceSSOIdentityProvider) {
+  buildCallbackUrl(identityProvider: WorkspaceSSOIdentityProvider) {
     const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
 
-    callbackURL.pathname = `/auth/${idp.type.toLowerCase()}/callback`;
+    callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
 
     return callbackURL.toString();
   }
 
-  buildIssuerURL(idp: WorkspaceSSOIdentityProvider) {
-    return `${this.environmentService.get('SERVER_URL')}/auth/${idp.type.toLowerCase()}/login/${idp.id}`;
+  buildIssuerURL(identityProvider: WorkspaceSSOIdentityProvider) {
+    return `${this.environmentService.get('SERVER_URL')}/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
   }
 
   private isOIDCIdentityProvider(
-    idp: WorkspaceSSOIdentityProvider,
-  ): idp is OIDCConfiguration & WorkspaceSSOIdentityProvider {
-    return idp.type === IdpType.OIDC;
+    identityProvider: WorkspaceSSOIdentityProvider,
+  ): identityProvider is OIDCConfiguration & WorkspaceSSOIdentityProvider {
+    return identityProvider.type === IdpType.OIDC;
   }
 
   isSAMLIdentityProvider(
-    idp: WorkspaceSSOIdentityProvider,
-  ): idp is SAMLConfiguration & WorkspaceSSOIdentityProvider {
-    return idp.type === IdpType.SAML;
+    identityProvider: WorkspaceSSOIdentityProvider,
+  ): identityProvider is SAMLConfiguration & WorkspaceSSOIdentityProvider {
+    return identityProvider.type === IdpType.SAML;
   }
 
-  getOIDCClient(idp: WorkspaceSSOIdentityProvider, issuer: Issuer) {
-    if (!this.isOIDCIdentityProvider(idp)) {
+  getOIDCClient(
+    identityProvider: WorkspaceSSOIdentityProvider,
+    issuer: Issuer,
+  ) {
+    if (!this.isOIDCIdentityProvider(identityProvider)) {
       throw new SSOException(
         'Invalid Identity Provider type',
         SSOExceptionCode.INVALID_IDP_TYPE,
@@ -215,21 +220,22 @@ export class SSOService {
     }
 
     return new issuer.Client({
-      client_id: idp.clientID,
-      client_secret: idp.clientSecret,
-      redirect_uris: [this.buildCallbackUrl(idp)],
+      client_id: identityProvider.clientID,
+      client_secret: identityProvider.clientSecret,
+      redirect_uris: [this.buildCallbackUrl(identityProvider)],
       response_types: [OIDCResponseType.CODE],
     });
   }
 
-  async getAuthorizationUrl(idpId: string) {
-    const idp = (await this.workspaceSSOIdentityProviderRepository.findOne({
-      where: {
-        id: idpId,
-      },
-    })) as WorkspaceSSOIdentityProvider & SSOConfiguration;
+  async getAuthorizationUrl(identityProviderId: string) {
+    const identityProvider =
+      (await this.workspaceSSOIdentityProviderRepository.findOne({
+        where: {
+          id: identityProviderId,
+        },
+      })) as WorkspaceSSOIdentityProvider & SSOConfiguration;
 
-    if (!idp) {
+    if (!identityProvider) {
       throw new SSOException(
         'Identity Provider not found',
         SSOExceptionCode.USER_NOT_FOUND,
@@ -237,9 +243,9 @@ export class SSOService {
     }
 
     return {
-      id: idp.id,
-      authorizationURL: this.buildIssuerURL(idp),
-      type: idp.type,
+      id: identityProvider.id,
+      authorizationURL: this.buildIssuerURL(identityProvider),
+      type: identityProvider.type,
     };
   }
 
@@ -255,15 +261,19 @@ export class SSOService {
     >;
   }
 
-  async deleteSSOIdentityProvider(idpId: string, workspaceId: string) {
-    const ssoIdp = await this.workspaceSSOIdentityProviderRepository.findOne({
-      where: {
-        id: idpId,
-        workspaceId,
-      },
-    });
+  async deleteSSOIdentityProvider(
+    identityProviderId: string,
+    workspaceId: string,
+  ) {
+    const identityProvider =
+      await this.workspaceSSOIdentityProviderRepository.findOne({
+        where: {
+          id: identityProviderId,
+          workspaceId,
+        },
+      });
 
-    if (!ssoIdp) {
+    if (!identityProvider) {
       throw new SSOException(
         'Identity Provider not found',
         SSOExceptionCode.IDENTITY_PROVIDER_NOT_FOUND,
@@ -271,10 +281,10 @@ export class SSOService {
     }
 
     await this.workspaceSSOIdentityProviderRepository.delete({
-      id: ssoIdp.id,
+      id: identityProvider.id,
     });
 
-    return { idpId: ssoIdp.id };
+    return { identityProviderId: identityProvider.id };
   }
 
   async editSSOIdentityProvider(

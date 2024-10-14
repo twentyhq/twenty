@@ -6,5 +6,5 @@ import { IsUUID } from 'class-validator';
 export class DeleteSsoInput {
   @Field(() => String)
   @IsUUID()
-  idpId: string;
+  identityProviderId: string;
 }
