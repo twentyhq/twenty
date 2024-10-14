@@ -4,6 +4,7 @@ import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/o
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
@@ -17,9 +18,13 @@ interface AdvancedFilterViewFilterFieldSelectProps {
 export const AdvancedFilterViewFilterFieldSelect = (
   props: AdvancedFilterViewFilterFieldSelectProps,
 ) => {
+  const dropdownId = `advanced-filter-view-filter-field-${props.viewFilter.id}`;
+
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
+  const { closeDropdown } = useDropdown(dropdownId);
 
   const handleSelectField = (filterDefinition: FilterDefinition) => {
+    closeDropdown();
     upsertCombinedViewFilter({
       ...props.viewFilter,
       fieldMetadataId: filterDefinition.fieldMetadataId,
@@ -39,7 +44,7 @@ export const AdvancedFilterViewFilterFieldSelect = (
   return (
     <Dropdown
       disableBlur
-      dropdownId={`advanced-filter-view-filter-field-${props.viewFilter.id}`}
+      dropdownId={dropdownId}
       clickableComponent={
         <SelectControl
           selectedOption={{

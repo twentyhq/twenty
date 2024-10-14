@@ -22,14 +22,15 @@ export const AdvancedFilterDropdownButton = (
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const viewFilters =
+  const advancedViewFilters =
     currentViewWithCombinedFiltersAndSorts?.viewFilters.filter(
       (viewFilter) => !!viewFilter.viewFilterGroupId,
     );
   const viewFilterGroups =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups;
 
-  const viewFilterIds = viewFilters?.map((viewFilter) => viewFilter.id) ?? [];
+  const advancedViewFilterIds =
+    advancedViewFilters?.map((viewFilter) => viewFilter.id) ?? [];
   const viewFilterGroupIds =
     viewFilterGroups?.map((viewFilter) => viewFilter.id) ?? [];
 
@@ -41,11 +42,11 @@ export const AdvancedFilterDropdownButton = (
     for (const viewFilterGroupId of viewFilterGroupIds) {
       await deleteCombinedViewFilterGroup(viewFilterGroupId);
     }
-    for (const viewFilterId of viewFilterIds) {
+    for (const viewFilterId of advancedViewFilterIds) {
       await deleteCombinedViewFilter(viewFilterId);
     }
   }, [
-    viewFilterIds,
+    advancedViewFilterIds,
     viewFilterGroupIds,
     deleteCombinedViewFilter,
     deleteCombinedViewFilterGroup,
@@ -55,7 +56,10 @@ export const AdvancedFilterDropdownButton = (
     <Dropdown
       dropdownId={ADVANCED_FILTER_DROPDOWN_ID}
       clickableComponent={
-        <AdvancedFilterChip onRemove={removeAdvancedFilter} />
+        <AdvancedFilterChip
+          onRemove={removeAdvancedFilter}
+          advancedFilterCount={advancedViewFilterIds.length}
+        />
       }
       dropdownComponents={
         <ObjectFilterDropdownScope filterScopeId={ADVANCED_FILTER_DROPDOWN_ID}>
