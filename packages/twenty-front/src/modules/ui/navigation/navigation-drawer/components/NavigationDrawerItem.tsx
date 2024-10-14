@@ -35,17 +35,11 @@ export type NavigationDrawerItemProps = {
   soon?: boolean;
   count?: number;
   keyboard?: string[];
-  isNavigationDrawerExpanded?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
-  | 'active'
-  | 'danger'
-  | 'indentationLevel'
-  | 'soon'
-  | 'to'
-  | 'isNavigationDrawerExpanded'
+  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to'
 >;
 
 const StyledItem = styled('div', {
@@ -75,8 +69,6 @@ const StyledItem = styled('div', {
   display: flex;
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.md};
-  gap: ${({ theme, isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? theme.spacing(2) : 'none'};
 
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
@@ -104,6 +96,12 @@ const StyledItem = styled('div', {
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     font-size: ${({ theme }) => theme.font.size.lg};
   }
+`;
+
+const StyledItemElementsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledItemLabel = styled.div`
@@ -193,50 +191,50 @@ export const NavigationDrawerItem = ({
         as={to ? Link : 'div'}
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
-        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
             <NavigationDrawerItemBreadcrumb state={subItemState} />
           </NavigationDrawerAnimatedCollapseWrapper>
         )}
+        <StyledItemElementsContainer>
+          {Icon && (
+            <Icon
+              style={{ minWidth: theme.icon.size.md }}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.md}
+              color={
+                showBreadcrumb && !isSettingsPage && !isNavigationDrawerExpanded
+                  ? theme.font.color.light
+                  : 'currentColor'
+              }
+            />
+          )}
 
-        {Icon && (
-          <Icon
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.md}
-            color={
-              showBreadcrumb && !isSettingsPage && !isNavigationDrawerExpanded
-                ? theme.font.color.light
-                : 'currentColor'
-            }
-          />
-        )}
-
-        <NavigationDrawerAnimatedCollapseWrapper>
-          <StyledItemLabel>{label}</StyledItemLabel>
-        </NavigationDrawerAnimatedCollapseWrapper>
-
-        {soon && (
           <NavigationDrawerAnimatedCollapseWrapper>
-            <Pill label="Soon" />
+            <StyledItemLabel>{label}</StyledItemLabel>
           </NavigationDrawerAnimatedCollapseWrapper>
-        )}
 
-        {!!count && (
-          <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledItemCount>{count}</StyledItemCount>
-          </NavigationDrawerAnimatedCollapseWrapper>
-        )}
+          {soon && (
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <Pill label="Soon" />
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
 
-        {keyboard && (
-          <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledKeyBoardShortcut className="keyboard-shortcuts">
-              {keyboard}
-            </StyledKeyBoardShortcut>
-          </NavigationDrawerAnimatedCollapseWrapper>
-        )}
+          {!!count && (
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <StyledItemCount>{count}</StyledItemCount>
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
+
+          {keyboard && (
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <StyledKeyBoardShortcut className="keyboard-shortcuts">
+                {keyboard}
+              </StyledKeyBoardShortcut>
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
+        </StyledItemElementsContainer>
       </StyledItem>
     </StyledNavigationDrawerItemContainer>
   );

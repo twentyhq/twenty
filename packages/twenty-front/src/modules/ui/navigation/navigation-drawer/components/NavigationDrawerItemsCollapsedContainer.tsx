@@ -3,16 +3,10 @@ import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
+import { useTheme } from '@emotion/react';
 
-const StyledBaseContainer = styled.div`
-  width: 24px;
-`;
-
-const StyledGroupContainer = styled(StyledBaseContainer)`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-`;
+const StyledAnimationGroupContainer = styled(motion.div)``;
 
 type NavigationDrawerItemsCollapsedContainerProps = {
   isGroup?: boolean;
@@ -23,15 +17,32 @@ export const NavigationDrawerItemsCollapsedContainer = ({
   isGroup = false,
   children,
 }: NavigationDrawerItemsCollapsedContainerProps) => {
+  const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
-  if (isNavigationDrawerExpanded || isSettingsPage) {
-    return children;
+  const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
+  let animate: AnimationControls | TargetAndTransition = { border: 'none' };
+  if (!isExpanded) {
+    animate = { width: 24 };
+    if (isGroup) {
+      animate = {
+        width: 24,
+        backgroundColor: theme.background.transparent.lighter,
+        border: `1px solid ${theme.background.transparent.lighter}`,
+        borderRadius: theme.border.radius.sm,
+      };
+    }
   }
-  if (!isGroup) {
-    return <StyledBaseContainer>{children}</StyledBaseContainer>;
-  }
-  return <StyledGroupContainer>{children}</StyledGroupContainer>;
+
+  return (
+    <StyledAnimationGroupContainer
+      initial={false}
+      animate={animate}
+      transition={{ duration: theme.animation.duration.normal }}
+    >
+      {children}
+    </StyledAnimationGroupContainer>
+  );
 };

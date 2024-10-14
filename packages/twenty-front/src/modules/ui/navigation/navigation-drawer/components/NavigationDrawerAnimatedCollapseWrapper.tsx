@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
@@ -11,8 +11,10 @@ const StyledAnimatedContainer = styled(motion.div)`
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,
+  animateHeight = false,
 }: {
   children: React.ReactNode;
+  animateHeight?: boolean;
 }) => {
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
@@ -24,13 +26,24 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
     return children;
   }
 
+  let animate: AnimationControls | TargetAndTransition = {};
+  if (isNavigationDrawerExpanded) {
+    animate = { opacity: 1, pointerEvents: 'auto' };
+  } else {
+    animate = {
+      width: 0,
+      opacity: 0,
+      pointerEvents: 'none',
+    };
+    if (animateHeight) {
+      animate = { ...animate, height: 0 };
+    }
+  }
+
   return (
     <StyledAnimatedContainer
-      animate={
-        isNavigationDrawerExpanded
-          ? { opacity: 1, height: 'auto', width: 'auto', pointerEvents: 'auto' }
-          : { opacity: 0, height: 0, width: 0, pointerEvents: 'none' }
-      }
+      initial={false}
+      animate={animate}
       transition={{
         duration: theme.animation.duration.normal,
       }}

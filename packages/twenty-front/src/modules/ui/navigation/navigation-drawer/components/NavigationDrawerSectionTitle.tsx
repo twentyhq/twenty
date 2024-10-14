@@ -54,7 +54,7 @@ export const NavigationDrawerSectionTitle = ({
         isNavigationDrawerExpanded || isSettingsPage ? onClick : undefined
       }
     >
-      {isNavigationDrawerExpanded || isSettingsPage ? label : ''}
+      {label}
     </StyledTitle>
   );
 };

@@ -107,7 +107,7 @@ export const CurrentWorkspaceMemberFavorites = () => {
 
   return (
     <StyledContainer>
-      <NavigationDrawerAnimatedCollapseWrapper>
+      <NavigationDrawerAnimatedCollapseWrapper animateHeight>
         <NavigationDrawerSectionTitle
           label="Favorites"
           onClick={() => toggleNavigationSection()}
