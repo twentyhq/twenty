@@ -1,10 +1,18 @@
+import * as Sentry from '@sentry/react';
 import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import * as Sentry from '@sentry/react';
 
 import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
+import { SettingsErrorFallback } from '@/error-handler/components/SettingsErrorFallback';
 
-export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
+type AppErrorBoundaryProps = {
+  children: ReactNode;
+  isSettingsRoute?: boolean;
+};
+export const AppErrorBoundary = ({
+  children,
+  isSettingsRoute = false,
+}: AppErrorBoundaryProps) => {
   const handleError = (_error: Error, _info: ErrorInfo) => {
     Sentry.captureException(_error, (scope) => {
       scope.setExtras({ _info });
@@ -14,7 +22,9 @@ export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
 
   return (
     <ErrorBoundary
-      FallbackComponent={GenericErrorFallback}
+      FallbackComponent={
+        isSettingsRoute ? SettingsErrorFallback : GenericErrorFallback
+      }
       onError={handleError}
     >
       {children}
