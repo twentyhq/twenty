@@ -20,10 +20,12 @@ export const useComputeNumberOfSelectedRecords = () => {
   const selectedRecordIds = contextStoreTargetedRecordIds.selectedRecordIds;
   const excludedRecordIds = contextStoreTargetedRecordIds.excludedRecordIds;
 
+  const shouldSkip = selectedRecordIds !== 'all';
+
   const { totalCount } = useFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     filter:
-      selectedRecordIds === 'all'
+      excludedRecordIds.length > 0
         ? {
             not: {
               id: {
@@ -31,9 +33,10 @@ export const useComputeNumberOfSelectedRecords = () => {
               },
             },
           }
-        : { id: { in: selectedRecordIds } },
+        : undefined,
     limit: 1,
+    skip: shouldSkip,
   });
 
-  return totalCount;
+  return shouldSkip ? selectedRecordIds.length : totalCount;
 };

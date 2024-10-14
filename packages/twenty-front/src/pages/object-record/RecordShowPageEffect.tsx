@@ -8,7 +8,10 @@ export const RecordShowPageEffect = ({ recordId }: { recordId: string }) => {
   );
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds([recordId]);
+    setContextStoreTargetedRecordIds({
+      selectedRecordIds: [recordId],
+      excludedRecordIds: [],
+    });
   }, [recordId, setContextStoreTargetedRecordIds]);
 
   return null;

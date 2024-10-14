@@ -20,7 +20,10 @@ const meta: Meta<typeof ActionMenuBar> = {
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
-          set(contextStoreTargetedRecordIdsState, ['1', '2', '3']);
+          set(contextStoreTargetedRecordIdsState, {
+            selectedRecordIds: ['1', '2', '3'],
+            excludedRecordIds: [],
+          });
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',

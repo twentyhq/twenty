@@ -8,11 +8,11 @@ export const RecordActionMenuEntriesSetter = () => {
     contextStoreTargetedRecordIdsState,
   );
 
-  if (contextStoreTargetedRecordIds.length === 0) {
+  if (contextStoreTargetedRecordIds.selectedRecordIds.length === 0) {
     return null;
   }
 
-  if (contextStoreTargetedRecordIds.length === 1) {
+  if (contextStoreTargetedRecordIds.selectedRecordIds.length === 1) {
     return <SingleRecordActionMenuEntriesSetter />;
   }
 

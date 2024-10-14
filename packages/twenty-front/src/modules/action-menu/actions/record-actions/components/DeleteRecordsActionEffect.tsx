@@ -22,6 +22,7 @@ export const DeleteRecordsActionEffect = ({
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
   );
+
   const selectedRecordIds = contextStoreTargetedRecordIds.selectedRecordIds;
   const excludedRecordIds = contextStoreTargetedRecordIds.excludedRecordIds;
 
@@ -45,11 +46,13 @@ export const DeleteRecordsActionEffect = ({
   });
   const { favorites, deleteFavorite } = useFavorites();
 
+  const shouldSkip = selectedRecordIds !== 'all';
+
   const { totalCount, records: recordsToDelete } = useFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     recordGqlFields: ['id'],
     filter:
-      selectedRecordIds === 'all'
+      excludedRecordIds.length > 0
         ? {
             not: {
               id: {
@@ -57,41 +60,43 @@ export const DeleteRecordsActionEffect = ({
               },
             },
           }
-        : { id: { in: selectedRecordIds } },
+        : undefined,
+    skip: shouldSkip,
   });
 
-  const numberOfSelectedRecords = totalCount ?? 0;
+  const numberOfSelectedRecords = totalCount ?? selectedRecordIds.length;
 
-  const recordIdsToDelete = recordsToDelete.map((record) => record.id);
+  const recordIdsToDelete = shouldSkip
+    ? selectedRecordIds
+    : recordsToDelete.map((record) => record.id);
 
-  const handleDeleteClick = useCallback(async () => {
-    resetTableRowSelection();
+  const handleDeleteClick = useCallback(
+    async (recordIdsToDelete: string[]) => {
+      for (const recordIdToDelete of recordIdsToDelete) {
+        const foundFavorite = favorites?.find(
+          (favorite) => favorite.recordId === recordIdToDelete,
+        );
 
-    for (const recordIdToDelete of recordIdsToDelete) {
-      const foundFavorite = favorites?.find(
-        (favorite) => favorite.recordId === recordIdToDelete,
-      );
-
-      if (foundFavorite !== undefined) {
-        deleteFavorite(foundFavorite.id);
+        if (foundFavorite !== undefined) {
+          deleteFavorite(foundFavorite.id);
+        }
       }
-    }
 
-    await deleteManyRecords(recordIdsToDelete, {
-      delayInMsBetweenRequests: 50,
-    });
-  }, [
-    deleteFavorite,
-    deleteManyRecords,
-    favorites,
-    recordIdsToDelete,
-    resetTableRowSelection,
-  ]);
+      await deleteManyRecords(recordIdsToDelete, {
+        delayInMsBetweenRequests: 50,
+      });
+
+      resetTableRowSelection();
+    },
+    [deleteFavorite, deleteManyRecords, favorites, resetTableRowSelection],
+  );
 
   const isRemoteObject = objectMetadataItem?.isRemote ?? false;
 
   const canDelete =
-    !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
+    !isRemoteObject &&
+    numberOfSelectedRecords < DELETE_MAX_COUNT &&
+    numberOfSelectedRecords > 0;
 
   useEffect(() => {
     if (canDelete) {
@@ -116,7 +121,7 @@ export const DeleteRecordsActionEffect = ({
             }? ${
               numberOfSelectedRecords === 1 ? 'It' : 'They'
             } can be recovered from the Options menu.`}
-            onConfirmClick={() => handleDeleteClick()}
+            onConfirmClick={() => handleDeleteClick(recordIdsToDelete)}
             deleteButtonText={`Delete ${
               numberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
@@ -126,6 +131,10 @@ export const DeleteRecordsActionEffect = ({
     } else {
       removeActionMenuEntry('delete');
     }
+
+    return () => {
+      removeActionMenuEntry('delete');
+    };
   }, [
     canDelete,
     addActionMenuEntry,

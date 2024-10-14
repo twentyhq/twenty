@@ -25,11 +25,17 @@ export const RecordShowPageContextStoreEffect = ({
   });
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds([recordId]);
+    setContextStoreTargetedRecordIds({
+      selectedRecordIds: [recordId],
+      excludedRecordIds: [],
+    });
     setContextStoreCurrentObjectMetadataId(objectMetadataItem?.id);
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
+      setContextStoreTargetedRecordIds({
+        selectedRecordIds: [],
+        excludedRecordIds: [],
+      });
       setContextStoreCurrentObjectMetadataId(null);
     };
   }, [

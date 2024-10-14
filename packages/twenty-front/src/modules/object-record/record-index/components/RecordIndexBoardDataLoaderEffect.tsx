@@ -2,7 +2,6 @@ import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
@@ -125,28 +124,19 @@ export const RecordIndexBoardDataLoaderEffect = ({
     contextStoreTargetedRecordIdsState,
   );
 
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
-  );
-
   useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
-
-  useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+    setContextStoreTargetedRecordIds({
+      selectedRecordIds: selectedRecordIds,
+      excludedRecordIds: [],
+    });
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
-      setContextStoreCurrentObjectMetadataItem(null);
+      setContextStoreTargetedRecordIds({
+        selectedRecordIds: [],
+        excludedRecordIds: [],
+      });
     };
-  }, [
-    objectMetadataItem?.id,
-    selectedRecordIds,
-    setContextStoreCurrentObjectMetadataItem,
-    setContextStoreTargetedRecordIds,
-  ]);
+  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
 
   return <></>;
 };
