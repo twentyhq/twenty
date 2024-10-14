@@ -47,6 +47,13 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
+const StyledHelperText = styled.p`
+  color: ${({ theme }) => theme.color.red};
+  font-size: 0.85rem;
+  padding: 4px;
+  margin: 0;
+`;
+
 export const SignInUpForm = () => {
   const captchaProvider = useRecoilValue(captchaProviderState);
   const isRequestingCaptchaToken = useRecoilValue(
@@ -54,6 +61,7 @@ export const SignInUpForm = () => {
   );
   const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
+  const [password, setPassword] = useState<string | null>(null);
   const { signInWithGoogle } = useSignInWithGoogle();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { form } = useSignInUpForm();
@@ -221,12 +229,18 @@ export const SignInUpForm = () => {
                         type="password"
                         placeholder="Password"
                         onBlur={onBlur}
-                        onChange={onChange}
+                        onChange={(text:string) => {
+                          onChange(text); 
+                          setPassword(text); 
+                        }}
                         error={showErrors ? error?.message : undefined}
                         fullWidth
                         disableHotkeys
                         onKeyDown={handleKeyDown}
                       />
+                       {password && password.length ! < 8 && !showErrors &&(
+                        <StyledHelperText>At least 8 characters long</StyledHelperText>
+                      )}
                     </StyledInputContainer>
                   )}
                 />
