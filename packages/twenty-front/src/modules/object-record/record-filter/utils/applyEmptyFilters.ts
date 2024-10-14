@@ -17,11 +17,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
-// TODO: fix this
-export const applyEmptyFilters = (
+export const getEmptyRecordGqlOperationFilter = (
   operand: ViewFilterOperand,
   correspondingField: Pick<Field, 'id' | 'name'>,
-  objectRecordFilters: RecordGqlOperationFilter[],
   definition: FilterDefinition,
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
@@ -312,13 +310,11 @@ export const applyEmptyFilters = (
 
   switch (operand) {
     case ViewFilterOperand.IsEmpty:
-      objectRecordFilters.push(emptyRecordFilter);
-      break;
+      return emptyRecordFilter;
     case ViewFilterOperand.IsNotEmpty:
-      objectRecordFilters.push({
+      return {
         not: emptyRecordFilter,
-      });
-      break;
+      };
     default:
       throw new Error(
         `Unknown operand ${operand} for ${definition.type} filter`,
