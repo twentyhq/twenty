@@ -10,6 +10,7 @@ export const emailsCompositeType: CompositeType = {
       type: FieldMetadataType.TEXT,
       hidden: false,
       isRequired: false,
+      isIncludedInUniqueConstraint: true,
     },
     {
       name: 'additionalEmails',

@@ -76,9 +76,6 @@ export class ClientConfig {
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
 
-  @Field(() => Telemetry, { nullable: false })
-  telemetry: Telemetry;
-
   @Field(() => Billing, { nullable: false })
   billing: Billing;
 

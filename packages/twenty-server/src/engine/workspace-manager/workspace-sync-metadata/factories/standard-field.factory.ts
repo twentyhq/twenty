@@ -12,6 +12,7 @@ import {
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
@@ -163,9 +164,12 @@ export class StandardFieldFactory {
         settings: workspaceFieldMetadataArgs.settings,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
+        isUnique: workspaceFieldMetadataArgs.isUnique,
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
+        asExpression: workspaceFieldMetadataArgs.asExpression,
+        generatedType: workspaceFieldMetadataArgs.generatedType,
       },
     ];
   }
@@ -216,6 +220,9 @@ export class StandardFieldFactory {
         isCustom: false,
         isSystem: true,
         isNullable: workspaceRelationMetadataArgs.isNullable,
+        isUnique:
+          workspaceRelationMetadataArgs.type ===
+          RelationMetadataType.ONE_TO_ONE,
         isActive: workspaceRelationMetadataArgs.isActive ?? true,
       });
     }
@@ -234,6 +241,8 @@ export class StandardFieldFactory {
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
       isNullable: true,
+      isUnique:
+        workspaceRelationMetadataArgs.type === RelationMetadataType.ONE_TO_ONE,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
     });
 

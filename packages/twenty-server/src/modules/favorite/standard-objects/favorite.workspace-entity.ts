@@ -22,6 +22,8 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -127,6 +129,48 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     featureFlag: FeatureFlagKey.IsWorkflowEnabled,
   })
   workflowId: string;
+
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.workflowVersion,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Workflow',
+    description: 'Favorite workflow version',
+    icon: 'IconSettingsAutomation',
+    inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
+  @WorkspaceIsNullable()
+  workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workflowVersion')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
+  workflowVersionId: string;
+
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.workflowRun,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Workflow',
+    description: 'Favorite workflow run',
+    icon: 'IconSettingsAutomation',
+    inverseSideTarget: () => WorkflowRunWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
+  @WorkspaceIsNullable()
+  workflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workflowRun')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
+  })
+  workflowRunId: string;
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.task,

@@ -4,10 +4,12 @@ import {
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
   DestroyManyResolverArgs,
+  DestroyOneResolverArgs,
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   RestoreManyResolverArgs,
+  SearchResolverArgs,
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -39,4 +41,8 @@ export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
                     ? RestoreManyResolverArgs
                     : T extends 'destroyMany'
                       ? DestroyManyResolverArgs
-                      : never;
+                      : T extends 'destroyOne'
+                        ? DestroyOneResolverArgs
+                        : T extends 'search'
+                          ? SearchResolverArgs
+                          : never;

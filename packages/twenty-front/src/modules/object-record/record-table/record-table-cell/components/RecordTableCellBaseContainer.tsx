@@ -71,10 +71,10 @@ export const RecordTableCellBaseContainer = ({
     }
   };
 
-  const { onContextMenu } = useContext(RecordTableContext);
+  const { onActionMenuDropdownOpened } = useContext(RecordTableContext);
 
-  const handleContextMenu = (event: React.MouseEvent) => {
-    onContextMenu(event, recordId);
+  const handleActionMenuDropdown = (event: React.MouseEvent) => {
+    onActionMenuDropdownOpened(event, recordId);
   };
 
   const { hotkeyScope } = useContext(FieldContext);
@@ -87,7 +87,7 @@ export const RecordTableCellBaseContainer = ({
         onMouseLeave={handleContainerMouseLeave}
         onMouseMove={handleContainerMouseMove}
         onClick={handleContainerClick}
-        onContextMenu={handleContextMenu}
+        onContextMenu={handleActionMenuDropdown}
         backgroundColorTransparentSecondary={
           theme.background.transparent.secondary
         }

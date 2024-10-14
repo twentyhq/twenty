@@ -6,6 +6,7 @@ import {
   ForwardedRef,
   InputHTMLAttributes,
   forwardRef,
+  useId,
   useRef,
   useState,
 } from 'react';
@@ -21,7 +22,7 @@ const StyledContainer = styled.div<
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 
-const StyledLabel = styled.span`
+const StyledLabel = styled.label`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -169,9 +170,15 @@ const TextInputV2Component = (
     setPasswordVisible(!passwordVisible);
   };
 
+  const inputId = useId();
+
   return (
     <StyledContainer className={className} fullWidth={fullWidth ?? false}>
-      {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
+      {label && (
+        <StyledLabel htmlFor={inputId}>
+          {label + (required ? '*' : '')}
+        </StyledLabel>
+      )}
       <StyledInputContainer>
         {!!LeftIcon && (
           <StyledLeftIconContainer>
@@ -181,6 +188,7 @@ const TextInputV2Component = (
           </StyledLeftIconContainer>
         )}
         <StyledInput
+          id={inputId}
           data-testid={dataTestId}
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}

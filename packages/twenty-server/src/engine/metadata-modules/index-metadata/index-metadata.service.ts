@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import {
+  IndexMetadataEntity,
+  IndexType,
+} from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -28,6 +32,10 @@ export class IndexMetadataService {
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
+    isUnique: boolean,
+    isCustom: boolean,
+    indexType?: IndexType,
+    indexWhereClause?: string,
   ) {
     const tableName = computeObjectTargetTable(objectMetadata);
 
@@ -53,6 +61,8 @@ export class IndexMetadataService {
         ),
         workspaceId,
         objectMetadataId: objectMetadata.id,
+        ...(isDefined(indexType) ? { indexType: indexType } : {}),
+        isCustom: isCustom,
       });
     } catch (error) {
       throw new Error(
@@ -74,6 +84,9 @@ export class IndexMetadataService {
           action: WorkspaceMigrationIndexActionType.CREATE,
           columns: columnNames,
           name: indexName,
+          isUnique,
+          where: indexWhereClause,
+          type: indexType,
         },
       ],
     } satisfies WorkspaceMigrationTableAction;

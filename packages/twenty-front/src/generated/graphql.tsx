@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -158,7 +158,6 @@ export type ClientConfig = {
   signInPrefilled: Scalars['Boolean'];
   signUpDisabled: Scalars['Boolean'];
   support: Support;
-  telemetry: Telemetry;
 };
 
 export type CreateServerlessFunctionFromFileInput = {
@@ -264,15 +263,12 @@ export enum FieldMetadataType {
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
-  Email = 'EMAIL',
   Emails = 'EMAILS',
   FullName = 'FULL_NAME',
-  Link = 'LINK',
   Links = 'LINKS',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
-  Phone = 'PHONE',
   Phones = 'PHONES',
   Position = 'POSITION',
   Rating = 'RATING',
@@ -281,6 +277,7 @@ export enum FieldMetadataType {
   RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
+  TsVector = 'TS_VECTOR',
   Uuid = 'UUID'
 }
 
@@ -524,6 +521,7 @@ export type MutationSignUpArgs = {
 
 export type MutationTrackArgs = {
   data: Scalars['JSON'];
+  sessionId: Scalars['String'];
   type: Scalars['String'];
 };
 
@@ -917,11 +915,6 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
-};
-
-export type Telemetry = {
-  __typename?: 'Telemetry';
-  enabled: Scalars['Boolean'];
 };
 
 export type TimelineCalendarEvent = {
@@ -1354,8 +1347,8 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type TrackMutationVariables = Exact<{
-  type: Scalars['String'];
-  data: Scalars['JSON'];
+  action: Scalars['String'];
+  payload: Scalars['JSON'];
 }>;
 
 
@@ -1511,7 +1504,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, chromeExtensionId?: string | null, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, chromeExtensionId?: string | null, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1948,8 +1941,8 @@ export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof us
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
 export const TrackDocument = gql`
-    mutation Track($type: String!, $data: JSON!) {
-  track(type: $type, data: $data) {
+    mutation Track($action: String!, $payload: JSON!) {
+  track(action: $action, payload: $payload) {
     success
   }
 }
@@ -1969,8 +1962,8 @@ export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutati
  * @example
  * const [trackMutation, { data, loading, error }] = useTrackMutation({
  *   variables: {
- *      type: // value for 'type'
- *      data: // value for 'data'
+ *      action: // value for 'type'
+ *      payload: // value for 'payload'
  *   },
  * });
  */
@@ -2684,9 +2677,6 @@ export const GetClientConfigDocument = gql`
     signInPrefilled
     signUpDisabled
     debugMode
-    telemetry {
-      enabled
-    }
     support {
       supportDriver
       supportFrontChatId

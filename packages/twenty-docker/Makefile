@@ -1,28 +1,3 @@
-dev-build:
-	@docker compose -f dev/docker-compose.yml down -v
-	@docker compose -f dev/docker-compose.yml build
-
-dev-up:
-	@docker compose -f dev/docker-compose.yml up -d
-
-dev-start:
-	@docker compose -f dev/docker-compose.yml start
-
-dev-stop:
-	@docker compose -f dev/docker-compose.yml stop
-
-dev-down:
-	@docker compose -f dev/docker-compose.yml down -v
-
-dev-sh:
-	@docker compose -f dev/docker-compose.yml exec twenty-dev sh
-
-dev-postgres-build:
-	@docker stop twenty_postgres || true
-	@docker rm twenty_postgres || true
-	@docker volume rm twenty_db_data || true
-	@docker compose -f dev/docker-compose.yml up --build postgres -d
-
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --tag twenty . && cd -
 

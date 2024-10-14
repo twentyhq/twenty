@@ -47,38 +47,36 @@ export const initialFavorites = [
   },
 ];
 
-export const sortedFavorites =  [
-      {
-       "avatarType": "rounded",
-       "avatarUrl": "",
-       "id": "1",
-       "labelIdentifier": " ",
-       "link": "/object/person/1",
-       "position": 0,
-       "recordId": "1",
-       "workspaceMemberId": undefined,
-     },
-      {
-       "avatarType": "rounded",
-       "avatarUrl": "",
-       "id": "2",
-       "labelIdentifier": " ",
-       "link": "/object/person/3",
-       "position": 1,
-       "recordId": "3",
-       "workspaceMemberId": undefined,
-     },
-      {
-       "avatarType": "squared",
-       "avatarUrl": "example.com",
-       "id": "3",
-       "key": "8f3b2121-f194-4ba4-9fbf-2d5a37126806",
-       "labelIdentifier": "favoriteLabel",
-       "link": "example.com",
-       "position": 2,
-       "recordId": "1",
-     },
-   ]
+export const sortedFavorites = [
+  {
+    id: '1',
+    recordId: '2',
+    position: 0,
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    labelIdentifier: 'ABC Corp',
+    link: '/object/company/2',
+  },
+  {
+    id: '2',
+    recordId: '4',
+    position: 1,
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    labelIdentifier: 'Company Test',
+    link: '/object/company/4',
+  },
+  {
+    id: '3',
+    position: 2,
+    key: '8f3b2121-f194-4ba4-9fbf-2d5a37126806',
+    labelIdentifier: 'favoriteLabel',
+    avatarUrl: 'example.com',
+    avatarType: 'squared',
+    link: 'example.com',
+    recordId: '1',
+  },
+];
 
 export const mocks = [
   {
@@ -87,155 +85,9 @@ export const mocks = [
         mutation CreateOneFavorite($input: FavoriteCreateInput!) {
           createFavorite(data: $input) {
             __typename
-        noteId
-        taskId
-        person {
-          __typename
-          name {
-            firstName
-            lastName
-          }
-          linkedinLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          deletedAt
-          createdAt
-          updatedAt
-          jobTitle
-          intro
-          workPrefereance
-          performanceRating
-          xLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          city
-          companyId
-          phones {
-            primaryPhoneNumber
-            primaryPhoneCountryCode
-            additionalPhones
-          }
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          id
-          position
-          emails {
-            primaryEmail
-            additionalEmails
-          }
-          avatarUrl
-          whatsapp {
-            primaryPhoneNumber
-            primaryPhoneCountryCode
-            additionalPhones
-          }
-        }
-        task {
-          __typename
-          updatedAt
-          createdAt
-          deletedAt
-          dueAt
-          id
-          status
-          body
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          assigneeId
-          position
-          title
-        }
-        rocketId
-        viewId
-        updatedAt
-        workflowId
-        personId
-        workspaceMemberId
-        note {
-          __typename
-          deletedAt
-          id
-          position
-          updatedAt
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          body
-          title
-          createdAt
-        }
-        createdAt
-        view {
-          __typename
-          id
-          type
-          icon
-          key
-          isCompact
-          kanbanFieldMetadataId
-          objectMetadataId
-          position
-          createdAt
-          deletedAt
-          updatedAt
-          name
-        }
-        opportunityId
-        position
-        deletedAt
-        id
-        companyId
-        workflow {
-          __typename
-          deletedAt
-          lastPublishedVersionId
-          createdAt
-          id
-          statuses
-          name
-          position
-          updatedAt
-        }
-        workspaceMember {
-          __typename
-          name {
-            firstName
-            lastName
-          }
-          avatarUrl
-          userId
-          createdAt
-          timeZone
-          id
-          timeFormat
-          updatedAt
-          locale
-          userEmail
-          deletedAt
-          colorScheme
-          dateFormat
-        }
         company {
           __typename
-          updatedAt
-          domainName {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          visaSponsorship
+          accountOwnerId
           address {
             addressStreet1
             addressStreet2
@@ -246,20 +98,9 @@ export const mocks = [
             addressLat
             addressLng
           }
-          position
-          employees
-          deletedAt
-          accountOwnerId
           annualRecurringRevenue {
             amountMicros
             currencyCode
-          }
-          id
-          name
-          xLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
           }
           createdAt
           createdBy {
@@ -267,7 +108,15 @@ export const mocks = [
             workspaceMemberId
             name
           }
-          workPolicy
+          deletedAt
+          domainName {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          employees
+          id
+          idealCustomerProfile
           introVideo {
             primaryLinkUrl
             primaryLinkLabel
@@ -278,45 +127,194 @@ export const mocks = [
             primaryLinkLabel
             secondaryLinks
           }
-          tagline
-          idealCustomerProfile
-        }
-        rocket {
-          __typename
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          updatedAt
           name
           position
-          createdAt
-          id
-          deletedAt
+          tagline
+          updatedAt
+          visaSponsorship
+          workPolicy
+          xLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
         }
-        opportunity {
+        companyId
+        createdAt
+        deletedAt
+        id
+        note {
           __typename
+          body
+          createdAt
           createdBy {
             source
             workspaceMemberId
             name
           }
+          deletedAt
+          id
+          position
+          title
+          updatedAt
+        }
+        noteId
+        opportunity {
+          __typename
           amount {
             amountMicros
             currencyCode
           }
-          stage
-          position
           closeDate
+          companyId
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
           id
           name
           pointOfContactId
-          companyId
+          position
+          stage
           updatedAt
-          deletedAt
-          createdAt
         }
+        opportunityId
+        person {
+          __typename
+          avatarUrl
+          city
+          companyId
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          emails {
+            primaryEmail
+            additionalEmails
+          }
+          id
+          intro
+          jobTitle
+          linkedinLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          name {
+            firstName
+            lastName
+          }
+          performanceRating
+          phones {
+            primaryPhoneNumber
+            primaryPhoneCountryCode
+            additionalPhones
+          }
+          position
+          updatedAt
+          whatsapp {
+            primaryPhoneNumber
+            primaryPhoneCountryCode
+            additionalPhones
+          }
+          workPreference
+          xLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+        }
+        personId
+        position
+        rocket {
+          __typename
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          id
+          name
+          position
+          updatedAt
+        }
+        rocketId
+        task {
+          __typename
+          assigneeId
+          body
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          dueAt
+          id
+          position
+          status
+          title
+          updatedAt
+        }
+        taskId
+        updatedAt
+        view {
+          __typename
+          createdAt
+          deletedAt
+          icon
+          id
+          isCompact
+          kanbanFieldMetadataId
+          key
+          name
+          objectMetadataId
+          position
+          type
+          updatedAt
+        }
+        viewId
+        workflow {
+          __typename
+          createdAt
+          deletedAt
+          id
+          lastPublishedVersionId
+          name
+          position
+          statuses
+          updatedAt
+        }
+        workflowId
+        workspaceMember {
+          __typename
+          avatarUrl
+          colorScheme
+          createdAt
+          dateFormat
+          deletedAt
+          id
+          locale
+          name {
+            firstName
+            lastName
+          }
+          timeFormat
+          timeZone
+          updatedAt
+          userEmail
+          userId
+        }
+        workspaceMemberId
       }
     }
       `,
@@ -342,7 +340,9 @@ export const mocks = [
       query: gql`
         mutation DeleteOneFavorite($idToDelete: ID!) {
           deleteFavorite(id: $idToDelete) {
+            __typename
             id
+            deletedAt
           }
         }
       `,
@@ -365,236 +365,236 @@ export const mocks = [
         ) {
           updateFavorite(id: $idToUpdate, data: $input) {
             __typename
-        noteId
-        taskId
-        person {
-          __typename
-          name {
-            firstName
-            lastName
-          }
-          linkedinLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          deletedAt
-          createdAt
-          updatedAt
-          jobTitle
-          intro
-          workPrefereance
-          performanceRating
-          xLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          city
-          companyId
-          phones {
-            primaryPhoneNumber
-            primaryPhoneCountryCode
-            additionalPhones
-          }
-          createdBy {
-            source
+            company {
+              __typename
+              accountOwnerId
+              address {
+                addressStreet1
+                addressStreet2
+                addressCity
+                addressState
+                addressCountry
+                addressPostcode
+                addressLat
+                addressLng
+              }
+              annualRecurringRevenue {
+                amountMicros
+                currencyCode
+              }
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              domainName {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              employees
+              id
+              idealCustomerProfile
+              introVideo {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              linkedinLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              name
+              position
+              tagline
+              updatedAt
+              visaSponsorship
+              workPolicy
+              xLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+            }
+            companyId
+            createdAt
+            deletedAt
+            id
+            note {
+              __typename
+              body
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              id
+              position
+              title
+              updatedAt
+            }
+            noteId
+            opportunity {
+              __typename
+              amount {
+                amountMicros
+                currencyCode
+              }
+              closeDate
+              companyId
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              id
+              name
+              pointOfContactId
+              position
+              stage
+              updatedAt
+            }
+            opportunityId
+            person {
+              __typename
+              avatarUrl
+              city
+              companyId
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              emails {
+                primaryEmail
+                additionalEmails
+              }
+              id
+              intro
+              jobTitle
+              linkedinLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              name {
+                firstName
+                lastName
+              }
+              performanceRating
+              phones {
+                primaryPhoneNumber
+                primaryPhoneCountryCode
+                additionalPhones
+              }
+              position
+              updatedAt
+              whatsapp {
+                primaryPhoneNumber
+                primaryPhoneCountryCode
+                additionalPhones
+              }
+              workPreference
+              xLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+            }
+            personId
+            position
+            rocket {
+              __typename
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              id
+              name
+              position
+              updatedAt
+            }
+            rocketId
+            task {
+              __typename
+              assigneeId
+              body
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              dueAt
+              id
+              position
+              status
+              title
+              updatedAt
+            }
+            taskId
+            updatedAt
+            view {
+              __typename
+              createdAt
+              deletedAt
+              icon
+              id
+              isCompact
+              kanbanFieldMetadataId
+              key
+              name
+              objectMetadataId
+              position
+              type
+              updatedAt
+            }
+            viewId
+            workflow {
+              __typename
+              createdAt
+              deletedAt
+              id
+              lastPublishedVersionId
+              name
+              position
+              statuses
+              updatedAt
+            }
+            workflowId
+            workspaceMember {
+              __typename
+              avatarUrl
+              colorScheme
+              createdAt
+              dateFormat
+              deletedAt
+              id
+              locale
+              name {
+                firstName
+                lastName
+              }
+              timeFormat
+              timeZone
+              updatedAt
+              userEmail
+              userId
+            }
             workspaceMemberId
-            name
-          }
-          id
-          position
-          emails {
-            primaryEmail
-            additionalEmails
-          }
-          avatarUrl
-          whatsapp {
-            primaryPhoneNumber
-            primaryPhoneCountryCode
-            additionalPhones
-          }
-        }
-        task {
-          __typename
-          updatedAt
-          createdAt
-          deletedAt
-          dueAt
-          id
-          status
-          body
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          assigneeId
-          position
-          title
-        }
-        rocketId
-        viewId
-        updatedAt
-        workflowId
-        personId
-        workspaceMemberId
-        note {
-          __typename
-          deletedAt
-          id
-          position
-          updatedAt
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          body
-          title
-          createdAt
-        }
-        createdAt
-        view {
-          __typename
-          id
-          type
-          icon
-          key
-          isCompact
-          kanbanFieldMetadataId
-          objectMetadataId
-          position
-          createdAt
-          deletedAt
-          updatedAt
-          name
-        }
-        opportunityId
-        position
-        deletedAt
-        id
-        companyId
-        workflow {
-          __typename
-          deletedAt
-          lastPublishedVersionId
-          createdAt
-          id
-          statuses
-          name
-          position
-          updatedAt
-        }
-        workspaceMember {
-          __typename
-          name {
-            firstName
-            lastName
-          }
-          avatarUrl
-          userId
-          createdAt
-          timeZone
-          id
-          timeFormat
-          updatedAt
-          locale
-          userEmail
-          deletedAt
-          colorScheme
-          dateFormat
-        }
-        company {
-          __typename
-          updatedAt
-          domainName {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          visaSponsorship
-          address {
-            addressStreet1
-            addressStreet2
-            addressCity
-            addressState
-            addressCountry
-            addressPostcode
-            addressLat
-            addressLng
-          }
-          position
-          employees
-          deletedAt
-          accountOwnerId
-          annualRecurringRevenue {
-            amountMicros
-            currencyCode
-          }
-          id
-          name
-          xLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          createdAt
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          workPolicy
-          introVideo {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          linkedinLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          tagline
-          idealCustomerProfile
-        }
-        rocket {
-          __typename
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          updatedAt
-          name
-          position
-          createdAt
-          id
-          deletedAt
-        }
-        opportunity {
-          __typename
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          amount {
-            amountMicros
-            currencyCode
-          }
-          stage
-          position
-          closeDate
-          id
-          name
-          pointOfContactId
-          companyId
-          updatedAt
-          deletedAt
-          createdAt
-        }
           }
         }
       `,

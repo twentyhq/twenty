@@ -50,6 +50,8 @@ export const sanitizeRecordInput = ({
           return undefined;
         }
 
+        // Todo: we should check that the fieldValue is a valid value
+        // (e.g. a string for a string field, following the right composite structure for composite fields)
         return [fieldName, fieldValue];
       })
       .filter(isDefined),

@@ -1,5 +1,5 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React, { useId } from 'react';
 
 interface TextInputProps {
   label?: string;
@@ -18,7 +18,7 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledLabel = styled.span`
+const StyledLabel = styled.label`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -65,12 +65,15 @@ const TextInput: React.FC<TextInputProps> = ({
   placeholder,
   icon,
 }) => {
+  const inputId = useId();
+
   return (
     <StyledContainer fullWidth={fullWidth}>
-      {label && <StyledLabel>{label}</StyledLabel>}
+      {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
       <StyledInputContainer>
         {icon && <StyledIcon>{icon}</StyledIcon>}
         <StyledInput
+          id={inputId}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}

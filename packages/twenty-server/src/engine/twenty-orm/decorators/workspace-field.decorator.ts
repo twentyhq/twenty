@@ -20,6 +20,8 @@ export interface WorkspaceFieldOptions<
   options?: FieldMetadataOptions<T>;
   settings?: FieldMetadataSettings<T>;
   isActive?: boolean;
+  generatedType?: 'STORED' | 'VIRTUAL';
+  asExpression?: string;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(
@@ -55,6 +57,12 @@ export function WorkspaceField<T extends FieldMetadataType>(
         object,
         propertyKey.toString(),
       ) ?? false;
+    const isUnique =
+      TypedReflect.getMetadata(
+        'workspace:is-unique-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
 
     const defaultValue = (options.defaultValue ??
       generateDefaultValue(options.type)) as FieldMetadataDefaultValue | null;
@@ -75,7 +83,10 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isSystem,
       gate,
       isDeprecated,
+      isUnique,
       isActive: options.isActive,
+      asExpression: options.asExpression,
+      generatedType: options.generatedType,
     });
   };
 }

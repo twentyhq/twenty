@@ -1,5 +1,17 @@
 import { InputData } from '../utils/data.types';
 
+const OBJECT_SUBFIELD_NAMES = ['secondaryLinks', 'additionalPhones'];
+
+const formatArrayInputData = (
+  key: string,
+  arrayInputData: InputData,
+): string => {
+  if (OBJECT_SUBFIELD_NAMES.includes(key)) {
+    return `${arrayInputData[key].join('","')}`;
+  }
+  return `"${arrayInputData[key].join('","')}"`;
+};
+
 const handleQueryParams = (inputData: InputData): string => {
   const formattedInputData: InputData = {};
   Object.keys(inputData).forEach((key) => {
@@ -17,7 +29,11 @@ const handleQueryParams = (inputData: InputData): string => {
   let result = '';
   Object.keys(formattedInputData).forEach((key) => {
     let quote = '';
-    if (typeof formattedInputData[key] === 'object') {
+    if (Array.isArray(formattedInputData[key])) {
+      result = result.concat(
+        `${key}: [${formatArrayInputData(key, formattedInputData)}], `,
+      );
+    } else if (typeof formattedInputData[key] === 'object') {
       result = result.concat(
         `${key}: {${handleQueryParams(formattedInputData[key])}}, `,
       );

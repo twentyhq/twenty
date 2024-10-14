@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
+import { GraphQLObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { generateFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/generate-fields.utils';
 import { pascalCase } from 'src/utils/pascal-case';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 import { OutputTypeFactory } from './output-type.factory';
 
@@ -39,48 +37,13 @@ export class ObjectTypeDefinitionFactory {
       type: new GraphQLObjectType({
         name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
         description: objectMetadata.description,
-        fields: this.generateFields(objectMetadata, kind, options),
+        fields: generateFields(
+          objectMetadata,
+          kind,
+          options,
+          this.outputTypeFactory,
+        ),
       }),
     };
-  }
-
-  private generateFields(
-    objectMetadata: ObjectMetadataInterface,
-    kind: ObjectTypeDefinitionKind,
-    options: WorkspaceBuildSchemaOptions,
-  ): GraphQLFieldConfigMap<any, any> {
-    const fields: GraphQLFieldConfigMap<any, any> = {};
-
-    for (const fieldMetadata of objectMetadata.fields) {
-      // Relation field types are generated during extension of object type definition
-      if (isRelationFieldMetadataType(fieldMetadata.type)) {
-        continue;
-      }
-
-      const target = isCompositeFieldMetadataType(fieldMetadata.type)
-        ? fieldMetadata.type.toString()
-        : fieldMetadata.id;
-
-      const type = this.outputTypeFactory.create(
-        target,
-        fieldMetadata.type,
-        kind,
-        options,
-        {
-          nullable: fieldMetadata.isNullable,
-          isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-          settings: fieldMetadata.settings,
-          // Scalar type is already defined in the entity itself.
-          isIdField: false,
-        },
-      );
-
-      fields[fieldMetadata.name] = {
-        type,
-        description: fieldMetadata.description,
-      };
-    }
-
-    return fields;
   }
 }

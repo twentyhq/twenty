@@ -18,11 +18,11 @@ export const useDeleteRecordFromCache = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  return (recordToDelete: ObjectRecord) => {
+  return (recordToDestroy: ObjectRecord) => {
     deleteRecordFromCache({
       objectMetadataItem,
       objectMetadataItems,
-      recordToDelete,
+      recordToDestroy,
       cache: apolloClient.cache,
     });
   };

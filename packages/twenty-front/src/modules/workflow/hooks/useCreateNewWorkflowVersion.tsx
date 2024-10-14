@@ -2,11 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 
-export const useCreateNewWorkflowVersion = ({
-  workflowId,
-}: {
-  workflowId: string;
-}) => {
+export const useCreateNewWorkflowVersion = () => {
   const { createOneRecord: createOneWorkflowVersion } =
     useCreateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -15,13 +11,10 @@ export const useCreateNewWorkflowVersion = ({
   const createNewWorkflowVersion = (
     workflowVersionData: Pick<
       WorkflowVersion,
-      'name' | 'status' | 'trigger' | 'steps'
+      'workflowId' | 'name' | 'status' | 'trigger' | 'steps'
     >,
   ) => {
-    return createOneWorkflowVersion({
-      workflowId,
-      ...workflowVersionData,
-    });
+    return createOneWorkflowVersion(workflowVersionData);
   };
 
   return {

@@ -1,7 +1,9 @@
-import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import { ComponentDecorator } from 'twenty-ui';
 
+import { expect } from '@storybook/jest';
+import { userEvent, within } from '@storybook/test';
 import { TextArea, TextAreaProps } from '../TextArea';
 
 type RenderProps = TextAreaProps;
@@ -36,4 +38,21 @@ export const Filled: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true, value: 'Lorem Ipsum' },
+};
+
+export const WithLabel: Story = {
+  args: { label: 'My Textarea' },
+  play: async () => {
+    const canvas = within(document.body);
+
+    const label = await canvas.findByText('My Textarea');
+
+    expect(label).toBeVisible();
+
+    await userEvent.click(label);
+
+    const input = await canvas.findByRole('textbox');
+
+    expect(input).toHaveFocus();
+  },
 };
