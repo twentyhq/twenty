@@ -130,7 +130,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   return (
     objectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
-        <NavigationDrawerAnimatedCollapseWrapper animateHeight>
+        <NavigationDrawerAnimatedCollapseWrapper>
           <NavigationDrawerSectionTitle
             label={sectionTitle}
             onClick={() => toggleNavigationSection()}

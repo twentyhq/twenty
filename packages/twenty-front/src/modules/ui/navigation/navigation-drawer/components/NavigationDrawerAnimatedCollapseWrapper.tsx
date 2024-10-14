@@ -5,16 +5,12 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useTheme } from '@emotion/react';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
-const StyledAnimatedContainer = styled(motion.div)`
-  overflow: hidden;
-`;
+const StyledAnimatedContainer = styled(motion.div)``;
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,
-  animateHeight = false,
 }: {
   children: React.ReactNode;
-  animateHeight?: boolean;
 }) => {
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
@@ -26,19 +22,20 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
     return children;
   }
 
-  let animate: AnimationControls | TargetAndTransition = {};
-  if (isNavigationDrawerExpanded) {
-    animate = { opacity: 1, pointerEvents: 'auto' };
-  } else {
-    animate = {
-      width: 0,
-      opacity: 0,
-      pointerEvents: 'none',
-    };
-    if (animateHeight) {
-      animate = { ...animate, height: 0 };
-    }
-  }
+  const animate: AnimationControls | TargetAndTransition =
+    isNavigationDrawerExpanded
+      ? {
+          opacity: 1,
+          width: 'auto',
+          height: 'auto',
+          pointerEvents: 'auto',
+        }
+      : {
+          opacity: 0,
+          width: 0,
+          height: 0,
+          pointerEvents: 'none',
+        };
 
   return (
     <StyledAnimatedContainer

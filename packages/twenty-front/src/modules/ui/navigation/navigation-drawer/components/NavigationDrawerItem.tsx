@@ -17,6 +17,7 @@ import {
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -40,7 +41,7 @@ export type NavigationDrawerItemProps = {
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
   'active' | 'danger' | 'indentationLevel' | 'soon' | 'to'
->;
+> & { isNavigationDrawerExpanded: boolean };
 
 const StyledItem = styled('div', {
   shouldForwardProp: (prop) =>
@@ -79,8 +80,12 @@ const StyledItem = styled('div', {
     indentationLevel === 2 ? '2px' : '0'};
 
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
-  width: 100%;
-  overflow: hidden;
+
+  width: ${(props) =>
+    !props.isNavigationDrawerExpanded
+      ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
+      : '100%'};
+
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
@@ -106,7 +111,6 @@ const StyledItemElementsContainer = styled.div`
 
 const StyledItemLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
@@ -191,6 +195,7 @@ export const NavigationDrawerItem = ({
         as={to ? Link : 'div'}
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
+        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
