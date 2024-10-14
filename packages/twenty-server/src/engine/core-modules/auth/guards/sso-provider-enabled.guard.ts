@@ -15,7 +15,7 @@ export class SSOProviderEnabledGuard implements CanActivate {
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
     if (!this.environmentService.get('ENTERPRISE_KEY')) {
       throw new AuthException(
-        'SSO auth is not enabled',
+        'Enterprise key must be defined to use SSO',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }

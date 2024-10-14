@@ -37,6 +37,7 @@ import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { assert } from 'src/utils/assert';
+import { SessionStorageType } from 'src/engine/core-modules/session-storage/types/session-storage-type.enum';
 
 export class EnvironmentVariables {
   // Misc
@@ -438,6 +439,11 @@ export class EnvironmentVariables {
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
+
+  SESSION_STORAGE_TYPE: SessionStorageType = SessionStorageType.Redis;
+
+  @ValidateIf((env) => env.ENTERPRISE_KEY)
+  SESSION_STORE_SECRET: string;
 
   @CastToBoolean()
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;

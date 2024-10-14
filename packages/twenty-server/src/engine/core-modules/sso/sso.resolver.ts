@@ -19,6 +19,7 @@ import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.inpu
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
 import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
 import { EditSsoOutput } from 'src/engine/core-modules/sso/dtos/edit-sso.output';
+import { SSOException } from 'src/engine/core-modules/sso/sso.exception';
 
 @Resolver()
 export class SSOResolver {
@@ -29,7 +30,7 @@ export class SSOResolver {
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOIDCSsoInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
+  ): Promise<SetupSsoOutput | SSOException> {
     return this.sSOService.createOIDCIdentityProvider(
       setupSsoInput,
       workspaceId,
@@ -40,7 +41,7 @@ export class SSOResolver {
   @Mutation(() => [FindAvailableSSOIDPOutput])
   async findAvailableSSOIdentityProviders(
     @Args('input') input: FindAvailableSSOIDPInput,
-  ) {
+  ): Promise<Array<FindAvailableSSOIDPOutput>> {
     return this.sSOService.findAvailableSSOIdentityProviders(input.email);
   }
 
@@ -64,7 +65,7 @@ export class SSOResolver {
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSAMLSsoInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
+  ): Promise<SetupSsoOutput | SSOException> {
     return this.sSOService.createSAMLIdentityProvider(
       setupSsoInput,
       workspaceId,

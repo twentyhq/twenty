@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui';
+import { IconGoogle, IconMicrosoft, IconKey } from 'twenty-ui';
 
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
@@ -61,18 +61,18 @@ export const SignInUpForm = () => {
     signInUpMode,
     continueWithCredentials,
     continueWithEmail,
-    // continueWithSSO,
+    continueWithSSO,
     submitCredentials,
     submitSSOEmail,
   } = useSignInUp(form);
 
-  // const toggleSSOMode = () => {
-  //   if (signInUpStep === SignInUpStep.EmailSSO) {
-  //     continueWithEmail();
-  //   } else {
-  //     continueWithSSO();
-  //   }
-  // };
+  const toggleSSOMode = () => {
+    if (signInUpStep === SignInUpStep.EmailSSO) {
+      continueWithEmail();
+    } else {
+      continueWithSSO();
+    }
+  };
 
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>,
@@ -164,16 +164,16 @@ export const SignInUpForm = () => {
             <HorizontalSeparator visible={false} />
           </>
         )}
-        {/*<MainButton*/}
-        {/*  Icon={() => <IconKey size={theme.icon.size.md} />}*/}
-        {/*  title={*/}
-        {/*    signInUpStep === SignInUpStep.EmailSSO*/}
-        {/*      ? 'Continue with email'*/}
-        {/*      : 'Single sign-on (SSO)'*/}
-        {/*  }*/}
-        {/*  onClick={toggleSSOMode}*/}
-        {/*  fullWidth*/}
-        {/*/>*/}
+        <MainButton
+          Icon={() => <IconKey size={theme.icon.size.md} />}
+          title={
+            signInUpStep === SignInUpStep.EmailSSO
+              ? 'Continue with email'
+              : 'Single sign-on (SSO)'
+          }
+          onClick={toggleSSOMode}
+          fullWidth
+        />
         <HorizontalSeparator visible={true} />
 
         {authProviders.password &&
