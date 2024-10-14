@@ -58,7 +58,7 @@ export class GraphqlQueryDestroyOneResolverService
     );
 
     const nonFormattedDeletedObjectRecords = await queryBuilder
-      .where({
+      .where(`"${objectMetadataMapItem.nameSingular}".id = :id`, {
         id: args.id,
       })
       .take(1)

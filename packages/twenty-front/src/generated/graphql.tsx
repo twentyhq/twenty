@@ -263,15 +263,12 @@ export enum FieldMetadataType {
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
-  Email = 'EMAIL',
   Emails = 'EMAILS',
   FullName = 'FULL_NAME',
-  Link = 'LINK',
   Links = 'LINKS',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
-  Phone = 'PHONE',
   Phones = 'PHONES',
   Position = 'POSITION',
   Rating = 'RATING',
@@ -1013,7 +1010,7 @@ export type UpdateBillingEntity = {
 };
 
 export type UpdateObjectPayload = {
-  areLabelAndNameSync?: InputMaybe<Scalars['Boolean']>;
+  shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
@@ -1247,7 +1244,7 @@ export type FieldFilter = {
 
 export type Object = {
   __typename?: 'object';
-  areLabelAndNameSync: Scalars['Boolean'];
+  shouldSyncLabelAndName: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;

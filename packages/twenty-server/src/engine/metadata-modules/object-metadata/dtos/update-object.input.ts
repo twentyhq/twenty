@@ -65,7 +65,7 @@ export class UpdateObjectPayload {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  areLabelAndNameSync?: boolean;
+  shouldSyncLabelAndName?: boolean;
 }
 
 @InputType()

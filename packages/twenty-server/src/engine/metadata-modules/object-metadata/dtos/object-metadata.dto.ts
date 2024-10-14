@@ -79,5 +79,5 @@ export class ObjectMetadataDTO {
   imageIdentifierFieldMetadataId?: string | null;
 
   @Field()
-  areLabelAndNameSync: boolean;
+  shouldSyncLabelAndName: boolean;
 }

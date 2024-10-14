@@ -5,9 +5,12 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 import { H2Title, IconArchive } from 'twenty-ui';
 import { z } from 'zod';
 
+import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
+import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
@@ -29,6 +32,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
 
 const objectEditFormSchema = z
@@ -56,6 +60,9 @@ export const SettingsObjectEdit = () => {
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const { lastVisitedObjectMetadataItemId } =
+    useLastVisitedObjectMetadataItem();
+  const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -66,6 +73,10 @@ export const SettingsObjectEdit = () => {
     mode: 'onTouched',
     resolver: zodResolver(objectEditFormSchema),
   });
+
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
 
   useEffect(() => {
     if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
@@ -90,6 +101,15 @@ export const SettingsObjectEdit = () => {
           pick(formValues, dirtyFieldKeys),
         ),
       });
+
+      if (lastVisitedObjectMetadataItemId === activeObjectMetadataItem.id) {
+        const lastVisitedView = getLastVisitedViewIdFromObjectMetadataItemId(
+          activeObjectMetadataItem.id,
+        );
+        setNavigationMemorizedUrl(
+          `/objects/${formValues.namePlural}?view=${lastVisitedView}`,
+        );
+      }
 
       navigate(
         `${settingsObjectsPagePath}/${getObjectSlug({

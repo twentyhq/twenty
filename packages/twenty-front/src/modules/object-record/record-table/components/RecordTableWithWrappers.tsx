@@ -81,7 +81,9 @@ export const RecordTableWithWrappers = ({
                 />
                 <DragSelect
                   dragSelectable={tableBodyRef}
-                  onDragSelectionStart={resetTableRowSelection}
+                  onDragSelectionStart={() => {
+                    resetTableRowSelection();
+                  }}
                   onDragSelectionChange={setRowSelected}
                 />
               </StyledTableInternalContainer>

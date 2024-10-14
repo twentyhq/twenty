@@ -18,9 +18,6 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.ARRAY:
       return 'text';
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
-      return 'varchar';
     case FieldMetadataType.NUMERIC:
       return 'numeric';
     case FieldMetadataType.NUMBER:

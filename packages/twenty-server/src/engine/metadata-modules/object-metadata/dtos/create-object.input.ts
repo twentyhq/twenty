@@ -85,5 +85,5 @@ export class CreateObjectInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  areLabelAndNameSync?: boolean;
+  shouldSyncLabelAndName?: boolean;
 }
