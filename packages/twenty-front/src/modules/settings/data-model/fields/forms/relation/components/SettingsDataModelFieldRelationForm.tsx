@@ -5,18 +5,17 @@ import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
-import { SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { RelationType } from '@/settings/data-model/types/RelationType';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useEffect, useState } from 'react';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
@@ -41,7 +40,7 @@ export type SettingsDataModelFieldRelationFormValues = z.infer<
 
 type SettingsDataModelFieldRelationFormProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type'>;
-  objectMetadataItem: SettingsDataModelFieldPreviewCardProps['objectMetadataItem'];
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 const StyledContainer = styled.div`
@@ -84,16 +83,11 @@ export const SettingsDataModelFieldRelationForm = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldRelationFormProps) => {
-  const {
-    control,
-    watch: watchFormValue,
-    setValue,
-  } = useFormContext<SettingsDataModelFieldRelationFormValues>();
+  const { control, watch: watchFormValue } =
+    useFormContext<SettingsDataModelFieldRelationFormValues>();
   const { getIcon } = useIcons();
   const { objectMetadataItems, findObjectMetadataItemById } =
     useFilteredObjectMetadataItems();
-
-  const [labelEditedManually, setLabelEditedManually] = useState(false);
 
   const {
     disableFieldEdition,
@@ -111,20 +105,6 @@ export const SettingsDataModelFieldRelationForm = ({
   );
 
   const isMobile = useIsMobile();
-  const relationType = watchFormValue('relation.type');
-
-  useEffect(() => {
-    if (labelEditedManually) return;
-    setValue(
-      'relation.field.label',
-      [
-        RelationDefinitionType.ManyToMany,
-        RelationDefinitionType.ManyToOne,
-      ].includes(relationType)
-        ? objectMetadataItem.labelPlural
-        : objectMetadataItem.labelSingular,
-    );
-  }, [labelEditedManually, objectMetadataItem, relationType, setValue]);
 
   return (
     <StyledContainer>
@@ -195,10 +175,7 @@ export const SettingsDataModelFieldRelationForm = ({
               disabled={disableFieldEdition}
               placeholder="Field name"
               value={value}
-              onChange={(newValue) => {
-                setLabelEditedManually(true);
-                onChange(newValue);
-              }}
+              onChange={onChange}
               fullWidth
               maxLength={FIELD_NAME_MAXIMUM_LENGTH}
             />

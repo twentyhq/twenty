@@ -11,6 +11,7 @@ import {
   EmailsFilter,
   FloatFilter,
   FullNameFilter,
+  LeafObjectRecordFilter,
   LinksFilter,
   NotObjectRecordFilter,
   OrObjectRecordFilter,
@@ -28,6 +29,12 @@ import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatc
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
+
+const isLeafFilter = (
+  filter: RecordGqlOperationFilter,
+): filter is LeafObjectRecordFilter => {
+  return !isAndFilter(filter) && !isOrFilter(filter) && !isNotFilter(filter);
+};
 
 const isAndFilter = (
   filter: RecordGqlOperationFilter,
@@ -50,7 +57,7 @@ export const isRecordMatchingFilter = ({
   filter: RecordGqlOperationFilter;
   objectMetadataItem: ObjectMetadataItem;
 }): boolean => {
-  if (Object.keys(filter).length === 0) {
+  if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
   }
 
@@ -118,6 +125,12 @@ export const isRecordMatchingFilter = ({
         objectMetadataItem,
       })
     );
+  }
+
+  if (isLeafFilter(filter)) {
+    if (isDefined(record.deletedAt) && filter.deletedAt === undefined) {
+      return false;
+    }
   }
 
   return Object.entries(filter).every(([filterKey, filterValue]) => {

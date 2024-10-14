@@ -51,7 +51,7 @@ export class WorkspaceSyncIndexMetadataService {
           // We're only interested in standard fields
           fields: { isCustom: false },
         },
-        relations: ['dataSource', 'fields', 'indexes'],
+        relations: ['dataSource', 'fields', 'indexMetadatas'],
       });
 
     // Create map of object metadata & field metadata by unique identifier
