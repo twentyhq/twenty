@@ -22,10 +22,6 @@ const StyledTableHeader = styled(TableHeader)`
     white-space: pre;
     margin-left: ${({ theme }) => theme.spacing(6)};
   }
-
-  @media (min-width: 360px) and (max-width: 390px) {
-    margin-left: ${({ theme }) => theme.spacing(3)};
-  }
 `;
 
 const StyledTableBody = styled.tbody`
