@@ -17,8 +17,6 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
-
 import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listener';
 
 @Module({
@@ -36,12 +34,11 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     FeatureFlagModule,
   ],
   providers: [
-    WorkspaceQueryRunnerService,
     ...workspaceQueryRunnerFactories,
     EntityEventsToDbListener,
     TelemetryListener,
     RecordPositionBackfillCommand,
   ],
-  exports: [WorkspaceQueryRunnerService, ...workspaceQueryRunnerFactories],
+  exports: [...workspaceQueryRunnerFactories],
 })
 export class WorkspaceQueryRunnerModule {}

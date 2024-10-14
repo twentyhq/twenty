@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const TRACK = gql`
-  mutation Track($type: String!, $sessionId: String!, $data: JSON!) {
-    track(type: $type, sessionId: $sessionId, data: $data) {
+  mutation Track($type: String!, $data: JSON!) {
+    track(action: $type, payload: $data) {
       success
     }
   }
