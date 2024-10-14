@@ -24,7 +24,10 @@ export const ManageFavoritesActionEffect = ({
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
-  const selectedRecordId = contextStoreTargetedRecordIds[0];
+  const selectedRecordId =
+    contextStoreTargetedRecordIds.selectedRecordIds === 'all'
+      ? ''
+      : contextStoreTargetedRecordIds.selectedRecordIds[0];
 
   const selectedRecord = useRecoilValue(
     recordStoreFamilyState(selectedRecordId),

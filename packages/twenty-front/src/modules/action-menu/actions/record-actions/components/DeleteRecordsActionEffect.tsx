@@ -1,9 +1,12 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
-import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -19,6 +22,8 @@ export const DeleteRecordsActionEffect = ({
   const contextStoreTargetedRecordIds = useRecoilValue(
     contextStoreTargetedRecordIdsState,
   );
+  const selectedRecordIds = contextStoreTargetedRecordIds.selectedRecordIds;
+  const excludedRecordIds = contextStoreTargetedRecordIds.excludedRecordIds;
 
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
     contextStoreCurrentObjectMetadataIdState,
@@ -31,18 +36,59 @@ export const DeleteRecordsActionEffect = ({
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 
-  const { deleteTableData } = useDeleteTableData({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordIndexId: objectMetadataItem?.namePlural ?? '',
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId: objectMetadataItem?.namePlural ?? '',
   });
 
-  const handleDeleteClick = useCallback(() => {
-    deleteTableData(contextStoreTargetedRecordIds);
-  }, [deleteTableData, contextStoreTargetedRecordIds]);
+  const { deleteManyRecords } = useDeleteManyRecords({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+  });
+  const { favorites, deleteFavorite } = useFavorites();
+
+  const { totalCount, records: recordsToDelete } = useFindManyRecords({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+    recordGqlFields: ['id'],
+    filter:
+      selectedRecordIds === 'all'
+        ? {
+            not: {
+              id: {
+                in: excludedRecordIds,
+              },
+            },
+          }
+        : { id: { in: selectedRecordIds } },
+  });
+
+  const numberOfSelectedRecords = totalCount ?? 0;
+
+  const recordIdsToDelete = recordsToDelete.map((record) => record.id);
+
+  const handleDeleteClick = useCallback(async () => {
+    resetTableRowSelection();
+
+    for (const recordIdToDelete of recordIdsToDelete) {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordIdToDelete,
+      );
+
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
+      }
+    }
+
+    await deleteManyRecords(recordIdsToDelete, {
+      delayInMsBetweenRequests: 50,
+    });
+  }, [
+    deleteFavorite,
+    deleteManyRecords,
+    favorites,
+    recordIdsToDelete,
+    resetTableRowSelection,
+  ]);
 
   const isRemoteObject = objectMetadataItem?.isRemote ?? false;
-
-  const numberOfSelectedRecords = contextStoreTargetedRecordIds.length;
 
   const canDelete =
     !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
