@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Section } from '@/ui/layout/section/components/Section';
-import { H2Title, IconCopy, IconUpload } from 'twenty-ui';
+import { H2Title, IconCopy, IconUpload, IconCheck } from 'twenty-ui';
 import styled from '@emotion/styled';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Button } from '@/ui/input/button/components/Button';
@@ -47,14 +47,14 @@ const StyledButtonCopy = styled.div`
 export const SettingsSSOSAMLForm = () => {
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
-  const { setValue, getValues } = useFormContext();
+  const { setValue, getValues, watch } = useFormContext();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
       const text = await e.target.files[0].text();
       const samlMetadataParsed = parseSAMLMetadata(text);
       if (!samlMetadataParsed.success) {
-        enqueueSnackBar('Error parsing SAML metadata', {
+        enqueueSnackBar('Invalid File', {
           variant: SnackBarVariant.Error,
           duration: 2000,
         });
@@ -75,6 +75,15 @@ export const SettingsSSOSAMLForm = () => {
     inputFileRef?.current?.click?.();
   };
 
+  const ssoURL = watch('ssoURL');
+  const certificate = watch('certificate');
+  const issuer = watch('issuer');
+
+  const isXMLMetadataValid = () => {
+    return [ssoURL, certificate, issuer].every(
+      (field) => isDefined(field) && field.length > 0,
+    );
+  };
   return (
     <>
       <Section>
@@ -87,12 +96,20 @@ export const SettingsSSOSAMLForm = () => {
             ref={inputFileRef}
             onChange={handleFileChange}
             type="file"
+            accept=".xml"
           />
           <Button
             Icon={IconUpload}
             onClick={handleUploadFileClick}
             title="Upload File"
           ></Button>
+          {isXMLMetadataValid() && (
+            <IconCheck
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.lg}
+              color={theme.color.blue}
+            />
+          )}
         </StyledUploadFileContainer>
       </Section>
       <Section>
