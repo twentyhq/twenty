@@ -15,7 +15,7 @@ export type GraphQLView = {
   isCompact: boolean;
   viewFields: ViewField[];
   viewFilters: ViewFilter[];
-  viewFilterGroups: ViewFilterGroup[];
+  viewFilterGroups?: ViewFilterGroup[];
   viewSorts: ViewSort[];
   position: number;
   icon: string;

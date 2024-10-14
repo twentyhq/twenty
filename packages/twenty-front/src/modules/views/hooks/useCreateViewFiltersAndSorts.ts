@@ -1,8 +1,10 @@
+import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewSort } from '@/views/types/ViewSort';
 import { isDefined } from '~/utils/isDefined';
 
@@ -13,8 +15,11 @@ export const useCreateViewFiltersAndSorts = () => {
 
   const { createViewFilterRecords } = usePersistViewFilterRecords();
 
+  const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
+
   const createViewFiltersAndSorts = async (
     viewIdToCreateOn: string,
+    viewFilterGroupsToCreate: ViewFilterGroup[],
     filtersToCreate: ViewFilter[],
     sortsToCreate: ViewSort[],
   ) => {
@@ -24,8 +29,9 @@ export const useCreateViewFiltersAndSorts = () => {
       return;
     }
 
-    await createViewSortRecords(sortsToCreate, view);
+    await createViewFilterGroupRecords(viewFilterGroupsToCreate, view);
     await createViewFilterRecords(filtersToCreate, view);
+    await createViewSortRecords(sortsToCreate, view);
   };
 
   return {

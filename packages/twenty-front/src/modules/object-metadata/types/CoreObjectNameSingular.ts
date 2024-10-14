@@ -24,6 +24,7 @@ export enum CoreObjectNameSingular {
   View = 'view',
   ViewField = 'viewField',
   ViewFilter = 'viewFilter',
+  ViewFilterGroup = 'viewFilterGroup',
   ViewSort = 'viewSort',
   Webhook = 'webhook',
   WorkspaceMember = 'workspaceMember',
