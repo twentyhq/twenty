@@ -1442,8 +1442,8 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type TrackMutationVariables = Exact<{
-  type: Scalars['String'];
-  data: Scalars['JSON'];
+  action: Scalars['String'];
+  payload: Scalars['JSON'];
 }>;
 
 
@@ -2029,8 +2029,8 @@ export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof us
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
 export const TrackDocument = gql`
-    mutation Track($type: String!, $data: JSON!) {
-  track(action: $type, payload: $data) {
+    mutation Track($action: String!, $payload: JSON!) {
+  track(action: $action, payload: $payload) {
     success
   }
 }
@@ -2050,8 +2050,8 @@ export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutati
  * @example
  * const [trackMutation, { data, loading, error }] = useTrackMutation({
  *   variables: {
- *      type: // value for 'type'
- *      data: // value for 'data'
+ *      action: // value for 'action'
+ *      payload: // value for 'payload'
  *   },
  * });
  */
