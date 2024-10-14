@@ -28,7 +28,7 @@ const useUploadAttachment = () => {
     
     await addAttachmentMutation({
       variables: {
-        fileId: uploadedFileData, // Assuming file ID is part of the upload response
+        fileId: uploadedFileData.id, // Assuming file ID is part of the upload response
         fileName: file.name,
         fileUrl: uploadedFileUrl,
       },
