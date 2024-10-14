@@ -21,12 +21,13 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { FileFolder, useAddAttachmentMutation, useUploadFileMutation } from '~/generated/graphql';
+import { FileFolder } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getFileType } from '../files/utils/getFileType';
 
+import useUploadAttachment from '@/activities/files/hooks/useUploadAttachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -122,42 +123,19 @@ export const RichTextEditor = ({
     canCreateActivityState,
   );
 
-  const [uploadFile] = useUploadFileMutation();
-
-  const [addAttachmentMutation] = useAddAttachmentMutation();
+ const { uploadAttachment } = useUploadAttachment();
 
   const handleUploadAttachment = async (file: File): Promise<string> => {
     if (isUndefinedOrNull(file)) {
       return '';
     }
-    const result = await uploadFile({
-      variables: {
-        file,
-        fileFolder: FileFolder.Attachment,
-      },
-    });
-    const uploadedFileData = result?.data?.uploadFile;
-
-  if (!uploadedFileData) {
-    throw new Error("Couldn't upload Image");
-  }
-
-  if (!result?.data?.uploadFile) {
-    throw new Error("Couldn't upload Image");
-  }
-
-  const uploadedFileUrl = getFileAbsoluteURI(result.data.uploadFile);
-
-  // Step 2: Update attachment table with file metadata
-  await addAttachmentMutation({
-    variables: {
-      fileId: result.data.uploadFile, // Assuming file ID is returned from the upload
-      fileName: file.name,
-      fileUrl: uploadedFileUrl,
-    },
-  });
-
-  return uploadedFileUrl;
+    const result = await uploadAttachment(file, FileFolder.Attachment);
+    if (!result) {
+      throw new Error("Couldn't upload Image");
+    }
+    const uploadedFileUrl = getFileAbsoluteURI(result);
+  
+    return uploadedFileUrl;
   };
 
   const prepareBody = (newStringifiedBody: string) => {
