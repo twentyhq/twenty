@@ -16,6 +16,7 @@ const jestConfig: JestConfigWithTsJest = {
   testTimeout: 15000,
   moduleNameMapper: {
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths),
+    '^test/(.*)$': '<rootDir>/test/$1',
     'twenty-emails': '<rootDir>/../twenty-emails/dist/index.js',
   },
   fakeTimers: {
