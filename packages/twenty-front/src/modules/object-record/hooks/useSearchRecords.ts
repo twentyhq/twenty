@@ -65,8 +65,7 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
       },
     });
 
-  // Use `previousData` if `data` is not available
-  const effectiveData = data ?? previousData;
+  const effectiveData = loading ? previousData : data;
 
   const queryResponseField = getSearchRecordsQueryResponseField(
     objectMetadataItem.namePlural,
