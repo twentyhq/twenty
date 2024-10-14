@@ -61,7 +61,7 @@ export const SignInUpForm = () => {
   );
   const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
-  const [password, setPassword] = useState<string | null>(null);
+  const [password, setPassword] = useState<string>('');
   const { signInWithGoogle } = useSignInWithGoogle();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { form } = useSignInUpForm();
