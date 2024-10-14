@@ -26,6 +26,8 @@ export const RecordIndexTableContainerEffect = ({
     selectedRowIdsSelector,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
+    hasUserSelectedAllRowsState,
+    unselectedRowIdsSelector,
   } = useRecordTable({
     recordTableId,
   });
@@ -80,10 +82,13 @@ export const RecordIndexTableContainerEffect = ({
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
+  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
+  const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
+
   useEffect(() => {
     setContextStoreTargetedRecordIds({
-      selectedRecordIds: selectedRowIds,
-      excludedRecordIds: [],
+      selectedRecordIds: hasUserSelectedAllRows ? 'all' : selectedRowIds,
+      excludedRecordIds: unselectedRowIds,
     });
 
     return () => {
@@ -92,7 +97,12 @@ export const RecordIndexTableContainerEffect = ({
         excludedRecordIds: [],
       });
     };
-  }, [selectedRowIds, setContextStoreTargetedRecordIds]);
+  }, [
+    hasUserSelectedAllRows,
+    selectedRowIds,
+    setContextStoreTargetedRecordIds,
+    unselectedRowIds,
+  ]);
 
   return <></>;
 };

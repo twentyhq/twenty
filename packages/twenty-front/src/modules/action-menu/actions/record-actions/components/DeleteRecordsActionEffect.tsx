@@ -143,6 +143,7 @@ export const DeleteRecordsActionEffect = ({
     numberOfSelectedRecords,
     handleDeleteClick,
     position,
+    recordIdsToDelete,
   ]);
 
   return null;
