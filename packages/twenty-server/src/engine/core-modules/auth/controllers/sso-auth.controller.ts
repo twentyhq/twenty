@@ -44,14 +44,14 @@ export class SSOAuthController {
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
   ) {}
 
-  @Get('oidc/login/:idpId')
+  @Get('oidc/login/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, OIDCAuthGuard)
   async oidcAuth() {
     // As this method is protected by OIDC Auth guard, it will trigger OIDC SSO flow
     return;
   }
 
-  @Get('saml/login/:idpId')
+  @Get('saml/login/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, SAMLAuthGuard)
   async samlAuth() {
     // As this method is protected by SAML Auth guard, it will trigger SAML SSO flow

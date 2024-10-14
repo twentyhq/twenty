@@ -41,18 +41,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
     return super.authenticate(req, {
       ...options,
       state: JSON.stringify({
-        idpId: req.params.idpId,
-        ...(req.params.workspaceInviteHash
-          ? {
-              workspaceInviteHash: req.params.workspaceInviteHash,
-              ...(req.params.workspacePersonalInviteToken
-                ? {
-                    workspacePersonalInviteToken:
-                      req.params.workspacePersonalInviteToken,
-                  }
-                : {}),
-            }
-          : {}),
+        identityProviderId: req.params.identityProviderId,
       }),
     });
   }
@@ -91,7 +80,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
         ...(userinfo.family_name ? { lastName: userinfo.family_name } : {}),
       };
 
-      done(null, { user, identityProviderId: state.idpId });
+      done(null, { user, identityProviderId: state.identityProviderId });
     } catch (err) {
       done(err);
     }

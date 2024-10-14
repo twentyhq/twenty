@@ -14,7 +14,7 @@ import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/utils/SS
 import { defaultIdpValues } from '@/settings/security/utils/SSOIdentityProviderDefaultValues';
 import { useEffect } from 'react';
 
-export const SettingsSecurityCRUDSSOIdentityProvider = () => {
+export const SettingsSecuritySSOIdentifyProvider = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();

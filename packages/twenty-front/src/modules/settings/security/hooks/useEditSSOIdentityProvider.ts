@@ -22,10 +22,10 @@ export const useEditSSOIdentityProvider = () => {
       },
       onCompleted: (data) => {
         setSSOIdentitiesProviders((SSOIdentitiesProviders) =>
-          SSOIdentitiesProviders.map((idp) =>
-            idp.id === data.editSSOIdentityProvider.id
+          SSOIdentitiesProviders.map((identityProvider) =>
+            identityProvider.id === data.editSSOIdentityProvider.id
               ? data.editSSOIdentityProvider
-              : idp,
+              : identityProvider,
           ),
         );
       },

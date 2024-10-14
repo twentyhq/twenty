@@ -14,16 +14,18 @@ export const useDeleteSSOIdentityProvider = () => {
   );
 
   const deleteSSOIdentityProvider = async ({
-    idpId,
+    identityProviderId,
   }: DeleteSsoIdentityProviderMutationVariables['input']) => {
     return await deleteSsoIdentityProviderMutation({
       variables: {
-        input: { idpId },
+        input: { identityProviderId },
       },
       onCompleted: (data) => {
         setSSOIdentitiesProviders((SSOIdentitiesProviders) =>
           SSOIdentitiesProviders.filter(
-            (idp) => idp.id !== data.deleteSSOIdentityProvider.idpId,
+            (identityProvider) =>
+              identityProvider.id !==
+              data.deleteSSOIdentityProvider.identityProviderId,
           ),
         );
       },
