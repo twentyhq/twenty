@@ -152,6 +152,18 @@ export const SignInUpForm = () => {
           </>
         )}
 
+        {authProviders.auth0 && (
+          <>
+            <MainButton
+              Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
+              title="Continue with Microsoft"
+              onClick={signInWithMicrosoft}
+              fullWidth
+            />
+            <HorizontalSeparator visible={authProviders.password} />
+          </>
+        )}
+
         {authProviders.password && (
           <StyledForm
             onSubmit={(event) => {

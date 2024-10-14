@@ -51,6 +51,14 @@ services:
       timeout: 5s
       retries: 10
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4gb
+        reservations:
+          cpus: '0.5'
+          memory: 1gb
 
   worker:
     image: twentycrm/twenty:${TAG}
@@ -79,6 +87,14 @@ services:
       server:
         condition: service_healthy
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4gb
+        reservations:
+          cpus: '0.5'
+          memory: 1gb
 
   db:
     image: twentycrm/twenty-postgres:${TAG}
@@ -92,6 +108,14 @@ services:
       timeout: 5s
       retries: 10
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4gb
+        reservations:
+          cpus: '0.5'
+          memory: 1gb
 
   redis:
     image: redis

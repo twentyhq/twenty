@@ -16,6 +16,7 @@ export class ClientConfigResolver {
         magicLink: false,
         password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+        auth0: this.environmentService.get('AUTH_AUTH0_ENABLED'),
       },
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),

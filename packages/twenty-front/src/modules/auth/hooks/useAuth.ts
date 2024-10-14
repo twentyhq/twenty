@@ -313,6 +313,16 @@ export const useAuth = () => {
     return url.toString();
   };
 
+  const handleAuth0Login = useCallback(
+    (params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+    }) => {
+      window.location.href = buildRedirectUrl('/auth/auth0', params);
+    },
+    [],
+  );
+
   const handleGoogleLogin = useCallback(
     (params: {
       workspacePersonalInviteToken?: string;
@@ -344,5 +354,6 @@ export const useAuth = () => {
     signInWithCredentials: handleCrendentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    signInWithAuth0: handleAuth0Login,
   };
 };

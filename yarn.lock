@@ -9234,6 +9234,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@panva/asn1.js@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@panva/asn1.js@npm:1.0.0"
+  checksum: 10c0/5d6e7ec460b65b017043e2702e25f323936baad2aa248dbd9bf54c9508e351d236bffac96fa033c6e36cb0482a9dd73c3605948a36a59bd6bec49353ba8d7b62
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-android-arm64@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-android-arm64@npm:2.4.1"
@@ -16596,6 +16603,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/passport-openidconnect@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@types/passport-openidconnect@npm:0.1.3"
+  dependencies:
+    "@types/express": "npm:*"
+    "@types/oauth": "npm:*"
+    "@types/passport": "npm:*"
+    "@types/passport-strategy": "npm:*"
+  checksum: 10c0/f0621840656a400f67f4fb1ef205b1388811d734a3c1c00ca165912c9cf0f6e3c26fe09878ed45dba529137cfd6dd7d922e7582d842e22b1937ea5e46c07934f
+  languageName: node
+  linkType: hard
+
 "@types/passport-strategy@npm:*":
   version: 0.2.38
   resolution: "@types/passport-strategy@npm:0.2.38"
@@ -18161,7 +18180,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aggregate-error@npm:^3.0.0":
+"aggregate-error@npm:^3.0.0, aggregate-error@npm:^3.1.0":
   version: 3.1.0
   resolution: "aggregate-error@npm:3.1.0"
   dependencies:
@@ -20287,7 +20306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64url@npm:3.x.x":
+"base64url@npm:3.x.x, base64url@npm:^3.0.1":
   version: 3.0.1
   resolution: "base64url@npm:3.0.1"
   checksum: 10c0/5ca9d6064e9440a2a45749558dddd2549ca439a305793d4f14a900b7256b5f4438ef1b7a494e1addc66ced5d20f5c010716d353ed267e4b769e6c78074991241
@@ -21966,7 +21985,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clone@npm:^2.1.1":
+"clone@npm:^2.1.1, clone@npm:^2.1.2":
   version: 2.1.2
   resolution: "clone@npm:2.1.2"
   checksum: 10c0/ed0601cd0b1606bc7d82ee7175b97e68d1dd9b91fd1250a3617b38d34a095f8ee0431d40a1a611122dcccb4f93295b4fdb94942aa763392b5fe44effa50c2d5e
@@ -26081,6 +26100,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"express-openid-connect@npm:^2.17.1":
+  version: 2.17.1
+  resolution: "express-openid-connect@npm:2.17.1"
+  dependencies:
+    base64url: "npm:^3.0.1"
+    clone: "npm:^2.1.2"
+    cookie: "npm:^0.5.0"
+    debug: "npm:^4.3.4"
+    futoin-hkdf: "npm:^1.5.1"
+    http-errors: "npm:^1.8.1"
+    joi: "npm:^17.7.0"
+    jose: "npm:^2.0.6"
+    on-headers: "npm:^1.0.2"
+    openid-client: "npm:^4.9.1"
+    url-join: "npm:^4.0.1"
+  peerDependencies:
+    express: ">= 4.17.0"
+  checksum: 10c0/c9bf56150fc2669e338f8d199e9870a08c32a570d76b4e2a5636bc8f67a305153e1608c6e7247417305722e9e1f6b1ce0cf6dfcf1a19d68f47cf04d6933426c0
+  languageName: node
+  linkType: hard
+
 "express@npm:4.18.2":
   version: 4.18.2
   resolution: "express@npm:4.18.2"
@@ -27253,6 +27293,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"futoin-hkdf@npm:^1.5.1":
+  version: 1.5.3
+  resolution: "futoin-hkdf@npm:1.5.3"
+  checksum: 10c0/fe87b50d2ac125ca2074e92588ca1df5016e9657267363cb77d8287080639dc31f90e7740f4737aa054c3e687b2ab3456f9b5c55950b94cd2c2010bc441aa5ae
+  languageName: node
+  linkType: hard
+
 "gauge@npm:^3.0.0":
   version: 3.0.2
   resolution: "gauge@npm:3.0.2"
@@ -27807,7 +27854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"got@npm:^11.8.3, got@npm:^11.8.5":
+"got@npm:^11.8.0, got@npm:^11.8.3, got@npm:^11.8.5":
   version: 11.8.6
   resolution: "got@npm:11.8.6"
   dependencies:
@@ -31300,7 +31347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"joi@npm:^17.11.0":
+"joi@npm:^17.11.0, joi@npm:^17.7.0":
   version: 17.13.3
   resolution: "joi@npm:17.13.3"
   dependencies:
@@ -31310,6 +31357,15 @@ __metadata:
     "@sideway/formula": "npm:^3.0.1"
     "@sideway/pinpoint": "npm:^2.0.0"
   checksum: 10c0/9262aef1da3f1bec5b03caf50c46368899fe03b8ff26cbe3d53af4584dd1049079fc97230bbf1500b6149db7cc765b9ee45f0deb24bb6fc3fa06229d7148c17f
+  languageName: node
+  linkType: hard
+
+"jose@npm:^2.0.5, jose@npm:^2.0.6":
+  version: 2.0.7
+  resolution: "jose@npm:2.0.7"
+  dependencies:
+    "@panva/asn1.js": "npm:^1.0.0"
+  checksum: 10c0/228406f4635debd05922fa565a85c42c086426c1af03c4db2ce247d84f240d3f5985efa9540e6c90c89bab56476b1d1a0be2199740d1f497a37b075bbe2307e8
   languageName: node
   linkType: hard
 
@@ -33252,7 +33308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-error@npm:1.x, make-error@npm:^1.1.1":
+"make-error@npm:1.x, make-error@npm:^1.1.1, make-error@npm:^1.3.6":
   version: 1.3.6
   resolution: "make-error@npm:1.3.6"
   checksum: 10c0/171e458d86854c6b3fc46610cfacf0b45149ba043782558c6875d9f42f222124384ad0b468c92e996d815a8a2003817a710c0a160e49c1c394626f76fa45396f
@@ -36256,6 +36312,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"object-hash@npm:^2.0.1":
+  version: 2.2.0
+  resolution: "object-hash@npm:2.2.0"
+  checksum: 10c0/1527de843926c5442ed61f8bdddfc7dc181b6497f725b0e89fcf50a55d9c803088763ed447cac85a5aa65345f1e99c2469ba679a54349ef3c4c0aeaa396a3eb9
+  languageName: node
+  linkType: hard
+
 "object-hash@npm:^3.0.0":
   version: 3.0.0
   resolution: "object-hash@npm:3.0.0"
@@ -36388,6 +36451,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oidc-token-hash@npm:^5.0.1":
+  version: 5.0.3
+  resolution: "oidc-token-hash@npm:5.0.3"
+  checksum: 10c0/d0dc0551406f09577874155cc83cf69c39e4b826293d50bb6c37936698aeca17d4bcee356ab910c859e53e83f2728a2acbd041020165191353b29de51fbca615
+  languageName: node
+  linkType: hard
+
 "on-finished@npm:2.4.1":
   version: 2.4.1
   resolution: "on-finished@npm:2.4.1"
@@ -36397,7 +36467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"on-headers@npm:~1.0.2":
+"on-headers@npm:^1.0.2, on-headers@npm:~1.0.2":
   version: 1.0.2
   resolution: "on-headers@npm:1.0.2"
   checksum: 10c0/f649e65c197bf31505a4c0444875db0258e198292f34b884d73c2f751e91792ef96bb5cf89aa0f4fecc2e4dc662461dda606b1274b0e564f539cae5d2f5fc32f
@@ -36496,6 +36566,21 @@ __metadata:
   bin:
     opener: bin/opener-bin.js
   checksum: 10c0/dd56256ab0cf796585617bc28e06e058adf09211781e70b264c76a1dbe16e90f868c974e5bf5309c93469157c7d14b89c35dc53fe7293b0e40b4d2f92073bc79
+  languageName: node
+  linkType: hard
+
+"openid-client@npm:^4.9.1":
+  version: 4.9.1
+  resolution: "openid-client@npm:4.9.1"
+  dependencies:
+    aggregate-error: "npm:^3.1.0"
+    got: "npm:^11.8.0"
+    jose: "npm:^2.0.5"
+    lru-cache: "npm:^6.0.0"
+    make-error: "npm:^1.3.6"
+    object-hash: "npm:^2.0.1"
+    oidc-token-hash: "npm:^5.0.1"
+  checksum: 10c0/88af2e7c17e62eaddd3f27e96567ef9c08dbd3266a6ff9c4e058128191d2d4ec07c49eaa523d9159953835fc90c59470270f6050872afb70c5c9576c387833e7
   languageName: node
   linkType: hard
 
@@ -37166,6 +37251,16 @@ __metadata:
     uid2: "npm:0.0.x"
     utils-merge: "npm:1.x.x"
   checksum: 10c0/16b431bd856b84dfe0c9c913dcbea6ff54875befac1035171b0dce1c77f79072dc5e26d785b13c2e62c034c8174a1a47571751d1066bdbcdb9108de217c0b19b
+  languageName: node
+  linkType: hard
+
+"passport-openidconnect@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "passport-openidconnect@npm:0.1.2"
+  dependencies:
+    oauth: "npm:0.10.x"
+    passport-strategy: "npm:1.x.x"
+  checksum: 10c0/4d4662b91e2580baa7cf2f341904c352de9ec776a3897f8bf51a90f248ee7dab26b94e2e3c590d14821b04b0fa95cb8d7cfad6edc095e3966b7666e8779b0b68
   languageName: node
   linkType: hard
 
@@ -43996,6 +44091,7 @@ __metadata:
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
     "@types/passport-microsoft": "npm:^1.0.3"
+    "@types/passport-openidconnect": "npm:^0.1.3"
     "@types/pluralize": "npm:^0.0.33"
     "@types/react": "npm:^18.2.39"
     "@types/react-datepicker": "npm:^6.2.0"
@@ -44056,6 +44152,7 @@ __metadata:
     eslint-plugin-storybook: "npm:^0.6.15"
     eslint-plugin-unicorn: "npm:^51.0.1"
     eslint-plugin-unused-imports: "npm:^3.0.0"
+    express-openid-connect: "npm:^2.17.1"
     facepaint: "npm:^1.2.1"
     file-type: "npm:16.5.4"
     framer-motion: "npm:^10.12.17"
@@ -44121,6 +44218,7 @@ __metadata:
     passport-jwt: "npm:^4.0.1"
     passport-local: "npm:^1.0.0"
     passport-microsoft: "npm:^2.0.0"
+    passport-openidconnect: "npm:^0.1.2"
     patch-package: "npm:^8.0.0"
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
