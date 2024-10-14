@@ -87,7 +87,10 @@ export const RecordIndexTableContainerEffect = ({
 
   useEffect(() => {
     setContextStoreTargetedRecordIds({
-      selectedRecordIds: hasUserSelectedAllRows ? 'all' : selectedRowIds,
+      selectedRecordIds:
+        selectedRowIds.length !== 1 && hasUserSelectedAllRows
+          ? 'all'
+          : selectedRowIds,
       excludedRecordIds: unselectedRowIds,
     });
 
