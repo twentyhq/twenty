@@ -271,11 +271,6 @@ export class WorkspaceMigrationRunnerService {
         columns,
       );
     }
-
-    // Enable totalCount for the table
-    await queryRunner.query(`
-      COMMENT ON TABLE "${schemaName}"."${tableName}" IS '@graphql({"totalCount": {"enabled": true}})';
-    `);
   }
 
   /**

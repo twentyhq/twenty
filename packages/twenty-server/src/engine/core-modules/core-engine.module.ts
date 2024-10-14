@@ -3,7 +3,6 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
-import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -62,7 +61,6 @@ import { FileModule } from './file/file.module';
     UserModule,
     WorkspaceModule,
     WorkspaceInvitationModule,
-    AISQLQueryModule,
     PostgresCredentialsModule,
     WorkflowTriggerApiModule,
     WorkspaceEventEmitterModule,
