@@ -1,4 +1,5 @@
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
+import { normalizeTimeZone } from '@/localization/utils/normalizeTimeZone';
 import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/accounts/constants/AvailableTimezoneOptionsByLabel';
 
 /**
@@ -10,14 +11,14 @@ import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/accounts/consta
 export const findAvailableTimeZoneOption = (value: string) => {
   const formattedLabel = formatTimeZoneLabel(value);
   
-  
   if (AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL[formattedLabel]) {
     return AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL[formattedLabel];
   }
 
-  const labelWithoutGMT = formattedLabel.replace(/^\(GMT[+-]\d{2}:\d{2}\)\s/, '');
+  
+  const normalizedInput = normalizeTimeZone(formattedLabel);
   const matchingKey = Object.keys(AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL).find(key => 
-    key.includes(labelWithoutGMT) || labelWithoutGMT.includes(key.replace(/^\(GMT[+-]\d{2}:\d{2}\)\s/, ''))
+    normalizeTimeZone(key) === normalizedInput
   );
 
   if (matchingKey) {
@@ -28,12 +29,11 @@ export const findAvailableTimeZoneOption = (value: string) => {
   const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const browserFormattedLabel = formatTimeZoneLabel(browserTimeZone);
   
-  if (AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL[browserFormattedLabel]) {
-    console.warn(`No match found for ${value}. Falling back to browser time zone: ${browserTimeZone}`);
+  if (AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL[browserFormattedLabel]) {    
     return AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL[browserFormattedLabel];
   }
-
-  const fallbackOption = Object.values(AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL)[0];
-  console.warn(`No match found for ${value} and browser time zone not available. Using fallback: ${fallbackOption.value}`);
+  
+  const fallbackOption = Object.values(AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL)[0];  
   return fallbackOption;
-}
+};
+
