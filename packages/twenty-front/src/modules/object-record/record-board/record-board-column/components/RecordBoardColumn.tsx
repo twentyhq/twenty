@@ -21,6 +21,8 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   padding-top: 0px;
 
   position: relative;
+
+  min-height: 100%;
 `;
 
 type RecordBoardColumnProps = {

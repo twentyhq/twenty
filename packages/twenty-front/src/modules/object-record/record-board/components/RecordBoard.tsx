@@ -24,14 +24,28 @@ const StyledContainer = styled.div`
   flex: 1;
   flex-direction: row;
   min-height: calc(100% - 1px);
-  overflow: visible;
+  height: 100%;
+`;
+
+const StyledColumnContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: fit-content;
+`;
+
+const StyledContainerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  width: fit-content;
+  height: 100%;
 `;
 
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+
+  overflow-y: scroll;
   position: relative;
   width: 100%;
 `;
@@ -136,27 +150,31 @@ export const RecordBoard = () => {
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >
-      <RecordBoardHeader />
-      <StyledWrapper>
-        {/* <ScrollWrapper contextProviderName="recordBoard"> */}
-        <StyledContainer ref={boardRef}>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            {columnIds.map((columnId) => (
-              <RecordBoardColumn
-                key={columnId}
-                recordBoardColumnId={columnId}
-              />
-            ))}
-          </DragDropContext>
-        </StyledContainer>
-        <RecordBoardScrollRestoreEffect />
-        {/* </ScrollWrapper> */}
-        <DragSelect
-          dragSelectable={boardRef}
-          onDragSelectionStart={resetRecordSelection}
-          onDragSelectionChange={setRecordAsSelected}
-        />
-      </StyledWrapper>
+      <StyledContainerContainer>
+        <RecordBoardHeader />
+        <StyledWrapper>
+          {/* <ScrollWrapper contextProviderName="recordBoard"> */}
+          <StyledContainer ref={boardRef}>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <StyledColumnContainer>
+                {columnIds.map((columnId) => (
+                  <RecordBoardColumn
+                    key={columnId}
+                    recordBoardColumnId={columnId}
+                  />
+                ))}
+              </StyledColumnContainer>
+            </DragDropContext>
+          </StyledContainer>
+          <RecordBoardScrollRestoreEffect />
+          {/* </ScrollWrapper> */}
+          <DragSelect
+            dragSelectable={boardRef}
+            onDragSelectionStart={resetRecordSelection}
+            onDragSelectionChange={setRecordAsSelected}
+          />
+        </StyledWrapper>
+      </StyledContainerContainer>
     </RecordBoardScope>
   );
 };

@@ -5,7 +5,6 @@ import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/rec
 import styled from '@emotion/styled';
 
 const StyledHeaderContainer = styled.div`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
   height: 40px;
