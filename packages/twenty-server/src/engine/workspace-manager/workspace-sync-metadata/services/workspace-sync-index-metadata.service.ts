@@ -7,10 +7,7 @@ import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/wo
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import {
-  IndexMetadataEntity,
-  IndexType,
-} from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationIndexFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-index.factory';
@@ -73,7 +70,7 @@ export class WorkspaceSyncIndexMetadataService {
 
     const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
 
-    let originalIndexMetadataCollection = await indexMetadataRepository.find({
+    const originalIndexMetadataCollection = await indexMetadataRepository.find({
       where: {
         workspaceId: context.workspaceId,
         objectMetadataId: Any(
@@ -87,7 +84,7 @@ export class WorkspaceSyncIndexMetadataService {
     });
 
     // Generate index metadata from models
-    let standardIndexMetadataCollection = this.standardIndexFactory.create(
+    const standardIndexMetadataCollection = this.standardIndexFactory.create(
       standardObjectMetadataDefinitions,
       context,
       originalStandardObjectMetadataMap,
@@ -95,15 +92,6 @@ export class WorkspaceSyncIndexMetadataService {
       workspaceFeatureFlagsMap,
     );
 
-    if (!workspaceFeatureFlagsMap.IS_SEARCH_ENABLED) {
-      originalIndexMetadataCollection = originalIndexMetadataCollection.filter(
-        (index) => index.indexType !== IndexType.GIN,
-      );
-
-      standardIndexMetadataCollection = standardIndexMetadataCollection.filter(
-        (index) => index.indexType !== IndexType.GIN,
-      );
-    }
     const indexComparatorResults = this.workspaceIndexComparator.compare(
       originalIndexMetadataCollection,
       standardIndexMetadataCollection,

@@ -469,6 +469,8 @@ export class WorkspaceMigrationRunnerService {
         ),
         isArray: migrationColumn.alteredColumnDefinition.isArray,
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
+        asExpression: migrationColumn.alteredColumnDefinition.asExpression,
+        generatedType: migrationColumn.alteredColumnDefinition.generatedType,
         isUnique: migrationColumn.alteredColumnDefinition.isUnique,
       }),
     );
