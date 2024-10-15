@@ -18,7 +18,10 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -26,6 +29,12 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
+export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
+  {
+    name: DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+    type: FieldMetadataType.TEXT,
+  },
+];
 @WorkspaceCustomEntity()
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -148,12 +157,9 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields([
-      {
-        name: DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
-        type: FieldMetadataType.TEXT,
-      },
-    ]),
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
+    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()

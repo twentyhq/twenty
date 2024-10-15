@@ -93,49 +93,70 @@ cd twenty
 You should run all commands in the following steps from the root of the project.
 
 ## Step 3: Set up a PostgreSQL Database
-We rely on [pg_graphql](https://github.com/supabase/pg_graphql) and recommend you use the scripts below to provision a database with the right extensions.  
 You can access the database at [localhost:5432](localhost:5432), with user `twenty` and password `twenty` .
 
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
     <b>Option 1:</b> To provision your database locally:
+    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
     ```bash
-    make postgres-on-linux
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
-    make postgres-on-docker
+      docker run \
+        --name twenty_postgres \
+        -e POSTGRES_USER=postgres \
+        -e POSTGRES_PASSWORD=postgres \
+        -e POSTGRES_DB=default \
+        -v twenty_db_data:/var/lib/postgresql/data \
+        -p 5432:5432 \
+        twentycrm/twenty-postgres:latest
     ```
   </ArticleTab>
   <ArticleTab>
     <b>Option 1:</b> To provision your database locally with `brew`:
-    ```bash
-    make postgres-on-macos-intel #for intel architecture
 
-    make postgres-on-macos-arm #for M1/M2/M3 architecture
+    ```bash
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
-    make postgres-on-docker
+      docker run \
+        --name twenty_postgres \
+        -e POSTGRES_USER=postgres \
+        -e POSTGRES_PASSWORD=postgres \
+        -e POSTGRES_DB=default \
+        -v twenty_db_data:/var/lib/postgresql/data \
+        -p 5432:5432 \
+        twentycrm/twenty-postgres:latest
     ```
   </ArticleTab>
   <ArticleTab>
     All the following steps are to be run in the WSL terminal (within your virtual machine)
 
-    <b>Option 1:</b> To provision your database locally:
+    <b>Option 1:</b> To provision your Postgresql locally:
+    Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
     ```bash
-    make postgres-on-linux
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
-
-    Note: you might need to run `sudo apt-get install build-essential` before running the above command if you don't have the build tools installed.
 
     <b>Option 2:</b> If you have docker installed:  
     Running Docker on WSL adds an extra layer of complexity.
     Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
     ```bash
-    make postgres-on-docker
+      docker run \
+        --name twenty_postgres \
+        -e POSTGRES_USER=postgres \
+        -e POSTGRES_PASSWORD=postgres \
+        -e POSTGRES_DB=default \
+        -v twenty_db_data:/var/lib/postgresql/data \
+        -p 5432:5432 \
+        twentycrm/twenty-postgres:latest
     ```
   </ArticleTab>
 </ArticleTabs>
@@ -154,7 +175,7 @@ Twenty requires a redis cache to provide the best performances
     ```
   </ArticleTab>
   <ArticleTab>
-    <b>Option 1:</b>To provision your Redis locally with `brew`:
+    <b>Option 1:</b> To provision your Redis locally with `brew`:
     ```bash
     brew install redis
     ```
