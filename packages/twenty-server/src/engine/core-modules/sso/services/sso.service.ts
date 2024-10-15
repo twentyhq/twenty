@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Issuer } from 'openid-client';
 
 import {
-  IdpType,
+  IdentityProviderType,
   OIDCResponseType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
@@ -85,7 +85,7 @@ export class SSOService {
 
       const identityProvider =
         await this.workspaceSSOIdentityProviderRepository.save({
-          type: IdpType.OIDC,
+          type: IdentityProviderType.OIDC,
           clientID: data.clientID,
           clientSecret: data.clientSecret,
           issuer: issuer.metadata.issuer,
@@ -124,7 +124,7 @@ export class SSOService {
     const identityProvider =
       await this.workspaceSSOIdentityProviderRepository.save({
         ...data,
-        type: IdpType.SAML,
+        type: IdentityProviderType.SAML,
         workspaceId,
       });
 
@@ -184,7 +184,9 @@ export class SSOService {
     })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | undefined;
   }
 
-  buildCallbackUrl(identityProvider: WorkspaceSSOIdentityProvider) {
+  buildCallbackUrl(
+    identityProvider: Pick<WorkspaceSSOIdentityProvider, 'type'>,
+  ) {
     const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
 
     callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
@@ -192,20 +194,22 @@ export class SSOService {
     return callbackURL.toString();
   }
 
-  buildIssuerURL(identityProvider: WorkspaceSSOIdentityProvider) {
+  buildIssuerURL(
+    identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
+  ) {
     return `${this.environmentService.get('SERVER_URL')}/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
   }
 
   private isOIDCIdentityProvider(
     identityProvider: WorkspaceSSOIdentityProvider,
   ): identityProvider is OIDCConfiguration & WorkspaceSSOIdentityProvider {
-    return identityProvider.type === IdpType.OIDC;
+    return identityProvider.type === IdentityProviderType.OIDC;
   }
 
   isSAMLIdentityProvider(
     identityProvider: WorkspaceSSOIdentityProvider,
   ): identityProvider is SAMLConfiguration & WorkspaceSSOIdentityProvider {
-    return identityProvider.type === IdpType.SAML;
+    return identityProvider.type === IdentityProviderType.SAML;
   }
 
   getOIDCClient(

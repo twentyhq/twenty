@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
-  IdpType,
+  IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
@@ -11,7 +11,7 @@ export class SetupSsoOutput {
   @Field(() => String)
   id: string;
 
-  @Field(() => IdpType)
+  @Field(() => IdentityProviderType)
   type: string;
 
   @Field(() => String)
