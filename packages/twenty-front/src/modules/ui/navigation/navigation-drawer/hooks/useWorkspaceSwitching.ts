@@ -46,7 +46,7 @@ export const useWorkspaceSwitching = () => {
     }
 
     if (
-      jwt.data.generateJWT.reason === 'WORKSPACE_USE_SSO_AUTH' &&
+      jwt.data.generateJWT.reason !== 'WORKSPACE_USE_SSO_AUTH' &&
       'authTokens' in jwt.data.generateJWT
     ) {
       const { tokens } = jwt.data.generateJWT.authTokens;
