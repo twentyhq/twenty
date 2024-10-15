@@ -6,7 +6,6 @@ import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -14,10 +13,6 @@ import { ViewGroup } from '@/views/types/ViewGroup';
 
 export const usePersistViewGroupRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.ViewGroup,
-  });
-
-  const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.ViewGroup,
   });
 

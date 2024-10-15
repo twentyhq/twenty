@@ -36,15 +36,12 @@ import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { useCallback, useContext } from 'react';
+import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
 import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -60,12 +57,6 @@ const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
 `;
 
 export const RecordIndexContainer = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
-  );
-
   const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
     recordIndexViewTypeState,
   );
@@ -95,17 +86,6 @@ export const RecordIndexContainer = () => {
   });
 
   const { setColumns } = useRecordBoard(recordIndexId);
-
-  const navigateToSelectSettings = useCallback(() => {
-    setNavigationMemorizedUrl(location.pathname + location.search);
-    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
-  }, [
-    navigate,
-    objectMetadataItem,
-    location.pathname,
-    location.search,
-    setNavigationMemorizedUrl,
-  ]);
 
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>

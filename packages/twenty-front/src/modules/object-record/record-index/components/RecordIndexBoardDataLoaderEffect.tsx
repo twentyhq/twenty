@@ -1,11 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
@@ -13,7 +11,6 @@ import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-in
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 type RecordIndexBoardDataLoaderEffectProps = {
   objectNameSingular: string;
@@ -63,23 +60,6 @@ export const RecordIndexBoardDataLoaderEffect = ({
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
-  );
-
-  const navigateToSelectSettings = useCallback(() => {
-    setNavigationMemorizedUrl(location.pathname + location.search);
-    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
-  }, [
-    navigate,
-    objectMetadataItem,
-    location.pathname,
-    location.search,
-    setNavigationMemorizedUrl,
-  ]);
 
   useEffect(() => {
     setObjectSingularName(objectNameSingular);

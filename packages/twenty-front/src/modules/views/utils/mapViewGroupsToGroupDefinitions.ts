@@ -37,6 +37,8 @@ export const mapViewGroupsToGroupDefinitions = ({
   }
   const groupDefinitionsFromViewGroups = viewGroups
     .map((viewGroup) => {
+      // It's actually check right above
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const selectedOption = selectFieldMetadataItem.options!.find(
         (option) => option.value === viewGroup.fieldValue,
       );
