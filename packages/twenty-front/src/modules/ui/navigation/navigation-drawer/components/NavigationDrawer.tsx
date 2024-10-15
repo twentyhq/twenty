@@ -1,4 +1,4 @@
-import { css, useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { ReactNode, useState } from 'react';

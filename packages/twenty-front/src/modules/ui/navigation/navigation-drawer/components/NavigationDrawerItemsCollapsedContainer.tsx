@@ -23,7 +23,11 @@ export const NavigationDrawerItemsCollapsedContainer = ({
     isNavigationDrawerExpandedState,
   );
   const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
-  let animate: AnimationControls | TargetAndTransition = { border: 'none' };
+  let animate: AnimationControls | TargetAndTransition = {
+    width: 'auto',
+    backgroundColor: 'transparent',
+    border: 'none',
+  };
   if (!isExpanded) {
     animate = { width: 24 };
     if (isGroup) {
