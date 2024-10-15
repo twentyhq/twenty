@@ -1,18 +1,15 @@
 import { MultipleRecordsActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/MultipleRecordsActionMenuEntriesSetter';
 import { SingleRecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/SingleRecordActionMenuEntriesSetter';
-import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
-import { useRecoilValue } from 'recoil';
+import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
 
 export const RecordActionMenuEntriesSetter = () => {
-  const contextStoreTargetedRecords = useRecoilValue(
-    contextStoreTargetedRecordsState,
-  );
+  const { totalCount } = useContextStoreSelectedRecords({ limit: 1 });
 
-  if (contextStoreTargetedRecords.selectedRecordIds.length === 0) {
+  if (!totalCount) {
     return null;
   }
 
-  if (contextStoreTargetedRecords.selectedRecordIds.length === 1) {
+  if (totalCount === 1) {
     return <SingleRecordActionMenuEntriesSetter />;
   }
 

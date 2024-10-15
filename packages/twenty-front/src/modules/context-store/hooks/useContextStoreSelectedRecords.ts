@@ -2,12 +2,21 @@ import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states
 import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
 import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { useRecoilValue } from 'recoil';
 
-export const useComputeNumberOfSelectedRecords = () => {
+export const useContextStoreSelectedRecords = ({
+  limit = undefined,
+  recordGqlFields = {
+    id: true,
+  },
+}: {
+  limit?: number;
+  recordGqlFields?: RecordGqlFields;
+}) => {
   const contextStoreTargetedRecords = useRecoilValue(
     contextStoreTargetedRecordsState,
   );
@@ -31,25 +40,28 @@ export const useComputeNumberOfSelectedRecords = () => {
   const selectedRecordIds = contextStoreTargetedRecords.selectedRecordIds;
   const excludedRecordIds = contextStoreTargetedRecords.excludedRecordIds;
 
-  const shouldSkip = selectedRecordIds !== 'all';
-
-  const { totalCount } = useFindManyRecords({
+  return useFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+    recordGqlFields,
     filter: makeAndFilterVariables([
       queryFilter,
-      excludedRecordIds.length > 0
+      selectedRecordIds !== 'all'
         ? {
-            not: {
-              id: {
-                in: excludedRecordIds,
-              },
+            id: {
+              in: selectedRecordIds,
             },
           }
-        : undefined,
+        : excludedRecordIds.length > 0
+          ? {
+              not: {
+                id: {
+                  in: excludedRecordIds,
+                },
+              },
+            }
+          : undefined,
     ]),
-    limit: 1,
-    skip: shouldSkip,
+    limit,
+    skip: selectedRecordIds !== 'all' && selectedRecordIds.length === 0,
   });
-
-  return shouldSkip ? selectedRecordIds.length : totalCount;
 };

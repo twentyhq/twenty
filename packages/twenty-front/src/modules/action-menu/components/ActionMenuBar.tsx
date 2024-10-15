@@ -4,7 +4,7 @@ import { ActionMenuBarEntry } from '@/action-menu/components/ActionMenuBarEntry'
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
-import { useComputeNumberOfSelectedRecords } from '@/context-store/hooks/useComputeNumberOfSelectedRecords';
+import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -18,7 +18,10 @@ const StyledLabel = styled.div`
 `;
 
 export const ActionMenuBar = () => {
-  const numberOfSelectedRecords = useComputeNumberOfSelectedRecords();
+  const { totalCount: numberOfSelectedRecords } =
+    useContextStoreSelectedRecords({
+      limit: 1,
+    });
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
