@@ -46,7 +46,7 @@ export const usePersistViewFilterGroupRecords = () => {
 
       return Promise.all(
         viewFilterGroupsToCreate.map((viewFilterGroup) =>
-          apolloClient.mutate({
+          apolloClient.mutate<{ createViewFilterGroup: ViewFilterGroup }>({
             mutation: createOneRecordMutation,
             variables: {
               input: {
@@ -59,7 +59,7 @@ export const usePersistViewFilterGroupRecords = () => {
               },
             },
             update: (cache, { data }) => {
-              const record = data?.['createViewFilterGroup'];
+              const record = data?.createViewFilterGroup;
               if (!record) return;
 
               triggerCreateRecordsOptimisticEffect({
@@ -86,7 +86,7 @@ export const usePersistViewFilterGroupRecords = () => {
       if (!viewFilterGroupsToUpdate.length) return;
       return Promise.all(
         viewFilterGroupsToUpdate.map((viewFilterGroup) =>
-          apolloClient.mutate({
+          apolloClient.mutate<{ updateViewFilterGroup: ViewFilterGroup }>({
             mutation: updateOneRecordMutation,
             variables: {
               idToUpdate: viewFilterGroup.id,
@@ -99,7 +99,7 @@ export const usePersistViewFilterGroupRecords = () => {
               },
             },
             update: (cache, { data }) => {
-              const record = data?.['updateViewFilterGroup'];
+              const record = data?.updateViewFilterGroup;
               if (!record) return;
               const cachedRecord = getRecordFromCache<ObjectRecord>(record.id);
 
@@ -131,13 +131,13 @@ export const usePersistViewFilterGroupRecords = () => {
       if (!viewFilterGroupIdsToDelete.length) return;
       return Promise.all(
         viewFilterGroupIdsToDelete.map((viewFilterGroupId) =>
-          apolloClient.mutate({
+          apolloClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
             mutation: destroyOneRecordMutation,
             variables: {
               idToDestroy: viewFilterGroupId,
             },
             update: (cache, { data }) => {
-              const record = data?.['destroyViewFilterGroup'];
+              const record = data?.destroyViewFilterGroup;
 
               if (!record) return;
 

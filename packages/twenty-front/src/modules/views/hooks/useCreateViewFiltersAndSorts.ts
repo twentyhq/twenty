@@ -29,8 +29,30 @@ export const useCreateViewFiltersAndSorts = () => {
       return;
     }
 
-    await createViewFilterGroupRecords(viewFilterGroupsToCreate, view);
-    await createViewFilterRecords(filtersToCreate, view);
+    const createViewFilterGroupsResult = await createViewFilterGroupRecords(
+      viewFilterGroupsToCreate,
+      view,
+    );
+
+    const viewFilterGroupPermanentIdsByTemporaryId = new Map<
+      string | undefined,
+      string | undefined
+    >(
+      viewFilterGroupsToCreate.map((viewFilterGroupToCreate, i) => [
+        viewFilterGroupToCreate.id,
+        createViewFilterGroupsResult?.[i].data?.createViewFilterGroup.id,
+      ]),
+    );
+
+    await createViewFilterRecords(
+      filtersToCreate.map((filterToCreate) => ({
+        ...filterToCreate,
+        viewFilterGroupId: viewFilterGroupPermanentIdsByTemporaryId.get(
+          filterToCreate.viewFilterGroupId,
+        ),
+      })),
+      view,
+    );
     await createViewSortRecords(sortsToCreate, view);
   };
 
