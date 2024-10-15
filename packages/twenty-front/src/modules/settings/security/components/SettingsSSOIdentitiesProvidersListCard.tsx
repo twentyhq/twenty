@@ -8,7 +8,7 @@ import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/securit
 import { useRecoilState } from 'recoil';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { SettingsSSOIdentitiesProvidersListEmptyStateCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListEmptyStateCard';
-import { guessIconByUrl } from '../utils/guessIconByUrl';
+import { guessSSOIdentityProviderIconByUrl } from '../utils/guessSSOIdentityProviderIconByUrl';
 import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -44,7 +44,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
       }
       isLoading={loading}
       RowIconFn={(SSOIdentityProvider) =>
-        guessIconByUrl(SSOIdentityProvider.issuer)
+        guessSSOIdentityProviderIconByUrl(SSOIdentityProvider.issuer)
       }
       RowRightComponent={({ item: SSOIdp }) => (
         <SettingsSSOIdentityProviderRowRightContainer SSOIdp={SSOIdp} />

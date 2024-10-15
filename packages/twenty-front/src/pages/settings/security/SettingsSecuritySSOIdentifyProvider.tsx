@@ -10,7 +10,7 @@ import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreat
 import { useForm, FormProvider } from 'react-hook-form';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/utils/SSOIdentityProviderSchema';
+import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/schemas/SSOIdentityProviderSchema';
 import { defaultIdpValues } from '@/settings/security/utils/SSOIdentityProviderDefaultValues';
 import { useEffect } from 'react';
 

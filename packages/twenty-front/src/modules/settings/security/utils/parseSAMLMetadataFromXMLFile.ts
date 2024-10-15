@@ -6,7 +6,7 @@ const validator = z.object({
   certificate: z.string().min(1),
 });
 
-export const parseSAMLMetadata = (
+export const parseSAMLMetadataFromXMLFile = (
   xmlString: string,
 ):
   | { success: true; data: z.infer<typeof validator> }

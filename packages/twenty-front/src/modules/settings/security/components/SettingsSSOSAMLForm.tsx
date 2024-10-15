@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Button } from '@/ui/input/button/components/Button';
 import { isDefined } from '~/utils/isDefined';
-import { parseSAMLMetadata } from '@/settings/security/utils/parseXMLMetadata';
+import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -52,7 +52,7 @@ export const SettingsSSOSAMLForm = () => {
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
       const text = await e.target.files[0].text();
-      const samlMetadataParsed = parseSAMLMetadata(text);
+      const samlMetadataParsed = parseSAMLMetadataFromXMLFile(text);
       if (!samlMetadataParsed.success) {
         enqueueSnackBar('Invalid File', {
           variant: SnackBarVariant.Error,

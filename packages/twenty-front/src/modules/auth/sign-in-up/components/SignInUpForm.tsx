@@ -67,7 +67,7 @@ export const SignInUpForm = () => {
   } = useSignInUp(form);
 
   const toggleSSOMode = () => {
-    if (signInUpStep === SignInUpStep.EmailSSO) {
+    if (signInUpStep === SignInUpStep.SSOEmail) {
       continueWithEmail();
     } else {
       continueWithSSO();
@@ -93,7 +93,7 @@ export const SignInUpForm = () => {
           setShowErrors(true);
           form.handleSubmit(submitCredentials)();
         }
-      } else if (signInUpStep === SignInUpStep.EmailSSO) {
+      } else if (signInUpStep === SignInUpStep.SSOEmail) {
         submitSSOEmail(form.getValues('email'));
       }
     }
@@ -108,7 +108,7 @@ export const SignInUpForm = () => {
       return 'Continue';
     }
 
-    if (signInUpStep === SignInUpStep.EmailSSO) {
+    if (signInUpStep === SignInUpStep.SSOEmail) {
       return 'Continue with SSO';
     }
 
@@ -167,7 +167,7 @@ export const SignInUpForm = () => {
         <MainButton
           Icon={() => <IconKey size={theme.icon.size.md} />}
           title={
-            signInUpStep === SignInUpStep.EmailSSO
+            signInUpStep === SignInUpStep.SSOEmail
               ? 'Continue with email'
               : 'Single sign-on (SSO)'
           }
@@ -290,7 +290,7 @@ export const SignInUpForm = () => {
             event.preventDefault();
           }}
         >
-          {signInUpStep === SignInUpStep.EmailSSO && (
+          {signInUpStep === SignInUpStep.SSOEmail && (
             <>
               <StyledFullWidthMotionDiv
                 initial={{ opacity: 0, height: 0 }}

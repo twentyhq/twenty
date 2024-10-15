@@ -7,7 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
-import { useEditSSOIdentityProvider } from '@/settings/security/hooks/useEditSSOIdentityProvider';
+import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
 import { isDefined } from '~/utils/isDefined';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -29,7 +29,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
   const { closeDropdown } = useDropdown(dropdownId);
 
   const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
-  const { editSSOIdentityProvider } = useEditSSOIdentityProvider();
+  const { updateSSOIdentityProvider } = useUpdateSSOIdentityProvider();
 
   const handleDeleteSSOIdentityProvider = async (
     identityProviderId: string,
@@ -48,7 +48,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
   const toggleSSOIdentityProviderStatus = async (
     identityProviderId: string,
   ) => {
-    const result = await editSSOIdentityProvider({
+    const result = await updateSSOIdentityProvider({
       id: identityProviderId,
       status:
         SSOIdp.status === 'Active'

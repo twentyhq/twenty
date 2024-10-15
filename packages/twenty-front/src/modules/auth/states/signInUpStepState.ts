@@ -4,7 +4,7 @@ export enum SignInUpStep {
   Init = 'init',
   Email = 'email',
   Password = 'password',
-  EmailSSO = 'emailSSO',
+  SSOEmail = 'SSOEmail',
   SSOWorkspaceSelection = 'SSOWorkspaceSelection',
 }
 
