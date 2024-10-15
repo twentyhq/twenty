@@ -4,8 +4,6 @@ import { RecordGroupDefinition } from '@/object-record/record-group/types/Record
 
 type RecordBoardColumnContextProps = {
   columnDefinition: RecordGroupDefinition;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
   recordCount: number;
 };
 

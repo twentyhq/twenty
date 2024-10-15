@@ -30,6 +30,9 @@ const StyledContainer = styled.div`
   flex: 1;
   flex-direction: row;
   min-height: calc(100% - 1px);
+  & > *:not(:first-child) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledWrapper = styled.div`
