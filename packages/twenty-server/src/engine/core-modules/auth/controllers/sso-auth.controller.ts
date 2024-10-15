@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
 
@@ -23,13 +24,17 @@ import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.gua
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import {
+  IdentityProviderType,
+  WorkspaceSSOIdentityProvider,
+} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -40,9 +45,25 @@ export class SSOAuthController {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly environmentService: EnvironmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly ssoService: SSOService,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
   ) {}
+
+  @Get('saml/metadata/:identityProviderId')
+  @UseGuards(SSOProviderEnabledGuard)
+  async generateMetadata(@Req() req: any): Promise<string> {
+    return generateServiceProviderMetadata({
+      wantAssertionsSigned: false,
+      issuer: this.ssoService.buildIssuerURL({
+        id: req.params.identityProviderId,
+        type: IdentityProviderType.SAML,
+      }),
+      callbackUrl: this.ssoService.buildCallbackUrl({
+        type: IdentityProviderType.SAML,
+      }),
+    });
+  }
 
   @Get('oidc/login/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, OIDCAuthGuard)

@@ -1,5 +1,5 @@
 import {
-  IdpType,
+  IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
@@ -11,13 +11,13 @@ type CommonSSOConfiguration = {
 };
 
 export type OIDCConfiguration = {
-  type: IdpType.OIDC;
+  type: IdentityProviderType.OIDC;
   clientID: string;
   clientSecret: string;
 } & CommonSSOConfiguration;
 
 export type SAMLConfiguration = {
-  type: IdpType.SAML;
+  type: IdentityProviderType.SAML;
   ssoURL: string;
   certificate: string;
   fingerprint?: string;

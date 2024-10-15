@@ -15,7 +15,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export enum IdpType {
+export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML',
 }
@@ -28,7 +28,7 @@ export enum OIDCResponseType {
   NONE = 'none',
 }
 
-registerEnumType(IdpType, {
+registerEnumType(IdentityProviderType, {
   name: 'IdpType',
 });
 
@@ -81,10 +81,10 @@ export class WorkspaceSSOIdentityProvider {
 
   @Column({
     type: 'enum',
-    enum: IdpType,
-    default: IdpType.OIDC,
+    enum: IdentityProviderType,
+    default: IdentityProviderType.OIDC,
   })
-  type: IdpType;
+  type: IdentityProviderType;
 
   @Column()
   issuer: string;

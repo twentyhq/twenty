@@ -1,7 +1,13 @@
 import React, { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Section } from '@/ui/layout/section/components/Section';
-import { H2Title, IconCopy, IconUpload, IconCheck } from 'twenty-ui';
+import {
+  H2Title,
+  IconCopy,
+  IconUpload,
+  IconCheck,
+  IconDownload,
+} from 'twenty-ui';
 import styled from '@emotion/styled';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Button } from '@/ui/input/button/components/Button';
@@ -11,6 +17,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
+import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;
@@ -84,6 +91,28 @@ export const SettingsSSOSAMLForm = () => {
       (field) => isDefined(field) && field.length > 0,
     );
   };
+
+  const downloadMetadata = async () => {
+    const response = await fetch(
+      `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
+    );
+    if (!response.ok) {
+      return enqueueSnackBar('Metadata file generation failed', {
+        variant: SnackBarVariant.Error,
+        duration: 2000,
+      });
+    }
+    const text = await response.text();
+    const blob = new Blob([text], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'metadata.xml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
   return (
     <>
       <Section>
@@ -101,7 +130,7 @@ export const SettingsSSOSAMLForm = () => {
           <Button
             Icon={IconUpload}
             onClick={handleUploadFileClick}
-            title="Upload File"
+            title="Upload Identity Provider Metadata File"
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
@@ -118,6 +147,14 @@ export const SettingsSSOSAMLForm = () => {
           description="Enter the infos to set the connection"
         />
         <StyledInputsContainer>
+          <StyledContainer>
+            <Button
+              Icon={IconDownload}
+              onClick={downloadMetadata}
+              title="Download Service Provider Metadata File"
+            ></Button>
+          </StyledContainer>
+          <HorizontalSeparator visible={true} text={'or'} />
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
