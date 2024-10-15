@@ -1,10 +1,11 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import {
   displayedExportProgress,
-  useExportTableData,
-} from '@/object-record/record-index/options/hooks/useExportTableData';
+  useExportRecordData,
+} from '@/action-menu/hooks/useExportRecordData';
+import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconFileExport } from 'twenty-ui';
@@ -30,7 +31,7 @@ export const ExportRecordsActionEffect = ({
     recordIndexId: objectMetadataItem?.namePlural ?? '',
   };
 
-  const { progress, download } = useExportTableData({
+  const { progress, download } = useExportRecordData({
     ...baseTableDataParams,
     filename: `${objectMetadataItem?.nameSingular}.csv`,
   });

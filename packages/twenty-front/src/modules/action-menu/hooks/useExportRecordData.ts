@@ -138,7 +138,7 @@ type UseExportTableDataOptions = Omit<UseTableDataOptions, 'callback'> & {
   filename: string;
 };
 
-export const useExportTableData = ({
+export const useExportRecordData = ({
   delayMs,
   filename,
   maximumRequests = 100,

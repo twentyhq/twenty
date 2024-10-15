@@ -72,6 +72,8 @@ export const DeleteRecordsActionEffect = ({
 
   const handleDeleteClick = useCallback(
     async (recordIdsToDelete: string[]) => {
+      resetTableRowSelection();
+
       for (const recordIdToDelete of recordIdsToDelete) {
         const foundFavorite = favorites?.find(
           (favorite) => favorite.recordId === recordIdToDelete,
@@ -85,8 +87,6 @@ export const DeleteRecordsActionEffect = ({
       await deleteManyRecords(recordIdsToDelete, {
         delayInMsBetweenRequests: 50,
       });
-
-      resetTableRowSelection();
     },
     [deleteFavorite, deleteManyRecords, favorites, resetTableRowSelection],
   );
