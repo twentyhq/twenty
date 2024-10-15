@@ -28,7 +28,7 @@ import { SEARCH_FIELDS_FOR_OPPORTUNITY } from 'src/modules/opportunity/standard-
 import { SEARCH_FIELDS_FOR_PERSON } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Command({
-  name: 'upgrade-0.32:simplify-search-vector-expression',
+  name: 'fix-0.32:simplify-search-vector-expression',
   description: 'Replace searchVector with simpler expression',
 })
 export class SimplifySearchVectorExpressionCommand extends ActiveWorkspacesCommandRunner {
