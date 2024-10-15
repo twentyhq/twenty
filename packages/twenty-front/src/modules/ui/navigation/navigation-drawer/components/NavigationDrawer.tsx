@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
@@ -33,15 +34,8 @@ const StyledContainer = styled.div<{
   width: ${NAV_DRAWER_WIDTHS.menu.desktop.expanded}px;
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
-  padding: ${({ theme }) => theme.spacing(3, 2, 4)};
-
-  ${({ isSubMenu, theme }) =>
-    isSubMenu
-      ? css`
-          padding-left: ${theme.spacing(0)};
-          padding-right: ${theme.spacing(8)};
-        `
-      : ''}
+  padding: ${({ theme, isSubMenu }) =>
+    isSubMenu ? theme.spacing(3, 8) : theme.spacing(3, 2, 4)};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
@@ -63,6 +57,7 @@ export const NavigationDrawer = ({
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
+  const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
@@ -84,15 +79,16 @@ export const NavigationDrawer = ({
     ? NAV_DRAWER_WIDTHS.menu.mobile.expanded
     : NAV_DRAWER_WIDTHS.menu.mobile.collapsed;
 
-  const navigationDrawerWidth = isMobile ? mobileWidth : desktopWidth;
+  const navigationDrawerAnimate = {
+    width: isMobile ? mobileWidth : desktopWidth,
+    opacity: isNavigationDrawerExpanded || !isSettingsPage ? 1 : 0,
+  };
 
   return (
     <StyledAnimatedContainer
       className={className}
       initial={false}
-      animate={{
-        width: navigationDrawerWidth,
-      }}
+      animate={navigationDrawerAnimate}
       transition={{
         duration: theme.animation.duration.normal,
       }}
