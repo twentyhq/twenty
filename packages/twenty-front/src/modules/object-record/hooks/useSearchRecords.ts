@@ -83,8 +83,6 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
     [result],
   );
 
-  console.log(effectiveData);
-
   return {
     objectMetadataItem,
     records: records,
