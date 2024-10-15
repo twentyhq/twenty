@@ -15,6 +15,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useEffect, useState } from 'react';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
@@ -94,9 +95,15 @@ export const SettingsDataModelFieldRelationForm = ({
     initialRelationType,
   } = useRelationSettingsFormInitialValues({ fieldMetadataItem });
 
-  const selectedObjectMetadataItem = findObjectMetadataItemById(
-    watchFormValue('relation.objectMetadataId'),
-  );
+  
+  const [selectedObjectMetadataItem, setSelectedObjectMetadataItem] =useState(initialRelationObjectMetadataItem);
+  const objectMetadataId = watchFormValue('relation.objectMetadataId');
+  useEffect(() => {
+    if (objectMetadataId !== undefined) {
+      setSelectedObjectMetadataItem(findObjectMetadataItemById(objectMetadataId));
+    }
+  }, [objectMetadataId]);
+  
 
   const isMobile = useIsMobile();
 
@@ -143,7 +150,7 @@ export const SettingsDataModelFieldRelationForm = ({
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>
-        Field on {selectedObjectMetadataItem?.labelPlural}
+        Field on  {selectedObjectMetadataItem?.labelPlural || 'Select an object'}
       </StyledInputsLabel>
       <StyledInputsContainer>
         <Controller
