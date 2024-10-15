@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
@@ -185,6 +185,12 @@ export const RecordIndexOptionsDropdownContent = ({
         hasSubMenu
       />
     ) : null;
+
+  useEffect(() => {
+    if (currentMenu === 'hiddenViewGroups' && hiddenRecordGroups.length === 0) {
+      setCurrentMenu('viewGroups');
+    }
+  }, [hiddenRecordGroups, currentMenu]);
 
   return (
     <>
