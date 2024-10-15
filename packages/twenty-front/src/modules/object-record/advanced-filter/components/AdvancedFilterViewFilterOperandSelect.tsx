@@ -9,12 +9,12 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewFilterDraft } from '@/views/types/ViewFilterDraft';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-ui';
 
 interface AdvancedFilterViewFilterOperandSelectProps {
-  viewFilter: ViewFilter;
+  viewFilter: ViewFilterDraft;
   filterDefinition: FilterDefinition;
   isDisabled?: boolean;
 }
@@ -48,7 +48,7 @@ export const AdvancedFilterViewFilterOperandSelect = (
         selectedOption={{
           label: props.viewFilter.operand
             ? getOperandLabel(props.viewFilter.operand)
-            : '',
+            : 'Select operand',
           value: '',
         }}
         isDisabled
@@ -65,7 +65,7 @@ export const AdvancedFilterViewFilterOperandSelect = (
           selectedOption={{
             label: props.viewFilter.operand
               ? getOperandLabel(props.viewFilter.operand)
-              : '',
+              : 'Select operand',
             value: '',
           }}
         />

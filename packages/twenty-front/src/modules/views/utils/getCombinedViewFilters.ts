@@ -1,8 +1,9 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewFilterDraft } from '@/views/types/ViewFilterDraft';
 
 export const getCombinedViewFilters = (
-  viewFilters: ViewFilter[],
-  toUpsertViewFilters: ViewFilter[],
+  viewFilters: ViewFilterDraft[],
+  toUpsertViewFilters: ViewFilterDraft[],
   toDeleteViewFilterIds: string[],
 ): ViewFilter[] => {
   const toCreateViewFilters = toUpsertViewFilters.filter(

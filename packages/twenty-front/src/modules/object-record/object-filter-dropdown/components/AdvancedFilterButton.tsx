@@ -7,7 +7,6 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { IconFilter, Pill } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -63,11 +62,8 @@ export const AdvancedFilterButton = () => {
 
     upsertCombinedViewFilter({
       id: v4(),
-      fieldMetadataId: undefined as any,
-      operand: ViewFilterOperand.Is,
       value: '',
       displayValue: '',
-      definition: {} as any,
       viewFilterGroupId: newViewFilterGroup.id,
     });
 

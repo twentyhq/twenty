@@ -9,7 +9,6 @@ import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedVie
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -40,12 +39,8 @@ export const AdvancedFilterAddFilterRuleSelect = (
 
     upsertCombinedViewFilter({
       id: v4(),
-      variant: 'default',
-      fieldMetadataId: undefined as any,
-      operand: ViewFilterOperand.Is,
       value: '',
       displayValue: '',
-      definition: {} as any,
       viewFilterGroupId: props.currentViewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     });

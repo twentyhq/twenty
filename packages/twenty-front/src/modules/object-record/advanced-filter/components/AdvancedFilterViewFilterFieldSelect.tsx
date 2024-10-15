@@ -2,6 +2,7 @@ import { ObjectFilterDropdownFilterSelect } from '@/object-record/object-filter-
 import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -25,10 +26,14 @@ export const AdvancedFilterViewFilterFieldSelect = (
 
   const handleSelectField = (filterDefinition: FilterDefinition) => {
     closeDropdown();
+    const operandsForFilterType =
+      getOperandsForFilterDefinition(filterDefinition);
+
     upsertCombinedViewFilter({
       ...props.viewFilter,
       fieldMetadataId: filterDefinition.fieldMetadataId,
       definition: filterDefinition,
+      operand: operandsForFilterType[0],
     });
   };
 

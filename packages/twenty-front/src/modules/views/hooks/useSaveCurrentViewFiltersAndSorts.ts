@@ -11,6 +11,8 @@ import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states
 import { unsavedToDeleteViewSortIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewSortIdsComponentFamilyState';
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/unsavedToUpsertViewSortsComponentFamilyState';
+import { viewFilterSchema } from '@/views/validation-schemas/viewFilterSchema';
+import { z } from 'zod';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -128,19 +130,27 @@ export const useSaveCurrentViewFiltersAndSorts = (
           return;
         }
 
-        const viewFiltersToCreate = unsavedToUpsertViewFilters.filter(
+        const viewFilterDraftsToCreate = unsavedToUpsertViewFilters.filter(
           (viewFilter) =>
             !view.viewFilters.some(
               (vf) => vf.fieldMetadataId === viewFilter.fieldMetadataId,
             ),
         );
 
-        const viewFiltersToUpdate = unsavedToUpsertViewFilters.filter(
+        const viewFiltersToCreate = z
+          .array(viewFilterSchema)
+          .parse(viewFilterDraftsToCreate);
+
+        const viewFilterDraftsToUpdate = unsavedToUpsertViewFilters.filter(
           (viewFilter) =>
             view.viewFilters.some(
               (vf) => vf.fieldMetadataId === viewFilter.fieldMetadataId,
             ),
         );
+
+        const viewFiltersToUpdate = z
+          .array(viewFilterSchema)
+          .parse(viewFilterDraftsToUpdate);
 
         await createViewFilterRecords(viewFiltersToCreate, view);
         await updateViewFilterRecords(viewFiltersToUpdate);
