@@ -1,8 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { Section } from '@/ui/layout/section/components/Section';
-import { H2Title, IconKey } from 'twenty-ui';
+import { H2Title, IconComponent, IconKey } from 'twenty-ui';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsSSOOIDCForm } from '@/settings/security/components/SettingsSSOOIDCForm';
 import { SettingsSSOSAMLForm } from '@/settings/security/components/SettingsSSOSAMLForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -10,6 +9,7 @@ import styled from '@emotion/styled';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { IdpType } from '~/generated/graphql';
 import { ReactElement } from 'react';
+import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
 
 const StyledInputsContainer = styled.div`
   display: grid;
@@ -33,8 +33,8 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
     IdpType,
     {
       form: ReactElement;
-      card: {
-        cardMedia: ReactElement;
+      option: {
+        Icon: IconComponent;
         title: string;
         value: string;
         description: string;
@@ -42,8 +42,8 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
     }
   > = {
     OIDC: {
-      card: {
-        cardMedia: <IconKey />,
+      option: {
+        Icon: IconKey,
         title: 'OIDC',
         value: 'OIDC',
         description: '',
@@ -51,8 +51,8 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
       form: <SettingsSSOOIDCForm />,
     },
     SAML: {
-      card: {
-        cardMedia: <IconKey />,
+      option: {
+        Icon: IconKey,
         title: 'SAML',
         value: 'SAML',
         description: '',
@@ -103,11 +103,12 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             name="type"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <SettingsAccountsRadioSettingsCard
-                onChange={onChange}
-                name="type"
-                options={Object.values(IdpMap).map(({ card }) => card)}
+              <SettingsRadioCardContainer
                 value={value}
+                options={Object.values(IdpMap).map(
+                  (identityProviderType) => identityProviderType.option,
+                )}
+                onChange={onChange}
               />
             )}
           />
