@@ -21,14 +21,14 @@ export class WorkflowExecutorWorkspaceService {
   async execute({
     currentStepIndex,
     steps,
-    payload,
+    context,
     output,
     attemptCount = 1,
   }: {
     currentStepIndex: number;
     steps: WorkflowStep[];
     output: WorkflowExecutorOutput;
-    payload?: object;
+    context?: Record<string, any>;
     attemptCount?: number;
   }): Promise<WorkflowExecutorOutput> {
     if (currentStepIndex >= steps.length) {
@@ -41,57 +41,54 @@ export class WorkflowExecutorWorkspaceService {
 
     const result = await workflowAction.execute({
       step,
-      payload,
+      context,
     });
 
-    const baseStepOutput = {
+    const stepOutput = output.steps[step.name];
+
+    const error =
+      result.error?.errorMessage ??
+      (result.result ? undefined : 'Execution result error, no data or error');
+
+    const updatedStepOutput = {
       id: step.id,
       name: step.name,
       type: step.type,
-      attemptCount,
+      outputs: [
+        ...(stepOutput?.outputs ?? []),
+        {
+          attemptCount,
+          result: result.result,
+          error,
+        },
+      ],
     };
 
     const updatedOutput = {
       ...output,
-      steps: [
+      steps: {
         ...output.steps,
-        {
-          ...baseStepOutput,
-          result: result.result,
-          error: result.error?.errorMessage,
-        },
-      ],
+        [step.name]: updatedStepOutput,
+      },
     };
 
     if (result.result) {
       return await this.execute({
         currentStepIndex: currentStepIndex + 1,
         steps,
-        payload: result.result,
+        context: {
+          ...context,
+          [step.name]: result.result,
+        },
         output: updatedOutput,
       });
-    }
-
-    if (!result.error) {
-      return {
-        ...output,
-        steps: [
-          ...output.steps,
-          {
-            ...baseStepOutput,
-            result: undefined,
-            error: 'Execution result error, no data or error',
-          },
-        ],
-        status: WorkflowRunStatus.FAILED,
-      };
     }
 
     if (step.settings.errorHandlingOptions.continueOnFailure.value) {
       return await this.execute({
         currentStepIndex: currentStepIndex + 1,
         steps,
-        payload,
+        context,
         output: updatedOutput,
       });
     }
@@ -103,7 +100,7 @@ export class WorkflowExecutorWorkspaceService {
       return await this.execute({
         currentStepIndex,
         steps,
-        payload,
+        context,
         output: updatedOutput,
         attemptCount: attemptCount + 1,
       });

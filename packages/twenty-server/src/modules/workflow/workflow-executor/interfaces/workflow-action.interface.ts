@@ -4,9 +4,9 @@ import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workf
 export interface WorkflowAction {
   execute({
     step,
-    payload,
+    context,
   }: {
     step: WorkflowStep;
-    payload?: object;
+    context?: Record<string, any>;
   }): Promise<WorkflowActionResult>;
 }

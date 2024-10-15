@@ -1,26 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { z } from 'zod';
+import DOMPurify from 'dompurify';
 import Handlebars from 'handlebars';
 import { JSDOM } from 'jsdom';
-import DOMPurify from 'dompurify';
+import { z } from 'zod';
 
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
-import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  WorkflowStepExecutorException,
-  WorkflowStepExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MailSenderException,
   MailSenderExceptionCode,
 } from 'src/modules/mail-sender/exceptions/mail-sender.exception';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
+import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
@@ -50,12 +50,12 @@ export class SendEmailWorkflowAction {
         'connectedAccount',
       );
     const connectedAccount = await connectedAccountRepository.findOneBy({
-      id: step.settings.connectedAccountId,
+      id: step.settings.input.connectedAccountId,
     });
 
     if (!isDefined(connectedAccount)) {
       throw new MailSenderException(
-        `Connected Account '${step.settings.connectedAccountId}' not found`,
+        `Connected Account '${step.settings.input.connectedAccountId}' not found`,
         MailSenderExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
@@ -73,37 +73,35 @@ export class SendEmailWorkflowAction {
 
   async execute({
     step,
-    payload,
+    context,
   }: {
     step: WorkflowSendEmailStep;
-    payload: {
-      email: string;
-      [key: string]: string;
-    };
+    context: Record<string, any>;
   }): Promise<WorkflowActionResult> {
     const emailProvider = await this.getEmailClient(step);
+    const { email, body, subject } = step.settings.input;
 
     try {
       const emailSchema = z.string().trim().email('Invalid email');
 
-      const result = emailSchema.safeParse(payload.email);
+      const result = emailSchema.safeParse(email);
 
       if (!result.success) {
-        this.logger.warn(`Email '${payload.email}' invalid`);
+        this.logger.warn(`Email '${email}' invalid`);
 
         return { result: { success: false } };
       }
 
-      const body = Handlebars.compile(step.settings.body)(payload);
-      const subject = Handlebars.compile(step.settings.subject)(payload);
+      const inferedBody = Handlebars.compile(body)(context);
+      const inferedSubject = Handlebars.compile(subject)(context);
 
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
-      const safeBody = purify.sanitize(body || '');
-      const safeSubject = purify.sanitize(subject || '');
+      const safeBody = purify.sanitize(inferedBody || '');
+      const safeSubject = purify.sanitize(inferedSubject || '');
 
       const message = [
-        `To: ${payload.email}`,
+        `To: ${email}`,
         `Subject: ${safeSubject || ''}`,
         'MIME-Version: 1.0',
         'Content-Type: text/plain; charset="UTF-8"',
