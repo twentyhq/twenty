@@ -69,10 +69,12 @@ export class SendEmailWorkflowAction implements WorkflowAction {
   }
 
   async execute(
-    payload: WorkflowSendEmailStepInput,
+    workflowStepInput: WorkflowSendEmailStepInput,
   ): Promise<WorkflowActionResult> {
-    const emailProvider = await this.getEmailClient(payload.connectedAccountId);
-    const { email, body, subject } = payload;
+    const emailProvider = await this.getEmailClient(
+      workflowStepInput.connectedAccountId,
+    );
+    const { email, body, subject } = workflowStepInput;
 
     try {
       const emailSchema = z.string().trim().email('Invalid email');

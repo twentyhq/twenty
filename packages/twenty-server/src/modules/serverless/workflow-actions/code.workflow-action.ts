@@ -18,7 +18,9 @@ export class CodeWorkflowAction implements WorkflowAction {
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
-  async execute(payload: WorkflowCodeStepInput): Promise<WorkflowActionResult> {
+  async execute(
+    workflowStepInput: WorkflowCodeStepInput,
+  ): Promise<WorkflowActionResult> {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
@@ -30,7 +32,7 @@ export class CodeWorkflowAction implements WorkflowAction {
 
     const result =
       await this.serverlessFunctionService.executeOneServerlessFunction(
-        payload.serverlessFunctionId,
+        workflowStepInput.serverlessFunctionId,
         workspaceId,
         {}, // TODO: input will be dynamically calculated from function input
       );
