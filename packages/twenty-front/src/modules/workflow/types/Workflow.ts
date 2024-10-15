@@ -84,6 +84,24 @@ export type WorkflowVersion = {
   __typename: 'WorkflowVersion';
 };
 
+export type WorkflowRun = {
+  __typename: 'WorkflowRun';
+  id: string;
+  workflowVersionId: string;
+  output: WorkflowRunOutput;
+};
+
+export type WorkflowRunOutput = {
+  steps: {
+    id: string;
+    name: string;
+    type: string;
+    attemptCount: number;
+    result: object | undefined;
+    error: string | undefined;
+  }[];
+};
+
 export type Workflow = {
   __typename: 'Workflow';
   id: string;

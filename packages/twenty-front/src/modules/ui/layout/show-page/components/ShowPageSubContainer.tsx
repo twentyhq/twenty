@@ -18,6 +18,8 @@ import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPage
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
+import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
 import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
@@ -25,7 +27,18 @@ import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualiz
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconTrash } from 'twenty-ui';
+import {
+  IconCalendarEvent,
+  IconCheckbox,
+  IconList,
+  IconMail,
+  IconNotes,
+  IconPaperclip,
+  IconPrinter,
+  IconSettings,
+  IconTimelineEvent,
+  IconTrash,
+} from 'twenty-ui';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -104,28 +117,131 @@ export const ShowPageSubContainer = ({
   );
   const activeTabId = useRecoilValue(activeTabIdState);
 
+  const targetObjectNameSingular =
+    targetableObject.targetObjectNameSingular as CoreObjectNameSingular;
+
+  const isCompanyOrPerson = [
+    CoreObjectNameSingular.Company,
+    CoreObjectNameSingular.Person,
+  ].includes(targetObjectNameSingular);
+
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isWorkflow =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.Workflow;
+  const isWorkflowVersion =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.WorkflowVersion;
+  const isWorkflowRun =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.WorkflowRun;
+
+  const hideTabsNotWorkflowRelated =
+    isWorkflow || isWorkflowVersion || isWorkflowRun;
+
+  const shouldDisplayCalendarTab = isCompanyOrPerson;
+  const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
+
   const isMobile = useIsMobile();
 
   const isNewViewableRecordLoading = useRecoilValue(
     isNewViewableRecordLoadingState,
   );
 
-  const summaryCard = (
-    <SummaryCard
-      objectNameSingular={targetableObject.targetObjectNameSingular}
-      objectRecordId={targetableObject.id}
-      isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
-      isInRightDrawer={isInRightDrawer}
-    />
-  );
-
-  const fieldsCard = (
-    <FieldsCard
-      objectNameSingular={targetableObject.targetObjectNameSingular}
-      objectRecordId={targetableObject.id}
-    />
-  );
-
+  const tabs = [
+    {
+      id: 'richText',
+      title: 'Note',
+      Icon: IconNotes,
+      hide:
+        loading ||
+        (targetableObject.targetObjectNameSingular !==
+          CoreObjectNameSingular.Note &&
+          targetableObject.targetObjectNameSingular !==
+            CoreObjectNameSingular.Task),
+    },
+    {
+      id: 'fields',
+      title: 'Fields',
+      Icon: IconList,
+      hide: !(isMobile || isInRightDrawer),
+    },
+    {
+      id: 'timeline',
+      title: 'Timeline',
+      Icon: IconTimelineEvent,
+      hide: !timeline || isInRightDrawer || hideTabsNotWorkflowRelated,
+    },
+    {
+      id: 'tasks',
+      title: 'Tasks',
+      Icon: IconCheckbox,
+      hide:
+        !tasks ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task ||
+        hideTabsNotWorkflowRelated,
+    },
+    {
+      id: 'notes',
+      title: 'Notes',
+      Icon: IconNotes,
+      hide:
+        !notes ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task ||
+        hideTabsNotWorkflowRelated,
+    },
+    {
+      id: 'files',
+      title: 'Files',
+      Icon: IconPaperclip,
+      hide: !notes || hideTabsNotWorkflowRelated,
+    },
+    {
+      id: 'emails',
+      title: 'Emails',
+      Icon: IconMail,
+      hide: !shouldDisplayEmailsTab,
+    },
+    {
+      id: 'calendar',
+      title: 'Calendar',
+      Icon: IconCalendarEvent,
+      hide: !shouldDisplayCalendarTab,
+    },
+    {
+      id: 'workflow',
+      title: 'Workflow',
+      Icon: IconSettings,
+      hide: !isWorkflow,
+    },
+    {
+      id: 'workflowVersion',
+      title: 'Flow',
+      Icon: IconSettings,
+      hide: !isWorkflowVersion,
+    },
+    {
+      id: 'workflowRunOutput',
+      title: 'Output',
+      Icon: IconPrinter,
+      hide: !isWorkflowRun,
+    },
+    {
+      id: 'workflowRunFlow',
+      title: 'Flow',
+      Icon: IconSettings,
+      hide: !isWorkflowRun,
+    },
+  ];
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'timeline':
@@ -181,6 +297,14 @@ export const ShowPageSubContainer = ({
               workflowVersionId={targetableObject.id}
             />
           </>
+        );
+      case 'workflowRunFlow':
+        return (
+          <WorkflowRunVersionVisualizer workflowRunId={targetableObject.id} />
+        );
+      case 'workflowRunOutput':
+        return (
+          <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
         );
       default:
         return <></>;
