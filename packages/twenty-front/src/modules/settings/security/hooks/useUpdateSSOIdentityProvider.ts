@@ -5,7 +5,7 @@ import {
   useEditSsoIdentityProviderMutation,
 } from '~/generated/graphql';
 
-export const useEditSSOIdentityProvider = () => {
+export const useUpdateSSOIdentityProvider = () => {
   const [editSsoIdentityProviderMutation] =
     useEditSsoIdentityProviderMutation();
 
@@ -13,7 +13,7 @@ export const useEditSSOIdentityProvider = () => {
     SSOIdentitiesProvidersState,
   );
 
-  const editSSOIdentityProvider = async (
+  const updateSSOIdentityProvider = async (
     payload: EditSsoIdentityProviderMutationVariables['input'],
   ) => {
     return await editSsoIdentityProviderMutation({
@@ -33,6 +33,6 @@ export const useEditSSOIdentityProvider = () => {
   };
 
   return {
-    editSSOIdentityProvider,
+    updateSSOIdentityProvider,
   };
 };

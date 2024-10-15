@@ -104,7 +104,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   ]);
 
   const continueWithSSO = () => {
-    setSignInUpStep(SignInUpStep.EmailSSO);
+    setSignInUpStep(SignInUpStep.SSOEmail);
   };
 
   const submitSSOEmail = async (email: string) => {

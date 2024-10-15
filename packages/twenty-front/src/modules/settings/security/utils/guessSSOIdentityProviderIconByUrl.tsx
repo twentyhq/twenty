@@ -1,6 +1,8 @@
 import { IconComponent, IconGoogle, IconKey } from 'twenty-ui';
 
-export const guessIconByUrl = (url: string): IconComponent => {
+export const guessSSOIdentityProviderIconByUrl = (
+  url: string,
+): IconComponent => {
   if (url.includes('google')) {
     return IconGoogle;
   }

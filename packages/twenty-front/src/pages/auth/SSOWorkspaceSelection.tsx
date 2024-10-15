@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 import styled from '@emotion/styled';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { guessIconByUrl } from '@/settings/security/utils/guessIconByUrl';
+import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
@@ -51,7 +51,7 @@ export const SSOWorkspaceSelection = () => {
                   <MainButton
                     title={idp.name}
                     onClick={() => redirectToSSOLoginPage(idp.id)}
-                    Icon={guessIconByUrl(idp.issuer)}
+                    Icon={guessSSOIdentityProviderIconByUrl(idp.issuer)}
                     fullWidth
                   />
                   <HorizontalSeparator visible={false} />

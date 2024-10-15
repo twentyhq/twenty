@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
-import { useEditSSOIdentityProvider } from '@/settings/security/hooks/useEditSSOIdentityProvider';
+import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
 
 const mutationEditSSOIDPCallSpy = jest.fn();
 
@@ -31,8 +31,8 @@ describe('useEditSsoIdentityProvider', () => {
     };
     renderHook(
       () => {
-        const { editSSOIdentityProvider } = useEditSSOIdentityProvider();
-        editSSOIdentityProvider(params);
+        const { updateSSOIdentityProvider } = useUpdateSSOIdentityProvider();
+        updateSSOIdentityProvider(params);
       },
       { wrapper: Wrapper },
     );
