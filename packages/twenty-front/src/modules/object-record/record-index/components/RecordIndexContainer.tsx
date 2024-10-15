@@ -3,7 +3,6 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexBoardDataLoader } from '@/object-record/record-index/components/RecordIndexBoardDataLoader';
 import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
@@ -46,7 +45,6 @@ import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoar
 import { useLocation, useNavigate } from 'react-router-dom';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { IconSettings } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -72,13 +70,9 @@ export const RecordIndexContainer = () => {
     recordIndexViewTypeState,
   );
 
-  const { objectNamePlural, recordIndexId } = useContext(
+  const { objectNameSingular, objectNamePlural, recordIndexId } = useContext(
     RecordIndexRootPropsContext,
   );
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -142,35 +136,10 @@ export const RecordIndexContainer = () => {
   const onViewGroupsChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewGroups: ViewGroup[]) => {
-        let newGroupDefinitions = mapViewGroupsToGroupDefinitions({
+        const newGroupDefinitions = mapViewGroupsToGroupDefinitions({
           objectMetadataItem,
           viewGroups,
         });
-
-        newGroupDefinitions = newGroupDefinitions.map((groupDefition) => ({
-          ...groupDefition,
-          actions: [
-            {
-              id: 'edit',
-              label: 'Edit',
-              icon: IconSettings,
-              position: 0,
-              callback: () => {
-                navigateToSelectSettings();
-              },
-            },
-            // TODO: Maybe we should define actions somewhere else
-            // {
-            //   id: 'hide',
-            //   label: 'Hide',
-            //   icon: IconEyeOff,
-            //   position: 1,
-            //   callback: () => {
-            //     handleBoardGroupVisibilityChange(groupDefition);
-            //   },
-            // },
-          ],
-        }));
 
         setColumns(newGroupDefinitions);
 
@@ -187,7 +156,7 @@ export const RecordIndexContainer = () => {
           set(recordIndexGroupDefinitionsState, newGroupDefinitions);
         }
       },
-    [navigateToSelectSettings, objectMetadataItem, setColumns],
+    [objectMetadataItem, setColumns],
   );
 
   return (

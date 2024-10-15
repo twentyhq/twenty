@@ -137,13 +137,11 @@ export const RecordBoardColumnHeader = () => {
           <StyledRightContainer>
             {isHeaderHovered && (
               <StyledHeaderActions>
-                {columnDefinition.actions.length > 0 && (
-                  <LightIconButton
-                    accent="tertiary"
-                    Icon={IconDotsVertical}
-                    onClick={handleBoardColumnMenuOpen}
-                  />
-                )}
+                <LightIconButton
+                  accent="tertiary"
+                  Icon={IconDotsVertical}
+                  onClick={handleBoardColumnMenuOpen}
+                />
 
                 <LightIconButton
                   accent="tertiary"
@@ -155,7 +153,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledRightContainer>
         </StyledHeaderContainer>
       </StyledHeader>
-      {isBoardColumnMenuOpen && columnDefinition.actions.length > 0 && (
+      {isBoardColumnMenuOpen && (
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           stageId={columnDefinition.id}

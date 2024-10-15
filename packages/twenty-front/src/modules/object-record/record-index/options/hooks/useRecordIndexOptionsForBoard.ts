@@ -15,10 +15,6 @@ import { mapBoardFieldDefinitionsToViewFields } from '@/views/utils/mapBoardFiel
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
-import { mapGroupDefinitionsToViewGroups } from '@/views/utils/mapGroupDefinitionsToViewGroups';
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 type useRecordIndexOptionsForBoardParams = {
   objectNameSingular: string;
@@ -33,11 +29,8 @@ export const useRecordIndexOptionsForBoard = ({
 }: useRecordIndexOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
     useRecoilState(recordIndexFieldDefinitionsState);
-  const [recordIndexGroupDefinitions, setRecordIndexGroupDefinitions] =
-    useRecoilState(recordIndexGroupDefinitionsState);
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
-  const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);
   const { updateCurrentView } = useUpdateCurrentView(viewBarId);
   const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
 
@@ -57,21 +50,6 @@ export const useRecordIndexOptionsForBoard = ({
       columnDefinitions.filter(({ isLabelIdentifier }) => !isLabelIdentifier),
     [columnDefinitions],
   );
-
-  const viewGroupFieldMetadataItem = useMemo(() => {
-    if (recordIndexGroupDefinitions.length === 0) return null;
-    // We're assuming that all groups have the same fieldMetadataId for now
-    const fieldMetadataId =
-      'fieldMetadataId' in recordIndexGroupDefinitions[0]
-        ? recordIndexGroupDefinitions[0].fieldMetadataId
-        : null;
-
-    if (!fieldMetadataId) return null;
-
-    return objectMetadataItem.fields.find(
-      (field) => field.id === fieldMetadataId,
-    );
-  }, [objectMetadataItem, recordIndexGroupDefinitions]);
 
   const recordIndexFieldDefinitionsByKey = useMemo(
     () =>
@@ -93,17 +71,6 @@ export const useRecordIndexOptionsForBoard = ({
     [recordIndexFieldDefinitions],
   );
 
-  const visibleBoardGroups = useMemo(
-    () =>
-      recordIndexGroupDefinitions
-        .filter((boardGroup) => boardGroup.isVisible)
-        .sort(
-          (boardGroupA, boardGroupB) =>
-            boardGroupA.position - boardGroupB.position,
-        ),
-    [recordIndexGroupDefinitions],
-  );
-
   const hiddenBoardFields = useMemo(
     () =>
       availableColumnDefinitions
@@ -122,17 +89,6 @@ export const useRecordIndexOptionsForBoard = ({
           };
         }),
     [availableColumnDefinitions, recordIndexFieldDefinitionsByKey],
-  );
-
-  const hiddenBoardGroups = useMemo(
-    () =>
-      recordIndexGroupDefinitions
-        .filter((boardGroup) => !boardGroup.isVisible)
-        .map((boardGroup) => ({
-          ...boardGroup,
-          isVisible: false,
-        })),
-    [recordIndexGroupDefinitions],
   );
 
   const handleReorderBoardFields: OnDragEndResponder = useCallback(
@@ -157,30 +113,6 @@ export const useRecordIndexOptionsForBoard = ({
       saveViewFields(mapBoardFieldDefinitionsToViewFields(updatedFields));
     },
     [saveViewFields, setRecordIndexFieldDefinitions, visibleBoardFields],
-  );
-
-  const handleReorderGroups: OnDragEndResponder = useCallback(
-    (result) => {
-      if (!result.destination) {
-        return;
-      }
-
-      const reorderedVisibleBoardGroups = moveArrayItem(visibleBoardGroups, {
-        fromIndex: result.source.index - 1,
-        toIndex: result.destination.index - 1,
-      });
-
-      if (isDeeplyEqual(visibleBoardGroups, reorderedVisibleBoardGroups))
-        return;
-
-      const updatedGroups = [...reorderedVisibleBoardGroups].map(
-        (group, index) => ({ ...group, position: index }),
-      );
-
-      setRecordIndexGroupDefinitions(updatedGroups);
-      saveViewGroups(mapGroupDefinitionsToViewGroups(updatedGroups));
-    },
-    [saveViewGroups, setRecordIndexGroupDefinitions, visibleBoardGroups],
   );
 
   // Todo : this seems over complex and should at least be extracted to an util with unit test.
@@ -248,29 +180,6 @@ export const useRecordIndexOptionsForBoard = ({
     ],
   );
 
-  const handleBoardGroupVisibilityChange = useCallback(
-    async (updatedGroupDefinition: RecordGroupDefinition) => {
-      const updatedGroupsDefinitions = recordIndexGroupDefinitions.map(
-        (groupDefinition) =>
-          groupDefinition.id === updatedGroupDefinition.id
-            ? {
-                ...groupDefinition,
-                isVisible: !groupDefinition.isVisible,
-              }
-            : groupDefinition,
-      );
-
-      setRecordIndexGroupDefinitions(updatedGroupsDefinitions);
-
-      saveViewGroups(mapGroupDefinitionsToViewGroups(updatedGroupsDefinitions));
-    },
-    [
-      recordIndexGroupDefinitions,
-      setRecordIndexGroupDefinitions,
-      saveViewGroups,
-    ],
-  );
-
   const setAndPersistIsCompactModeActive = useCallback(
     (isCompactModeActive: boolean, view: GraphQLView | undefined) => {
       if (!view) return;
@@ -285,13 +194,8 @@ export const useRecordIndexOptionsForBoard = ({
   return {
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
-    handleBoardGroupVisibilityChange,
-    viewGroupFieldMetadataItem,
     visibleBoardFields,
     hiddenBoardFields,
-    visibleBoardGroups,
-    hiddenBoardGroups,
-    handleReorderGroups,
     isCompactModeActive,
     setAndPersistIsCompactModeActive,
   };

@@ -1,4 +1,3 @@
-import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { ThemeColor } from 'twenty-ui';
 
 export const enum RecordGroupDefinitionType {
@@ -13,7 +12,6 @@ export type RecordGroupDefinitionNoValue = {
   position: number;
   value: null;
   isVisible: boolean;
-  actions: RecordGroupAction[];
 };
 
 export type RecordGroupDefinitionValue = {
@@ -25,7 +23,6 @@ export type RecordGroupDefinitionValue = {
   color: ThemeColor;
   position: number;
   isVisible: boolean;
-  actions: RecordGroupAction[];
 };
 
 export type RecordGroupDefinition =

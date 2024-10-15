@@ -52,7 +52,6 @@ export const mapViewGroupsToGroupDefinitions = ({
         color: selectedOption.color,
         position: viewGroup.position,
         isVisible: viewGroup.isVisible,
-        actions: [],
       } as RecordGroupDefinition;
     })
     .filter(isDefined)
@@ -64,7 +63,6 @@ export const mapViewGroupsToGroupDefinitions = ({
       title: 'No Value',
       type: RecordGroupDefinitionType.NoValue,
       value: null,
-      actions: [],
       position:
         groupDefinitionsFromViewGroups
           .map((option) => option.position)

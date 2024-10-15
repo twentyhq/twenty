@@ -75,6 +75,8 @@ export const standardObjectMetadataDefinitions = [
   MessageChannelMessageAssociationWorkspaceEntity,
   NoteWorkspaceEntity,
   NoteTargetWorkspaceEntity,
+  OpportunityWorkspaceEntity,
+  PersonWorkspaceEntity,
   TaskWorkspaceEntity,
   TaskTargetWorkspaceEntity,
 ];

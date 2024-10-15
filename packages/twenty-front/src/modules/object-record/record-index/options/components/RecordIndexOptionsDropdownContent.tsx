@@ -41,6 +41,9 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { ViewGroupsVisibilityDropdownSection } from '@/views/components/ViewGroupsVisibilityDropdownSection';
+import { useRecordGroupStates } from '@/object-record/record-group/hooks/useRecordGroupStates';
+import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { useRecordGroupReoder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 
 type RecordIndexOptionsMenu =
   | 'viewGroups'
@@ -107,13 +110,8 @@ export const RecordIndexOptionsDropdownContent = ({
   const {
     visibleBoardFields,
     hiddenBoardFields,
-    visibleBoardGroups,
-    hiddenBoardGroups,
-    viewGroupFieldMetadataItem,
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
-    handleBoardGroupVisibilityChange,
-    handleReorderGroups,
     isCompactModeActive,
     setAndPersistIsCompactModeActive,
   } = useRecordIndexOptionsForBoard({
@@ -121,6 +119,24 @@ export const RecordIndexOptionsDropdownContent = ({
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
   });
+
+  const {
+    hiddenRecordGroups,
+    visibleRecordGroups,
+    viewGroupFieldMetadataItem,
+  } = useRecordGroupStates({
+    objectNameSingular,
+    viewBarId: recordIndexId,
+  });
+  const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
+    useRecordGroupVisibility({
+      viewBarId: recordIndexId,
+    });
+  const { handleOrderChange: handleRecordGroupOrderChange } =
+    useRecordGroupReoder({
+      objectNameSingular,
+      viewBarId: recordIndexId,
+    });
 
   const viewGroupSettingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
     id: viewGroupFieldMetadataItem?.name,
@@ -161,7 +177,7 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const viewGroupMenuItem =
     viewGroupFieldMetadataItem &&
-    (visibleBoardGroups.length > 0 || hiddenBoardGroups.length > 0) ? (
+    (visibleRecordGroups.length > 0 || hiddenRecordGroups.length > 0) ? (
       <MenuItem
         onClick={() => handleSelectMenu('viewGroups')}
         LeftIcon={getIcon(currentViewWithCombinedFiltersAndSorts?.icon)}
@@ -209,14 +225,14 @@ export const RecordIndexOptionsDropdownContent = ({
           </DropdownMenuHeader>
           <ViewGroupsVisibilityDropdownSection
             title={viewGroupFieldMetadataItem?.label ?? ''}
-            viewGroups={visibleBoardGroups}
-            onDragEnd={handleReorderGroups}
-            onVisibilityChange={handleBoardGroupVisibilityChange}
+            viewGroups={visibleRecordGroups}
+            onDragEnd={handleRecordGroupOrderChange}
+            onVisibilityChange={handleRecordGroupVisibilityChange}
             isDraggable
             showSubheader={false}
             showDragGrip={true}
           />
-          {hiddenBoardGroups.length > 0 && (
+          {hiddenRecordGroups.length > 0 && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer>
@@ -264,8 +280,8 @@ export const RecordIndexOptionsDropdownContent = ({
           </DropdownMenuHeader>
           <ViewGroupsVisibilityDropdownSection
             title={`Hidden ${viewGroupFieldMetadataItem?.label}`}
-            viewGroups={hiddenBoardGroups}
-            onVisibilityChange={handleBoardGroupVisibilityChange}
+            viewGroups={hiddenRecordGroups}
+            onVisibilityChange={handleRecordGroupVisibilityChange}
             isDraggable={false}
             showSubheader={false}
             showDragGrip={false}
