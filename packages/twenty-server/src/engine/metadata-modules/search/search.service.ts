@@ -74,10 +74,12 @@ export class SearchService {
           );
 
     if (!isDefined(searchableFieldForCustomObject)) {
-      throw new Error('No searchable field found for custom object');
+      throw new Error(
+        `No searchable field found for custom object (object name: ${createdObjectMetadata.nameSingular})`,
+      );
     }
 
-    this.workspaceMigrationService.createCustomMigration(
+    await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
       createdObjectMetadata.workspaceId,
       [
