@@ -1,6 +1,6 @@
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { isOneRecordOrMoreSelected } from '@/context-store/utils/isOneRecordOrMoreSelected';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -9,11 +9,11 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 export const ActionMenuEffect = () => {
-  const contextStoreTargetedRecordIds = useRecoilValue(
-    contextStoreTargetedRecordIdsState,
+  const contextStoreTargetedRecords = useRecoilValue(
+    contextStoreTargetedRecordsState,
   );
 
-  const selectedRecords = contextStoreTargetedRecordIds.selectedRecordIds;
+  const selectedRecords = contextStoreTargetedRecords.selectedRecordIds;
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
@@ -39,7 +39,7 @@ export const ActionMenuEffect = () => {
       closeActionBar();
     }
   }, [
-    contextStoreTargetedRecordIds,
+    contextStoreTargetedRecords,
     openActionBar,
     closeActionBar,
     isDropdownOpen,

@@ -1,18 +1,18 @@
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 export const RecordShowPageEffect = ({ recordId }: { recordId: string }) => {
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
+  const setcontextStoreTargetedRecords = useSetRecoilState(
+    contextStoreTargetedRecordsState,
   );
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds({
+    setcontextStoreTargetedRecords({
       selectedRecordIds: [recordId],
       excludedRecordIds: [],
     });
-  }, [recordId, setContextStoreTargetedRecordIds]);
+  }, [recordId, setcontextStoreTargetedRecords]);
 
   return null;
 };

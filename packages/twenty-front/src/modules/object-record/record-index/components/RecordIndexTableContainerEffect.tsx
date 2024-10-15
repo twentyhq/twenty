@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
@@ -32,8 +32,8 @@ export const RecordIndexTableContainerEffect = ({
     recordTableId,
   });
 
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
+  const setcontextStoreTargetedRecords = useSetRecoilState(
+    contextStoreTargetedRecordsState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -86,7 +86,7 @@ export const RecordIndexTableContainerEffect = ({
   const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds({
+    setcontextStoreTargetedRecords({
       selectedRecordIds:
         selectedRowIds.length !== 1 && hasUserSelectedAllRows
           ? 'all'
@@ -95,7 +95,7 @@ export const RecordIndexTableContainerEffect = ({
     });
 
     return () => {
-      setContextStoreTargetedRecordIds({
+      setcontextStoreTargetedRecords({
         selectedRecordIds: [],
         excludedRecordIds: [],
       });
@@ -103,7 +103,7 @@ export const RecordIndexTableContainerEffect = ({
   }, [
     hasUserSelectedAllRows,
     selectedRowIds,
-    setContextStoreTargetedRecordIds,
+    setcontextStoreTargetedRecords,
     unselectedRowIds,
   ]);
 

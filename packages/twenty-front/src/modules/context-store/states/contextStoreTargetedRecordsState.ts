@@ -1,10 +1,10 @@
 import { createState } from 'twenty-ui';
 
-export const contextStoreTargetedRecordIdsState = createState<{
+export const contextStoreTargetedRecordsState = createState<{
   selectedRecordIds: 'all' | string[];
   excludedRecordIds: string[];
 }>({
-  key: 'contextStoreTargetedRecordIdsState',
+  key: 'contextStoreTargetedRecordsState',
   defaultValue: {
     selectedRecordIds: [],
     excludedRecordIds: [],

@@ -1,12 +1,15 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -19,15 +22,19 @@ export const DeleteRecordsActionEffect = ({
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const contextStoreTargetedRecordIds = useRecoilValue(
-    contextStoreTargetedRecordIdsState,
+  const contextStoreTargetedRecords = useRecoilValue(
+    contextStoreTargetedRecordsState,
   );
 
-  const selectedRecordIds = contextStoreTargetedRecordIds.selectedRecordIds;
-  const excludedRecordIds = contextStoreTargetedRecordIds.excludedRecordIds;
+  const selectedRecordIds = contextStoreTargetedRecords.selectedRecordIds;
+  const excludedRecordIds = contextStoreTargetedRecords.excludedRecordIds;
 
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
     contextStoreCurrentObjectMetadataIdState,
+  );
+
+  const contextStoreTargetedRecordsFilters = useRecoilValue(
+    contextStoreTargetedRecordsFiltersState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -48,10 +55,18 @@ export const DeleteRecordsActionEffect = ({
 
   const shouldSkip = selectedRecordIds !== 'all';
 
+  const queryFilter = turnFiltersIntoQueryFilter(
+    contextStoreTargetedRecordsFilters,
+    objectMetadataItem?.fields ?? [],
+  );
+
   const { totalCount, records: recordsToDelete } = useFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordGqlFields: ['id'],
-    filter:
+    recordGqlFields: {
+      id: true,
+    },
+    filter: makeAndFilterVariables([
+      queryFilter,
       excludedRecordIds.length > 0
         ? {
             not: {
@@ -61,6 +76,7 @@ export const DeleteRecordsActionEffect = ({
             },
           }
         : undefined,
+    ]),
     skip: shouldSkip,
   });
 

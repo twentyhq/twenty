@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -120,23 +120,23 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
+  const setcontextStoreTargetedRecords = useSetRecoilState(
+    contextStoreTargetedRecordsState,
   );
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds({
+    setcontextStoreTargetedRecords({
       selectedRecordIds: selectedRecordIds,
       excludedRecordIds: [],
     });
 
     return () => {
-      setContextStoreTargetedRecordIds({
+      setcontextStoreTargetedRecords({
         selectedRecordIds: [],
         excludedRecordIds: [],
       });
     };
-  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
+  }, [selectedRecordIds, setcontextStoreTargetedRecords]);
 
   return <></>;
 };

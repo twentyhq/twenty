@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
 import { IconCheckbox, IconTrash } from 'twenty-ui';
@@ -20,7 +20,7 @@ const meta: Meta<typeof ActionMenuBar> = {
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
-          set(contextStoreTargetedRecordIdsState, {
+          set(contextStoreTargetedRecordsState, {
             selectedRecordIds: ['1', '2', '3'],
             excludedRecordIds: [],
           });

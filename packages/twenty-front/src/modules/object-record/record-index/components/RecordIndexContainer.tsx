@@ -25,6 +25,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
 import { ActionMenu } from '@/action-menu/components/ActionMenu';
+import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -107,6 +108,10 @@ export const RecordIndexContainer = () => {
     [columnDefinitions, setTableColumns],
   );
 
+  const setContextStoreTargetedRecordsFilters = useSetRecoilState(
+    contextStoreTargetedRecordsFiltersState,
+  );
+
   return (
     <StyledContainer>
       <InformationBannerWrapper />
@@ -138,6 +143,12 @@ export const RecordIndexContainer = () => {
                     ),
                   );
                   setRecordIndexFilters(
+                    mapViewFiltersToFilters(
+                      view.viewFilters,
+                      filterDefinitions,
+                    ),
+                  );
+                  setContextStoreTargetedRecordsFilters(
                     mapViewFiltersToFilters(
                       view.viewFilters,
                       filterDefinitions,
