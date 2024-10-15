@@ -17,6 +17,7 @@ import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 const StyledContainer = styled.div`
@@ -153,21 +154,21 @@ export const RecordBoard = () => {
       <StyledContainerContainer>
         <RecordBoardHeader />
         <StyledWrapper>
-          {/* <ScrollWrapper contextProviderName="recordBoard"> */}
-          <StyledContainer ref={boardRef}>
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <StyledColumnContainer>
-                {columnIds.map((columnId) => (
-                  <RecordBoardColumn
-                    key={columnId}
-                    recordBoardColumnId={columnId}
-                  />
-                ))}
-              </StyledColumnContainer>
-            </DragDropContext>
-          </StyledContainer>
-          <RecordBoardScrollRestoreEffect />
-          {/* </ScrollWrapper> */}
+          <ScrollWrapper contextProviderName="recordBoard">
+            <StyledContainer ref={boardRef}>
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <StyledColumnContainer>
+                  {columnIds.map((columnId) => (
+                    <RecordBoardColumn
+                      key={columnId}
+                      recordBoardColumnId={columnId}
+                    />
+                  ))}
+                </StyledColumnContainer>
+              </DragDropContext>
+            </StyledContainer>
+            <RecordBoardScrollRestoreEffect />
+          </ScrollWrapper>
           <DragSelect
             dragSelectable={boardRef}
             onDragSelectionStart={resetRecordSelection}
