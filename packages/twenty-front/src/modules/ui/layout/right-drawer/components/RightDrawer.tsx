@@ -9,7 +9,7 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { Key } from 'ts-key-enum';
-
+import debounce from 'lodash.debounce';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompletedState';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
@@ -111,6 +111,8 @@ export const RightDrawer = () => {
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
 
+  const debouncedCloseRightDrawer = debounce(closeRightDrawer, 400);
+
   useListenClickOutside({
     refs: [rightDrawerRef],
     callback: useRecoilCallback(
@@ -125,12 +127,12 @@ export const RightDrawer = () => {
 
           if (isRightDrawerOpen && !isRightDrawerMinimized) {
             set(rightDrawerCloseEventState, event);
-            closeRightDrawer();
+            debouncedCloseRightDrawer();
 
             emitRightDrawerCloseEvent();
           }
         },
-      [closeRightDrawer],
+      [debouncedCloseRightDrawer],
     ),
     mode: ClickOutsideMode.comparePixels,
   });
