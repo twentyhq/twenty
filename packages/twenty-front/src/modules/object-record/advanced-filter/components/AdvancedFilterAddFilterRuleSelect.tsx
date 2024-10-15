@@ -2,6 +2,7 @@ import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filte
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
@@ -22,6 +23,8 @@ interface AdvancedFilterAddFilterRuleSelectProps {
 export const AdvancedFilterAddFilterRuleSelect = (
   props: AdvancedFilterAddFilterRuleSelectProps,
 ) => {
+  const dropdownId = `advanced-filter-add-filter-rule-${props.currentViewFilterGroup.id}`;
+
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
@@ -30,7 +33,11 @@ export const AdvancedFilterAddFilterRuleSelect = (
       props.childViewFiltersAndViewFilterGroups.length - 1
     ]?.positionInViewFilterGroup ?? 0) + 1;
 
+  const { closeDropdown } = useDropdown(dropdownId);
+
   const handleAddFilter = () => {
+    closeDropdown();
+
     upsertCombinedViewFilter({
       id: v4(),
       variant: 'default',
@@ -45,6 +52,8 @@ export const AdvancedFilterAddFilterRuleSelect = (
   };
 
   const handleAddFilterGroup = () => {
+    closeDropdown();
+
     if (!props.viewId) {
       throw new Error('Missing view id');
     }
@@ -71,7 +80,7 @@ export const AdvancedFilterAddFilterRuleSelect = (
   return (
     <Dropdown
       disableBlur
-      dropdownId={`advanced-filter-add-filter-rule-${props.currentViewFilterGroup.id}`}
+      dropdownId={dropdownId}
       clickableComponent={
         <LightButton Icon={IconPlus} title="Add filter rule" />
       }

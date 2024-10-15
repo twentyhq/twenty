@@ -141,7 +141,7 @@ export const RecordIndexContainer = () => {
                   }
 
                   onViewFieldsChange(view.viewFields);
-                  setTableViewFilterGroups(view.viewFilterGroups);
+                  setTableViewFilterGroups(view.viewFilterGroups ?? []);
                   setTableFilters(
                     mapViewFiltersToFilters(
                       view.viewFilters,

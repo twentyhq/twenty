@@ -17,6 +17,7 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
+  align-items: start;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};

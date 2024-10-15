@@ -5,6 +5,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
@@ -23,9 +24,13 @@ export const AdvancedFilterViewFilterOperandSelect = (
 ) => {
   const dropdownId = `advanced-filter-view-filter-operand-${props.viewFilter.id}`;
 
+  const { closeDropdown } = useDropdown(dropdownId);
+
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
   const handleOperandChange = (operand: ViewFilterOperand) => {
+    closeDropdown();
+
     upsertCombinedViewFilter({
       ...props.viewFilter,
       definition: props.filterDefinition,
