@@ -12,12 +12,13 @@ export const formatTimeZoneLabel = (ianaTimeZone: string) => {
     Date.now(),
     ianaTimeZone,
     `(OOOO) zzzz`,
-    { locale: defaultLocale },
-  );
+    { locale: defaultLocale }
+  ).toLowerCase().trim(); // normalize formatting here
+
   const ianaTimeZoneParts = ianaTimeZone.split('/');
   const location =
     ianaTimeZoneParts.length > 1
-      ? ianaTimeZoneParts.slice(-1)[0].replaceAll('_', ' ')
+      ? ianaTimeZoneParts.slice(-1)[0].replaceAll('_', ' ').toLowerCase().trim()
       : undefined;
 
   const timeZoneLabel =
