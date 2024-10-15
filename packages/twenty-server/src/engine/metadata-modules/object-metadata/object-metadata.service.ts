@@ -10,7 +10,6 @@ import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
@@ -360,17 +359,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdObjectMetadata,
       );
 
-      const isSearchEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsSearchEnabled,
-        objectMetadataInput.workspaceId,
+      await this.searchService.createSearchVectorFieldForObject(
+        objectMetadataInput,
+        createdObjectMetadata,
       );
-
-      if (isSearchEnabled) {
-        await this.searchService.createSearchVectorFieldForObject(
-          objectMetadataInput,
-          createdObjectMetadata,
-        );
-      }
     } else {
       await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
         objectMetadataInput.workspaceId,
@@ -436,36 +428,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     if (input.update.labelIdentifierFieldMetadataId) {
-      const isSearchEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsSearchEnabled,
-        workspaceId,
-      );
+      const labelIdentifierFieldMetadata =
+        await this.fieldMetadataRepository.findOneByOrFail({
+          id: input.update.labelIdentifierFieldMetadataId,
+          objectMetadataId: input.id,
+          workspaceId: workspaceId,
+        });
 
-      const isWorkspaceMigratedForSearch =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IsWorkspaceMigratedForSearch,
+      if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
+        await this.searchService.updateSearchVector(
+          input.id,
+          [
+            {
+              name: labelIdentifierFieldMetadata.name,
+              type: labelIdentifierFieldMetadata.type,
+            },
+          ],
           workspaceId,
         );
-
-      if (isSearchEnabled && isWorkspaceMigratedForSearch) {
-        const labelIdentifierFieldMetadata =
-          await this.fieldMetadataRepository.findOneByOrFail({
-            id: input.update.labelIdentifierFieldMetadataId,
-            objectMetadataId: input.id,
-          });
-
-        if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
-          await this.searchService.updateSearchVector(
-            input.id,
-            [
-              {
-                name: labelIdentifierFieldMetadata.name,
-                type: labelIdentifierFieldMetadata.type,
-              },
-            ],
-            workspaceId,
-          );
-        }
       }
 
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
