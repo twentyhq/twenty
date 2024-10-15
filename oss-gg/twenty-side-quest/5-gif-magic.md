@@ -29,5 +29,6 @@ Your turn 👇
 » 13-October-2024 by Nabhag Motivaras
 » Link to gif: https://giphy.com/gifs/twenty-twentycrm-opensourcecrm-wCcsmnJuzzzGrfuf9B
 
-
+» 15-October-2024 by Ali Yar Khan
+» Link to gif: https://giphy.com/gifs/Q3f7T107wSsMJlT7aj
 ---
