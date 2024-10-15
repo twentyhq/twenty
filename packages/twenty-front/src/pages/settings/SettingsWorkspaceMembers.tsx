@@ -148,17 +148,18 @@ export const SettingsWorkspaceMembers = () => {
       ]}
     >
       <SettingsPageContainer>
-        {currentWorkspace?.inviteHash && (
-          <Section>
-            <H2Title
-              title="Invite by link"
-              description="Share this link to invite users to join your workspace"
-            />
-            <WorkspaceInviteLink
-              inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
-            />
-          </Section>
-        )}
+        {currentWorkspace?.inviteHash &&
+          currentWorkspace?.isPublicInviteLinkEnabled && (
+            <Section>
+              <H2Title
+                title="Invite by link"
+                description="Share this link to invite users to join your workspace"
+              />
+              <WorkspaceInviteLink
+                inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
+              />
+            </Section>
+          )}
         <Section>
           <H2Title
             title="Members"

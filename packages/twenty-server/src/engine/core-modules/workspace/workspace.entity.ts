@@ -93,6 +93,10 @@ export class Workspace {
   @Column({ default: true })
   allowImpersonation: boolean;
 
+  @Field()
+  @Column({ default: true })
+  isPublicInviteLinkEnabled: boolean;
+
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlagEntity[]>;
 
