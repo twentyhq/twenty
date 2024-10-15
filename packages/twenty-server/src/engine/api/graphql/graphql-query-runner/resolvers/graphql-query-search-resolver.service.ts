@@ -93,4 +93,9 @@ export class GraphqlQuerySearchResolverService
 
     return formattedWords.join(' | ');
   }
+
+  async validate(
+    _args: SearchResolverArgs,
+    _options: WorkspaceQueryRunnerOptions,
+  ): Promise<void> {}
 }
