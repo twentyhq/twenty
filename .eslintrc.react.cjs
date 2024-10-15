@@ -48,6 +48,7 @@ module.exports = {
         '@nx/workspace-use-getLoadable-and-getValue-to-get-atoms': 'error',
         '@nx/workspace-useRecoilCallback-has-dependency-array': 'error',
         '@nx/workspace-no-navigate-prefer-link': 'error',
+        '@nx/workspace-folder-structure': 'warn',
         'react/no-unescaped-entities': 'off',
         'react/prop-types': 'off',
         'react/jsx-key': 'off',
