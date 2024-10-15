@@ -10,9 +10,9 @@ import {
 const VARIABLE_PATTERN = RegExp('\\{\\{(.*?)\\}\\}', 'g');
 
 export const resolveInput = (
-  unresolvedInput: any,
-  context: Record<string, object>,
-): any => {
+  unresolvedInput: unknown,
+  context: Record<string, unknown>,
+): unknown => {
   if (isNil(unresolvedInput)) {
     return unresolvedInput;
   }
@@ -21,26 +21,48 @@ export const resolveInput = (
     return resolveString(unresolvedInput, context);
   }
 
-  const resolvedInput = unresolvedInput;
-
   if (Array.isArray(unresolvedInput)) {
-    for (let i = 0; i < unresolvedInput.length; ++i) {
-      resolvedInput[i] = resolveInput(unresolvedInput[i], context);
-    }
-  } else if (typeof unresolvedInput === 'object') {
-    const entries = Object.entries(unresolvedInput);
-
-    for (const [key, value] of entries) {
-      resolvedInput[key] = resolveInput(value, context);
-    }
+    return resolveArray(unresolvedInput, context);
   }
 
-  return resolvedInput;
+  if (typeof unresolvedInput === 'object' && unresolvedInput !== null) {
+    return resolveObject(unresolvedInput, context);
+  }
+
+  return unresolvedInput;
+};
+
+const resolveArray = (
+  input: unknown[],
+  context: Record<string, unknown>,
+): unknown[] => {
+  const resolvedArray = input;
+
+  for (let i = 0; i < input.length; ++i) {
+    resolvedArray[i] = resolveInput(input[i], context);
+  }
+
+  return resolvedArray;
+};
+
+const resolveObject = (
+  input: object,
+  context: Record<string, unknown>,
+): object => {
+  const resolvedObject = input;
+
+  const entries = Object.entries(resolvedObject);
+
+  for (const [key, value] of entries) {
+    resolvedObject[key] = resolveInput(value, context);
+  }
+
+  return resolvedObject;
 };
 
 const resolveString = (
   input: string,
-  context: Record<string, object>,
+  context: Record<string, unknown>,
 ): string => {
   const matchedTokens = input.match(VARIABLE_PATTERN);
 
@@ -61,7 +83,7 @@ const resolveString = (
 
 const evalFromContext = (
   input: string,
-  context: Record<string, object>,
+  context: Record<string, unknown>,
 ): string => {
   try {
     const inferredInput = Handlebars.compile(input)(context);

@@ -29,7 +29,7 @@ export class WorkflowExecutorWorkspaceService {
     currentStepIndex: number;
     steps: WorkflowStep[];
     output: WorkflowExecutorOutput;
-    context: Record<string, any>;
+    context: Record<string, unknown>;
     attemptCount?: number;
   }): Promise<WorkflowExecutorOutput> {
     if (currentStepIndex >= steps.length) {
