@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
-import Handlebars from 'handlebars';
 import { JSDOM } from 'jsdom';
 import { z } from 'zod';
 
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -20,21 +19,19 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
-import { WorkflowSendEmailStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { WorkflowSendEmailStepInput } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
-export class SendEmailWorkflowAction {
+export class SendEmailWorkflowAction implements WorkflowAction {
   private readonly logger = new Logger(SendEmailWorkflowAction.name);
   constructor(
-    private readonly environmentService: EnvironmentService,
-    private readonly emailService: EmailService,
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  private async getEmailClient(step: WorkflowSendEmailStep) {
+  private async getEmailClient(connectedAccountId: string) {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
@@ -50,12 +47,12 @@ export class SendEmailWorkflowAction {
         'connectedAccount',
       );
     const connectedAccount = await connectedAccountRepository.findOneBy({
-      id: step.settings.input.connectedAccountId,
+      id: connectedAccountId,
     });
 
     if (!isDefined(connectedAccount)) {
       throw new MailSenderException(
-        `Connected Account '${step.settings.input.connectedAccountId}' not found`,
+        `Connected Account '${connectedAccountId}' not found`,
         MailSenderExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
@@ -71,15 +68,11 @@ export class SendEmailWorkflowAction {
     }
   }
 
-  async execute({
-    step,
-    context,
-  }: {
-    step: WorkflowSendEmailStep;
-    context: Record<string, any>;
-  }): Promise<WorkflowActionResult> {
-    const emailProvider = await this.getEmailClient(step);
-    const { email, body, subject } = step.settings.input;
+  async execute(
+    payload: WorkflowSendEmailStepInput,
+  ): Promise<WorkflowActionResult> {
+    const emailProvider = await this.getEmailClient(payload.connectedAccountId);
+    const { email, body, subject } = payload;
 
     try {
       const emailSchema = z.string().trim().email('Invalid email');
@@ -92,13 +85,10 @@ export class SendEmailWorkflowAction {
         return { result: { success: false } };
       }
 
-      const inferredBody = Handlebars.compile(body)(context);
-      const inferredSubject = Handlebars.compile(subject)(context);
-
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
-      const safeBody = purify.sanitize(inferredBody || '');
-      const safeSubject = purify.sanitize(inferredSubject || '');
+      const safeBody = purify.sanitize(body || '');
+      const safeSubject = purify.sanitize(subject || '');
 
       const message = [
         `To: ${email}`,

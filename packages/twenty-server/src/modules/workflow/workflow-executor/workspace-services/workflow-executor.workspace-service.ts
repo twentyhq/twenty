@@ -6,7 +6,7 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
-import { resolve } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -40,18 +40,9 @@ export class WorkflowExecutorWorkspaceService {
 
     const workflowAction = this.workflowActionFactory.get(step.type);
 
-    const inferredStepInput = await resolve(step.settings.input, context);
+    const actionPayload = resolveInput(step.settings.input, context);
 
-    const result = await workflowAction.execute({
-      step: {
-        ...step,
-        settings: {
-          ...step.settings,
-          input: inferredStepInput,
-        },
-      },
-      context,
-    });
+    const result = await workflowAction.execute(actionPayload);
 
     const stepOutput = output.steps[step.id];
 

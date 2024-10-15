@@ -9,17 +9,21 @@ type BaseWorkflowStepSettings = {
   };
 };
 
+export type WorkflowCodeStepInput = {
+  serverlessFunctionId: string;
+};
+
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
-  input: {
-    serverlessFunctionId: string;
-  };
+  input: WorkflowCodeStepInput;
+};
+
+export type WorkflowSendEmailStepInput = {
+  connectedAccountId: string;
+  email: string;
+  subject?: string;
+  body?: string;
 };
 
 export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
-  input: {
-    connectedAccountId: string;
-    email: string;
-    subject?: string;
-    body?: string;
-  };
+  input: WorkflowSendEmailStepInput;
 };

@@ -9,10 +9,10 @@ import {
 
 const VARIABLE_PATTERN = RegExp('\\{\\{(.*?)\\}\\}', 'g');
 
-export const resolve = (
+export const resolveInput = (
   unresolvedInput: any,
   context: Record<string, object>,
-) => {
+): any => {
   if (isNil(unresolvedInput)) {
     return unresolvedInput;
   }
@@ -25,13 +25,13 @@ export const resolve = (
 
   if (Array.isArray(unresolvedInput)) {
     for (let i = 0; i < unresolvedInput.length; ++i) {
-      resolvedInput[i] = resolve(unresolvedInput[i], context);
+      resolvedInput[i] = resolveInput(unresolvedInput[i], context);
     }
   } else if (typeof unresolvedInput === 'object') {
     const entries = Object.entries(unresolvedInput);
 
     for (const [key, value] of entries) {
-      resolvedInput[key] = resolve(value, context);
+      resolvedInput[key] = resolveInput(value, context);
     }
   }
 
