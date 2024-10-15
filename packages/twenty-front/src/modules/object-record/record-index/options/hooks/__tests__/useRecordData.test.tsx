@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { percentage, sleep, useTableData } from '../useTableData';
+import { percentage, sleep, useRecordData } from '../useRecordData';
 
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -158,7 +158,7 @@ describe('useTableData', () => {
 
       const { result } = renderHook(
         () =>
-          useTableData({
+          useRecordData({
             recordIndexId,
             objectNameSingular,
             pageSize: 30,
@@ -182,7 +182,7 @@ describe('useTableData', () => {
       const callback = jest.fn();
       const { result } = renderHook(
         () =>
-          useTableData({
+          useRecordData({
             recordIndexId,
             objectNameSingular,
             callback,
@@ -211,7 +211,7 @@ describe('useTableData', () => {
             recordIndexId,
           );
           return {
-            tableData: useTableData({
+            tableData: useRecordData({
               recordIndexId,
               objectNameSingular,
               callback,
@@ -304,7 +304,7 @@ describe('useTableData', () => {
             recordIndexId,
           );
           return {
-            tableData: useTableData({
+            tableData: useRecordData({
               recordIndexId,
               objectNameSingular,
               callback,

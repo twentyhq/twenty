@@ -39,7 +39,7 @@ type ExportProgress = {
   displayType: 'percentage' | 'number';
 };
 
-export const useTableData = ({
+export const useRecordData = ({
   delayMs,
   maximumRequests = 100,
   objectNameSingular,

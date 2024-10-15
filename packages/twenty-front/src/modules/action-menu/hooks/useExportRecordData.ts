@@ -4,10 +4,11 @@ import { useMemo } from 'react';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useProcessRecordsForCSVExport } from '@/object-record/record-index/options/hooks/useProcessRecordsForCSVExport';
+
 import {
-  useTableData,
   UseTableDataOptions,
-} from '@/object-record/record-index/options/hooks/useTableData';
+  useRecordData,
+} from '@/object-record/record-index/options/hooks/useRecordData';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -160,7 +161,7 @@ export const useExportRecordData = ({
     [filename, processRecordsForCSVExport],
   );
 
-  const { getTableData: download, progress } = useTableData({
+  const { getTableData: download, progress } = useRecordData({
     delayMs,
     maximumRequests,
     objectNameSingular,
