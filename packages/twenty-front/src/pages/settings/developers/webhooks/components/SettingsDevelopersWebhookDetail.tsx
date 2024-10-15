@@ -11,7 +11,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { SettingsDeveloppersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
+import { SettingsDevelopersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
 import { SettingsDevelopersWebhookUsageGraphEffect } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraphEffect';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -181,7 +181,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         {isAnalyticsV2Enabled ? (
           <>
             <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
-            <SettingsDeveloppersWebhookUsageGraph />
+            <SettingsDevelopersWebhookUsageGraph webhookId={webhookId} />
           </>
         ) : (
           <></>
