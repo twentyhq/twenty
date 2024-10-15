@@ -6,6 +6,7 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { resolve } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -28,7 +29,7 @@ export class WorkflowExecutorWorkspaceService {
     currentStepIndex: number;
     steps: WorkflowStep[];
     output: WorkflowExecutorOutput;
-    context?: Record<string, any>;
+    context: Record<string, any>;
     attemptCount?: number;
   }): Promise<WorkflowExecutorOutput> {
     if (currentStepIndex >= steps.length) {
@@ -39,12 +40,20 @@ export class WorkflowExecutorWorkspaceService {
 
     const workflowAction = this.workflowActionFactory.get(step.type);
 
+    const inferredStepInput = await resolve(step.settings.input, context);
+
     const result = await workflowAction.execute({
-      step,
+      step: {
+        ...step,
+        settings: {
+          ...step.settings,
+          input: inferredStepInput,
+        },
+      },
       context,
     });
 
-    const stepOutput = output.steps[step.name];
+    const stepOutput = output.steps[step.id];
 
     const error =
       result.error?.errorMessage ??
@@ -68,7 +77,7 @@ export class WorkflowExecutorWorkspaceService {
       ...output,
       steps: {
         ...output.steps,
-        [step.name]: updatedStepOutput,
+        [step.id]: updatedStepOutput,
       },
     };
 
@@ -78,7 +87,7 @@ export class WorkflowExecutorWorkspaceService {
         steps,
         context: {
           ...context,
-          [step.name]: result.result,
+          [step.id]: result.result,
         },
         output: updatedOutput,
       });

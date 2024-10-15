@@ -92,13 +92,13 @@ export class SendEmailWorkflowAction {
         return { result: { success: false } };
       }
 
-      const inferedBody = Handlebars.compile(body)(context);
-      const inferedSubject = Handlebars.compile(subject)(context);
+      const inferredBody = Handlebars.compile(body)(context);
+      const inferredSubject = Handlebars.compile(subject)(context);
 
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
-      const safeBody = purify.sanitize(inferedBody || '');
-      const safeSubject = purify.sanitize(inferedSubject || '');
+      const safeBody = purify.sanitize(inferredBody || '');
+      const safeSubject = purify.sanitize(inferredSubject || '');
 
       const message = [
         `To: ${email}`,
