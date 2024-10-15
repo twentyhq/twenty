@@ -99,13 +99,13 @@ export const SettingsNewObject = () => {
         }
       >
         <SettingsPageContainer individualPaddingLeftForItems>
-          <StyledFormSection>
-            <StyledFormTitle
+          <Section>
+            <H2Title
               title="About"
               description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
             />
             <SettingsDataModelObjectAboutForm />
-          </StyledFormSection>
+          </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>

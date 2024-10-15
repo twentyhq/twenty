@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
+import { SyncObjectLabelAndNameToggle } from '@/settings/data-model/objects/SyncObjectLabelAndNameToggle';
 import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -9,7 +10,7 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
-import { singular } from 'pluralize';
+import { plural } from 'pluralize';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
@@ -17,15 +18,15 @@ import {
   AppTooltip,
   IconInfoCircle,
   IconTool,
+  isDefined,
   MAIN_COLORS,
   TooltipDelay,
 } from 'twenty-ui';
 import { z } from 'zod';
 import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { SyncObjectLabelAndNameToggle } from '../../SyncObjectLabelAndNameToggle';
 
-export const settingsDataModelObjectAboutFormSchema =
-  objectMetadataItemSchema.pick({
+export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
+  .pick({
     description: true,
     icon: true,
     labelPlural: true,
@@ -33,10 +34,23 @@ export const settingsDataModelObjectAboutFormSchema =
     shouldSyncLabelAndName: true,
     nameSingular: true,
     namePlural: true,
-  });
+  })
+  .partial();
+
+const settingsDataModelObjectAboutFormSchemaWithTransformedValues =
+  settingsDataModelObjectAboutFormSchema.transform((value) => ({
+    ...value,
+    nameSingular: value.labelSingular
+      ? computeMetadataNameFromLabelOrThrow(value.labelSingular)
+      : undefined,
+    namePlural: value.labelPlural
+      ? computeMetadataNameFromLabelOrThrow(value.labelPlural)
+      : undefined,
+    shouldSyncLabelAndName: value.shouldSyncLabelAndName ?? true,
+  }));
 
 type SettingsDataModelObjectAboutFormValues = z.infer<
-  typeof settingsDataModelObjectAboutFormSchema
+  typeof settingsDataModelObjectAboutFormSchemaWithTransformedValues
 >;
 
 type SettingsDataModelObjectAboutFormProps = {
@@ -45,46 +59,53 @@ type SettingsDataModelObjectAboutFormProps = {
   objectMetadataItem?: ObjectMetadataItem;
 };
 
-const StyledIconInputContainer = styled.div`
-  margin-right: ${({ theme }) => theme.spacing(2)};
+const StyledInputsContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 const StyledInputContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  display: flex;
+  flex-direction: column;
 `;
 
 const StyledSectionWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
-  width: 100%;
-  margin-left: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
-  width: 100%;
-`;
-
-const StyledLabelSection = styled.div`
-  align-items: flex-end;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+  width: 100%;
 `;
 
 const StyledAdvancedSettingsContainer = styled.div`
   display: flex;
   width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
+  position: relative;
 `;
 
 const StyledIconToolContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(2.25)};
+  left: ${({ theme }) => theme.spacing(-5)};
+  position: absolute;
+  height: 100%;
 `;
 
 const StyledIconTool = styled(IconTool)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const infoCircleElementId = 'info-circle-id';
@@ -111,20 +132,6 @@ export const SettingsDataModelObjectAboutForm = ({
 
   useEffect(() => {
     if (shouldSyncLabelAndName === true) {
-      labelPlural &&
-        setValue(
-          'namePlural',
-          computeMetadataNameFromLabelOrThrow(labelPlural),
-          { shouldDirty: false },
-        );
-    }
-
-    labelPlural &&
-      setValue('labelSingular', singular(labelPlural), { shouldDirty: true });
-  }, [shouldSyncLabelAndName, labelPlural, setValue]);
-
-  useEffect(() => {
-    if (shouldSyncLabelAndName === true) {
       labelSingular &&
         setValue(
           'nameSingular',
@@ -132,13 +139,29 @@ export const SettingsDataModelObjectAboutForm = ({
           { shouldDirty: false },
         );
     }
+
+    isDefined(labelSingular)
+      ? setValue('labelPlural', plural(labelSingular), { shouldDirty: true })
+      : setValue('labelPlural', '', { shouldDirty: false });
   }, [shouldSyncLabelAndName, labelSingular, setValue]);
+
+  useEffect(() => {
+    if (shouldSyncLabelAndName === true) {
+      labelPlural &&
+        setValue(
+          'namePlural',
+          computeMetadataNameFromLabelOrThrow(labelPlural),
+          { shouldDirty: false },
+        );
+    }
+  }, [shouldSyncLabelAndName, labelPlural, setValue]);
 
   return (
     <>
       <StyledSectionWrapper>
-        <StyledLabelSection>
-          <StyledIconInputContainer>
+        <StyledInputsContainer>
+          <StyledInputContainer>
+            <StyledLabel>Icon</StyledLabel>
             <Controller
               name="icon"
               control={control}
@@ -151,26 +174,41 @@ export const SettingsDataModelObjectAboutForm = ({
                 />
               )}
             />
-          </StyledIconInputContainer>
-          <Controller
-            key="object-labelPlural-text-input"
-            name="labelPlural"
-            control={control}
-            defaultValue={objectMetadataItem?.labelPlural}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                label="Label (Plural)"
-                placeholder="Listings"
-                value={value}
-                onChange={onChange}
-                disabled={disabled || disableNameEdit}
-                fullWidth
-                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-              />
-            )}
-          />
-        </StyledLabelSection>
+          </StyledInputContainer>
+          {[
+            {
+              label: 'Singular',
+              fieldName: 'labelSingular' as const,
+              placeholder: 'Listing',
+              defaultValue: objectMetadataItem?.labelSingular,
+            },
+            {
+              label: 'Plural',
+              fieldName: 'labelPlural' as const,
+              placeholder: 'Listings',
+              defaultValue: objectMetadataItem?.labelPlural,
+            },
+          ].map(({ defaultValue, fieldName, label, placeholder }) => (
+            <Controller
+              // TODO they are not taking the full width
+              key={`object-${fieldName}-text-input`}
+              name={fieldName}
+              control={control}
+              defaultValue={defaultValue}
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  label={label}
+                  placeholder={placeholder}
+                  value={value}
+                  onChange={onChange}
+                  disabled={disabled || disableNameEdit}
+                />
+              )}
+            />
+          ))}
+        </StyledInputsContainer>
         <Controller
+          // TODO this glitches when toggling advanced mode
           name="description"
           control={control}
           defaultValue={objectMetadataItem?.description ?? null}
@@ -200,13 +238,6 @@ export const SettingsDataModelObjectAboutForm = ({
               </StyledIconToolContainer>
               <StyledAdvancedSettingsSectionInputWrapper>
                 {[
-                  {
-                    label: 'Label (Singular)',
-                    fieldName: 'labelSingular' as const,
-                    placeholder: 'Listing',
-                    defaultValue: objectMetadataItem?.labelSingular,
-                    disabled: disabled || disableNameEdit,
-                  },
                   {
                     label: 'API Name (Singular)',
                     fieldName: 'nameSingular' as const,

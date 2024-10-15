@@ -136,3 +136,9 @@ const validateNameCharactersOrThrow = (name?: string) => {
     }
   }
 };
+
+export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
+  const formattedString = transliterateAndFormatOrThrow(label);
+
+  return formattedString;
+};
