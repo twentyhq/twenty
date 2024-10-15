@@ -402,7 +402,10 @@ export class WorkspaceMigrationRunnerService {
         enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
-        isUnique: migrationColumn.isUnique,
+        /* For now unique constraints are created at a higher level
+        as we need to handle soft-delete and a bug on empty strings
+        */
+        // isUnique: migrationColumn.isUnique,
         asExpression: migrationColumn.asExpression,
         generatedType: migrationColumn.generatedType,
       }),
