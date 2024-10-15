@@ -164,16 +164,22 @@ export const SignInUpForm = () => {
             <HorizontalSeparator visible={false} />
           </>
         )}
-        <MainButton
-          Icon={() => <IconKey size={theme.icon.size.md} />}
-          title={
-            signInUpStep === SignInUpStep.SSOEmail
-              ? 'Continue with email'
-              : 'Single sign-on (SSO)'
-          }
-          onClick={toggleSSOMode}
-          fullWidth
-        />
+        {authProviders.sso && (
+          <>
+            <MainButton
+              Icon={() => <IconKey size={theme.icon.size.md} />}
+              title={
+                signInUpStep === SignInUpStep.SSOEmail
+                  ? 'Continue with email'
+                  : 'Single sign-on (SSO)'
+              }
+              onClick={toggleSSOMode}
+              fullWidth
+            />
+            <HorizontalSeparator visible={false} />
+          </>
+        )}
+
         <HorizontalSeparator visible={true} />
 
         {authProviders.password &&

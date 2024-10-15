@@ -48,6 +48,7 @@ export const ClientConfigProviderEffect = () => {
         microsoft: data?.clientConfig.authProviders.microsoft,
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
+        sso: data?.clientConfig.authProviders.sso,
       });
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
