@@ -144,7 +144,7 @@ export const SignInUpForm = () => {
         {authProviders.google && (
           <>
             <MainButton
-              Icon={() => <IconGoogle size={theme.icon.size.md} />}
+              Icon={() => <IconGoogle size={theme.icon.size.lg} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth
@@ -156,7 +156,7 @@ export const SignInUpForm = () => {
         {authProviders.microsoft && (
           <>
             <MainButton
-              Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
+              Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
               title="Continue with Microsoft"
               onClick={signInWithMicrosoft}
               fullWidth
@@ -167,7 +167,7 @@ export const SignInUpForm = () => {
         {authProviders.sso && (
           <>
             <MainButton
-              Icon={() => <IconKey size={theme.icon.size.md} />}
+              Icon={() => <IconKey size={theme.icon.size.lg} />}
               title={
                 signInUpStep === SignInUpStep.SSOEmail
                   ? 'Continue with email'
