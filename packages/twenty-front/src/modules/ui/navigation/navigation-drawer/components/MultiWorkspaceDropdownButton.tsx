@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconChevronDown } from 'twenty-ui';
 
@@ -15,6 +15,7 @@ import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/c
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
@@ -37,8 +38,6 @@ const StyledContainer = styled.div`
   padding: calc(${({ theme }) => theme.spacing(1)} - 1px);
   width: 100%;
 
-  gap: ${({ theme }) => theme.spacing(1)};
-
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -48,6 +47,7 @@ const StyledContainer = styled.div`
 const StyledLabel = styled.div`
   align-items: center;
   display: flex;
+  margin: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
@@ -95,11 +95,15 @@ export const MultiWorkspaceDropdownButton = ({
               ) ?? ''
             }
           />
-          <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
-          <StyledIconChevronDown
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
+          </NavigationDrawerAnimatedCollapseWrapper>
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <StyledIconChevronDown
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          </NavigationDrawerAnimatedCollapseWrapper>
         </StyledContainer>
       }
       dropdownComponents={
