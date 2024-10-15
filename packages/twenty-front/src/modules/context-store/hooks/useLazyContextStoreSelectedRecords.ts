@@ -4,12 +4,12 @@ import { contextStoreTargetedRecordsState } from '@/context-store/states/context
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { useRecoilValue } from 'recoil';
 
-export const useContextStoreSelectedRecords = ({
+export const useLazyContextStoreSelectedRecords = ({
   limit = undefined,
   recordGqlFields,
 }: {
@@ -39,13 +39,7 @@ export const useContextStoreSelectedRecords = ({
   const selectedRecordIds = contextStoreTargetedRecords.selectedRecordIds;
   const excludedRecordIds = contextStoreTargetedRecords.excludedRecordIds;
 
-  const skip =
-    selectedRecordIds !== 'all' &&
-    (selectedRecordIds.length === 0 ||
-      (Object.keys(recordGqlFields ?? {}).length === 1 &&
-        recordGqlFields?.id === true));
-
-  const result = useFindManyRecords({
+  return useLazyFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     recordGqlFields:
       recordGqlFields ??
@@ -71,12 +65,5 @@ export const useContextStoreSelectedRecords = ({
           : undefined,
     ]),
     limit,
-    skip,
   });
-
-  return {
-    ...result,
-    totalCount: skip ? selectedRecordIds.length : result.totalCount,
-    records: skip ? selectedRecordIds.map((id) => ({ id })) : result.records,
-  };
 };

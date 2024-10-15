@@ -1,18 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
+import { useLazyContextStoreSelectedRecords } from '@/context-store/hooks/useLazyContextStoreSelectedRecords';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { ViewType } from '@/views/types/ViewType';
-import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -57,12 +56,7 @@ export const useTableData = ({
   });
   const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
-  const {
-    visibleTableColumnsSelector,
-    selectedRowIdsSelector,
-    tableRowIdsState,
-    hasUserSelectedAllRowsState,
-  } = useRecordTableStates(recordIndexId);
+  const { visibleTableColumnsSelector } = useRecordTableStates(recordIndexId);
 
   const { hiddenBoardFields } = useRecordIndexOptionsForBoard({
     objectNameSingular,
@@ -76,60 +70,6 @@ export const useTableData = ({
     (column) => column.metadata.fieldName === kanbanFieldMetadataName,
   );
   const columns = useRecoilValue(visibleTableColumnsSelector());
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
-
-  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
-  const tableRowIds = useRecoilValue(tableRowIdsState);
-
-  // user has checked select all and then unselected some rows
-  const userHasUnselectedSomeRows =
-    hasUserSelectedAllRows && selectedRowIds.length < tableRowIds.length;
-
-  const hasSelectedRows =
-    selectedRowIds.length > 0 &&
-    !(hasUserSelectedAllRows && selectedRowIds.length === tableRowIds.length);
-
-  const unselectedRowIds = useMemo(
-    () =>
-      userHasUnselectedSomeRows
-        ? tableRowIds.filter((id) => !selectedRowIds.includes(id))
-        : [],
-    [userHasUnselectedSomeRows, tableRowIds, selectedRowIds],
-  );
-
-  const findManyRecordsParams = useFindManyParams(
-    objectNameSingular,
-    recordIndexId,
-  );
-
-  const selectedFindManyParams = {
-    ...findManyRecordsParams,
-    filter: {
-      ...findManyRecordsParams.filter,
-      id: {
-        in: selectedRowIds,
-      },
-    },
-  };
-
-  const unselectedFindManyParams = {
-    ...findManyRecordsParams,
-    filter: {
-      ...findManyRecordsParams.filter,
-      not: {
-        id: {
-          in: unselectedRowIds,
-        },
-      },
-    },
-  };
-
-  const usedFindManyParams =
-    hasSelectedRows && !userHasUnselectedSomeRows
-      ? selectedFindManyParams
-      : userHasUnselectedSomeRows
-        ? unselectedFindManyParams
-        : findManyRecordsParams;
 
   const {
     findManyRecords,
@@ -137,10 +77,7 @@ export const useTableData = ({
     records,
     fetchMoreRecordsWithPagination,
     loading,
-  } = useLazyFindManyRecords({
-    ...usedFindManyParams,
-    limit: pageSize,
-  });
+  } = useLazyContextStoreSelectedRecords({});
 
   useEffect(() => {
     const fetchNextPage = async () => {
