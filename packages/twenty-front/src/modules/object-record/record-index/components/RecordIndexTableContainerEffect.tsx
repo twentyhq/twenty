@@ -1,25 +1,22 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
-type RecordIndexTableContainerEffectProps = {
-  objectNameSingular: string;
-  recordTableId: string;
-  viewBarId: string;
-};
+export const RecordIndexTableContainerEffect = () => {
+  const { recordIndexId, objectNameSingular } = useContext(
+    RecordIndexRootPropsContext,
+  );
 
-export const RecordIndexTableContainerEffect = ({
-  objectNameSingular,
-  recordTableId,
-  viewBarId,
-}: RecordIndexTableContainerEffectProps) => {
+  const viewBarId = recordIndexId;
+
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
@@ -29,7 +26,7 @@ export const RecordIndexTableContainerEffect = ({
     hasUserSelectedAllRowsState,
     unselectedRowIdsSelector,
   } = useRecordTable({
-    recordTableId,
+    recordTableId: recordIndexId,
   });
 
   const setcontextStoreTargetedRecords = useSetRecoilState(

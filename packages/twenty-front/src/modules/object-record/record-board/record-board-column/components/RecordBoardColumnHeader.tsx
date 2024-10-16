@@ -21,7 +21,6 @@ const StyledHeader = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: left;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
@@ -45,6 +44,7 @@ const StyledHeaderActions = styled.div`
   margin-left: auto;
 `;
 const StyledHeaderContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -59,13 +59,29 @@ const StyledRightContainer = styled.div`
   display: flex;
 `;
 
+const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
+  background-color: ${({ theme }) => theme.background.primary};
+  border-left: 1px solid
+    ${({ theme, isFirstColumn }) =>
+      isFirstColumn ? 'none' : theme.border.color.light};
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  min-width: 200px;
+
+  padding: ${({ theme }) => theme.spacing(2)};
+
+  position: relative;
+`;
+
 export const RecordBoardColumnHeader = () => {
-  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
-  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
-  const { objectMetadataItem } = useContext(RecordBoardContext);
-  const { columnDefinition, recordCount } = useContext(
+  const { columnDefinition, isFirstColumn, recordCount } = useContext(
     RecordBoardColumnContext,
   );
+  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
+  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
+
+  const { objectMetadataItem } = useContext(RecordBoardContext);
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -94,7 +110,8 @@ export const RecordBoardColumnHeader = () => {
     handleNewButtonClick,
     handleCreateSuccess,
     handleEntitySelect,
-  } = useColumnNewCardActions(columnDefinition.id);
+  } = useColumnNewCardActions(columnDefinition?.id ?? '');
+
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
 
@@ -103,7 +120,7 @@ export const RecordBoardColumnHeader = () => {
     !isOpportunitiesCompanyFieldDisabled;
 
   return (
-    <>
+    <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
@@ -181,6 +198,6 @@ export const RecordBoardColumnHeader = () => {
             position="first"
           />
         ))}
-    </>
+    </StyledColumn>
   );
 };
