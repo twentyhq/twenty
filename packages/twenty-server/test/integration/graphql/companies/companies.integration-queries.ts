@@ -23,7 +23,7 @@ export const findCompanyQuery = gql`
   }
 `;
 
-export const findCompaniesWithFilterQuery = gql`
+export const findCompaniesQuery = gql`
   query Companies($filter: CompanyFilterInput) {
     companies(filter: $filter) {
       edges {
@@ -31,14 +31,6 @@ export const findCompaniesWithFilterQuery = gql`
           ${companyProperties}
         }
       }
-    }
-  }
-`;
-
-export const createCompaniesMutation = gql`
-  mutation CreateCompanies($data: [CompanyCreateInput!]!) {
-    createCompanies(data: $data) {
-      ${companyProperties}
     }
   }
 `;
@@ -51,10 +43,30 @@ export const createCompanyMutation = gql`
   }
 `;
 
-export const deleteCompaniesMutation = gql`
-  mutation DeleteCompanies($filter: CompanyFilterInput) {
-    deleteCompanies(filter: $filter) {
-      deletedAt
+export const createCompaniesMutation = gql`
+  mutation CreateCompanies($data: [CompanyCreateInput!]!) {
+    createCompanies(data: $data) {
+      ${companyProperties}
+    }
+  }
+`;
+
+export const updateCompanyMutation = gql`
+  mutation UpdateCompany($companyId: ID, $data: CompanyUpdateInput) {
+    updateCompany(id: $companyId, data: $data) {
+      name
+    }
+  }
+`;
+
+export const updateCompaniesMutation = gql`
+  mutation UpdateCompanies(
+    $data: CompanyUpdateInput
+    $filter: CompanyFilterInput
+  ) {
+    updateCompanies(data: $data, filter: $filter) {
+      id
+      name
     }
   }
 `;
@@ -67,13 +79,14 @@ export const deleteCompanyMutation = gql`
   }
 `;
 
-export const destroyCompaniesMutation = gql`
-  mutation DestroyCompanies($filter: CompanyFilterInput) {
-    destroyCompanies(filter: $filter) {
+export const deleteCompaniesMutation = gql`
+  mutation DeleteCompanies($filter: CompanyFilterInput) {
+    deleteCompanies(filter: $filter) {
       deletedAt
     }
   }
 `;
+
 export const destroyCompanyMutation = gql`
   mutation DestroyCompany($companyId: ID!) {
     destroyCompany(id: $companyId) {
@@ -81,6 +94,15 @@ export const destroyCompanyMutation = gql`
     }
   }
 `;
+
+export const destroyCompaniesMutation = gql`
+  mutation DestroyCompanies($filter: CompanyFilterInput) {
+    destroyCompanies(filter: $filter) {
+      deletedAt
+    }
+  }
+`;
+
 export const updatePersonMutation = gql`
   mutation UpdatePerson($personId: ID!, $data: PersonUpdateInput!) {
     updatePerson(id: $personId, data: $data) {
@@ -114,46 +136,6 @@ export const findPersonWithCompanyRelationQuery = gql`
         id
         name
       }
-    }
-  }
-`;
-
-export const updateCompaniesMutation = gql`
-  mutation UpdateCompanies(
-    $data: CompanyUpdateInput
-    $filter: CompanyFilterInput
-  ) {
-    updateCompanies(data: $data, filter: $filter) {
-      id
-      name
-    }
-  }
-`;
-
-export const findAllCompaniesQuery = gql`
-  query Companies {
-    companies {
-      edges {
-        node {
-          ${companyProperties}
-        }
-      }
-    }
-  }
-`;
-
-export const updateCompanyMutation = gql`
-  mutation UpdateCompany($companyId: ID, $data: CompanyUpdateInput) {
-    updateCompany(id: $companyId, data: $data) {
-      name
-    }
-  }
-`;
-
-export const findCompanyWithFilterQuery = gql`
-  query Company($filter: CompanyFilterInput) {
-    company(filter: $filter) {
-        ${companyProperties}
     }
   }
 `;
