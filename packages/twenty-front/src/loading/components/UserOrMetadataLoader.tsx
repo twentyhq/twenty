@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { BACKGROUND_LIGHT, MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
+import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
 
@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
   flex-direction: row;
   gap: 12px;
   height: 100dvh;
-  min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
+  min-width: ${NAV_DRAWER_WIDTHS.menu.desktop.expanded}px;
   width: 100%;
   padding: 12px 8px 12px 8px;
   overflow: hidden;

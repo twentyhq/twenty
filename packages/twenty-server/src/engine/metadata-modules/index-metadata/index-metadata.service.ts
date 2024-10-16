@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { Repository } from 'typeorm';
+import { InsertResult, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -45,32 +45,37 @@ export class IndexMetadataService {
 
     const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
-    let savedIndexMetadata: IndexMetadataEntity;
+    let result: InsertResult;
 
     try {
-      savedIndexMetadata = await this.indexMetadataRepository.save({
-        name: indexName,
-        tableName,
-        indexFieldMetadatas: fieldMetadataToIndex.map(
-          (fieldMetadata, index) => {
-            return {
-              fieldMetadataId: fieldMetadata.id,
-              order: index,
-            };
-          },
-        ),
-        workspaceId,
-        objectMetadataId: objectMetadata.id,
-        ...(isDefined(indexType) ? { indexType: indexType } : {}),
-        isCustom: isCustom,
-      });
+      result = await this.indexMetadataRepository.upsert(
+        {
+          name: indexName,
+          indexFieldMetadatas: fieldMetadataToIndex.map(
+            (fieldMetadata, index) => {
+              return {
+                fieldMetadataId: fieldMetadata.id,
+                order: index,
+              };
+            },
+          ),
+          workspaceId,
+          objectMetadataId: objectMetadata.id,
+          ...(isDefined(indexType) ? { indexType: indexType } : {}),
+          isCustom: isCustom,
+        },
+        {
+          conflictPaths: ['workspaceId', 'name', 'objectMetadataId'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
     } catch (error) {
       throw new Error(
         `Failed to create index ${indexName} on object metadata ${objectMetadata.nameSingular}`,
       );
     }
 
-    if (!savedIndexMetadata) {
+    if (!result.identifiers.length) {
       throw new Error(
         `Failed to return saved index ${indexName} on object metadata ${objectMetadata.nameSingular}`,
       );
