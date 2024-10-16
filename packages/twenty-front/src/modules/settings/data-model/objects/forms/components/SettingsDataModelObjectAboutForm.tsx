@@ -31,26 +31,19 @@ export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
     icon: true,
     labelPlural: true,
     labelSingular: true,
-    shouldSyncLabelAndName: true,
-    nameSingular: true,
-    namePlural: true,
   })
-  .partial();
-
-const settingsDataModelObjectAboutFormSchemaWithTransformedValues =
-  settingsDataModelObjectAboutFormSchema.transform((value) => ({
-    ...value,
-    nameSingular: value.labelSingular
-      ? computeMetadataNameFromLabelOrThrow(value.labelSingular)
-      : undefined,
-    namePlural: value.labelPlural
-      ? computeMetadataNameFromLabelOrThrow(value.labelPlural)
-      : undefined,
-    shouldSyncLabelAndName: value.shouldSyncLabelAndName ?? true,
-  }));
+  .merge(
+    objectMetadataItemSchema
+      .pick({
+        nameSingular: true,
+        namePlural: true,
+        shouldSyncLabelAndName: true,
+      })
+      .partial(),
+  );
 
 type SettingsDataModelObjectAboutFormValues = z.infer<
-  typeof settingsDataModelObjectAboutFormSchemaWithTransformedValues
+  typeof settingsDataModelObjectAboutFormSchema
 >;
 
 type SettingsDataModelObjectAboutFormProps = {
@@ -318,7 +311,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   }
                   render={({ field: { onChange, value } }) => (
                     <SyncObjectLabelAndNameToggle
-                      value={value}
+                      value={value ?? true}
                       onChange={onChange}
                     />
                   )}

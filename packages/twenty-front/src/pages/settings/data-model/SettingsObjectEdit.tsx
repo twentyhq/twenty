@@ -34,6 +34,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
+import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
   .object({})
@@ -87,34 +88,72 @@ export const SettingsObjectEdit = () => {
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
 
-  const handleSave = async (
+  const getUpdatePayload = (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
+    let values = formValues;
+    if (
+      formValues.shouldSyncLabelAndName ??
+      activeObjectMetadataItem.shouldSyncLabelAndName
+    ) {
+      values = {
+        ...values,
+        ...(values.labelSingular
+          ? {
+              nameSingular: computeMetadataNameFromLabelOrThrow(
+                formValues.labelSingular,
+              ),
+            }
+          : {}),
+        ...(values.labelPlural
+          ? {
+              namePlural: computeMetadataNameFromLabelOrThrow(
+                formValues.labelPlural,
+              ),
+            }
+          : {}),
+      };
+    }
+
     const dirtyFieldKeys = Object.keys(
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsDataModelObjectEditFormValues)[];
 
+    return settingsUpdateObjectInputSchema.parse(
+      pick(values, [
+        ...dirtyFieldKeys,
+        ...(values.namePlural ? ['namePlural'] : []),
+        ...(values.nameSingular ? ['nameSingular'] : []),
+      ]),
+    );
+  };
+
+  const handleSave = async (
+    formValues: SettingsDataModelObjectEditFormValues,
+  ) => {
     try {
+      const updatePayload = getUpdatePayload(formValues);
       await updateOneObjectMetadataItem({
         idToUpdate: activeObjectMetadataItem.id,
-        updatePayload: settingsUpdateObjectInputSchema.parse(
-          pick(formValues, dirtyFieldKeys),
-        ),
+        updatePayload,
       });
+
+      const objectNamePluralForRedirection =
+        updatePayload.namePlural ?? activeObjectMetadataItem.namePlural;
 
       if (lastVisitedObjectMetadataItemId === activeObjectMetadataItem.id) {
         const lastVisitedView = getLastVisitedViewIdFromObjectMetadataItemId(
           activeObjectMetadataItem.id,
         );
         setNavigationMemorizedUrl(
-          `/objects/${formValues.namePlural}?view=${lastVisitedView}`,
+          `/objects/${objectNamePluralForRedirection}?view=${lastVisitedView}`,
         );
       }
 
       navigate(
         `${settingsObjectsPagePath}/${getObjectSlug({
-          ...formValues,
-          namePlural: formValues.namePlural,
+          ...updatePayload,
+          namePlural: objectNamePluralForRedirection,
         })}`,
       );
     } catch (error) {
