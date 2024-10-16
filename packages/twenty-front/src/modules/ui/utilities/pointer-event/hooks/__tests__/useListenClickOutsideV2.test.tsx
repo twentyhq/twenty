@@ -1,6 +1,6 @@
+import { fireEvent, renderHook } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { fireEvent, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import {
@@ -19,7 +19,16 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 const listenerId = 'listenerId';
+
 describe('useListenClickOutsideV2', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('should trigger the callback when clicking outside the specified refs', () => {
     const callback = jest.fn();
 
@@ -35,13 +44,22 @@ describe('useListenClickOutsideV2', () => {
 
     act(() => {
       fireEvent.mouseDown(document);
+      jest.advanceTimersByTime(10);
+      fireEvent.click(document);
+    });
+
+    callback.mockClear();
+
+    act(() => {
+      fireEvent.mouseDown(document);
+      jest.advanceTimersByTime(10);
       fireEvent.click(document);
     });
 
     expect(callback).toHaveBeenCalled();
   });
 
-  it('should trigger the callback when clicking outside the specified ref with pixel comparison', async () => {
+  it('should trigger the callback when clicking outside the specified ref with pixel comparison', () => {
     const callback = jest.fn();
 
     renderHook(
@@ -57,6 +75,15 @@ describe('useListenClickOutsideV2', () => {
 
     act(() => {
       fireEvent.mouseDown(document);
+      jest.advanceTimersByTime(10);
+      fireEvent.click(document);
+    });
+
+    callback.mockClear();
+
+    act(() => {
+      fireEvent.mouseDown(document);
+      jest.advanceTimersByTime(10);
       fireEvent.click(document);
     });
 
@@ -79,6 +106,7 @@ describe('useListenClickOutsideV2', () => {
     act(() => {
       if (isDefined(containerRef.current)) {
         fireEvent.mouseDown(containerRef.current);
+        jest.advanceTimersByTime(10);
         fireEvent.click(containerRef.current);
       }
     });
@@ -103,10 +131,67 @@ describe('useListenClickOutsideV2', () => {
     act(() => {
       if (isDefined(containerRef.current)) {
         fireEvent.mouseDown(containerRef.current);
+        jest.advanceTimersByTime(10);
         fireEvent.click(containerRef.current);
       }
     });
 
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('should not trigger the callback on initial mount', () => {
+    const callback = jest.fn();
+
+    renderHook(
+      () =>
+        useListenClickOutsideV2({
+          refs: [containerRef],
+          callback,
+          listenerId,
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      fireEvent.mouseDown(document);
+      jest.advanceTimersByTime(10);
+      fireEvent.click(document);
+    });
+
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('should not trigger callback for mouse events immediately after touch events', () => {
+    const callback = jest.fn();
+
+    renderHook(
+      () =>
+        useListenClickOutsideV2({
+          refs: [containerRef],
+          callback,
+          listenerId,
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      fireEvent.touchStart(document);
+      jest.advanceTimersByTime(10);
+      fireEvent.touchEnd(document);
+    });
+
+    callback.mockClear();
+
+    act(() => {
+      fireEvent.touchStart(document);
+      jest.advanceTimersByTime(10);
+      fireEvent.touchEnd(document);
+      jest.advanceTimersByTime(10);
+      fireEvent.mouseDown(document);
+      jest.advanceTimersByTime(10);
+      fireEvent.click(document);
+    });
+
+    expect(callback).toHaveBeenCalledTimes(1);
   });
 });
