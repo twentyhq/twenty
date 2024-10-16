@@ -3,6 +3,7 @@ import {
   MessageQueueDriverType,
   MessageQueueModuleOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
+import IORedis from 'ioredis';
 
 /**
  * MessageQueue Module factory
@@ -32,20 +33,12 @@ export const messageQueueModuleFactory = async (
       };
     }
     case MessageQueueDriverType.BullMQ: {
-      const host = environmentService.get('REDIS_HOST');
-      const port = environmentService.get('REDIS_PORT');
-      const username = environmentService.get('REDIS_USERNAME');
-      const password = environmentService.get('REDIS_PASSWORD');
+      const connectionString = environmentService.get('REDIS_URL');
 
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: {
-            host,
-            port,
-            username,
-            password,
-          },
+          connection: new IORedis(connectionString)
         },
       };
     }

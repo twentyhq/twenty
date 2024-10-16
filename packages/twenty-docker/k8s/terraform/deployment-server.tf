@@ -61,12 +61,8 @@ resource "kubernetes_deployment" "twentycrm_server" {
             value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${kubernetes_service.twentycrm_db.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
           }
           env {
-            name  = "REDIS_HOST"
-            value = "${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local"
-          }
-          env {
-            name  = "REDIS_PORT"
-            value = 6379
+            name  = "REDIS_URL"
+            value = "redis://${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local:6379"
           }
           env {
             name  = "ENABLE_DB_MIGRATIONS"

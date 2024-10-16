@@ -375,14 +375,13 @@ export class EnvironmentVariables {
   @IsNumber()
   MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
-  REDIS_HOST = '127.0.0.1';
-
-  @CastToPositiveNumber()
-  REDIS_PORT = 6379;
-
-  REDIS_USERNAME: string;
-
-  REDIS_PASSWORD: string;
+  @IsOptional()
+  @IsUrl({
+    protocols: ['redis'],
+    require_tld: false,
+    allow_underscores: true,
+  })
+  REDIS_URL: string;
 
   API_TOKEN_EXPIRES_IN = '100y';
 
