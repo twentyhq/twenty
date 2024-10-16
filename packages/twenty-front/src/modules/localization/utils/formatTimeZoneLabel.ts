@@ -7,13 +7,18 @@ import defaultLocale from 'date-fns/locale/en-US';
  * @returns Formatted label
  * @example 'Europe/Paris' => '(GMT+01:00) Central European Time - Paris'
  */
-export const formatTimeZoneLabel = (ianaTimeZone: string) => {
+export const formatTimeZoneLabel = (ianaTimeZone: string): string => {
+  if (!ianaTimeZone || typeof ianaTimeZone !== 'string') {
+      throw new Error('Invalid IANA time zone provided.');
+  }
+
   const timeZoneWithGmtOffset = formatInTimeZone(
     Date.now(),
     ianaTimeZone,
     `(OOOO) zzzz`,
-    { locale: defaultLocale },
+    { locale: defaultLocale }
   );
+
   const ianaTimeZoneParts = ianaTimeZone.split('/');
   const location =
     ianaTimeZoneParts.length > 1
@@ -25,5 +30,6 @@ export const formatTimeZoneLabel = (ianaTimeZone: string) => {
       ? timeZoneWithGmtOffset
       : [timeZoneWithGmtOffset, location].join(' - ');
 
-  return timeZoneLabel;
+  return timeZoneLabel.toLowerCase(); // Normalize case if necessary
 };
+
