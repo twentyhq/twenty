@@ -8,6 +8,7 @@ const StyledSourceCode = styled.pre`
   background-color: ${({ theme }) => theme.background.transparent.secondary};
   margin: ${({ theme }) => theme.spacing(4)};
   padding: ${({ theme }) => theme.spacing(2)};
+  white-space: pre-wrap;
 `;
 
 export const WorkflowRunOutputVisualizer = ({
