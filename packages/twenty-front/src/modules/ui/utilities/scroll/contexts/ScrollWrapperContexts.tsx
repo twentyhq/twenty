@@ -8,7 +8,8 @@ type ScrollWrapperContextValue = {
 export type ContextProviderName =
   | 'eventList'
   | 'commandMenu'
-  | 'recordBoard'
+  | 'recordBoardX'
+  | 'recordBoardY'
   | 'recordTableWithWrappers'
   | 'settingsPageContainer'
   | 'dropdownMenuItemsContainer'
@@ -29,8 +30,10 @@ export const EventListScrollWrapperContext =
   createScrollWrapperContext('eventList');
 export const CommandMenuScrollWrapperContext =
   createScrollWrapperContext('commandMenu');
-export const RecordBoardScrollWrapperContext =
-  createScrollWrapperContext('recordBoard');
+export const RecordBoardScrollXWrapperContext =
+  createScrollWrapperContext('recordBoardX');
+export const RecordBoardScrollYWrapperContext =
+  createScrollWrapperContext('recordBoardY');
 export const RecordTableWithWrappersScrollWrapperContext =
   createScrollWrapperContext('recordTableWithWrappers');
 export const SettingsPageContainerScrollWrapperContext =
@@ -57,8 +60,10 @@ export const getContextByProviderName = (
       return EventListScrollWrapperContext;
     case 'commandMenu':
       return CommandMenuScrollWrapperContext;
-    case 'recordBoard':
-      return RecordBoardScrollWrapperContext;
+    case 'recordBoardX':
+      return RecordBoardScrollXWrapperContext;
+    case 'recordBoardY':
+      return RecordBoardScrollYWrapperContext;
     case 'recordTableWithWrappers':
       return RecordTableWithWrappersScrollWrapperContext;
     case 'settingsPageContainer':

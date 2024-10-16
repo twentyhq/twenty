@@ -22,7 +22,7 @@ import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { RecordBoardScrollYWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
@@ -232,7 +232,7 @@ export const RecordBoardCard = ({
     return [updateEntity, { loading: false }];
   };
 
-  const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
+  const scrollWrapperRef = useContext(RecordBoardScrollYWrapperContext);
 
   const { ref: cardRef, inView } = useInView({
     root: scrollWrapperRef?.ref.current,

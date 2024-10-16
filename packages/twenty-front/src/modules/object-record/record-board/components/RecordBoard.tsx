@@ -30,25 +30,19 @@ const StyledContainer = styled.div`
 
 const StyledColumnContainer = styled.div`
   display: flex;
-  width: 100%;
-  height: fit-content;
 `;
 
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  width: fit-content;
   height: 100%;
 `;
 
-const StyledWrapper = styled.div`
+const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-
-  overflow-y: scroll;
-  position: relative;
-  width: 100%;
+  height: calc(100% - 40px);
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
@@ -153,8 +147,11 @@ export const RecordBoard = () => {
     >
       <StyledContainerContainer>
         <RecordBoardHeader />
-        <StyledWrapper>
-          <ScrollWrapper contextProviderName="recordBoard">
+        <StyledBoardContentContainer>
+          <ScrollWrapper
+            contextProviderName="recordBoardY"
+            enableXScroll={false}
+          >
             <StyledContainer ref={boardRef}>
               <DragDropContext onDragEnd={handleDragEnd}>
                 <StyledColumnContainer>
@@ -174,7 +171,7 @@ export const RecordBoard = () => {
             onDragSelectionStart={resetRecordSelection}
             onDragSelectionChange={setRecordAsSelected}
           />
-        </StyledWrapper>
+        </StyledBoardContentContainer>
       </StyledContainerContainer>
     </RecordBoardScope>
   );
