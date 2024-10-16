@@ -18,12 +18,12 @@ const StyledTbody = styled.tbody<{
     }
     td:nth-of-type(2) {
       position: sticky;
-      left: 9px;
+      left: 11px;
       z-index: 5;
     }
     td:nth-of-type(3) {
       position: sticky;
-      left: 39px;
+      left: 43px;
       z-index: 5;
       &::after {
         content: '';

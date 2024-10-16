@@ -39,6 +39,8 @@ const StyledTableHead = styled.thead<{
       position: sticky;
       left: 39px;
       z-index: 5;
+      transition: 0.3s ease;
+
       &::after {
         content: '';
         position: absolute;
@@ -50,8 +52,8 @@ const StyledTableHead = styled.thead<{
         clip-path: inset(0px -4px 0px 0px);
       }
       @media (max-width: ${MOBILE_VIEWPORT}px) {
-        width: 30px;
-        max-width: 35px;
+        width: 150px;
+        max-width: 150px;
       }
     }
   }
