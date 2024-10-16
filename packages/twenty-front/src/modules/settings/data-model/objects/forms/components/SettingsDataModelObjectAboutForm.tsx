@@ -11,19 +11,18 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { plural } from 'pluralize';
-import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import {
   AppTooltip,
   IconInfoCircle,
   IconTool,
-  isDefined,
   MAIN_COLORS,
   TooltipDelay,
 } from 'twenty-ui';
 import { z } from 'zod';
 import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { isDefined } from '~/utils/isDefined';
 
 export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
   .pick({
@@ -123,31 +122,31 @@ export const SettingsDataModelObjectAboutForm = ({
     ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
     : 'Input must be in camel case and cannot start with a number';
 
-  useEffect(() => {
-    if (shouldSyncLabelAndName === true) {
-      labelSingular &&
-        setValue(
-          'nameSingular',
-          computeMetadataNameFromLabelOrThrow(labelSingular),
-          { shouldDirty: false },
-        );
-    }
+  const fillLabelPlural = (labelSingular: string) => {
+    const newLabelPluralValue = isDefined(labelSingular)
+      ? plural(labelSingular)
+      : '';
+    setValue('labelPlural', newLabelPluralValue, {
+      shouldDirty: isDefined(labelSingular) ? true : false,
+    });
+    fillNamePluralFromLabelPlural(newLabelPluralValue);
+  };
 
-    isDefined(labelSingular)
-      ? setValue('labelPlural', plural(labelSingular), { shouldDirty: true })
-      : setValue('labelPlural', '', { shouldDirty: false });
-  }, [shouldSyncLabelAndName, labelSingular, setValue]);
+  const fillNameSingularFromLabelSingular = (labelSingular: string) => {
+    isDefined(labelSingular) &&
+      setValue(
+        'nameSingular',
+        computeMetadataNameFromLabelOrThrow(labelSingular),
+        { shouldDirty: false },
+      );
+  };
 
-  useEffect(() => {
-    if (shouldSyncLabelAndName === true) {
-      labelPlural &&
-        setValue(
-          'namePlural',
-          computeMetadataNameFromLabelOrThrow(labelPlural),
-          { shouldDirty: false },
-        );
-    }
-  }, [shouldSyncLabelAndName, labelPlural, setValue]);
+  const fillNamePluralFromLabelPlural = (labelPlural: string) => {
+    isDefined(labelPlural) &&
+      setValue('namePlural', computeMetadataNameFromLabelOrThrow(labelPlural), {
+        shouldDirty: false,
+      });
+  };
 
   return (
     <>
@@ -168,40 +167,53 @@ export const SettingsDataModelObjectAboutForm = ({
               )}
             />
           </StyledInputContainer>
-          {[
-            {
-              label: 'Singular',
-              fieldName: 'labelSingular' as const,
-              placeholder: 'Listing',
-              defaultValue: objectMetadataItem?.labelSingular,
-            },
-            {
-              label: 'Plural',
-              fieldName: 'labelPlural' as const,
-              placeholder: 'Listings',
-              defaultValue: objectMetadataItem?.labelPlural,
-            },
-          ].map(({ defaultValue, fieldName, label, placeholder }) => (
-            <Controller
-              // TODO they are not taking the full width
-              key={`object-${fieldName}-text-input`}
-              name={fieldName}
-              control={control}
-              defaultValue={defaultValue}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  label={label}
-                  placeholder={placeholder}
-                  value={value}
-                  onChange={onChange}
-                  disabled={disabled || disableNameEdit}
-                />
-              )}
-            />
-          ))}
+          <Controller
+            key={`object-labelSingular-text-input`}
+            name={'labelSingular'}
+            control={control}
+            defaultValue={objectMetadataItem?.labelSingular}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                label={'Singular'}
+                placeholder={'Listing'}
+                value={value}
+                onChange={(value) => {
+                  onChange(value);
+                  fillLabelPlural(value);
+                  if (shouldSyncLabelAndName === true) {
+                    fillNameSingularFromLabelSingular(value);
+                  }
+                }}
+                disabled={disabled || disableNameEdit}
+                fullWidth
+                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+              />
+            )}
+          />
+          <Controller
+            key={`object-labelPlural-text-input`}
+            name={'labelPlural'}
+            control={control}
+            defaultValue={objectMetadataItem?.labelPlural}
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                label={'Singular'}
+                placeholder={'Listings'}
+                value={value}
+                onChange={(value) => {
+                  onChange(value);
+                  if (shouldSyncLabelAndName === true) {
+                    fillNamePluralFromLabelPlural(value);
+                  }
+                }}
+                disabled={disabled || disableNameEdit}
+                fullWidth
+                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+              />
+            )}
+          />
         </StyledInputsContainer>
         <Controller
-          // TODO this glitches when toggling advanced mode
           name="description"
           control={control}
           defaultValue={objectMetadataItem?.description ?? null}
@@ -312,7 +324,13 @@ export const SettingsDataModelObjectAboutForm = ({
                   render={({ field: { onChange, value } }) => (
                     <SyncObjectLabelAndNameToggle
                       value={value ?? true}
-                      onChange={onChange}
+                      onChange={(value) => {
+                        onChange(value);
+                        if (value === true) {
+                          fillNamePluralFromLabelPlural(labelPlural);
+                          fillNameSingularFromLabelSingular(labelSingular);
+                        }
+                      }}
                     />
                   )}
                 />

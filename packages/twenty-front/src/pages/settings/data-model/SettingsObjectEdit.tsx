@@ -33,7 +33,6 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import styled from '@emotion/styled';
 import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
@@ -44,14 +43,6 @@ const objectEditFormSchema = z
 type SettingsDataModelObjectEditFormValues = z.infer<
   typeof objectEditFormSchema
 >;
-
-const StyledFormSection = styled(Section)`
-  padding-left: 0 !important;
-`;
-
-const StyledFormTitle = styled(H2Title)`
-  margin-left: ${({ theme }) => theme.spacing(8)};
-`;
 
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
@@ -205,8 +196,8 @@ export const SettingsObjectEdit = () => {
           }
         >
           <SettingsPageContainer individualPaddingLeftForItems>
-            <StyledFormSection>
-              <StyledFormTitle
+            <Section>
+              <H2Title
                 title="About"
                 description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
               />
@@ -215,7 +206,7 @@ export const SettingsObjectEdit = () => {
                 disableNameEdit={!activeObjectMetadataItem.isCustom}
                 objectMetadataItem={activeObjectMetadataItem}
               />
-            </StyledFormSection>
+            </Section>
             <Section>
               <H2Title
                 title="Settings"
