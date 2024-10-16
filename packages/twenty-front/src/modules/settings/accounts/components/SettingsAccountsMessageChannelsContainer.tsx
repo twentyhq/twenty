@@ -9,10 +9,9 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
-import { DEFAULT_PADDING } from '@/ui/layout/tab/components/Constant';
-import { CustomPaddings } from '@/ui/layout/tab/components/CustomPaddings';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { css } from '@emotion/react';
 import React from 'react';
 
 const StyledMessageContainer = styled.div`
@@ -64,14 +63,13 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     <>
       {tabs.length > 1 && (
         <StyledMessageContainer>
-          <CustomPaddings padding={DEFAULT_PADDING}>
-            <TabList
-              tabListId={
-                SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID
-              }
-              tabs={tabs}
-            />
-          </CustomPaddings>
+          <TabList
+            tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
+            tabs={tabs}
+            css={css`
+              padding: 0;
+            `}
+          />
         </StyledMessageContainer>
       )}
       {messageChannels.map((messageChannel) => (

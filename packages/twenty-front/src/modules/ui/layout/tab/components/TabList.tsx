@@ -1,3 +1,4 @@
+import { SerializedStyles } from '@emotion/react';
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { useRecoilValue } from 'recoil';
@@ -8,6 +9,10 @@ import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { Tab } from './Tab';
+
+interface StyledContainerProps {
+  css?: SerializedStyles;
+}
 
 type SingleTabProps = {
   title: string;
@@ -23,16 +28,18 @@ type TabListProps = {
   tabs: SingleTabProps[];
   loading?: boolean;
   className?: string;
+  css?: SerializedStyles;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<StyledContainerProps>`
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-left: var(--custom-padding, ${({ theme }) => theme.spacing(2)});
+  padding-left: ${({ theme }) => theme.spacing(2)};
   height: 40px;
   user-select: none;
+  ${(props) => props.css}
 `;
 
 export const TabList = ({
@@ -40,6 +47,7 @@ export const TabList = ({
   tabListId,
   loading,
   className,
+  css,
 }: TabListProps) => {
   const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || '';
 
@@ -54,7 +62,7 @@ export const TabList = ({
   return (
     <TabListScope tabListScopeId={tabListId}>
       <ScrollWrapper hideY contextProviderName="tabList">
-        <StyledContainer className={className}>
+        <StyledContainer className={className} css={css}>
           {tabs
             .filter((tab) => !tab.hide)
             .map((tab) => (
