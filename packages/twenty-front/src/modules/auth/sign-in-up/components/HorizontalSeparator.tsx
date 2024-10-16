@@ -16,7 +16,8 @@ const StyledSeparator = styled.div<HorizontalSeparatorProps>`
 const StyledSeparatorContainer = styled.div`
   align-items: center;
   display: flex;
-  margin: ${({ theme }) => theme.spacing(3)} 0;
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
 

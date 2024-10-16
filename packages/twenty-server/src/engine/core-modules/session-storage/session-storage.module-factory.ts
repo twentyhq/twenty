@@ -5,37 +5,40 @@ import RedisStore from 'connect-redis';
 import session from 'express-session';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { SessionStorageType } from 'src/engine/core-modules/session-storage/types/session-storage-type.enum';
+import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 
 export const getSessionStorageOptions = (
   environmentService: EnvironmentService,
 ): session.SessionOptions => {
-  const sessionStorageType = environmentService.get('SESSION_STORAGE_TYPE');
+  const cacheStorageType = environmentService.get('CACHE_STORAGE_TYPE');
+
+  const SERVER_URL = environmentService.get('SERVER_URL');
 
   const sessionStorage = {
     secret: environmentService.get('SESSION_STORE_SECRET'),
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: environmentService.get('SERVER_URL').startsWith('https'),
+      secure: !!(SERVER_URL && SERVER_URL.startsWith('https')),
+      maxAge: 1000 * 60 * 30, // 30 minutes
     },
   };
 
-  switch (sessionStorageType) {
-    case SessionStorageType.Memory: {
+  switch (cacheStorageType) {
+    case CacheStorageType.Memory: {
       Logger.warn(
         'Memory session storage is not recommended for production. Prefer Redis.',
       );
 
       return sessionStorage;
     }
-    case SessionStorageType.Redis: {
+    case CacheStorageType.Redis: {
       const host = environmentService.get('REDIS_HOST');
       const port = environmentService.get('REDIS_PORT');
 
       if (!(host && port)) {
         throw new Error(
-          `${sessionStorageType} session storage requires host: ${host} and port: ${port} to be defined, check your .env file`,
+          `${cacheStorageType} session storage requires host: ${host} and port: ${port} to be defined, check your .env file`,
         );
       }
 
@@ -65,7 +68,7 @@ export const getSessionStorageOptions = (
     }
     default:
       throw new Error(
-        `Invalid session-storage (${sessionStorageType}), check your .env file`,
+        `Invalid session-storage (${cacheStorageType}), check your .env file`,
       );
   }
 };
