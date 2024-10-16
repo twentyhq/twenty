@@ -17,6 +17,8 @@ const StyledText = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: ${({ theme }) => theme.spacing(1)};
+  cursor: pointer;
+  flex-grow: 1;
 `;
 
 const StyledIconContainer = styled.div`
@@ -46,13 +48,17 @@ export const AdvancedSettingsToggle = () => {
     setIsAdvancedModeEnabled(newValue);
   };
 
+  const toogleAdvancedMode = () => {
+    setIsAdvancedModeEnabled((current) => !current);
+  };
+
   return (
     <StyledContainer>
       <StyledIconContainer>
         <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
       </StyledIconContainer>
       <StyledToggleContainer>
-        <StyledText>Advanced:</StyledText>
+        <StyledText onClick={toogleAdvancedMode}>Advanced:</StyledText>
         <Toggle
           onChange={onChange}
           color={MAIN_COLORS.yellow}
