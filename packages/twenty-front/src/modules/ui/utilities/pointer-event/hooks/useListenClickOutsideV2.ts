@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
-
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
+import React, { useEffect, useState } from 'react';
+import { useRecoilCallback } from 'recoil';
 
 export enum ClickOutsideMode {
   comparePixels = 'comparePixels',
@@ -28,7 +27,10 @@ export const useListenClickOutsideV2 = <T extends Element>({
     getClickOutsideListenerIsActivatedState,
   } = useClickOustideListenerStates(listenerId);
 
-  const handleMouseDown = useRecoilCallback(
+  const [isInitialMount, setIsInitialMount] = useState(true);
+  const [justProcessedTouchEvent, setJustProcessedTouchEvent] = useState(false);
+
+  const handleInteraction = useRecoilCallback(
     ({ snapshot, set }) =>
       (event: MouseEvent | TouchEvent) => {
         const clickOutsideListenerIsActivated = snapshot
@@ -36,149 +38,102 @@ export const useListenClickOutsideV2 = <T extends Element>({
           .getValue();
 
         const isListening = clickOutsideListenerIsActivated && enabled;
+        if (!isListening) return;
 
-        if (!isListening) {
+        if (isInitialMount) {
+          setIsInitialMount(false);
           return;
         }
 
-        if (mode === ClickOutsideMode.compareHTMLRef) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => ref.current?.contains(event.target as Node));
+        let clientX: number, clientY: number;
 
+        if ('touches' in event && event.touches.length > 0) {
+          clientX = event.touches[0].clientX;
+          clientY = event.touches[0].clientY;
+          setJustProcessedTouchEvent(true);
+        } else if ('clientX' in event && 'clientY' in event) {
+          clientX = event.clientX;
+          clientY = event.clientY;
+          if (justProcessedTouchEvent) {
+            setJustProcessedTouchEvent(false);
+            return;
+          }
+        } else {
+          return;
+        }
+
+        const clickedOnAtLeastOneRef = refs.some((ref) => {
+          if (!ref.current) return false;
+
+          if (mode === ClickOutsideMode.compareHTMLRef) {
+            return ref.current.contains(event.target as Node);
+          }
+
+          if (mode === ClickOutsideMode.comparePixels) {
+            const { left, top, right, bottom } =
+              ref.current.getBoundingClientRect();
+            return (
+              clientX >= left &&
+              clientX <= right &&
+              clientY >= top &&
+              clientY <= bottom
+            );
+          }
+          return false;
+        });
+
+        if (event.type === 'mousedown' || event.type === 'touchstart') {
           set(
             getClickOutsideListenerIsMouseDownInsideState,
             clickedOnAtLeastOneRef,
           );
         }
 
-        if (mode === ClickOutsideMode.comparePixels) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => {
-              if (!ref.current) {
-                return false;
-              }
+        if (event.type === 'click' || event.type === 'touchend') {
+          const isMouseDownInside = snapshot
+            .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
+            .getValue();
 
-              const { x, y, width, height } =
-                ref.current.getBoundingClientRect();
-
-              const clientX =
-                'clientX' in event
-                  ? event.clientX
-                  : event.changedTouches[0].clientX;
-              const clientY =
-                'clientY' in event
-                  ? event.clientY
-                  : event.changedTouches[0].clientY;
-
-              if (
-                clientX < x ||
-                clientX > x + width ||
-                clientY < y ||
-                clientY > y + height
-              ) {
-                return false;
-              }
-              return true;
-            });
-
-          set(
-            getClickOutsideListenerIsMouseDownInsideState,
-            clickedOnAtLeastOneRef,
-          );
+          if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+            callback(event);
+          }
         }
       },
     [
-      mode,
       refs,
+      callback,
+      mode,
       getClickOutsideListenerIsMouseDownInsideState,
       enabled,
       getClickOutsideListenerIsActivatedState,
+      isInitialMount,
+      justProcessedTouchEvent,
     ],
   );
 
-  const handleClickOutside = useRecoilCallback(
-    ({ snapshot }) =>
-      (event: MouseEvent | TouchEvent) => {
-        const isMouseDownInside = snapshot
-          .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
-          .getValue();
-
-        if (mode === ClickOutsideMode.compareHTMLRef) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => ref.current?.contains(event.target as Node));
-
-          if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
-            callback(event);
-          }
-        }
-
-        if (mode === ClickOutsideMode.comparePixels) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => {
-              if (!ref.current) {
-                return false;
-              }
-
-              const { x, y, width, height } =
-                ref.current.getBoundingClientRect();
-
-              const clientX =
-                'clientX' in event
-                  ? event.clientX
-                  : event.changedTouches[0].clientX;
-              const clientY =
-                'clientY' in event
-                  ? event.clientY
-                  : event.changedTouches[0].clientY;
-
-              if (
-                clientX < x ||
-                clientX > x + width ||
-                clientY < y ||
-                clientY > y + height
-              ) {
-                return false;
-              }
-              return true;
-            });
-
-          if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
-            callback(event);
-          }
-        }
-      },
-    [mode, refs, callback, getClickOutsideListenerIsMouseDownInsideState],
-  );
-
   useEffect(() => {
-    document.addEventListener('mousedown', handleMouseDown, {
+    document.addEventListener('mousedown', handleInteraction, {
       capture: true,
     });
-    document.addEventListener('click', handleClickOutside, { capture: true });
-    document.addEventListener('touchstart', handleMouseDown, {
+    document.addEventListener('click', handleInteraction, { capture: true });
+    document.addEventListener('touchstart', handleInteraction, {
       capture: true,
     });
-    document.addEventListener('touchend', handleClickOutside, {
-      capture: true,
-    });
+    document.addEventListener('touchend', handleInteraction, { capture: true });
 
     return () => {
-      document.removeEventListener('mousedown', handleMouseDown, {
+      document.removeEventListener('mousedown', handleInteraction, {
         capture: true,
       });
-      document.removeEventListener('click', handleClickOutside, {
+      document.removeEventListener('click', handleInteraction, {
         capture: true,
       });
-      document.removeEventListener('touchstart', handleMouseDown, {
+      document.removeEventListener('touchstart', handleInteraction, {
         capture: true,
       });
-      document.removeEventListener('touchend', handleClickOutside, {
+      document.removeEventListener('touchend', handleInteraction, {
         capture: true,
       });
     };
-  }, [refs, callback, mode, handleClickOutside, handleMouseDown]);
+  }, [handleInteraction]);
 };
