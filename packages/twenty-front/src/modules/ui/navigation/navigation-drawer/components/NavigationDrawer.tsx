@@ -24,6 +24,8 @@ export type NavigationDrawerProps = {
 };
 
 const StyledAnimatedContainer = styled(motion.div)`
+  max-height: 100vh;
+  overflow: scroll;
   display: flex;
   justify-content: end;
 `;
@@ -35,6 +37,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
+  
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
