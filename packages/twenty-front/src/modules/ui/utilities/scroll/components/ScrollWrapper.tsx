@@ -26,16 +26,16 @@ const StyledScrollWrapper = styled.div`
 export type ScrollWrapperProps = {
   children: React.ReactNode;
   className?: string;
-  hideY?: boolean;
-  hideX?: boolean;
+  enableXScroll?: boolean;
+  enableYScroll?: boolean;
   contextProviderName: ContextProviderName;
 };
 
 export const ScrollWrapper = ({
   children,
   className,
-  hideX,
-  hideY,
+  enableXScroll = true,
+  enableYScroll = true,
   contextProviderName,
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
@@ -58,8 +58,8 @@ export const ScrollWrapper = ({
     options: {
       scrollbars: { autoHide: 'scroll' },
       overflow: {
-        y: hideY ? 'hidden' : undefined,
-        x: hideX ? 'hidden' : undefined,
+        x: enableXScroll ? undefined : 'hidden',
+        y: enableYScroll ? undefined : 'hidden',
       },
     },
     events: {
