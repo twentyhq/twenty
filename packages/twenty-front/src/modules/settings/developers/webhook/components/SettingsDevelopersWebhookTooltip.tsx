@@ -1,6 +1,9 @@
+import { UserContext } from '@/users/contexts/UserContext';
 import styled from '@emotion/styled';
-import { format } from 'date-fns';
-import { ReactElement } from 'react';
+import { Point } from '@nivo/line';
+import { ReactElement, useContext } from 'react';
+import { formatToHumanReadableMonthDateTime } from '~/utils/format/formatDate';
+
 const StyledTooltipContainer = styled.div`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -55,15 +58,18 @@ const StyledDataDefinition = styled.div`
 const StyledSpan = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
 `;
-
+type SettingsDevelopersWebhookTooltipProps = {
+  point: Point;
+};
 export const SettingsDevelopersWebhookTooltip = ({
   point,
-}: any): ReactElement => {
-  const newDate = new Date(point.data.x);
+}: SettingsDevelopersWebhookTooltipProps): ReactElement => {
+  const { timeZone } = useContext(UserContext);
+  const windowInterval = new Date(point.data.x);
   return (
     <StyledTooltipContainer>
       <StyledTooltipDateContainer>
-        {format(newDate, 'MMM d · HH:mm')}
+        {formatToHumanReadableMonthDateTime(windowInterval, timeZone)}
       </StyledTooltipDateContainer>
       <StyledLine />
       <StyledTooltipDataRow>

@@ -1,7 +1,6 @@
-import { SettingsDevelopersWebhookTooltip } from '@/settings/developers/webhook/components/SettingsDevelopersliceTooltip';
+import { SettingsDevelopersWebhookTooltip } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookTooltip';
+import { useGraphData } from '@/settings/developers/webhook/hooks/useGraphData';
 import { webhookGraphDataState } from '@/settings/developers/webhook/states/webhookGraphDataState';
-import { fetchGraphData } from '@/settings/developers/webhook/utils/fetchGraphData';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -45,10 +44,11 @@ export const SettingsDevelopersWebhookUsageGraph = ({
   const setWebhookGraphData = useSetRecoilState(webhookGraphDataState);
   const theme = useTheme();
 
-  const [wGraphOptions, setwGraphOptions] = useState<
+  const [windowLengthGraphOption, setWindowLengthGraphOption] = useState<
     '7D' | '1D' | '12H' | '4H'
   >('7D');
-  const { enqueueSnackBar } = useSnackBar();
+
+  const { fetchGraphData } = useGraphData(webhookId);
 
   return (
     <>
@@ -61,20 +61,16 @@ export const SettingsDevelopersWebhookUsageGraph = ({
             />
             <Select
               dropdownId="test-id-webhook-graph"
-              value={wGraphOptions}
+              value={windowLengthGraphOption}
               options={[
                 { value: '7D', label: 'This week' },
                 { value: '1D', label: 'Today' },
                 { value: '12H', label: 'Last 12 hours' },
                 { value: '4H', label: 'Last 4 hours' },
               ]}
-              onChange={(wGraphOptions) => {
-                setwGraphOptions(wGraphOptions);
-                fetchGraphData({
-                  webhookId,
-                  enqueueSnackBar,
-                  webhookOptions: wGraphOptions,
-                }).then((graphInput) => {
+              onChange={(windowLengthGraphOption) => {
+                setWindowLengthGraphOption(windowLengthGraphOption);
+                fetchGraphData(windowLengthGraphOption).then((graphInput) => {
                   setWebhookGraphData(graphInput);
                 });
               }}

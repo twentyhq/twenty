@@ -1,6 +1,5 @@
+import { useGraphData } from '@/settings/developers/webhook/hooks/useGraphData';
 import { webhookGraphDataState } from '@/settings/developers/webhook/states/webhookGraphDataState';
-import { fetchGraphData } from '@/settings/developers/webhook/utils/fetchGraphData';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -13,13 +12,13 @@ export const SettingsDevelopersWebhookUsageGraphEffect = ({
 }: SettingsDevelopersWebhookUsageGraphEffectProps) => {
   const setWebhookGraphData = useSetRecoilState(webhookGraphDataState);
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { fetchGraphData } = useGraphData(webhookId);
 
   useEffect(() => {
-    fetchGraphData({ webhookId, enqueueSnackBar }).then((graphInput) => {
+    fetchGraphData('7D').then((graphInput) => {
       setWebhookGraphData(graphInput);
     });
-  }, [enqueueSnackBar, setWebhookGraphData, webhookId]);
+  }, [fetchGraphData, setWebhookGraphData, webhookId]);
 
   return <></>;
 };
