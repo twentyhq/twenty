@@ -16,16 +16,16 @@ import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSel
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   filterDefinition: FilterDefinition;
-  onClick?: () => void;
+  onSelectField?: (filterDefinition: FilterDefinition) => void;
 };
 
 export const ObjectFilterDropdownFilterSelectMenuItem = ({
   filterDefinition,
-  onClick,
+  onSelectField,
 }: ObjectFilterDropdownFilterSelectMenuItemProps) => {
   const { selectFilter } = useSelectFilter();
 
@@ -87,7 +87,9 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   const { getIcon } = useIcons();
 
   const handleClick = () => {
-    onClick?.();
+    if (isDefined(onSelectField)) {
+      return onSelectField(filterDefinition);
+    }
 
     resetSelectedItem();
 

@@ -117,11 +117,12 @@ export const ObjectFilterDropdownFilterSelect = ({
       return;
     }
 
-    onSelectField?.(selectedFilterDefinition);
-
-    resetSelectedItem();
-
-    selectFilter({ filterDefinition: selectedFilterDefinition });
+    if (isDefined(onSelectField)) {
+      onSelectField(selectedFilterDefinition);
+    } else {
+      resetSelectedItem();
+      selectFilter({ filterDefinition: selectedFilterDefinition });
+    }
   };
 
   const shoudShowSeparator =
@@ -153,9 +154,7 @@ export const ObjectFilterDropdownFilterSelect = ({
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
                   filterDefinition={visibleFilterDefinition}
-                  onClick={() => {
-                    onSelectField?.(visibleFilterDefinition);
-                  }}
+                  onSelectField={onSelectField}
                 />
               </SelectableItem>
             ),
@@ -171,6 +170,7 @@ export const ObjectFilterDropdownFilterSelect = ({
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
                   filterDefinition={hiddenFilterDefinition}
+                  onSelectField={onSelectField}
                 />
               </SelectableItem>
             ),
