@@ -7,7 +7,11 @@ export class AddShouldSyncLabelAndName1728579416430
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" ADD "shouldSyncLabelAndName" boolean NOT NULL DEFAULT true`,
+      `ALTER TABLE "metadata"."objectMetadata" ADD "shouldSyncLabelAndName" boolean NOT NULL DEFAULT false`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "metadata"."objectMetadata" ALTER COLUMN "shouldSyncLabelAndName" SET DEFAULT true`,
     );
   }
 
