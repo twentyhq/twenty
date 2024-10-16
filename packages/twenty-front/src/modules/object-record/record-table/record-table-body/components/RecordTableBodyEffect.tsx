@@ -9,7 +9,6 @@ import { RecordTableContext } from '@/object-record/record-table/contexts/Record
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useScrollLeftValue } from '@/ui/utilities/scroll/hooks/useScrollLeftValue';
 import { useScrollTopValue } from '@/ui/utilities/scroll/hooks/useScrollTopValue';
@@ -41,16 +40,12 @@ export const RecordTableBodyEffect = () => {
   const tableLastRowVisible = useRecoilValue(tableLastRowVisibleState);
 
   const scrollTop = useScrollTopValue('recordTableWithWrappers');
-  const setIsRecordTableScrolledTop = useSetRecoilComponentState(
-    isRecordTableScrolledTopComponentState,
-  );
 
   const setHasRecordTableFetchedAllRecordsComponents =
     useSetRecoilComponentState(hasRecordTableFetchedAllRecordsComponentStateV2);
 
   // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {
-    setIsRecordTableScrolledTop(scrollTop === 0);
     if (scrollTop > 0) {
       document
         .getElementById('record-table-header')
@@ -60,7 +55,7 @@ export const RecordTableBodyEffect = () => {
         .getElementById('record-table-header')
         ?.classList.remove('header-sticky');
     }
-  }, [scrollTop, setIsRecordTableScrolledTop]);
+  }, [scrollTop]);
 
   const scrollLeft = useScrollLeftValue('recordTableWithWrappers');
 

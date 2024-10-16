@@ -76,6 +76,10 @@ export const SignInUpForm = () => {
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
       } else if (signInUpStep === SignInUpStep.Email) {
+        if (isDefined(form?.formState?.errors?.email)) {
+          setShowErrors(true);
+          return;
+        }
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         if (!form.formState.isSubmitting) {
@@ -238,6 +242,10 @@ export const SignInUpForm = () => {
                   return;
                 }
                 if (signInUpStep === SignInUpStep.Email) {
+                  if (isDefined(form?.formState?.errors?.email)) {
+                    setShowErrors(true);
+                    return;
+                  }
                   continueWithCredentials();
                   return;
                 }

@@ -89,7 +89,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @OneToMany(() => IndexMetadataEntity, (index) => index.objectMetadata, {
     cascade: true,
   })
-  indexes: Relation<IndexMetadataEntity[]>;
+  indexMetadatas: Relation<IndexMetadataEntity[]>;
 
   @OneToMany(
     () => RelationMetadataEntity,

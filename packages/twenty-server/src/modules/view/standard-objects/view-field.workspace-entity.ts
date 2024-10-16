@@ -1,16 +1,16 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { VIEW_FIELD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewField,
@@ -22,6 +22,12 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
+/*
+TODO: add soon once we've confirmed it's stabled
+@WorkspaceIndex(['fieldMetadataId', 'viewId'], {
+  isUnique: true,
+  indexWhereClause: '"deletedAt" IS NULL',
+})*/
 export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,

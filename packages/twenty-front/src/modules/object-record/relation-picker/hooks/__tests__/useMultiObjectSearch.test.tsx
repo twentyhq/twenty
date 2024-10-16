@@ -47,6 +47,7 @@ const objectData: ObjectMetadataItem[] = [
         isActive: true,
       },
     ],
+    indexMetadatas: [],
   },
 ];
 
