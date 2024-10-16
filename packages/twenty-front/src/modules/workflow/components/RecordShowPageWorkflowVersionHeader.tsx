@@ -124,7 +124,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
 
       {isDefined(workflowVersion) && isDefined(draftWorkflowVersion) ? (
         <OverrideWorkflowDraftConfirmationModal
-          workflowVersionIdToUpdate={draftWorkflowVersion.id}
+          draftWorkflowVersionId={draftWorkflowVersion.id}
           workflowVersionUpdateInput={{
             steps: workflowVersion.steps,
             trigger: workflowVersion.trigger,

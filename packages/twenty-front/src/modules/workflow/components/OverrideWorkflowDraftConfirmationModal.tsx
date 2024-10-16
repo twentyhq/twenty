@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import {
   ConfirmationModal,
   StyledCenteredButton,
@@ -9,10 +10,10 @@ import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useRecoilState } from 'recoil';
 
 export const OverrideWorkflowDraftConfirmationModal = ({
-  workflowVersionIdToUpdate,
+  draftWorkflowVersionId,
   workflowVersionUpdateInput,
 }: {
-  workflowVersionIdToUpdate: string;
+  draftWorkflowVersionId: string;
   workflowVersionUpdateInput: Pick<WorkflowVersion, 'trigger' | 'steps'>;
 }) => {
   const [
@@ -27,7 +28,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
 
   const handleOverrideDraft = async () => {
     await updateOneWorkflowVersion({
-      idToUpdate: workflowVersionIdToUpdate,
+      idToUpdate: draftWorkflowVersionId,
       updateOneRecordInput: workflowVersionUpdateInput,
     });
   };
@@ -43,7 +44,10 @@ export const OverrideWorkflowDraftConfirmationModal = ({
         deleteButtonText={'Override Draft'}
         AdditionalButtons={
           <StyledCenteredButton
-            to="/"
+            to={buildShowPageURL(
+              CoreObjectNameSingular.WorkflowVersion,
+              draftWorkflowVersionId,
+            )}
             variant="secondary"
             title="Go to Draft"
             fullWidth
