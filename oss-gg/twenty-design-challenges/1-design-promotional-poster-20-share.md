@@ -24,5 +24,5 @@ Your turn 👇
 
 » 14-October-2024 by [AliYar-Khan](https://oss.gg/AliYar-Khan) poster Link: [poster](https://x.com/Mr_Programmer14/status/1845888855183884352)
 
-» 14-October-2024 by [Harsh BHat](https://oss.gg/harshsbhat) poster Link: [poster](https://x.com/HarshBhatX/status/1846233330435477531)
+» 16-October-2024 by [Harsh BHat](https://oss.gg/harshsbhat) poster Link: [poster](https://x.com/HarshBhatX/status/1846233330435477531)
 ---
