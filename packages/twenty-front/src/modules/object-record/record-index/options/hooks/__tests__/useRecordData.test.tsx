@@ -2,6 +2,9 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 import { percentage, sleep, useRecordData } from '../useRecordData';
 
+import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
@@ -129,6 +132,18 @@ const mocks: MockedResponse[] = [
 
 const WrapperWithResponse = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
+  onInitializeRecoilSnapshot: (snapshot) => {
+    const { set } = snapshot;
+    set(contextStoreTargetedRecordsState, {
+      selectedRecordIds: 'all',
+      excludedRecordIds: [],
+    });
+    set(
+      contextStoreCurrentObjectMetadataIdState,
+      '20202020-e674-48e5-a542-72570eee7213',
+    );
+    set(contextStoreTargetedRecordsFiltersState, []);
+  },
 });
 
 const graphqlEmptyResponse = [
@@ -147,9 +162,21 @@ const graphqlEmptyResponse = [
 
 const WrapperWithEmptyResponse = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: graphqlEmptyResponse,
+  onInitializeRecoilSnapshot: (snapshot) => {
+    const { set } = snapshot;
+    set(contextStoreTargetedRecordsState, {
+      selectedRecordIds: 'all',
+      excludedRecordIds: [],
+    });
+    set(
+      contextStoreCurrentObjectMetadataIdState,
+      '20202020-e674-48e5-a542-72570eee7213',
+    );
+    set(contextStoreTargetedRecordsFiltersState, []);
+  },
 });
 
-describe('useTableData', () => {
+describe('useRecordData', () => {
   const recordIndexId = 'people';
   const objectNameSingular = 'person';
   describe('data fetching', () => {

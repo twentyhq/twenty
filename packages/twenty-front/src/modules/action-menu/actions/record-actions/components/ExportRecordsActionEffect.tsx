@@ -25,14 +25,10 @@ export const ExportRecordsActionEffect = ({
     objectId: contextStoreCurrentObjectMetadataId,
   });
 
-  const baseTableDataParams = {
+  const { progress, download } = useExportRecordData({
     delayMs: 100,
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     recordIndexId: objectMetadataItem?.namePlural ?? '',
-  };
-
-  const { progress, download } = useExportRecordData({
-    ...baseTableDataParams,
     filename: `${objectMetadataItem?.nameSingular}.csv`,
   });
 

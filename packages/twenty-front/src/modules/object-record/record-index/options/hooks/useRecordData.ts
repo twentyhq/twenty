@@ -93,6 +93,7 @@ export const useRecordData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: contextStoreCurrentObjectMetadataId,
   });
+
   const queryFilter = turnFiltersIntoQueryFilter(
     contextStoreTargetedRecordsFilters,
     objectMetadataItem?.fields ?? [],
