@@ -5,6 +5,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
+import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -35,14 +36,11 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-
-  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100% - 40px);
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
@@ -145,13 +143,11 @@ export const RecordBoard = () => {
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >
-      <StyledContainerContainer>
-        <RecordBoardHeader />
-        <StyledBoardContentContainer>
-          <ScrollWrapper
-            contextProviderName="recordBoardY"
-            enableXScroll={false}
-          >
+      <ScrollWrapper contextProviderName="recordBoard">
+        <RecordBoardStickyHeaderEffect />
+        <StyledContainerContainer>
+          <RecordBoardHeader />
+          <StyledBoardContentContainer>
             <StyledContainer ref={boardRef}>
               <DragDropContext onDragEnd={handleDragEnd}>
                 <StyledColumnContainer>
@@ -165,14 +161,14 @@ export const RecordBoard = () => {
               </DragDropContext>
             </StyledContainer>
             <RecordBoardScrollRestoreEffect />
-          </ScrollWrapper>
-          <DragSelect
-            dragSelectable={boardRef}
-            onDragSelectionStart={resetRecordSelection}
-            onDragSelectionChange={setRecordAsSelected}
-          />
-        </StyledBoardContentContainer>
-      </StyledContainerContainer>
+            <DragSelect
+              dragSelectable={boardRef}
+              onDragSelectionStart={resetRecordSelection}
+              onDragSelectionChange={setRecordAsSelected}
+            />
+          </StyledBoardContentContainer>
+        </StyledContainerContainer>
+      </ScrollWrapper>
     </RecordBoardScope>
   );
 };

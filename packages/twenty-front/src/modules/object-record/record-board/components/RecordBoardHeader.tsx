@@ -8,9 +8,15 @@ const StyledHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
   height: 40px;
+  z-index: 10;
 
   overflow: visible;
   width: 100%;
+
+  &.header-sticky {
+    position: sticky;
+    top: 0;
+  }
 `;
 
 export const RecordBoardHeader = () => {
@@ -19,7 +25,7 @@ export const RecordBoardHeader = () => {
   const columnIds = useRecoilValue(columnIdsState);
 
   return (
-    <StyledHeaderContainer>
+    <StyledHeaderContainer id="record-board-header">
       {columnIds.map((columnId) => (
         <RecordBoardColumnHeaderWrapper columnId={columnId} />
       ))}

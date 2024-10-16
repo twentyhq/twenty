@@ -28,7 +28,6 @@ import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMen
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -49,9 +48,8 @@ const StyledContainer = styled.div`
 `;
 
 const StyledContainerWithPadding = styled.div`
-  height: 100%;
-
-  width: fit-content;
+  height: calc(100% - 40px);
+  width: 100%;
 `;
 
 export const RecordIndexContainer = () => {
@@ -165,26 +163,21 @@ export const RecordIndexContainer = () => {
             </>
           )}
           {recordIndexViewType === ViewType.Kanban && (
-            <ScrollWrapper
-              enableYScroll={false}
-              contextProviderName="recordBoardX"
-            >
-              <StyledContainerWithPadding>
-                <RecordIndexBoardContainer
-                  recordBoardId={recordIndexId}
-                  viewBarId={recordIndexId}
-                  objectNameSingular={objectNameSingular}
-                />
-                <RecordIndexBoardDataLoader
-                  objectNameSingular={objectNameSingular}
-                  recordBoardId={recordIndexId}
-                />
-                <RecordIndexBoardDataLoaderEffect
-                  objectNameSingular={objectNameSingular}
-                  recordBoardId={recordIndexId}
-                />
-              </StyledContainerWithPadding>
-            </ScrollWrapper>
+            <StyledContainerWithPadding>
+              <RecordIndexBoardContainer
+                recordBoardId={recordIndexId}
+                viewBarId={recordIndexId}
+                objectNameSingular={objectNameSingular}
+              />
+              <RecordIndexBoardDataLoader
+                objectNameSingular={objectNameSingular}
+                recordBoardId={recordIndexId}
+              />
+              <RecordIndexBoardDataLoaderEffect
+                objectNameSingular={objectNameSingular}
+                recordBoardId={recordIndexId}
+              />
+            </StyledContainerWithPadding>
           )}
           <ActionMenuComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
