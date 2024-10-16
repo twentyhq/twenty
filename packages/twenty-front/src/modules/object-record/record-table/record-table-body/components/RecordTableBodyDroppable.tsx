@@ -27,6 +27,16 @@ const StyledTbody = styled.tbody<{
       z-index: 5;
       transition: 0.3s ease;
 
+      &[data-testid='editable-cell-display-mode'] {
+        [data-testid='tooltip'] {
+          display: none;
+        }
+
+        [data-testid='chip'] {
+          gap: 0;
+        }
+      }
+
       &::after {
         content: '';
         position: absolute;
