@@ -10,6 +10,8 @@ import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/comp
 import { SettingsAccountsCalendarChannelsGeneral } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
+import { DEFAULT_PADDING } from '@/ui/layout/tab/components/Constant';
+import { CustomPaddings } from '@/ui/layout/tab/components/CustomPaddings';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import React from 'react';
@@ -63,10 +65,14 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
     <>
       {tabs.length > 1 && (
         <StyledCalenderContainer>
-          <TabList
-            tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
-            tabs={tabs}
-          />
+          <CustomPaddings padding={DEFAULT_PADDING}>
+            <TabList
+              tabListId={
+                SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID
+              }
+              tabs={tabs}
+            />
+          </CustomPaddings>
         </StyledCalenderContainer>
       )}
       {calendarChannels.map((calendarChannel) => (

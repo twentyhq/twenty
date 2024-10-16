@@ -30,8 +30,8 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  padding-left: var(--custom-padding, ${({ theme }) => theme.spacing(2)});
   height: 40px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
 `;
 
