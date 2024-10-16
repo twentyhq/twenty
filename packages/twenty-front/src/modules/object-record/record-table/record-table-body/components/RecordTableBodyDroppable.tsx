@@ -15,16 +15,20 @@ const StyledTbody = styled.tbody<{
       position: sticky;
       left: 0;
       z-index: 5;
+      transition: 0.3s ease;
     }
     td:nth-of-type(2) {
       position: sticky;
       left: 11px;
       z-index: 5;
+      transition: 0.3s ease;
     }
     td:nth-of-type(3) {
       position: sticky;
       left: 43px;
       z-index: 5;
+      transition: 0.3s ease;
+
       &::after {
         content: '';
         position: absolute;

@@ -32,12 +32,12 @@ const StyledTableHead = styled.thead<{
     }
     th:nth-of-type(2) {
       position: sticky;
-      left: 9px;
+      left: 11px;
       z-index: 5;
     }
     th:nth-of-type(3) {
       position: sticky;
-      left: 39px;
+      left: 43px;
       z-index: 5;
       transition: 0.3s ease;
 
@@ -52,8 +52,8 @@ const StyledTableHead = styled.thead<{
         clip-path: inset(0px -4px 0px 0px);
       }
       @media (max-width: ${MOBILE_VIEWPORT}px) {
-        width: 150px;
-        max-width: 150px;
+        width: 30px;
+        max-width: 35px;
       }
     }
   }

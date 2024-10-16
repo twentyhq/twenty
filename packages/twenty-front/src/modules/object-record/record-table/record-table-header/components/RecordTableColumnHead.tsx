@@ -12,7 +12,7 @@ type RecordTableColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;
 };
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -21,6 +21,14 @@ const StyledTitle = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
+
+  ${({ hideTitle }) =>
+    hideTitle &&
+    css`
+      @media (max-width: ${MOBILE_VIEWPORT}px) {
+        display: none;
+      }
+    `}
 `;
 
 const StyledIcon = styled.div`
@@ -52,7 +60,9 @@ export const RecordTableColumnHead = ({
   );
 
   return (
-    <StyledTitle>
+    <StyledTitle
+      hideTitle={!!column.isLabelIdentifier && !isRecordTableScrolledLeft}
+    >
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
