@@ -48,6 +48,9 @@ export const OverrideWorkflowDraftConfirmationModal = ({
               CoreObjectNameSingular.WorkflowVersion,
               draftWorkflowVersionId,
             )}
+            onClick={() => {
+              setOpenOverrideWorkflowDraftConfirmationModal(false);
+            }}
             variant="secondary"
             title="Go to Draft"
             fullWidth
