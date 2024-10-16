@@ -7,10 +7,17 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
-import { useLazyContextStoreSelectedRecords } from '@/context-store/hooks/useLazyContextStoreSelectedRecords';
+import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewType } from '@/views/types/ViewType';
 
 export const sleep = (ms: number) =>
@@ -71,13 +78,62 @@ export const useRecordData = ({
   );
   const columns = useRecoilValue(visibleTableColumnsSelector());
 
+  const contextStoreTargetedRecords = useRecoilValue(
+    contextStoreTargetedRecordsState,
+  );
+
+  const contextStoreCurrentObjectMetadataId = useRecoilValue(
+    contextStoreCurrentObjectMetadataIdState,
+  );
+
+  const contextStoreTargetedRecordsFilters = useRecoilValue(
+    contextStoreTargetedRecordsFiltersState,
+  );
+
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: contextStoreCurrentObjectMetadataId,
+  });
+  const queryFilter = turnFiltersIntoQueryFilter(
+    contextStoreTargetedRecordsFilters,
+    objectMetadataItem?.fields ?? [],
+  );
+
+  const selectedRecordIds = contextStoreTargetedRecords.selectedRecordIds;
+  const excludedRecordIds = contextStoreTargetedRecords.excludedRecordIds;
+
   const {
     findManyRecords,
     totalCount,
     records,
     fetchMoreRecordsWithPagination,
     loading,
-  } = useLazyContextStoreSelectedRecords({});
+  } = useLazyFindManyRecords({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+    recordGqlFields: objectMetadataItem
+      ? generateDepthOneRecordGqlFields({ objectMetadataItem })
+      : undefined,
+    filter: makeAndFilterVariables([
+      queryFilter,
+      selectedRecordIds !== 'all'
+        ? selectedRecordIds.length === 0
+          ? undefined
+          : {
+              id: {
+                in: selectedRecordIds,
+              },
+            }
+        : excludedRecordIds.length > 0
+          ? {
+              not: {
+                id: {
+                  in: excludedRecordIds,
+                },
+              },
+            }
+          : undefined,
+    ]),
+    limit: pageSize,
+  });
 
   useEffect(() => {
     const fetchNextPage = async () => {
