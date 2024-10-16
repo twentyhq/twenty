@@ -40,7 +40,6 @@ export const AdvancedFilterViewFilterFieldSelect = (
   const [objectFilterDropdownIsSelectingCompositeField] =
     useRecoilComponentStateV2(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
-      ADVANCED_FILTER_DROPDOWN_ID,
     );
 
   const shouldShowCompositeSelectionSubMenu =

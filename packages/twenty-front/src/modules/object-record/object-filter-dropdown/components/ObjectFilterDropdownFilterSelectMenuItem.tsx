@@ -66,6 +66,10 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   const setHotkeyScope = useSetHotkeyScope();
 
   const handleSelectFilter = (availableFilterDefinition: FilterDefinition) => {
+    if (isDefined(onSelectField)) {
+      return onSelectField(availableFilterDefinition);
+    }
+
     setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
     if (
@@ -87,10 +91,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   const { getIcon } = useIcons();
 
   const handleClick = () => {
-    if (isDefined(onSelectField)) {
-      return onSelectField(filterDefinition);
-    }
-
     resetSelectedItem();
 
     selectFilter({ filterDefinition });
