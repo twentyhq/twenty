@@ -1,4 +1,5 @@
 import { ConfigurableFilterDropdownContent } from '@/object-record/object-filter-dropdown/components/ConfigurableFilterDropdownContent';
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -16,6 +17,9 @@ export const AdvancedFilterViewFilterValueInput = (
   props: AdvancedFilterViewFilterValueInputProps,
 ) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${props.viewFilter.id}`;
+
+  const { setFilterDefinitionUsedInDropdown, setSelectedOperandInDropdown } =
+    useFilterDropdown();
 
   if (props.isDisabled === true) {
     return (
@@ -41,6 +45,10 @@ export const AdvancedFilterViewFilterValueInput = (
           }}
         />
       }
+      onOpen={() => {
+        setFilterDefinitionUsedInDropdown(props.filterDefinition);
+        setSelectedOperandInDropdown(props.viewFilter.operand);
+      }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <ConfigurableFilterDropdownContent
