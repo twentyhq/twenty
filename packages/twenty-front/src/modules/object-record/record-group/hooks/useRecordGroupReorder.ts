@@ -14,7 +14,7 @@ type UseRecordGroupHandlersParams = {
   viewBarId: string;
 };
 
-export const useRecordGroupReoder = ({
+export const useRecordGroupReorder = ({
   objectNameSingular,
   viewBarId,
 }: UseRecordGroupHandlersParams) => {
@@ -24,7 +24,6 @@ export const useRecordGroupReoder = ({
 
   const { visibleRecordGroups } = useRecordGroupStates({
     objectNameSingular,
-    viewBarId,
   });
 
   const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);

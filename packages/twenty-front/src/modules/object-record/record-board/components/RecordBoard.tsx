@@ -165,11 +165,10 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
         <ScrollWrapper contextProviderName="recordBoard">
           <StyledContainer ref={boardRef}>
             <DragDropContext onDragEnd={onDragEnd}>
-              {columnIds.map((columnId, index) => (
+              {columnIds.map((columnId) => (
                 <RecordBoardColumn
                   key={columnId}
                   recordBoardColumnId={columnId}
-                  __indexDebug={index}
                 />
               ))}
             </DragDropContext>

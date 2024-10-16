@@ -20,12 +20,10 @@ const StyledColumn = styled.div`
 
 type RecordBoardColumnProps = {
   recordBoardColumnId: string;
-  __indexDebug: number;
 };
 
 export const RecordBoardColumn = ({
   recordBoardColumnId,
-  __indexDebug,
 }: RecordBoardColumnProps) => {
   const { columnsFamilySelector, recordIdsByColumnIdFamilyState } =
     useRecordBoardStates();

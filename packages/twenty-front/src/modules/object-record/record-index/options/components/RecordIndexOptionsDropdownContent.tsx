@@ -43,7 +43,7 @@ import { useSetRecoilState } from 'recoil';
 import { ViewGroupsVisibilityDropdownSection } from '@/views/components/ViewGroupsVisibilityDropdownSection';
 import { useRecordGroupStates } from '@/object-record/record-group/hooks/useRecordGroupStates';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
-import { useRecordGroupReoder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
+import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 
 type RecordIndexOptionsMenu =
   | 'viewGroups'
@@ -126,14 +126,13 @@ export const RecordIndexOptionsDropdownContent = ({
     viewGroupFieldMetadataItem,
   } = useRecordGroupStates({
     objectNameSingular,
-    viewBarId: recordIndexId,
   });
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
       viewBarId: recordIndexId,
     });
   const { handleOrderChange: handleRecordGroupOrderChange } =
-    useRecordGroupReoder({
+    useRecordGroupReorder({
       objectNameSingular,
       viewBarId: recordIndexId,
     });

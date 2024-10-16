@@ -29,7 +29,6 @@ export const useRecordGroupActions = () => {
 
   const { viewGroupFieldMetadataItem } = useRecordGroupStates({
     objectNameSingular,
-    viewBarId: recordIndexId,
   });
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
@@ -44,7 +43,7 @@ export const useRecordGroupActions = () => {
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
     navigate(
-      `/settings/objects/${getObjectSlug(objectMetadataItem)}/${viewGroupFieldMetadataItem?.name}`,
+      `/settings/objects/${getObjectSlug(objectMetadataItem)}/${viewGroupFieldMetadataItem?.name ?? ''}`,
     );
   }, [
     setNavigationMemorizedUrl,

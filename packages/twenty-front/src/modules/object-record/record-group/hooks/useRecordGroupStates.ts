@@ -6,7 +6,6 @@ import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/s
 
 type UseRecordGroupStatesParams = {
   objectNameSingular: string;
-  viewBarId: string;
 };
 
 export const useRecordGroupStates = ({
@@ -48,12 +47,7 @@ export const useRecordGroupStates = ({
 
   const hiddenRecordGroups = useMemo(
     () =>
-      recordIndexGroupDefinitions
-        .filter((boardGroup) => !boardGroup.isVisible)
-        .map((boardGroup) => ({
-          ...boardGroup,
-          isVisible: false,
-        })),
+      recordIndexGroupDefinitions.filter((boardGroup) => !boardGroup.isVisible),
     [recordIndexGroupDefinitions],
   );
 
