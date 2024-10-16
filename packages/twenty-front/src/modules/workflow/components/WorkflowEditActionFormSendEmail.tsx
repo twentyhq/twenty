@@ -1,21 +1,21 @@
+import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
+import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
 import { IconMail, IconPlus, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { Select, SelectOption } from '@/ui/input/components/Select';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { useRecoilValue } from 'recoil';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 
 const StyledTriggerSettings = styled.div`
   padding: ${({ theme }) => theme.spacing(6)};
@@ -37,6 +37,7 @@ type WorkflowEditActionFormSendEmailProps =
 
 type SendEmailFormData = {
   connectedAccountId: string;
+  email: string;
   subject: string;
   body: string;
 };
@@ -53,6 +54,7 @@ export const WorkflowEditActionFormSendEmail = (
   const form = useForm<SendEmailFormData>({
     defaultValues: {
       connectedAccountId: '',
+      email: '',
       subject: '',
       body: '',
     },
@@ -83,10 +85,11 @@ export const WorkflowEditActionFormSendEmail = (
   useEffect(() => {
     form.setValue(
       'connectedAccountId',
-      props.action.settings.connectedAccountId ?? '',
+      props.action.settings.input.connectedAccountId ?? '',
     );
-    form.setValue('subject', props.action.settings.subject ?? '');
-    form.setValue('body', props.action.settings.body ?? '');
+    form.setValue('email', props.action.settings.input.email ?? '');
+    form.setValue('subject', props.action.settings.input.subject ?? '');
+    form.setValue('body', props.action.settings.input.body ?? '');
   }, [props.action.settings, form]);
 
   const saveAction = useDebouncedCallback(
@@ -99,9 +102,12 @@ export const WorkflowEditActionFormSendEmail = (
         ...props.action,
         settings: {
           ...props.action.settings,
-          connectedAccountId: formData.connectedAccountId,
-          subject: formData.subject,
-          body: formData.body,
+          input: {
+            connectedAccountId: formData.connectedAccountId,
+            email: formData.email,
+            subject: formData.subject,
+            body: formData.body,
+          },
         },
       });
 
@@ -134,12 +140,12 @@ export const WorkflowEditActionFormSendEmail = (
   };
 
   if (
-    isDefined(props.action.settings.connectedAccountId) &&
-    props.action.settings.connectedAccountId !== ''
+    isDefined(props.action.settings.input.connectedAccountId) &&
+    props.action.settings.input.connectedAccountId !== ''
   ) {
     filter.or.push({
       id: {
-        eq: props.action.settings.connectedAccountId,
+        eq: props.action.settings.input.connectedAccountId,
       },
     });
   }
@@ -194,6 +200,21 @@ export const WorkflowEditActionFormSendEmail = (
                 onChange={(connectedAccountId) => {
                   field.onChange(connectedAccountId);
                   handleSave(true);
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field }) => (
+              <TextInput
+                label="Email"
+                placeholder="Enter receiver email (use {{variable}} for dynamic content)"
+                value={field.value}
+                onChange={(email) => {
+                  field.onChange(email);
+                  handleSave();
                 }}
               />
             )}

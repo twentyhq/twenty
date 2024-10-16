@@ -24,5 +24,6 @@ Your turn 👇
 
 » 13-October-2024 by [Ionfinisher](https://oss.gg/Ionfinisher) Logo Link: [logo](https://drive.google.com/file/d/1l9vE8CIjW9KfdioI5WKzxrdmvO8LR4j7/view?usp=drive_link) » tweet Link: [tweet](https://x.com/ion_finisher/status/1845466470429442163)
 
+» 16-October-2024 by [harshsbhat](https://oss.gg/harshsbhat) Logo Link: [logo](https://drive.google.com/file/d/1jmqwNvlSyWSY1-pCG63TAtDvCoVa8xg-/view?usp=sharing) » tweet Link: [tweet](https://x.com/HarshBhatX/status/1846234658712772977)
 
 ---
