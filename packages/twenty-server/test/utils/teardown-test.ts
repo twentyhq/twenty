@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { apiRequest } from 'test/utils/api-requests';
+import { makeGraphqlAPIRequest } from 'test/utils/api-requests';
 import { TEST_NAME_PREFIX } from 'test/utils/generate-record-name';
 import 'tsconfig-paths/register';
 
@@ -38,7 +38,7 @@ export default async () => {
   global.APP_PORT = jestConfig.globals?.APP_PORT;
   // @ts-expect-error in the teardown this env is not present in the global object anymore
   global.ACCESS_TOKEN = jestConfig.globals?.ACCESS_TOKEN;
-  apiRequest({
+  makeGraphqlAPIRequest({
     query,
     variables: {
       nameFilter,

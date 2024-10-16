@@ -10,7 +10,7 @@ type QueryData = {
 
 type StandardObjectsSingularName = 'Company' | 'Person';
 
-export const apiRequest = (data: QueryData) => {
+export const makeGraphqlAPIRequest = (data: QueryData) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
   return client
@@ -19,8 +19,8 @@ export const apiRequest = (data: QueryData) => {
     .send({ query: print(data.query), variables: data.variables || {} });
 };
 
-export const successfulApiRequest = (data: QueryData) => {
-  return apiRequest(data).expect((res) => {
+export const expectSuccessfullGraphqlAPIRequest = (data: QueryData) => {
+  return makeGraphqlAPIRequest(data).expect((res) => {
     expect(res.body.errors).toBeUndefined();
     expect(res.body.data).toBeDefined();
   });
@@ -44,11 +44,13 @@ export const createOneObject = async (
     data,
   };
 
-  return await successfulApiRequest({ query, variables }).then((res) => {
-    const createdObject = res.body.data[mutationName];
+  return await expectSuccessfullGraphqlAPIRequest({ query, variables }).then(
+    (res) => {
+      const createdObject = res.body.data[mutationName];
 
-    return createdObject.id as string;
-  });
+      return createdObject.id as string;
+    },
+  );
 };
 
 export const createManyObjects = async (
@@ -70,11 +72,13 @@ export const createManyObjects = async (
     data,
   };
 
-  return await successfulApiRequest({ query, variables }).then((res) => {
-    const createdObjectsIds: string[] = res.body.data[mutationName].map(
-      (object) => object.id,
-    );
+  return await expectSuccessfullGraphqlAPIRequest({ query, variables }).then(
+    (res) => {
+      const createdObjectsIds: string[] = res.body.data[mutationName].map(
+        (object) => object.id,
+      );
 
-    return createdObjectsIds;
-  });
+      return createdObjectsIds;
+    },
+  );
 };
