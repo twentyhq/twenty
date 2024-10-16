@@ -195,7 +195,7 @@ export const SettingsObjectEdit = () => {
             )
           }
         >
-          <SettingsPageContainer individualPaddingLeftForItems>
+          <SettingsPageContainer>
             <Section>
               <H2Title
                 title="About"

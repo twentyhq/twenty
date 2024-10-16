@@ -129,7 +129,9 @@ export const SettingsDataModelObjectAboutForm = ({
     setValue('labelPlural', newLabelPluralValue, {
       shouldDirty: isDefined(labelSingular) ? true : false,
     });
-    fillNamePluralFromLabelPlural(newLabelPluralValue);
+    if (shouldSyncLabelAndName === true) {
+      fillNamePluralFromLabelPlural(newLabelPluralValue);
+    }
   };
 
   const fillNameSingularFromLabelSingular = (labelSingular: string) => {

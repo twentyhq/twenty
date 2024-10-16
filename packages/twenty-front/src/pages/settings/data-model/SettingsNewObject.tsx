@@ -90,7 +90,7 @@ export const SettingsNewObject = () => {
           />
         }
       >
-        <SettingsPageContainer individualPaddingLeftForItems>
+        <SettingsPageContainer>
           <Section>
             <H2Title
               title="About"

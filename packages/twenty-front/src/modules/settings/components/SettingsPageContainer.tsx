@@ -27,7 +27,6 @@ export const SettingsPageContainer = ({
   children,
 }: {
   children: ReactNode;
-  individualPaddingLeftForItems?: boolean;
 }) => (
   <ScrollWrapper contextProviderName="settingsPageContainer">
     <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>

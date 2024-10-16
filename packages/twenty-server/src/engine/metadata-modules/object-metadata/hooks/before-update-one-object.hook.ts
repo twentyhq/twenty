@@ -13,7 +13,6 @@ import { Equal, In, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 @Injectable()
@@ -99,54 +98,6 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       }
     }
 
-    this.checkIfFieldIsEditable(instance.update, objectMetadata);
-
     return instance;
-  }
-
-  // This is temporary until we properly use the MigrationRunner to update column names
-  private checkIfFieldIsEditable(
-    update: UpdateObjectPayload,
-    objectMetadata: ObjectMetadataEntity,
-  ) {
-    if (
-      update.nameSingular &&
-      update.nameSingular !== objectMetadata.nameSingular &&
-      !objectMetadata.isCustom
-    ) {
-      throw new BadRequestException(
-        "Object's nameSingular can't be updated. Please create a new object instead",
-      );
-    }
-
-    if (
-      update.labelSingular &&
-      update.labelSingular !== objectMetadata.labelSingular &&
-      !objectMetadata.isCustom
-    ) {
-      throw new BadRequestException(
-        "Object's labelSingular can't be updated. Please create a new object instead",
-      );
-    }
-
-    if (
-      update.namePlural &&
-      update.namePlural !== objectMetadata.namePlural &&
-      !objectMetadata.isCustom
-    ) {
-      throw new BadRequestException(
-        "Object's namePlural can't be updated. Please create a new object instead",
-      );
-    }
-
-    if (
-      update.labelPlural &&
-      update.labelPlural !== objectMetadata.labelPlural &&
-      !objectMetadata.isCustom
-    ) {
-      throw new BadRequestException(
-        "Object's labelPlural can't be updated. Please create a new object instead",
-      );
-    }
   }
 }
