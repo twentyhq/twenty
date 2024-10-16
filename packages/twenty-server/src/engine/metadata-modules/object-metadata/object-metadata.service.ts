@@ -5,12 +5,8 @@ import console from 'console';
 
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-<<<<<<< HEAD
 import { isDefined } from 'class-validator';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
-=======
-import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
->>>>>>> fad04144a36b03759a7920f9b291cbee5a1225d7
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -21,13 +17,7 @@ import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-<<<<<<< HEAD
-import {
-  computeColumnName
-} from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-=======
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
->>>>>>> fad04144a36b03759a7920f9b291cbee5a1225d7
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -47,10 +37,7 @@ import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-<<<<<<< HEAD
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
-=======
->>>>>>> fad04144a36b03759a7920f9b291cbee5a1225d7
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,

@@ -5,21 +5,12 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
-const StyledSettingsPageContainer = styled.div<{
-  width?: number;
-  individualPaddingLeftForItems?: boolean;
-}>`
+const StyledSettingsPageContainer = styled.div<{ width?: number }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   overflow: auto;
   padding: ${({ theme }) => theme.spacing(6, 8, 8)};
-  ${({ individualPaddingLeftForItems }) =>
-    individualPaddingLeftForItems && 'padding-left: 0;'}
-  & > * {
-    padding-left: ${({ theme, individualPaddingLeftForItems }) =>
-      individualPaddingLeftForItems ? theme.spacing(8) : undefined};
-  }
   width: ${({ width }) => {
     if (isDefined(width)) {
       return width + 'px';
@@ -34,16 +25,11 @@ const StyledSettingsPageContainer = styled.div<{
 
 export const SettingsPageContainer = ({
   children,
-  individualPaddingLeftForItems,
 }: {
   children: ReactNode;
   individualPaddingLeftForItems?: boolean;
 }) => (
   <ScrollWrapper contextProviderName="settingsPageContainer">
-    <StyledSettingsPageContainer
-      individualPaddingLeftForItems={individualPaddingLeftForItems}
-    >
-      {children}
-    </StyledSettingsPageContainer>
+    <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
   </ScrollWrapper>
 );
