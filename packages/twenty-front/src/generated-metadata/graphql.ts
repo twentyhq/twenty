@@ -28,13 +28,6 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
-export type AisqlQueryResult = {
-  __typename?: 'AISQLQueryResult';
-  queryFailedErrorMessage?: Maybe<Scalars['String']['output']>;
-  sqlQuery: Scalars['String']['output'];
-  sqlQueryResult?: Maybe<Scalars['String']['output']>;
-};
-
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -862,7 +855,6 @@ export type Query = {
   findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAISQLQuery: AisqlQueryResult;
   getAvailablePackages: Scalars['JSON']['output'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
@@ -927,11 +919,6 @@ export type QueryFindOneRemoteServerByIdArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
-};
-
-
-export type QueryGetAisqlQueryArgs = {
-  text: Scalars['String']['input'];
 };
 
 
