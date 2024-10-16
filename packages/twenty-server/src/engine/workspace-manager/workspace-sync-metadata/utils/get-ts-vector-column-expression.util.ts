@@ -9,15 +9,27 @@ import {
   WorkspaceMigrationException,
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
+import {
+  isSearchableFieldType,
+  SearchableFieldType,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
-type FieldTypeAndNameMetadata = {
+export type FieldTypeAndNameMetadata = {
   name: string;
-  type: FieldMetadataType;
+  type: SearchableFieldType;
 };
 
 export const getTsVectorColumnExpressionFromFields = (
   fieldsUsedForSearch: FieldTypeAndNameMetadata[],
 ): string => {
+  const filteredFieldsUsedForSearch = fieldsUsedForSearch.filter((field) =>
+    isSearchableFieldType(field.type),
+  );
+
+  if (filteredFieldsUsedForSearch.length < 1) {
+    throw new Error('No searchable fields found');
+  }
+
   const columnExpressions = fieldsUsedForSearch.flatMap(
     getColumnExpressionsFromField,
   );
