@@ -31,9 +31,7 @@ export const cacheStorageModuleFactory = (
       return {
         ...cacheModuleOptions,
         store: redisStore,
-        socket: {
-          connectionString,
-        },
+        url: connectionString,
       };
     }
     default:
