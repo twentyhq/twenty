@@ -46,8 +46,8 @@ const StyledEmptySubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  max-height: 2.4em;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  max-height: 2.8em;
   overflow: hidden;
   width: 50%;
 `;
