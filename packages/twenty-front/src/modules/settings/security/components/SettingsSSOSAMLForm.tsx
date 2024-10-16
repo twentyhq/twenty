@@ -130,7 +130,7 @@ export const SettingsSSOSAMLForm = () => {
           <Button
             Icon={IconUpload}
             onClick={handleUploadFileClick}
-            title="Upload Identity Provider Metadata File"
+            title="Upload file"
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
@@ -151,14 +151,14 @@ export const SettingsSSOSAMLForm = () => {
             <Button
               Icon={IconDownload}
               onClick={downloadMetadata}
-              title="Download Service Provider Metadata File"
+              title="Download file"
             ></Button>
           </StyledContainer>
-          <HorizontalSeparator visible={true} text={'or'} />
+          <HorizontalSeparator visible={true} text={'Or'} />
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
-                readOnly={true}
+                disabled={true}
                 label="ACS Url"
                 value={acsUrl}
                 fullWidth
@@ -182,7 +182,7 @@ export const SettingsSSOSAMLForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
-                readOnly={true}
+                disabled={true}
                 label="Entity ID"
                 value={entityID}
                 fullWidth

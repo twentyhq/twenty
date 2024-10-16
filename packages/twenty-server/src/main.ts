@@ -63,8 +63,10 @@ const bootstrap = async () => {
   // Create the env-config.js of the front at runtime
   generateFrontConfig();
 
-  // Enable sessions
-  app.use(session(getSessionStorageOptions(environmentService)));
+  // Enable session - Today it's used only for SSO
+  if (environmentService.get('AUTH_SSO_ENABLED')) {
+    app.use(session(getSessionStorageOptions(environmentService)));
+  }
 
   await app.listen(process.env.PORT ?? 3000);
 };
