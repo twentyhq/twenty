@@ -1,12 +1,6 @@
 import { OnModuleDestroy } from '@nestjs/common';
 
-import {
-  ConnectionOptions,
-  JobsOptions,
-  Queue,
-  QueueOptions,
-  Worker,
-} from 'bullmq';
+import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
 import omitBy from 'lodash.omitby';
 
 import {
@@ -19,9 +13,7 @@ import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-export type BullMQDriverOptions = QueueOptions & {
-  connection?: ConnectionOptions | string;
-};
+export type BullMQDriverOptions = QueueOptions;
 
 export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
   private queueMap: Record<MessageQueue, Queue> = {} as Record<

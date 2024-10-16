@@ -1,3 +1,5 @@
+import { ConnectionOptions } from 'tls';
+
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
   BullMQDriverFactoryOptions,
@@ -46,7 +48,7 @@ export const messageQueueModuleFactory = async (
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: connectionString,
+          connection: connectionString as ConnectionOptions,
         },
       } satisfies BullMQDriverFactoryOptions;
     }
