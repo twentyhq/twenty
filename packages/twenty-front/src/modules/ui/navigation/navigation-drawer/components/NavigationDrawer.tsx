@@ -22,7 +22,12 @@ export type NavigationDrawerProps = {
   title?: string;
 };
 
-const StyledAnimatedContainer = styled(motion.div)``;
+const StyledAnimatedContainer = styled(motion.div)`
+max-height: 100vh;
+overflow: scroll;
+display: flex;
+justify-content: end;
+`;
 
 const StyledContainer = styled.div<{
   isSettings?: boolean;
