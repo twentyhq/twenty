@@ -1,7 +1,10 @@
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
+  BullMQDriverFactoryOptions,
   MessageQueueDriverType,
   MessageQueueModuleOptions,
+  PgBossDriverFactoryOptions,
+  SyncDriverFactoryOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
 
 /**
@@ -19,7 +22,7 @@ export const messageQueueModuleFactory = async (
       return {
         type: MessageQueueDriverType.Sync,
         options: {},
-      };
+      } satisfies SyncDriverFactoryOptions;
     }
     case MessageQueueDriverType.PgBoss: {
       const connectionString = environmentService.get('PG_DATABASE_URL');
@@ -29,7 +32,7 @@ export const messageQueueModuleFactory = async (
         options: {
           connectionString,
         },
-      };
+      } satisfies PgBossDriverFactoryOptions;
     }
     case MessageQueueDriverType.BullMQ: {
       const connectionString = environmentService.get('REDIS_URL');
@@ -43,9 +46,9 @@ export const messageQueueModuleFactory = async (
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: connectionString as any,
+          connection: connectionString,
         },
-      };
+      } satisfies BullMQDriverFactoryOptions;
     }
     default:
       throw new Error(
