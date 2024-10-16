@@ -18,11 +18,11 @@ export const ActionMenu = ({ actionMenuId }: { actionMenuId: string }) => {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: actionMenuId }}
         >
-          <ActionMenuEffect />
-          <RecordActionMenuEntriesSetter />
           <ActionMenuBar />
           <ActionMenuDropdown />
           <ActionMenuConfirmationModals />
+          <ActionMenuEffect />
+          <RecordActionMenuEntriesSetter />
         </ActionMenuComponentInstanceContext.Provider>
       )}
     </>

@@ -120,23 +120,23 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const setcontextStoreTargetedRecords = useSetRecoilState(
+  const setContextStoreTargetedRecords = useSetRecoilState(
     contextStoreTargetedRecordsState,
   );
 
   useEffect(() => {
-    setcontextStoreTargetedRecords({
+    setContextStoreTargetedRecords({
       selectedRecordIds: selectedRecordIds,
       excludedRecordIds: [],
     });
 
     return () => {
-      setcontextStoreTargetedRecords({
+      setContextStoreTargetedRecords({
         selectedRecordIds: [],
         excludedRecordIds: [],
       });
     };
-  }, [selectedRecordIds, setcontextStoreTargetedRecords]);
+  }, [selectedRecordIds, setContextStoreTargetedRecords]);
 
   return <></>;
 };

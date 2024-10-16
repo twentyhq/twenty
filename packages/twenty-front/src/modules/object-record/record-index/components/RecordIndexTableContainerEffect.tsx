@@ -29,7 +29,7 @@ export const RecordIndexTableContainerEffect = () => {
     recordTableId: recordIndexId,
   });
 
-  const setcontextStoreTargetedRecords = useSetRecoilState(
+  const setContextStoreTargetedRecords = useSetRecoilState(
     contextStoreTargetedRecordsState,
   );
 
@@ -83,7 +83,7 @@ export const RecordIndexTableContainerEffect = () => {
   const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
 
   useEffect(() => {
-    setcontextStoreTargetedRecords({
+    setContextStoreTargetedRecords({
       selectedRecordIds:
         selectedRowIds.length !== 1 && hasUserSelectedAllRows
           ? 'all'
@@ -92,7 +92,7 @@ export const RecordIndexTableContainerEffect = () => {
     });
 
     return () => {
-      setcontextStoreTargetedRecords({
+      setContextStoreTargetedRecords({
         selectedRecordIds: [],
         excludedRecordIds: [],
       });
@@ -100,7 +100,7 @@ export const RecordIndexTableContainerEffect = () => {
   }, [
     hasUserSelectedAllRows,
     selectedRowIds,
-    setcontextStoreTargetedRecords,
+    setContextStoreTargetedRecords,
     unselectedRowIds,
   ]);
 

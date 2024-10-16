@@ -9,6 +9,37 @@ import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { useRecoilValue } from 'recoil';
 
+const getFilterForSelectedRecords = (
+  selectedRecordIds: string[] | 'all',
+  excludedRecordIds: string[],
+  queryFilter: any,
+) => {
+  if (selectedRecordIds === 'all') {
+    if (excludedRecordIds.length > 0) {
+      return makeAndFilterVariables([
+        queryFilter,
+        {
+          not: {
+            id: {
+              in: excludedRecordIds,
+            },
+          },
+        },
+      ]);
+    }
+    return queryFilter;
+  }
+
+  return makeAndFilterVariables([
+    queryFilter,
+    {
+      id: {
+        in: selectedRecordIds,
+      },
+    },
+  ]);
+};
+
 export const useContextStoreSelectedRecords = ({
   limit = undefined,
   recordGqlFields,
@@ -36,14 +67,26 @@ export const useContextStoreSelectedRecords = ({
     objectMetadataItem?.fields ?? [],
   );
 
-  const selectedRecordIds = contextStoreTargetedRecords.selectedRecordIds;
-  const excludedRecordIds = contextStoreTargetedRecords.excludedRecordIds;
+  const { selectedRecordIds, excludedRecordIds } = contextStoreTargetedRecords;
+
+  // Determine if we should skip the query based on the following conditions:
+  // 1. We're not selecting all records (selectedRecordIds !== 'all')
+  // 2. Either:
+  //    a) No specific records are selected (selectedRecordIds.length === 0)
+  //    b) We're only requesting the 'id' field (which we already have)
+  const isOnlyRequestingId =
+    Object.keys(recordGqlFields ?? {}).length === 1 &&
+    recordGqlFields?.id === true;
 
   const skip =
     selectedRecordIds !== 'all' &&
-    (selectedRecordIds.length === 0 ||
-      (Object.keys(recordGqlFields ?? {}).length === 1 &&
-        recordGqlFields?.id === true));
+    (selectedRecordIds.length === 0 || isOnlyRequestingId);
+
+  const filter = getFilterForSelectedRecords(
+    selectedRecordIds,
+    excludedRecordIds,
+    queryFilter,
+  );
 
   const result = useFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
@@ -52,24 +95,7 @@ export const useContextStoreSelectedRecords = ({
       (objectMetadataItem
         ? generateDepthOneRecordGqlFields({ objectMetadataItem })
         : undefined),
-    filter: makeAndFilterVariables([
-      queryFilter,
-      selectedRecordIds !== 'all'
-        ? {
-            id: {
-              in: selectedRecordIds,
-            },
-          }
-        : excludedRecordIds.length > 0
-          ? {
-              not: {
-                id: {
-                  in: excludedRecordIds,
-                },
-              },
-            }
-          : undefined,
-    ]),
+    filter,
     limit,
     skip,
   });
