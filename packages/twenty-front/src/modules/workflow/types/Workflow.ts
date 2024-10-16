@@ -84,22 +84,26 @@ export type WorkflowVersion = {
   __typename: 'WorkflowVersion';
 };
 
+type StepRunOutput = {
+  id: string;
+  name: string;
+  type: string;
+  outputs: {
+    attemptCount: number;
+    result: object | undefined;
+    error: string | undefined;
+  }[];
+};
+
+export type WorkflowRunOutput = {
+  steps: Record<string, StepRunOutput>;
+};
+
 export type WorkflowRun = {
   __typename: 'WorkflowRun';
   id: string;
   workflowVersionId: string;
   output: WorkflowRunOutput;
-};
-
-export type WorkflowRunOutput = {
-  steps: {
-    id: string;
-    name: string;
-    type: string;
-    attemptCount: number;
-    result: object | undefined;
-    error: string | undefined;
-  }[];
 };
 
 export type Workflow = {
