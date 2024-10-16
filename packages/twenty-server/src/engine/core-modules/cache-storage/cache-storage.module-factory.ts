@@ -24,7 +24,7 @@ export const cacheStorageModuleFactory = (
 
       if (!connectionString) {
         throw new Error(
-          `${cacheStorageType} cache storage requires ${connectionString} to be defined, check your .env file`,
+          `${cacheStorageType} cache storage requires REDIS_URL to be defined, check your .env file`,
         );
       }
 

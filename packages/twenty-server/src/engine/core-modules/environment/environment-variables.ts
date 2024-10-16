@@ -376,6 +376,11 @@ export class EnvironmentVariables {
   MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
   @IsOptional()
+  @ValidateIf(
+    (env) =>
+      env.CACHE_STORAGE_TYPE === CacheStorageType.Redis ||
+      env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.BullMQ,
+  )
   @IsUrl({
     protocols: ['redis'],
     require_tld: false,

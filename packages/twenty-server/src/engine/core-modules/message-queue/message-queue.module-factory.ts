@@ -3,7 +3,6 @@ import {
   MessageQueueDriverType,
   MessageQueueModuleOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
-import IORedis from 'ioredis';
 
 /**
  * MessageQueue Module factory
@@ -35,10 +34,16 @@ export const messageQueueModuleFactory = async (
     case MessageQueueDriverType.BullMQ: {
       const connectionString = environmentService.get('REDIS_URL');
 
+      if (!connectionString) {
+        throw new Error(
+          `${MessageQueueDriverType.BullMQ} message queue requires REDIS_URL to be defined, check your .env file`,
+        );
+      }
+
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: new IORedis(connectionString)
+          connection: connectionString as any,
         },
       };
     }
