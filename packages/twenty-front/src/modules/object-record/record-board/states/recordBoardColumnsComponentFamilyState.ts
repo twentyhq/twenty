@@ -1,8 +1,8 @@
-import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 export const recordBoardColumnsComponentFamilyState =
-  createComponentFamilyState<RecordBoardColumnDefinition | undefined, string>({
+  createComponentFamilyState<RecordGroupDefinition | undefined, string>({
     key: 'recordBoardColumnsComponentFamilyState',
     defaultValue: undefined,
   });

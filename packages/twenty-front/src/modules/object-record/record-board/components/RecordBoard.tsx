@@ -30,6 +30,9 @@ const StyledContainer = styled.div`
   flex: 1;
   flex-direction: row;
   min-height: calc(100% - 1px);
+  & > *:not(:first-child) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledWrapper = styled.div`
@@ -66,6 +69,11 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
 
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
+
+  // const isPersistingViewGroups = useRecoilComponentValueV2(
+  //   isPersistingViewGroupsComponentState,
+  //   recordBoardId,
+  // );
 
   useListenClickOutsideByClassName({
     classNames: ['record-board-card'],
@@ -139,6 +147,12 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
       updateOneRecord,
     ],
   );
+
+  // FixMe: Check if we really need this as it depends on the times it takes to update the view groups
+  // if (isPersistingViewGroups) {
+  //   // TODO: Add skeleton state
+  //   return null;
+  // }
 
   return (
     <RecordBoardScope

@@ -3,7 +3,6 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexBoardDataLoader } from '@/object-record/record-index/components/RecordIndexBoardDataLoader';
 import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
@@ -39,6 +38,10 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { ViewGroup } from '@/views/types/ViewGroup';
+import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
+import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
+import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -58,13 +61,9 @@ export const RecordIndexContainer = () => {
     recordIndexViewTypeState,
   );
 
-  const { objectNamePlural, recordIndexId } = useContext(
+  const { objectNameSingular, objectNamePlural, recordIndexId } = useContext(
     RecordIndexRootPropsContext,
   );
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -85,6 +84,8 @@ export const RecordIndexContainer = () => {
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableId: recordIndexId,
   });
+
+  const { setColumns } = useRecordBoard(recordIndexId);
 
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -112,6 +113,32 @@ export const RecordIndexContainer = () => {
     [columnDefinitions, setTableColumns],
   );
 
+  const onViewGroupsChange = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (viewGroups: ViewGroup[]) => {
+        const newGroupDefinitions = mapViewGroupsToGroupDefinitions({
+          objectMetadataItem,
+          viewGroups,
+        });
+
+        setColumns(newGroupDefinitions);
+
+        const existingRecordIndexGroupDefinitions = snapshot
+          .getLoadable(recordIndexGroupDefinitionsState)
+          .getValue();
+
+        if (
+          !isDeeplyEqual(
+            existingRecordIndexGroupDefinitions,
+            newGroupDefinitions,
+          )
+        ) {
+          set(recordIndexGroupDefinitionsState, newGroupDefinitions);
+        }
+      },
+    [objectMetadataItem, setColumns],
+  );
+
   return (
     <StyledContainer>
       <InformationBannerWrapper />
@@ -136,6 +163,7 @@ export const RecordIndexContainer = () => {
                   }
 
                   onViewFieldsChange(view.viewFields);
+                  onViewGroupsChange(view.viewGroups);
                   setTableFilters(
                     mapViewFiltersToFilters(
                       view.viewFilters,

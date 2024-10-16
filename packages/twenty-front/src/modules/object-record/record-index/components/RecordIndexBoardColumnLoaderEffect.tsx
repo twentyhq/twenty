@@ -9,14 +9,12 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 
 export const RecordIndexBoardColumnLoaderEffect = ({
   objectNameSingular,
-  boardFieldSelectValue,
   boardFieldMetadataId,
   recordBoardId,
   columnId,
 }: {
   recordBoardId: string;
   objectNameSingular: string;
-  boardFieldSelectValue: string | null;
   boardFieldMetadataId: string | null;
   columnId: string;
 }) => {
@@ -40,7 +38,6 @@ export const RecordIndexBoardColumnLoaderEffect = ({
       objectNameSingular,
       recordBoardId,
       boardFieldMetadataId,
-      columnFieldSelectValue: boardFieldSelectValue,
       columnId,
     });
 
@@ -70,7 +67,6 @@ export const RecordIndexBoardColumnLoaderEffect = ({
     fetchMoreRecords,
     loading,
     shouldFetchMore,
-    boardFieldSelectValue,
     setLoadingRecordsForThisColumn,
     loadingRecordsForThisColumn,
 

@@ -1,19 +1,16 @@
-import { useCallback, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
-import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
 
 type RecordIndexBoardDataLoaderEffectProps = {
   objectNameSingular: string;
@@ -30,6 +27,10 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const recordIndexFieldDefinitions = useRecoilValue(
     recordIndexFieldDefinitionsState,
+  );
+
+  const recordIndexGroupDefinitions = useRecoilValue(
+    recordIndexGroupDefinitionsState,
   );
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
@@ -60,43 +61,15 @@ export const RecordIndexBoardDataLoaderEffect = ({
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
-  );
-
-  const navigateToSelectSettings = useCallback(() => {
-    setNavigationMemorizedUrl(location.pathname + location.search);
-    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
-  }, [
-    navigate,
-    objectMetadataItem,
-    location.pathname,
-    location.search,
-    setNavigationMemorizedUrl,
-  ]);
-
   useEffect(() => {
     setObjectSingularName(objectNameSingular);
   }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
-    setColumns(
-      computeRecordBoardColumnDefinitionsFromObjectMetadata(
-        objectMetadataItem,
-        recordIndexKanbanFieldMetadataId ?? '',
-        navigateToSelectSettings,
-      ),
-    );
-  }, [
-    navigateToSelectSettings,
-    objectMetadataItem,
-    objectNameSingular,
-    recordIndexKanbanFieldMetadataId,
-    setColumns,
-  ]);
+    setColumns(recordIndexGroupDefinitions);
+  }, [recordIndexGroupDefinitions, setColumns]);
 
+  // FixMe: Why do we have 2 useEffects for setFieldDefinitions?
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);

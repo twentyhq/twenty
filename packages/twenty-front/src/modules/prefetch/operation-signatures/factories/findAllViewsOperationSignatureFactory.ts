@@ -20,5 +20,6 @@ export const findAllViewsOperationSignatureFactory: RecordGqlOperationSignatureF
       viewFilters: true,
       viewSorts: true,
       viewFields: true,
+      viewGroups: true,
     },
   });
