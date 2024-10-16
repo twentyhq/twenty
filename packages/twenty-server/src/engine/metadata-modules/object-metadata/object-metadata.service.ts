@@ -466,7 +466,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    await this.updateObjectNamesAndLabels(
+    const updatedObject = await super.updateOne(input.id, input.update);
+
+    await this.handleObjectNameAndLabelUpdates(
       existingObjectMetadata,
       objectMetadataForUpdate,
       input,
@@ -484,9 +486,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
     );
 
-    return (await this.objectMetadataRepository.findOne({
-      where: { id: input.id },
-    })) as ObjectMetadataEntity;
+    return updatedObject;
   }
 
   public async findOneWithinWorkspace(
@@ -1471,7 +1471,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
   }
 
-  private async updateRelations(
+  private async createRelationsUpdatesMigrations(
     existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,
   ) {
@@ -1563,7 +1563,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
   }
 
-  private async updateObjectNamesAndLabels(
+  private async handleObjectNameAndLabelUpdates(
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
     input: UpdateOneObjectInput,
@@ -1576,12 +1576,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     if (!(newTargetTableName === existingTargetTableName)) {
-      await this.addRenameTableMigration(
+      await this.createRenameTableMigration(
         existingObjectMetadata,
         objectMetadataForUpdate,
       );
 
-      await this.updateRelations(
+      await this.createRelationsUpdatesMigrations(
         existingObjectMetadata,
         objectMetadataForUpdate,
       );
@@ -1595,34 +1595,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         );
       }
     }
-
-    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      objectMetadataForUpdate.workspaceId,
-    );
-
-    // } else {
-
-    //   await this.syncObjectMetadataAfterUpdate(
-    //     existingObjectMetadata,
-    //     updatedObjectWithFormatedName,
-    //   );
-    // } else {
-    //   const newLabelSingular = input.update.labelSingular || labelSingular;
-    //   const newLabelPlural = input.update.labelPlural || labelPlural;
-
-    //   const updatedObjectMetadata = await super.updateOne(input.id, {
-    //     labelSingular: newLabelSingular,
-    //     labelPlural: newLabelPlural,
-    //   });
-
-    //   await this.updateObjectView(
-    //     updatedObjectMetadata,
-    //     existingObjectMetadata.workspaceId,
-    //   );
-    // }
   }
 
-  private async addRenameTableMigration(
+  private async createRenameTableMigration(
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
   ) {
