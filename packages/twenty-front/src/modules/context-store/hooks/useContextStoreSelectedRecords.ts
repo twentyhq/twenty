@@ -3,9 +3,9 @@ import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/
 import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
+import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { useRecoilValue } from 'recoil';
 
@@ -88,13 +88,14 @@ export const useContextStoreSelectedRecords = ({
     queryFilter,
   );
 
+  const findManyRecordsParams = useFindManyParams(
+    objectMetadataItem?.nameSingular ?? '',
+    objectMetadataItem?.namePlural ?? '',
+  );
+
   const result = useFindManyRecords({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordGqlFields:
-      recordGqlFields ??
-      (objectMetadataItem
-        ? generateDepthOneRecordGqlFields({ objectMetadataItem })
-        : undefined),
+    ...findManyRecordsParams,
+    recordGqlFields,
     filter,
     limit,
     skip,

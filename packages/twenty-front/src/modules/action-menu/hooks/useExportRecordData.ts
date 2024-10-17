@@ -6,7 +6,7 @@ import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-inde
 import { useProcessRecordsForCSVExport } from '@/object-record/record-index/options/hooks/useProcessRecordsForCSVExport';
 
 import {
-  UseTableDataOptions,
+  UseRecordDataOptions,
   useRecordData,
 } from '@/object-record/record-index/options/hooks/useRecordData';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -135,7 +135,7 @@ const downloader = (mimeType: string, generator: GenerateExport) => {
 
 export const csvDownloader = downloader('text/csv', generateCsv);
 
-type UseExportTableDataOptions = Omit<UseTableDataOptions, 'callback'> & {
+type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
   filename: string;
 };
 

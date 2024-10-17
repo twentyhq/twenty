@@ -11,10 +11,10 @@ import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states
 import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
 import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
+import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
@@ -27,7 +27,7 @@ export const percentage = (part: number, whole: number): number => {
   return Math.round((part / whole) * 100);
 };
 
-export type UseTableDataOptions = {
+export type UseRecordDataOptions = {
   delayMs: number;
   maximumRequests?: number;
   objectNameSingular: string;
@@ -54,7 +54,7 @@ export const useRecordData = ({
   recordIndexId,
   callback,
   viewType = ViewType.Table,
-}: UseTableDataOptions) => {
+}: UseRecordDataOptions) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [inflight, setInflight] = useState(false);
   const [pageCount, setPageCount] = useState(0);
@@ -101,6 +101,11 @@ export const useRecordData = ({
 
   const { selectedRecordIds, excludedRecordIds } = contextStoreTargetedRecords;
 
+  const findManyRecordsParams = useFindManyParams(
+    objectNameSingular,
+    recordIndexId,
+  );
+
   const {
     findManyRecords,
     totalCount,
@@ -108,10 +113,7 @@ export const useRecordData = ({
     fetchMoreRecordsWithPagination,
     loading,
   } = useLazyFindManyRecords({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordGqlFields: objectMetadataItem
-      ? generateDepthOneRecordGqlFields({ objectMetadataItem })
-      : undefined,
+    ...findManyRecordsParams,
     filter: makeAndFilterVariables([
       queryFilter,
       selectedRecordIds !== 'all'
