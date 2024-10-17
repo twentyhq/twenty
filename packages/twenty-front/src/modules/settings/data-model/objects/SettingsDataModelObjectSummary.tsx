@@ -17,7 +17,7 @@ const StyledObjectSummary = styled.div`
   justify-content: space-between;
 `;
 
-const StyledTextContainer = styled.div`
+const StyledObjectName = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   max-width: 60%;
@@ -39,12 +39,12 @@ export const SettingsDataModelObjectSummary = ({
 
   return (
     <StyledObjectSummary className={className}>
-      <StyledTextContainer>
+      <StyledObjectName>
         <StyledIconContainer>
           <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={objectMetadataItem.labelPlural} />
-      </StyledTextContainer>
+      </StyledObjectName>
       <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
     </StyledObjectSummary>
   );
