@@ -1,10 +1,12 @@
+/* @license Enterprise */
+
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 
 @ObjectType()
 export class EditSsoOutput {

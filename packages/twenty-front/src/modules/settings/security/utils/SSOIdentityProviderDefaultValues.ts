@@ -1,5 +1,7 @@
-import { IdpType } from '~/generated/graphql';
+/* @license Enterprise */
+
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { IdpType } from '~/generated/graphql';
 
 export const defaultIdpValues: Record<
   IdpType,

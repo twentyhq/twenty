@@ -1,18 +1,16 @@
-/**
- * @license
- * Enterprise License
- */
+/* @license Enterprise */
+
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { Issuer } from 'openid-client';
 
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {

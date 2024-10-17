@@ -1,5 +1,7 @@
-import { useSetRecoilState } from 'recoil';
+/* @license Enterprise */
+
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { useSetRecoilState } from 'recoil';
 import {
   DeleteSsoIdentityProviderMutationVariables,
   useDeleteSsoIdentityProviderMutation,

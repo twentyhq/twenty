@@ -1,4 +1,5 @@
-import { isDefined } from '~/utils/isDefined';
+/* @license Enterprise */
+
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -7,6 +8,7 @@ import {
   useFindAvailableSsoIdentityProvidersMutation,
   useGetAuthorizationUrlMutation,
 } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useSSO = () => {
   const { enqueueSnackBar } = useSnackBar();

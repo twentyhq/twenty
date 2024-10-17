@@ -1,9 +1,11 @@
+/* @license Enterprise */
+
 import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { SsoIdentityProviderStatus } from '~/generated/graphql';
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
+import { SsoIdentityProviderStatus } from '~/generated/graphql';
 
 const mutationEditSSOIDPCallSpy = jest.fn();
 

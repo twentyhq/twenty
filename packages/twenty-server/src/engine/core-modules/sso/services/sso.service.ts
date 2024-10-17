@@ -1,31 +1,33 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Issuer } from 'openid-client';
+import { Repository } from 'typeorm';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 import {
-  IdentityProviderType,
-  OIDCResponseType,
-  WorkspaceSSOIdentityProvider,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+  SSOException,
+  SSOExceptionCode,
+} from 'src/engine/core-modules/sso/sso.exception';
 import {
   OIDCConfiguration,
   SAMLConfiguration,
   SSOConfiguration,
 } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import {
-  SSOException,
-  SSOExceptionCode,
-} from 'src/engine/core-modules/sso/sso.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
+  IdentityProviderType,
+  OIDCResponseType,
+  WorkspaceSSOIdentityProvider,
+} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

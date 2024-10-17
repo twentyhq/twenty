@@ -1,20 +1,18 @@
-/**
- * @license
- * Enterprise License
- */
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
-import { isEmail } from 'class-validator';
 import {
-  SamlConfig,
   MultiSamlStrategy,
-  PassportSamlConfig,
   MultiStrategyConfig,
+  PassportSamlConfig,
+  SamlConfig,
   VerifyWithRequest,
 } from '@node-saml/passport-saml';
-import { Request } from 'express';
 import { AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
+import { isEmail } from 'class-validator';
+import { Request } from 'express';
 
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 

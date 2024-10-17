@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import * as crypto from 'crypto';
 
 import {

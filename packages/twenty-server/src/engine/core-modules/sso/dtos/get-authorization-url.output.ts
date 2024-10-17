@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';

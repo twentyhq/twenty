@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { ThemeColor } from 'twenty-ui';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
 

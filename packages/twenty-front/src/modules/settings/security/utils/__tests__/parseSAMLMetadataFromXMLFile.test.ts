@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { parseSAMLMetadataFromXMLFile } from '../parseSAMLMetadataFromXMLFile';
 
 describe('parseSAMLMetadataFromXMLFile', () => {
