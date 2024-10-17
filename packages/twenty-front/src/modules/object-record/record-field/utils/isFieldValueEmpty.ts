@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isArray, isNonEmptyArray, isString } from '@sniptt/guards';
 
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -58,7 +58,6 @@ export const isFieldValueEmpty = ({
     isFieldNumber(fieldDefinition) ||
     isFieldRating(fieldDefinition) ||
     isFieldBoolean(fieldDefinition) ||
-    isFieldRelation(fieldDefinition) ||
     isFieldRawJson(fieldDefinition) ||
     isFieldRichText(fieldDefinition) ||
     isFieldPosition(fieldDefinition)
@@ -73,11 +72,19 @@ export const isFieldValueEmpty = ({
     );
   }
 
+  if (isFieldRelation(fieldDefinition)) {
+    if (isArray(fieldValue)) {
+      return !isNonEmptyArray(fieldValue);
+    }
+    return isValueEmpty(fieldValue);
+  }
+
   if (isFieldMultiSelect(fieldDefinition) || isFieldArray(fieldDefinition)) {
     return (
       !isFieldArrayValue(fieldValue) ||
       !isFieldMultiSelectValue(fieldValue, selectOptionValues) ||
-      !isDefined(fieldValue)
+      !isDefined(fieldValue) ||
+      !isNonEmptyArray(fieldValue)
     );
   }
 
