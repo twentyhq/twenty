@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   ArrowFunction,
   FunctionDeclaration,
+  ParameterDeclaration,
   Project,
   SyntaxKind,
 } from 'ts-morph';
@@ -62,15 +63,12 @@ export class CodeIntrospectionService {
 
     const functionDeclaration = functionDeclarations[0];
 
-    return functionDeclaration.getParameters().map((parameter) => {
-      return {
-        name: parameter.getName(),
-        type: parameter.getType().getText(),
-      };
-    });
+    return functionDeclaration.getParameters().map(this.buildFunctionParameter);
   }
 
-  private analyzeArrowFunctions(arrowFunctions: ArrowFunction[]) {
+  private analyzeArrowFunctions(
+    arrowFunctions: ArrowFunction[],
+  ): FunctionParameter[] {
     if (arrowFunctions.length > 1) {
       throw new CodeIntrospectionException(
         'Only one arrow function is allowed',
@@ -80,11 +78,15 @@ export class CodeIntrospectionService {
 
     const arrowFunction = arrowFunctions[0];
 
-    return arrowFunction.getParameters().map((parameter) => {
-      return {
-        name: parameter.getName(),
-        type: parameter.getType().getText(),
-      };
-    });
+    return arrowFunction.getParameters().map(this.buildFunctionParameter);
+  }
+
+  private buildFunctionParameter(
+    parameter: ParameterDeclaration,
+  ): FunctionParameter {
+    return {
+      name: parameter.getName(),
+      type: parameter.getType().getText(),
+    };
   }
 }
