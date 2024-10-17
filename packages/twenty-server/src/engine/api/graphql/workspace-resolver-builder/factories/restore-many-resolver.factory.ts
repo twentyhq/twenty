@@ -40,7 +40,7 @@ export class RestoreManyResolverFactory
 
         return await this.graphqlQueryRunnerService.restoreMany(args, options);
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }
     };
   }
