@@ -15,6 +15,10 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledTableBody = styled(TableBody)`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+`;
+
 export const SettingsAccountsBlocklistTable = ({
   blocklist,
   handleBlockedEmailRemove,
@@ -31,7 +35,7 @@ export const SettingsAccountsBlocklistTable = ({
             <TableHeader>Added to blocklist</TableHeader>
             <TableHeader></TableHeader>
           </TableRow>
-          <TableBody>
+          <StyledTableBody>
             {blocklist.map((blocklistItem) => (
               <SettingsAccountsBlocklistTableRow
                 key={blocklistItem.id}
@@ -39,7 +43,7 @@ export const SettingsAccountsBlocklistTable = ({
                 onRemove={handleBlockedEmailRemove}
               />
             ))}
-          </TableBody>
+          </StyledTableBody>
         </StyledTable>
       )}
     </>
