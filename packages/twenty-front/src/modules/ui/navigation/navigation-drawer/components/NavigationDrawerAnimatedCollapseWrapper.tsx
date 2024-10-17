@@ -44,7 +44,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
       transition={{
         duration: theme.animation.duration.normal,
       }}
-    > 
+    >
       {children}
     </StyledAnimatedContainer>
   );
