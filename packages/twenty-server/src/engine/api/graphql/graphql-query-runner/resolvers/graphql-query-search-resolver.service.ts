@@ -10,10 +10,6 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
@@ -100,20 +96,6 @@ export class GraphqlQuerySearchResolverService
 
   async validate(
     _args: SearchResolverArgs,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<void> {
-    const featureFlagsForWorkspace =
-      await this.featureFlagService.getWorkspaceFeatureFlags(
-        options.authContext.workspace.id,
-      );
-
-    const isSearchEnabled = featureFlagsForWorkspace.IS_SEARCH_ENABLED;
-
-    if (!isSearchEnabled) {
-      throw new GraphqlQueryRunnerException(
-        'This endpoint is not available yet, please use findMany instead.',
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
-    }
-  }
+    _options: WorkspaceQueryRunnerOptions,
+  ): Promise<void> {}
 }

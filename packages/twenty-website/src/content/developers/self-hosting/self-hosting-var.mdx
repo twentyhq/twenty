@@ -34,10 +34,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 <ArticleTable options={[
     ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
     ['PG_SSL_ALLOW_SELF_SIGNED', 'false', 'Allow self signed certificates'],
-    ['REDIS_HOST', '127.0.0.1', 'Redis connection host'],
-    ['REDIS_PORT', '6379', 'Redis connection port'],
-    ['REDIS_USERNAME', 'redis_username', 'Redis connection username'],
-    ['REDIS_PASSWORD', 'redis_pwd', 'Redis connection password'],
+    ['REDIS_URL', 'redis://localhost:6379', 'Redis connection url'],
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
     ['PORT', '3000', 'Port'],
