@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyArray, isString } from '@sniptt/guards';
 
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -28,6 +28,8 @@ import { isFieldPosition } from '@/object-record/record-field/types/guards/isFie
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { isFieldRelationFromManyValue } from '@/object-record/record-field/types/guards/isFieldRelationFromManyValue';
+import { isFieldRelationToOneValue } from '@/object-record/record-field/types/guards/isFieldRelationToOneValue';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
@@ -58,7 +60,6 @@ export const isFieldValueEmpty = ({
     isFieldNumber(fieldDefinition) ||
     isFieldRating(fieldDefinition) ||
     isFieldBoolean(fieldDefinition) ||
-    isFieldRelation(fieldDefinition) ||
     isFieldRawJson(fieldDefinition) ||
     isFieldRichText(fieldDefinition) ||
     isFieldPosition(fieldDefinition)
@@ -73,11 +74,20 @@ export const isFieldValueEmpty = ({
     );
   }
 
+  if (isFieldRelation(fieldDefinition)) {
+    return (
+      !isFieldRelationToOneValue(fieldValue) ||
+      !isFieldRelationFromManyValue(fieldValue) ||
+      !isNonEmptyArray(fieldValue)
+    );
+  }
+
   if (isFieldMultiSelect(fieldDefinition) || isFieldArray(fieldDefinition)) {
     return (
       !isFieldArrayValue(fieldValue) ||
       !isFieldMultiSelectValue(fieldValue, selectOptionValues) ||
-      !isDefined(fieldValue)
+      !isDefined(fieldValue) ||
+      !isNonEmptyArray(fieldValue)
     );
   }
 
