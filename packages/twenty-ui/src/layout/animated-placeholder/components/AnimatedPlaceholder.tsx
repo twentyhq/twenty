@@ -1,12 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { BACKGROUND } from '@ui/layout/animated-placeholder/constants/Background';
+import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkBackground';
+import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
+import { MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/MovingImage';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { useEffect } from 'react';
-
-import { BACKGROUND } from '@/ui/layout/animated-placeholder/constants/Background';
-import { DARK_BACKGROUND } from '@/ui/layout/animated-placeholder/constants/DarkBackground';
-import { DARK_MOVING_IMAGE } from '@/ui/layout/animated-placeholder/constants/DarkMovingImage';
-import { MOVING_IMAGE } from '@/ui/layout/animated-placeholder/constants/MovingImage';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -43,7 +42,7 @@ interface AnimatedPlaceholderProps {
   type: AnimatedPlaceholderType;
 }
 
-const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
+export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   const theme = useTheme();
 
   const x = useMotionValue(window.innerWidth / 2);
@@ -106,5 +105,3 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
     </StyledContainer>
   );
 };
-
-export default AnimatedPlaceholder;
