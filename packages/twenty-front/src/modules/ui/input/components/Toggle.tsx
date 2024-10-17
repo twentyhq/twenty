@@ -38,7 +38,7 @@ const StyledCircle = styled(motion.div)<{
 
 export type ToggleProps = {
   value?: boolean;
-  onChange?: (value: boolean) => void;
+  onChange?: (value: boolean, e?: React.MouseEvent<HTMLDivElement>) => void;
   color?: string;
   toggleSize?: ToggleSize;
   className?: string;
@@ -60,11 +60,11 @@ export const Toggle = ({
     off: { x: 2 },
   };
 
-  const handleChange = () => {
+  const handleChange = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsOn(!isOn);
 
     if (isDefined(onChange)) {
-      onChange(!isOn);
+      onChange(!isOn, e);
     }
   };
 
@@ -80,7 +80,7 @@ export const Toggle = ({
 
   return (
     <StyledContainer
-      onClick={handleChange}
+      onClick={(e) => handleChange(e)}
       isOn={isOn}
       color={color}
       toggleSize={toggleSize}

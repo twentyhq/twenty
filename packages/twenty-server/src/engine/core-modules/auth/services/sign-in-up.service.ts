@@ -225,23 +225,45 @@ export class SignInUpService {
     email,
   }) {
     if (!workspacePersonalInviteToken && !workspaceInviteHash) {
-      throw new Error('No invite token or hash provided');
-    }
-
-    if (!workspacePersonalInviteToken && workspaceInviteHash) {
-      return (
-        (await this.workspaceRepository.findOneBy({
-          inviteHash: workspaceInviteHash,
-        })) ?? undefined
+      throw new AuthException(
+        'No invite token or hash provided',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
-    const appToken = await this.userWorkspaceService.validateInvitation(
-      workspacePersonalInviteToken,
-      email,
-    );
+    const workspace = await this.workspaceRepository.findOneBy({
+      inviteHash: workspaceInviteHash,
+    });
 
-    return appToken?.workspace;
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    if (!workspacePersonalInviteToken && !workspace.isPublicInviteLinkEnabled) {
+      throw new AuthException(
+        'Workspace does not allow public invites',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (workspacePersonalInviteToken && workspace.isPublicInviteLinkEnabled) {
+      try {
+        await this.userWorkspaceService.validateInvitation(
+          workspacePersonalInviteToken,
+          email,
+        );
+      } catch (err) {
+        throw new AuthException(
+          err.message,
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+    }
+
+    return workspace;
   }
 
   private async activateOnboardingForNewUser(

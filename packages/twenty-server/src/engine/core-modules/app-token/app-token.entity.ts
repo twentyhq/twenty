@@ -22,6 +22,7 @@ export enum AppTokenType {
   AuthorizationCode = 'AUTHORIZATION_CODE',
   PasswordResetToken = 'PASSWORD_RESET_TOKEN',
   InvitationToken = 'INVITATION_TOKEN',
+  OIDCCodeVerifier = 'OIDC_CODE_VERIFIER',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })

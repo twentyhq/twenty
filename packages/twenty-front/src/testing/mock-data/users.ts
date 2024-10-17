@@ -40,6 +40,7 @@ export const mockDefaultWorkspace: Workspace = {
   domainName: 'twenty.com',
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
+  isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.Active,
   featureFlags: [

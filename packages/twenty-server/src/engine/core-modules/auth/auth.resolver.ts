@@ -24,6 +24,11 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import {
+  GenerateJWTOutput,
+  GenerateJWTOutputWithAuthTokens,
+  GenerateJWTOutputWithSSOAUTH,
+} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -159,18 +164,41 @@ export class AuthResolver {
     return authorizedApp;
   }
 
-  @Mutation(() => AuthTokens)
+  @Mutation(() => GenerateJWTOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateJWT(
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
-  ): Promise<AuthTokens> {
-    const token = await this.tokenService.generateSwitchWorkspaceToken(
+  ): Promise<GenerateJWTOutputWithAuthTokens | GenerateJWTOutputWithSSOAUTH> {
+    const result = await this.tokenService.switchWorkspace(
       user,
       args.workspaceId,
     );
 
-    return token;
+    if (result.useSSOAuth) {
+      return {
+        success: true,
+        reason: 'WORKSPACE_USE_SSO_AUTH',
+        availableSSOIDPs: result.availableSSOIdentityProviders.map(
+          (identityProvider) => ({
+            ...identityProvider,
+            workspace: {
+              id: result.workspace.id,
+              displayName: result.workspace.displayName,
+            },
+          }),
+        ),
+      };
+    }
+
+    return {
+      success: true,
+      reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH',
+      authTokens: await this.tokenService.generateSwitchWorkspaceToken(
+        user,
+        result.workspace,
+      ),
+    };
   }
 
   @Mutation(() => AuthTokens)

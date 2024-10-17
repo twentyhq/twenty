@@ -19,6 +19,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 export enum WorkspaceActivationStatus {
   ONGOING_CREATION = 'ONGOING_CREATION',
@@ -92,6 +93,10 @@ export class Workspace {
   @Column({ default: true })
   allowImpersonation: boolean;
 
+  @Field()
+  @Column({ default: true })
+  isPublicInviteLinkEnabled: boolean;
+
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlagEntity[]>;
 
@@ -117,6 +122,12 @@ export class Workspace {
     (postgresCredentials) => postgresCredentials.workspace,
   )
   allPostgresCredentials: Relation<PostgresCredentials[]>;
+
+  @OneToMany(
+    () => WorkspaceSSOIdentityProvider,
+    (workspaceSSOIdentityProviders) => workspaceSSOIdentityProviders.workspace,
+  )
+  workspaceSSOIdentityProviders: Relation<WorkspaceSSOIdentityProvider[]>;
 
   @Field()
   @Column({ default: 1 })

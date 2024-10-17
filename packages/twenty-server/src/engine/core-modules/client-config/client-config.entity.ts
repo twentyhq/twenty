@@ -15,6 +15,9 @@ class AuthProviders {
 
   @Field(() => Boolean)
   microsoft: boolean;
+
+  @Field(() => Boolean)
+  sso: boolean;
 }
 
 @ObjectType()
