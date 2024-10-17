@@ -1,18 +1,19 @@
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
+import styled from '@emotion/styled';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 const ORDERED_STANDARD_OBJECTS = [
   'person',
   'company',
@@ -20,6 +21,16 @@ const ORDERED_STANDARD_OBJECTS = [
   'task',
   'note',
 ];
+
+const ObjectsMetaDataItemsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  flex: 1;
+  overflow-y: auto;
+`;
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
@@ -136,7 +147,9 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             onClick={() => toggleNavigationSection()}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
-        {isNavigationSectionOpen && renderObjectMetadataItems()}
+        <ObjectsMetaDataItemsWrapper>
+          {isNavigationSectionOpen && renderObjectMetadataItems()}
+        </ObjectsMetaDataItemsWrapper>
       </NavigationDrawerSection>
     )
   );

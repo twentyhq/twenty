@@ -9,10 +9,10 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
+import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
 export type NavigationDrawerProps = {
   children: ReactNode;
@@ -23,10 +23,8 @@ export type NavigationDrawerProps = {
 };
 
 const StyledAnimatedContainer = styled(motion.div)`
-max-height: 100vh;
-overflow: scroll;
-display: flex;
-justify-content: end;
+  max-height: 100vh;
+  overflow: hidden;
 `;
 
 const StyledContainer = styled.div<{
@@ -56,6 +54,8 @@ const StyledItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
+  overflow: hidden;
+  flex: 1;
 `;
 
 export const NavigationDrawer = ({
