@@ -1,0 +1,28 @@
+.button {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+}
+
+.button .separator {
+    margin: 0 4px;
+    color: #999;
+}
+
+.button .shortcut-helper {
+    color: #999; 
+
+//Variants for different states or themes 
+.button.variant1 .separator,
+.button.variant1 .shortcut-helper {
+    color: #666; 
+}
+
+.button.variant2 .separator,
+.button.variant2 .shortcut-helper {
+    color: #333; 
+}
