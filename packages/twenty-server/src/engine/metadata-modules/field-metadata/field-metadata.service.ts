@@ -29,7 +29,6 @@ import {
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
   RelationMetadataEntity,
@@ -76,7 +75,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -143,20 +141,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       // Generate options for rating fields
       if (fieldMetadataInput.type === FieldMetadataType.RATING) {
         fieldMetadataInput.options = generateRatingOptions();
-      }
-
-      if (fieldMetadataInput.type === FieldMetadataType.LINK) {
-        throw new FieldMetadataException(
-          '"Link" field types are being deprecated, please use Links type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      if (fieldMetadataInput.type === FieldMetadataType.EMAIL) {
-        throw new FieldMetadataException(
-          '"Email" field types are being deprecated, please use Emails type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
       }
 
       const fieldMetadataForCreate = {
@@ -408,9 +392,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const fieldMetadataForUpdate = {
         ...updatableFieldInput,
-        defaultValue: isDefined(updatableFieldInput.defaultValue)
-          ? updatableFieldInput.defaultValue
-          : existingFieldMetadata.defaultValue,
+        defaultValue:
+          updatableFieldInput.defaultValue !== undefined
+            ? updatableFieldInput.defaultValue
+            : existingFieldMetadata.defaultValue,
       };
 
       this.validateFieldMetadata<UpdateFieldInput>(

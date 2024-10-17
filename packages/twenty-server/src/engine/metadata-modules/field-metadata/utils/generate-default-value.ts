@@ -7,8 +7,6 @@ export function generateDefaultValue(
 ): FieldMetadataDefaultValue {
   switch (type) {
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
       return "''";
     case FieldMetadataType.EMAILS:
       return {
@@ -30,11 +28,6 @@ export function generateDefaultValue(
         addressPostcode: "''",
         addressLat: null,
         addressLng: null,
-      };
-    case FieldMetadataType.LINK:
-      return {
-        url: "''",
-        label: "''",
       };
     case FieldMetadataType.CURRENCY:
       return {

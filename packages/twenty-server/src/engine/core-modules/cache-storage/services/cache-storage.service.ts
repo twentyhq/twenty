@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { RedisCache } from 'cache-manager-redis-yet';
 
@@ -65,6 +65,31 @@ export class CacheStorageService {
 
   async flush() {
     return this.cache.reset();
+  }
+
+  async flushByPattern(scanPattern: string): Promise<void> {
+    if (!this.isRedisCache()) {
+      throw new Error('flushByPattern is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+    let cursor = 0;
+
+    do {
+      const result = await redisClient.scan(cursor, {
+        MATCH: scanPattern,
+        COUNT: 100,
+      });
+
+      const nextCursor = result.cursor;
+      const keys = result.keys;
+
+      if (keys.length > 0) {
+        await redisClient.del(keys);
+      }
+
+      cursor = nextCursor;
+    } while (cursor !== 0);
   }
 
   private isRedisCache() {

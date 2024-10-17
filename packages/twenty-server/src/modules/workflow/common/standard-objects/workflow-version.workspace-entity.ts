@@ -14,11 +14,10 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import {
-  WORKFLOW_RUN_STANDARD_FIELD_IDS,
-  WORKFLOW_VERSION_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
@@ -64,7 +63,7 @@ const WorkflowVersionStatusOptions = [
   labelSingular: 'Workflow Version',
   labelPlural: 'Workflow Versions',
   description: 'A workflow version',
-  icon: 'IconVersions',
+  icon: 'IconSettingsAutomation',
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceGate({
@@ -76,7 +75,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'The workflow version name',
-    icon: 'IconVersions',
+    icon: 'IconSettingsAutomation',
   })
   name: string;
 
@@ -139,14 +138,37 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   workflowId: string;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.runs,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Runs',
     description: 'Workflow runs linked to the version.',
-    icon: 'IconVersions',
+    icon: 'IconRun',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   runs: Relation<WorkflowRunWorkspaceEntity>;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.favorites,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Favorites',
+    description: 'Favorites linked to the workflow version',
+    icon: 'IconHeart',
+    inverseSideTarget: () => FavoriteWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  favorites: Relation<FavoriteWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.timelineActivities,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Timeline Activities',
+    description: 'Timeline activities linked to the version',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 }

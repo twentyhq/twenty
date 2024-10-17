@@ -70,7 +70,9 @@ export const RecordTable = ({
           <RecordTableEmptyState />
         ) : (
           <StyledTable className="entity-table-cell">
-            <RecordTableHeader />
+            <RecordTableHeader
+              objectMetadataNameSingular={objectNameSingular}
+            />
             <RecordTableBody />
           </StyledTable>
         )}

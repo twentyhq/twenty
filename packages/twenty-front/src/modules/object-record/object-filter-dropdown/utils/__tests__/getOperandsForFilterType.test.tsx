@@ -1,7 +1,7 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { getOperandsForFilterDefinition } from '../getOperandsForFilterType';
 
 describe('getOperandsForFilterType', () => {
@@ -34,10 +34,8 @@ describe('getOperandsForFilterType', () => {
 
   const testCases = [
     ['TEXT', [...containsOperands, ...emptyOperands]],
-    ['EMAIL', [...containsOperands, ...emptyOperands]],
     ['FULL_NAME', [...containsOperands, ...emptyOperands]],
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
-    ['LINK', [...containsOperands, ...emptyOperands]],
     ['LINKS', [...containsOperands, ...emptyOperands]],
     ['ACTOR', [...containsOperands, ...emptyOperands]],
     ['CURRENCY', [...numberOperands, ...emptyOperands]],
