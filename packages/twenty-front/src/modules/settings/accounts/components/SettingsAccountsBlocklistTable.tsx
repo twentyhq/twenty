@@ -1,11 +1,10 @@
-import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import styled from '@emotion/styled';
 
 type SettingsAccountsBlocklistTableProps = {
   blocklist: BlocklistItem[];
@@ -16,37 +15,23 @@ const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledTableHeader = styled(TableHeader)`
-  width: 100%;
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    white-space: pre;
-    margin-left: ${({ theme }) => theme.spacing(6)};
-  }
-`;
-
-const StyledTableBody = styled.tbody`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    max-width: 60%;
-  }
-`;
-
 export const SettingsAccountsBlocklistTable = ({
   blocklist,
   handleBlockedEmailRemove,
 }: SettingsAccountsBlocklistTableProps) => {
-  const theme = useTheme();
   return (
     <>
       {blocklist.length > 0 && (
         <StyledTable>
-          <TableRow gridAutoColumns={`1fr 1fr ${theme.spacing(16)}`}>
+          <TableRow
+            gridAutoColumns="200px 1fr 20px"
+            mobileGridAutoColumns="120px 1fr 20px"
+          >
             <TableHeader>Email/Domain</TableHeader>
-            <StyledTableHeader align={'right'}>
-              Added to blocklist
-            </StyledTableHeader>
+            <TableHeader>Added to blocklist</TableHeader>
             <TableHeader></TableHeader>
           </TableRow>
-          <StyledTableBody>
+          <TableBody>
             {blocklist.map((blocklistItem) => (
               <SettingsAccountsBlocklistTableRow
                 key={blocklistItem.id}
@@ -54,7 +39,7 @@ export const SettingsAccountsBlocklistTable = ({
                 onRemove={handleBlockedEmailRemove}
               />
             ))}
-          </StyledTableBody>
+          </TableBody>
         </StyledTable>
       )}
     </>
