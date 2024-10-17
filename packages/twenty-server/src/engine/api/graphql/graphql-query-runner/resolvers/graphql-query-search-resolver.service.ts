@@ -16,6 +16,7 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GraphqlQuerySearchResolverService
@@ -49,7 +50,7 @@ export class GraphqlQuerySearchResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
-    if (!args.searchInput) {
+    if (!isDefined(args.searchInput)) {
       return typeORMObjectRecordsParser.createConnection({
         objectRecords: [],
         objectName: objectMetadataItem.nameSingular,
@@ -79,9 +80,12 @@ export class GraphqlQuerySearchResolverService
     );
 
     const resultsWithTsVector = (await queryBuilderWithFilter
-      .andWhere(`"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`, {
-        searchTerms,
-      })
+      .andWhere(
+        searchTerms === ''
+          ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
+          : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`,
+        searchTerms === '' ? {} : { searchTerms },
+      )
       .orderBy(
         `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
         'DESC',
@@ -107,6 +111,9 @@ export class GraphqlQuerySearchResolverService
   }
 
   private formatSearchTerms(searchTerm: string) {
+    if (searchTerm === '') {
+      return '';
+    }
     const words = searchTerm.trim().split(/\s+/);
     const formattedWords = words.map((word) => {
       const escapedWord = word.replace(/[\\:'&|!()]/g, '\\$&');
