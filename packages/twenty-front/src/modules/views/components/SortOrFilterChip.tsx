@@ -42,6 +42,7 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
   padding: ${({ theme }) => theme.spacing(0.5) + ' ' + theme.spacing(2)};
   user-select: none;
   white-space: nowrap;
+  margin-left: 8px;
 
   max-height: ${({ theme }) => theme.spacing(4.5)};
 `;
