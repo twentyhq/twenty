@@ -60,9 +60,13 @@ describe('searchTimelineActivitiesResolver (e2e)', () => {
           expect(searchTimelineActivities).toHaveProperty('happensAt');
           expect(searchTimelineActivities).toHaveProperty('name');
           expect(searchTimelineActivities).toHaveProperty('properties');
-          expect(searchTimelineActivities).toHaveProperty('linkedRecordCachedName');
+          expect(searchTimelineActivities).toHaveProperty(
+            'linkedRecordCachedName',
+          );
           expect(searchTimelineActivities).toHaveProperty('linkedRecordId');
-          expect(searchTimelineActivities).toHaveProperty('linkedObjectMetadataId');
+          expect(searchTimelineActivities).toHaveProperty(
+            'linkedObjectMetadataId',
+          );
           expect(searchTimelineActivities).toHaveProperty('id');
           expect(searchTimelineActivities).toHaveProperty('createdAt');
           expect(searchTimelineActivities).toHaveProperty('updatedAt');

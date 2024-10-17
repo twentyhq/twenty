@@ -59,9 +59,15 @@ describe('searchMessageChannelsResolver (e2e)', () => {
           expect(searchMessageChannels).toHaveProperty('visibility');
           expect(searchMessageChannels).toHaveProperty('handle');
           expect(searchMessageChannels).toHaveProperty('type');
-          expect(searchMessageChannels).toHaveProperty('isContactAutoCreationEnabled');
-          expect(searchMessageChannels).toHaveProperty('contactAutoCreationPolicy');
-          expect(searchMessageChannels).toHaveProperty('excludeNonProfessionalEmails');
+          expect(searchMessageChannels).toHaveProperty(
+            'isContactAutoCreationEnabled',
+          );
+          expect(searchMessageChannels).toHaveProperty(
+            'contactAutoCreationPolicy',
+          );
+          expect(searchMessageChannels).toHaveProperty(
+            'excludeNonProfessionalEmails',
+          );
           expect(searchMessageChannels).toHaveProperty('excludeGroupEmails');
           expect(searchMessageChannels).toHaveProperty('isSyncEnabled');
           expect(searchMessageChannels).toHaveProperty('syncCursor');

@@ -51,14 +51,20 @@ describe('searchCalendarEventParticipantsResolver (e2e)', () => {
           expect(searchCalendarEventParticipants).toHaveProperty('handle');
           expect(searchCalendarEventParticipants).toHaveProperty('displayName');
           expect(searchCalendarEventParticipants).toHaveProperty('isOrganizer');
-          expect(searchCalendarEventParticipants).toHaveProperty('responseStatus');
+          expect(searchCalendarEventParticipants).toHaveProperty(
+            'responseStatus',
+          );
           expect(searchCalendarEventParticipants).toHaveProperty('id');
           expect(searchCalendarEventParticipants).toHaveProperty('createdAt');
           expect(searchCalendarEventParticipants).toHaveProperty('updatedAt');
           expect(searchCalendarEventParticipants).toHaveProperty('deletedAt');
-          expect(searchCalendarEventParticipants).toHaveProperty('calendarEventId');
+          expect(searchCalendarEventParticipants).toHaveProperty(
+            'calendarEventId',
+          );
           expect(searchCalendarEventParticipants).toHaveProperty('personId');
-          expect(searchCalendarEventParticipants).toHaveProperty('workspaceMemberId');
+          expect(searchCalendarEventParticipants).toHaveProperty(
+            'workspaceMemberId',
+          );
         }
       });
   });

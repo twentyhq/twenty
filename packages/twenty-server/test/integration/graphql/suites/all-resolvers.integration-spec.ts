@@ -185,8 +185,6 @@ describe('companies resolvers (integration)', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-    console.log(response);
-
     const updatedCompanies = response.body.data.updateCompanies;
 
     expect(updatedCompanies).toHaveLength(2);

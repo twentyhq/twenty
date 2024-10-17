@@ -45,14 +45,28 @@ describe('searchCalendarChannelEventAssociationsResolver (e2e)', () => {
         if (edges.length > 0) {
           const searchCalendarChannelEventAssociations = edges[0].node;
 
-          expect(searchCalendarChannelEventAssociations).toHaveProperty('eventExternalId');
-          expect(searchCalendarChannelEventAssociations).toHaveProperty('recurringEventExternalId');
+          expect(searchCalendarChannelEventAssociations).toHaveProperty(
+            'eventExternalId',
+          );
+          expect(searchCalendarChannelEventAssociations).toHaveProperty(
+            'recurringEventExternalId',
+          );
           expect(searchCalendarChannelEventAssociations).toHaveProperty('id');
-          expect(searchCalendarChannelEventAssociations).toHaveProperty('createdAt');
-          expect(searchCalendarChannelEventAssociations).toHaveProperty('updatedAt');
-          expect(searchCalendarChannelEventAssociations).toHaveProperty('deletedAt');
-          expect(searchCalendarChannelEventAssociations).toHaveProperty('calendarChannelId');
-          expect(searchCalendarChannelEventAssociations).toHaveProperty('calendarEventId');
+          expect(searchCalendarChannelEventAssociations).toHaveProperty(
+            'createdAt',
+          );
+          expect(searchCalendarChannelEventAssociations).toHaveProperty(
+            'updatedAt',
+          );
+          expect(searchCalendarChannelEventAssociations).toHaveProperty(
+            'deletedAt',
+          );
+          expect(searchCalendarChannelEventAssociations).toHaveProperty(
+            'calendarChannelId',
+          );
+          expect(searchCalendarChannelEventAssociations).toHaveProperty(
+            'calendarEventId',
+          );
         }
       });
   });

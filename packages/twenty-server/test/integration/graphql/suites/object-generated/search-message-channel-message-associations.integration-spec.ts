@@ -46,15 +46,31 @@ describe('searchMessageChannelMessageAssociationsResolver (e2e)', () => {
         if (edges.length > 0) {
           const searchMessageChannelMessageAssociations = edges[0].node;
 
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('messageExternalId');
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('messageThreadExternalId');
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('direction');
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'messageExternalId',
+          );
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'messageThreadExternalId',
+          );
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'direction',
+          );
           expect(searchMessageChannelMessageAssociations).toHaveProperty('id');
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('createdAt');
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('updatedAt');
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('deletedAt');
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('messageChannelId');
-          expect(searchMessageChannelMessageAssociations).toHaveProperty('messageId');
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'createdAt',
+          );
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'updatedAt',
+          );
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'deletedAt',
+          );
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'messageChannelId',
+          );
+          expect(searchMessageChannelMessageAssociations).toHaveProperty(
+            'messageId',
+          );
         }
       });
   });

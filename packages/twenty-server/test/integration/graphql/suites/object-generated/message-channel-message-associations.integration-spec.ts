@@ -46,14 +46,20 @@ describe('messageChannelMessageAssociationsResolver (e2e)', () => {
         if (edges.length > 0) {
           const messageChannelMessageAssociations = edges[0].node;
 
-          expect(messageChannelMessageAssociations).toHaveProperty('messageExternalId');
-          expect(messageChannelMessageAssociations).toHaveProperty('messageThreadExternalId');
+          expect(messageChannelMessageAssociations).toHaveProperty(
+            'messageExternalId',
+          );
+          expect(messageChannelMessageAssociations).toHaveProperty(
+            'messageThreadExternalId',
+          );
           expect(messageChannelMessageAssociations).toHaveProperty('direction');
           expect(messageChannelMessageAssociations).toHaveProperty('id');
           expect(messageChannelMessageAssociations).toHaveProperty('createdAt');
           expect(messageChannelMessageAssociations).toHaveProperty('updatedAt');
           expect(messageChannelMessageAssociations).toHaveProperty('deletedAt');
-          expect(messageChannelMessageAssociations).toHaveProperty('messageChannelId');
+          expect(messageChannelMessageAssociations).toHaveProperty(
+            'messageChannelId',
+          );
           expect(messageChannelMessageAssociations).toHaveProperty('messageId');
         }
       });
