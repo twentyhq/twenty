@@ -12,7 +12,7 @@ Please follow the following schema:
 
 ////////////////////////////
 
-Your turn 👇
+» 16-October-2024 by [chrisdadev13](https://oss.gg/chrisdadev13) » video Link: [video](https://dub.sh/raycast-twenty)
 
 ////////////////////////////
 
