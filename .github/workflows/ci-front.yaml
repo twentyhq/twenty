@@ -43,7 +43,7 @@ jobs:
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
   front-sb-test:
-    runs-on: ci-8-cores
+    runs-on: shipfox-8vcpu-ubuntu-2204
     needs: front-sb-build
     strategy:
       matrix:
@@ -68,7 +68,7 @@ jobs:
       - name: Run storybook tests
         run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
   front-sb-test-performance:
-    runs-on: ci-8-cores
+    runs-on: shipfox-8vcpu-ubuntu-2204
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
