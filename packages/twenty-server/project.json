@@ -16,7 +16,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false
@@ -162,7 +162,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx ts-node-no-deps -- ./scripts/generate-integration-tests/index.ts"
+          "nx ts-node-no-deps -- ./test/integration/graphql/codegen/index.ts"
         ],
         "parallel": false
       }
