@@ -26,7 +26,7 @@ const StyledEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
   text-align: center;
   width: 100%;
