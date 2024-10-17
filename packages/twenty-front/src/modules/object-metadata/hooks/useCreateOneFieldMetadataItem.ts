@@ -10,6 +10,7 @@ import {
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
+import { v4 } from 'uuid';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useCreateOneFieldMetadataItem = () => {
@@ -31,6 +32,15 @@ export const useCreateOneFieldMetadataItem = () => {
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      optimisticResponse: {
+        createOneField: {
+          ...input,
+          createdAt: new Date().toISOString(),
+          __typename: 'field',
+          id: v4(),
+          updatedAt: undefined,
+        },
+      },
     });
   };
 

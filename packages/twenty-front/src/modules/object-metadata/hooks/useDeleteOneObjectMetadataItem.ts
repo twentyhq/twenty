@@ -30,6 +30,12 @@ export const useDeleteOneObjectMetadataItem = () => {
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      optimisticResponse: {
+        deleteOneObject: {
+          id: idToDelete,
+          __typename: 'object',
+        } as any,
+      },
     });
   };
 
