@@ -7,6 +7,8 @@ import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destr
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 const COMPANY_1_ID = '777a8457-eb2d-40ac-a707-551b615b6987';
@@ -166,7 +168,85 @@ describe('companies resolvers (integration)', () => {
     expect(company).toHaveProperty('visaSponsorship');
   });
 
-  it('3. should delete many companies', async () => {
+  it('3. should update many companies', async () => {
+    const graphqlOperation = updateManyOperationFactory({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      gqlFields: COMPANY_GQL_FIELDS,
+      data: {
+        employees: 123,
+      },
+      filter: {
+        id: {
+          in: [COMPANY_1_ID, COMPANY_2_ID],
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    console.log(response);
+
+    const updatedCompanies = response.body.data.updateCompanies;
+
+    expect(updatedCompanies).toHaveLength(2);
+
+    updatedCompanies.forEach((company) => {
+      expect(company.employees).toEqual(123);
+    });
+  });
+
+  it('3b. should update one company', async () => {
+    const graphqlOperation = updateOneOperationFactory({
+      objectMetadataSingularName: 'company',
+      gqlFields: COMPANY_GQL_FIELDS,
+      data: {
+        employees: 122,
+      },
+      recordId: COMPANY_3_ID,
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    const updatedCompany = response.body.data.updateCompany;
+
+    expect(updatedCompany.employees).toEqual(122);
+  });
+
+  it('4. should find many companies with updated employees', async () => {
+    const graphqlOperation = findManyOperationFactory({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      gqlFields: COMPANY_GQL_FIELDS,
+      filter: {
+        employees: {
+          eq: 123,
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.companies.edges).toHaveLength(2);
+  });
+
+  it('4b. should find one company with updated employees', async () => {
+    const graphqlOperation = findOneOperationFactory({
+      objectMetadataSingularName: 'company',
+      gqlFields: COMPANY_GQL_FIELDS,
+      filter: {
+        employees: {
+          eq: 122,
+        },
+      },
+    });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    expect(response.body.data.company.employees).toEqual(122);
+  });
+
+  it('5. should delete many companies', async () => {
     const graphqlOperation = deleteManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -189,7 +269,7 @@ describe('companies resolvers (integration)', () => {
     });
   });
 
-  it('3b. should delete one company', async () => {
+  it('5b. should delete one company', async () => {
     const graphqlOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: COMPANY_GQL_FIELDS,
@@ -201,7 +281,7 @@ describe('companies resolvers (integration)', () => {
     expect(response.body.data.deleteCompany.deletedAt).toBeTruthy();
   });
 
-  it('4. should not find many companies anymore', async () => {
+  it('6. should not find many companies anymore', async () => {
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -218,7 +298,7 @@ describe('companies resolvers (integration)', () => {
     expect(findCompaniesResponse.body.data.companies.edges).toHaveLength(0);
   });
 
-  it('4b. should not find one company anymore', async () => {
+  it('6b. should not find one company anymore', async () => {
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: COMPANY_GQL_FIELDS,
@@ -234,7 +314,7 @@ describe('companies resolvers (integration)', () => {
     expect(response.body.data.company).toBeNull();
   });
 
-  it('5. should find many deleted companies with deletedAt filter', async () => {
+  it('7. should find many deleted companies with deletedAt filter', async () => {
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -256,7 +336,7 @@ describe('companies resolvers (integration)', () => {
     expect(response.body.data.companies.edges).toHaveLength(2);
   });
 
-  it('5b. should find one deleted company with deletedAt filter', async () => {
+  it('7b. should find one deleted company with deletedAt filter', async () => {
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: COMPANY_GQL_FIELDS,
@@ -277,7 +357,7 @@ describe('companies resolvers (integration)', () => {
     expect(response.body.data.company.id).toEqual(COMPANY_3_ID);
   });
 
-  it('6. should destroy many companies', async () => {
+  it('8. should destroy many companies', async () => {
     const graphqlOperation = destroyManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -294,7 +374,7 @@ describe('companies resolvers (integration)', () => {
     expect(response.body.data.destroyCompanies).toHaveLength(2);
   });
 
-  it('6b. should destroy one company', async () => {
+  it('8b. should destroy one company', async () => {
     const graphqlOperation = destroyOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: COMPANY_GQL_FIELDS,
@@ -307,7 +387,7 @@ describe('companies resolvers (integration)', () => {
     expect(destroyCompanyResponse.body.data.destroyCompany).toBeTruthy();
   });
 
-  it('7. should not find many companies anymore', async () => {
+  it('9. should not find many companies anymore', async () => {
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -329,7 +409,7 @@ describe('companies resolvers (integration)', () => {
     expect(response.body.data.companies.edges).toHaveLength(0);
   });
 
-  it('7b. should not find one company anymore', async () => {
+  it('9b. should not find one company anymore', async () => {
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'company',
       gqlFields: COMPANY_GQL_FIELDS,
