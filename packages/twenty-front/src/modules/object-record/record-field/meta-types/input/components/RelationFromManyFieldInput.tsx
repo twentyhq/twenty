@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 
-import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
@@ -54,7 +53,6 @@ export const RelationFromManyFieldInput = ({
   return (
     <>
       <RelationPickerScope relationPickerScopeId={relationPickerScopeId}>
-        <ObjectMetadataItemsRelationPickerEffect />
         <RelationFromManyFieldInputMultiRecordsEffect />
         <MultiRecordSelect
           onSubmit={handleSubmit}

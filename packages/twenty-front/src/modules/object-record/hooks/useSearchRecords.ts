@@ -13,10 +13,11 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier &
-  RecordGqlOperationVariables & {
+  Pick<RecordGqlOperationVariables, 'filter' | 'limit'> & {
     onError?: (error?: Error) => void;
     skip?: boolean;
     recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -29,6 +30,7 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
   searchInput,
   limit,
   skip,
+  filter,
   recordGqlFields,
   fetchPolicy,
 }: UseSearchRecordsParams) => {
@@ -45,10 +47,14 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
   const { data, loading, error, previousData } =
     useQuery<RecordGqlOperationSearchResult>(searchRecordsQuery, {
       skip:
-        skip || !objectMetadataItem || !currentWorkspaceMember || !searchInput,
+        skip ||
+        !objectMetadataItem ||
+        !currentWorkspaceMember ||
+        !isDefined(searchInput),
       variables: {
         search: searchInput,
         limit: limit,
+        filter: filter,
       },
       fetchPolicy: fetchPolicy,
       onError: (error) => {

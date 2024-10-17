@@ -11,6 +11,7 @@ export const GotoHotkeys = () => {
 
   return nonSystemActiveObjectMetadataItems.map((objectMetadataItem) => (
     <GoToHotkeyItemEffect
+      key={`go-to-hokey-item-${objectMetadataItem.id}`}
       hotkey={objectMetadataItem.namePlural[0]}
       pathToNavigateTo={`/objects/${objectMetadataItem.namePlural}`}
     />

@@ -1,4 +1,3 @@
-import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import {
   SingleEntitySelectMenuItems,
   SingleEntitySelectMenuItemsProps,
@@ -65,9 +64,6 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
 
   return (
     <>
-      <ObjectMetadataItemsRelationPickerEffect
-        relationPickerScopeId={relationPickerScopeId}
-      />
       <DropdownMenuSearchInput onChange={handleSearchFilterChange} autoFocus />
       <DropdownMenuSeparator />
       <SingleEntitySelectMenuItems

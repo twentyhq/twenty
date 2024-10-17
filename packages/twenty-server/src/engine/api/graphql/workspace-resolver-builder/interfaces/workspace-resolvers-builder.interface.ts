@@ -48,8 +48,11 @@ export interface FindDuplicatesResolverArgs<
   data?: Data[];
 }
 
-export interface SearchResolverArgs {
+export interface SearchResolverArgs<
+  Filter extends RecordFilter = RecordFilter,
+> {
   searchInput?: string;
+  filter?: Filter;
   limit?: number;
 }
 

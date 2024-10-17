@@ -15,12 +15,14 @@ export const generateSearchRecordsQuery = ({
   computeReferences,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  objectMetadataItems: ObjectMetadataItem[]; // TODO - what is this used for?
+  objectMetadataItems: ObjectMetadataItem[];
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
 }) => gql`
-    query Search${capitalize(objectMetadataItem.namePlural)}($search: String, $limit: Int) {
-  ${getSearchRecordsQueryResponseField(objectMetadataItem.namePlural)}(searchInput: $search, limit: $limit){
+    query Search${capitalize(objectMetadataItem.namePlural)}($search: String, $limit: Int, $filter: ${capitalize(
+      objectMetadataItem.nameSingular,
+    )}FilterInput) {
+  ${getSearchRecordsQueryResponseField(objectMetadataItem.namePlural)}(searchInput: $search, limit: $limit, filter: $filter){
     edges {
       node ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
