@@ -31,12 +31,12 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.operation,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.ARRAY,
     label: 'Operation',
     description: 'Webhook operation',
     icon: 'IconCheckbox',
   })
-  operation: string;
+  operations: string[];
 
   @WorkspaceField({
     standardId: WEBHOOK_STANDARD_FIELD_IDS.description,

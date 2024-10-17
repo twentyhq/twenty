@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconTrash } from 'twenty-ui';
+import { H2Title, IconPlus, IconTrash } from 'twenty-ui';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -16,6 +16,7 @@ import { SettingsDevelopersWebhookUsageGraphEffect } from '@/settings/developers
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -28,6 +29,11 @@ const StyledFilterRow = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledAddOperationButton = styled(Button)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDevelopersWebhooksDetail = () => {
@@ -37,11 +43,10 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
     useState(false);
-
   const [description, setDescription] = useState<string>('');
-  const [operationObjectSingularName, setOperationObjectSingularName] =
-    useState<string>('');
-  const [operationAction, setOperationAction] = useState('');
+  const [operations, setOperations] = useState<
+    Array<{ object: string; action: string }>
+  >([]);
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const { record: webhookData } = useFindOneRecord({
@@ -49,8 +54,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
     objectRecordId: webhookId,
     onCompleted: (data) => {
       setDescription(data?.description ?? '');
-      setOperationObjectSingularName(data?.operation.split('.')[0] ?? '');
-      setOperationAction(data?.operation.split('.')[1] ?? '');
+      setOperations(
+        data?.operations.map((op: string) => {
+          const [object, action] = op.split('.');
+          return { object, action };
+        }) ?? [],
+      );
       setIsDirty(false);
     },
   });
@@ -85,11 +94,33 @@ export const SettingsDevelopersWebhooksDetail = () => {
     await updateOneRecord({
       idToUpdate: webhookId,
       updateOneRecordInput: {
-        operation: `${operationObjectSingularName}.${operationAction}`,
+        operations: operations.map((op) => `${op.object}.${op.action}`),
         description: description,
       },
     });
     navigate(developerPath);
+  };
+
+  const addOperation = () => {
+    setOperations([...operations, { object: '*', action: '*' }]);
+    setIsDirty(true);
+  };
+
+  const updateOperation = (
+    index: number,
+    field: 'object' | 'action',
+    value: string,
+  ) => {
+    const newOperations = [...operations];
+    newOperations[index][field] = value;
+    setOperations(newOperations);
+    setIsDirty(true);
+  };
+
+  const removeOperation = (index: number) => {
+    const newOperations = operations.filter((_, i) => i !== index);
+    setOperations(newOperations);
+    setIsDirty(true);
   };
 
   if (!webhookData?.targetUrl) {
@@ -104,10 +135,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
           children: 'Workspace',
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        {
-          children: 'Developers',
-          href: developerPath,
-        },
+        { children: 'Developers', href: developerPath },
         { children: 'Webhook' },
       ]}
       actionButton={
@@ -148,43 +176,50 @@ export const SettingsDevelopersWebhooksDetail = () => {
         <Section>
           <H2Title
             title="Filters"
-            description="Select the event you wish to send to this endpoint"
+            description="Select the events you wish to send to this endpoint"
           />
-          <StyledFilterRow>
-            <Select
-              fullWidth
-              dropdownId="object-webhook-type-select"
-              value={operationObjectSingularName}
-              onChange={(objectSingularName) => {
-                setIsDirty(true);
-                setOperationObjectSingularName(objectSingularName);
-              }}
-              options={fieldTypeOptions}
-            />
-            <Select
-              fullWidth
-              dropdownId="operation-webhook-type-select"
-              value={operationAction}
-              onChange={(operationAction) => {
-                setIsDirty(true);
-                setOperationAction(operationAction);
-              }}
-              options={[
-                { value: '*', label: 'All Actions' },
-                { value: 'create', label: 'Create' },
-                { value: 'update', label: 'Update' },
-                { value: 'delete', label: 'Delete' },
-              ]}
-            />
-          </StyledFilterRow>
+          {operations.map((operation, index) => (
+            <StyledFilterRow key={index}>
+              <Select
+                fullWidth
+                dropdownId={`object-webhook-type-select-${index}`}
+                value={operation.object}
+                onChange={(object) => updateOperation(index, 'object', object)}
+                options={fieldTypeOptions}
+              />
+              <Select
+                fullWidth
+                dropdownId={`operation-webhook-type-select-${index}`}
+                value={operation.action}
+                onChange={(action) => updateOperation(index, 'action', action)}
+                options={[
+                  { value: '*', label: 'All Actions' },
+                  { value: 'create', label: 'Create' },
+                  { value: 'update', label: 'Update' },
+                  { value: 'delete', label: 'Delete' },
+                ]}
+              />
+
+              <IconButton
+                onClick={() => removeOperation(index)}
+                variant="tertiary"
+                size="medium"
+                Icon={IconTrash}
+              />
+            </StyledFilterRow>
+          ))}
+          <StyledAddOperationButton
+            variant="tertiary"
+            title="Add Operation"
+            Icon={IconPlus}
+            onClick={addOperation}
+          />
         </Section>
-        {isAnalyticsV2Enabled ? (
+        {isAnalyticsV2Enabled && (
           <>
             <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
             <SettingsDeveloppersWebhookUsageGraph />
           </>
-        ) : (
-          <></>
         )}
         <Section>
           <H2Title title="Danger zone" description="Delete this integration" />

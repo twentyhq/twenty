@@ -18,10 +18,10 @@ export const SettingsDevelopersWebhooksNew = () => {
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState<{
     targetUrl: string;
-    operation: string;
+    operations: string[];
   }>({
     targetUrl: '',
-    operation: '*.*',
+    operations: ['*.*'],
   });
   const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
 
