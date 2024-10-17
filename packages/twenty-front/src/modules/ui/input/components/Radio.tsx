@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import * as React from 'react';
 import { RGBA } from 'twenty-ui';
 
-import { v4 } from 'uuid';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -134,7 +133,7 @@ export const Radio = ({
     onCheckedChange?.(event.target.checked);
   };
 
-  const optionId = v4();
+  const optionId = React.useId();
 
   return (
     <StyledContainer className={className} labelPosition={labelPosition}>

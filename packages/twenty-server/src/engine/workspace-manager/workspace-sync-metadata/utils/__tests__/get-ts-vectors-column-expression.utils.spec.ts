@@ -1,5 +1,8 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 
 const nameTextField = { name: 'name', type: FieldMetadataType.TEXT };
 const nameFullNameField = {
@@ -63,19 +66,21 @@ jest.mock(
 
 describe('getTsVectorColumnExpressionFromFields', () => {
   it('should generate correct expression for simple text field', () => {
-    const fields = [nameTextField];
+    const fields = [nameTextField] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
     expect(result).toContain("to_tsvector('simple', COALESCE(\"name\", ''))");
   });
 
   it('should handle multiple fields', () => {
-    const fields = [nameFullNameField, jobTitleTextField, emailsEmailsField];
+    const fields = [
+      nameFullNameField,
+      jobTitleTextField,
+      emailsEmailsField,
+    ] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
     const expected = `
-    CASE 
-      WHEN "deletedAt" IS NULL THEN 
-        to_tsvector('simple', COALESCE("nameFirstName", '') || ' ' || COALESCE("nameLastName", '') || ' ' || COALESCE("jobTitle", '') || ' ' || 
+    to_tsvector('simple', COALESCE("nameFirstName", '') || ' ' || COALESCE("nameLastName", '') || ' ' || COALESCE("jobTitle", '') || ' ' || 
       COALESCE(
         replace(
           "emailsPrimaryEmail",
@@ -85,19 +90,8 @@ describe('getTsVectorColumnExpressionFromFields', () => {
         ''
       )
     )
-      ELSE NULL
-    END
   `.trim();
 
     expect(result.trim()).toBe(expected);
-  });
-
-  it('should include CASE statement for handling deletedAt', () => {
-    const fields = [nameTextField];
-    const result = getTsVectorColumnExpressionFromFields(fields);
-
-    expect(result).toContain('CASE');
-    expect(result).toContain('WHEN "deletedAt" IS NULL THEN');
-    expect(result).toContain('ELSE NULL');
   });
 });

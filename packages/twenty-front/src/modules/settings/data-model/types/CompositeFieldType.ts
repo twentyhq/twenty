@@ -5,7 +5,6 @@ import { PickLiteral } from '~/types/PickLiteral';
 export const COMPOSITE_FIELD_TYPES = [
   'CURRENCY',
   'EMAILS',
-  'LINK',
   'LINKS',
   'ADDRESS',
   'PHONES',

@@ -104,20 +104,6 @@ const fieldUuidMock = {
   defaultValue: null,
 };
 
-const fieldPhoneMock = {
-  name: 'fieldPhone',
-  type: FieldMetadataType.PHONE,
-  isNullable: true,
-  defaultValue: null,
-};
-
-const fieldEmailMock = {
-  name: 'fieldEmail',
-  type: FieldMetadataType.EMAIL,
-  isNullable: true,
-  defaultValue: null,
-};
-
 const fieldDateTimeMock = {
   name: 'fieldDateTime',
   type: FieldMetadataType.DATE_TIME,
@@ -253,9 +239,7 @@ const fieldPhonesMock = {
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
-  fieldPhoneMock,
   fieldPhonesMock,
-  fieldEmailMock,
   fieldEmailsMock,
   fieldDateTimeMock,
   fieldDateMock,

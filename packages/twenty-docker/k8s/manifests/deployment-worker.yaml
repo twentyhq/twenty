@@ -40,10 +40,8 @@ spec:
               value: "bull-mq"
             - name: "CACHE_STORAGE_TYPE"
               value: "redis"
-            - name: "REDIS_HOST"
-              value: "twentycrm-redis.twentycrm.svc.cluster.local"
-            - name: "REDIS_PORT"
-              value: 6379
+            - name: "REDIS_URL"
+              value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
             - name: ACCESS_TOKEN_SECRET
               valueFrom:
                 secretKeyRef:

@@ -56,11 +56,8 @@ const getFieldProperties = (
     case FieldMetadataType.UUID:
       return { type: 'string', format: 'uuid' };
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.PHONE:
     case FieldMetadataType.RICH_TEXT:
       return { type: 'string' };
-    case FieldMetadataType.EMAIL:
-      return { type: 'string', format: 'email' };
     case FieldMetadataType.DATE_TIME:
       return { type: 'string', format: 'date-time' };
     case FieldMetadataType.DATE:
@@ -139,7 +136,6 @@ const getSchemaComponentsProperties = ({
           enum: field.options.map((option: { value: string }) => option.value),
         };
         break;
-      case FieldMetadataType.LINK:
       case FieldMetadataType.LINKS:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { ObjectFilterDropdownScopeInternalContext } from './scope-internal-context/ObjectFilterDropdownScopeInternalContext';
 
 type ObjectFilterDropdownScopeProps = {
@@ -12,10 +13,14 @@ export const ObjectFilterDropdownScope = ({
   filterScopeId,
 }: ObjectFilterDropdownScopeProps) => {
   return (
-    <ObjectFilterDropdownScopeInternalContext.Provider
-      value={{ scopeId: filterScopeId }}
+    <ObjectFilterDropdownComponentInstanceContext.Provider
+      value={{ instanceId: filterScopeId }}
     >
-      {children}
-    </ObjectFilterDropdownScopeInternalContext.Provider>
+      <ObjectFilterDropdownScopeInternalContext.Provider
+        value={{ scopeId: filterScopeId }}
+      >
+        {children}
+      </ObjectFilterDropdownScopeInternalContext.Provider>
+    </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };
