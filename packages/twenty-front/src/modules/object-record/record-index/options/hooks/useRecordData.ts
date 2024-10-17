@@ -99,8 +99,7 @@ export const useRecordData = ({
     objectMetadataItem?.fields ?? [],
   );
 
-  const selectedRecordIds = contextStoreTargetedRecords.selectedRecordIds;
-  const excludedRecordIds = contextStoreTargetedRecords.excludedRecordIds;
+  const { selectedRecordIds, excludedRecordIds } = contextStoreTargetedRecords;
 
   const {
     findManyRecords,
