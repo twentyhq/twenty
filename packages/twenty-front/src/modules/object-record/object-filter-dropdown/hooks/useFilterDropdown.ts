@@ -7,6 +7,7 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ObjectFilterDropdownScopeInternalContext } from '../scopes/scope-internal-context/ObjectFilterDropdownScopeInternalContext';
 import { Filter } from '../types/Filter';
 
@@ -32,11 +33,18 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     onFilterSelectState,
   } = useFilterDropdownStates(scopeId);
 
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
+
   const selectFilter = useRecoilCallback(
     ({ set, snapshot }) =>
       (filter: Filter | null) => {
         set(selectedFilterState, filter);
         const onFilterSelect = getSnapshotValue(snapshot, onFilterSelectState);
+
+        // TODO: IMPORTANT - Figure out correct way to refresh view after advanced view filter change
+        upsertCombinedViewFilter({
+          ...(filter as any),
+        });
 
         onFilterSelect?.(filter);
       },

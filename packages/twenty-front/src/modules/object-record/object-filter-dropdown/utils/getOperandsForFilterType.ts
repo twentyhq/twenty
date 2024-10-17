@@ -3,7 +3,7 @@ import { isActorSourceCompositeFilter } from '@/object-record/object-filter-drop
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export const getOperandsForFilterDefinition = (
-  filterDefinition: FilterDefinition,
+  filterDefinition: Pick<FilterDefinition, 'type' | 'compositeFieldName'>,
 ): ViewFilterOperand[] => {
   const emptyOperands = [
     ViewFilterOperand.IsEmpty,

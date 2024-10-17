@@ -15,7 +15,13 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useState } from 'react';
 import { IconApps, IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
 
-export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
+interface ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps {
+  onSelectField?: (filterDefinition: FilterDefinition) => void;
+}
+
+export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
+  onSelectField,
+}: ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps) => {
   const [searchText] = useState('');
 
   const { getIcon } = useIcons();
@@ -51,6 +57,10 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
 
   const handleSelectFilter = (definition: FilterDefinition | null) => {
     if (definition !== null) {
+      if (onSelectField !== undefined) {
+        onSelectField(definition);
+      }
+
       setFilterDefinitionUsedInDropdown(definition);
 
       setSelectedOperandInDropdown(
