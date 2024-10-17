@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
@@ -14,16 +14,17 @@ export type SettingsDataModelObjectSummaryProps = {
 const StyledObjectSummary = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: space-between;
 `;
 
-const StyledEllipsisParagraph = styled.p`
-  max-width: 80px;      
-  white-space: nowrap;  
-  overflow: hidden;     
-  text-overflow: ellipsis; 
-  margin: 0;
+const StyledTextContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  max-width: 60%;
+`;
+
+const StyledIconContainer = styled.div`
+  flex-shrink: 0;
 `;
 
 export const SettingsDataModelObjectSummary = ({
@@ -38,9 +39,12 @@ export const SettingsDataModelObjectSummary = ({
 
   return (
     <StyledObjectSummary className={className}>
-      <StyledEllipsisParagraph>
-        {objectMetadataItem.labelPlural}
-      </StyledEllipsisParagraph>
+      <StyledTextContainer>
+        <StyledIconContainer>
+          <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
+        </StyledIconContainer>
+        <OverflowingTextWithTooltip text={objectMetadataItem.labelPlural} />
+      </StyledTextContainer>
       <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
     </StyledObjectSummary>
   );
