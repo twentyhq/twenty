@@ -1,12 +1,14 @@
-import { useRecoilValue } from 'recoil';
-import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
-import styled from '@emotion/styled';
-import { MainButton } from '@/ui/input/button/components/MainButton';
-import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
+/* @license Enterprise */
+
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
+import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
+import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

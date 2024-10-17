@@ -1,9 +1,11 @@
+/* @license Enterprise */
+
+import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/components/SettingsSecuritySSORowDropdownMenu';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
 import { Status } from '@/ui/display/status/components/Status';
 import styled from '@emotion/styled';
 import { UnwrapRecoilValue } from 'recoil';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
-import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/components/SettingsSecuritySSORowDropdownMenu';
-import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;

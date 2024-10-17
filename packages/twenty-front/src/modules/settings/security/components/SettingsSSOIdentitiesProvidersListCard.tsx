@@ -1,17 +1,19 @@
+/* @license Enterprise */
+
 import { useNavigate } from 'react-router-dom';
 
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { SettingsListCard } from '../../components/SettingsListCard';
-import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
-import { useRecoilState } from 'recoil';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { SettingsSSOIdentitiesProvidersListEmptyStateCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListEmptyStateCard';
-import { guessSSOIdentityProviderIconByUrl } from '../utils/guessSSOIdentityProviderIconByUrl';
-import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
+import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilState } from 'recoil';
+import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
+import { SettingsListCard } from '../../components/SettingsListCard';
+import { guessSSOIdentityProviderIconByUrl } from '../utils/guessSSOIdentityProviderIconByUrl';
 
 export const SettingsSSOIdentitiesProvidersListCard = () => {
   const navigate = useNavigate();

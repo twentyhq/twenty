@@ -1,15 +1,17 @@
-import { Controller, useFormContext } from 'react-hook-form';
-import { Section } from '@/ui/layout/section/components/Section';
-import { H2Title, IconComponent, IconKey } from 'twenty-ui';
-import { TextInput } from '@/ui/input/components/TextInput';
+/* @license Enterprise */
+
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
 import { SettingsSSOOIDCForm } from '@/settings/security/components/SettingsSSOOIDCForm';
 import { SettingsSSOSAMLForm } from '@/settings/security/components/SettingsSSOSAMLForm';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import styled from '@emotion/styled';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { IdpType } from '~/generated/graphql';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { Section } from '@/ui/layout/section/components/Section';
+import styled from '@emotion/styled';
 import { ReactElement } from 'react';
-import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
+import { Controller, useFormContext } from 'react-hook-form';
+import { H2Title, IconComponent, IconKey } from 'twenty-ui';
+import { IdpType } from '~/generated/graphql';
 
 const StyledInputsContainer = styled.div`
   display: grid;

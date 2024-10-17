@@ -1,3 +1,8 @@
+
+This project is mostly licensed under the GNU General Public License (GPL) as described below. However, certain files within this project are licensed under a different commercial license. These files are clearly marked with the following comment at the top of the file: /* @license Enterprise */
+Files with this comment are not licensed under the aGPL v3, but instead are subject to the commercial license terms defined later in this file. 
+
+
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
@@ -659,3 +664,47 @@ specific requirements.
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
+
+
+
+------------------------------------
+
+
+
+                    The Twenty.com Commercial License (the “Commercial License”)
+                    Copyright (c) 2023-present Twenty.com, PBC
+
+With regard to Twenty's Software:
+
+This part of the software and associated documentation files (the "Software") may only be
+used in production, if you (and any entity that you represent) have agreed to,
+and are in compliance with, the Terms available
+at https://twenty.com/legal/terms, or other agreements governing
+the use of the Software, as mutually agreed by you and Twenty.com, PBC ("Twenty"),
+and otherwise have a valid Twenty Enterprise Edition subscription
+for the correct number of hosts and seats as defined in the Commercial Terms.
+Subject to the foregoing sentence,
+you are free to modify this Software and publish patches to the Software. You agree
+that Twenty and/or its licensors (as applicable) retain all right, title and interest in
+and to all such modifications and/or patches, and all such modifications and/or
+patches may only be used, copied, modified, displayed, distributed, or otherwise
+exploited with a valid Commercial Subscription for the correct number of hosts and seats.
+Notwithstanding the foregoing, you may copy and modify the Software for development
+and testing purposes, without requiring a subscription. You agree that Twenty.Com and/or
+its licensors (as applicable) retain all right, title and interest in and to all such
+modifications. You are not granted any other rights beyond what is expressly stated herein.
+Subject to the foregoing, it is forbidden to copy, merge, publish, distribute, sublicense,
+and/or sell the Software.
+
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+For all third party components incorporated into the Twenty Software, those
+components are licensed under the original license provided by the owner of the
+applicable component.

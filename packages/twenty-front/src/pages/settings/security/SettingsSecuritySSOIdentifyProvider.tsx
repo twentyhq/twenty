@@ -1,18 +1,20 @@
+/* @license Enterprise */
+
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import SettingsSSOIdentitiesProvidersForm from '@/settings/security/components/SettingsSSOIdentitiesProvidersForm';
+import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
+import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/schemas/SSOIdentityProviderSchema';
+import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { defaultIdpValues } from '@/settings/security/utils/SSOIdentityProviderDefaultValues';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { useNavigate } from 'react-router-dom';
-import SettingsSSOIdentitiesProvidersForm from '@/settings/security/components/SettingsSSOIdentitiesProvidersForm';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
-import { useForm, FormProvider } from 'react-hook-form';
-import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/schemas/SSOIdentityProviderSchema';
-import { defaultIdpValues } from '@/settings/security/utils/SSOIdentityProviderDefaultValues';
 import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
   const navigate = useNavigate();

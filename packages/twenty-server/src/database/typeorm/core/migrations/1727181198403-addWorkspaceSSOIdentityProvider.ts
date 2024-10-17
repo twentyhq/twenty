@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddWorkspaceSSOIdentityProvider1727181198403

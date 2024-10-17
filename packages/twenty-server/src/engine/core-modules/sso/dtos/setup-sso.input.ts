@@ -1,6 +1,8 @@
+/* @license Enterprise */
+
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsString, IsUrl, IsOptional, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUrl, IsUUID } from 'class-validator';
 
 import { IsX509Certificate } from 'src/engine/core-modules/sso/dtos/validators/x509.validator';
 

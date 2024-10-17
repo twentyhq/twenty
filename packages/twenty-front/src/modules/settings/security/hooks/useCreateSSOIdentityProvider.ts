@@ -1,3 +1,6 @@
+/* @license Enterprise */
+
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { useSetRecoilState } from 'recoil';
 import {
   CreateOidcIdentityProviderMutationVariables,
@@ -5,7 +8,6 @@ import {
   useCreateOidcIdentityProviderMutation,
   useCreateSamlIdentityProviderMutation,
 } from '~/generated/graphql';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 
 export const useCreateSSOIdentityProvider = () => {
   const [createOidcIdentityProviderMutation] =

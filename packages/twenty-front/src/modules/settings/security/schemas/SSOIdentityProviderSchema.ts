@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { z } from 'zod';
 
 export const SSOIdentitiesProvidersOIDCParamsSchema = z

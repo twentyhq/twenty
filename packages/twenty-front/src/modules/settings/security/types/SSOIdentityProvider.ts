@@ -1,6 +1,8 @@
-import { IdpType, SsoIdentityProviderStatus } from '~/generated/graphql';
-import { z } from 'zod';
+/* @license Enterprise */
+
 import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/schemas/SSOIdentityProviderSchema';
+import { z } from 'zod';
+import { IdpType, SsoIdentityProviderStatus } from '~/generated/graphql';
 
 export type SSOIdentityProvider = {
   __typename: 'SSOIdentityProvider';

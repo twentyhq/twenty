@@ -1,7 +1,5 @@
-/**
- * @license
- * Enterprise License
- */
+/* @license Enterprise */
+
 import {
   Controller,
   Get,
@@ -17,24 +15,24 @@ import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
-import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
-import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.guard';
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
+import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.guard';
+import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   IdentityProviderType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)

@@ -1,19 +1,21 @@
-import { IconDotsVertical, IconTrash, IconArchive } from 'twenty-ui';
+/* @license Enterprise */
 
+import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui';
+
+import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
+import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
-import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
-import { isDefined } from '~/utils/isDefined';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { UnwrapRecoilValue } from 'recoil';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type SettingsSecuritySSORowDropdownMenuProps = {
   SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];
