@@ -2,7 +2,7 @@ import { Theme } from '@emotion/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { ReactNode, useContext, useState } from 'react';
-import { ThemeContext } from 'twenty-ui';
+import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 const StyledTbody = styled.tbody<{
@@ -27,13 +27,15 @@ const StyledTbody = styled.tbody<{
       z-index: 5;
       transition: 0.3s ease;
 
-      &[data-testid='editable-cell-display-mode'] {
-        [data-testid='tooltip'] {
-          display: none;
-        }
+      @media (max-width: ${MOBILE_VIEWPORT}px) {
+        &[data-testid='editable-cell-display-mode'] {
+          [data-testid='tooltip'] {
+            display: none;
+          }
 
-        [data-testid='chip'] {
-          gap: 0;
+          [data-testid='chip'] {
+            gap: 0;
+          }
         }
       }
 
