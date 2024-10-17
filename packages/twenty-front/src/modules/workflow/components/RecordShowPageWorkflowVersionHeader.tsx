@@ -48,7 +48,8 @@ export const RecordShowPageWorkflowVersionHeader = ({
     skip: !isDefined(workflowVersion),
     limit: 1,
   });
-  const draftWorkflowVersion = draftWorkflowVersions[0];
+  const draftWorkflowVersion: WorkflowVersion | undefined =
+    draftWorkflowVersions[0];
 
   const showUseAsDraftButton =
     !loadingDraftWorkflowVersions &&
