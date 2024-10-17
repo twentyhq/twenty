@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconTrash } from 'twenty-ui';
 
+import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -23,6 +24,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
 
 const StyledFilterRow = styled.div`
   display: flex;
@@ -32,6 +34,8 @@ const StyledFilterRow = styled.div`
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
+
   const navigate = useNavigate();
   const { webhookId = '' } = useParams();
 
@@ -178,7 +182,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
             />
           </StyledFilterRow>
         </Section>
-        {isAnalyticsV2Enabled ? (
+        {isAnalyticsEnabled && isAnalyticsV2Enabled ? (
           <>
             <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
             <SettingsDevelopersWebhookUsageGraph webhookId={webhookId} />

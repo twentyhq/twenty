@@ -36,13 +36,3 @@ export const formatToHumanReadableTime = (
     timeZone: timeZone,
   }).format(parsedJSDate);
 };
-
-export const formatToHumanReadableMonthDateTime = (
-  date: Date | string,
-  timeZone: string,
-) => {
-  const formattedMonth = formatToHumanReadableMonth(date, timeZone);
-  const formattedDay = formatToHumanReadableDay(date, timeZone);
-  const formattedTime = formatToHumanReadableTime(date, timeZone);
-  return `${formattedMonth} ${formattedDay} · ${formattedTime}`;
-};

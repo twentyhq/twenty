@@ -1,8 +1,8 @@
+import { formatDateISOStringToDateTimeSimplified } from '@/localization/utils/formatDateISOStringToDateTimeSimplified';
 import { UserContext } from '@/users/contexts/UserContext';
 import styled from '@emotion/styled';
 import { Point } from '@nivo/line';
 import { ReactElement, useContext } from 'react';
-import { formatToHumanReadableMonthDateTime } from '~/utils/format/formatDate';
 
 const StyledTooltipContainer = styled.div`
   align-items: center;
@@ -64,12 +64,18 @@ type SettingsDevelopersWebhookTooltipProps = {
 export const SettingsDevelopersWebhookTooltip = ({
   point,
 }: SettingsDevelopersWebhookTooltipProps): ReactElement => {
-  const { timeZone } = useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const windowInterval = new Date(point.data.x);
+  const windowIntervalDate = formatDateISOStringToDateTimeSimplified(
+    windowInterval,
+    timeZone,
+    dateFormat,
+    timeFormat,
+  );
   return (
     <StyledTooltipContainer>
       <StyledTooltipDateContainer>
-        {formatToHumanReadableMonthDateTime(windowInterval, timeZone)}
+        {windowIntervalDate}
       </StyledTooltipDateContainer>
       <StyledLine />
       <StyledTooltipDataRow>
