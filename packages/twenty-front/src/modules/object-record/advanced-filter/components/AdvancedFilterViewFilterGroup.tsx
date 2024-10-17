@@ -96,6 +96,10 @@ export const AdvancedFilterViewFilterGroup = (
             <AdvancedFilterRuleOptionsDropdown
               dropdownId={`advanced-filter-rule-options-${child.id}`}
               viewFilterId={child.id}
+              parentViewFilterGroupId={currentViewFilterGroup.id}
+              isOnlyViewFilterInGroup={
+                childViewFiltersAndViewFilterGroups.length === 1
+              }
             />
           </StyledRow>
         ),

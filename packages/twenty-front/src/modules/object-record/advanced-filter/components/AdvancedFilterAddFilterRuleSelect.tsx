@@ -53,11 +53,21 @@ export const AdvancedFilterAddFilterRuleSelect = (
       throw new Error('Missing view id');
     }
 
-    upsertCombinedViewFilterGroup({
+    const newViewFilterGroup = {
       id: v4(),
       viewId: props.viewId,
       logicalOperator: ViewFilterGroupLogicalOperator.AND,
       parentViewFilterGroupId: props.currentViewFilterGroup.id,
+      positionInViewFilterGroup: newPositionInViewFilterGroup,
+    };
+
+    upsertCombinedViewFilterGroup(newViewFilterGroup);
+
+    upsertCombinedViewFilter({
+      id: v4(),
+      value: '',
+      displayValue: '',
+      viewFilterGroupId: newViewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     });
   };

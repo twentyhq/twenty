@@ -10,8 +10,18 @@ import { isDefined } from 'twenty-ui';
 type AdvancedFilterRuleOptionsDropdownProps = {
   dropdownId: string;
 } & (
-  | { viewFilterId: string; viewFilterGroupId?: never }
-  | { viewFilterId?: never; viewFilterGroupId: string }
+  | {
+      viewFilterId: string;
+      parentViewFilterGroupId: string;
+      isOnlyViewFilterInGroup: boolean;
+      viewFilterGroupId?: never;
+    }
+  | {
+      viewFilterId?: never;
+      parentViewFilterGroupId?: never;
+      isOnlyViewFilterInGroup?: never;
+      viewFilterGroupId: string;
+    }
 );
 
 export const AdvancedFilterRuleOptionsDropdown = (
@@ -23,6 +33,9 @@ export const AdvancedFilterRuleOptionsDropdown = (
   const handleRemove = () => {
     if (isDefined(props.viewFilterId)) {
       deleteCombinedViewFilter(props.viewFilterId);
+      if (props.isOnlyViewFilterInGroup === true) {
+        deleteCombinedViewFilterGroup(props.parentViewFilterGroupId);
+      }
     } else if (isDefined(props.viewFilterGroupId)) {
       deleteCombinedViewFilterGroup(props.viewFilterGroupId);
     }
