@@ -1,3 +1,4 @@
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { isActorSourceCompositeFilter } from '../utils/isActorSourceCompositeFilter';
@@ -12,10 +13,12 @@ import { ObjectFilterDropdownTextSearchInput } from './ObjectFilterDropdownTextS
 
 type ConfigurableFilterDropdownContentProps = {
   filterDefinitionUsedInDropdown: FilterDefinition;
+  filter?: Filter;
 };
 
 export const ConfigurableFilterDropdownContent = ({
   filterDefinitionUsedInDropdown,
+  filter,
 }: ConfigurableFilterDropdownContentProps) => {
   return (
     <>
@@ -33,7 +36,7 @@ export const ConfigurableFilterDropdownContent = ({
         'PHONES',
       ].includes(filterDefinitionUsedInDropdown.type) &&
         !isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
-          <ObjectFilterDropdownTextSearchInput />
+          <ObjectFilterDropdownTextSearchInput filter={filter} />
         )}
       {['NUMBER', 'CURRENCY'].includes(filterDefinitionUsedInDropdown.type) && (
         <ObjectFilterDropdownNumberInput />

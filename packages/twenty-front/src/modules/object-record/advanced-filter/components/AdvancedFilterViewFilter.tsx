@@ -45,7 +45,7 @@ export const AdvancedFilterViewFilter = (
         />
         {configurableViewFilterOperands.has(props.viewFilter.operand) && (
           <AdvancedFilterViewFilterValueInput
-            viewFilter={props.viewFilter}
+            filter={filter}
             filterDefinition={filter?.definition}
             isDisabled={
               !props.viewFilter.fieldMetadataId || !props.viewFilter.operand

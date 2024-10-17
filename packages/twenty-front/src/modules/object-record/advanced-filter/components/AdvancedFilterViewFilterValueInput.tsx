@@ -1,14 +1,14 @@
 import { ConfigurableFilterDropdownContent } from '@/object-record/object-filter-dropdown/components/ConfigurableFilterDropdownContent';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
-import { ViewFilter } from '@/views/types/ViewFilter';
 
 interface AdvancedFilterViewFilterValueInputProps {
-  viewFilter: ViewFilter;
+  filter: Filter;
   filterDefinition: FilterDefinition;
   isDisabled?: boolean;
 }
@@ -16,7 +16,7 @@ interface AdvancedFilterViewFilterValueInputProps {
 export const AdvancedFilterViewFilterValueInput = (
   props: AdvancedFilterViewFilterValueInputProps,
 ) => {
-  const dropdownId = `advanced-filter-view-filter-value-input-${props.viewFilter.id}`;
+  const dropdownId = `advanced-filter-view-filter-value-input-${props.filter.id}`;
 
   const { setFilterDefinitionUsedInDropdown, setSelectedOperandInDropdown } =
     useFilterDropdown();
@@ -26,7 +26,7 @@ export const AdvancedFilterViewFilterValueInput = (
       <SelectControl
         isDisabled
         selectedOption={{
-          label: props.viewFilter?.displayValue ?? '',
+          label: props.filter?.displayValue ?? '',
           value: '',
         }}
       />
@@ -40,19 +40,20 @@ export const AdvancedFilterViewFilterValueInput = (
       clickableComponent={
         <SelectControl
           selectedOption={{
-            label: props.viewFilter?.displayValue ?? '',
+            label: props.filter?.displayValue ?? '',
             value: '',
           }}
         />
       }
       onOpen={() => {
         setFilterDefinitionUsedInDropdown(props.filterDefinition);
-        setSelectedOperandInDropdown(props.viewFilter.operand);
+        setSelectedOperandInDropdown(props.filter.operand);
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <ConfigurableFilterDropdownContent
             filterDefinitionUsedInDropdown={props.filterDefinition}
+            filter={props.filter}
           />
         </DropdownMenuItemsContainer>
       }
