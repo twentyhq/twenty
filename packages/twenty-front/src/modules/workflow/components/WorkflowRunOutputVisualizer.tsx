@@ -1,14 +1,13 @@
+import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-ui';
 
-const StyledSourceCode = styled.pre`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  background-color: ${({ theme }) => theme.background.transparent.secondary};
+const StyledSourceCodeContainer = styled.div`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   margin: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  white-space: pre-wrap;
+  overflow: hidden;
 `;
 
 export const WorkflowRunOutputVisualizer = ({
@@ -22,8 +21,12 @@ export const WorkflowRunOutputVisualizer = ({
   }
 
   return (
-    <StyledSourceCode>
-      {JSON.stringify(workflowRun.output, null, 2)}
-    </StyledSourceCode>
+    <StyledSourceCodeContainer>
+      <CodeEditor
+        value={JSON.stringify(workflowRun.output, null, 2)}
+        language="json"
+        options={{ readOnly: true, domReadOnly: true }}
+      />
+    </StyledSourceCodeContainer>
   );
 };
