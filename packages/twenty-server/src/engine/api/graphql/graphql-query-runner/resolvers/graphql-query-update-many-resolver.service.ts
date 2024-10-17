@@ -16,6 +16,7 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryUpdateManyResolverService
@@ -57,9 +58,14 @@ export class GraphqlQueryUpdateManyResolverService
       objectMetadataMapItem.nameSingular,
     );
 
+    const tableName = computeTableName(
+      objectMetadataMapItem.nameSingular,
+      objectMetadataMapItem.isCustom,
+    );
+
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
+      tableName,
       args.filter,
     );
 

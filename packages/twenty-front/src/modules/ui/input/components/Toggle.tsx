@@ -69,11 +69,14 @@ export const Toggle = ({
   };
 
   useEffect(() => {
-    if (value !== isOn) {
-      setIsOn(value ?? false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+    setIsOn((isOn) => {
+      if (value !== isOn) {
+        return value ?? false;
+      }
+
+      return isOn;
+    });
+  }, [value, setIsOn]);
 
   return (
     <StyledContainer

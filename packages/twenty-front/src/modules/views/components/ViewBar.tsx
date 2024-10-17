@@ -60,7 +60,6 @@ export const ViewBar = ({
         leftComponent={
           loading ? <ViewBarSkeletonLoader /> : <ViewPickerDropdown />
         }
-        displayBottomBorder={false}
         rightComponent={
           <>
             <ObjectFilterDropdownButton

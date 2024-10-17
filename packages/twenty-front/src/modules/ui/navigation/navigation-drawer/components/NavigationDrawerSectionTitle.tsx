@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -37,9 +39,22 @@ export const NavigationDrawerSectionTitle = ({
 }: NavigationDrawerSectionTitleProps) => {
   const currentUser = useRecoilValue(currentUserState);
   const loading = useIsPrefetchLoading();
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
+
+  const isSettingsPage = useIsSettingsPage();
 
   if (loading && isDefined(currentUser)) {
     return <NavigationDrawerSectionTitleSkeletonLoader />;
   }
-  return <StyledTitle onClick={onClick}>{label}</StyledTitle>;
+  return (
+    <StyledTitle
+      onClick={
+        isNavigationDrawerExpanded || isSettingsPage ? onClick : undefined
+      }
+    >
+      {label}
+    </StyledTitle>
+  );
 };

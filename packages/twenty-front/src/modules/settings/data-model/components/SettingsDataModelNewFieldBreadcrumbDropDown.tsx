@@ -82,12 +82,11 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
       navigate(
         `/settings/objects/${objectSlug}/new-field/configure?fieldType=${fieldType}`,
       );
-      return;
+    } else {
+      navigate(
+        `/settings/objects/${objectSlug}/new-field/select${fieldType ? `?fieldType=${fieldType}` : ''}`,
+      );
     }
-
-    navigate(
-      `/settings/objects/${objectSlug}/new-field/select${fieldType ? `?fieldType=${fieldType}` : ''}`,
-    );
     closeDropdown();
   };
 

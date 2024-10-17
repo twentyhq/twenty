@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
@@ -118,13 +118,13 @@ export const useCreateOneRecord = <
           objectMetadataItems,
           objectMetadataItem,
           cache: apolloClient.cache,
-          recordToDelete: recordCreatedInCache,
+          recordToDestroy: recordCreatedInCache,
         });
 
-        triggerDeleteRecordsOptimisticEffect({
+        triggerDestroyRecordsOptimisticEffect({
           cache: apolloClient.cache,
           objectMetadataItem,
-          recordsToDelete: [recordCreatedInCache],
+          recordsToDestroy: [recordCreatedInCache],
           objectMetadataItems,
         });
 

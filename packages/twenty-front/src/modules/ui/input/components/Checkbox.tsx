@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { IconCheck, IconMinus } from 'twenty-ui';
-import { v4 } from 'uuid';
 
 export enum CheckboxVariant {
   Primary = 'primary',
@@ -165,7 +164,7 @@ export const Checkbox = ({
     setIsInternalChecked(event.target.checked ?? false);
   };
 
-  const checkboxId = 'checkbox' + v4();
+  const checkboxId = React.useId();
 
   return (
     <StyledInputContainer
