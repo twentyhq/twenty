@@ -59,6 +59,9 @@ export class ServerlessFunctionDTO {
   @Field({ nullable: true })
   latestVersion: string;
 
+  @Field(() => [String], { nullable: false })
+  publishedVersions: string[];
+
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()
   @Field(() => ServerlessFunctionSyncStatus)

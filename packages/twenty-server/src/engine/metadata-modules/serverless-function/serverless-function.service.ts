@@ -154,8 +154,14 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       existingServerlessFunction,
     );
 
+    const newPublishedVersions = [
+      ...existingServerlessFunction.publishedVersions,
+      newVersion,
+    ];
+
     await super.updateOne(existingServerlessFunction.id, {
       latestVersion: newVersion,
+      publishedVersions: newPublishedVersions,
     });
 
     return await this.findById(existingServerlessFunction.id);
