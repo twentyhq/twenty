@@ -13,13 +13,16 @@ import {
   IconMail,
   IconRocket,
   IconSettings,
+  IconTool,
   IconUserCircle,
   IconUsers,
+  MAIN_COLORS,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
+import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
@@ -29,19 +32,45 @@ import {
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+import { AnimatePresence, motion } from 'framer-motion';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 
 type SettingsNavigationItem = {
   label: string;
   path: SettingsPath;
   Icon: IconComponent;
-  matchSubPages?: boolean;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
+  matchSubPages?: boolean;
 };
 
+const StyledIconContainer = styled.div`
+  border-right: 1px solid ${MAIN_COLORS.yellow};
+  position: absolute;
+  left: ${({ theme }) => theme.spacing(-5)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  height: 75%;
+`;
+
+const StyledDeveloperSection = styled.div`
+  display: flex;
+  width: 100%;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+`;
+
+const StyledIconTool = styled(IconTool)`
+  margin-right: ${({ theme }) => theme.spacing(0.5)};
+`;
+
 export const SettingsNavigationDrawerItems = () => {
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const { contentRef, motionAnimationVariants } = useExpandedHeightAnimation(
+    isAdvancedModeEnabled,
+  );
   const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
@@ -61,14 +90,12 @@ export const SettingsNavigationDrawerItems = () => {
       label: 'Emails',
       path: SettingsPath.AccountsEmails,
       Icon: IconMail,
-      matchSubPages: true,
       indentationLevel: 2,
     },
     {
       label: 'Calendars',
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
-      matchSubPages: true,
       indentationLevel: 2,
     },
   ];
@@ -80,7 +107,7 @@ export const SettingsNavigationDrawerItems = () => {
     return matchPath(
       {
         path: pathName,
-        end: !accountSubSetting.matchSubPages,
+        end: accountSubSetting.matchSubPages === false,
       },
       currentPathName,
     );
@@ -105,6 +132,7 @@ export const SettingsNavigationDrawerItems = () => {
             label="Accounts"
             path={SettingsPath.Accounts}
             Icon={IconAt}
+            matchSubPages={false}
           />
           {accountSubSettings.map((navigationItem, index) => (
             <SettingsNavigationDrawerItem
@@ -145,20 +173,7 @@ export const SettingsNavigationDrawerItems = () => {
           label="Data model"
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
-          matchSubPages
         />
-        <SettingsNavigationDrawerItem
-          label="Developers"
-          path={SettingsPath.Developers}
-          Icon={IconCode}
-        />
-        {isFunctionSettingsEnabled && (
-          <SettingsNavigationDrawerItem
-            label="Functions"
-            path={SettingsPath.ServerlessFunctions}
-            Icon={IconFunction}
-          />
-        )}
         <SettingsNavigationDrawerItem
           label="Integrations"
           path={SettingsPath.Integrations}
@@ -172,6 +187,38 @@ export const SettingsNavigationDrawerItems = () => {
           />
         )}
       </NavigationDrawerSection>
+      <AnimatePresence>
+        {isAdvancedModeEnabled && (
+          <motion.div
+            ref={contentRef}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={motionAnimationVariants}
+          >
+            <StyledDeveloperSection>
+              <StyledIconContainer>
+                <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+              </StyledIconContainer>
+              <NavigationDrawerSection>
+                <NavigationDrawerSectionTitle label="Developers" />
+                <SettingsNavigationDrawerItem
+                  label="API & Webhooks"
+                  path={SettingsPath.Developers}
+                  Icon={IconCode}
+                />
+                {isFunctionSettingsEnabled && (
+                  <SettingsNavigationDrawerItem
+                    label="Functions"
+                    path={SettingsPath.ServerlessFunctions}
+                    Icon={IconFunction}
+                  />
+                )}
+              </NavigationDrawerSection>
+            </StyledDeveloperSection>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
         <SettingsNavigationDrawerItem

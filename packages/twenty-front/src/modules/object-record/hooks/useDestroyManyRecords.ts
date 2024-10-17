@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
+import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -60,43 +61,61 @@ export const useDestroyManyRecords = ({
     const destroyedRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchIds = idsToDestroy.slice(
+      const batchedIdToDestroy = idsToDestroy.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const destroyedRecordsResponse = await apolloClient.mutate({
-        mutation: destroyManyRecordsMutation,
-        variables: {
-          filter: { id: { in: batchIds } },
-        },
-        optimisticResponse: options?.skipOptimisticEffect
-          ? undefined
-          : {
-              [mutationResponseField]: batchIds.map((idToDestroy) => ({
-                __typename: capitalize(objectNameSingular),
-                id: idToDestroy,
-              })),
-            },
-        update: options?.skipOptimisticEffect
-          ? undefined
-          : (cache, { data }) => {
-              const records = data?.[mutationResponseField];
+      const originalRecords = batchedIdToDestroy
+        .map((recordId) => getRecordFromCache(recordId, apolloClient.cache))
+        .filter(isDefined);
 
-              if (!records?.length) return;
+      const destroyedRecordsResponse = await apolloClient
+        .mutate({
+          mutation: destroyManyRecordsMutation,
+          variables: {
+            filter: { id: { in: batchedIdToDestroy } },
+          },
+          optimisticResponse: options?.skipOptimisticEffect
+            ? undefined
+            : {
+                [mutationResponseField]: batchedIdToDestroy.map(
+                  (idToDestroy) => ({
+                    __typename: capitalize(objectNameSingular),
+                    id: idToDestroy,
+                  }),
+                ),
+              },
+          update: options?.skipOptimisticEffect
+            ? undefined
+            : (cache, { data }) => {
+                const records = data?.[mutationResponseField];
 
-              const cachedRecords = records
-                .map((record) => getRecordFromCache(record.id, cache))
-                .filter(isDefined);
+                if (!records?.length) return;
 
-              triggerDeleteRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToDelete: cachedRecords,
-                objectMetadataItems,
-              });
-            },
-      });
+                const cachedRecords = records
+                  .map((record) => getRecordFromCache(record.id, cache))
+                  .filter(isDefined);
+
+                triggerDestroyRecordsOptimisticEffect({
+                  cache,
+                  objectMetadataItem,
+                  recordsToDestroy: cachedRecords,
+                  objectMetadataItems,
+                });
+              },
+        })
+        .catch((error: Error) => {
+          if (originalRecords.length > 0) {
+            triggerCreateRecordsOptimisticEffect({
+              cache: apolloClient.cache,
+              objectMetadataItem,
+              recordsToCreate: originalRecords,
+              objectMetadataItems,
+            });
+          }
+          throw error;
+        });
 
       const destroyedRecordsForThisBatch =
         destroyedRecordsResponse.data?.[mutationResponseField] ?? [];

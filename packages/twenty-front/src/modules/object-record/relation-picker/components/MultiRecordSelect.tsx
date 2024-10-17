@@ -23,6 +23,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconPlus, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
   width: 100%;
@@ -144,19 +145,19 @@ export const MultiRecordSelect = ({
               )}
             </>
           )}
-          {isDefined(onCreate) && (
-            <>
-              {objectRecordsIdsMultiSelect.length > 0 && (
-                <DropdownMenuSeparator />
-              )}
+        </DropdownMenuItemsContainer>
+        {isDefined(onCreate) && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItemsContainer>
               <CreateNewButton
                 onClick={debouncedOnCreate}
                 LeftIcon={IconPlus}
                 text="Add New"
               />
-            </>
-          )}
-        </DropdownMenuItemsContainer>
+            </DropdownMenuItemsContainer>
+          </>
+        )}
       </DropdownMenu>
     </>
   );

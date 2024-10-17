@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationIndexActionType,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 @Injectable()
 export class WorkspaceMigrationIndexFactory {
@@ -77,10 +81,8 @@ export class WorkspaceMigrationIndexFactory {
         objectMetadata.fields.map((field) => [field.id, field]),
       );
 
-      const indexes = indexMetadataCollection.map((indexMetadata) => ({
-        name: indexMetadata.name,
-        action: WorkspaceMigrationIndexActionType.CREATE,
-        columns: indexMetadata.indexFieldMetadatas
+      const indexes = indexMetadataCollection.map((indexMetadata) => {
+        const columns = indexMetadata.indexFieldMetadatas
           .sort((a, b) => a.order - b.order)
           .map((indexFieldMetadata) => {
             const fieldMetadata =
@@ -92,9 +94,35 @@ export class WorkspaceMigrationIndexFactory {
               );
             }
 
-            return fieldMetadata.name;
-          }),
-      }));
+            if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
+              return fieldMetadata.name;
+            }
+
+            const compositeType = compositeTypeDefinitions.get(
+              fieldMetadata.type,
+            ) as CompositeType;
+
+            return compositeType.properties
+              .filter((property) => property.isIncludedInUniqueConstraint)
+              .map((property) =>
+                computeCompositeColumnName(fieldMetadata, property),
+              );
+          })
+          .flat();
+
+        const defaultWhereClause = indexMetadata.isUnique
+          ? `${columns.map((column) => `"${column}"`).join(" != '' AND ")} != '' AND "deletedAt" IS NULL`
+          : null;
+
+        return {
+          name: indexMetadata.name,
+          action: WorkspaceMigrationIndexActionType.CREATE,
+          isUnique: indexMetadata.isUnique,
+          columns,
+          type: indexMetadata.indexType,
+          where: indexMetadata.indexWhereClause ?? defaultWhereClause,
+        };
+      });
 
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,
@@ -133,6 +161,7 @@ export class WorkspaceMigrationIndexFactory {
         name: indexMetadata.name,
         action: WorkspaceMigrationIndexActionType.DROP,
         columns: [],
+        isUnique: indexMetadata.isUnique,
       }));
 
       workspaceMigrations.push({

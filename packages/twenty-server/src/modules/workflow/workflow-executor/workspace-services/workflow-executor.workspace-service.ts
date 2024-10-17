@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import {
-  WorkflowExecutorException,
-  WorkflowExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-executor/exceptions/workflow-executor.exception';
+  WorkflowRunOutput,
+  WorkflowRunStatus,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
-export type WorkflowExecutionOutput = {
-  result?: object;
-  error?: object;
+export type WorkflowExecutorOutput = {
+  steps: WorkflowRunOutput['steps'];
+  status: WorkflowRunStatus;
 };
 
 @Injectable()
@@ -21,49 +22,74 @@ export class WorkflowExecutorWorkspaceService {
   async execute({
     currentStepIndex,
     steps,
-    payload,
+    context,
+    output,
     attemptCount = 1,
   }: {
     currentStepIndex: number;
     steps: WorkflowStep[];
-    payload?: object;
+    output: WorkflowExecutorOutput;
+    context: Record<string, unknown>;
     attemptCount?: number;
-  }): Promise<WorkflowExecutionOutput> {
+  }): Promise<WorkflowExecutorOutput> {
     if (currentStepIndex >= steps.length) {
-      return {
-        result: payload,
-      };
+      return { ...output, status: WorkflowRunStatus.COMPLETED };
     }
 
     const step = steps[currentStepIndex];
 
     const workflowAction = this.workflowActionFactory.get(step.type);
 
-    const result = await workflowAction.execute({
-      step,
-      payload,
-    });
+    const actionPayload = resolveInput(step.settings.input, context);
+
+    const result = await workflowAction.execute(actionPayload);
+
+    const stepOutput = output.steps[step.id];
+
+    const error =
+      result.error?.errorMessage ??
+      (result.result ? undefined : 'Execution result error, no data or error');
+
+    const updatedStepOutput = {
+      id: step.id,
+      name: step.name,
+      type: step.type,
+      outputs: [
+        ...(stepOutput?.outputs ?? []),
+        {
+          attemptCount,
+          result: result.result,
+          error,
+        },
+      ],
+    };
+
+    const updatedOutput = {
+      ...output,
+      steps: {
+        ...output.steps,
+        [step.id]: updatedStepOutput,
+      },
+    };
 
     if (result.result) {
       return await this.execute({
         currentStepIndex: currentStepIndex + 1,
         steps,
-        payload: result.result,
+        context: {
+          ...context,
+          [step.id]: result.result,
+        },
+        output: updatedOutput,
       });
-    }
-
-    if (!result.error) {
-      throw new WorkflowExecutorException(
-        'Execution result error, no data or error',
-        WorkflowExecutorExceptionCode.WORKFLOW_FAILED,
-      );
     }
 
     if (step.settings.errorHandlingOptions.continueOnFailure.value) {
       return await this.execute({
         currentStepIndex: currentStepIndex + 1,
         steps,
-        payload,
+        context,
+        output: updatedOutput,
       });
     }
 
@@ -74,14 +100,12 @@ export class WorkflowExecutorWorkspaceService {
       return await this.execute({
         currentStepIndex,
         steps,
-        payload,
+        context,
+        output: updatedOutput,
         attemptCount: attemptCount + 1,
       });
     }
 
-    throw new WorkflowExecutorException(
-      `Workflow failed: ${result.error}`,
-      WorkflowExecutorExceptionCode.WORKFLOW_FAILED,
-    );
+    return { ...updatedOutput, status: WorkflowRunStatus.FAILED };
   }
 }

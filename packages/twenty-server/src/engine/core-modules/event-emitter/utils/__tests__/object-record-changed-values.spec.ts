@@ -13,6 +13,7 @@ const mockObjectMetadata: ObjectMetadataInterface = {
   fromRelations: [],
   toRelations: [],
   fields: [],
+  indexMetadatas: [],
   isSystem: false,
   isCustom: false,
   isActive: true,

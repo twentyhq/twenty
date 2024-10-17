@@ -10,6 +10,7 @@ import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
@@ -32,13 +33,16 @@ import {
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
+import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -58,6 +62,7 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
@@ -82,9 +87,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly searchService: SearchService,
+    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {
     super(objectMetadataRepository);
   }
@@ -350,6 +358,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput,
         createdObjectMetadata,
       );
+
+      await this.searchService.createSearchVectorFieldForObject(
+        objectMetadataInput,
+        createdObjectMetadata,
+      );
     } else {
       await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
         objectMetadataInput.workspaceId,
@@ -412,6 +425,32 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     if (input.update.isActive !== undefined) {
       await this.updateObjectRelationships(input.id, input.update.isActive);
+    }
+
+    if (input.update.labelIdentifierFieldMetadataId) {
+      const labelIdentifierFieldMetadata =
+        await this.fieldMetadataRepository.findOneByOrFail({
+          id: input.update.labelIdentifierFieldMetadataId,
+          objectMetadataId: input.id,
+          workspaceId: workspaceId,
+        });
+
+      if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
+        await this.searchService.updateSearchVector(
+          input.id,
+          [
+            {
+              name: labelIdentifierFieldMetadata.name,
+              type: labelIdentifierFieldMetadata.type,
+            },
+          ],
+          workspaceId,
+        );
+      }
+
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
     }
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
@@ -533,8 +572,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadataInput.primaryKeyFieldMetadataSettings,
     );
 
-    return this.workspaceMigrationService.createCustomMigration(
+    await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+      createdObjectMetadata.workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: WorkspaceMigrationTableActionType.CREATE,
+        } satisfies WorkspaceMigrationTableAction,
+      ],
+    );
+
+    for (const fieldMetadata of createdObjectMetadata.fields) {
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`create-${fieldMetadata.name}`),
+        createdObjectMetadata.workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(createdObjectMetadata),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.CREATE,
+              fieldMetadata,
+            ),
+          },
+        ] satisfies WorkspaceMigrationTableAction[],
+      );
+    }
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(
+        `create-${createdObjectMetadata.nameSingular}-relations`,
+      ),
       createdObjectMetadata.workspaceId,
       buildMigrationsForCustomObjectRelations(
         createdObjectMetadata,

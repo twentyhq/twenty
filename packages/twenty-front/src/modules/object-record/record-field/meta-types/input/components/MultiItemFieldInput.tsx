@@ -18,6 +18,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
   left: -1px;
@@ -30,7 +31,7 @@ type MultiItemFieldInputProps<T> = {
   onPersist: (updatedItems: T[]) => void;
   onCancel?: () => void;
   placeholder: string;
-  validateInput?: (input: string) => boolean;
+  validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   formatInput?: (input: string) => T;
   renderItem: (props: {
     value: T;
@@ -74,7 +75,20 @@ export const MultiItemFieldInput = <T,>({
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
+  const [errorData, setErrorData] = useState({
+    isValid: true,
+    errorMessage: '',
+  });
   const isAddingNewItem = itemToEditIndex === -1;
+
+  const handleOnChange = (value: string) => {
+    setInputValue(value);
+    if (!validateInput) return;
+
+    if (errorData.isValid) {
+      setErrorData(errorData);
+    }
+  };
 
   const handleAddButtonClick = () => {
     setItemToEditIndex(-1);
@@ -105,7 +119,13 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleSubmitInput = () => {
-    if (validateInput !== undefined && !validateInput(inputValue)) return;
+    if (validateInput !== undefined) {
+      const validationData = validateInput(inputValue) ?? { isValid: true };
+      if (!validationData.isValid) {
+        setErrorData(validationData);
+        return;
+      }
+    }
 
     const newItem = formatInput
       ? formatInput(inputValue)
@@ -160,6 +180,7 @@ export const MultiItemFieldInput = <T,>({
           placeholder={placeholder}
           value={inputValue}
           hotkeyScope={hotkeyScope}
+          hasError={!errorData.isValid}
           renderInput={
             renderInput
               ? (props) =>
@@ -170,7 +191,11 @@ export const MultiItemFieldInput = <T,>({
                   })
               : undefined
           }
-          onChange={(event) => setInputValue(event.target.value)}
+          onChange={(event) =>
+            handleOnChange(
+              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+            )
+          }
           onEnter={handleSubmitInput}
           rightComponent={
             <LightIconButton

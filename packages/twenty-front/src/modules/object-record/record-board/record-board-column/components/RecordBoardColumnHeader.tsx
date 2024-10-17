@@ -7,8 +7,8 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
+import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
@@ -21,7 +21,6 @@ const StyledHeader = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: left;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
@@ -45,6 +44,7 @@ const StyledHeaderActions = styled.div`
   margin-left: auto;
 `;
 const StyledHeaderContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -59,13 +59,29 @@ const StyledRightContainer = styled.div`
   display: flex;
 `;
 
+const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
+  background-color: ${({ theme }) => theme.background.primary};
+  border-left: 1px solid
+    ${({ theme, isFirstColumn }) =>
+      isFirstColumn ? 'none' : theme.border.color.light};
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  min-width: 200px;
+
+  padding: ${({ theme }) => theme.spacing(2)};
+
+  position: relative;
+`;
+
 export const RecordBoardColumnHeader = () => {
-  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
-  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
-  const { objectMetadataItem } = useContext(RecordBoardContext);
-  const { columnDefinition, recordCount } = useContext(
+  const { columnDefinition, isFirstColumn, recordCount } = useContext(
     RecordBoardColumnContext,
   );
+  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
+  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
+
+  const { objectMetadataItem } = useContext(RecordBoardContext);
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -90,24 +106,21 @@ export const RecordBoardColumnHeader = () => {
   const boardColumnTotal = 0;
 
   const {
-    isCreatingCard,
-    handleAddNewOpportunityClick,
-    handleCancel,
+    newRecord,
+    handleNewButtonClick,
+    handleCreateSuccess,
     handleEntitySelect,
-  } = useAddNewOpportunity('first');
+  } = useColumnNewCardActions(columnDefinition?.id ?? '');
 
-  const { newRecord, handleNewButtonClick, handleCreateSuccess } =
-    useColumnNewCardActions(columnDefinition.id);
+  const { isOpportunitiesCompanyFieldDisabled } =
+    useIsOpportunitiesCompanyFieldDisabled();
 
   const isOpportunity =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
-
-  const handleClick = isOpportunity
-    ? handleAddNewOpportunityClick
-    : () => handleNewButtonClick('first');
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity &&
+    !isOpportunitiesCompanyFieldDisabled;
 
   return (
-    <>
+    <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
@@ -152,7 +165,7 @@ export const RecordBoardColumnHeader = () => {
                 <LightIconButton
                   accent="tertiary"
                   Icon={IconPlus}
-                  onClick={handleClick}
+                  onClick={() => handleNewButtonClick('first', isOpportunity)}
                 />
               </StyledHeaderActions>
             )}
@@ -165,23 +178,26 @@ export const RecordBoardColumnHeader = () => {
           stageId={columnDefinition.id}
         />
       )}
-      {newRecord?.isCreating && newRecord.position === 'first' && (
-        <RecordBoardCard
-          isCreating={true}
-          onCreateSuccess={() => handleCreateSuccess('first')}
-          position="first"
-        />
-      )}
-      {isCreatingCard && (
-        <SingleEntitySelect
-          disableBackgroundBlur
-          onCancel={handleCancel}
-          onEntitySelected={handleEntitySelect}
-          relationObjectNameSingular={CoreObjectNameSingular.Company}
-          relationPickerScopeId="relation-picker"
-          selectedRelationRecordIds={[]}
-        />
-      )}
-    </>
+      {newRecord?.isCreating &&
+        newRecord.position === 'first' &&
+        (newRecord.isOpportunity ? (
+          <SingleEntitySelect
+            disableBackgroundBlur
+            onCancel={() => handleCreateSuccess('first', columnDefinition.id)}
+            onEntitySelected={(company) =>
+              company && handleEntitySelect('first', company)
+            }
+            relationObjectNameSingular={CoreObjectNameSingular.Company}
+            relationPickerScopeId="relation-picker"
+            selectedRelationRecordIds={[]}
+          />
+        ) : (
+          <RecordBoardCard
+            isCreating={true}
+            onCreateSuccess={() => handleCreateSuccess('first')}
+            position="first"
+          />
+        ))}
+    </StyledColumn>
   );
 };

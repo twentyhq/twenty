@@ -38,6 +38,24 @@ export const Default: Story = {
   },
 };
 
+export const DateTimeSettingsTimeFormat: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+
+    await canvas.findByText('Date and time');
+
+    const timeFormatSelect = await canvas.findByText('24h (08:33)');
+
+    userEvent.click(timeFormatSelect);
+
+    const timeFormatOptions = await canvas.findByText('12h (8:33 AM)');
+
+    userEvent.click(timeFormatOptions);
+
+    await canvas.findByText('12h (8:33 AM)');
+  },
+};
+
 export const DateTimeSettingsTimezone: Story = {
   play: async () => {
     const canvas = within(document.body);
@@ -75,23 +93,5 @@ export const DateTimeSettingsDateFormat: Story = {
     userEvent.click(timeFormatOptions);
 
     await canvas.findByText('Jun 13, 2022');
-  },
-};
-
-export const DateTimeSettingsTimeFormat: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-
-    await canvas.findByText('Date and time');
-
-    const timeFormatSelect = await canvas.findByText('24h (08:33)');
-
-    userEvent.click(timeFormatSelect);
-
-    const timeFormatOptions = await canvas.findByText('12h (8:33 AM)');
-
-    userEvent.click(timeFormatOptions);
-
-    await canvas.findByText('12h (8:33 AM)');
   },
 };

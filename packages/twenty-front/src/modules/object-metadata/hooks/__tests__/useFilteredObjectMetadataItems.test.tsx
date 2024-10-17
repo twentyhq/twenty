@@ -10,7 +10,7 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const mocks = [
   {

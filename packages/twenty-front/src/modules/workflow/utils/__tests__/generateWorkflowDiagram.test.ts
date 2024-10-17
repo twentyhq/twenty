@@ -42,7 +42,9 @@ describe('generateWorkflowDiagram', () => {
             retryOnFailure: { value: true },
             continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          input: {
+            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          },
         },
       },
       {
@@ -55,7 +57,9 @@ describe('generateWorkflowDiagram', () => {
             retryOnFailure: { value: true },
             continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          input: {
+            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          },
         },
       },
     ];
@@ -72,6 +76,7 @@ describe('generateWorkflowDiagram', () => {
     for (const [index, step] of steps.entries()) {
       expect(stepNodes[index].data).toEqual({
         nodeType: 'action',
+        actionType: 'CODE',
         label: step.name,
       });
     }
@@ -95,7 +100,9 @@ describe('generateWorkflowDiagram', () => {
             retryOnFailure: { value: true },
             continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          input: {
+            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          },
         },
       },
       {
@@ -108,7 +115,9 @@ describe('generateWorkflowDiagram', () => {
             retryOnFailure: { value: true },
             continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          input: {
+            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          },
         },
       },
     ];

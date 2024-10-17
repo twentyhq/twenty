@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -14,6 +15,7 @@ import { RelationType } from '@/settings/data-model/types/RelationType';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
@@ -38,19 +40,19 @@ export type SettingsDataModelFieldRelationFormValues = z.infer<
 
 type SettingsDataModelFieldRelationFormProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type'>;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledSelectsContainer = styled.div`
+const StyledSelectsContainer = styled.div<{ isMobile: boolean }>`
   display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: ${({ isMobile }) => (isMobile ? '1fr' : '1fr 1fr')};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
-
 const StyledInputsLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   display: block;
@@ -66,7 +68,11 @@ const StyledInputsContainer = styled.div`
 `;
 
 const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
-  .filter(([value]) => 'ONE_TO_ONE' !== value)
+  .filter(
+    ([value]) =>
+      RelationDefinitionType.OneToOne !== value &&
+      RelationDefinitionType.ManyToMany !== value,
+  )
   .map(([value, { label, Icon }]) => ({
     label,
     value: value as RelationType,
@@ -75,6 +81,7 @@ const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
 
 export const SettingsDataModelFieldRelationForm = ({
   fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldRelationFormProps) => {
   const { control, watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldRelationFormValues>();
@@ -88,15 +95,20 @@ export const SettingsDataModelFieldRelationForm = ({
     initialRelationFieldMetadataItem,
     initialRelationObjectMetadataItem,
     initialRelationType,
-  } = useRelationSettingsFormInitialValues({ fieldMetadataItem });
+  } = useRelationSettingsFormInitialValues({
+    fieldMetadataItem,
+    objectMetadataItem,
+  });
 
   const selectedObjectMetadataItem = findObjectMetadataItemById(
     watchFormValue('relation.objectMetadataId'),
   );
 
+  const isMobile = useIsMobile();
+
   return (
     <StyledContainer>
-      <StyledSelectsContainer>
+      <StyledSelectsContainer isMobile={isMobile}>
         <Controller
           name="relation.type"
           control={control}

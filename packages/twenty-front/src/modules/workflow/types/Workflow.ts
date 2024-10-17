@@ -1,4 +1,4 @@
-type WorkflowBaseSettingsType = {
+type BaseWorkflowStepSettings = {
   errorHandlingOptions: {
     retryOnFailure: {
       value: boolean;
@@ -9,26 +9,42 @@ type WorkflowBaseSettingsType = {
   };
 };
 
-export type WorkflowCodeSettingsType = WorkflowBaseSettingsType & {
-  serverlessFunctionId: string;
+export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
+  input: {
+    serverlessFunctionId: string;
+  };
 };
 
-export type WorkflowActionType = 'CODE';
+export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
+  input: {
+    connectedAccountId: string;
+    email: string;
+    subject?: string;
+    body?: string;
+  };
+};
 
-type CommonWorkflowAction = {
+type BaseWorkflowStep = {
   id: string;
   name: string;
   valid: boolean;
 };
 
-type WorkflowCodeAction = CommonWorkflowAction & {
+export type WorkflowCodeStep = BaseWorkflowStep & {
   type: 'CODE';
-  settings: WorkflowCodeSettingsType;
+  settings: WorkflowCodeStepSettings;
 };
 
-export type WorkflowAction = WorkflowCodeAction;
+export type WorkflowSendEmailStep = BaseWorkflowStep & {
+  type: 'SEND_EMAIL';
+  settings: WorkflowSendEmailStepSettings;
+};
+
+export type WorkflowAction = WorkflowCodeStep | WorkflowSendEmailStep;
 
 export type WorkflowStep = WorkflowAction;
+
+export type WorkflowActionType = WorkflowAction['type'];
 
 export type WorkflowStepType = WorkflowStep['type'];
 

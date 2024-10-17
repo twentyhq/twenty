@@ -35,14 +35,8 @@ import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../types/guards/isFieldCurrencyValue';
 import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldDateTimeValue } from '../types/guards/isFieldDateTimeValue';
-import { isFieldEmail } from '../types/guards/isFieldEmail';
-import { isFieldEmailValue } from '../types/guards/isFieldEmailValue';
-import { isFieldLink } from '../types/guards/isFieldLink';
-import { isFieldLinkValue } from '../types/guards/isFieldLinkValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
-import { isFieldPhone } from '../types/guards/isFieldPhone';
-import { isFieldPhoneValue } from '../types/guards/isFieldPhoneValue';
 import { isFieldRating } from '../types/guards/isFieldRating';
 import { isFieldRatingValue } from '../types/guards/isFieldRatingValue';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -68,9 +62,6 @@ export const usePersistField = () => {
         const fieldIsText =
           isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist);
 
-        const fieldIsEmail =
-          isFieldEmail(fieldDefinition) && isFieldEmailValue(valueToPersist);
-
         const fieldIsEmails =
           isFieldEmails(fieldDefinition) && isFieldEmailsValue(valueToPersist);
 
@@ -80,9 +71,6 @@ export const usePersistField = () => {
 
         const fieldIsDate =
           isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist);
-
-        const fieldIsLink =
-          isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
 
         const fieldIsLinks =
           isFieldLinks(fieldDefinition) && isFieldLinksValue(valueToPersist);
@@ -104,9 +92,6 @@ export const usePersistField = () => {
         const fieldIsFullName =
           isFieldFullName(fieldDefinition) &&
           isFieldFullNameValue(valueToPersist);
-
-        const fieldIsPhone =
-          isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);
 
         const fieldIsPhones =
           isFieldPhones(fieldDefinition) && isFieldPhonesValue(valueToPersist);
@@ -133,15 +118,12 @@ export const usePersistField = () => {
           fieldIsRelationToOneObject ||
           fieldIsText ||
           fieldIsBoolean ||
-          fieldIsEmail ||
           fieldIsEmails ||
           fieldIsRating ||
           fieldIsNumber ||
           fieldIsDateTime ||
           fieldIsDate ||
-          fieldIsPhone ||
           fieldIsPhones ||
-          fieldIsLink ||
           fieldIsLinks ||
           fieldIsCurrency ||
           fieldIsFullName ||

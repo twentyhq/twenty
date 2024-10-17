@@ -16,7 +16,7 @@ type ContainerProps = {
 const StyledContainer = styled.div<ContainerProps>`
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
-    isOn ? (color ?? theme.color.blue) : theme.background.quaternary};
+    isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -69,11 +69,14 @@ export const Toggle = ({
   };
 
   useEffect(() => {
-    if (value !== isOn) {
-      setIsOn(value ?? false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+    setIsOn((isOn) => {
+      if (value !== isOn) {
+        return value ?? false;
+      }
+
+      return isOn;
+    });
+  }, [value, setIsOn]);
 
   return (
     <StyledContainer

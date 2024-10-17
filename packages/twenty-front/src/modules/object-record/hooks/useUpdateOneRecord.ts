@@ -11,6 +11,7 @@ import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRe
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
@@ -108,26 +109,48 @@ export const useUpdateOneRecord = <
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
 
-    const updatedRecord = await apolloClient.mutate({
-      mutation: updateOneRecordMutation,
-      variables: {
-        idToUpdate,
-        input: sanitizedInput,
-      },
-      update: (cache, { data }) => {
-        const record = data?.[mutationResponseField];
+    const updatedRecord = await apolloClient
+      .mutate({
+        mutation: updateOneRecordMutation,
+        variables: {
+          idToUpdate,
+          input: sanitizedInput,
+        },
+        update: (cache, { data }) => {
+          const record = data?.[mutationResponseField];
 
-        if (!record || !cachedRecord) return;
+          if (!record || !cachedRecord) return;
+
+          triggerUpdateRecordOptimisticEffect({
+            cache,
+            objectMetadataItem,
+            currentRecord: cachedRecord,
+            updatedRecord: record,
+            objectMetadataItems,
+          });
+        },
+      })
+      .catch((error: Error) => {
+        if (isUndefinedOrNull(cachedRecord?.id)) {
+          throw error;
+        }
+        updateRecordFromCache({
+          objectMetadataItems,
+          objectMetadataItem,
+          cache: apolloClient.cache,
+          record: cachedRecord,
+        });
 
         triggerUpdateRecordOptimisticEffect({
-          cache,
+          cache: apolloClient.cache,
           objectMetadataItem,
-          currentRecord: cachedRecord,
-          updatedRecord: record,
+          currentRecord: optimisticRecordWithConnection,
+          updatedRecord: cachedRecordWithConnection,
           objectMetadataItems,
         });
-      },
-    });
+
+        throw error;
+      });
 
     return updatedRecord?.data?.[mutationResponseField] ?? null;
   };
