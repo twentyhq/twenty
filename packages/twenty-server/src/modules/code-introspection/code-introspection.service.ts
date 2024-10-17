@@ -10,7 +10,7 @@ import {
 import {
   CodeIntrospectionException,
   CodeIntrospectionExceptionCode,
-} from 'src/engine/metadata-modules/serverless-function/code-introspection/code-introspection.exception';
+} from 'src/modules/code-introspection/code-introspection.exception';
 
 type FunctionParameter = {
   name: string;

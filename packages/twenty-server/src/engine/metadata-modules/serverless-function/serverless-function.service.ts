@@ -81,11 +81,9 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
         filename: ENV_FILE_NAME,
       });
 
-      const fileContent = await readFileContent(indexFileStream);
-
       return {
         '.env': await readFileContent(envFileStream),
-        'src/index.ts': fileContent,
+        'src/index.ts': await readFileContent(indexFileStream),
       };
     } catch (error) {
       if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
