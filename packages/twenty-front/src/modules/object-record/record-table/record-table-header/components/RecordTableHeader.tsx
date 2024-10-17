@@ -8,10 +8,7 @@ import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/re
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
 
-const StyledTableHead = styled.thead<{
-  isScrolledTop?: boolean;
-  isScrolledLeft?: boolean;
-}>`
+const StyledTableHead = styled.thead`
   cursor: pointer;
 
   th:nth-of-type(1) {
