@@ -8,16 +8,11 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
-import { useSetHasUserSelectedAllRows } from './useSetAllRowSelectedState';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const disableSoftFocus = useDisableSoftFocus(recordTableId);
   const closeCurrentCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
-
-  const setHasUserSelectedAllRows = useSetHasUserSelectedAllRows(recordTableId);
-
-  const selectAllRows = useSetHasUserSelectedAllRows(recordTableId);
 
   const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
 
@@ -43,15 +38,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
 
         closeCurrentCellInEditMode();
         disableSoftFocus();
-        setHasUserSelectedAllRows(false);
-        selectAllRows(false);
       },
-    [
-      closeCurrentCellInEditMode,
-      disableSoftFocus,
-      isSoftFocusActiveState,
-      selectAllRows,
-      setHasUserSelectedAllRows,
-    ],
+    [closeCurrentCellInEditMode, disableSoftFocus, isSoftFocusActiveState],
   );
 };

@@ -3,6 +3,7 @@ import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/
 import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
 import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
@@ -101,9 +102,16 @@ export const useContextStoreSelectedRecords = ({
     skip,
   });
 
+  const { fetchAllRecordIds } = useFetchAllRecordIds({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+    filter,
+    limit,
+  });
+
   return {
     ...result,
     totalCount: skip ? selectedRecordIds.length : result.totalCount,
     records: skip ? selectedRecordIds.map((id) => ({ id })) : result.records,
+    fetchAllRecordIds,
   };
 };

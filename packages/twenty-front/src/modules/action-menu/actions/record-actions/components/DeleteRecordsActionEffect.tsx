@@ -36,37 +36,40 @@ export const DeleteRecordsActionEffect = ({
   const { deleteManyRecords } = useDeleteManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
   });
+
   const { favorites, deleteFavorite } = useFavorites();
 
-  const { totalCount: numberOfSelectedRecords, records: recordsToDelete } =
+  const { totalCount: numberOfSelectedRecords, fetchAllRecordIds } =
     useContextStoreSelectedRecords({
       recordGqlFields: {
         id: true,
       },
     });
 
-  const recordIdsToDelete = recordsToDelete.map((record) => record.id);
+  const handleDeleteClick = useCallback(async () => {
+    const recordIdsToDelete = await fetchAllRecordIds();
 
-  const handleDeleteClick = useCallback(
-    async (recordIdsToDelete: string[]) => {
-      resetTableRowSelection();
+    for (const recordIdToDelete of recordIdsToDelete) {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordIdToDelete,
+      );
 
-      for (const recordIdToDelete of recordIdsToDelete) {
-        const foundFavorite = favorites?.find(
-          (favorite) => favorite.recordId === recordIdToDelete,
-        );
-
-        if (foundFavorite !== undefined) {
-          deleteFavorite(foundFavorite.id);
-        }
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
       }
+    }
 
-      await deleteManyRecords(recordIdsToDelete, {
-        delayInMsBetweenRequests: 50,
-      });
-    },
-    [deleteFavorite, deleteManyRecords, favorites, resetTableRowSelection],
-  );
+    await deleteManyRecords(recordIdsToDelete, {
+      delayInMsBetweenRequests: 50,
+    });
+    resetTableRowSelection();
+  }, [
+    deleteFavorite,
+    deleteManyRecords,
+    favorites,
+    fetchAllRecordIds,
+    resetTableRowSelection,
+  ]);
 
   const isRemoteObject = objectMetadataItem?.isRemote ?? false;
 
@@ -99,7 +102,7 @@ export const DeleteRecordsActionEffect = ({
             }? ${
               numberOfSelectedRecords === 1 ? 'It' : 'They'
             } can be recovered from the Options menu.`}
-            onConfirmClick={() => handleDeleteClick(recordIdsToDelete)}
+            onConfirmClick={() => handleDeleteClick()}
             deleteButtonText={`Delete ${
               numberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
@@ -114,14 +117,13 @@ export const DeleteRecordsActionEffect = ({
       removeActionMenuEntry('delete');
     };
   }, [
-    canDelete,
     addActionMenuEntry,
-    removeActionMenuEntry,
+    canDelete,
+    handleDeleteClick,
     isDeleteRecordsModalOpen,
     numberOfSelectedRecords,
-    handleDeleteClick,
     position,
-    recordIdsToDelete,
+    removeActionMenuEntry,
   ]);
 
   return null;
