@@ -85,7 +85,6 @@ export const SettingsServerlessFunctionTestTab = ({
               language="json"
               height={200}
               onChange={setSettingsServerlessFunctionInput}
-              options={{ readOnly: true, domReadOnly: true }}
             />
           </SettingsServerlessFunctionCodeEditorContainer>
         </div>
