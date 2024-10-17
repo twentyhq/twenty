@@ -20,6 +20,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "fd99213f-1b50-4d72-8708-75ba80097736",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "noteTarget",
@@ -645,6 +646,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "f98ea433-1b70-46d3-aefa-43eb369925d2",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "messageThread",
@@ -830,6 +832,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "f2414140-86ea-4fa3-bc63-ca5dab9f9044",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "workspaceMember",
@@ -1864,6 +1867,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "f04a7171-564a-44ec-a061-63938e29f0c5",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "apiKey",
@@ -2069,6 +2073,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "edfd2da3-26e4-4e84-b490-c0790848dc23",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "taskTarget",
@@ -2706,6 +2711,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "eda936a5-97b9-4b9f-986a-d8e19e8ea882",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "comment",
@@ -3079,6 +3085,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "e5915d30-4425-4c4c-a9c4-1b4bff20c469",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "workflowVersion",
@@ -3521,6 +3528,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "d828bda6-68e2-47f0-b0aa-b810b1f33981",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "connectedAccount",
@@ -4052,6 +4060,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "d00ff1e9-774a-4b08-87fb-03d37c24f174",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "attachment",
@@ -5082,6 +5091,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "cb8c8d67-16c0-4a38-a919-b375845abf42",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "favorite",
@@ -6157,6 +6167,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "c55193eb-042d-42d5-a6a7-8263fd1433a2",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "viewSort",
@@ -6492,6 +6503,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "c46916fc-0528-4331-9766-6ac2247a70fb",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "view",
@@ -7016,6 +7028,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "be13cda6-aff5-4003-8fe9-e936011b3325",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "opportunity",
@@ -7908,6 +7921,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "b74e80b0-7132-469f-bbd9-6e6fc12f04f8",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "person",
@@ -9058,6 +9072,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "b6e22795-68e7-4d18-a242-545afea5a8a9",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "timelineActivity",
@@ -10068,6 +10083,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "af56ee43-5666-482f-a980-434fefac00c7",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "calendarEventParticipant",
@@ -10640,6 +10656,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "981fd8a9-37a2-4742-98c1-08509d995bd3",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "calendarEvent",
@@ -11154,6 +11171,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "92b529f1-b82b-4352-a0d5-18f32f8e47ab",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "messageChannel",
@@ -11901,6 +11919,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "8cceadc4-de6b-4ecf-8324-82c6b4eec077",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "calendarChannel",
@@ -12575,10 +12594,12 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "8ae98b12-2ef6-4c20-adc6-240857dd7343",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "blocklist",
             "namePlural": "blocklists",
+            "shouldSyncLabelAndName": true,
             "labelSingular": "Blocklist",
             "labelPlural": "Blocklists",
             "description": "Blocklist",
@@ -12836,6 +12857,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "88f29168-a15b-4330-89a1-680581a2e86b",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "viewFilter",
@@ -13166,6 +13188,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "823e8b9d-1947-48f9-9f43-116a2cbceba3",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "webhook",
@@ -13371,6 +13394,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "7cab9c82-929f-4ea3-98e1-5c221a12263d",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "workflow",
@@ -13814,6 +13838,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "6edf5dd8-ee31-42ec-80f9-728b01c50ff4",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "messageParticipant",
@@ -14340,6 +14365,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "6a09bc08-33ae-4321-868a-30064279097f",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "note",
@@ -14767,6 +14793,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "681f89d7-0581-42b0-b97d-870e3b2a8359",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "task",
@@ -15375,10 +15402,12 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "673b8cb8-44c1-4c20-9834-7c35d44fd180",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "message",
             "namePlural": "messages",
+            "shouldSyncLabelAndName": true,
             "labelSingular": "Message",
             "labelPlural": "Messages",
             "description": "Message",
@@ -15803,10 +15832,12 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "65cce76e-0f4c-4de1-a68a-6cadce4d000e",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "workflowEventListener",
             "namePlural": "workflowEventListeners",
+            "shouldSyncLabelAndName": true,
             "labelSingular": "WorkflowEventListener",
             "labelPlural": "WorkflowEventListeners",
             "description": "A workflow event listener",
@@ -16064,6 +16095,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "631882fd-28e8-4a87-8ceb-f8217006a620",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "messageChannelMessageAssociation",
@@ -16509,6 +16541,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "5a1aa92b-1ee9-4a7e-ab08-ca8c1e462d16",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "activity",
@@ -17144,6 +17177,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "50f61b05-868d-425b-ab3f-c085e1652d82",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "viewField",
@@ -17502,10 +17536,12 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "45b7e1cf-792c-45fa-8d6a-0d5e67e1fa42",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "workflowRun",
             "namePlural": "workflowRuns",
+            "shouldSyncLabelAndName": true,
             "labelSingular": "Workflow Run",
             "labelPlural": "Workflow Runs",
             "description": "A workflow run",
@@ -18034,6 +18070,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "43fe0e45-b323-4b6e-ab98-1d9fe30c9af9",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "activityTarget",
@@ -18671,6 +18708,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "39d5f2b7-03ce-41e7-afe9-7710aeb766a2",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "company",
@@ -19757,6 +19795,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "2590029a-05d7-4908-8b7a-a253967068a1",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "auditLog",
@@ -20133,6 +20172,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "1e5ee6b2-67e5-4549-bebc-8d35bc6bc649",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "rocket",
@@ -20682,6 +20722,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "objectEdge",
           "node": {
             "__typename": "object",
+            "shouldSyncLabelAndName": true,
             "id": "149f1a0d-f528-48a3-a3f8-0203926d07f5",
             "dataSourceId": "d8a38ce6-6ac9-4c10-b55f-408386f86290",
             "nameSingular": "calendarChannelEventAssociation",

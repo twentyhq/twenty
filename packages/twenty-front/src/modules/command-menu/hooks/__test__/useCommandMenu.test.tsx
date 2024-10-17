@@ -124,6 +124,7 @@ describe('useCommandMenu', () => {
           namePlural: 'tasks',
           labelSingular: 'Task',
           labelPlural: 'Tasks',
+          shouldSyncLabelAndName: true,
           description: 'A task',
           icon: 'IconCheckbox',
           isCustom: false,
