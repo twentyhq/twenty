@@ -215,6 +215,7 @@ export {
   IconTimelineEvent,
   IconTool,
   IconTrash,
+  IconPrinter,
   IconUnlink,
   IconUpload,
   IconUser,
