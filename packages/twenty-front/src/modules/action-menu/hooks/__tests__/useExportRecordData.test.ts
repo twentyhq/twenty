@@ -7,7 +7,7 @@ import {
   displayedExportProgress,
   download,
   generateCsv,
-} from '../useExportTableData';
+} from '../useExportRecordData';
 
 jest.useFakeTimers();
 

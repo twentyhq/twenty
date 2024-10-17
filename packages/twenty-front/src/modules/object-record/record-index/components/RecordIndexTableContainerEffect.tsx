@@ -1,8 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
@@ -24,16 +23,14 @@ export const RecordIndexTableContainerEffect = () => {
     selectedRowIdsSelector,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
+    hasUserSelectedAllRowsState,
+    unselectedRowIdsSelector,
   } = useRecordTable({
     recordTableId: recordIndexId,
   });
 
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
-  );
-
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
+  const setContextStoreTargetedRecords = useSetRecoilState(
+    contextStoreTargetedRecordsState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -82,19 +79,29 @@ export const RecordIndexTableContainerEffect = () => {
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
+  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
+  const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
+
   useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRowIds);
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+    setContextStoreTargetedRecords({
+      selectedRecordIds:
+        selectedRowIds.length !== 1 && hasUserSelectedAllRows
+          ? 'all'
+          : selectedRowIds,
+      excludedRecordIds: unselectedRowIds,
+    });
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
-      setContextStoreCurrentObjectMetadataItem(null);
+      setContextStoreTargetedRecords({
+        selectedRecordIds: [],
+        excludedRecordIds: [],
+      });
     };
   }, [
-    objectMetadataItem?.id,
+    hasUserSelectedAllRows,
     selectedRowIds,
-    setContextStoreCurrentObjectMetadataItem,
-    setContextStoreTargetedRecordIds,
+    setContextStoreTargetedRecords,
+    unselectedRowIds,
   ]);
 
   return <></>;

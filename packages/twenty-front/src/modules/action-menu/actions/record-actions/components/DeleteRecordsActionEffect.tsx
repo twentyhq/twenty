@@ -1,13 +1,15 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
-import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconTrash } from 'twenty-ui';
+import { IconTrash, isDefined } from 'twenty-ui';
 
 export const DeleteRecordsActionEffect = ({
   position,
@@ -15,10 +17,6 @@ export const DeleteRecordsActionEffect = ({
   position: number;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-
-  const contextStoreTargetedRecordIds = useRecoilValue(
-    contextStoreTargetedRecordIdsState,
-  );
 
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
     contextStoreCurrentObjectMetadataIdState,
@@ -31,21 +29,56 @@ export const DeleteRecordsActionEffect = ({
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 
-  const { deleteTableData } = useDeleteTableData({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordIndexId: objectMetadataItem?.namePlural ?? '',
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId: objectMetadataItem?.namePlural ?? '',
   });
 
-  const handleDeleteClick = useCallback(() => {
-    deleteTableData(contextStoreTargetedRecordIds);
-  }, [deleteTableData, contextStoreTargetedRecordIds]);
+  const { deleteManyRecords } = useDeleteManyRecords({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+  });
+
+  const { favorites, deleteFavorite } = useFavorites();
+
+  const { totalCount: numberOfSelectedRecords, fetchAllRecordIds } =
+    useContextStoreSelectedRecords({
+      recordGqlFields: {
+        id: true,
+      },
+    });
+
+  const handleDeleteClick = useCallback(async () => {
+    const recordIdsToDelete = await fetchAllRecordIds();
+
+    resetTableRowSelection();
+
+    for (const recordIdToDelete of recordIdsToDelete) {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordIdToDelete,
+      );
+
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
+      }
+    }
+
+    await deleteManyRecords(recordIdsToDelete, {
+      delayInMsBetweenRequests: 50,
+    });
+  }, [
+    deleteFavorite,
+    deleteManyRecords,
+    favorites,
+    fetchAllRecordIds,
+    resetTableRowSelection,
+  ]);
 
   const isRemoteObject = objectMetadataItem?.isRemote ?? false;
 
-  const numberOfSelectedRecords = contextStoreTargetedRecordIds.length;
-
   const canDelete =
-    !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
+    !isRemoteObject &&
+    isDefined(numberOfSelectedRecords) &&
+    numberOfSelectedRecords < DELETE_MAX_COUNT &&
+    numberOfSelectedRecords > 0;
 
   useEffect(() => {
     if (canDelete) {
@@ -80,14 +113,18 @@ export const DeleteRecordsActionEffect = ({
     } else {
       removeActionMenuEntry('delete');
     }
+
+    return () => {
+      removeActionMenuEntry('delete');
+    };
   }, [
-    canDelete,
     addActionMenuEntry,
-    removeActionMenuEntry,
+    canDelete,
+    handleDeleteClick,
     isDeleteRecordsModalOpen,
     numberOfSelectedRecords,
-    handleDeleteClick,
     position,
+    removeActionMenuEntry,
   ]);
 
   return null;

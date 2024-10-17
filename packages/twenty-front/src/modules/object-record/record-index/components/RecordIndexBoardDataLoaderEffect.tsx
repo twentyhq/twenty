@@ -2,8 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -121,32 +120,23 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
-  );
-
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
+  const setContextStoreTargetedRecords = useSetRecoilState(
+    contextStoreTargetedRecordsState,
   );
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
-
-  useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+    setContextStoreTargetedRecords({
+      selectedRecordIds: selectedRecordIds,
+      excludedRecordIds: [],
+    });
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
-      setContextStoreCurrentObjectMetadataItem(null);
+      setContextStoreTargetedRecords({
+        selectedRecordIds: [],
+        excludedRecordIds: [],
+      });
     };
-  }, [
-    objectMetadataItem?.id,
-    selectedRecordIds,
-    setContextStoreCurrentObjectMetadataItem,
-    setContextStoreTargetedRecordIds,
-  ]);
+  }, [selectedRecordIds, setContextStoreTargetedRecords]);
 
   return <></>;
 };
