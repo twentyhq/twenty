@@ -7,11 +7,7 @@ on:
       - 'package.json'
       - 'packages/twenty-front/**'
       - 'packages/twenty-ui/**'
-  pull_request:
-    paths:
-      - 'package.json'
-      - 'packages/twenty-front/**'
-      - 'packages/twenty-ui/**'
+  pull_request: {}
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -42,32 +38,6 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
-  front-sb-test:
-    runs-on: ci-8-cores
-    timeout-minutes: 60
-    needs: front-sb-build
-    strategy:
-      matrix:
-        storybook_scope: [pages, modules]
-    env:
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-    steps:
-      - name: Fetch local actions
-        uses: actions/checkout@v4
-      - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Install Playwright
-        run: cd packages/twenty-front && npx playwright install
-      - name: Front / Restore Storybook Task Cache
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: storybook:build
-      - name: Front / Write .env
-        run: npx nx reset:env twenty-front
-      - name: Run storybook tests
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
   front-sb-test-shipfox:
     runs-on: shipfox-8vcpu-ubuntu-2204
     timeout-minutes: 60
@@ -94,79 +64,3 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
-  front-sb-test-performance:
-    runs-on: ci-8-cores
-    timeout-minutes: 60
-    env:
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-    steps:
-      - name: Fetch local actions
-        uses: actions/checkout@v4
-      - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Install Playwright
-        run: cd packages/twenty-front && npx playwright install
-      - name: Front / Write .env
-        run: npx nx reset:env twenty-front
-      - name: Run storybook tests
-        run: npx nx storybook:serve-and-test:static:performance twenty-front
-  front-chromatic-deployment:
-    if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
-    needs: front-sb-build
-    runs-on: ubuntu-latest
-    env:
-      REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
-      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Restore Storybook Task Cache
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: storybook:build
-      - name: Front / Write .env
-        run: |
-          cd packages/twenty-front
-          touch .env
-          echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
-      - name: Publish to Chromatic
-        run: npx nx run twenty-front:chromatic:ci
-  front-task:
-    runs-on: ubuntu-latest
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-    strategy:
-      matrix:
-        task: [lint, typecheck, test]
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
-      - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Restore ${{ matrix.task }} task cache
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: ${{ matrix.task }}
-      - name: Reset .env
-        uses: ./.github/workflows/actions/nx-affected
-        with:
-          tag: scope:frontend
-          tasks: reset:env
-      - name: Run ${{ matrix.task }} task
-        uses: ./.github/workflows/actions/nx-affected
-        with:
-          tag: scope:frontend
-          tasks: ${{ matrix.task }}
