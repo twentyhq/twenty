@@ -9,10 +9,16 @@ import { ViewFilter } from '@/views/types/ViewFilter';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import styled from '@emotion/styled';
 
+const StyledValueDropdownContainer = styled.div`
+  flex: 3;
+`;
+
 const StyledRow = styled.div`
+  flex: 1;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   white-space: nowrap;
+  overflow: hidden;
 `;
 
 interface AdvancedFilterViewFilterProps {
@@ -43,15 +49,17 @@ export const AdvancedFilterViewFilter = (
           filterDefinition={filter?.definition}
           isDisabled={!props.viewFilter.fieldMetadataId}
         />
-        {configurableViewFilterOperands.has(props.viewFilter.operand) && (
-          <AdvancedFilterViewFilterValueInput
-            filter={filter}
-            filterDefinition={filter?.definition}
-            isDisabled={
-              !props.viewFilter.fieldMetadataId || !props.viewFilter.operand
-            }
-          />
-        )}
+        <StyledValueDropdownContainer>
+          {configurableViewFilterOperands.has(props.viewFilter.operand) && (
+            <AdvancedFilterViewFilterValueInput
+              filter={filter}
+              filterDefinition={filter?.definition}
+              isDisabled={
+                !props.viewFilter.fieldMetadataId || !props.viewFilter.operand
+              }
+            />
+          )}
+        </StyledValueDropdownContainer>
       </StyledRow>
     </ObjectFilterDropdownScope>
   );

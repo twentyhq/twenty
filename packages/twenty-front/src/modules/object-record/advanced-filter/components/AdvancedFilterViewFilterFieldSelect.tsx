@@ -10,6 +10,11 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import styled from '@emotion/styled';
+
+const StyledContainer = styled.div`
+  flex: 2;
+`;
 
 interface AdvancedFilterViewFilterFieldSelectProps {
   viewFilter: ViewFilter;
@@ -46,29 +51,33 @@ export const AdvancedFilterViewFilterFieldSelect = (
     objectFilterDropdownIsSelectingCompositeField;
 
   return (
-    <Dropdown
-      disableBlur
-      dropdownId={dropdownId}
-      clickableComponent={
-        <SelectControl
-          selectedOption={{
-            label: props.selectedFieldLabel,
-            value: '',
-          }}
-        />
-      }
-      dropdownComponents={
-        shouldShowCompositeSelectionSubMenu ? (
-          <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu
-            onSelectField={handleSelectField} // This should probably be done using useFilterDropdown instead?
+    <StyledContainer>
+      <Dropdown
+        disableBlur
+        dropdownId={dropdownId}
+        clickableComponent={
+          <SelectControl
+            selectedOption={{
+              label: props.selectedFieldLabel,
+              value: '',
+            }}
           />
-        ) : (
-          <ObjectFilterDropdownFilterSelect onSelectField={handleSelectField} />
-        )
-      }
-      dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
-    />
+        }
+        dropdownComponents={
+          shouldShowCompositeSelectionSubMenu ? (
+            <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu
+              onSelectField={handleSelectField} // This should probably be done using useFilterDropdown instead?
+            />
+          ) : (
+            <ObjectFilterDropdownFilterSelect
+              onSelectField={handleSelectField}
+            />
+          )
+        }
+        dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
+        dropdownOffset={{ y: 8, x: 0 }}
+        dropdownPlacement="bottom-start"
+      />
+    </StyledContainer>
   );
 };

@@ -66,7 +66,7 @@ export const AdvancedFilterDropdownButton = (
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
-      dropdownMenuWidth={480}
+      dropdownMenuWidth={560}
       onClickOutside={handleDropdownClickOutside}
       onClose={handleDropdownClose}
     />

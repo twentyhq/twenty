@@ -11,7 +11,12 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterDraft } from '@/views/types/ViewFilterDraft';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import styled from '@emotion/styled';
 import { isDefined } from 'twenty-ui';
+
+const StyledContainer = styled.div`
+  flex: 1;
+`;
 
 interface AdvancedFilterViewFilterOperandSelectProps {
   viewFilter: ViewFilterDraft;
@@ -57,38 +62,40 @@ export const AdvancedFilterViewFilterOperandSelect = (
   }
 
   return (
-    <Dropdown
-      disableBlur
-      dropdownId={dropdownId}
-      clickableComponent={
-        <SelectControl
-          selectedOption={{
-            label: props.viewFilter.operand
-              ? getOperandLabel(props.viewFilter.operand)
-              : 'Select operand',
-            value: '',
-          }}
-        />
-      }
-      dropdownComponents={
-        <DropdownMenu width="160px">
-          <DropdownMenuItemsContainer>
-            {operandsForFilterType.map((filterOperand, index) => (
-              <MenuItem
-                key={`select-filter-operand-${index}`}
-                onClick={() => {
-                  handleOperandChange(filterOperand);
-                }}
-                text={getOperandLabel(filterOperand)}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      }
-      dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
-      dropdownMenuWidth={280}
-    />
+    <StyledContainer>
+      <Dropdown
+        disableBlur
+        dropdownId={dropdownId}
+        clickableComponent={
+          <SelectControl
+            selectedOption={{
+              label: props.viewFilter.operand
+                ? getOperandLabel(props.viewFilter.operand)
+                : 'Select operand',
+              value: '',
+            }}
+          />
+        }
+        dropdownComponents={
+          <DropdownMenu width="160px">
+            <DropdownMenuItemsContainer>
+              {operandsForFilterType.map((filterOperand, index) => (
+                <MenuItem
+                  key={`select-filter-operand-${index}`}
+                  onClick={() => {
+                    handleOperandChange(filterOperand);
+                  }}
+                  text={getOperandLabel(filterOperand)}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
+          </DropdownMenu>
+        }
+        dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
+        dropdownOffset={{ y: 8, x: 0 }}
+        dropdownPlacement="bottom-start"
+        dropdownMenuWidth={280}
+      />
+    </StyledContainer>
   );
 };

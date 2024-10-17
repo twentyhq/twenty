@@ -7,20 +7,22 @@ import styled from '@emotion/styled';
 
 const StyledRow = styled.div`
   display: flex;
-  align-items: start;
+  width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
+  align-items: start;
   background-color: ${({ theme, isGrayBackground }) =>
     isGrayBackground ? theme.background.transparent.lighter : 'transparent'};
   border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
-  align-items: start;
+  flex: 1;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
+  overflow: hidden;
 `;
 
 interface AdvancedFilterViewFilterGroupProps {
