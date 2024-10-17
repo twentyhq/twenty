@@ -119,11 +119,14 @@ export const SelectInput = ({
   useScopedHotkeys(
     Key.Enter,
     () => {
-      const selectedOption = optionsInDropDown.find((option) =>
-        option.label.toLowerCase().includes(searchFilter.toLowerCase()),
-      );
-      if (isDefined(selectedOption)) {
-        handleOptionChange(selectedOption);
+      if (searchFilter.trim() !== '') {
+        const selectedOption = optionsInDropDown.find((option) =>
+          option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+        );
+
+        if (isDefined(selectedOption)) {
+          handleOptionChange(selectedOption);
+        }
       }
     },
     hotkeyScope,
