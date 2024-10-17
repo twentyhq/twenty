@@ -48,6 +48,7 @@ export class ClientConfigResolver {
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',
         ),
       },
+      analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
     };
 
     return Promise.resolve(clientConfig);
