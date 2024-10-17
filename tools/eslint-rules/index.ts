@@ -51,6 +51,11 @@ import {
   RULE_NAME as useRecoilCallbackHasDependencyArrayName,
 } from './rules/useRecoilCallback-has-dependency-array';
 
+import {
+  rule as folderStructureRule,
+  RULE_NAME as folderStructureRuleName,
+} from './rules/folder-structure-rule';
+
 /**
  * Import your custom workspace rules at the top of this file.
  *
@@ -93,5 +98,6 @@ module.exports = {
       useRecoilCallbackHasDependencyArray,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
+    [folderStructureRuleName]: folderStructureRule,
   },
 };
