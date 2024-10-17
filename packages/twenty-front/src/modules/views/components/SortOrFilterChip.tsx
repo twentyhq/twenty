@@ -40,9 +40,9 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: ${({ theme }) => theme.spacing(0.5) + ' ' + theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
   white-space: nowrap;
-  margin-left: 8px;
 
   max-height: ${({ theme }) => theme.spacing(4.5)};
 `;
