@@ -9,6 +9,7 @@ import {
 
 import { Response } from 'express';
 
+import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
 import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-provider-enabled.guard';
@@ -33,6 +34,7 @@ export class GoogleAuthController {
 
   @Get('redirect')
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
+  @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const {
       firstName,

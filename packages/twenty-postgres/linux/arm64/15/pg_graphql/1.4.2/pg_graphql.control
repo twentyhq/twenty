@@ -1,6 +1,0 @@
-comment = 'pg_graphql: GraphQL support'
-default_version = '1.4.2'
-module_pathname = '$libdir/pg_graphql'
-relocatable = false
-superuser = true
-schema = 'graphql'

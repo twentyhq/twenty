@@ -29,7 +29,6 @@ import {
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
   RelationMetadataEntity,
@@ -76,7 +75,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -145,28 +143,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.options = generateRatingOptions();
       }
 
-      if (fieldMetadataInput.type === FieldMetadataType.LINK) {
-        throw new FieldMetadataException(
-          '"Link" field types are being deprecated, please use Links type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      if (fieldMetadataInput.type === FieldMetadataType.EMAIL) {
-        throw new FieldMetadataException(
-          '"Email" field types are being deprecated, please use Emails type instead',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      this.validateFieldMetadataInput<CreateFieldInput>(
-        fieldMetadataInput.type,
-        fieldMetadataInput,
-        objectMetadata,
-      );
-
-      console.time('createOne save');
-      const createdFieldMetadata = await fieldMetadataRepository.save({
+      const fieldMetadataForCreate = {
         id: v4(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -187,7 +164,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           : undefined,
         isActive: true,
         isCustom: true,
-      });
+      };
+
+      this.validateFieldMetadata<CreateFieldInput>(
+        fieldMetadataForCreate.type,
+        fieldMetadataForCreate,
+        objectMetadata,
+      );
+
+      console.time('createOne save');
+      const createdFieldMetadata = await fieldMetadataRepository.save(
+        fieldMetadataForCreate,
+      );
 
       console.timeEnd('createOne save');
 
@@ -394,12 +382,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         }
       }
 
-      this.validateFieldMetadataInput<UpdateFieldInput>(
-        existingFieldMetadata.type,
-        fieldMetadataInput,
-        objectMetadata,
-      );
-
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
           ? this.buildUpdatableStandardFieldInput(
@@ -408,21 +390,22 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             )
           : fieldMetadataInput;
 
-      // We're running field update under a transaction, so we can rollback if migration fails
-      await fieldMetadataRepository.update(id, {
+      const fieldMetadataForUpdate = {
         ...updatableFieldInput,
         defaultValue:
-          // Todo: we handle default value for all field types.
-          ![
-            FieldMetadataType.SELECT,
-            FieldMetadataType.MULTI_SELECT,
-            FieldMetadataType.BOOLEAN,
-          ].includes(existingFieldMetadata.type)
-            ? existingFieldMetadata.defaultValue
-            : updatableFieldInput.defaultValue !== null
-              ? updatableFieldInput.defaultValue
-              : null,
-      });
+          updatableFieldInput.defaultValue !== undefined
+            ? updatableFieldInput.defaultValue
+            : existingFieldMetadata.defaultValue,
+      };
+
+      this.validateFieldMetadata<UpdateFieldInput>(
+        existingFieldMetadata.type,
+        fieldMetadataForUpdate,
+        objectMetadata,
+      );
+
+      // We're running field update under a transaction, so we can rollback if migration fails
+      await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
 
       const updatedFieldMetadata = await fieldMetadataRepository.findOne({
         where: { id },
@@ -710,9 +693,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
   }
 
-  private validateFieldMetadataInput<
-    T extends UpdateFieldInput | CreateFieldInput,
-  >(
+  private validateFieldMetadata<T extends UpdateFieldInput | CreateFieldInput>(
     fieldMetadataType: FieldMetadataType,
     fieldMetadataInput: T,
     objectMetadata: ObjectMetadataEntity,
@@ -746,7 +727,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    if (!fieldMetadataInput.isNullable) {
+    if (fieldMetadataInput.isNullable === false) {
       if (!isDefined(fieldMetadataInput.defaultValue)) {
         throw new FieldMetadataException(
           'Default value is required for non nullable fields',

@@ -8,10 +8,7 @@ import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/re
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
 
-const StyledTableHead = styled.thead<{
-  isScrolledTop?: boolean;
-  isScrolledLeft?: boolean;
-}>`
+const StyledTableHead = styled.thead`
   cursor: pointer;
 
   th:nth-of-type(1) {
@@ -73,7 +70,11 @@ const StyledTableHead = styled.thead<{
   }
 `;
 
-export const RecordTableHeader = () => {
+export const RecordTableHeader = ({
+  objectMetadataNameSingular,
+}: {
+  objectMetadataNameSingular: string;
+}) => {
   const { visibleTableColumnsSelector } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
@@ -84,7 +85,11 @@ export const RecordTableHeader = () => {
         <RecordTableHeaderDragDropColumn />
         <RecordTableHeaderCheckboxColumn />
         {visibleTableColumns.map((column) => (
-          <RecordTableHeaderCell key={column.fieldMetadataId} column={column} />
+          <RecordTableHeaderCell
+            key={column.fieldMetadataId}
+            column={column}
+            objectMetadataNameSingular={objectMetadataNameSingular}
+          />
         ))}
         <RecordTableHeaderLastColumn />
       </tr>

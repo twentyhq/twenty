@@ -61,8 +61,6 @@ export class TypeMapperService {
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
       [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
-      [FieldMetadataType.PHONE, GraphQLString],
-      [FieldMetadataType.EMAIL, GraphQLString],
       [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
       [FieldMetadataType.DATE, GraphQLISODateTime],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
@@ -81,6 +79,7 @@ export class TypeMapperService {
         StringArrayScalarType as unknown as GraphQLScalarType,
       ],
       [FieldMetadataType.RICH_TEXT, GraphQLString],
+      [FieldMetadataType.TS_VECTOR, GraphQLString],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -101,8 +100,6 @@ export class TypeMapperService {
     >([
       [FieldMetadataType.UUID, IDFilterType],
       [FieldMetadataType.TEXT, StringFilterType],
-      [FieldMetadataType.PHONE, StringFilterType],
-      [FieldMetadataType.EMAIL, StringFilterType],
       [FieldMetadataType.DATE_TIME, DateFilterType],
       [FieldMetadataType.DATE, DateFilterType],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
@@ -118,6 +115,7 @@ export class TypeMapperService {
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
       [FieldMetadataType.RICH_TEXT, StringFilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
+      [FieldMetadataType.TS_VECTOR, StringFilterType], // TODO: Add TSVectorFilterType
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -129,8 +127,6 @@ export class TypeMapperService {
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],
-      [FieldMetadataType.PHONE, OrderByDirectionType],
-      [FieldMetadataType.EMAIL, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
       [FieldMetadataType.DATE, OrderByDirectionType],
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],
@@ -143,6 +139,7 @@ export class TypeMapperService {
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
       [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
       [FieldMetadataType.ARRAY, OrderByDirectionType],
+      [FieldMetadataType.TS_VECTOR, OrderByDirectionType], // TODO: Add TSVectorOrderByType
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

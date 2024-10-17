@@ -65,48 +65,43 @@ export const triggerUpdateRecordOptimisticEffect = ({
         const rootQueryFilter = rootQueryVariables?.filter;
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
 
-        const shouldTryToMatchFilter = isDefined(rootQueryFilter);
+        const updatedRecordMatchesThisRootQueryFilter = isRecordMatchingFilter({
+          record: updatedRecord,
+          filter: rootQueryFilter ?? {},
+          objectMetadataItem,
+        });
 
-        if (shouldTryToMatchFilter) {
-          const updatedRecordMatchesThisRootQueryFilter =
-            isRecordMatchingFilter({
-              record: updatedRecord,
-              filter: rootQueryFilter,
-              objectMetadataItem,
+        const updatedRecordIndexInRootQueryEdges =
+          rootQueryCurrentEdges.findIndex(
+            (cachedEdge) =>
+              readField('id', cachedEdge.node) === updatedRecord.id,
+          );
+
+        const updatedRecordFoundInRootQueryEdges =
+          updatedRecordIndexInRootQueryEdges > -1;
+
+        const updatedRecordShouldBeAddedToRootQueryEdges =
+          updatedRecordMatchesThisRootQueryFilter &&
+          !updatedRecordFoundInRootQueryEdges;
+
+        const updatedRecordShouldBeRemovedFromRootQueryEdges =
+          !updatedRecordMatchesThisRootQueryFilter &&
+          updatedRecordFoundInRootQueryEdges;
+
+        if (updatedRecordShouldBeAddedToRootQueryEdges) {
+          const updatedRecordNodeReference = toReference(updatedRecord);
+
+          if (isDefined(updatedRecordNodeReference)) {
+            rootQueryNextEdges.push({
+              __typename: getEdgeTypename(objectMetadataItem.nameSingular),
+              node: updatedRecordNodeReference,
+              cursor: '',
             });
-
-          const updatedRecordIndexInRootQueryEdges =
-            rootQueryCurrentEdges.findIndex(
-              (cachedEdge) =>
-                readField('id', cachedEdge.node) === updatedRecord.id,
-            );
-
-          const updatedRecordFoundInRootQueryEdges =
-            updatedRecordIndexInRootQueryEdges > -1;
-
-          const updatedRecordShouldBeAddedToRootQueryEdges =
-            updatedRecordMatchesThisRootQueryFilter &&
-            !updatedRecordFoundInRootQueryEdges;
-
-          const updatedRecordShouldBeRemovedFromRootQueryEdges =
-            !updatedRecordMatchesThisRootQueryFilter &&
-            updatedRecordFoundInRootQueryEdges;
-
-          if (updatedRecordShouldBeAddedToRootQueryEdges) {
-            const updatedRecordNodeReference = toReference(updatedRecord);
-
-            if (isDefined(updatedRecordNodeReference)) {
-              rootQueryNextEdges.push({
-                __typename: getEdgeTypename(objectMetadataItem.nameSingular),
-                node: updatedRecordNodeReference,
-                cursor: '',
-              });
-            }
           }
+        }
 
-          if (updatedRecordShouldBeRemovedFromRootQueryEdges) {
-            rootQueryNextEdges.splice(updatedRecordIndexInRootQueryEdges, 1);
-          }
+        if (updatedRecordShouldBeRemovedFromRootQueryEdges) {
+          rootQueryNextEdges.splice(updatedRecordIndexInRootQueryEdges, 1);
         }
 
         const rootQueryNextEdgesShouldBeSorted = isDefined(rootQueryOrderBy);
