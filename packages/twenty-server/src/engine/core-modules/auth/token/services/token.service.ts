@@ -46,6 +46,7 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { generateSecret } from 'src/utils/generate-secret';
 
 @Injectable()
 export class TokenService {
@@ -232,7 +233,7 @@ export class TokenService {
     userId: string,
     workspaceId: string,
   ): Promise<AuthToken> {
-    const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const secret = generateSecret(workspaceId, 'LOGIN');
     const expiresIn = this.environmentService.get(
       'SHORT_TERM_TOKEN_EXPIRES_IN',
     );
@@ -271,7 +272,7 @@ export class TokenService {
     const jwtPayload = {
       sub: workspaceId,
     };
-    const secret = this.environmentService.get('ACCESS_TOKEN_SECRET');
+    const secret = generateSecret(workspaceId, 'ACCESS');
     let expiresIn: string | number;
 
     if (expiresAt) {
