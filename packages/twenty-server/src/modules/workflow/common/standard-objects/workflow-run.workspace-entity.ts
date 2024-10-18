@@ -32,15 +32,19 @@ export enum WorkflowRunStatus {
   FAILED = 'FAILED',
 }
 
-export type WorkflowRunOutput = {
-  steps: {
-    id: string;
-    name: string;
-    type: string;
+type StepRunOutput = {
+  id: string;
+  name: string;
+  type: string;
+  outputs: {
     attemptCount: number;
     result: object | undefined;
     error: string | undefined;
   }[];
+};
+
+export type WorkflowRunOutput = {
+  steps: Record<string, StepRunOutput>;
 };
 
 @WorkspaceEntity({

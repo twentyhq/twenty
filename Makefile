@@ -1,26 +1,12 @@
-docker-dev-build:
-	make -C packages/twenty-docker dev-build
-
-docker-dev-up:
-	make -C packages/twenty-docker dev-up
-
-docker-dev-start:
-	make -C packages/twenty-docker dev-start
-
-docker-dev-stop:
-	make -C packages/twenty-docker dev-stop
-
-docker-dev-sh:
-	make -C packages/twenty-docker dev-sh
-
 postgres-on-docker:
-	make -C packages/twenty-postgres provision-on-docker
+	docker run \
+	--name twenty_postgres \
+	-e POSTGRES_USER=postgres \
+	-e POSTGRES_PASSWORD=postgres \
+	-e POSTGRES_DB=default \
+	-v twenty_db_data:/var/lib/postgresql/data \
+	-p 5432:5432 \
+	twentycrm/twenty-postgres:latest
 
-postgres-on-macos-arm:
-	make -C packages/twenty-postgres provision-on-macos-arm
-
-postgres-on-macos-intel:
-	make -C packages/twenty-postgres provision-on-macos-intel
-
-postgres-on-linux:
-	make -C packages/twenty-postgres provision-on-linux
+redis-on-docker:
+	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
