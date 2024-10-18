@@ -1,8 +1,7 @@
 name: 'Test Docker Compose'
 on:
   pull_request:
-    paths:
-      - 'packages/twenty-docker/**'
+   
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -13,8 +12,19 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Check for changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v11
+      with:
+          files: |
+            packages/twenty-docker/**
+            docker-compose.yml
+    - name: Skip if no relevant changes
+      if: steps.changed-files.outputs.any_changed != 'true'
+      run: echo "No relevant changes detected. Marking as valid."
 
     - name: Run compose
+      if: steps.changed-files.outputs.any_changed == 'true'
       run: |
         echo "Patching docker-compose.yml..."
         # change image to localbuild using yq
