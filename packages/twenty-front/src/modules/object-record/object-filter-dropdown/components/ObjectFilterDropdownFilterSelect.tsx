@@ -49,10 +49,12 @@ export const StyledInput = styled.input`
 
 interface ObjectFilterDropdownFilterSelectProps {
   onSelectField?: (filterDefinition: FilterDefinition) => void;
+  isAdvancedFilterButtonVisible?: boolean;
 }
 
 export const ObjectFilterDropdownFilterSelect = ({
   onSelectField,
+  isAdvancedFilterButtonVisible,
 }: ObjectFilterDropdownFilterSelectProps) => {
   const {
     setObjectFilterDropdownSearchInput,
@@ -177,7 +179,7 @@ export const ObjectFilterDropdownFilterSelect = ({
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
-      <AdvancedFilterButton />
+      {isAdvancedFilterButtonVisible && <AdvancedFilterButton />}
     </>
   );
 };
