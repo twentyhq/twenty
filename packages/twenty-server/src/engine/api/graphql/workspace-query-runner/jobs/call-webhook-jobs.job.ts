@@ -80,14 +80,9 @@ export class CallWebhookJobsJob {
       );
     });
 
-    if (webhooks.length > 0) {
+    webhooks.length > 0 &&
       this.logger.log(
         `CallWebhookJobsJob on eventName '${eventName}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
       );
-    } else {
-      this.logger.debug(
-        `CallWebhookJobsJob on eventName '${eventName}' did not trigger any webhooks.`,
-      );
-    }
   }
 }

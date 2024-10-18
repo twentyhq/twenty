@@ -1,7 +1,15 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { IconHandClick, IconNorthStar } from '@tabler/icons-react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconPlus, IconTrash } from 'twenty-ui';
+import {
+  H2Title,
+  IconBox,
+  IconPlus,
+  IconRefresh,
+  IconTrash,
+  useIcons,
+} from 'twenty-ui';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -17,7 +25,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { Select } from '@/ui/input/components/Select';
+import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -26,14 +34,20 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledFilterRow = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+  align-items: center;
 `;
 
 const StyledAddOperationButton = styled(Button)`
   margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledPlaceholder = styled.div`
+  height: 32px;
+  width: 32px;
 `;
 
 export const SettingsDevelopersWebhooksDetail = () => {
@@ -48,6 +62,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     Array<{ object: string; action: string }>
   >([]);
   const [isDirty, setIsDirty] = useState<boolean>(false);
+  const { getIcon } = useIcons();
 
   const { record: webhookData } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.Webhook,
@@ -58,7 +73,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         data?.operations.map((op: string) => {
           const [object, action] = op.split('.');
           return { object, action };
-        }) ?? [],
+        }) ?? [{ object: '', action: '' }],
       );
       setIsDirty(false);
     },
@@ -77,32 +92,50 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
 
-  const fieldTypeOptions = [
-    { value: '*', label: 'All Objects' },
-    ...objectMetadataItems.map((item) => ({
-      value: item.nameSingular,
-      label: item.labelSingular,
-    })),
+  const fieldTypeOptions: SelectOption<string>[] = useMemo(
+    () => [
+      { value: '*', label: 'All Objects', Icon: IconNorthStar },
+      ...objectMetadataItems.map((item) => ({
+        value: item.nameSingular,
+        label: item.labelSingular,
+        Icon: getIcon(item.icon),
+      })),
+    ],
+    [objectMetadataItems, getIcon],
+  );
+
+  const actionOptions: SelectOption<string>[] = [
+    { value: '*', label: 'All Actions', Icon: IconNorthStar },
+    { value: 'create', label: 'Create', Icon: IconPlus },
+    { value: 'update', label: 'Update', Icon: IconRefresh },
+    { value: 'delete', label: 'Delete', Icon: IconTrash },
   ];
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
+  const isValidOperation = (op: { object: string; action: string }) =>
+    op.object !== '' && op.action !== '';
+
+  const areAllOperationsValid = operations.every(isValidOperation);
+
   const handleSave = async () => {
-    setIsDirty(false);
-    await updateOneRecord({
-      idToUpdate: webhookId,
-      updateOneRecordInput: {
-        operations: operations.map((op) => `${op.object}.${op.action}`),
-        description: description,
-      },
-    });
-    navigate(developerPath);
+    if (areAllOperationsValid) {
+      setIsDirty(false);
+      await updateOneRecord({
+        idToUpdate: webhookId,
+        updateOneRecordInput: {
+          operations: operations.map((op) => `${op.object}.${op.action}`),
+          description: description,
+        },
+      });
+      navigate(developerPath);
+    }
   };
 
   const addOperation = () => {
-    setOperations([...operations, { object: '*', action: '*' }]);
+    setOperations([...operations, { object: '', action: '' }]);
     setIsDirty(true);
   };
 
@@ -118,9 +151,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
   };
 
   const removeOperation = (index: number) => {
-    const newOperations = operations.filter((_, i) => i !== index);
-    setOperations(newOperations);
-    setIsDirty(true);
+    if (index > 0) {
+      const newOperations = operations.filter((_, i) => i !== index);
+      setOperations(newOperations);
+      setIsDirty(true);
+    }
   };
 
   if (!webhookData?.targetUrl) {
@@ -140,7 +175,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!isDirty}
+          isSaveDisabled={!isDirty || !areAllOperationsValid}
           onCancel={() => {
             navigate(developerPath);
           }}
@@ -186,26 +221,30 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 value={operation.object}
                 onChange={(object) => updateOperation(index, 'object', object)}
                 options={fieldTypeOptions}
+                emptyOption={{ value: '', label: 'Object', Icon: IconBox }}
               />
               <Select
                 fullWidth
                 dropdownId={`operation-webhook-type-select-${index}`}
                 value={operation.action}
                 onChange={(action) => updateOperation(index, 'action', action)}
-                options={[
-                  { value: '*', label: 'All Actions' },
-                  { value: 'create', label: 'Create' },
-                  { value: 'update', label: 'Update' },
-                  { value: 'delete', label: 'Delete' },
-                ]}
+                options={actionOptions}
+                emptyOption={{
+                  value: '',
+                  label: 'Action',
+                  Icon: IconHandClick,
+                }}
               />
-
-              <IconButton
-                onClick={() => removeOperation(index)}
-                variant="tertiary"
-                size="medium"
-                Icon={IconTrash}
-              />
+              {index > 0 ? (
+                <IconButton
+                  onClick={() => removeOperation(index)}
+                  variant="tertiary"
+                  size="medium"
+                  Icon={IconTrash}
+                />
+              ) : (
+                <StyledPlaceholder />
+              )}
             </StyledFilterRow>
           ))}
           <StyledAddOperationButton
