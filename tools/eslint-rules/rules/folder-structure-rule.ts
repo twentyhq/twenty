@@ -51,12 +51,27 @@ const validateString = (input: string, validator: NameValidationType) => {
       return false;
     }
 
-    const ext = fileName.substring(extIndex + 1) as ExtensionsType;
-    if (!extensionArray.includes(ext)) {
+    const extractedExt = fileName.substring(extIndex + 1) as ExtensionsType;
+    const foundExt = extensionArray.find((ext) => ext === extractedExt);
+    if (foundExt === undefined) {
       return false;
     }
 
     fileName = fileName.substring(0, extIndex);
+
+    if (foundExt.endsWith('tsx')) {
+      if (foundExt.endsWith('test.tsx') && foundPrefix === 'use') {
+        return CASES['StrictPascalCase'].test(fileName);
+      }
+      return CASES['StrictPascalCase'].test(foundPrefix + fileName);
+    }
+
+    if (foundExt.endsWith('ts')) {
+      return (
+        CASES['StrictCamelCase'].test(foundPrefix + fileName) ||
+        CASES['kebab-case'].test(foundPrefix + fileName)
+      );
+    }
   }
 
   // Check for suffix
@@ -117,6 +132,12 @@ const checkFolderStructure = (
 
   if (ruleId) {
     const rule = RULES[ruleId];
+    const folderName = currentPath.split('/').pop();
+
+    if (rule.reservedFolders && rule.reservedFolders.includes(folderName)) {
+      return false;
+    }
+
     return checkFolderStructure(currentPath, {
       ...rule,
       name: name ? undefined : rule.name,
@@ -196,7 +217,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
 
     const rootFolder = path.resolve(
       __dirname,
-      '../../../packages/twenty-front',
+      '../../../packages/twenty-front/src',
     );
 
     checkFolderStructure(rootFolder, configs);
