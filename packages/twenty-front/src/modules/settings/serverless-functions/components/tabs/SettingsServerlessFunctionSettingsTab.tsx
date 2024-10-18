@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { H2Title } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection';
+import { SettingsServerlessFunctionTabEnvironmentVariablesSection } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
@@ -61,7 +61,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
         formValues={formValues}
         onChange={onChange}
       />
-      <SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection
+      <SettingsServerlessFunctionTabEnvironmentVariablesSection
         formValues={formValues}
         onCodeChange={onCodeChange}
       />
