@@ -53,7 +53,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         edges {
           node {
             __typename
-            activityId
             authorId
             companyId
             createdAt

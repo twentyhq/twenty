@@ -47,22 +47,6 @@ const mocks: MockedResponse[] = [
               userId
             }
             accountOwnerId
-            activityTargets {
-              edges {
-                node {
-                  __typename
-                  activityId
-                  companyId
-                  createdAt
-                  deletedAt
-                  id
-                  opportunityId
-                  personId
-                  rocketId
-                  updatedAt
-                }
-              }
-            }
             address {
               addressStreet1
               addressStreet2
@@ -81,7 +65,6 @@ const mocks: MockedResponse[] = [
               edges {
                 node {
                   __typename
-                  activityId
                   authorId
                   companyId
                   createdAt

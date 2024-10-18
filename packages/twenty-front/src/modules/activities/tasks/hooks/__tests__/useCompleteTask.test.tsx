@@ -51,7 +51,6 @@ const mocks: MockedResponse[] = [
               edges {
                 node {
                   __typename
-                  activityId
                   authorId
                   companyId
                   createdAt
