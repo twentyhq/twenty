@@ -10,7 +10,7 @@ import {
   IconPaperclip,
   IconSettings,
   IconTimelineEvent,
-} from '@tabler/icons-react';
+} from 'twenty-ui';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
