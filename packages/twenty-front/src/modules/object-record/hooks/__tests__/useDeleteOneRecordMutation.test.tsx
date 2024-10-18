@@ -8,8 +8,8 @@ const expectedQueryTemplate = `
   mutation DeleteOnePerson($idToDelete: ID!) {
     deletePerson(id: $idToDelete) {
       __typename
-      deletedAt
       id
+      deletedAt
     }
   }
 `.replace(/\s/g, '');
