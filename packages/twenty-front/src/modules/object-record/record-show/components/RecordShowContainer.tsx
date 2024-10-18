@@ -151,7 +151,7 @@ export const RecordShowContainer = ({
       <ShowPageSummaryCardSkeletonLoader />
     );
 
-  const fieldsBox = (
+  const fieldsCard = (
     <>
       {isDefined(recordFromStore) && (
         <>
@@ -276,7 +276,7 @@ export const RecordShowContainer = ({
           }}
           isInRightDrawer={isInRightDrawer}
           summaryCard={summaryCard}
-          fieldsBox={fieldsBox}
+          fieldsCard={fieldsCard}
           loading={isPrefetchLoading || loading || recordLoading}
         />
       </ShowPageContainer>

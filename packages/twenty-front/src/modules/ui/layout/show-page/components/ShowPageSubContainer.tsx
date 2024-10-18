@@ -85,11 +85,7 @@ type ShowPageSubContainerProps = {
     ActivityTargetableObject,
     'targetObjectNameSingular' | 'id'
   >;
-  timeline?: boolean;
-  tasks?: boolean;
-  notes?: boolean;
-  emails?: boolean;
-  fieldsBox?: JSX.Element;
+  fieldsCard?: JSX.Element;
   summaryCard?: JSX.Element;
   isInRightDrawer?: boolean;
   loading: boolean;
@@ -99,7 +95,7 @@ export const ShowPageSubContainer = ({
   tabs,
   targetableObject,
   loading,
-  fieldsBox,
+  fieldsCard,
   summaryCard,
   isInRightDrawer = false,
 }: ShowPageSubContainerProps) => {
@@ -137,10 +133,9 @@ export const ShowPageSubContainer = ({
       case 'fields':
         return (
           <StyledGreyBox isInRightDrawer={isInRightDrawer}>
-            {fieldsBox}
+            {fieldsCard}
           </StyledGreyBox>
         );
-
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -197,7 +192,7 @@ export const ShowPageSubContainer = ({
       {!isMobile && !isInRightDrawer && (
         <ShowPageLeftContainer forceMobile={isMobile}>
           {summaryCard}
-          {fieldsBox}
+          {fieldsCard}
         </ShowPageLeftContainer>
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
