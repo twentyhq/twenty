@@ -54,7 +54,7 @@ export const WorkflowEditActionFormServerlessFunction = (
           dropdownId="workflow-edit-action-function"
           label="Function"
           fullWidth
-          value={props.action.settings.serverlessFunctionId}
+          value={props.action.settings.input.serverlessFunctionId}
           options={availableFunctions}
           disabled={props.readonly}
           onChange={(updatedFunction) => {
@@ -66,7 +66,9 @@ export const WorkflowEditActionFormServerlessFunction = (
               ...props.action,
               settings: {
                 ...props.action.settings,
-                serverlessFunctionId: updatedFunction,
+                input: {
+                  serverlessFunctionId: updatedFunction,
+                },
               },
             });
           }}

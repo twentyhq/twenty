@@ -4,9 +4,9 @@ import { ManageFavoritesActionEffect } from '@/action-menu/actions/record-action
 
 export const SingleRecordActionMenuEntriesSetter = () => {
   const actionEffects = [
+    ManageFavoritesActionEffect,
     ExportRecordsActionEffect,
     DeleteRecordsActionEffect,
-    ManageFavoritesActionEffect,
   ];
   return (
     <>

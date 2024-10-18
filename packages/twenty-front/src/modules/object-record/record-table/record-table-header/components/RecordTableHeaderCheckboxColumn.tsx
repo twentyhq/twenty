@@ -17,7 +17,6 @@ const StyledColumnHeaderCell = styled.th`
   background-color: ${({ theme }) => theme.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-right: transparent;
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   max-width: 30px;
   min-width: 30px;
   width: 30px;

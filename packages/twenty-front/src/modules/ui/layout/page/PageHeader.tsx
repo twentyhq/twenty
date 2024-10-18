@@ -13,7 +13,8 @@ import {
 
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
+
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { matchPath, useLocation } from 'react-router-dom';
 
@@ -113,10 +114,11 @@ export const PageHeader = ({
   const { pathname } = useLocation();
   const isSettingsPage = matchPath('/settings/*', pathname);
 
+
   return (
     <StyledTopBarContainer width={width}>
       <StyledLeftContainer>
-        {!isMobile && !isNavigationDrawerOpen && !isSettingsPage && (
+       {!isMobile && !isNavigationDrawerOpen && !isSettingsPage && (
           <StyledTopBarButtonContainer>
             <NavigationDrawerCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
