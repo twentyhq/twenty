@@ -105,7 +105,7 @@ export class SearchService {
       ],
     );
 
-    await this.indexMetadataService.createIndex(
+    await this.indexMetadataService.createIndexMetadata(
       objectMetadataInput.workspaceId,
       createdObjectMetadata,
       [searchVectorFieldMetadata],
@@ -157,7 +157,7 @@ export class SearchService {
     );
 
     // index needs to be recreated as typeorm deletes then recreates searchVector column at alter
-    await this.indexMetadataService.createIndex(
+    await this.indexMetadataService.createIndexCreationMigration(
       workspaceId,
       objectMetadata,
       [existingSearchVectorFieldMetadata],
