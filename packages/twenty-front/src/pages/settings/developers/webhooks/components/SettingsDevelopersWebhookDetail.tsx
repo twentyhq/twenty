@@ -1,13 +1,15 @@
 import styled from '@emotion/styled';
-import { IconHandClick, IconNorthStar } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   H2Title,
   IconBox,
+  IconHandClick,
+  IconNorthStar,
   IconPlus,
   IconRefresh,
   IconTrash,
+  isDefined,
   useIcons,
 } from 'twenty-ui';
 
@@ -34,6 +36,8 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
+import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
 const StyledFilterRow = styled.div`
   display: grid;
@@ -43,13 +47,9 @@ const StyledFilterRow = styled.div`
   align-items: center;
 `;
 
-const StyledAddOperationButton = styled(Button)`
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledPlaceholder = styled.div`
-  height: 32px;
-  width: 32px;
+  height: ${({ theme }) => theme.spacing(8)};
+  width: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const SettingsDevelopersWebhooksDetail = () => {
@@ -62,9 +62,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
     useState(false);
   const [description, setDescription] = useState<string>('');
-  const [operations, setOperations] = useState<
-    Array<{ object: string; action: string }>
-  >([]);
+  const [operations, setOperations] = useState<WebhookOperationType[]>([
+    WEBHOOK_EMPTY_OPERATION,
+  ]);
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const { getIcon } = useIcons();
 
@@ -77,7 +77,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         data?.operations.map((op: string) => {
           const [object, action] = op.split('.');
           return { object, action };
-        }) ?? [{ object: '', action: '' }],
+        }) ?? [WEBHOOK_EMPTY_OPERATION],
       );
       setIsDirty(false);
     },
@@ -119,39 +119,52 @@ export const SettingsDevelopersWebhooksDetail = () => {
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
-  const isValidOperation = (op: { object: string; action: string }) =>
-    op.object !== '' && op.action !== '';
-
-  const areAllOperationsValid = operations.every(isValidOperation);
-
-  const handleSave = async () => {
-    if (areAllOperationsValid) {
-      setIsDirty(false);
-      await updateOneRecord({
-        idToUpdate: webhookId,
-        updateOneRecordInput: {
-          operations: operations.map((op) => `${op.object}.${op.action}`),
-          description: description,
-        },
-      });
-      navigate(developerPath);
-    }
+  const cleanAndFormatOperations = (operations: WebhookOperationType[]) => {
+    return Array.from(
+      new Set(
+        operations
+          .filter((op) => isDefined(op.object) && isDefined(op.action))
+          .map((op) => `${op.object}.${op.action}`),
+      ),
+    );
   };
 
-  const addOperation = () => {
-    setOperations([...operations, { object: '', action: '' }]);
-    setIsDirty(true);
+  const handleSave = async () => {
+    const cleanedOperations = cleanAndFormatOperations(operations);
+    setIsDirty(false);
+    await updateOneRecord({
+      idToUpdate: webhookId,
+      updateOneRecordInput: {
+        operations: cleanedOperations,
+        description: description,
+      },
+    });
+    navigate(developerPath);
   };
 
   const updateOperation = (
     index: number,
     field: 'object' | 'action',
-    value: string,
+    value: string | null,
   ) => {
     const newOperations = [...operations];
-    newOperations[index][field] = value;
+    newOperations[index] = {
+      ...newOperations[index],
+      [field]: value ?? '',
+    };
     setOperations(newOperations);
     setIsDirty(true);
+
+    if (
+      index === operations.length - 1 &&
+      isDefined(value) &&
+      newOperations[index].object !== null &&
+      newOperations[index].action !== null &&
+      (newOperations[index].object !== '*' ||
+        newOperations[index].action !== '*')
+    ) {
+      setOperations([...newOperations, WEBHOOK_EMPTY_OPERATION]);
+    }
   };
 
   const removeOperation = (index: number) => {
@@ -179,7 +192,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!isDirty || !areAllOperationsValid}
+          isSaveDisabled={!isDirty}
           onCancel={() => {
             navigate(developerPath);
           }}
@@ -253,20 +266,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
               )}
             </StyledFilterRow>
           ))}
-          <StyledAddOperationButton
-            variant="tertiary"
-            title="Add Operation"
-            Icon={IconPlus}
-            onClick={addOperation}
-          />
         </Section>
-        {isAnalyticsEnabled && isAnalyticsV2Enabled ? (
+        {isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <>
             <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
             <SettingsDevelopersWebhookUsageGraph webhookId={webhookId} />
           </>
-        ) : (
-          <></>
         )}
         <Section>
           <H2Title title="Danger zone" description="Delete this integration" />
