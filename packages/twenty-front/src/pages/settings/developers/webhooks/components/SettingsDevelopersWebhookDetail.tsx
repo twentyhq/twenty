@@ -150,18 +150,14 @@ export const SettingsDevelopersWebhooksDetail = () => {
     const newOperations = [...operations];
     newOperations[index] = {
       ...newOperations[index],
-      [field]: value ?? '',
+      [field]: value,
     };
     setOperations(newOperations);
     setIsDirty(true);
 
     if (
-      index === operations.length - 1 &&
-      isDefined(value) &&
-      newOperations[index].object !== null &&
-      newOperations[index].action !== null &&
-      (newOperations[index].object !== '*' ||
-        newOperations[index].action !== '*')
+      !newOperations.some((op) => op.object === '*' && op.action === '*') &&
+      !newOperations.some((op) => op.object === null || op.action === null)
     ) {
       setOperations([...newOperations, WEBHOOK_EMPTY_OPERATION]);
     }
@@ -238,7 +234,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 value={operation.object}
                 onChange={(object) => updateOperation(index, 'object', object)}
                 options={fieldTypeOptions}
-                emptyOption={{ value: '', label: 'Object', Icon: IconBox }}
+                emptyOption={{ value: null, label: 'Object', Icon: IconBox }}
               />
 
               <Select
@@ -248,7 +244,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 onChange={(action) => updateOperation(index, 'action', action)}
                 options={actionOptions}
                 emptyOption={{
-                  value: '',
+                  value: null,
                   label: 'Action',
                   Icon: IconHandClick,
                 }}
