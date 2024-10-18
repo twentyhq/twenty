@@ -11,6 +11,7 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -19,7 +20,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { SettingsDeveloppersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
+import { SettingsDevelopersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
 import { SettingsDevelopersWebhookUsageGraphEffect } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraphEffect';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -32,6 +33,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
 
 const StyledFilterRow = styled.div`
   display: grid;
@@ -52,6 +54,8 @@ const StyledPlaceholder = styled.div`
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
+
   const navigate = useNavigate();
   const { webhookId = '' } = useParams();
 
@@ -223,6 +227,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 options={fieldTypeOptions}
                 emptyOption={{ value: '', label: 'Object', Icon: IconBox }}
               />
+
               <Select
                 fullWidth
                 dropdownId={`operation-webhook-type-select-${index}`}
@@ -235,6 +240,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                   Icon: IconHandClick,
                 }}
               />
+
               {index > 0 ? (
                 <IconButton
                   onClick={() => removeOperation(index)}
@@ -254,11 +260,13 @@ export const SettingsDevelopersWebhooksDetail = () => {
             onClick={addOperation}
           />
         </Section>
-        {isAnalyticsV2Enabled && (
+        {isAnalyticsEnabled && isAnalyticsV2Enabled ? (
           <>
             <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
-            <SettingsDeveloppersWebhookUsageGraph />
+            <SettingsDevelopersWebhookUsageGraph webhookId={webhookId} />
           </>
+        ) : (
+          <></>
         )}
         <Section>
           <H2Title title="Danger zone" description="Delete this integration" />

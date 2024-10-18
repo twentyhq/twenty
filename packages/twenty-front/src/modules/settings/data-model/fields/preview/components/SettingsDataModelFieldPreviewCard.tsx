@@ -19,7 +19,6 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledCardContent = styled(CardContent)`
-  display: grid;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
