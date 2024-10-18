@@ -64,12 +64,11 @@ type SettingsDevelopersWebhookTooltipProps = {
 export const SettingsDevelopersWebhookTooltip = ({
   point,
 }: SettingsDevelopersWebhookTooltipProps): ReactElement => {
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { timeFormat, timeZone } = useContext(UserContext);
   const windowInterval = new Date(point.data.x);
   const windowIntervalDate = formatDateISOStringToDateTimeSimplified(
     windowInterval,
     timeZone,
-    dateFormat,
     timeFormat,
   );
   return (
