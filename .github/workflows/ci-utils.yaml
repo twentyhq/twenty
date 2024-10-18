@@ -23,9 +23,16 @@ jobs:
     if: github.event.action != 'closed'
     steps:
       - uses: actions/checkout@v4
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          files: 'packages/twenty-utils/**' 
       - name: Install dependencies
+        if: steps.changed-files.outputs.changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Utils / Run Danger.js
+        if: steps.changed-files.outputs.changed == 'true'
         run: cd packages/twenty-utils && npx nx danger:ci
         env:
           DANGER_GITHUB_API_TOKEN: ${{ github.token }}
@@ -35,9 +42,16 @@ jobs:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v4
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          files: 'packages/twenty-utils/**'
       - name: Install dependencies
+        if: steps.changed-files.outputs.changed == 'true' 
         uses: ./.github/workflows/actions/yarn-install
       - name: Run congratulate-dangerfile.js
+        if: steps.changed-files.outputs.changed == 'true'
         run: cd packages/twenty-utils && npx nx danger:congratulate
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
