@@ -15,6 +15,8 @@ import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/Show
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
+import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
 import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
@@ -30,6 +32,7 @@ import {
   IconMail,
   IconNotes,
   IconPaperclip,
+  IconPrinter,
   IconSettings,
   IconTimelineEvent,
   IconTrash,
@@ -137,6 +140,12 @@ export const ShowPageRightContainer = ({
     isWorkflowEnabled &&
     targetableObject.targetObjectNameSingular ===
       CoreObjectNameSingular.WorkflowVersion;
+  const isWorkflowRun =
+    isWorkflowEnabled &&
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.WorkflowRun;
+
+  const isWorkflowRelated = isWorkflow || isWorkflowVersion || isWorkflowRun;
 
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
@@ -169,7 +178,7 @@ export const ShowPageRightContainer = ({
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isInRightDrawer || isWorkflow || isWorkflowVersion,
+      hide: !timeline || isInRightDrawer || isWorkflowRelated,
     },
     {
       id: 'tasks',
@@ -181,8 +190,7 @@ export const ShowPageRightContainer = ({
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Task ||
-        isWorkflow ||
-        isWorkflowVersion,
+        isWorkflowRelated,
     },
     {
       id: 'notes',
@@ -194,14 +202,13 @@ export const ShowPageRightContainer = ({
           CoreObjectNameSingular.Note ||
         targetableObject.targetObjectNameSingular ===
           CoreObjectNameSingular.Task ||
-        isWorkflow ||
-        isWorkflowVersion,
+        isWorkflowRelated,
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: !notes || isWorkflow || isWorkflowVersion,
+      hide: !notes || isWorkflowRelated,
     },
     {
       id: 'emails',
@@ -223,9 +230,21 @@ export const ShowPageRightContainer = ({
     },
     {
       id: 'workflowVersion',
-      title: 'Workflow Version',
+      title: 'Flow',
       Icon: IconSettings,
       hide: !isWorkflowVersion,
+    },
+    {
+      id: 'workflowRunOutput',
+      title: 'Output',
+      Icon: IconPrinter,
+      hide: !isWorkflowRun,
+    },
+    {
+      id: 'workflowRunFlow',
+      title: 'Flow',
+      Icon: IconSettings,
+      hide: !isWorkflowRun,
     },
   ];
   const renderActiveTabContent = () => {
@@ -284,6 +303,14 @@ export const ShowPageRightContainer = ({
               workflowVersionId={targetableObject.id}
             />
           </>
+        );
+      case 'workflowRunFlow':
+        return (
+          <WorkflowRunVersionVisualizer workflowRunId={targetableObject.id} />
+        );
+      case 'workflowRunOutput':
+        return (
+          <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
         );
       default:
         return <></>;
