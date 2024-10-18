@@ -66,7 +66,7 @@ const StyledContainer = withTheme(styled.div<
   display: inline-flex;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(3)};
+  height: ${({ theme }) => theme.spacing(4)};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
