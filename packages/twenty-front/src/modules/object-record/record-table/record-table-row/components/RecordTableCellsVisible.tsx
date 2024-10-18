@@ -8,7 +8,7 @@ import { RecordTableCellWrapper } from '@/object-record/record-table/record-tabl
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 
 export const RecordTableCellsVisible = () => {
-  const { isDragging, isSelected } = useContext(RecordTableRowContext);
+  const { isSelected } = useContext(RecordTableRowContext);
   const { visibleTableColumnsSelector } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
@@ -22,18 +22,17 @@ export const RecordTableCellsVisible = () => {
           <RecordTableCell />
         </RecordTableTd>
       </RecordTableCellWrapper>
-      {!isDragging &&
-        tableColumnsAfterFirst.map((column, columnIndex) => (
-          <RecordTableCellWrapper
-            key={column.fieldMetadataId}
-            column={column}
-            columnIndex={columnIndex + 1}
-          >
-            <RecordTableTd isSelected={isSelected}>
-              <RecordTableCell />
-            </RecordTableTd>
-          </RecordTableCellWrapper>
-        ))}
+      {tableColumnsAfterFirst.map((column, columnIndex) => (
+        <RecordTableCellWrapper
+          key={column.fieldMetadataId}
+          column={column}
+          columnIndex={columnIndex + 1}
+        >
+          <RecordTableTd isSelected={isSelected}>
+            <RecordTableCell />
+          </RecordTableTd>
+        </RecordTableCellWrapper>
+      ))}
     </>
   );
 };
