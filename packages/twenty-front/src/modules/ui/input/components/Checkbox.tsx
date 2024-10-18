@@ -52,7 +52,10 @@ const StyledInputContainer = styled.div<InputProps>`
 
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme, checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large
+      ? theme.spacing(1.5)
+      : theme.spacing(1.25)};
   position: relative;
   ${({ hoverable, isChecked, theme, indeterminate, disabled }) => {
     if (!hoverable || disabled === true) return '';
@@ -75,7 +78,7 @@ const StyledInput = styled.input<InputProps>`
   z-index: 10;
   & + label {
     --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '18px' : '14px'};
+      checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     height: calc(var(--size) + 2px);
     padding: 0;
@@ -85,7 +88,7 @@ const StyledInput = styled.input<InputProps>`
 
   & + label:before {
     --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '18px' : '14px'};
+      checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
     background: ${({ theme, indeterminate, isChecked }) =>
       indeterminate || isChecked ? theme.color.blue : 'transparent'};
     border-color: ${({
@@ -126,10 +129,9 @@ const StyledInput = styled.input<InputProps>`
   }
 
   & + label > svg {
-    --padding: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '2px' : '1px'};
+    --padding: 0px;
     --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '16px' : '14px'};
+      checkboxSize === CheckboxSize.Large ? '20px' : '14px'};
     height: var(--size);
     left: var(--padding);
     position: absolute;
