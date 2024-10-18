@@ -30,7 +30,7 @@ const StyledTbody = styled.tbody<{
       transition: 0.3s ease;
 
       @media (max-width: ${MOBILE_VIEWPORT}px) {
-        &[data-testid='editable-cell-display-mode'] {
+        & [data-testid='editable-cell-display-mode'] {
           [data-testid='tooltip'] {
             display: none;
           }
