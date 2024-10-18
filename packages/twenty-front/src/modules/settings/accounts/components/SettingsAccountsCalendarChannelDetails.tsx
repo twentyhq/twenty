@@ -70,6 +70,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
               title: 'Auto-creation',
               description: 'Automatically create contacts for people.',
               onToggle: handleContactAutoCreationToggle,
+              testId: 'auto-creation-toggle',
             },
           ]}
         />

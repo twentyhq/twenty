@@ -46,6 +46,7 @@ export const ColorSchemePicker = ({
         onClick={() => onChange('Light')}
         variant="Light"
         selected={value === 'Light'}
+        dataTestId="light-theme"
       />
       <StyledLabel>Light</StyledLabel>
     </StyledCardContainer>
@@ -54,6 +55,7 @@ export const ColorSchemePicker = ({
         onClick={() => onChange('Dark')}
         variant="Dark"
         selected={value === 'Dark'}
+        dataTestId="dark-theme"
       />
       <StyledLabel>Dark</StyledLabel>
     </StyledCardContainer>

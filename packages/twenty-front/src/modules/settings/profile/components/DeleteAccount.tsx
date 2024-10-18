@@ -34,6 +34,7 @@ export const DeleteAccount = () => {
         onClick={() => setIsDeleteAccountModalOpen(true)}
         variant="secondary"
         title="Delete account"
+        dataTestId="delete-account-button"
       />
 
       <ConfirmationModal

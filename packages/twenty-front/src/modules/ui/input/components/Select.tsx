@@ -40,6 +40,7 @@ export type SelectProps<Value extends string | number | null> = {
   value?: Value;
   withSearchInput?: boolean;
   callToActionButton?: CallToActionButton;
+  dataTestId?: string;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -98,6 +99,7 @@ export const Select = <Value extends string | number | null>({
   value,
   withSearchInput,
   callToActionButton,
+  dataTestId,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -155,6 +157,7 @@ export const Select = <Value extends string | number | null>({
         selectControl
       ) : (
         <Dropdown
+          testId={dataTestId}
           dropdownId={dropdownId}
           dropdownMenuWidth={dropdownWidth}
           dropdownPlacement="bottom-start"

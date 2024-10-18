@@ -19,6 +19,7 @@ export const DateTimeSettingsTimeZoneSelect = ({
 
   return (
     <Select
+      dataTestId="time-zone-select"
       dropdownId="settings-accounts-calendar-time-zone"
       dropdownWidth={416}
       label="Time zone"

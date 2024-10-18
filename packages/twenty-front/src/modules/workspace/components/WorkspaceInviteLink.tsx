@@ -32,7 +32,12 @@ export const WorkspaceInviteLink = ({
   return (
     <StyledContainer data-chromatic="ignore">
       <StyledLinkContainer>
-        <TextInput value={inviteLink} disabled fullWidth />
+        <TextInput
+          value={inviteLink}
+          disabled
+          fullWidth
+          dataTestId="invite-link-input"
+        />
       </StyledLinkContainer>
       <Button
         Icon={IconLink}
@@ -47,6 +52,7 @@ export const WorkspaceInviteLink = ({
           });
           navigator.clipboard.writeText(inviteLink);
         }}
+        dataTestId="copy-invite-link-button"
       />
     </StyledContainer>
   );

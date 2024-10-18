@@ -31,6 +31,7 @@ export const DeleteWorkspace = () => {
         title="Delete workspace"
         Icon={IconTrash}
         onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
+        dataTestId="delete-workspace-button"
       />
 
       <ConfirmationModal
