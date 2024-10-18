@@ -13,6 +13,7 @@ import {
   FormatRelationMetadataInputParams,
 } from '../utils/formatRelationMetadataInput';
 
+import { v4 } from 'uuid';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useCreateOneRelationMetadataItem = () => {
@@ -32,6 +33,20 @@ export const useCreateOneRelationMetadataItem = () => {
       variables: { input: { relation: formatRelationMetadataInput(input) } },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      optimisticResponse: {
+        createOneRelation: {
+          ...input,
+          createdAt: new Date().toISOString(),
+          __typename: 'relation',
+          id: v4(),
+          updatedAt: undefined,
+          fromObjectMetadataId: '',
+          toObjectMetadataId: '',
+          fromFieldMetadataId: '',
+          toFieldMetadataId: '',
+          relationType: input.relationType as any,
+        },
+      },
     });
   };
 
