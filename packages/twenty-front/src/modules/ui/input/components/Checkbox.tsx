@@ -75,7 +75,7 @@ const StyledInput = styled.input<InputProps>`
   z-index: 10;
   & + label {
     --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
+      checkboxSize === CheckboxSize.Large ? '18px' : '14px'};
     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     height: calc(var(--size) + 2px);
     padding: 0;
@@ -85,7 +85,7 @@ const StyledInput = styled.input<InputProps>`
 
   & + label:before {
     --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
+      checkboxSize === CheckboxSize.Large ? '18px' : '14px'};
     background: ${({ theme, indeterminate, isChecked }) =>
       indeterminate || isChecked ? theme.color.blue : 'transparent'};
     border-color: ${({
@@ -126,8 +126,7 @@ const StyledInput = styled.input<InputProps>`
   }
 
   & + label > svg {
-    --padding: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '2px' : '1px'};
+    --padding: 2px;
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '16px' : '12px'};
     height: var(--size);
