@@ -116,7 +116,7 @@ export const graphqlMocks = {
     graphql.query('SearchWorkspaceMembers', () => {
       return HttpResponse.json({
         data: {
-          workspaceMembers: {
+          searchWorkspaceMembers: {
             edges: mockWorkspaceMembers.map((member) => ({
               node: {
                 ...member,
