@@ -1,10 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-
-import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
-import {
-  LinkType,
-  SocialLink,
-} from '@/ui/navigation/link/components/SocialLink';
+import { LinkType, RoundedLink, SocialLink } from 'twenty-ui';
 
 type LinkDisplayProps = {
   value?: { url: string; label?: string };

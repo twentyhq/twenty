@@ -1,4 +1,4 @@
-import { LinkType } from 'twenty-ui';
+import { LinkType } from '@ui/navigation/link';
 import { isDefined } from './isDefined';
 
 type getUrlDisplayValueByUrlTypeProps = {

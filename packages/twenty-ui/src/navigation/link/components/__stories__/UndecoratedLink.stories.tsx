@@ -1,9 +1,8 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
-
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { UndecoratedLink } from '@ui/navigation/link/components/UndecoratedLink';
+import { ComponentWithRouterDecorator } from '@ui/testing';
 
 const meta: Meta<typeof UndecoratedLink> = {
   title: 'UI/navigation/link/UndecoratedLink',

@@ -1,8 +1,7 @@
-import { Toggle } from '@/ui/input/components/Toggle';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
-import { IconTool, MAIN_COLORS } from 'twenty-ui';
+import { IconTool } from '@ui/display';
+import { Toggle } from '@ui/input';
+import { MAIN_COLORS } from '@ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -37,11 +36,15 @@ const StyledIconTool = styled(IconTool)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-export const AdvancedSettingsToggle = () => {
-  const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useRecoilState(
-    isAdvancedModeEnabledState,
-  );
+interface AdvancedSettingsToggleProps {
+  isAdvancedModeEnabled: boolean;
+  setIsAdvancedModeEnabled: (enabled: boolean) => void;
+}
 
+export const AdvancedSettingsToggle = ({
+  isAdvancedModeEnabled,
+  setIsAdvancedModeEnabled,
+}: AdvancedSettingsToggleProps) => {
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };
