@@ -52,6 +52,7 @@ const StyledHeaderContainer = styled.div`
 const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
+  gap: 4px;
 `;
 
 const StyledRightContainer = styled.div`
