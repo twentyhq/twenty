@@ -110,15 +110,14 @@ export const PageHeader = ({
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
-  const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
-  const { pathname } = useLocation();
-  const isSettingsPage = matchPath('/settings/*', pathname);
-
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
 
   return (
     <StyledTopBarContainer width={width}>
       <StyledLeftContainer>
-       {!isMobile && !isNavigationDrawerOpen && !isSettingsPage && (
+        {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>
             <NavigationDrawerCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
