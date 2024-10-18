@@ -28,6 +28,7 @@ import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMen
 import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
 import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -67,6 +68,9 @@ export const RecordIndexContainer = () => {
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
+  const setRecordIndexViewFilterGroups = useSetRecoilState(
+    recordIndexViewFilterGroupsState,
+  );
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
@@ -138,6 +142,7 @@ export const RecordIndexContainer = () => {
                 setTableFilters(
                   mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
                 );
+                setRecordIndexViewFilterGroups(view.viewFilterGroups ?? []);
                 setRecordIndexFilters(
                   mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
                 );
