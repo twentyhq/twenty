@@ -2,35 +2,29 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
-import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import {
+  ContextStoreTargetedRecordsRule,
+  contextStoreTargetedRecordsRuleState,
+} from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
 export const JestContextStoreSetter = ({
-  contextStoreTargetedRecords = {
-    selectedRecordIds: 'all',
-    excludedRecordIds: [],
+  contextStoreTargetedRecordsRule = {
+    mode: 'selection',
+    selectedRecordIds: [],
   },
   contextStoreCurrentObjectMetadataNameSingular = '',
-  contextStoreTargetedRecordsFilters = [],
   children,
 }: {
-  contextStoreTargetedRecords?: {
-    selectedRecordIds: string[] | 'all';
-    excludedRecordIds: string[];
-  };
+  contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
   contextStoreCurrentObjectMetadataNameSingular?: string;
-  contextStoreTargetedRecordsFilters?: [];
   children: ReactNode;
 }) => {
-  const setContextStoreTargetedRecords = useSetRecoilState(
-    contextStoreTargetedRecordsState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilState(
+    contextStoreTargetedRecordsRuleState,
   );
   const setContextStoreCurrentObjectMetadataId = useSetRecoilState(
     contextStoreCurrentObjectMetadataIdState,
-  );
-  const setContextStoreTargetedRecordsFilters = useSetRecoilState(
-    contextStoreTargetedRecordsFiltersState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -41,17 +35,14 @@ export const JestContextStoreSetter = ({
 
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
-    setContextStoreTargetedRecords(contextStoreTargetedRecords);
+    setContextStoreTargetedRecordsRule(contextStoreTargetedRecordsRule);
     setContextStoreCurrentObjectMetadataId(contextStoreCurrentObjectMetadataId);
-    setContextStoreTargetedRecordsFilters(contextStoreTargetedRecordsFilters);
     setIsLoaded(true);
   }, [
-    setContextStoreTargetedRecords,
+    setContextStoreTargetedRecordsRule,
     setContextStoreCurrentObjectMetadataId,
-    setContextStoreTargetedRecordsFilters,
-    contextStoreTargetedRecords,
+    contextStoreTargetedRecordsRule,
     contextStoreCurrentObjectMetadataId,
-    contextStoreTargetedRecordsFilters,
   ]);
 
   return isLoaded ? <>{children}</> : null;

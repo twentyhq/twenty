@@ -8,16 +8,14 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
-import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
 import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
-import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewType } from '@/views/types/ViewType';
 
 export const sleep = (ms: number) =>
@@ -78,28 +76,22 @@ export const useRecordData = ({
   );
   const columns = useRecoilValue(visibleTableColumnsSelector());
 
-  const contextStoreTargetedRecords = useRecoilValue(
-    contextStoreTargetedRecordsState,
+  const contextStoreTargetedRecordsRule = useRecoilValue(
+    contextStoreTargetedRecordsRuleState,
   );
 
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
     contextStoreCurrentObjectMetadataIdState,
   );
 
-  const contextStoreTargetedRecordsFilters = useRecoilValue(
-    contextStoreTargetedRecordsFiltersState,
-  );
-
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: contextStoreCurrentObjectMetadataId,
   });
 
-  const queryFilter = turnFiltersIntoQueryFilter(
-    contextStoreTargetedRecordsFilters,
-    objectMetadataItem?.fields ?? [],
+  const queryFilter = computeContextStoreFilters(
+    contextStoreTargetedRecordsRule,
+    objectMetadataItem ?? undefined,
   );
-
-  const { selectedRecordIds, excludedRecordIds } = contextStoreTargetedRecords;
 
   const findManyRecordsParams = useFindManyParams(
     objectNameSingular,
@@ -114,26 +106,7 @@ export const useRecordData = ({
     loading,
   } = useLazyFindManyRecords({
     ...findManyRecordsParams,
-    filter: makeAndFilterVariables([
-      queryFilter,
-      selectedRecordIds !== 'all'
-        ? selectedRecordIds.length === 0
-          ? undefined
-          : {
-              id: {
-                in: selectedRecordIds,
-              },
-            }
-        : excludedRecordIds.length > 0
-          ? {
-              not: {
-                id: {
-                  in: excludedRecordIds,
-                },
-              },
-            }
-          : undefined,
-    ]),
+    filter: queryFilter,
     limit: pageSize,
   });
 

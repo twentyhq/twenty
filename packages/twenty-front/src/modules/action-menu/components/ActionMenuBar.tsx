@@ -4,10 +4,11 @@ import { ActionMenuBarEntry } from '@/action-menu/components/ActionMenuBarEntry'
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
-import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
+import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilValue } from 'recoil';
 
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -18,10 +19,9 @@ const StyledLabel = styled.div`
 `;
 
 export const ActionMenuBar = () => {
-  const { totalCount: numberOfSelectedRecords } =
-    useContextStoreSelectedRecords({
-      limit: 1,
-    });
+  const contextStoreNumberOfSelectedRecords = useRecoilValue(
+    contextStoreNumberOfSelectedRecordsState,
+  );
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
@@ -42,7 +42,7 @@ export const ActionMenuBar = () => {
         scope: ActionBarHotkeyScope.ActionBar,
       }}
     >
-      <StyledLabel>{numberOfSelectedRecords} selected:</StyledLabel>
+      <StyledLabel>{contextStoreNumberOfSelectedRecords} selected:</StyledLabel>
       {actionMenuEntries.map((entry, index) => (
         <ActionMenuBarEntry key={index} entry={entry} />
       ))}

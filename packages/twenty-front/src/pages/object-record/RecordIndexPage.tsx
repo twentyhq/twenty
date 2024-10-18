@@ -5,7 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
-import { RecordIndexContainerEffect } from '@/object-record/record-index/components/RecordIndexContainerEffect';
+import { RecordIndexContainerContextStoreEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
@@ -72,7 +72,7 @@ export const RecordIndexPage = () => {
         <RecordIndexPageHeader />
         <PageBody>
           <StyledIndexContainer>
-            <RecordIndexContainerEffect />
+            <RecordIndexContainerContextStoreEffect />
             <RecordIndexContainer />
           </StyledIndexContainer>
         </PageBody>

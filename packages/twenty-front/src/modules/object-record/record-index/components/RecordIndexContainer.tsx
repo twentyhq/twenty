@@ -23,7 +23,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
 import { ActionMenu } from '@/action-menu/components/ActionMenu';
-import { contextStoreTargetedRecordsFiltersState } from '@/context-store/states/contextStoreTargetedRecordsFilters';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -102,8 +102,8 @@ export const RecordIndexContainer = () => {
     [columnDefinitions, setTableColumns],
   );
 
-  const setContextStoreTargetedRecordsFilters = useSetRecoilState(
-    contextStoreTargetedRecordsFiltersState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilState(
+    contextStoreTargetedRecordsRuleState,
   );
 
   return (
@@ -135,9 +135,13 @@ export const RecordIndexContainer = () => {
                 setRecordIndexFilters(
                   mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
                 );
-                setContextStoreTargetedRecordsFilters(
-                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
-                );
+                setContextStoreTargetedRecordsRule((prev) => ({
+                  ...prev,
+                  filters: mapViewFiltersToFilters(
+                    view.viewFilters,
+                    filterDefinitions,
+                  ),
+                }));
                 setTableSorts(
                   mapViewSortsToSorts(view.viewSorts, sortDefinitions),
                 );

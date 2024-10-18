@@ -130,12 +130,11 @@ const mocks: MockedResponse[] = [
 const WrapperWithResponse = getJestMetadataAndApolloMocksAndContextStoreWrapper(
   {
     apolloMocks: mocks,
-    contextStoreTargetedRecords: {
-      selectedRecordIds: 'all',
-      excludedRecordIds: [],
+    contextStoreTargetedRecordsRule: {
+      mode: 'selection',
+      selectedRecordIds: [],
     },
     contextStoreCurrentObjectMetadataNameSingular: 'person',
-    contextStoreTargetedRecordsFilters: [],
   },
 );
 
@@ -156,12 +155,11 @@ const graphqlEmptyResponse = [
 const WrapperWithEmptyResponse =
   getJestMetadataAndApolloMocksAndContextStoreWrapper({
     apolloMocks: graphqlEmptyResponse,
-    contextStoreTargetedRecords: {
-      selectedRecordIds: 'all',
-      excludedRecordIds: [],
+    contextStoreTargetedRecordsRule: {
+      mode: 'selection',
+      selectedRecordIds: [],
     },
     contextStoreCurrentObjectMetadataNameSingular: 'person',
-    contextStoreTargetedRecordsFilters: [],
   });
 
 describe('useRecordData', () => {

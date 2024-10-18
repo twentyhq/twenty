@@ -1,6 +1,6 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -15,8 +15,8 @@ export const ManageFavoritesActionEffect = ({
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const contextStoreTargetedRecords = useRecoilValue(
-    contextStoreTargetedRecordsState,
+  const contextStoreTargetedRecordsRule = useRecoilValue(
+    contextStoreTargetedRecordsRuleState,
   );
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
     contextStoreCurrentObjectMetadataIdState,
@@ -25,9 +25,9 @@ export const ManageFavoritesActionEffect = ({
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const selectedRecordId =
-    contextStoreTargetedRecords.selectedRecordIds === 'all'
-      ? ''
-      : contextStoreTargetedRecords.selectedRecordIds[0];
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      : '';
 
   const selectedRecord = useRecoilValue(
     recordStoreFamilyState(selectedRecordId),

@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
@@ -74,25 +74,30 @@ export const RecordIndexTableContainerEffect = () => {
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
   const setContextStoreTargetedRecords = useSetRecoilState(
-    contextStoreTargetedRecordsState,
+    contextStoreTargetedRecordsRuleState,
   );
   const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
   const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
 
   useEffect(() => {
-    setContextStoreTargetedRecords({
-      selectedRecordIds:
-        selectedRowIds.length !== 1 && hasUserSelectedAllRows
-          ? 'all'
-          : selectedRowIds,
-      excludedRecordIds: unselectedRowIds,
-    });
+    if (hasUserSelectedAllRows) {
+      setContextStoreTargetedRecords({
+        mode: 'exclusion',
+        excludedRecordIds: unselectedRowIds,
+        filters: [],
+      });
+    } else {
+      setContextStoreTargetedRecords({
+        mode: 'selection',
+        selectedRecordIds: selectedRowIds,
+      });
+    }
 
     return () => {
       setContextStoreTargetedRecords({
+        mode: 'selection',
         selectedRecordIds: [],
-        excludedRecordIds: [],
       });
     };
   }, [

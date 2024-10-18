@@ -1,5 +1,5 @@
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordsState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,8 +10,8 @@ export const RecordShowPageContextStoreEffect = ({
 }: {
   recordId: string;
 }) => {
-  const setcontextStoreTargetedRecords = useSetRecoilState(
-    contextStoreTargetedRecordsState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilState(
+    contextStoreTargetedRecordsRuleState,
   );
 
   const setContextStoreCurrentObjectMetadataId = useSetRecoilState(
@@ -25,22 +25,22 @@ export const RecordShowPageContextStoreEffect = ({
   });
 
   useEffect(() => {
-    setcontextStoreTargetedRecords({
+    setContextStoreTargetedRecordsRule({
+      mode: 'selection',
       selectedRecordIds: [recordId],
-      excludedRecordIds: [],
     });
     setContextStoreCurrentObjectMetadataId(objectMetadataItem?.id);
 
     return () => {
-      setcontextStoreTargetedRecords({
+      setContextStoreTargetedRecordsRule({
+        mode: 'selection',
         selectedRecordIds: [],
-        excludedRecordIds: [],
       });
       setContextStoreCurrentObjectMetadataId(null);
     };
   }, [
     recordId,
-    setcontextStoreTargetedRecords,
+    setContextStoreTargetedRecordsRule,
     setContextStoreCurrentObjectMetadataId,
     objectMetadataItem?.id,
   ]);

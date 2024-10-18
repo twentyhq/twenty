@@ -1,10 +1,13 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCallback, useEffect, useState } from 'react';
@@ -39,12 +42,23 @@ export const DeleteRecordsActionEffect = ({
 
   const { favorites, deleteFavorite } = useFavorites();
 
-  const { totalCount: numberOfSelectedRecords, fetchAllRecordIds } =
-    useContextStoreSelectedRecords({
-      recordGqlFields: {
-        id: true,
-      },
-    });
+  const contextStoreNumberOfSelectedRecords = useRecoilValue(
+    contextStoreNumberOfSelectedRecordsState,
+  );
+
+  const contextStoreTargetedRecordsRule = useRecoilValue(
+    contextStoreTargetedRecordsRuleState,
+  );
+
+  const filter = computeContextStoreFilters(
+    contextStoreTargetedRecordsRule,
+    objectMetadataItem ?? undefined,
+  );
+
+  const { fetchAllRecordIds } = useFetchAllRecordIds({
+    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+    filter,
+  });
 
   const handleDeleteClick = useCallback(async () => {
     const recordIdsToDelete = await fetchAllRecordIds();
@@ -76,9 +90,9 @@ export const DeleteRecordsActionEffect = ({
 
   const canDelete =
     !isRemoteObject &&
-    isDefined(numberOfSelectedRecords) &&
-    numberOfSelectedRecords < DELETE_MAX_COUNT &&
-    numberOfSelectedRecords > 0;
+    isDefined(contextStoreNumberOfSelectedRecords) &&
+    contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
+    contextStoreNumberOfSelectedRecords > 0;
 
   useEffect(() => {
     if (canDelete) {
@@ -95,17 +109,19 @@ export const DeleteRecordsActionEffect = ({
           <ConfirmationModal
             isOpen={isDeleteRecordsModalOpen}
             setIsOpen={setIsDeleteRecordsModalOpen}
-            title={`Delete ${numberOfSelectedRecords} ${
-              numberOfSelectedRecords === 1 ? `record` : 'records'
+            title={`Delete ${contextStoreNumberOfSelectedRecords} ${
+              contextStoreNumberOfSelectedRecords === 1 ? `record` : 'records'
             }`}
             subtitle={`Are you sure you want to delete ${
-              numberOfSelectedRecords === 1 ? 'this record' : 'these records'
+              contextStoreNumberOfSelectedRecords === 1
+                ? 'this record'
+                : 'these records'
             }? ${
-              numberOfSelectedRecords === 1 ? 'It' : 'They'
+              contextStoreNumberOfSelectedRecords === 1 ? 'It' : 'They'
             } can be recovered from the Options menu.`}
             onConfirmClick={() => handleDeleteClick()}
             deleteButtonText={`Delete ${
-              numberOfSelectedRecords > 1 ? 'Records' : 'Record'
+              contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
           />
         ),
@@ -120,9 +136,9 @@ export const DeleteRecordsActionEffect = ({
   }, [
     addActionMenuEntry,
     canDelete,
+    contextStoreNumberOfSelectedRecords,
     handleDeleteClick,
     isDeleteRecordsModalOpen,
-    numberOfSelectedRecords,
     position,
     removeActionMenuEntry,
   ]);

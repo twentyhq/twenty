@@ -1,3 +1,4 @@
+import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
@@ -7,20 +8,15 @@ import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
   apolloMocks,
   onInitializeRecoilSnapshot,
-  contextStoreTargetedRecords,
+  contextStoreTargetedRecordsRule,
   contextStoreCurrentObjectMetadataNameSingular,
-  contextStoreTargetedRecordsFilters,
 }: {
   apolloMocks:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
-  contextStoreTargetedRecords?: {
-    selectedRecordIds: string[] | 'all';
-    excludedRecordIds: string[];
-  };
+  contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
   contextStoreCurrentObjectMetadataNameSingular?: string;
-  contextStoreTargetedRecordsFilters?: [];
 }) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks,
@@ -29,11 +25,10 @@ export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
       <JestContextStoreSetter
-        contextStoreTargetedRecords={contextStoreTargetedRecords}
+        contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
         contextStoreCurrentObjectMetadataNameSingular={
           contextStoreCurrentObjectMetadataNameSingular
         }
-        contextStoreTargetedRecordsFilters={contextStoreTargetedRecordsFilters}
       >
         {children}
       </JestContextStoreSetter>

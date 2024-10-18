@@ -1,12 +1,26 @@
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { createState } from 'twenty-ui';
 
-export const contextStoreTargetedRecordsState = createState<{
-  selectedRecordIds: 'all' | string[];
+type ContextStoreTargetedRecordsRuleSelectionMode = {
+  mode: 'selection';
+  selectedRecordIds: string[];
+};
+
+type ContextStoreTargetedRecordsRuleExclusionMode = {
+  mode: 'exclusion';
   excludedRecordIds: string[];
-}>({
-  key: 'contextStoreTargetedRecordsState',
-  defaultValue: {
-    selectedRecordIds: [],
-    excludedRecordIds: [],
-  },
-});
+  filters: Filter[];
+};
+
+export type ContextStoreTargetedRecordsRule =
+  | ContextStoreTargetedRecordsRuleSelectionMode
+  | ContextStoreTargetedRecordsRuleExclusionMode;
+
+export const contextStoreTargetedRecordsRuleState =
+  createState<ContextStoreTargetedRecordsRule>({
+    key: 'contextStoreTargetedRecordsRuleState',
+    defaultValue: {
+      mode: 'selection',
+      selectedRecordIds: [],
+    },
+  });
