@@ -137,6 +137,9 @@ const mocks: MockedResponse[] = [
                   rocketId
                   taskId
                   updatedAt
+                  workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }
