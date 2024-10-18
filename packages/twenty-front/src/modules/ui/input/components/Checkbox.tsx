@@ -126,9 +126,10 @@ const StyledInput = styled.input<InputProps>`
   }
 
   & + label > svg {
-    --padding: 2px;
+    --padding: ${({ checkboxSize }) =>
+      checkboxSize === CheckboxSize.Large ? '2px' : '1px'};
     --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '16px' : '12px'};
+      checkboxSize === CheckboxSize.Large ? '16px' : '14px'};
     height: var(--size);
     left: var(--padding);
     position: absolute;
