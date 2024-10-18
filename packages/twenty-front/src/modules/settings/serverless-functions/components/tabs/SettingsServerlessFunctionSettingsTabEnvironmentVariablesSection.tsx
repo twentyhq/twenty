@@ -1,13 +1,8 @@
 import dotenv from 'dotenv';
 import {
   H2Title,
-  IconCheck,
-  IconX,
-  IconDotsVertical,
-  IconPencil,
   IconPlus,
   IconSearch,
-  IconTrash,
   MOBILE_VIEWPORT,
   isDefined,
 } from 'twenty-ui';
@@ -18,16 +13,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import React, { useState } from 'react';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { Button } from '@/ui/input/button/components/Button';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { SettingsServerlessFunctionSettingsTabEnvironmentVariableTableRow } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTabEnvironmentVariableTableRow';
 
 const StyledSearchInput = styled(TextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -51,22 +40,6 @@ const StyledTableRow = styled(TableRow)`
   grid-template-columns: 180px auto 32px;
 `;
 
-const StyledEditModeTableRow = styled(TableRow)`
-  grid-template-columns: 180px auto 56px;
-`;
-
-type EnvironmentVariable = {
-  key: string;
-  value: string;
-  editMode?: boolean;
-};
-
-const EMPTY_ENV_VARIABLE: EnvironmentVariable = {
-  key: '',
-  value: '',
-  editMode: true,
-};
-
 export const SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection =
   ({
     formValues,
@@ -75,105 +48,25 @@ export const SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection =
     formValues: ServerlessFunctionFormValues;
     onCodeChange: (filePath: string, value: string) => void;
   }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-
-    const parsedEnvironmentVariables = formValues.code?.['.env']
+    const environmentVariables = formValues.code?.['.env']
       ? dotenv.parse(formValues.code['.env'])
       : {};
 
-    const environmentVariables = Object.keys(parsedEnvironmentVariables).map(
-      (key) => {
-        return { key, value: parsedEnvironmentVariables[key], editMode: false };
-      },
+    const [searchTerm, setSearchTerm] = useState('');
+    const [editModeIndex, setEditModeIndex] = useState<number | undefined>();
+    const [envVariables, setEnvVariables] = useState<{ [key: string]: string }>(
+      environmentVariables,
     );
 
-    const [envVariables, setEnvVariables] =
-      useState<EnvironmentVariable[]>(environmentVariables);
-
-    const tableRow = ({ key, value, editMode = false }: EnvironmentVariable) =>
-      editMode ? (
-        <StyledEditModeTableRow>
-          <TableCell>
-            <TextInputV2 autoFocus value={key} placeholder="Name" fullWidth />
-          </TableCell>
-          <TableCell>
-            <TextInputV2 value={value} placeholder="Value" fullWidth />
-          </TableCell>
-          <TableCell>
-            <LightIconButton
-              accent={'tertiary'}
-              Icon={IconX}
-              onClick={() => {}}
-            />
-            <LightIconButton
-              accent={'tertiary'}
-              Icon={IconCheck}
-              onClick={() => {}}
-            />
-          </TableCell>
-        </StyledEditModeTableRow>
-      ) : (
-        <StyledTableRow>
-          <TableCell>{key}</TableCell>
-          <TableCell>{value}</TableCell>
-          <TableCell>
-            <Dropdown
-              dropdownMenuWidth="100px"
-              dropdownId={`${key}-settings-env-variable-dropdown`}
-              clickableComponent={
-                <LightIconButton
-                  aria-label="Env Variable Options"
-                  Icon={IconDotsVertical}
-                  accent="tertiary"
-                />
-              }
-              dropdownComponents={
-                <DropdownMenu disableBlur disableBorder width="auto">
-                  <DropdownMenuItemsContainer>
-                    <MenuItem
-                      text={'Edit'}
-                      LeftIcon={IconPencil}
-                      onClick={() =>
-                        setEnvVariables((prevState) =>
-                          prevState.reduce((acc, state) => {
-                            if (state.key === key) {
-                              acc.push({ ...state, editMode: true });
-                              return acc;
-                            } else if (state.key === '' && state.value === '') {
-                              return acc;
-                            } else {
-                              acc.push({ ...state, editMode: false });
-                              return acc;
-                            }
-                          }, [] as EnvironmentVariable[]),
-                        )
-                      }
-                    />
-                    <MenuItem
-                      text={'Delete'}
-                      LeftIcon={IconTrash}
-                      onClick={() =>
-                        setEnvVariables((prevState) =>
-                          prevState.reduce((acc, state) => {
-                            if (state.key !== key) {
-                              acc.push({ ...state, editMode: true });
-                              return acc;
-                            }
-                            return acc;
-                          }, [] as EnvironmentVariable[]),
-                        )
-                      }
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownMenu>
-              }
-              dropdownHotkeyScope={{
-                scope: `${key}-settings-env-variable-dropdown`,
-              }}
-            />
-          </TableCell>
-        </StyledTableRow>
+    const getFormattedEnvironmentVariables = (newEnvVariables: {
+      [key: string]: string;
+    }) => {
+      return Object.entries(newEnvVariables).reduce(
+        (acc, [key, value]) =>
+          key.length > 0 && value.length > 0 ? `${acc}\n${key}=${value}` : acc,
+        '',
       );
+    };
 
     return (
       <Section>
@@ -194,13 +87,47 @@ export const SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection =
             <TableHeader></TableHeader>
           </StyledTableRow>
           <StyledTableBody>
-            {envVariables.map((environmentVariable) =>
-              tableRow({
-                key: environmentVariable.key,
-                value: environmentVariable.value,
-                editMode: environmentVariable.editMode,
-              }),
-            )}
+            {Object.entries(envVariables).map(([key, value], index) => (
+              <SettingsServerlessFunctionSettingsTabEnvironmentVariableTableRow
+                key={index}
+                index={index}
+                envKey={key}
+                envValue={value}
+                editMode={editModeIndex === index}
+                onChange={(newKey, newValue) => {
+                  const newEnvVariables = Object.entries(envVariables).reduce(
+                    (acc, [oldKey, oldValue], currentIndex) => {
+                      if (index === currentIndex) {
+                        acc[newKey] = newValue;
+                      } else {
+                        acc[oldKey] = oldValue;
+                      }
+                      return acc;
+                    },
+                    {} as { [key: string]: string },
+                  );
+                  setEnvVariables(newEnvVariables);
+                  onCodeChange(
+                    '.env',
+                    getFormattedEnvironmentVariables(newEnvVariables),
+                  );
+                }}
+                onDelete={() => {
+                  const newEnvVariables = { ...envVariables };
+                  delete newEnvVariables[key];
+                  setEnvVariables(newEnvVariables);
+                  onCodeChange(
+                    '.env',
+                    getFormattedEnvironmentVariables(newEnvVariables),
+                  );
+                }}
+                setEditMode={(newEditMode: boolean) =>
+                  newEditMode === true
+                    ? setEditModeIndex(index)
+                    : setEditModeIndex(undefined)
+                }
+              />
+            ))}
           </StyledTableBody>
         </Table>
         <StyledButtonContainer>
@@ -208,15 +135,14 @@ export const SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection =
             Icon={IconPlus}
             title="Add Variable"
             size="small"
-            disabled={isDefined(
-              envVariables.find((envVariable) => envVariable.editMode),
-            )}
+            disabled={isDefined(editModeIndex)}
             variant="secondary"
-            onClick={() =>
+            onClick={() => {
               setEnvVariables((prevState) => {
-                return [...prevState, EMPTY_ENV_VARIABLE];
-              })
-            }
+                return { ...prevState, '': '' };
+              });
+              setEditModeIndex(Object.keys(envVariables).length);
+            }}
           />
         </StyledButtonContainer>
       </Section>
