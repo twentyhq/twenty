@@ -2,8 +2,6 @@ import { InformationBannerDeletedRecord } from '@/information-banner/components/
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 
-import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
-import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
@@ -55,21 +53,8 @@ export const RecordShowContainer = ({
             targetObjectNameSingular: objectMetadataItem?.nameSingular,
           }}
           isInRightDrawer={isInRightDrawer}
-          summaryCard={
-            <SummaryCard
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-              isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
-              isInRightDrawer={isInRightDrawer}
-            />
-          }
-          fieldsCard={
-            <FieldsCard
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-            />
-          }
           loading={isPrefetchLoading || loading || recordLoading}
+          isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
         />
       </ShowPageContainer>
     </>

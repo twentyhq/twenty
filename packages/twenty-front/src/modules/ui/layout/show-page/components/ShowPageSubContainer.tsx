@@ -8,6 +8,8 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
+import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
+import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Button } from '@/ui/input/button/components/Button';
@@ -85,19 +87,17 @@ type ShowPageSubContainerProps = {
     ActivityTargetableObject,
     'targetObjectNameSingular' | 'id'
   >;
-  fieldsCard?: JSX.Element;
-  summaryCard?: JSX.Element;
   isInRightDrawer?: boolean;
   loading: boolean;
+  isNewRightDrawerItemLoading?: boolean;
 };
 
 export const ShowPageSubContainer = ({
   tabs,
   targetableObject,
   loading,
-  fieldsCard,
-  summaryCard,
   isInRightDrawer = false,
+  isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
   const { activeTabIdState } = useTabList(
     `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
@@ -108,6 +108,22 @@ export const ShowPageSubContainer = ({
 
   const isNewViewableRecordLoading = useRecoilValue(
     isNewViewableRecordLoadingState,
+  );
+
+  const summaryCard = (
+    <SummaryCard
+      objectNameSingular={targetableObject.targetObjectNameSingular}
+      objectRecordId={targetableObject.id}
+      isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
+      isInRightDrawer={isInRightDrawer}
+    />
+  );
+
+  const fieldsCard = (
+    <FieldsCard
+      objectNameSingular={targetableObject.targetObjectNameSingular}
+      objectRecordId={targetableObject.id}
+    />
   );
 
   const renderActiveTabContent = () => {
