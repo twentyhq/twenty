@@ -36,6 +36,7 @@ export const STANDARD_OBJECT_IDS = {
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',
   viewField: '20202020-4d19-4655-95bf-b2a04cf206d4',
   viewFilter: '20202020-6fb6-4631-aded-b7d67e952ec8',
+  viewFilterGroup: '20202020-b920-4b11-92aa-9b07d878e542',
   viewSort: '20202020-e46a-47a8-939a-e5d911f83531',
   view: '20202020-722e-4739-8e2c-0c372d661f49',
   webhook: '20202020-be4d-4e08-811d-0fffcd13ffd4',

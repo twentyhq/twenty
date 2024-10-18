@@ -52,7 +52,7 @@ export const MultipleFiltersDropdownContent = ({
       ) : shouldShowCompositeSelectionSubMenu ? (
         <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu />
       ) : (
-        <ObjectFilterDropdownFilterSelect />
+        <ObjectFilterDropdownFilterSelect isAdvancedFilterButtonVisible />
       )}
       <MultipleFiltersDropdownFilterOnFilterChangedEffect
         filterDefinitionUsedInDropdownType={

@@ -7,6 +7,7 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
@@ -127,28 +128,39 @@ export const ViewBarDetails = ({
   const { resetUnsavedViewStates } = useResetUnsavedViewStates();
   const canResetView = canPersistView && !hasFiltersQueryParams;
 
-  const { otherViewFilters, defaultViewFilters } = useMemo(() => {
-    if (!currentViewWithCombinedFiltersAndSorts) {
+  const { otherViewFilters, defaultViewFilters, advancedFilterViewFilters } =
+    useMemo(() => {
+      if (!currentViewWithCombinedFiltersAndSorts) {
+        return {
+          otherViewFilters: [],
+          defaultViewFilters: [],
+        };
+      }
+
+      const otherViewFilters =
+        currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+          (viewFilter) =>
+            viewFilter.variant &&
+            viewFilter.variant !== 'default' &&
+            !viewFilter.viewFilterGroupId,
+        );
+      const defaultViewFilters =
+        currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+          (viewFilter) =>
+            (!viewFilter.variant || viewFilter.variant === 'default') &&
+            !viewFilter.viewFilterGroupId,
+        );
+      const advancedFilterViewFilters =
+        currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+          (viewFilter) => viewFilter.viewFilterGroupId,
+        );
+
       return {
-        otherViewFilters: [],
-        defaultViewFilters: [],
+        otherViewFilters,
+        defaultViewFilters,
+        advancedFilterViewFilters,
       };
-    }
-
-    const otherViewFilters =
-      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
-        (viewFilter) => viewFilter.variant && viewFilter.variant !== 'default',
-      );
-    const defaultViewFilters =
-      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
-        (viewFilter) => !viewFilter.variant || viewFilter.variant === 'default',
-      );
-
-    return {
-      otherViewFilters,
-      defaultViewFilters,
-    };
-  }, [currentViewWithCombinedFiltersAndSorts]);
+    }, [currentViewWithCombinedFiltersAndSorts]);
 
   const handleCancelClick = () => {
     if (isDefined(viewId)) {
@@ -165,6 +177,10 @@ export const ViewBarDetails = ({
   if (!shouldExpandViewBar) {
     return null;
   }
+
+  const showAdvancedFilterDropdownButton =
+    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups &&
+    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.length > 0;
 
   return (
     <StyledBar>
@@ -199,6 +215,9 @@ export const ViewBarDetails = ({
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
+          {showAdvancedFilterDropdownButton && (
+            <AdvancedFilterDropdownButton viewBarId={viewBarId} />
+          )}
           {mapViewFiltersToFilters(
             defaultViewFilters,
             availableFilterDefinitions,
