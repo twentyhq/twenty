@@ -76,7 +76,8 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
         if (isDefined(matchingFilterInUnsavedFilters)) {
           const updatedFilters = unsavedToUpsertViewFilters.map((viewFilter) =>
             viewFilter.fieldMetadataId ===
-            matchingFilterInUnsavedFilters.fieldMetadataId
+              matchingFilterInUnsavedFilters.fieldMetadataId &&
+            !viewFilter.viewFilterGroupId
               ? { ...viewFilter, ...upsertedFilter, id: viewFilter.id }
               : viewFilter,
           );
