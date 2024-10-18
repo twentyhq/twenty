@@ -77,7 +77,7 @@ export const AdvancedFilterViewFilterGroup = (
           <StyledRow key={child.id}>
             <AdvancedFilterLogicalOperatorCell
               index={i}
-              viewFilterGroup={child}
+              viewFilterGroup={currentViewFilterGroup}
             />
             <AdvancedFilterViewFilterGroup
               viewBarInstanceId={props.viewBarInstanceId}

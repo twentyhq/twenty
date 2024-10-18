@@ -3,7 +3,6 @@ import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/ge
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -77,24 +76,21 @@ export const AdvancedFilterViewFilterOperandSelect = (
           />
         }
         dropdownComponents={
-          <DropdownMenu width="160px">
-            <DropdownMenuItemsContainer>
-              {operandsForFilterType.map((filterOperand, index) => (
-                <MenuItem
-                  key={`select-filter-operand-${index}`}
-                  onClick={() => {
-                    handleOperandChange(filterOperand);
-                  }}
-                  text={getOperandLabel(filterOperand)}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          <DropdownMenuItemsContainer>
+            {operandsForFilterType.map((filterOperand, index) => (
+              <MenuItem
+                key={`select-filter-operand-${index}`}
+                onClick={() => {
+                  handleOperandChange(filterOperand);
+                }}
+                text={getOperandLabel(filterOperand)}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
-        dropdownMenuWidth={280}
       />
     </StyledContainer>
   );
