@@ -87,10 +87,7 @@ export const RecordTableWithWrappers = ({
                   onDragSelectionChange={setRowSelected}
                 />
               </StyledTableInternalContainer>
-              <RecordTableInternalEffect
-                recordTableId={recordTableId}
-                tableBodyRef={tableBodyRef}
-              />
+              <RecordTableInternalEffect recordTableId={recordTableId} />
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>

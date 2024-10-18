@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
 import { IconCheckbox, IconTrash } from 'twenty-ui';
@@ -20,7 +20,10 @@ const meta: Meta<typeof ActionMenuBar> = {
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
-          set(contextStoreTargetedRecordIdsState, ['1', '2', '3']);
+          set(contextStoreTargetedRecordsRuleState, {
+            mode: 'selection',
+            selectedRecordIds: ['1', '2', '3'],
+          });
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',

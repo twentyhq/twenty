@@ -37,7 +37,6 @@ export const RecordTableHeaderCheckboxColumn = () => {
       setHasUserSelectedAllRows(true);
       selectAllRows();
     } else {
-      setHasUserSelectedAllRows(false);
       resetTableRowSelection();
     }
   };

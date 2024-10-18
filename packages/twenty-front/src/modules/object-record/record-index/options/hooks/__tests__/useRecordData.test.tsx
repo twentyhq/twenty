@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { percentage, sleep, useTableData } from '../useTableData';
+import { percentage, sleep, useRecordData } from '../useRecordData';
 
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -11,7 +11,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getJestMetadataAndApolloMocksAndContextStoreWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const defaultResponseData = {
@@ -127,9 +127,16 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const WrapperWithResponse = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: mocks,
-});
+const WrapperWithResponse = getJestMetadataAndApolloMocksAndContextStoreWrapper(
+  {
+    apolloMocks: mocks,
+    contextStoreTargetedRecordsRule: {
+      mode: 'selection',
+      selectedRecordIds: [],
+    },
+    contextStoreCurrentObjectMetadataNameSingular: 'person',
+  },
+);
 
 const graphqlEmptyResponse = [
   {
@@ -145,11 +152,17 @@ const graphqlEmptyResponse = [
   },
 ];
 
-const WrapperWithEmptyResponse = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: graphqlEmptyResponse,
-});
+const WrapperWithEmptyResponse =
+  getJestMetadataAndApolloMocksAndContextStoreWrapper({
+    apolloMocks: graphqlEmptyResponse,
+    contextStoreTargetedRecordsRule: {
+      mode: 'selection',
+      selectedRecordIds: [],
+    },
+    contextStoreCurrentObjectMetadataNameSingular: 'person',
+  });
 
-describe('useTableData', () => {
+describe('useRecordData', () => {
   const recordIndexId = 'people';
   const objectNameSingular = 'person';
   describe('data fetching', () => {
@@ -158,7 +171,7 @@ describe('useTableData', () => {
 
       const { result } = renderHook(
         () =>
-          useTableData({
+          useRecordData({
             recordIndexId,
             objectNameSingular,
             pageSize: 30,
@@ -166,7 +179,9 @@ describe('useTableData', () => {
             delayMs: 0,
             viewType: ViewType.Kanban,
           }),
-        { wrapper: WrapperWithEmptyResponse },
+        {
+          wrapper: WrapperWithEmptyResponse,
+        },
       );
 
       await act(async () => {
@@ -182,7 +197,7 @@ describe('useTableData', () => {
       const callback = jest.fn();
       const { result } = renderHook(
         () =>
-          useTableData({
+          useRecordData({
             recordIndexId,
             objectNameSingular,
             callback,
@@ -211,7 +226,7 @@ describe('useTableData', () => {
             recordIndexId,
           );
           return {
-            tableData: useTableData({
+            tableData: useRecordData({
               recordIndexId,
               objectNameSingular,
               callback,
@@ -304,7 +319,7 @@ describe('useTableData', () => {
             recordIndexId,
           );
           return {
-            tableData: useTableData({
+            tableData: useRecordData({
               recordIndexId,
               objectNameSingular,
               callback,

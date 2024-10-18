@@ -14,10 +14,11 @@ import {
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
+
 import {
   displayedExportProgress,
-  useExportTableData,
-} from '@/object-record/record-index/options/hooks/useExportTableData';
+  useExportRecordData,
+} from '@/action-menu/hooks/useExportRecordData';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -128,7 +129,7 @@ export const RecordIndexOptionsDropdownContent = ({
   const { openObjectRecordsSpreasheetImportDialog } =
     useOpenObjectRecordsSpreasheetImportDialog(objectNameSingular);
 
-  const { progress, download } = useExportTableData({
+  const { progress, download } = useExportRecordData({
     delayMs: 100,
     filename: `${objectNameSingular}.csv`,
     objectNameSingular,
