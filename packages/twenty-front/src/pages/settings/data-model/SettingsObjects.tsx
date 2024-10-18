@@ -1,6 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { H2Title, IconChevronRight, IconPlus, IconSearch } from 'twenty-ui';
+import {
+  H2Title,
+  IconChevronRight,
+  IconPlus,
+  IconSearch,
+  UndecoratedLink,
+} from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -26,7 +32,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';

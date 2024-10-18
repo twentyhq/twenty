@@ -1,4 +1,5 @@
 export * from './color/utils/stringToHslColor';
+export * from './getDisplayValueByUrlType';
 export * from './image/getImageAbsoluteURI';
 export * from './isDefined';
 export * from './state/utils/createState';

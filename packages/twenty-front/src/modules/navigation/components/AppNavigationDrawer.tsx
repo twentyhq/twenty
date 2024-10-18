@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
@@ -8,14 +8,14 @@ import {
   NavigationDrawer,
   NavigationDrawerProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
-import { AdvancedSettingsToggle } from '@/ui/navigation/link/components/AdvancedSettingsToggle';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { AdvancedSettingsToggle } from 'twenty-ui';
 import { MainNavigationDrawerItems } from './MainNavigationDrawerItems';
 
 export type AppNavigationDrawerProps = {
@@ -31,12 +31,20 @@ export const AppNavigationDrawer = ({
     isNavigationDrawerExpandedState,
   );
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useRecoilState(
+    isAdvancedModeEnabledState,
+  );
 
   const drawerProps: NavigationDrawerProps = isSettingsDrawer
     ? {
         title: 'Exit Settings',
         children: <SettingsNavigationDrawerItems />,
-        footer: <AdvancedSettingsToggle />,
+        footer: (
+          <AdvancedSettingsToggle
+            isAdvancedModeEnabled={isAdvancedModeEnabled}
+            setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+          />
+        ),
       }
     : {
         logo:
