@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
@@ -14,15 +14,17 @@ export type SettingsDataModelObjectSummaryProps = {
 const StyledObjectSummary = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: space-between;
 `;
 
 const StyledObjectName = styled.div`
-  align-items: center;
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
+  max-width: 60%;
+`;
+
+const StyledIconContainer = styled.div`
+  flex-shrink: 0;
 `;
 
 export const SettingsDataModelObjectSummary = ({
@@ -38,8 +40,10 @@ export const SettingsDataModelObjectSummary = ({
   return (
     <StyledObjectSummary className={className}>
       <StyledObjectName>
-        <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
-        {objectMetadataItem.labelPlural}
+        <StyledIconContainer>
+          <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
+        </StyledIconContainer>
+        <OverflowingTextWithTooltip text={objectMetadataItem.labelPlural} />
       </StyledObjectName>
       <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
     </StyledObjectSummary>

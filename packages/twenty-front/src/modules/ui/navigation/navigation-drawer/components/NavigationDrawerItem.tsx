@@ -142,7 +142,6 @@ const StyledKeyBoardShortcut = styled.div`
 
 const StyledNavigationDrawerItemContainer = styled.div`
   display: flex;
-  flex-grow: 1;
   width: 100%;
 `;
 
