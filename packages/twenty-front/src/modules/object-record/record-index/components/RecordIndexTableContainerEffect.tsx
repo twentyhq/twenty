@@ -29,10 +29,6 @@ export const RecordIndexTableContainerEffect = () => {
     recordTableId: recordIndexId,
   });
 
-  const setContextStoreTargetedRecords = useSetRecoilState(
-    contextStoreTargetedRecordsState,
-  );
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -46,8 +42,6 @@ export const RecordIndexTableContainerEffect = () => {
   useEffect(() => {
     setAvailableTableColumns(columnDefinitions);
   }, [columnDefinitions, setAvailableTableColumns]);
-
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const handleToggleColumnFilter = useHandleToggleColumnFilter({
     objectNameSingular,
@@ -79,7 +73,11 @@ export const RecordIndexTableContainerEffect = () => {
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
+  const setContextStoreTargetedRecords = useSetRecoilState(
+    contextStoreTargetedRecordsState,
+  );
   const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
   const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
 
   useEffect(() => {
