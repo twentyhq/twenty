@@ -11,44 +11,12 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 
 export const buildMigrationsForCustomObjectRelations = (
   createdObjectMetadata: ObjectMetadataEntity,
-  activityTargetObjectMetadata: ObjectMetadataEntity,
   attachmentObjectMetadata: ObjectMetadataEntity,
   timelineActivityObjectMetadata: ObjectMetadataEntity,
   favoriteObjectMetadata: ObjectMetadataEntity,
   noteTargetObjectMetadata: ObjectMetadataEntity,
   taskTargetObjectMetadata: ObjectMetadataEntity,
 ): WorkspaceMigrationTableAction[] => [
-  // Add activity target relation
-  {
-    name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        columnType: 'uuid',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  },
-  {
-    name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
-        referencedTableColumnName: 'id',
-        onDelete: RelationOnDeleteAction.CASCADE,
-      },
-    ],
-  },
   // Add note target relation
   {
     name: computeObjectTargetTable(noteTargetObjectMetadata),

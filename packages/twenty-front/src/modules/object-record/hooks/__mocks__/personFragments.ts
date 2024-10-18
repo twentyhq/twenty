@@ -49,22 +49,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
 
 export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       __typename
-      activityTargets {
-        edges {
-          node {
-            __typename
-            activityId
-            companyId
-            createdAt
-            deletedAt
-            id
-            opportunityId
-            personId
-            rocketId
-            updatedAt
-          }
-        }
-      }
       attachments {
         edges {
           node {
