@@ -5,10 +5,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import {
-  ClickOutsideMode,
-  useListenClickOutsideByClassName,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 type RecordTableInternalEffectProps = {
   recordTableId: string;
@@ -28,14 +25,6 @@ export const RecordTableInternalEffect = ({
     SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  useListenClickOutside({
-    refs: [tableBodyRef],
-    callback: () => {
-      leaveTableFocus();
-    },
-    mode: ClickOutsideMode.compareHTMLRef,
-  });
-
   useScopedHotkeys(
     [Key.Escape],
     () => {
@@ -46,9 +35,10 @@ export const RecordTableInternalEffect = ({
 
   useListenClickOutsideByClassName({
     classNames: ['entity-table-cell'],
-    excludeClassNames: ['bottom-bar', 'context-menu'],
+    excludeClassNames: ['bottom-bar', 'action-menu-dropdown'],
     callback: () => {
-      resetTableRowSelection();
+      console.log('click outside');
+      leaveTableFocus();
     },
   });
 
