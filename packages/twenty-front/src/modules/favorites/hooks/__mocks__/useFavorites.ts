@@ -295,6 +295,41 @@ export const mocks = [
           updatedAt
         }
         workflowId
+        workflowRun {
+          __typename
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          endedAt
+          id
+          name
+          output
+          position
+          startedAt
+          status
+          updatedAt
+          workflowId
+          workflowVersionId
+        }
+        workflowRunId
+        workflowVersion {
+          __typename
+          createdAt
+          deletedAt
+          id
+          name
+          position
+          status
+          steps
+          trigger
+          updatedAt
+          workflowId
+        }
+        workflowVersionId
         workspaceMember {
           __typename
           avatarUrl
@@ -575,6 +610,41 @@ export const mocks = [
               updatedAt
             }
             workflowId
+            workflowRun {
+              __typename
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              endedAt
+              id
+              name
+              output
+              position
+              startedAt
+              status
+              updatedAt
+              workflowId
+              workflowVersionId
+            }
+            workflowRunId
+            workflowVersion {
+              __typename
+              createdAt
+              deletedAt
+              id
+              name
+              position
+              status
+              steps
+              trigger
+              updatedAt
+              workflowId
+            }
+            workflowVersionId
             workspaceMember {
               __typename
               avatarUrl

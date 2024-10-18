@@ -17,7 +17,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       id
       intro
       jobTitle
-      linkedinLink{
+      linkedinLink {
         primaryLinkUrl
         primaryLinkLabel
         secondaryLinks
@@ -173,6 +173,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             updatedAt
             viewId
             workflowId
+            workflowRunId
+            workflowVersionId
             workspaceMemberId
           }
         }
@@ -291,6 +293,9 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             rocketId
             taskId
             updatedAt
+            workflowId
+            workflowRunId
+            workflowVersionId
             workspaceMemberId
           }
         }
