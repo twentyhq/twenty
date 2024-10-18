@@ -14,13 +14,8 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { useParams } from 'react-router-dom';
 import { Button } from '@/ui/input/button/components/Button';
-import {
-  ServerlessFunctionFormValues,
-  ServerlessFunctionNewFormValues,
-} from 'packages/twenty-front/src/modules/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { ServerlessFunctionFormValues } from 'packages/twenty-front/src/modules/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 
 const StyledSearchInput = styled(TextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -43,18 +38,17 @@ const StyledTableBody = styled(TableBody)`
 export const SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection =
   ({
     formValues,
-    onChange,
+    onCodeChange,
   }: {
     formValues: ServerlessFunctionFormValues;
-    onChange: (key: string) => (value: string) => void;
+    onCodeChange: (filePath: string, value: string) => void;
   }) => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [isNewInputDisplayed, setIsNewInputDisplayed] = useState(false);
 
     const environmentVariables = formValues.code?.['.env']
       ? dotenv.parse(formValues.code['.env'])
       : {};
-
-    console.log(environmentVariables);
 
     return (
       <Section>
@@ -81,6 +75,12 @@ export const SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection =
                 <TableCell>{environmentVariables[key]}</TableCell>
               </TableRow>
             ))}
+            {isNewInputDisplayed && (
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            )}
           </StyledTableBody>
         </Table>
         <StyledButtonContainer>
@@ -88,8 +88,9 @@ export const SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection =
             Icon={IconPlus}
             title="Add Variable"
             size="small"
+            disabled={isNewInputDisplayed}
             variant="secondary"
-            onClick={() => console.log('toto')}
+            onClick={() => setIsNewInputDisplayed(true)}
           />
         </StyledButtonContainer>
       </Section>

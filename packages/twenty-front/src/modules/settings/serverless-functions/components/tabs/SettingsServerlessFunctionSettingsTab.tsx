@@ -19,10 +19,12 @@ export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
   serverlessFunctionId,
   onChange,
+  onCodeChange,
 }: {
   formValues: ServerlessFunctionFormValues;
   serverlessFunctionId: string;
   onChange: (key: string) => (value: string) => void;
+  onCodeChange: (filePath: string, value: string) => void;
 }) => {
   const navigate = useNavigate();
   const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
@@ -61,7 +63,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
       />
       <SettingsServerlessFunctionSettingsTabEnvironmentVariablesSection
         formValues={formValues}
-        onChange={onChange}
+        onCodeChange={onCodeChange}
       />
       <Section>
         <H2Title title="Danger zone" description="Delete this function" />
