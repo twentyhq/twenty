@@ -1,4 +1,4 @@
-import { FocusEventHandler, useEffect, useRef, useState } from 'react';
+import React, { FocusEventHandler, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
@@ -16,6 +16,7 @@ export type TextInputProps = TextInputV2ComponentProps & {
   dataTestId?: string;
   autoFocusOnMount?: boolean;
   autoSelectOnMount?: boolean;
+  RightComponent?: React.ReactNode;
 };
 
 export const TextInput = ({

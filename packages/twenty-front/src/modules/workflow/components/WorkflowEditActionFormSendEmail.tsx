@@ -7,6 +7,7 @@ import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
+import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
@@ -41,6 +42,8 @@ type SendEmailFormData = {
   subject: string;
   body: string;
 };
+
+type FieldName = 'connectedAccountId' | 'email' | 'subject' | 'body';
 
 export const WorkflowEditActionFormSendEmail = (
   props: WorkflowEditActionFormSendEmailProps,
@@ -172,6 +175,10 @@ export const WorkflowEditActionFormSendEmail = (
     }
   });
 
+  const handleVariableSelected = (fieldName: FieldName, variable: string) => {
+    form.setValue(fieldName, `${form.getValues(fieldName)}${variable}`);
+  };
+
   return (
     !loading && (
       <WorkflowEditActionFormBase
@@ -216,6 +223,13 @@ export const WorkflowEditActionFormSendEmail = (
                   field.onChange(email);
                   handleSave();
                 }}
+                RightComponent={
+                  <SearchVariablesDropdown
+                    onSelect={(variable: string) =>
+                      handleVariableSelected('email', variable)
+                    }
+                  />
+                }
               />
             )}
           />

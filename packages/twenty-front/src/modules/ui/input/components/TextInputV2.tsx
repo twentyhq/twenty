@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
+import React, {
   ChangeEvent,
   FocusEventHandler,
   ForwardedRef,
@@ -33,6 +33,16 @@ const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+`;
+
+const StyledRightComponentContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  justify-content: center;
+  display: flex;
 `;
 
 const StyledInput = styled.input<
@@ -130,6 +140,7 @@ export type TextInputV2ComponentProps = Omit<
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
+  RightComponent?: React.ReactNode;
 };
 
 const TextInputV2Component = (
@@ -155,6 +166,7 @@ const TextInputV2Component = (
     autoComplete,
     maxLength,
     dataTestId,
+    RightComponent,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -213,6 +225,11 @@ const TextInputV2Component = (
             error,
           }}
         />
+        {!!RightComponent && (
+          <StyledRightComponentContainer>
+            {RightComponent}
+          </StyledRightComponentContainer>
+        )}
         <StyledTrailingIconContainer {...{ error }}>
           {!error && type === INPUT_TYPE_PASSWORD && (
             <StyledTrailingIcon
