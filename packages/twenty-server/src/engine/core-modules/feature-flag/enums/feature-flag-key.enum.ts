@@ -10,8 +10,6 @@ export enum FeatureFlagKey {
   IsMessageThreadSubscriberEnabled = 'IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED',
   IsQueryRunnerTwentyORMEnabled = 'IS_QUERY_RUNNER_TWENTY_ORM_ENABLED',
   IsWorkspaceFavoriteEnabled = 'IS_WORKSPACE_FAVORITE_ENABLED',
-  IsSearchEnabled = 'IS_SEARCH_ENABLED',
-  IsWorkspaceMigratedForSearch = 'IS_WORKSPACE_MIGRATED_FOR_SEARCH',
   IsGmailSendEmailScopeEnabled = 'IS_GMAIL_SEND_EMAIL_SCOPE_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',

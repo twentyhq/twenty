@@ -61,6 +61,7 @@ export const RecordIndexPage = () => {
           recordIndexId,
           objectNamePlural,
           objectNameSingular,
+          objectMetadataItem,
           onIndexRecordsLoaded: handleIndexRecordsLoaded,
           onIndexIdentifierClick: handleIndexIdentifierClick,
           onCreateRecord: handleCreateRecord,
