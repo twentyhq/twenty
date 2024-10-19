@@ -20,6 +20,8 @@ const StyledActivityGroup = styled.div`
 `;
 
 const StyledActivityGroupContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
   position: relative;
 `;
 
