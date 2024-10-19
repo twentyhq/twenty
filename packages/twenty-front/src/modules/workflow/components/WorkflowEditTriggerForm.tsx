@@ -45,6 +45,8 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+const SELECT_AN_OPTION = {label: 'Select an option', value: ''};
+
 type WorkflowEditTriggerFormProps =
   | {
       trigger: WorkflowTrigger | undefined;
@@ -69,7 +71,6 @@ export const WorkflowEditTriggerForm = ({
   const triggerEvent = isDefined(trigger)
     ? splitWorkflowTriggerEventName(trigger.settings.eventName)
     : undefined;
-
   const availableMetadata: Array<SelectOption<string>> =
     activeObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
@@ -114,9 +115,9 @@ export const WorkflowEditTriggerForm = ({
           fullWidth
           disabled={readonly}
           value={triggerEvent?.objectType}
-          options={availableMetadata}
+          options={[SELECT_AN_OPTION, ...availableMetadata]}
           onChange={(updatedRecordType) => {
-            if (readonly === true) {
+            if (readonly === true || updatedRecordType == '') {
               return;
             }
 
@@ -143,10 +144,10 @@ export const WorkflowEditTriggerForm = ({
           label="Event type"
           fullWidth
           value={triggerEvent?.event}
-          options={OBJECT_EVENT_TRIGGERS}
+          options={[SELECT_AN_OPTION, ...OBJECT_EVENT_TRIGGERS]}
           disabled={readonly}
           onChange={(updatedEvent) => {
-            if (readonly === true) {
+            if (readonly === true || updatedEvent == '') {
               return;
             }
 
