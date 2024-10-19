@@ -3,7 +3,7 @@ import { IconCheckbox, IconNotes, IconPaperclip } from 'twenty-ui';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
-import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageRightContainer';
+import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageSubContainer';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 export const TimelineCreateButtonGroup = ({

@@ -8,32 +8,24 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
+import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
+import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Button } from '@/ui/input/button/components/Button';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
-import { TabList } from '@/ui/layout/tab/components/TabList';
+import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
+import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
 import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualizerEffect';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  IconCalendarEvent,
-  IconCheckbox,
-  IconList,
-  IconMail,
-  IconNotes,
-  IconPaperclip,
-  IconSettings,
-  IconTimelineEvent,
-  IconTrash,
-} from 'twenty-ui';
+import { IconTrash } from 'twenty-ui';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -89,57 +81,28 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
 
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
-type ShowPageRightContainerProps = {
+type ShowPageSubContainerProps = {
+  tabs: SingleTabProps[];
   targetableObject: Pick<
     ActivityTargetableObject,
     'targetObjectNameSingular' | 'id'
   >;
-  timeline?: boolean;
-  tasks?: boolean;
-  notes?: boolean;
-  emails?: boolean;
-  fieldsBox?: JSX.Element;
-  summaryCard?: JSX.Element;
   isInRightDrawer?: boolean;
   loading: boolean;
+  isNewRightDrawerItemLoading?: boolean;
 };
 
-export const ShowPageRightContainer = ({
+export const ShowPageSubContainer = ({
+  tabs,
   targetableObject,
-  timeline,
-  tasks,
-  notes,
-  emails,
   loading,
-  fieldsBox,
-  summaryCard,
   isInRightDrawer = false,
-}: ShowPageRightContainerProps) => {
+  isNewRightDrawerItemLoading = false,
+}: ShowPageSubContainerProps) => {
   const { activeTabIdState } = useTabList(
     `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
   );
   const activeTabId = useRecoilValue(activeTabIdState);
-
-  const targetObjectNameSingular =
-    targetableObject.targetObjectNameSingular as CoreObjectNameSingular;
-
-  const isCompanyOrPerson = [
-    CoreObjectNameSingular.Company,
-    CoreObjectNameSingular.Person,
-  ].includes(targetObjectNameSingular);
-
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
-  const isWorkflow =
-    isWorkflowEnabled &&
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.Workflow;
-  const isWorkflowVersion =
-    isWorkflowEnabled &&
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.WorkflowVersion;
-
-  const shouldDisplayCalendarTab = isCompanyOrPerson;
-  const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
   const isMobile = useIsMobile();
 
@@ -147,87 +110,22 @@ export const ShowPageRightContainer = ({
     isNewViewableRecordLoadingState,
   );
 
-  const tabs = [
-    {
-      id: 'richText',
-      title: 'Note',
-      Icon: IconNotes,
-      hide:
-        loading ||
-        (targetableObject.targetObjectNameSingular !==
-          CoreObjectNameSingular.Note &&
-          targetableObject.targetObjectNameSingular !==
-            CoreObjectNameSingular.Task),
-    },
-    {
-      id: 'fields',
-      title: 'Fields',
-      Icon: IconList,
-      hide: !(isMobile || isInRightDrawer),
-    },
-    {
-      id: 'timeline',
-      title: 'Timeline',
-      Icon: IconTimelineEvent,
-      hide: !timeline || isInRightDrawer || isWorkflow || isWorkflowVersion,
-    },
-    {
-      id: 'tasks',
-      title: 'Tasks',
-      Icon: IconCheckbox,
-      hide:
-        !tasks ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Note ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Task ||
-        isWorkflow ||
-        isWorkflowVersion,
-    },
-    {
-      id: 'notes',
-      title: 'Notes',
-      Icon: IconNotes,
-      hide:
-        !notes ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Note ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Task ||
-        isWorkflow ||
-        isWorkflowVersion,
-    },
-    {
-      id: 'files',
-      title: 'Files',
-      Icon: IconPaperclip,
-      hide: !notes || isWorkflow || isWorkflowVersion,
-    },
-    {
-      id: 'emails',
-      title: 'Emails',
-      Icon: IconMail,
-      hide: !shouldDisplayEmailsTab,
-    },
-    {
-      id: 'calendar',
-      title: 'Calendar',
-      Icon: IconCalendarEvent,
-      hide: !shouldDisplayCalendarTab,
-    },
-    {
-      id: 'workflow',
-      title: 'Workflow',
-      Icon: IconSettings,
-      hide: !isWorkflow,
-    },
-    {
-      id: 'workflowVersion',
-      title: 'Workflow Version',
-      Icon: IconSettings,
-      hide: !isWorkflowVersion,
-    },
-  ];
+  const summaryCard = (
+    <SummaryCard
+      objectNameSingular={targetableObject.targetObjectNameSingular}
+      objectRecordId={targetableObject.id}
+      isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
+      isInRightDrawer={isInRightDrawer}
+    />
+  );
+
+  const fieldsCard = (
+    <FieldsCard
+      objectNameSingular={targetableObject.targetObjectNameSingular}
+      objectRecordId={targetableObject.id}
+    />
+  );
+
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'timeline':
@@ -251,10 +149,9 @@ export const ShowPageRightContainer = ({
       case 'fields':
         return (
           <StyledGreyBox isInRightDrawer={isInRightDrawer}>
-            {fieldsBox}
+            {fieldsCard}
           </StyledGreyBox>
         );
-
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -307,28 +204,36 @@ export const ShowPageRightContainer = ({
   );
 
   return (
-    <StyledShowPageRightContainer isMobile={isMobile}>
-      <StyledTabListContainer>
-        <TabList
-          loading={loading || isNewViewableRecordLoading}
-          tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
-          tabs={tabs}
-        />
-      </StyledTabListContainer>
-      {summaryCard}
-      <StyledContentContainer isInRightDrawer={isInRightDrawer}>
-        {renderActiveTabContent()}
-      </StyledContentContainer>
-      {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-        <StyledButtonContainer>
-          <Button
-            Icon={IconTrash}
-            onClick={handleDelete}
-            disabled={isDeleting}
-            title={isDeleting ? 'Deleting...' : 'Delete'}
-          ></Button>
-        </StyledButtonContainer>
+    <>
+      {!isMobile && !isInRightDrawer && (
+        <ShowPageLeftContainer forceMobile={isMobile}>
+          {summaryCard}
+          {fieldsCard}
+        </ShowPageLeftContainer>
       )}
-    </StyledShowPageRightContainer>
+      <StyledShowPageRightContainer isMobile={isMobile}>
+        <StyledTabListContainer>
+          <TabList
+            loading={loading || isNewViewableRecordLoading}
+            tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
+            tabs={tabs}
+          />
+        </StyledTabListContainer>
+        {(isMobile || isInRightDrawer) && summaryCard}
+        <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+          {renderActiveTabContent()}
+        </StyledContentContainer>
+        {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
+          <StyledButtonContainer>
+            <Button
+              Icon={IconTrash}
+              onClick={handleDelete}
+              disabled={isDeleting}
+              title={isDeleting ? 'Deleting...' : 'Delete'}
+            ></Button>
+          </StyledButtonContainer>
+        )}
+      </StyledShowPageRightContainer>
+    </>
   );
 };
