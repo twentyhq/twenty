@@ -90,6 +90,7 @@ export const SettingsObjectDetailPageContent = ({
                   title="Add Field"
                   size="small"
                   variant="secondary"
+                  dataTestId="add-field-button"
                 />
               </UndecoratedLink>
             </StyledDiv>

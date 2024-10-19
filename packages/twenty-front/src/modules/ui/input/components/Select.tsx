@@ -127,7 +127,7 @@ export const Select = <Value extends string | number | null>({
   const { closeDropdown } = useDropdown(dropdownId);
 
   const selectControl = (
-    <StyledControlContainer disabled={isDisabled}>
+    <StyledControlContainer disabled={isDisabled} data-testid={dataTestId}>
       <StyledControlLabel>
         {!!selectedOption?.Icon && (
           <selectedOption.Icon
@@ -157,7 +157,6 @@ export const Select = <Value extends string | number | null>({
         selectControl
       ) : (
         <Dropdown
-          testId={dataTestId}
           dropdownId={dropdownId}
           dropdownMenuWidth={dropdownWidth}
           dropdownPlacement="bottom-start"

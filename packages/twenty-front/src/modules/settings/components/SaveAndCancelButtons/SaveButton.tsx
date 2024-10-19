@@ -17,6 +17,7 @@ export const SaveButton = ({ onSave, disabled }: SaveButtonProps) => {
       disabled={disabled}
       onClick={onSave}
       Icon={IconDeviceFloppy}
+      dataTestId="save-button"
     />
   );
 };

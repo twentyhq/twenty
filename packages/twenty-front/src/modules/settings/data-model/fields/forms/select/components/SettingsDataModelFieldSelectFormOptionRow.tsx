@@ -59,6 +59,7 @@ const StyledColorSample = styled(ColorSample)`
 const StyledOptionInput = styled(TextInput)`
   flex-grow: 1;
   width: 100%;
+
   & input {
     height: ${({ theme }) => theme.spacing(6)};
   }
@@ -129,6 +130,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
               }
               RightIcon={isDefault ? IconCheck : undefined}
               maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+              dataTestId="api-key-option-input"
             />
           </motion.div>
         )}
@@ -139,7 +141,12 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         dropdownHotkeyScope={{
           scope: dropdownIds.color,
         }}
-        clickableComponent={<StyledColorSample colorName={option.color} />}
+        clickableComponent={
+          <StyledColorSample
+            colorName={option.color}
+            data-testid="option-color-dropdown"
+          />
+        }
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>
@@ -177,6 +184,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         onInputEnter={handleInputEnter}
         autoFocusOnMount={isNewRow}
         autoSelectOnMount={isNewRow}
+        dataTestId="option-value-input"
       />
       <Dropdown
         dropdownId={dropdownIds.actions}
@@ -185,7 +193,11 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           scope: dropdownIds.actions,
         }}
         clickableComponent={
-          <StyledLightIconButton accent="tertiary" Icon={IconDotsVertical} />
+          <StyledLightIconButton
+            accent="tertiary"
+            Icon={IconDotsVertical}
+            testId="option-dropdown"
+          />
         }
         dropdownComponents={
           <DropdownMenu>

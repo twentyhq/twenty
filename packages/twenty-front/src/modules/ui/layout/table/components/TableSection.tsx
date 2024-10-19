@@ -8,6 +8,7 @@ type TableSectionProps = {
   children: ReactNode;
   isInitiallyExpanded?: boolean;
   title: string;
+  testId?: string;
 };
 
 const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
@@ -43,6 +44,7 @@ export const TableSection = ({
   children,
   isInitiallyExpanded = true,
   title,
+  testId,
 }: TableSectionProps) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
@@ -53,6 +55,7 @@ export const TableSection = ({
   return (
     <>
       <StyledSectionHeader
+        data-testid={testId}
         isExpanded={isExpanded}
         onClick={handleToggleSection}
       >

@@ -37,6 +37,7 @@ type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
   status: 'active' | 'disabled';
   mode: 'view' | 'new-field';
+  testId?: string;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -63,6 +64,7 @@ export const SettingsObjectFieldItemTableRow = ({
   settingsObjectDetailTableItem,
   mode,
   status,
+  testId,
 }: SettingsObjectFieldItemTableRowProps) => {
   const { fieldMetadataItem, identifierType, objectMetadataItem } =
     settingsObjectDetailTableItem;
@@ -206,6 +208,7 @@ export const SettingsObjectFieldItemTableRow = ({
   return (
     <StyledObjectFieldTableRow
       to={mode === 'view' ? linkToNavigate : undefined}
+      testId={testId}
     >
       <StyledNameTableCell>
         {!!Icon && (
@@ -262,6 +265,7 @@ export const SettingsObjectFieldItemTableRow = ({
                 Icon={IconMinus}
                 accent="tertiary"
                 onClick={handleToggleField}
+                testId="test2"
               />
             )
           )
@@ -278,6 +282,7 @@ export const SettingsObjectFieldItemTableRow = ({
             Icon={IconPlus}
             accent="tertiary"
             onClick={handleToggleField}
+            testId="inactive-object-options-button"
           />
         )}
       </StyledIconTableCell>

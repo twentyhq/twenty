@@ -122,6 +122,7 @@ export const SettingsDevelopersApiKeysNew = () => {
                 expirationDate: value,
               }));
             }}
+            dataTestId="expiration-date-select"
           />
         </Section>
       </SettingsPageContainer>

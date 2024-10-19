@@ -76,6 +76,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
             disabled={disabled}
             maxLength={maxLength}
             fullWidth
+            dataTestId="field-name-input"
           />
         )}
       />

@@ -55,7 +55,11 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <LightIconButton
+          Icon={IconDotsVertical}
+          accent="tertiary"
+          testId="inactive-field-dropdown"
+        />
       }
       dropdownComponents={
         <DropdownMenu width="160px">

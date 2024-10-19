@@ -39,7 +39,7 @@ export const SettingsListItemCardContent = ({
   const theme = useTheme();
 
   return (
-    <StyledRow onClick={onClick} divider={divider} data-testid={label}>
+    <StyledRow onClick={onClick} divider={divider}>
       {!!LeftIcon && <LeftIcon size={theme.icon.size.md} />}
       <StyledLabel>{label}</StyledLabel>
       {rightComponent}

@@ -99,7 +99,11 @@ export const SettingsAccountsBlocklistInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title="Add to blocklist" type="submit" />
+        <Button
+          title="Add to blocklist"
+          type="submit"
+          dataTestId="add-blocklist-button"
+        />
       </StyledContainer>
     </form>
   );

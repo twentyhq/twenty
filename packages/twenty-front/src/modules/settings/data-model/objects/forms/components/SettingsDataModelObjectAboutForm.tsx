@@ -77,14 +77,16 @@ export const SettingsDataModelObjectAboutForm = ({
             fieldName: 'labelSingular' as const,
             placeholder: 'Listing',
             defaultValue: objectMetadataItem?.labelSingular,
+            testId: 'singular-object-name-input',
           },
           {
             label: 'Plural',
             fieldName: 'labelPlural' as const,
             placeholder: 'Listings',
             defaultValue: objectMetadataItem?.labelPlural,
+            testId: 'plural-object-name-input',
           },
-        ].map(({ defaultValue, fieldName, label, placeholder }) => (
+        ].map(({ defaultValue, fieldName, label, placeholder, testId }) => (
           <Controller
             key={`object-${fieldName}-text-input`}
             name={fieldName}
@@ -99,6 +101,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 disabled={disabled || disableNameEdit}
                 fullWidth
                 maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+                dataTestId={testId}
               />
             )}
           />
@@ -115,6 +118,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             disabled={disabled}
+            testId="object-description"
           />
         )}
       />

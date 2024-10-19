@@ -17,6 +17,7 @@ export type TextAreaProps = {
   placeholder?: string;
   value?: string;
   className?: string;
+  testId?: string;
 };
 
 const StyledContainer = styled.div`
@@ -70,6 +71,7 @@ export const TextArea = ({
   value = '',
   className,
   onChange,
+  testId,
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, MAX_ROWS);
 
@@ -105,6 +107,7 @@ export const TextArea = ({
         onBlur={handleBlur}
         disabled={disabled}
         className={className}
+        data-testid={testId}
       />
     </StyledContainer>
   );

@@ -75,6 +75,7 @@ export const SettingsServerlessFunctionTestTab = ({
                 size="small"
                 Icon={IconPlayerPlay}
                 onClick={handleExecute}
+                dataTestId="run-function-button"
               />,
             ]}
           />
