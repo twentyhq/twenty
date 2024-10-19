@@ -40,7 +40,7 @@ jobs:
           files: 'package.json, packages/twenty-server/**, packages/twenty-emails/**'  
 
       - name: Install dependencies
-        if: steps.changed-files.outputs.changed == 'true's
+        if: steps.changed-files.outputs.changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Server / Restore Task Cache
         if: steps.changed-files.outputs.changed == 'true'
