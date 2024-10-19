@@ -70,6 +70,7 @@ const StyledButtonContainer = styled.div`
   box-sizing: border-box;
   position: absolute;
   width: 100%;
+  background: ${({ theme }) => theme.background.secondary};
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
