@@ -117,7 +117,7 @@ export const WorkflowEditTriggerForm = ({
           value={triggerEvent?.objectType}
           options={[SELECT_AN_OPTION, ...availableMetadata]}
           onChange={(updatedRecordType) => {
-            if (readonly === true || updatedRecordType == '') {
+            if (readonly === true || updatedRecordType === '') {
               return;
             }
 
@@ -147,7 +147,7 @@ export const WorkflowEditTriggerForm = ({
           options={[SELECT_AN_OPTION, ...OBJECT_EVENT_TRIGGERS]}
           disabled={readonly}
           onChange={(updatedEvent) => {
-            if (readonly === true || updatedEvent == '') {
+            if (readonly === true || updatedEvent === '') {
               return;
             }
 
