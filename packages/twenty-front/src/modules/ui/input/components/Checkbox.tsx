@@ -52,7 +52,10 @@ const StyledInputContainer = styled.div<InputProps>`
 
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme, checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large
+      ? theme.spacing(1.5)
+      : theme.spacing(1.25)};
   position: relative;
   ${({ hoverable, isChecked, theme, indeterminate, disabled }) => {
     if (!hoverable || disabled === true) return '';
@@ -126,10 +129,9 @@ const StyledInput = styled.input<InputProps>`
   }
 
   & + label > svg {
-    --padding: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '2px' : '1px'};
+    --padding: 0px;
     --size: ${({ checkboxSize }) =>
-      checkboxSize === CheckboxSize.Large ? '16px' : '12px'};
+      checkboxSize === CheckboxSize.Large ? '20px' : '14px'};
     height: var(--size);
     left: var(--padding);
     position: absolute;

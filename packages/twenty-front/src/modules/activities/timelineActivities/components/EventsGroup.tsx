@@ -20,8 +20,8 @@ const StyledActivityGroup = styled.div`
 `;
 
 const StyledActivityGroupContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
   position: relative;
 `;
 
@@ -29,7 +29,7 @@ const StyledActivityGroupBar = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.xl};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
   height: 100%;
