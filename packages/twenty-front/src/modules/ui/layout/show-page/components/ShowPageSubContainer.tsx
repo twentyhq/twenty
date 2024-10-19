@@ -61,16 +61,15 @@ const StyledGreyBox = styled.div<{ isInRightDrawer: boolean }>`
 
 const StyledButtonContainer = styled.div`
   align-items: center;
-  bottom: 0;
+  background: ${({ theme }) => theme.background.secondary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  bottom: 0;
+  box-sizing: border-box;
   display: flex;
   justify-content: flex-end;
   padding: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-  box-sizing: border-box;
   position: absolute;
   width: 100%;
-  background: ${({ theme }) => theme.background.secondary};
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
