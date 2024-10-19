@@ -225,13 +225,14 @@ Setup your database with the following command:
 npx nx database:reset twenty-server
 ```
 
-Start the server and the frontend:
+Start the server, the worker and the frontend services:
 ```bash
 npx nx start twenty-server
+npx nx worker twenty-server
 npx nx start twenty-front
 ```
 
-Alternatively, you can start both applications at once:
+Alternatively, you can start all services at once:
 ```bash
 npx nx start
 ```
