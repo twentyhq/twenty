@@ -4,7 +4,6 @@ import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
 
-import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -209,7 +208,6 @@ export const RecordDetailRelationSection = ({
                       />
                     ) : (
                       <>
-                        <ObjectMetadataItemsRelationPickerEffect />
                         <RelationFromManyFieldInputMultiRecordsEffect />
                         <MultiRecordSelect
                           onCreate={createNewRecordAndOpenRightDrawer}

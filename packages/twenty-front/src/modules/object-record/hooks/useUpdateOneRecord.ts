@@ -11,6 +11,7 @@ import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRe
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
@@ -130,7 +131,7 @@ export const useUpdateOneRecord = <
         },
       })
       .catch((error: Error) => {
-        if (!cachedRecord) {
+        if (isUndefinedOrNull(cachedRecord?.id)) {
           throw error;
         }
         updateRecordFromCache({
