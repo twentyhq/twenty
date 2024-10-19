@@ -1,4 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -11,15 +12,16 @@ import {
   IconSettings,
   IconTimelineEvent,
 } from 'twenty-ui';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
   targetObjectNameSingular: CoreObjectNameSingular,
   isInRightDrawer: boolean,
+  objectMetadataItem: ObjectMetadataItem,
 ) => {
   const isMobile = useIsMobile();
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
-
   const isWorkflow =
     isWorkflowEnabled &&
     targetObjectNameSingular === CoreObjectNameSingular.Workflow;
@@ -34,6 +36,27 @@ export const useRecordShowContainerTabs = (
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = isCompanyOrPerson;
 
+  const shouldDisplayNotesTab = objectMetadataItem.fields.some(
+    (field) =>
+      field.type === FieldMetadataType.Relation &&
+      field.name === 'noteTargets' &&
+      field.isActive,
+  );
+
+  const shouldDisplayTasksTab = objectMetadataItem.fields.some(
+    (field) =>
+      field.type === FieldMetadataType.Relation &&
+      field.name === 'taskTargets' &&
+      field.isActive,
+  );
+
+  const shouldDisplayFilesTab = objectMetadataItem.fields.some(
+    (field) =>
+      field.type === FieldMetadataType.Relation &&
+      field.name === 'attachments' &&
+      field.isActive,
+  );
+
   return [
     {
       id: 'richText',
@@ -42,7 +65,8 @@ export const useRecordShowContainerTabs = (
       hide:
         loading ||
         (targetObjectNameSingular !== CoreObjectNameSingular.Note &&
-          targetObjectNameSingular !== CoreObjectNameSingular.Task),
+          targetObjectNameSingular !== CoreObjectNameSingular.Task) ||
+        !shouldDisplayNotesTab,
     },
     {
       id: 'fields',
@@ -64,7 +88,8 @@ export const useRecordShowContainerTabs = (
         targetObjectNameSingular === CoreObjectNameSingular.Note ||
         targetObjectNameSingular === CoreObjectNameSingular.Task ||
         isWorkflow ||
-        isWorkflowVersion,
+        isWorkflowVersion ||
+        !shouldDisplayTasksTab,
     },
     {
       id: 'notes',
@@ -74,13 +99,14 @@ export const useRecordShowContainerTabs = (
         targetObjectNameSingular === CoreObjectNameSingular.Note ||
         targetObjectNameSingular === CoreObjectNameSingular.Task ||
         isWorkflow ||
-        isWorkflowVersion,
+        isWorkflowVersion ||
+        !shouldDisplayNotesTab,
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: isWorkflow || isWorkflowVersion,
+      hide: isWorkflow || isWorkflowVersion || !shouldDisplayFilesTab,
     },
     {
       id: 'emails',

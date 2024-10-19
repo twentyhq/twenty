@@ -35,6 +35,7 @@ export const RecordShowContainer = ({
     loading,
     objectNameSingular as CoreObjectNameSingular,
     isInRightDrawer,
+    objectMetadataItem,
   );
 
   return (
