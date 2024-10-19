@@ -1,0 +1,73 @@
+{
+  "$schema": "../../node_modules/eslint-plugin-project-structure/folderStructure.schema.json",
+  "regexParameters": {
+    "camelCase": "^[a-zA-Z]+([A-Z][a-z]+)+"
+  },
+  "structure": [
+    {
+      "name": "packages",
+      "children": [
+        {
+          "name": "twenty-front",
+          "children": [
+            {
+              "name": "src",
+              "children": [
+                { "name": "*", "children": [] },
+                { "name": "*" },
+                {
+                  "name": "modules",
+                  "children": [{ "ruleId": "moduleFolderRule" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "moduleFolderRule": {
+      "name": "^(?!utils$|hooks$|states|types|graphql|components|effect-components|constants|validation-schemas|context$)[a-z][a-z0-9]**(?:-[a-z0-9]+)**$",
+      "folderRecursionLimit": 3,
+      "children": [
+        { "ruleId": "moduleFolderRule" },
+        { "name": "hooks", "ruleId": "hooksLeafFolderRule" },
+        { "name": "utils", "ruleId": "utilsLeafFolderRule" },
+        { "name": "states", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "types", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "graphql", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "components", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "effect-components", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "constants", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "validation-schemas", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "context", "ruleId": "doNotCheckLeafFolderRule" }
+      ]
+    },
+    "hooksLeafFolderRule": {
+      "folderRecursionLimit": 2,
+      "children": [
+        { "name": "use{PascalCase}.(ts|tsx)" },
+        {
+          "name": "__tests__",
+          "children": [{ "name": "use{PascalCase}.test.(ts|tsx)" }]
+        },
+        { "name": "internal", "ruleId": "hooksLeafFolderRule" }
+      ]
+    },
+    "doNotCheckLeafFolderRule": {
+      "folderRecursionLimit": 1,
+      "children": [{ "name": "*" }, { "name": "*", "children": [] }]
+    },
+    "utilsLeafFolderRule": {
+      "folderRecursionLimit": 1,
+      "children": [
+        { "name": "{camelCase}.ts" },
+        {
+          "name": "__tests__",
+          "children": [{ "name": "{camelCase}.test.ts" }]
+        }
+      ]
+    }
+  }
+}
