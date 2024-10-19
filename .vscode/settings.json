@@ -45,6 +45,5 @@
   "search.exclude": {
     "**/.yarn": true,
   },
-  "eslint.debug": true,
-  "makefile.configureOnOpen": false
+  "eslint.debug": true
 }
