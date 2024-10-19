@@ -1,14 +1,22 @@
+import { ConfigService } from '@nestjs/config';
+
 import { createHash } from 'crypto';
 
-if (!process.env.APP_SECRET) {
-  throw new Error('APP_SECRET is not set');
-}
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 export const generateSecret = (
   workspaceId: string,
   type: 'ACCESS' | 'LOGIN' | 'REFRESH' | 'FILE',
 ): string => {
+  const appSecret = new EnvironmentService(new ConfigService()).get(
+    'APP_SECRET',
+  );
+
+  if (!appSecret) {
+    throw new Error('APP_SECRET is not set');
+  }
+
   return createHash('sha256')
-    .update(`${process.env.APP_SECRET}${workspaceId}${type}`)
+    .update(`${appSecret}${workspaceId}${type}`)
     .digest('hex');
 };
