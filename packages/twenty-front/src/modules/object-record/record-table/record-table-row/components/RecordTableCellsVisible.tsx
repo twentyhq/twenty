@@ -18,7 +18,10 @@ export const RecordTableCellsVisible = () => {
   return (
     <>
       <RecordTableCellWrapper column={visibleTableColumns[0]} columnIndex={0}>
-        <RecordTableTd isSelected={isSelected}>
+        <RecordTableTd
+          isSelected={isSelected}
+          width={visibleTableColumns[0].size}
+        >
           <RecordTableCell />
         </RecordTableTd>
       </RecordTableCellWrapper>
@@ -28,7 +31,7 @@ export const RecordTableCellsVisible = () => {
           column={column}
           columnIndex={columnIndex + 1}
         >
-          <RecordTableTd isSelected={isSelected}>
+          <RecordTableTd isSelected={isSelected} width={column.size}>
             <RecordTableCell />
           </RecordTableTd>
         </RecordTableCellWrapper>

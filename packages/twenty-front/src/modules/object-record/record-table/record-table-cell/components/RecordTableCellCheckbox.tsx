@@ -11,11 +11,10 @@ import { Checkbox } from '@/ui/input/components/Checkbox';
 const StyledContainer = styled.div`
   align-items: center;
   cursor: pointer;
-
   display: flex;
   height: 32px;
-
   justify-content: center;
+  min-width: 24px;
 `;
 
 export const RecordTableCellCheckbox = () => {
@@ -30,14 +29,10 @@ export const RecordTableCellCheckbox = () => {
     setCurrentRowSelected(!currentRowSelected);
   }, [currentRowSelected, setCurrentRowSelected]);
 
-  if (isDragging) {
-    return <></>;
-  }
-
   return (
     <RecordTableTd isSelected={isSelected} hasRightBorder={false}>
       <StyledContainer onClick={handleClick}>
-        <Checkbox hoverable checked={currentRowSelected} />
+        {!isDragging && <Checkbox hoverable checked={currentRowSelected} />}
       </StyledContainer>
     </RecordTableTd>
   );
