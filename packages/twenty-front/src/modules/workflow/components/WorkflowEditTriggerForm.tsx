@@ -45,7 +45,7 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-const SELECT_AN_OPTION = {label:'Select an option',value:''};
+const SELECT_AN_OPTION = { label: 'Select an option', value: '' };
 
 type WorkflowEditTriggerFormProps =
   | {
