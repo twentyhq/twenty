@@ -36,5 +36,5 @@ Your turn 👇
 » Link to gif: https://giphy.com/gifs/oss-twentycrm-mgoYSDrjIalUL7XJzm
 
 » 20-October-2024 by Satesh Charan
-» Link to gif: https://giphy.com/gifs/oss-twentycrm-mgoYSDrjIalUL7XJzm
+» Link to gif: https://giphy.com/gifs/rXjvGBrTqu7vvhEsvR
 ---
