@@ -136,6 +136,7 @@ describe('useCommandMenu', () => {
             'ab7901eb-43e1-4dc7-8f3b-cdee2857eb9a',
           imageIdentifierFieldMetadataId: null,
           fields: [],
+          indexMetadatas: [],
         },
       ]);
     });
