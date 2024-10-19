@@ -37,6 +37,8 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,
         FieldMetadataType.Phones,
+        FieldMetadataType.Array,
+        FieldMetadataType.RawJson,
       ].includes(field.type)
     ) {
       return acc;
@@ -92,6 +94,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'ACTOR';
     case FieldMetadataType.Array:
       return 'ARRAY';
+    case FieldMetadataType.RawJson:
+      return 'RAW_JSON';
     default:
       return 'TEXT';
   }

@@ -3,10 +3,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ActorFilter,
   AddressFilter,
+  ArrayFilter,
   CurrencyFilter,
   DateFilter,
   EmailsFilter,
   FloatFilter,
+  RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
   StringFilter,
@@ -80,6 +82,39 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 [correspondingField.name]: {
                   ilike: `%${rawUIFilter.value}%`,
                 } as StringFilter,
+              },
+            });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition,
+            );
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      case 'RAW_JSON':
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                contains_filter: `%${rawUIFilter.value}%`,
+              } as RawJsonFilter,
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              not: {
+                [correspondingField.name]: {
+                  contains_filter: `%${rawUIFilter.value}%`,
+                } as RawJsonFilter,
               },
             });
             break;
@@ -831,6 +866,31 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      }
+      case 'ARRAY': {
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains: {
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                contains: [`${rawUIFilter.value}`],
+              } as ArrayFilter,
+            });
+            break;
+          }
+          case ViewFilterOperand.DoesNotContain: {
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                not_contains: [`${rawUIFilter.value}`],
+              } as ArrayFilter,
+            });
+            break;
+          }
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.label} filter`,
             );
         }
         break;

@@ -44,7 +44,12 @@ export class GraphqlQueryFilterFieldParser {
     }
     const [[operator, value]] = Object.entries(filterValue);
 
-    if (operator === 'in') {
+    if (
+      operator === 'in' ||
+      operator === 'contains' ||
+      operator === 'contains_any' ||
+      operator === 'not_contains'
+    ) {
       if (!Array.isArray(value) || value.length === 0) {
         throw new GraphqlQueryRunnerException(
           `Invalid filter value for field ${key}. Expected non-empty array`,

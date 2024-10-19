@@ -79,6 +79,29 @@ export const computeWhereConditionParts = (
         sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
+    case 'contains':
+      return {
+        sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
+        params: { [`${key}${uuid}`]: value },
+      };
+
+    case 'contains_any':
+      return {
+        sql: `"${objectNameSingular}"."${key}" && ARRAY[:...${key}${uuid}]`,
+        params: { [`${key}${uuid}`]: value },
+      };
+
+    case 'not_contains':
+      return {
+        sql: `NOT ("${objectNameSingular}"."${key}" && ARRAY[:...${key}${uuid}])`,
+        params: { [`${key}${uuid}`]: value },
+      };
+    case 'contains_filter':
+      return {
+        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
+        params: { [`${key}${uuid}`]: `%${value}%` },
+      };
+
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,
