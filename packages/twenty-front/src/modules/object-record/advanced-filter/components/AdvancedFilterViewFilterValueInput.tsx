@@ -1,4 +1,4 @@
-import { ConfigurableFilterDropdownContent } from '@/object-record/object-filter-dropdown/components/ConfigurableFilterDropdownContent';
+import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
@@ -18,8 +18,12 @@ export const AdvancedFilterViewFilterValueInput = (
 ) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${props.filter.id}`;
 
-  const { setFilterDefinitionUsedInDropdown, setSelectedOperandInDropdown } =
-    useFilterDropdown();
+  const {
+    setFilterDefinitionUsedInDropdown,
+    setSelectedOperandInDropdown,
+    setIsObjectFilterDropdownOperandSelectUnfolded,
+    setSelectedFilter,
+  } = useFilterDropdown();
 
   if (props.isDisabled === true) {
     return (
@@ -48,13 +52,12 @@ export const AdvancedFilterViewFilterValueInput = (
       onOpen={() => {
         setFilterDefinitionUsedInDropdown(props.filterDefinition);
         setSelectedOperandInDropdown(props.filter.operand);
+        setIsObjectFilterDropdownOperandSelectUnfolded(true);
+        setSelectedFilter(props.filter);
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          <ConfigurableFilterDropdownContent
-            filterDefinitionUsedInDropdown={props.filterDefinition}
-            filter={props.filter}
-          />
+          <ObjectFilterDropdownFilterInput />
         </DropdownMenuItemsContainer>
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}

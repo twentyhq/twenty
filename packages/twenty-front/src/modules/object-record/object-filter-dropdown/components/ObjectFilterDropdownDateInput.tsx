@@ -63,6 +63,7 @@ export const ObjectFilterDropdownDateInput = () => {
           : newDate.toLocaleDateString()
         : '',
       definition: filterDefinitionUsedInDropdown,
+      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
 
     setIsObjectFilterDropdownUnfolded(false);
@@ -92,6 +93,7 @@ export const ObjectFilterDropdownDateInput = () => {
       operand: selectedOperandInDropdown,
       displayValue: getRelativeDateDisplayValue(relativeDate),
       definition: filterDefinitionUsedInDropdown,
+      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
 
     setIsObjectFilterDropdownUnfolded(false);

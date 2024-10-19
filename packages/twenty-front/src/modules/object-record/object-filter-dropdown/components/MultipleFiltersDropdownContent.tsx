@@ -1,6 +1,7 @@
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
+import { ObjectFilterDropdownFilterOperandSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterOperandSelect';
 import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
@@ -48,7 +49,14 @@ export const MultipleFiltersDropdownContent = ({
   return (
     <StyledContainer>
       {shoudShowFilterInput ? (
-        <ObjectFilterDropdownFilterInput filterDropdownId={filterDropdownId} />
+        <>
+          <ObjectFilterDropdownFilterOperandSelect
+            filterDropdownId={filterDropdownId}
+          />
+          <ObjectFilterDropdownFilterInput
+            filterDropdownId={filterDropdownId}
+          />
+        </>
       ) : shouldShowCompositeSelectionSubMenu ? (
         <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu />
       ) : (
