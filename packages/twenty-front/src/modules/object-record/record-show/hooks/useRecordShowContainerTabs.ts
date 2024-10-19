@@ -1,7 +1,9 @@
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
@@ -21,6 +23,7 @@ export const useRecordShowContainerTabs = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
   const isMobile = useIsMobile();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
   const isWorkflow =
     isWorkflowEnabled &&
@@ -35,27 +38,47 @@ export const useRecordShowContainerTabs = (
   ].includes(targetObjectNameSingular);
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = isCompanyOrPerson;
-
-  const shouldDisplayNotesTab = objectMetadataItem.fields.some(
-    (field) =>
-      field.type === FieldMetadataType.Relation &&
-      field.name === 'noteTargets' &&
-      field.isActive,
+  const isNotesObjectActive = objectMetadataItems.some(
+    (item) =>
+      item.nameSingular === CoreObjectNameSingular.Note && item.isActive,
   );
 
-  const shouldDisplayTasksTab = objectMetadataItem.fields.some(
-    (field) =>
-      field.type === FieldMetadataType.Relation &&
-      field.name === 'taskTargets' &&
-      field.isActive,
+  const isTasksObjectActive = objectMetadataItems.some(
+    (item) =>
+      item.nameSingular === CoreObjectNameSingular.Task && item.isActive,
   );
 
-  const shouldDisplayFilesTab = objectMetadataItem.fields.some(
-    (field) =>
-      field.type === FieldMetadataType.Relation &&
-      field.name === 'attachments' &&
-      field.isActive,
+  const isAttachmentsObjectActive = objectMetadataItems.some(
+    (item) =>
+      item.nameSingular === CoreObjectNameSingular.Attachment && item.isActive,
   );
+
+  const shouldDisplayNotesTab =
+    isNotesObjectActive &&
+    objectMetadataItem.fields.some(
+      (field) =>
+        field.type === FieldMetadataType.Relation &&
+        field.name === 'noteTargets' &&
+        field.isActive,
+    );
+
+  const shouldDisplayTasksTab =
+    isTasksObjectActive &&
+    objectMetadataItem.fields.some(
+      (field) =>
+        field.type === FieldMetadataType.Relation &&
+        field.name === 'taskTargets' &&
+        field.isActive,
+    );
+
+  const shouldDisplayFilesTab =
+    isAttachmentsObjectActive &&
+    objectMetadataItem.fields.some(
+      (field) =>
+        field.type === FieldMetadataType.Relation &&
+        field.name === 'attachments' &&
+        field.isActive,
+    );
 
   return [
     {
