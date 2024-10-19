@@ -8,6 +8,7 @@ import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { isDefined } from 'twenty-ui';
 
 interface AdvancedFilterDropdownButtonProps {
   viewBarId: string;
@@ -21,23 +22,25 @@ export const AdvancedFilterDropdownButton = (
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const advancedViewFilters =
-    currentViewWithCombinedFiltersAndSorts?.viewFilters.filter(
-      (viewFilter) => !!viewFilter.viewFilterGroupId,
-    );
-  const viewFilterGroups =
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups;
-
   const advancedViewFilterIds =
-    advancedViewFilters?.map((viewFilter) => viewFilter.id) ?? [];
-  const viewFilterGroupIds =
-    viewFilterGroups?.map((viewFilter) => viewFilter.id) ?? [];
+    currentViewWithCombinedFiltersAndSorts?.viewFilters
+      .filter((viewFilter) => isDefined(viewFilter.viewFilterGroupId))
+      .map((viewFilter) => viewFilter.id);
 
   const handleDropdownClickOutside = useCallback(() => {}, []);
 
   const handleDropdownClose = () => {};
 
   const removeAdvancedFilter = useCallback(async () => {
+    if (!advancedViewFilterIds) {
+      throw new Error('No advanced view filters to remove');
+    }
+
+    const viewFilterGroupIds =
+      currentViewWithCombinedFiltersAndSorts?.viewFilterGroups?.map(
+        (viewFilter) => viewFilter.id,
+      ) ?? [];
+
     for (const viewFilterGroupId of viewFilterGroupIds) {
       await deleteCombinedViewFilterGroup(viewFilterGroupId);
     }
@@ -46,9 +49,9 @@ export const AdvancedFilterDropdownButton = (
     }
   }, [
     advancedViewFilterIds,
-    viewFilterGroupIds,
     deleteCombinedViewFilter,
     deleteCombinedViewFilterGroup,
+    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups,
   ]);
 
   return (
@@ -57,7 +60,7 @@ export const AdvancedFilterDropdownButton = (
       clickableComponent={
         <AdvancedFilterChip
           onRemove={removeAdvancedFilter}
-          advancedFilterCount={advancedViewFilterIds.length}
+          advancedFilterCount={advancedViewFilterIds?.length}
         />
       }
       dropdownComponents={
