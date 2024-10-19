@@ -24,7 +24,7 @@ module.exports = {
       plugins: ['project-structure'],
       settings: {
         'project-structure/folder-structure-config-path':
-          './packages/twenty-front/folderStructure.json',
+          'packages/twenty-front/folderStructure.json',
       },
       rules: {
         'project-structure/folder-structure': 'warn',
