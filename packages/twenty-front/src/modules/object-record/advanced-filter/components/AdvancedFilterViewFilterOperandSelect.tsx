@@ -8,7 +8,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { ViewFilterDraft } from '@/views/types/ViewFilterDraft';
+import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-ui';
@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
 `;
 
 interface AdvancedFilterViewFilterOperandSelectProps {
-  viewFilter: ViewFilterDraft;
+  viewFilter: ViewFilter;
   filterDefinition: FilterDefinition;
   isDisabled?: boolean;
 }

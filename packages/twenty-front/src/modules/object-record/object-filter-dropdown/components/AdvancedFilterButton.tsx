@@ -1,11 +1,15 @@
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
 import { IconFilter, Pill } from 'twenty-ui';
@@ -47,6 +51,17 @@ export const AdvancedFilterButton = () => {
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const objectMetadataId =
+    currentViewWithCombinedFiltersAndSorts?.objectMetadataId;
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: objectMetadataId ?? null,
+  });
+
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+  );
+
   const handleClick = () => {
     if (!currentViewId) {
       throw new Error('Missing current view id');
@@ -60,8 +75,22 @@ export const AdvancedFilterButton = () => {
 
     upsertCombinedViewFilterGroup(newViewFilterGroup);
 
+    const defaultFilterDefinition =
+      availableFilterDefinitions.find(
+        (filterDefinition) =>
+          filterDefinition.fieldMetadataId ===
+          objectMetadataItem?.labelIdentifierFieldMetadataId,
+      ) ?? availableFilterDefinitions?.[0];
+
+    if (!defaultFilterDefinition) {
+      throw new Error('Missing default filter definition');
+    }
+
     upsertCombinedViewFilter({
       id: v4(),
+      fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
+      operand: getOperandsForFilterDefinition(defaultFilterDefinition)[0],
+      definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
       viewFilterGroupId: newViewFilterGroup.id,
