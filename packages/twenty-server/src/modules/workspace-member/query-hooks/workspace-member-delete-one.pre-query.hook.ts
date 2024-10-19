@@ -2,10 +2,9 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 @WorkspaceQueryHook(`workspaceMember.deleteOne`)
 export class WorkspaceMemberDeleteOnePreQueryHook
@@ -24,18 +23,9 @@ export class WorkspaceMemberDeleteOnePreQueryHook
         'attachment',
       );
 
-    const commentRepository =
-      await this.twentyORMManager.getRepository<CommentWorkspaceEntity>(
-        'comment',
-      );
-
     const authorId = payload.id;
 
     await attachmentRepository.delete({
-      authorId,
-    });
-
-    await commentRepository.delete({
       authorId,
     });
 

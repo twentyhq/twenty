@@ -40,21 +40,6 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        graphql.query('FindManyActivityTargets', () => {
-          return HttpResponse.json({
-            data: {
-              activityTargets: {
-                edges: [],
-                pageInfo: {
-                  hasNextPage: false,
-                  startCursor: '',
-                  endCursor: '',
-                },
-                totalCount: 0,
-              },
-            },
-          });
-        }),
         graphql.query('FindOneworkspaceMember', () => {
           return HttpResponse.json({
             data: {
