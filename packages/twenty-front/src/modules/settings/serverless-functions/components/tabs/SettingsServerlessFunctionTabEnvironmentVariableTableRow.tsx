@@ -35,7 +35,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
 }: {
   envKey: string;
   envValue: string;
-  onChange: (newKey: string, newValue: string) => void;
+  onChange: (prevKey: string, newKey: string, newValue: string) => void;
   onDelete: () => void;
   index: number;
   initialEditMode?: boolean;
@@ -91,7 +91,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
             editedEnvValue === ''
           }
           onClick={() => {
-            onChange(editedEnvKey, editedEnvValue);
+            onChange(envKey, editedEnvKey, editedEnvValue);
             setEditMode(false);
           }}
         />

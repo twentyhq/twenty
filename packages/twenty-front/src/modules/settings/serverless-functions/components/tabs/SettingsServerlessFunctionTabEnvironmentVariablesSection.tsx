@@ -5,7 +5,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { Button } from '@/ui/input/button/components/Button';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
@@ -46,10 +46,26 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
     : {};
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [editModeIndex, setEditModeIndex] = useState<number | undefined>();
+  const [newEnvVarAdded, setNewEnvVarAdded] = useState(false);
   const [envVariables, setEnvVariables] = useState<{ [key: string]: string }>(
     environmentVariables,
   );
+  const filteredEnvVariable = useMemo(() => {
+    return Object.entries(envVariables)
+      .filter(([key, value]) =>
+        key
+          .toLowerCase()
+          .concat(value.toLowerCase())
+          .includes(searchTerm.toLowerCase()),
+      )
+      .reduce(
+        (acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        },
+        {} as { [key: string]: string },
+      );
+  }, [envVariables, searchTerm]);
 
   const getFormattedEnvironmentVariables = (newEnvVariables: {
     [key: string]: string;
@@ -80,17 +96,17 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
           <TableHeader></TableHeader>
         </StyledTableRow>
         <StyledTableBody>
-          {Object.entries(envVariables).map(([key, value], index) => (
+          {Object.entries(filteredEnvVariable).map(([key, value], index) => (
             <SettingsServerlessFunctionTabEnvironmentVariableTableRow
               key={index}
               index={index}
               envKey={key}
               envValue={value}
-              initialEditMode={index === editModeIndex}
-              onChange={(newKey, newValue) => {
+              initialEditMode={newEnvVarAdded && value === ''}
+              onChange={(prevKey, newKey, newValue) => {
                 const newEnvVariables = Object.entries(envVariables).reduce(
-                  (acc, [oldKey, oldValue], currentIndex) => {
-                    if (index === currentIndex) {
+                  (acc, [oldKey, oldValue]) => {
+                    if (oldKey === prevKey) {
                       acc[newKey] = newValue;
                     } else {
                       acc[oldKey] = oldValue;
@@ -128,7 +144,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
             setEnvVariables((prevState) => {
               return { ...prevState, '': '' };
             });
-            setEditModeIndex(Object.keys(envVariables).length);
+            setNewEnvVarAdded(true);
           }}
         />
       </StyledButtonContainer>
