@@ -5,7 +5,7 @@ export const isMatchingArrayFilter = ({
   value,
 }: {
   arrayFilter: ArrayFilter;
-  value: string;
+  value: string[];
 }) => {
   switch (true) {
     case arrayFilter.contains !== undefined: {
