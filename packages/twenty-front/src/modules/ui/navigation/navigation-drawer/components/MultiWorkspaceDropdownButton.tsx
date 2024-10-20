@@ -120,6 +120,7 @@ export const MultiWorkspaceDropdownButton = ({
         <DropdownMenuItemsContainer>
           {workspaces.map((workspace) => (
             <MenuItemSelectAvatar
+              testId="workspace"
               key={workspace.id}
               text={workspace.displayName ?? ''}
               avatar={

@@ -41,6 +41,10 @@ export const ActionMenuBarEntry = ({ entry }: ActionMenuBarEntryProps) => {
     <StyledButton
       accent={entry.accent ?? 'default'}
       onClick={() => entry.onClick?.()}
+      data-testid={entry.label
+        .toLowerCase()
+        .replace(/ /g, '-')
+        .concat('-button')}
     >
       {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
       <StyledButtonLabel>{entry.label}</StyledButtonLabel>

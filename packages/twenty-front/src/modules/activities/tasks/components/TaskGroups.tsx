@@ -83,6 +83,7 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
               targetableObjects: targetableObjects ?? [],
             })
           }
+          dataTestId="add-task-button"
         />
       </AnimatedPlaceholderEmptyContainer>
     );

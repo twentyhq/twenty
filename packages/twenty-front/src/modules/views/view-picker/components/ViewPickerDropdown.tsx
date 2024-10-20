@@ -82,7 +82,10 @@ export const ViewPickerDropdown = () => {
       dropdownMenuWidth={200}
       onClickOutside={handleClickOutside}
       clickableComponent={
-        <StyledDropdownButtonContainer isUnfolded={isViewsListDropdownOpen}>
+        <StyledDropdownButtonContainer
+          isUnfolded={isViewsListDropdownOpen}
+          data-testid="view-button"
+        >
           {currentViewWithCombinedFiltersAndSorts && CurrentViewIcon ? (
             <CurrentViewIcon size={theme.icon.size.md} />
           ) : (

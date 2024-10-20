@@ -127,6 +127,7 @@ export const PageHeader = ({
             size="small"
             variant="tertiary"
             onClick={() => onClosePage?.()}
+            dataTestId="close-page-button"
           />
         )}
 
@@ -139,6 +140,7 @@ export const PageHeader = ({
                 variant="secondary"
                 disabled={!hasPreviousRecord}
                 onClick={() => navigateToPreviousRecord?.()}
+                dataTestId="previous-record-button"
               />
               <IconButton
                 Icon={IconChevronDown}
@@ -146,6 +148,7 @@ export const PageHeader = ({
                 variant="secondary"
                 disabled={!hasNextRecord}
                 onClick={() => navigateToNextRecord?.()}
+                dataTestId="next-record-button"
               />
             </>
           )}

@@ -17,9 +17,11 @@ export const ActivityRow = ({
   children,
   onClick,
   disabled,
+  testId,
 }: React.PropsWithChildren<{
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   disabled?: boolean;
+  testId?: string;
 }>) => {
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (disabled !== true) {
@@ -28,7 +30,11 @@ export const ActivityRow = ({
   };
 
   return (
-    <StyledRowContent onClick={handleClick} clickable={disabled !== true}>
+    <StyledRowContent
+      onClick={handleClick}
+      clickable={disabled !== true}
+      data-testid={testId}
+    >
       {children}
     </StyledRowContent>
   );

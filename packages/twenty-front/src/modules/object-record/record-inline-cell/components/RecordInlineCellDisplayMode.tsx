@@ -61,13 +61,8 @@ export const RecordInlineCellDisplayMode = ({
 }: React.PropsWithChildren<unknown>) => {
   const { isFocused } = useFieldFocus();
 
-  const {
-    editModeContentOnly,
-
-    showLabel,
-    label,
-    buttonIcon,
-  } = useRecordInlineCellContext();
+  const { editModeContentOnly, showLabel, label, buttonIcon } =
+    useRecordInlineCellContext();
 
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =
