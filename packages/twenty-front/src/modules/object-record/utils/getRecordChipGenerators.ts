@@ -1,7 +1,7 @@
 import {
   ChipGeneratorPerObjectNameSingularPerFieldName,
   IdentifierChipGeneratorPerObject,
-} from '@/object-metadata/context/PreComputedChipGeneratorsContext';
+} from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { getAvatarUrl } from '@/object-metadata/utils/getAvatarUrl';

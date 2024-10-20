@@ -7,7 +7,6 @@ import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
-import { blockSchema } from '@/activities/blocks/schema';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
@@ -27,6 +26,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getFileType } from '../files/utils/getFileType';
 
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -287,7 +287,7 @@ export const RichTextEditor = ({
   const editor = useCreateBlockNote({
     initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
-    schema: blockSchema,
+    schema: BLOCK_SCHEMA,
     uploadFile: handleUploadAttachment,
   });
 
