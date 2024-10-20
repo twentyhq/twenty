@@ -75,6 +75,7 @@ export const CalendarDayCardContent = ({
         delay: Math.max(0, dayEndsIn),
         duration: theme.animation.duration.fast,
       }}
+      data-testid="calendar-row"
     >
       <StyledDayContainer>
         <StyledWeekDay>{weekDayLabel}</StyledWeekDay>

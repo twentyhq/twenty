@@ -32,7 +32,7 @@ export const SettingsServerlessFunctionsFieldItemTableRow = ({
 }) => {
   const theme = useTheme();
   return (
-    <StyledApisFieldTableRow to={to}>
+    <StyledApisFieldTableRow to={to} testId="function-row">
       <StyledNameTableCell>{serverlessFunction.name}</StyledNameTableCell>
       <StyledNameTableCell>{serverlessFunction.runtime}</StyledNameTableCell>
       <StyledIconTableCell>

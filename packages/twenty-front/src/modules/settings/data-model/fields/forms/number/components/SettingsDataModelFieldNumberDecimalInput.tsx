@@ -146,6 +146,7 @@ export const SettingsDataModelFieldNumberDecimalsInput = ({
               onClick={handleDecrementCounter}
               Icon={IconMinus}
               disabled={disabled}
+              dataTestId="decrement-decimals-button"
             />
             <StyledTextInput
               name="decimals"
@@ -153,12 +154,14 @@ export const SettingsDataModelFieldNumberDecimalsInput = ({
               value={value.toString()}
               onChange={(value) => handleTextInputChange(value)}
               disabled={disabled}
+              dataTestId="decimals-number-input"
             />
             <StyledControlButton
               variant="secondary"
               onClick={handleIncrementCounter}
               Icon={IconPlus}
               disabled={disabled}
+              dataTestId="increment-decimals-button"
             />
           </StyledCounterControlsIcons>
         </StyledCounterInnerContainer>

@@ -54,6 +54,7 @@ export const SettingsDataModelFieldBooleanForm = ({
         defaultValue={initialDefaultValue}
         render={({ field: { onChange, value } }) => (
           <Select
+            dataTestId="boolean-default-select"
             className={className}
             fullWidth
             // TODO: temporary fix - disabling edition because after editing the defaultValue,

@@ -137,6 +137,7 @@ export const ConfirmationModal = ({
               variant="secondary"
               title="Cancel"
               fullWidth
+              dataTestId="confirmation-modal-cancel-button"
             />
             <StyledCenteredButton
               onClick={handleConfirmClick}

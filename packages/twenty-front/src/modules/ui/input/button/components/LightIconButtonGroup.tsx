@@ -37,6 +37,7 @@ export const LightIconButtonGroup = ({
           disabled={!onClick}
           onClick={onClick}
           size={size}
+          testId="edit-button"
         />
       );
 

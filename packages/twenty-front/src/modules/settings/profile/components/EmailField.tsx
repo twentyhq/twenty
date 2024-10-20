@@ -12,6 +12,7 @@ export const EmailField = () => {
       disabled
       fullWidth
       key={'email-' + currentUser?.id}
+      dataTestId="email-input"
     />
   );
 };

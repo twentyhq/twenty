@@ -49,6 +49,7 @@ export const NavigationDrawerCollapseButton = ({
         }
         variant="tertiary"
         size="small"
+        dataTestId="hide-drawer-button"
       />
     </StyledCollapseButton>
   );

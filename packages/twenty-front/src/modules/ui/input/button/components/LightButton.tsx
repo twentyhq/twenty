@@ -14,6 +14,7 @@ export type LightButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  testId?: string;
 };
 
 const StyledButton = styled.button<
@@ -83,6 +84,7 @@ export const LightButton = ({
   disabled = false,
   focus = false,
   onClick,
+  testId,
 }: LightButtonProps) => {
   const theme = useTheme();
 
@@ -94,6 +96,7 @@ export const LightButton = ({
       accent={accent}
       className={className}
       active={active}
+      data-testid={testId}
     >
       {!!Icon && <Icon size={theme.icon.size.md} />}
       {title}

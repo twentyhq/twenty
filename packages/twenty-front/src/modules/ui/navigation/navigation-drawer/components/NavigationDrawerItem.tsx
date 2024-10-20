@@ -185,6 +185,7 @@ export const NavigationDrawerItem = ({
   return (
     <StyledNavigationDrawerItemContainer>
       <StyledItem
+        data-testid={label}
         className={className}
         onClick={handleItemClick}
         active={active}

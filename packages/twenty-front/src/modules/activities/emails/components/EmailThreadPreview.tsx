@@ -128,6 +128,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
     <ActivityRow
       onClick={(event) => handleThreadClick(event)}
       disabled={isDisabled}
+      testId="email-row"
     >
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>

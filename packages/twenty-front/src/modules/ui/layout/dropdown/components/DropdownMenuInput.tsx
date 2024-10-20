@@ -75,6 +75,7 @@ export type DropdownMenuInputProps = HTMLInputProps & {
   }) => React.ReactNode;
   error?: string | null;
   hasError?: boolean;
+  testId?: string;
 };
 
 export const DropdownMenuInput = forwardRef<
@@ -98,6 +99,7 @@ export const DropdownMenuInput = forwardRef<
       renderInput,
       error = '',
       hasError = false,
+      testId,
     },
     ref,
   ) => {
@@ -134,6 +136,7 @@ export const DropdownMenuInput = forwardRef<
               onChange={onChange}
               ref={combinedRef}
               withRightComponent={!!rightComponent}
+              data-testid={testId}
             />
           )}
           {!!rightComponent && (

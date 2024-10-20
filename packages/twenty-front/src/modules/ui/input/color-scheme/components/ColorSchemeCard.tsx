@@ -143,6 +143,7 @@ const StyledCheckmarkContainer = styled(motion.div)`
 export type ColorSchemeCardProps = {
   variant: ColorScheme;
   selected?: boolean;
+  dataTestId?: string;
 } & React.ComponentPropsWithoutRef<'div'>;
 
 const checkmarkAnimationVariants = {
@@ -155,6 +156,7 @@ export const ColorSchemeCard = ({
   variant,
   selected,
   onClick,
+  dataTestId,
 }: ColorSchemeCardProps) => {
   const controls = useAnimation();
 
@@ -176,7 +178,7 @@ export const ColorSchemeCard = ({
 
   if (variant === 'System') {
     return (
-      <StyledContainer>
+      <StyledContainer data-testid="system-theme">
         <StyledMixedColorSchemeSegment
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -212,7 +214,7 @@ export const ColorSchemeCard = ({
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer data-testid={dataTestId}>
       <ColorSchemeSegment
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

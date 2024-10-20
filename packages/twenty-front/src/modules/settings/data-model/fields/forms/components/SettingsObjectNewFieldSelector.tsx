@@ -108,6 +108,7 @@ export const SettingsObjectNewFieldSelector = ({
           placeholder="Search a type"
           value={searchQuery}
           onChange={setSearchQuery}
+          dataTestId="field-type-search-input"
         />
       </Section>
       <Controller
@@ -127,7 +128,10 @@ export const SettingsObjectNewFieldSelector = ({
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
                     .map(([key, config]) => (
-                      <StyledCardContainer key={key}>
+                      <StyledCardContainer
+                        key={key}
+                        data-testid={key.toLowerCase()}
+                      >
                         <UndecoratedLink
                           to={`/settings/objects/${objectSlug}/new-field/configure?fieldType=${key}`}
                           fullWidth

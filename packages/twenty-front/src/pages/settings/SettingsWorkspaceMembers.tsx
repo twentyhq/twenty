@@ -223,6 +223,7 @@ export const SettingsWorkspaceMembers = () => {
                           variant="tertiary"
                           size="medium"
                           Icon={IconTrash}
+                          dataTestId="delete-workspace-member-button"
                         />
                       </StyledButtonContainer>
                     )}
@@ -284,6 +285,7 @@ export const SettingsWorkspaceMembers = () => {
                           variant="tertiary"
                           size="medium"
                           Icon={IconReload}
+                          dataTestId="resend-invite-button"
                         />
                         <IconButton
                           onClick={() => {
@@ -294,6 +296,7 @@ export const SettingsWorkspaceMembers = () => {
                           variant="tertiary"
                           size="medium"
                           Icon={IconTrash}
+                          dataTestId="delete-invite-button"
                         />
                       </StyledButtonContainer>
                     </TableCell>

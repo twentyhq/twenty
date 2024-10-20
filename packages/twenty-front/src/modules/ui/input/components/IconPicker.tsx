@@ -164,6 +164,7 @@ export const IconPicker = ({
             disabled={disabled}
             Icon={icon}
             variant={variant}
+            dataTestId="icon-button"
           />
         }
         dropdownMenuWidth={176}

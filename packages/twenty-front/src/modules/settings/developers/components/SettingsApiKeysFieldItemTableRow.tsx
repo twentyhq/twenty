@@ -39,7 +39,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   const theme = useTheme();
 
   return (
-    <StyledApisFieldTableRow to={to}>
+    <StyledApisFieldTableRow to={to} testId="api-key-row">
       <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
       <TableCell
         color={

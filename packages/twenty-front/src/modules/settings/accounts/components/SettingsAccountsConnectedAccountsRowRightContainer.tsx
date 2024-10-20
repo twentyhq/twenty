@@ -25,7 +25,7 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
   );
 
   return (
-    <StyledRowRightContainer>
+    <StyledRowRightContainer data-testid={account.handle}>
       {status === SyncStatus.FAILED && (
         <Status color="red" text="Sync failed" weight="medium" />
       )}

@@ -135,6 +135,7 @@ export const SettingsObjects = () => {
             title="Add object"
             accent="blue"
             size="small"
+            dataTestId="add-object-button"
           />
         </UndecoratedLink>
       }
@@ -159,6 +160,7 @@ export const SettingsObjects = () => {
               placeholder="Search an object..."
               value={searchTerm}
               onChange={setSearchTerm}
+              dataTestId="object-search-input"
             />
 
             <Table>
@@ -178,10 +180,11 @@ export const SettingsObjects = () => {
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
               {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
-                <TableSection title="Active">
+                <TableSection title="Active" testId="active-section">
                   {filteredActiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
+                        testId="active-object"
                         key={objectSettingsItem.objectMetadataItem.namePlural}
                         objectMetadataItem={
                           objectSettingsItem.objectMetadataItem
@@ -202,10 +205,11 @@ export const SettingsObjects = () => {
                 </TableSection>
               )}
               {isNonEmptyArray(inactiveObjectMetadataItems) && (
-                <TableSection title="Inactive">
+                <TableSection title="Inactive" testId="inactive-section">
                   {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
+                        testId="inactive-object"
                         key={objectSettingsItem.objectMetadataItem.namePlural}
                         objectMetadataItem={
                           objectSettingsItem.objectMetadataItem
@@ -213,6 +217,7 @@ export const SettingsObjects = () => {
                         totalObjectCount={objectSettingsItem.totalObjectCount}
                         action={
                           <SettingsObjectInactiveMenuDropDown
+                            data-testid="Test"
                             isCustomObject={
                               objectSettingsItem.objectMetadataItem.isCustom
                             }

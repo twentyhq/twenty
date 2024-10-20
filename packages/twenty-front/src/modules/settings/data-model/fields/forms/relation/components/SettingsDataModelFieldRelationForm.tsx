@@ -122,6 +122,7 @@ export const SettingsDataModelFieldRelationForm = ({
               value={value}
               options={RELATION_TYPE_OPTIONS}
               onChange={onChange}
+              dataTestId="relation-type-select"
             />
           )}
         />
@@ -144,6 +145,7 @@ export const SettingsDataModelFieldRelationForm = ({
                   Icon: getIcon(objectMetadataItem.icon),
                 }))}
               onChange={onChange}
+              dataTestId="object-destination-select"
             />
           )}
         />
@@ -178,6 +180,7 @@ export const SettingsDataModelFieldRelationForm = ({
               onChange={onChange}
               fullWidth
               maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+              dataTestId="relation-name-input"
             />
           )}
         />

@@ -86,6 +86,7 @@ export const ViewPickerContentEditMode = () => {
               setViewPickerInputName(event.target.value);
             }}
             autoFocus
+            testId="view-name-input"
           />
         </ViewPickerIconAndNameContainer>
       </DropdownMenuItemsContainer>

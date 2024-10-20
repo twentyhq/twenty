@@ -81,7 +81,7 @@ export const NoteCard = ({
   });
 
   return (
-    <StyledCard isSingleNote={isSingleNote}>
+    <StyledCard isSingleNote={isSingleNote} data-testid="note-card">
       <StyledCardDetailsContainer
         onClick={() => openActivityRightDrawer(note.id)}
       >

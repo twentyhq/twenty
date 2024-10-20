@@ -61,6 +61,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
             value={value}
             options={OPTIONS}
             onChange={onChange}
+            dataTestId="currency-unit-select"
           />
         )}
       />

@@ -42,6 +42,7 @@ export const ToggleImpersonate = () => {
     <Toggle
       value={currentWorkspace?.allowImpersonation}
       onChange={handleChange}
+      testId="support-toggle"
     />
   );
 };

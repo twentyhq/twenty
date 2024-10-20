@@ -15,7 +15,7 @@ export const PageFavoriteButton = ({
     Icon={IconHeart}
     size="medium"
     variant="secondary"
-    data-testid="add-button"
+    dataTestId="favorite-button"
     accent={isFavorite ? 'danger' : 'default'}
     onClick={onClick}
   />

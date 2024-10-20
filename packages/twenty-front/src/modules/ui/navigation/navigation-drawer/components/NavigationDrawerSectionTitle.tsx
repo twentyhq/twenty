@@ -50,6 +50,7 @@ export const NavigationDrawerSectionTitle = ({
   }
   return (
     <StyledTitle
+      data-testid={label.toLowerCase().concat('-section')}
       onClick={
         isNavigationDrawerExpanded || isSettingsPage ? onClick : undefined
       }

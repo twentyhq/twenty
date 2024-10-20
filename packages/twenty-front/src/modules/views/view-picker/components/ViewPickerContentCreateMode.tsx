@@ -127,10 +127,12 @@ export const ViewPickerContentCreateMode = () => {
               setViewPickerInputName(event.target.value);
             }}
             autoFocus
+            testId="view-name-input"
           />
         </ViewPickerIconAndNameContainer>
         <ViewPickerSelectContainer>
           <Select
+            dataTestId="view-type-select"
             disableBlur
             label="View type"
             fullWidth

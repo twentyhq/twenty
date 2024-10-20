@@ -125,7 +125,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
 
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
-      <ActivityRow disabled>
+      <ActivityRow disabled testId="attachment-row">
         <StyledLeftContent>
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
@@ -135,6 +135,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
               onBlur={handleOnBlur}
               autoFocus
               onKeyDown={handleOnKeyDown}
+              dataTestId="file-name-input"
             />
           ) : (
             <StyledLinkContainer>
