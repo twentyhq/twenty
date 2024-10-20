@@ -80,13 +80,11 @@ describe('useFilteredSearchEntityQuery', () => {
         setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFilteredSearchEntityQuery({
-          orderByField: 'name',
-          filters: [{ fieldNames: ['name'], filter: 'Entity' }],
-          sortOrder: 'AscNullsLast',
           selectedIds: ['1'],
           limit: 10,
           excludeRecordIds: ['2'],
           objectNameSingular: 'person',
+          searchFilter: 'Entity',
         });
       },
       { wrapper: Wrapper },

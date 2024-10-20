@@ -9,6 +9,7 @@
 
 .nx/installation
 .nx/cache
+projectStructure.cache.json
 
 .pnp.*
 .yarn/*
