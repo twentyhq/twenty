@@ -5,7 +5,6 @@ import { DataSource, QueryFailedError, Repository } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -153,13 +152,6 @@ export class WorkspaceSyncMetadataService {
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
         context.workspaceId,
       );
-
-      if (workspaceFeatureFlagsMap.IS_SEARCH_ENABLED) {
-        await this.featureFlagService.enableFeatureFlags(
-          [FeatureFlagKey.IsWorkspaceMigratedForSearch],
-          context.workspaceId,
-        );
-      }
     } catch (error) {
       this.logger.error('Sync of standard objects failed with:', error);
 

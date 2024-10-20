@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 
 type TopBarProps = {
   className?: string;
@@ -10,14 +10,15 @@ type TopBarProps = {
 };
 
 const StyledContainer = styled.div`
+  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   display: flex;
+
   flex-direction: column;
 `;
 
-const StyledTopBar = styled.div<{ displayBottomBorder: boolean }>`
+const StyledTopBar = styled.div`
   align-items: center;
-  border-bottom: ${({ displayBottomBorder, theme }) =>
-    displayBottomBorder ? `1px solid ${theme.border.color.light}` : 'none'};
+
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
@@ -26,6 +27,8 @@ const StyledTopBar = styled.div<{ displayBottomBorder: boolean }>`
   height: 39px;
   justify-content: space-between;
   padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+
   z-index: 7;
 `;
 
@@ -44,10 +47,9 @@ export const TopBar = ({
   leftComponent,
   rightComponent,
   bottomComponent,
-  displayBottomBorder = true,
 }: TopBarProps) => (
   <StyledContainer className={className}>
-    <StyledTopBar displayBottomBorder={displayBottomBorder}>
+    <StyledTopBar>
       <StyledLeftSection>{leftComponent}</StyledLeftSection>
       <StyledRightSection>{rightComponent}</StyledRightSection>
     </StyledTopBar>

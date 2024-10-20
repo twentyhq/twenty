@@ -9,7 +9,6 @@ import {
   decryptText,
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
@@ -19,7 +18,6 @@ export class PostgresCredentialsService {
   constructor(
     @InjectRepository(PostgresCredentials, 'core')
     private readonly postgresCredentialsRepository: Repository<PostgresCredentials>,
-    private readonly environmentService: EnvironmentService,
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
