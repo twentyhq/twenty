@@ -5,8 +5,8 @@ import { FloatingButton } from '@/ui/input/button/components/FloatingButton';
 import { Card } from '@/ui/layout/card/components/Card';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import DarkCoverImage from '../assets/cover-dark.png';
-import LightCoverImage from '../assets/cover-light.png';
+import DarkCoverImage from '../../assets/cover-dark.png';
+import LightCoverImage from '../../assets/cover-light.png';
 
 const StyledCoverImageContainer = styled(Card)`
   align-items: center;
