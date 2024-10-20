@@ -12,6 +12,8 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useCallback } from 'react';
 import { IconLibraryPlus, IconPlus, isDefined } from 'twenty-ui';
@@ -36,10 +38,14 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
-  const newPositionInViewFilterGroup =
-    (childViewFiltersAndViewFilterGroups[
+  const lastChildRule: ViewFilter | ViewFilterGroup | undefined =
+    childViewFiltersAndViewFilterGroups[
       childViewFiltersAndViewFilterGroups.length - 1
-    ]?.positionInViewFilterGroup ?? 0) + 1;
+    ];
+
+  const newPositionInViewFilterGroup = isDefined(lastChildRule)
+    ? (lastChildRule.positionInViewFilterGroup ?? 0) + 1
+    : 0;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
