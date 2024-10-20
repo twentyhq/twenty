@@ -1,4 +1,4 @@
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -8,7 +8,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-ui';
@@ -18,17 +17,17 @@ const StyledContainer = styled.div`
 `;
 
 type AdvancedFilterViewFilterOperandSelectProps = {
-  viewFilter: ViewFilter;
-  filterDefinition: FilterDefinition;
-  isDisabled?: boolean;
+  viewFilterId: string;
 };
 
 export const AdvancedFilterViewFilterOperandSelect = ({
-  viewFilter,
-  filterDefinition,
-  isDisabled,
+  viewFilterId,
 }: AdvancedFilterViewFilterOperandSelectProps) => {
-  const dropdownId = `advanced-filter-view-filter-operand-${viewFilter.id}`;
+  const dropdownId = `advanced-filter-view-filter-operand-${viewFilterId}`;
+
+  const filter = useCurrentViewFilter({ viewFilterId });
+
+  const isDisabled = !filter?.fieldMetadataId;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -37,23 +36,26 @@ export const AdvancedFilterViewFilterOperandSelect = ({
   const handleOperandChange = (operand: ViewFilterOperand) => {
     closeDropdown();
 
+    if (!filter) {
+      throw new Error('Filter is not defined');
+    }
+
     upsertCombinedViewFilter({
-      ...viewFilter,
-      definition: filterDefinition,
+      ...filter,
       operand,
     });
   };
 
-  const operandsForFilterType = isDefined(filterDefinition)
-    ? getOperandsForFilterDefinition(filterDefinition)
+  const operandsForFilterType = isDefined(filter?.definition)
+    ? getOperandsForFilterDefinition(filter.definition)
     : [];
 
   if (isDisabled === true) {
     return (
       <SelectControl
         selectedOption={{
-          label: viewFilter.operand
-            ? getOperandLabel(viewFilter.operand)
+          label: filter?.operand
+            ? getOperandLabel(filter.operand)
             : 'Select operand',
           value: '',
         }}
@@ -70,8 +72,8 @@ export const AdvancedFilterViewFilterOperandSelect = ({
         clickableComponent={
           <SelectControl
             selectedOption={{
-              label: viewFilter.operand
-                ? getOperandLabel(viewFilter.operand)
+              label: filter.operand
+                ? getOperandLabel(filter.operand)
                 : 'Select operand',
               value: '',
             }}

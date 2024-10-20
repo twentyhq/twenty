@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { IconApps, IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
 
 interface ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps {
-  onSelectField?: (filterDefinition: FilterDefinition) => void;
+  onSelectField?: (filterDefinition: FilterDefinition) => void; // TODO: Remove
 }
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({

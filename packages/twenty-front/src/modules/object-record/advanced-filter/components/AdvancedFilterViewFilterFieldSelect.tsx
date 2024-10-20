@@ -1,3 +1,4 @@
+import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { ObjectFilterDropdownFilterSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
@@ -9,7 +10,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { ViewFilter } from '@/views/types/ViewFilter';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -17,15 +17,17 @@ const StyledContainer = styled.div`
 `;
 
 type AdvancedFilterViewFilterFieldSelectProps = {
-  viewFilter: ViewFilter;
-  selectedFieldLabel: string;
+  viewFilterId: string;
 };
 
 export const AdvancedFilterViewFilterFieldSelect = ({
-  viewFilter,
-  selectedFieldLabel,
+  viewFilterId,
 }: AdvancedFilterViewFilterFieldSelectProps) => {
-  const dropdownId = `advanced-filter-view-filter-field-${viewFilter.id}`;
+  const dropdownId = `advanced-filter-view-filter-field-${viewFilterId}`;
+
+  const filter = useCurrentViewFilter({ viewFilterId });
+
+  const selectedFieldLabel = filter.definition.label;
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
   const { closeDropdown } = useDropdown(dropdownId);
@@ -36,7 +38,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
       getOperandsForFilterDefinition(filterDefinition);
 
     upsertCombinedViewFilter({
-      ...viewFilter,
+      ...filter,
       fieldMetadataId: filterDefinition.fieldMetadataId,
       definition: filterDefinition,
       operand: operandsForFilterType[0],

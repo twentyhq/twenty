@@ -1,24 +1,23 @@
+import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 
 type AdvancedFilterViewFilterValueInputProps = {
-  filter: Filter;
-  filterDefinition: FilterDefinition;
-  isDisabled?: boolean;
-}
+  viewFilterId: string;
+};
 
 export const AdvancedFilterViewFilterValueInput = ({
-  filter,
-  filterDefinition,
-  isDisabled,
+  viewFilterId,
 }: AdvancedFilterViewFilterValueInputProps) => {
-  const dropdownId = `advanced-filter-view-filter-value-input-${filter.id}`;
+  const dropdownId = `advanced-filter-view-filter-value-input-${viewFilterId}`;
+
+  const filter = useCurrentViewFilter({ viewFilterId });
+
+  const isDisabled = !filter.fieldMetadataId || !filter.operand;
 
   const {
     setFilterDefinitionUsedInDropdown,
@@ -27,7 +26,7 @@ export const AdvancedFilterViewFilterValueInput = ({
     setSelectedFilter,
   } = useFilterDropdown();
 
-  if (isDisabled === true) {
+  if (isDisabled) {
     return (
       <SelectControl
         isDisabled
@@ -52,7 +51,7 @@ export const AdvancedFilterViewFilterValueInput = ({
         />
       }
       onOpen={() => {
-        setFilterDefinitionUsedInDropdown(filterDefinition);
+        setFilterDefinitionUsedInDropdown(filter.definition);
         setSelectedOperandInDropdown(filter.operand);
         setIsObjectFilterDropdownOperandSelectUnfolded(true);
         setSelectedFilter(filter);

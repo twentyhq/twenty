@@ -27,12 +27,10 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
 
 type AdvancedFilterViewFilterGroupProps = {
   parentViewFilterGroupId?: string;
-  viewBarInstanceId: string;
 };
 
 export const AdvancedFilterViewFilterGroup = ({
   parentViewFilterGroupId,
-  viewBarInstanceId,
 }: AdvancedFilterViewFilterGroupProps) => {
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
     useCurrentViewViewFilterGroup({
@@ -40,9 +38,7 @@ export const AdvancedFilterViewFilterGroup = ({
     });
 
   if (!currentViewFilterGroup) {
-    throw new Error(
-      `Missing component view filter group for view filter group with parent id of '${parentViewFilterGroupId}'`,
-    );
+    return null;
   }
 
   return (
@@ -55,7 +51,6 @@ export const AdvancedFilterViewFilterGroup = ({
               viewFilterGroup={currentViewFilterGroup}
             />
             <AdvancedFilterViewFilterGroup
-              viewBarInstanceId={viewBarInstanceId}
               parentViewFilterGroupId={currentViewFilterGroup.id}
             />
             <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
@@ -66,7 +61,7 @@ export const AdvancedFilterViewFilterGroup = ({
               index={i}
               viewFilterGroup={currentViewFilterGroup}
             />
-            <AdvancedFilterViewFilter viewFilter={child} />
+            <AdvancedFilterViewFilter viewFilterId={child.id} />
             <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
           </StyledRow>
         ),

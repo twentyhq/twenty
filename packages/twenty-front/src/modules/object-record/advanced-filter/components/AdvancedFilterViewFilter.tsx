@@ -1,12 +1,9 @@
 import { AdvancedFilterViewFilterFieldSelect } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterFieldSelect';
 import { AdvancedFilterViewFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterOperandSelect';
 import { AdvancedFilterViewFilterValueInput } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterValueInput';
+import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import styled from '@emotion/styled';
 
 const StyledValueDropdownContainer = styled.div`
@@ -22,40 +19,22 @@ const StyledRow = styled.div`
 `;
 
 type AdvancedFilterViewFilterProps = {
-  viewFilter: ViewFilter;
+  viewFilterId: string;
 };
 
 export const AdvancedFilterViewFilter = ({
-  viewFilter,
+  viewFilterId,
 }: AdvancedFilterViewFilterProps) => {
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
-  );
-
-  const [filter] = mapViewFiltersToFilters(
-    [viewFilter],
-    availableFilterDefinitions,
-  );
+  const filter = useCurrentViewFilter({ viewFilterId });
 
   return (
-    <ObjectFilterDropdownScope filterScopeId={viewFilter.id}>
+    <ObjectFilterDropdownScope filterScopeId={filter.id}>
       <StyledRow>
-        <AdvancedFilterViewFilterFieldSelect
-          viewFilter={viewFilter}
-          selectedFieldLabel={filter?.definition?.label ?? 'Select field'}
-        />
-        <AdvancedFilterViewFilterOperandSelect
-          viewFilter={viewFilter}
-          filterDefinition={filter?.definition}
-          isDisabled={!viewFilter.fieldMetadataId}
-        />
+        <AdvancedFilterViewFilterFieldSelect viewFilterId={filter.id} />
+        <AdvancedFilterViewFilterOperandSelect viewFilterId={filter.id} />
         <StyledValueDropdownContainer>
-          {configurableViewFilterOperands.has(viewFilter.operand) && (
-            <AdvancedFilterViewFilterValueInput
-              filter={filter}
-              filterDefinition={filter?.definition}
-              isDisabled={!viewFilter.fieldMetadataId || !viewFilter.operand}
-            />
+          {configurableViewFilterOperands.has(filter.operand) && (
+            <AdvancedFilterViewFilterValueInput viewFilterId={filter.id} />
           )}
         </StyledValueDropdownContainer>
       </StyledRow>

@@ -10,13 +10,7 @@ import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedVie
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from 'twenty-ui';
 
-type AdvancedFilterDropdownButtonProps = {
-  viewBarId: string;
-};
-
-export const AdvancedFilterDropdownButton = (
-  props: AdvancedFilterDropdownButtonProps,
-) => {
+export const AdvancedFilterDropdownButton = () => {
   const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
   const { deleteCombinedViewFilterGroup } = useDeleteCombinedViewFilterGroup();
 
@@ -63,9 +57,7 @@ export const AdvancedFilterDropdownButton = (
           advancedFilterCount={advancedViewFilterIds?.length}
         />
       }
-      dropdownComponents={
-        <AdvancedFilterViewFilterGroup viewBarInstanceId={props.viewBarId} />
-      }
+      dropdownComponents={<AdvancedFilterViewFilterGroup />}
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
