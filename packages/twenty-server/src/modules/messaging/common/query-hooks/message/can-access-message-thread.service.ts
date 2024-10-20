@@ -54,6 +54,7 @@ export class CanAccessMessageThreadService {
         'connectedAccount',
       );
 
+if(messageChannels.length===0) return []
     const connectedAccounts = await connectedAccountRepository.find({
       select: ['id'],
       where: {
@@ -65,7 +66,7 @@ export class CanAccessMessageThreadService {
     if (connectedAccounts.length > 0) {
       return;
     }
-
+  
     throw new ForbiddenException();
   }
 }
