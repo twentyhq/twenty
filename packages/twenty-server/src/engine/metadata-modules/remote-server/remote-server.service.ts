@@ -72,6 +72,7 @@ export class RemoteServerService<T extends RemoteServerType> {
           ...remoteServerInput.userMappingOptions,
           password: this.encryptPassword(
             remoteServerInput.userMappingOptions.password,
+            workspaceId,
           ),
         },
       };
@@ -156,6 +157,7 @@ export class RemoteServerService<T extends RemoteServerType> {
           ...partialRemoteServerWithUpdates.userMappingOptions,
           password: this.encryptPassword(
             partialRemoteServerWithUpdates.userMappingOptions.password,
+            workspaceId,
           ),
         },
       };
@@ -252,8 +254,11 @@ export class RemoteServerService<T extends RemoteServerType> {
     });
   }
 
-  private encryptPassword(password: string) {
-    const key = this.jwtWrapperService.generateAppSecret('REMOTE_SERVER');
+  private encryptPassword(password: string, workspaceId: string) {
+    const key = this.jwtWrapperService.generateAppSecret(
+      'REMOTE_SERVER',
+      workspaceId,
+    );
 
     return encryptText(password, key);
   }

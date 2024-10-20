@@ -27,7 +27,10 @@ export class PostgresCredentialsService {
     const user = `user_${randomBytes(4).toString('hex')}`;
     const password = randomBytes(16).toString('hex');
 
-    const key = this.jwtWrapperService.generateAppSecret('POSTGRES_PROXY');
+    const key = this.jwtWrapperService.generateAppSecret(
+      'POSTGRES_PROXY',
+      workspaceId,
+    );
     const passwordHash = encryptText(password, key);
 
     const existingCredentials =
@@ -81,7 +84,10 @@ export class PostgresCredentialsService {
       id: postgresCredentials.id,
     });
 
-    const key = this.jwtWrapperService.generateAppSecret('POSTGRES_PROXY');
+    const key = this.jwtWrapperService.generateAppSecret(
+      'POSTGRES_PROXY',
+      workspaceId,
+    );
 
     return {
       id: postgresCredentials.id,
@@ -105,7 +111,10 @@ export class PostgresCredentialsService {
       return null;
     }
 
-    const key = this.jwtWrapperService.generateAppSecret('POSTGRES_PROXY');
+    const key = this.jwtWrapperService.generateAppSecret(
+      'POSTGRES_PROXY',
+      workspaceId,
+    );
 
     return {
       id: postgresCredentials.id,

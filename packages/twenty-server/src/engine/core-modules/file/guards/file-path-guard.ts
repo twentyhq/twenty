@@ -6,15 +6,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
-  constructor(
-    private readonly jwtWrapperService: JwtWrapperService,
-    private readonly environmentService: EnvironmentService,
-  ) {}
+  constructor(private readonly jwtWrapperService: JwtWrapperService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
