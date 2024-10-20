@@ -34,4 +34,7 @@ Your turn 👇
 
 » 16-October-2024 by Harsh Bhat
 » Link to gif: https://giphy.com/gifs/oss-twentycrm-mgoYSDrjIalUL7XJzm
+
+» 20-October-2024 by Satesh Charan
+» Link to gif: https://giphy.com/gifs/rXjvGBrTqu7vvhEsvR
 ---
