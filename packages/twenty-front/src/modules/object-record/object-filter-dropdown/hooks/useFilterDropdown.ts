@@ -48,7 +48,7 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
 
         onFilterSelect?.(filter);
       },
-    [selectedFilterState, onFilterSelectState],
+    [selectedFilterState, onFilterSelectState, upsertCombinedViewFilter],
   );
 
   const emptyFilterButKeepDefinition = useRecoilCallback(
