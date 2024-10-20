@@ -27,7 +27,7 @@ module.exports = {
           'packages/twenty-front/folderStructure.json',
       },
       rules: {
-        'project-structure/folder-structure': 'warn',
+        'project-structure/folder-structure': 'error',
       },
     },
   ],

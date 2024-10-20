@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { participantFragment } from '@/activities/emails/queries/fragments/participantFragment';
+import { participantFragment } from '@/activities/emails/graphql/queries/fragments/participantFragment';
 
 export const timelineThreadFragment = gql`
   fragment TimelineThreadFragment on TimelineThread {
