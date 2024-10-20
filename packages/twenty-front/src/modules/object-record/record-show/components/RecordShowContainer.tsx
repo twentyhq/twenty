@@ -1,6 +1,6 @@
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
+import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';

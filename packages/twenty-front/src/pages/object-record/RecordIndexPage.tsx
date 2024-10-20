@@ -9,9 +9,9 @@ import { RecordIndexPageHeader } from '@/object-record/record-index/components/R
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from '~/utils/string/capitalize';
 

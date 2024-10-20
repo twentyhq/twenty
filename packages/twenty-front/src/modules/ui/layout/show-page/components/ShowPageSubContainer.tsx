@@ -3,7 +3,7 @@ import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
-import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
+import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
