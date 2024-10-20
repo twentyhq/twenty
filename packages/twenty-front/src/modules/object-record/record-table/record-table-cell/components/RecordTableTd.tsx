@@ -32,7 +32,6 @@ const StyledTd = styled.td<{
 
   background: ${({ backgroundColor }) => backgroundColor};
   z-index: ${({ zIndex }) => (isDefined(zIndex) ? zIndex : 'auto')};
-  width: ${({ width }) => (isDefined(width) ? `${width}px` : 'auto')};
   ${({ isDragging }) =>
     isDragging
       ? `

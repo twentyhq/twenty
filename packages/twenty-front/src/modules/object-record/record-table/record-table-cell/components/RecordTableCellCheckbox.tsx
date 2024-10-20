@@ -14,7 +14,6 @@ const StyledContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  min-width: 24px;
 `;
 
 export const RecordTableCellCheckbox = () => {
