@@ -1,3 +1,4 @@
+import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
@@ -6,6 +7,7 @@ import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-rec
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
+import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -13,15 +15,10 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { IconApps, IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
 
-interface ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps {
-  onSelectField?: (filterDefinition: FilterDefinition) => void; // TODO: Remove
-}
-
-export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
-  onSelectField,
-}: ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps) => {
+export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');
 
   const { getIcon } = useIcons();
@@ -53,12 +50,44 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
+    selectFilter,
+    advancedFilterViewFilterIdState,
+    advancedFilterViewFilterGroupIdState,
   } = useFilterDropdown();
+
+  const advancedFilterViewFilterId = useRecoilValue(
+    advancedFilterViewFilterIdState,
+  );
+  const advancedFilterViewFilterGroupId = useRecoilValue(
+    advancedFilterViewFilterGroupIdState,
+  );
+
+  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
+    advancedFilterViewFilterId,
+  );
 
   const handleSelectFilter = (definition: FilterDefinition | null) => {
     if (definition !== null) {
-      if (onSelectField !== undefined) {
-        onSelectField(definition);
+      if (
+        isDefined(advancedFilterViewFilterId) &&
+        isDefined(advancedFilterViewFilterGroupId)
+      ) {
+        closeAdvancedFilterDropdown();
+
+        const operand = getOperandsForFilterDefinition(definition)[0];
+        const { value, displayValue } = getInitialFilterValue(
+          definition.type,
+          operand,
+        );
+        selectFilter({
+          id: advancedFilterViewFilterId,
+          fieldMetadataId: definition.fieldMetadataId,
+          value,
+          operand,
+          displayValue,
+          definition,
+          viewFilterGroupId: advancedFilterViewFilterGroupId,
+        });
       }
 
       setFilterDefinitionUsedInDropdown(definition);

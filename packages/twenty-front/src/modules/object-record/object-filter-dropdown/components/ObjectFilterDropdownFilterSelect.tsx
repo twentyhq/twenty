@@ -3,12 +3,12 @@ import { useContext } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
+import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -48,18 +48,25 @@ export const StyledInput = styled.input`
 `;
 
 interface ObjectFilterDropdownFilterSelectProps {
-  onSelectField?: (filterDefinition: FilterDefinition) => void;
   isAdvancedFilterButtonVisible?: boolean;
 }
 
 export const ObjectFilterDropdownFilterSelect = ({
-  onSelectField,
   isAdvancedFilterButtonVisible,
 }: ObjectFilterDropdownFilterSelectProps) => {
   const {
     setObjectFilterDropdownSearchInput,
     objectFilterDropdownSearchInputState,
+    advancedFilterViewFilterIdState,
   } = useFilterDropdown();
+
+  const advancedFilterViewFilterId = useRecoilValue(
+    advancedFilterViewFilterIdState,
+  );
+
+  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
+    advancedFilterViewFilterId,
+  );
 
   const objectFilterDropdownSearchInput = useRecoilValue(
     objectFilterDropdownSearchInputState,
@@ -119,12 +126,9 @@ export const ObjectFilterDropdownFilterSelect = ({
       return;
     }
 
-    if (isDefined(onSelectField)) {
-      onSelectField(selectedFilterDefinition);
-    } else {
-      resetSelectedItem();
-      selectFilter({ filterDefinition: selectedFilterDefinition });
-    }
+    resetSelectedItem();
+    selectFilter({ filterDefinition: selectedFilterDefinition });
+    closeAdvancedFilterDropdown();
   };
 
   const shoudShowSeparator =
@@ -156,7 +160,6 @@ export const ObjectFilterDropdownFilterSelect = ({
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
                   filterDefinition={visibleFilterDefinition}
-                  onSelectField={onSelectField}
                 />
               </SelectableItem>
             ),
@@ -172,7 +175,6 @@ export const ObjectFilterDropdownFilterSelect = ({
               >
                 <ObjectFilterDropdownFilterSelectMenuItem
                   filterDefinition={hiddenFilterDefinition}
-                  onSelectField={onSelectField}
                 />
               </SelectableItem>
             ),

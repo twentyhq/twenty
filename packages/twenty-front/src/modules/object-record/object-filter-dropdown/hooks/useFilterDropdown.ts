@@ -14,6 +14,7 @@ import { Filter } from '../types/Filter';
 
 type UseFilterDropdownProps = {
   filterDropdownId?: string;
+  advancedFilterViewFilterId?: string;
 };
 
 export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
@@ -32,6 +33,8 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
+    advancedFilterViewFilterGroupIdState,
+    advancedFilterViewFilterIdState,
   } = useFilterDropdownStates(scopeId);
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
@@ -125,6 +128,12 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     isObjectFilterDropdownUnfoldedState,
   );
   const setOnFilterSelect = useSetRecoilState(onFilterSelectState);
+  const setAdvancedFilterViewFilterGroupId = useSetRecoilState(
+    advancedFilterViewFilterGroupIdState,
+  );
+  const setAdvancedFilterViewFilterId = useSetRecoilState(
+    advancedFilterViewFilterIdState,
+  );
 
   return {
     scopeId,
@@ -140,6 +149,8 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setIsObjectFilterDropdownOperandSelectUnfolded,
     setIsObjectFilterDropdownUnfolded,
     setOnFilterSelect,
+    setAdvancedFilterViewFilterGroupId,
+    setAdvancedFilterViewFilterId,
     emptyFilterButKeepDefinition,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
@@ -151,5 +162,7 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
+    advancedFilterViewFilterGroupIdState,
+    advancedFilterViewFilterIdState,
   };
 };
