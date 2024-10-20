@@ -20,7 +20,7 @@ export const useCurrentViewViewFilterGroup = ({
   if (!currentViewFilterGroup) {
     return {
       currentViewFilterGroup: undefined,
-      childViewFiltersAndViewFilterGroups: [] satisfies (
+      childViewFiltersAndViewFilterGroups: [] as (
         | ViewFilter
         | ViewFilterGroup
       )[],

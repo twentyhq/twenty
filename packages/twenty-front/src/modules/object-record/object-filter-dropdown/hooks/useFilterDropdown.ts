@@ -8,6 +8,7 @@ import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-rec
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+import { isDefined } from 'twenty-ui';
 import { ObjectFilterDropdownScopeInternalContext } from '../scopes/scope-internal-context/ObjectFilterDropdownScopeInternalContext';
 import { Filter } from '../types/Filter';
 
@@ -41,10 +42,9 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
         set(selectedFilterState, filter);
         const onFilterSelect = getSnapshotValue(snapshot, onFilterSelectState);
 
-        // TODO: IMPORTANT - Figure out correct way to refresh view after advanced view filter change
-        upsertCombinedViewFilter({
-          ...(filter as any),
-        });
+        if (isDefined(filter)) {
+          upsertCombinedViewFilter(filter);
+        }
 
         onFilterSelect?.(filter);
       },

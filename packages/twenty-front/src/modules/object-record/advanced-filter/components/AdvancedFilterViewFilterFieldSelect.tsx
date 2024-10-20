@@ -62,7 +62,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
           <SelectControl
             selectedOption={{
               label: selectedFieldLabel,
-              value: '',
+              value: null,
             }}
           />
         }

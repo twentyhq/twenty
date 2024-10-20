@@ -57,7 +57,7 @@ export const AdvancedFilterViewFilterOperandSelect = ({
           label: filter?.operand
             ? getOperandLabel(filter.operand)
             : 'Select operand',
-          value: '',
+          value: null,
         }}
         isDisabled
       />
@@ -75,7 +75,7 @@ export const AdvancedFilterViewFilterOperandSelect = ({
               label: filter.operand
                 ? getOperandLabel(filter.operand)
                 : 'Select operand',
-              value: '',
+              value: null,
             }}
           />
         }

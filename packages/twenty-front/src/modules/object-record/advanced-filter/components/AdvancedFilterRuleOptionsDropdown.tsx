@@ -48,6 +48,8 @@ export const AdvancedFilterRuleOptionsDropdown = ({
       }
     } else if (isDefined(currentViewFilterGroup)) {
       deleteCombinedViewFilterGroup(currentViewFilterGroup.id);
+    } else {
+      throw new Error('No view filter or view filter group to remove');
     }
   };
 

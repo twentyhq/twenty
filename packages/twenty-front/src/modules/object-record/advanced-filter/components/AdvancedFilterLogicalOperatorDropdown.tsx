@@ -1,3 +1,4 @@
+import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { Select } from '@/ui/input/components/Select';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
@@ -26,16 +27,7 @@ export const AdvancedFilterLogicalOperatorDropdown = ({
       dropdownId={`advanced-filter-logical-operator-${viewFilterGroup.id}`}
       value={viewFilterGroup.logicalOperator}
       onChange={handleChange}
-      options={[
-        {
-          value: ViewFilterGroupLogicalOperator.AND,
-          label: 'And',
-        },
-        {
-          value: ViewFilterGroupLogicalOperator.OR,
-          label: 'Or',
-        },
-      ]}
+      options={ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS}
     />
   );
 };

@@ -33,7 +33,7 @@ const StyledIconChevronDown = styled(IconChevronDown)<{
 `;
 
 type SelectControlProps = {
-  selectedOption: SelectOption<any>;
+  selectedOption: SelectOption<string | number | null>;
   isDisabled?: boolean;
 };
 

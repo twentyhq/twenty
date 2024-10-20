@@ -43,7 +43,7 @@ export const AdvancedFilterViewFilterGroup = ({
 
   return (
     <StyledContainer isGrayBackground={!!parentViewFilterGroupId}>
-      {childViewFiltersAndViewFilterGroups?.map((child, i) =>
+      {childViewFiltersAndViewFilterGroups.map((child, i) =>
         child.__typename === 'ViewFilterGroup' ? (
           <StyledRow key={child.id}>
             <AdvancedFilterLogicalOperatorCell

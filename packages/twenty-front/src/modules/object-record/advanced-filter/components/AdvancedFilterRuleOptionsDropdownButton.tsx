@@ -17,6 +17,7 @@ export const AdvancedFilterRuleOptionsDropdownButton = ({
 
   return (
     <IconButton
+      aria-label="Filter rule options"
       variant="tertiary"
       Icon={IconDotsVertical}
       onClick={handleClick}

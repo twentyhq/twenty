@@ -32,7 +32,7 @@ export const AdvancedFilterViewFilterValueInput = ({
         isDisabled
         selectedOption={{
           label: filter?.displayValue ?? '',
-          value: '',
+          value: null,
         }}
       />
     );
@@ -46,7 +46,7 @@ export const AdvancedFilterViewFilterValueInput = ({
         <SelectControl
           selectedOption={{
             label: filter?.displayValue ?? '',
-            value: '',
+            value: null,
           }}
         />
       }
