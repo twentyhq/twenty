@@ -14,6 +14,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-ui';
 
+import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
+import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
+import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
+
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
 };
@@ -57,30 +61,20 @@ export const ObjectFilterDropdownFilterInput = ({
     <>
       {isConfigurable && selectedOperandInDropdown && (
         <>
-          {[
-            'TEXT',
-            'EMAIL',
-            'EMAILS',
-            'PHONE',
-            'FULL_NAME',
-            'LINK',
-            'LINKS',
-            'ADDRESS',
-            'ACTOR',
-            'ARRAY',
-            'PHONES',
-          ].includes(filterDefinitionUsedInDropdown.type) &&
+          {TEXT_FILTER_TYPES.includes(
+            filterDefinitionUsedInDropdown.type as any,
+          ) &&
             !isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
               <ObjectFilterDropdownTextSearchInput />
             )}
-          {['NUMBER', 'CURRENCY'].includes(
-            filterDefinitionUsedInDropdown.type,
+          {NUMBER_FILTER_TYPES.includes(
+            filterDefinitionUsedInDropdown.type as any,
           ) && <ObjectFilterDropdownNumberInput />}
           {filterDefinitionUsedInDropdown.type === 'RATING' && (
             <ObjectFilterDropdownRatingInput />
           )}
-          {['DATE_TIME', 'DATE'].includes(
-            filterDefinitionUsedInDropdown.type,
+          {DATE_FILTER_TYPES.includes(
+            filterDefinitionUsedInDropdown.type as any,
           ) && <ObjectFilterDropdownDateInput />}
           {filterDefinitionUsedInDropdown.type === 'RELATION' && (
             <>
