@@ -1,4 +1,5 @@
 import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
+import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -40,9 +41,18 @@ export const AdvancedFilterViewFilterOperandSelect = ({
       throw new Error('Filter is not defined');
     }
 
+    const { value, displayValue } = getInitialFilterValue(
+      filter.definition.type,
+      operand,
+      filter.value,
+      filter.displayValue,
+    );
+
     upsertCombinedViewFilter({
       ...filter,
       operand,
+      value,
+      displayValue,
     });
   };
 
