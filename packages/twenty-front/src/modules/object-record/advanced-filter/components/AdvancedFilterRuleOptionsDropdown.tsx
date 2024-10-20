@@ -1,4 +1,5 @@
 import { AdvancedFilterRuleOptionsDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdownButton';
+import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -8,51 +9,56 @@ import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedVie
 import { isDefined } from 'twenty-ui';
 
 type AdvancedFilterRuleOptionsDropdownProps = {
-  dropdownId: string;
+  parentViewFilterGroupId?: string;
 } & (
   | {
       viewFilterId: string;
-      parentViewFilterGroupId: string;
-      isOnlyViewFilterInGroup: boolean;
       viewFilterGroupId?: never;
     }
   | {
       viewFilterId?: never;
-      parentViewFilterGroupId?: never;
-      isOnlyViewFilterInGroup?: never;
       viewFilterGroupId: string;
     }
 );
 
-export const AdvancedFilterRuleOptionsDropdown = (
-  props: AdvancedFilterRuleOptionsDropdownProps,
-) => {
+export const AdvancedFilterRuleOptionsDropdown = ({
+  parentViewFilterGroupId,
+  viewFilterId,
+  viewFilterGroupId,
+}: AdvancedFilterRuleOptionsDropdownProps) => {
+  const dropdownId = `advanced-filter-rule-options-${viewFilterId ?? viewFilterGroupId}`;
+
   const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
   const { deleteCombinedViewFilterGroup } = useDeleteCombinedViewFilterGroup();
 
+  const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
+    useCurrentViewViewFilterGroup({
+      parentViewFilterGroupId: parentViewFilterGroupId,
+    });
+
   const handleRemove = () => {
-    if (isDefined(props.viewFilterId)) {
-      deleteCombinedViewFilter(props.viewFilterId);
-      if (props.isOnlyViewFilterInGroup === true) {
-        deleteCombinedViewFilterGroup(props.parentViewFilterGroupId);
+    if (isDefined(viewFilterId)) {
+      deleteCombinedViewFilter(viewFilterId);
+
+      const isOnlyViewFilterInGroup =
+        childViewFiltersAndViewFilterGroups.length === 1;
+
+      if (isOnlyViewFilterInGroup && isDefined(parentViewFilterGroupId)) {
+        deleteCombinedViewFilterGroup(parentViewFilterGroupId);
       }
-    } else if (isDefined(props.viewFilterGroupId)) {
-      deleteCombinedViewFilterGroup(props.viewFilterGroupId);
+    } else if (isDefined(currentViewFilterGroup)) {
+      deleteCombinedViewFilterGroup(currentViewFilterGroup.id);
     }
   };
 
-  const removeButtonLabel = props.viewFilterId
-    ? 'Remove rule'
-    : 'Remove rule group';
+  const removeButtonLabel = viewFilterId ? 'Remove rule' : 'Remove rule group';
 
   return (
     <Dropdown
       disableBlur
-      dropdownId={props.dropdownId}
+      dropdownId={dropdownId}
       clickableComponent={
-        <AdvancedFilterRuleOptionsDropdownButton
-          dropdownId={props.dropdownId}
-        />
+        <AdvancedFilterRuleOptionsDropdownButton dropdownId={dropdownId} />
       }
       dropdownComponents={
         <DropdownMenuItemsContainer>

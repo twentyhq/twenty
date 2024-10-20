@@ -1,4 +1,6 @@
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 
 export const useCurrentViewViewFilterGroup = ({
   parentViewFilterGroupId,
@@ -16,7 +18,13 @@ export const useCurrentViewViewFilterGroup = ({
     );
 
   if (!currentViewFilterGroup) {
-    throw new Error('Current view filter group not found');
+    return {
+      currentViewFilterGroup: undefined,
+      childViewFiltersAndViewFilterGroups: [] satisfies (
+        | ViewFilter
+        | ViewFilterGroup
+      )[],
+    };
   }
 
   const childViewFilters =

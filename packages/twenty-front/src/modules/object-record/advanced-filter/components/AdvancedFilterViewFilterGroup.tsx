@@ -57,10 +57,7 @@ export const AdvancedFilterViewFilterGroup = (
               viewBarInstanceId={props.viewBarInstanceId}
               parentViewFilterGroupId={currentViewFilterGroup.id}
             />
-            <AdvancedFilterRuleOptionsDropdown
-              dropdownId={`advanced-filter-rule-options-${child.id}`}
-              viewFilterGroupId={child.id}
-            />
+            <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
           </StyledRow>
         ) : (
           <StyledRow key={child.id}>
@@ -69,14 +66,7 @@ export const AdvancedFilterViewFilterGroup = (
               viewFilterGroup={currentViewFilterGroup}
             />
             <AdvancedFilterViewFilter viewFilter={child} />
-            <AdvancedFilterRuleOptionsDropdown
-              dropdownId={`advanced-filter-rule-options-${child.id}`}
-              viewFilterId={child.id}
-              parentViewFilterGroupId={currentViewFilterGroup.id}
-              isOnlyViewFilterInGroup={
-                childViewFiltersAndViewFilterGroups.length === 1
-              }
-            />
+            <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
           </StyledRow>
         ),
       )}

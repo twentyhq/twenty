@@ -29,7 +29,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       parentViewFilterGroupId,
     });
 
-  const dropdownId = `advanced-filter-add-filter-rule-${currentViewFilterGroup.id}`;
+  const dropdownId = `advanced-filter-add-filter-rule-${currentViewFilterGroup?.id}`;
 
   const { currentViewId } = useGetCurrentView();
 
@@ -81,7 +81,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
-      viewFilterGroupId: currentViewFilterGroup.id,
+      viewFilterGroupId: currentViewFilterGroup?.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     });
   };
@@ -97,7 +97,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       id: v4(),
       viewId: currentViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.AND,
-      parentViewFilterGroupId: currentViewFilterGroup.id,
+      parentViewFilterGroupId: currentViewFilterGroup?.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     };
 
