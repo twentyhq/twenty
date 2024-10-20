@@ -1,4 +1,4 @@
-import { createAppRouter } from '@/app/utils/createAppRouter';
+import { useCreateAppRouter } from '@/app/hooks/useCreateAppRouter';
 import { billingState } from '@/client-config/states/billingState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { RouterProvider } from 'react-router-dom';
@@ -17,7 +17,7 @@ export const AppRouter = () => {
 
   return (
     <RouterProvider
-      router={createAppRouter(
+      router={useCreateAppRouter(
         isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,

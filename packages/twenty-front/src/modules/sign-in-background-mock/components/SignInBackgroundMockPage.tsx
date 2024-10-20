@@ -3,11 +3,11 @@ import { IconBuildingSkyscraper } from 'twenty-ui';
 
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SignInBackgroundMockContainer } from '@/sign-in-background-mock/components/SignInBackgroundMockContainer';
-import { PageAddButton } from '@/ui/layout/page/PageAddButton';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageHeader } from '@/ui/layout/page/PageHeader';
-import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
+import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
+import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 
 const StyledTableContainer = styled.div`
   display: flex;
