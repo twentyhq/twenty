@@ -10,10 +10,18 @@ import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
 import { useIcons } from 'twenty-ui';
+import styled from '@emotion/styled';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
+
+const SubItemsWrapper = styled.div`
+  display: flex;
+  flex-direction: ${() => (useIsMobile() ? 'row' : 'column')};
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
 
 export const NavigationDrawerItemForObjectMetadataItem = ({
   objectMetadataItem,
@@ -64,21 +72,24 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         Icon={getIcon(objectMetadataItem.icon)}
         active={isActive}
       />
-      {shouldSubItemsBeDisplayed &&
-        sortedObjectMetadataViews.map((view, index) => (
-          <NavigationDrawerSubItem
-            label={view.name}
-            to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-            active={viewId === view.id}
-            subItemState={getNavigationSubItemState({
-              index,
-              arrayLength: subItemArrayLength,
-              selectedIndex: selectedSubItemIndex,
-            })}
-            Icon={getIcon(view.icon)}
-            key={view.id}
-          />
-        ))}
+      {shouldSubItemsBeDisplayed && (
+        <SubItemsWrapper>
+          {sortedObjectMetadataViews.map((view, index) => (
+            <NavigationDrawerSubItem
+              label={view.name}
+              to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+              active={viewId === view.id}
+              subItemState={getNavigationSubItemState({
+                index,
+                arrayLength: subItemArrayLength,
+                selectedIndex: selectedSubItemIndex,
+              })}
+              Icon={getIcon(view.icon)}
+              key={view.id}
+            />
+          ))}
+        </SubItemsWrapper>
+      )}
     </NavigationDrawerItemsCollapsedContainer>
   );
 };
