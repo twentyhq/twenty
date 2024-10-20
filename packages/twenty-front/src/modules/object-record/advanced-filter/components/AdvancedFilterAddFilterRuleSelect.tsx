@@ -17,9 +17,9 @@ import { useCallback } from 'react';
 import { IconLibraryPlus, IconPlus, isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-interface AdvancedFilterAddFilterRuleSelectProps {
+type AdvancedFilterAddFilterRuleSelectProps = {
   parentViewFilterGroupId?: string;
-}
+};
 
 export const AdvancedFilterAddFilterRuleSelect = ({
   parentViewFilterGroupId,

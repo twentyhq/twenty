@@ -16,24 +16,25 @@ const StyledContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-interface AdvancedFilterLogicalOperatorCellProps {
+type AdvancedFilterLogicalOperatorCellProps = {
   index: number;
   viewFilterGroup: ViewFilterGroup;
-}
+};
 
-export const AdvancedFilterLogicalOperatorCell = (
-  props: AdvancedFilterLogicalOperatorCellProps,
-) => (
+export const AdvancedFilterLogicalOperatorCell = ({
+  index,
+  viewFilterGroup,
+}: AdvancedFilterLogicalOperatorCellProps) => (
   <StyledContainer>
-    {props.index === 0 ? (
+    {index === 0 ? (
       <StyledText>Where</StyledText>
-    ) : props.index === 1 ? (
+    ) : index === 1 ? (
       <AdvancedFilterLogicalOperatorDropdown
-        viewFilterGroup={props.viewFilterGroup}
+        viewFilterGroup={viewFilterGroup}
       />
     ) : (
       <StyledText>
-        {capitalize(props.viewFilterGroup.logicalOperator.toLowerCase())}
+        {capitalize(viewFilterGroup.logicalOperator.toLowerCase())}
       </StyledText>
     )}
   </StyledContainer>

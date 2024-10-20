@@ -21,42 +21,40 @@ const StyledRow = styled.div`
   overflow: hidden;
 `;
 
-interface AdvancedFilterViewFilterProps {
+type AdvancedFilterViewFilterProps = {
   viewFilter: ViewFilter;
-}
+};
 
-export const AdvancedFilterViewFilter = (
-  props: AdvancedFilterViewFilterProps,
-) => {
+export const AdvancedFilterViewFilter = ({
+  viewFilter,
+}: AdvancedFilterViewFilterProps) => {
   const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
   );
 
   const [filter] = mapViewFiltersToFilters(
-    [props.viewFilter],
+    [viewFilter],
     availableFilterDefinitions,
   );
 
   return (
-    <ObjectFilterDropdownScope filterScopeId={props.viewFilter.id}>
+    <ObjectFilterDropdownScope filterScopeId={viewFilter.id}>
       <StyledRow>
         <AdvancedFilterViewFilterFieldSelect
-          viewFilter={props.viewFilter}
+          viewFilter={viewFilter}
           selectedFieldLabel={filter?.definition?.label ?? 'Select field'}
         />
         <AdvancedFilterViewFilterOperandSelect
-          viewFilter={props.viewFilter}
+          viewFilter={viewFilter}
           filterDefinition={filter?.definition}
-          isDisabled={!props.viewFilter.fieldMetadataId}
+          isDisabled={!viewFilter.fieldMetadataId}
         />
         <StyledValueDropdownContainer>
-          {configurableViewFilterOperands.has(props.viewFilter.operand) && (
+          {configurableViewFilterOperands.has(viewFilter.operand) && (
             <AdvancedFilterViewFilterValueInput
               filter={filter}
               filterDefinition={filter?.definition}
-              isDisabled={
-                !props.viewFilter.fieldMetadataId || !props.viewFilter.operand
-              }
+              isDisabled={!viewFilter.fieldMetadataId || !viewFilter.operand}
             />
           )}
         </StyledValueDropdownContainer>

@@ -2,14 +2,14 @@ import { IconButton } from '@/ui/input/button/components/IconButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { IconDotsVertical } from 'twenty-ui';
 
-interface AdvancedFilterRuleOptionsDropdownButtonProps {
+type AdvancedFilterRuleOptionsDropdownButtonProps = {
   dropdownId: string;
-}
+};
 
-export const AdvancedFilterRuleOptionsDropdownButton = (
-  props: AdvancedFilterRuleOptionsDropdownButtonProps,
-) => {
-  const { toggleDropdown } = useDropdown(props.dropdownId);
+export const AdvancedFilterRuleOptionsDropdownButton = ({
+  dropdownId,
+}: AdvancedFilterRuleOptionsDropdownButtonProps) => {
+  const { toggleDropdown } = useDropdown(dropdownId);
 
   const handleClick = () => {
     toggleDropdown();

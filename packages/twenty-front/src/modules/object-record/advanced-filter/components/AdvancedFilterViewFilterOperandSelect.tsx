@@ -17,16 +17,18 @@ const StyledContainer = styled.div`
   flex: 1;
 `;
 
-interface AdvancedFilterViewFilterOperandSelectProps {
+type AdvancedFilterViewFilterOperandSelectProps = {
   viewFilter: ViewFilter;
   filterDefinition: FilterDefinition;
   isDisabled?: boolean;
-}
+};
 
-export const AdvancedFilterViewFilterOperandSelect = (
-  props: AdvancedFilterViewFilterOperandSelectProps,
-) => {
-  const dropdownId = `advanced-filter-view-filter-operand-${props.viewFilter.id}`;
+export const AdvancedFilterViewFilterOperandSelect = ({
+  viewFilter,
+  filterDefinition,
+  isDisabled,
+}: AdvancedFilterViewFilterOperandSelectProps) => {
+  const dropdownId = `advanced-filter-view-filter-operand-${viewFilter.id}`;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -36,22 +38,22 @@ export const AdvancedFilterViewFilterOperandSelect = (
     closeDropdown();
 
     upsertCombinedViewFilter({
-      ...props.viewFilter,
-      definition: props.filterDefinition,
+      ...viewFilter,
+      definition: filterDefinition,
       operand,
     });
   };
 
-  const operandsForFilterType = isDefined(props.filterDefinition)
-    ? getOperandsForFilterDefinition(props.filterDefinition)
+  const operandsForFilterType = isDefined(filterDefinition)
+    ? getOperandsForFilterDefinition(filterDefinition)
     : [];
 
-  if (props.isDisabled === true) {
+  if (isDisabled === true) {
     return (
       <SelectControl
         selectedOption={{
-          label: props.viewFilter.operand
-            ? getOperandLabel(props.viewFilter.operand)
+          label: viewFilter.operand
+            ? getOperandLabel(viewFilter.operand)
             : 'Select operand',
           value: '',
         }}
@@ -68,8 +70,8 @@ export const AdvancedFilterViewFilterOperandSelect = (
         clickableComponent={
           <SelectControl
             selectedOption={{
-              label: props.viewFilter.operand
-                ? getOperandLabel(props.viewFilter.operand)
+              label: viewFilter.operand
+                ? getOperandLabel(viewFilter.operand)
                 : 'Select operand',
               value: '',
             }}

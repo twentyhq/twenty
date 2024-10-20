@@ -16,15 +16,16 @@ const StyledContainer = styled.div`
   flex: 2;
 `;
 
-interface AdvancedFilterViewFilterFieldSelectProps {
+type AdvancedFilterViewFilterFieldSelectProps = {
   viewFilter: ViewFilter;
   selectedFieldLabel: string;
-}
+};
 
-export const AdvancedFilterViewFilterFieldSelect = (
-  props: AdvancedFilterViewFilterFieldSelectProps,
-) => {
-  const dropdownId = `advanced-filter-view-filter-field-${props.viewFilter.id}`;
+export const AdvancedFilterViewFilterFieldSelect = ({
+  viewFilter,
+  selectedFieldLabel,
+}: AdvancedFilterViewFilterFieldSelectProps) => {
+  const dropdownId = `advanced-filter-view-filter-field-${viewFilter.id}`;
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
   const { closeDropdown } = useDropdown(dropdownId);
@@ -35,7 +36,7 @@ export const AdvancedFilterViewFilterFieldSelect = (
       getOperandsForFilterDefinition(filterDefinition);
 
     upsertCombinedViewFilter({
-      ...props.viewFilter,
+      ...viewFilter,
       fieldMetadataId: filterDefinition.fieldMetadataId,
       definition: filterDefinition,
       operand: operandsForFilterType[0],
@@ -58,7 +59,7 @@ export const AdvancedFilterViewFilterFieldSelect = (
         clickableComponent={
           <SelectControl
             selectedOption={{
-              label: props.selectedFieldLabel,
+              label: selectedFieldLabel,
               value: '',
             }}
           />

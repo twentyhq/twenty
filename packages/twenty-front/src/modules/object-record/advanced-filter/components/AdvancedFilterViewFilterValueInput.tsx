@@ -7,16 +7,18 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 
-interface AdvancedFilterViewFilterValueInputProps {
+type AdvancedFilterViewFilterValueInputProps = {
   filter: Filter;
   filterDefinition: FilterDefinition;
   isDisabled?: boolean;
 }
 
-export const AdvancedFilterViewFilterValueInput = (
-  props: AdvancedFilterViewFilterValueInputProps,
-) => {
-  const dropdownId = `advanced-filter-view-filter-value-input-${props.filter.id}`;
+export const AdvancedFilterViewFilterValueInput = ({
+  filter,
+  filterDefinition,
+  isDisabled,
+}: AdvancedFilterViewFilterValueInputProps) => {
+  const dropdownId = `advanced-filter-view-filter-value-input-${filter.id}`;
 
   const {
     setFilterDefinitionUsedInDropdown,
@@ -25,12 +27,12 @@ export const AdvancedFilterViewFilterValueInput = (
     setSelectedFilter,
   } = useFilterDropdown();
 
-  if (props.isDisabled === true) {
+  if (isDisabled === true) {
     return (
       <SelectControl
         isDisabled
         selectedOption={{
-          label: props.filter?.displayValue ?? '',
+          label: filter?.displayValue ?? '',
           value: '',
         }}
       />
@@ -44,16 +46,16 @@ export const AdvancedFilterViewFilterValueInput = (
       clickableComponent={
         <SelectControl
           selectedOption={{
-            label: props.filter?.displayValue ?? '',
+            label: filter?.displayValue ?? '',
             value: '',
           }}
         />
       }
       onOpen={() => {
-        setFilterDefinitionUsedInDropdown(props.filterDefinition);
-        setSelectedOperandInDropdown(props.filter.operand);
+        setFilterDefinitionUsedInDropdown(filterDefinition);
+        setSelectedOperandInDropdown(filter.operand);
         setIsObjectFilterDropdownOperandSelectUnfolded(true);
-        setSelectedFilter(props.filter);
+        setSelectedFilter(filter);
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>

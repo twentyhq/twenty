@@ -10,9 +10,9 @@ import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedVie
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from 'twenty-ui';
 
-interface AdvancedFilterDropdownButtonProps {
+type AdvancedFilterDropdownButtonProps = {
   viewBarId: string;
-}
+};
 
 export const AdvancedFilterDropdownButton = (
   props: AdvancedFilterDropdownButtonProps,

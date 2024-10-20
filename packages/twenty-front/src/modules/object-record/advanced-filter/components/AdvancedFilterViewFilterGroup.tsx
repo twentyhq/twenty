@@ -25,27 +25,28 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   overflow: hidden;
 `;
 
-interface AdvancedFilterViewFilterGroupProps {
+type AdvancedFilterViewFilterGroupProps = {
   parentViewFilterGroupId?: string;
   viewBarInstanceId: string;
-}
+};
 
-export const AdvancedFilterViewFilterGroup = (
-  props: AdvancedFilterViewFilterGroupProps,
-) => {
+export const AdvancedFilterViewFilterGroup = ({
+  parentViewFilterGroupId,
+  viewBarInstanceId,
+}: AdvancedFilterViewFilterGroupProps) => {
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
     useCurrentViewViewFilterGroup({
-      parentViewFilterGroupId: props.parentViewFilterGroupId,
+      parentViewFilterGroupId,
     });
 
   if (!currentViewFilterGroup) {
     throw new Error(
-      `Missing component view filter group for view filter group with parent id of '${props.parentViewFilterGroupId}'`,
+      `Missing component view filter group for view filter group with parent id of '${parentViewFilterGroupId}'`,
     );
   }
 
   return (
-    <StyledContainer isGrayBackground={!!props.parentViewFilterGroupId}>
+    <StyledContainer isGrayBackground={!!parentViewFilterGroupId}>
       {childViewFiltersAndViewFilterGroups?.map((child, i) =>
         child.__typename === 'ViewFilterGroup' ? (
           <StyledRow key={child.id}>
@@ -54,7 +55,7 @@ export const AdvancedFilterViewFilterGroup = (
               viewFilterGroup={currentViewFilterGroup}
             />
             <AdvancedFilterViewFilterGroup
-              viewBarInstanceId={props.viewBarInstanceId}
+              viewBarInstanceId={viewBarInstanceId}
               parentViewFilterGroupId={currentViewFilterGroup.id}
             />
             <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
@@ -71,7 +72,7 @@ export const AdvancedFilterViewFilterGroup = (
         ),
       )}
       <AdvancedFilterAddFilterRuleSelect
-        parentViewFilterGroupId={props.parentViewFilterGroupId}
+        parentViewFilterGroupId={parentViewFilterGroupId}
       />
     </StyledContainer>
   );

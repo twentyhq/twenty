@@ -3,18 +3,18 @@ import { Select } from '@/ui/input/components/Select';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 
-interface AdvancedFilterLogicalOperatorDropdownProps {
+type AdvancedFilterLogicalOperatorDropdownProps = {
   viewFilterGroup: ViewFilterGroup;
-}
+};
 
-export const AdvancedFilterLogicalOperatorDropdown = (
-  props: AdvancedFilterLogicalOperatorDropdownProps,
-) => {
+export const AdvancedFilterLogicalOperatorDropdown = ({
+  viewFilterGroup,
+}: AdvancedFilterLogicalOperatorDropdownProps) => {
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
 
   const handleChange = (value: ViewFilterGroupLogicalOperator) => {
     upsertCombinedViewFilterGroup({
-      ...props.viewFilterGroup,
+      ...viewFilterGroup,
       logicalOperator: value,
     });
   };
@@ -23,8 +23,8 @@ export const AdvancedFilterLogicalOperatorDropdown = (
     <Select
       disableBlur
       fullWidth
-      dropdownId={`advanced-filter-logical-operator-${props.viewFilterGroup.id}`}
-      value={props.viewFilterGroup.logicalOperator}
+      dropdownId={`advanced-filter-logical-operator-${viewFilterGroup.id}`}
+      value={viewFilterGroup.logicalOperator}
       onChange={handleChange}
       options={[
         {
