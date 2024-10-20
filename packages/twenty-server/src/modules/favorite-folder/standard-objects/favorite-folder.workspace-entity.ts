@@ -6,44 +6,44 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { FAVORITE_LIST_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { FAVORITE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.favoriteList,
-  namePlural: 'favoriteLists',
-  labelSingular: 'Favorite List',
-  labelPlural: 'Favorite Lists',
-  description: 'A list of favorites',
-  icon: 'IconList',
+  standardId: STANDARD_OBJECT_IDS.favoriteFolder,
+  namePlural: 'favoriteFolders',
+  labelSingular: 'Favorite Folder',
+  labelPlural: 'Favorite Folders',
+  description: 'A Folder of favorites',
+  icon: 'IconFolder',
 })
-export class FavoriteListWorkspaceEntity extends BaseWorkspaceEntity {
+export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: FAVORITE_LIST_STANDARD_FIELD_IDS.name,
+    standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'Name of the favorite list',
+    description: 'Name of the favorite folder',
     icon: 'IconText',
   })
   name: string;
 
   @WorkspaceField({
-    standardId: FAVORITE_LIST_STANDARD_FIELD_IDS.icon,
+    standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.icon,
     type: FieldMetadataType.TEXT,
     label: 'Icon',
-    description: 'Icon for the favorite list',
+    description: 'Icon for the favorite folder',
     icon: 'IconFolder',
   })
   icon: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_LIST_STANDARD_FIELD_IDS.favorites,
+    standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
-    description: 'Favorites in this list',
+    description: 'Favorites in this folder',
     icon: 'IconHeart',
-    inverseSideFieldKey: 'favoriteList',
+    inverseSideFieldKey: 'favoriteFolder',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
   })
   favorites: Relation<FavoriteWorkspaceEntity[]>;
