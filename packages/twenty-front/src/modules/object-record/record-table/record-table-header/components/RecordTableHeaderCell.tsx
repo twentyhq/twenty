@@ -97,7 +97,8 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   objectMetadataNameSingular: string;
 }) => {
-  const { resizeFieldOffsetState, tableColumnsState } = useRecordTableStates();
+  const { resizeFieldOffsetState, tableColumnsState, resizedFieldKeyState } =
+    useRecordTableStates();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: objectMetadataNameSingular,
@@ -117,7 +118,8 @@ export const RecordTableHeaderCell = ({
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
-  const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
+  const [resizedFieldKey, setResizedFieldKey] =
+    useRecoilState(resizedFieldKeyState);
 
   const { handleColumnsChange } = useTableColumns();
 
@@ -170,6 +172,7 @@ export const RecordTableHeaderCell = ({
       resizedFieldKey,
       resizeFieldOffsetState,
       tableColumnsByKey,
+      setResizedFieldKey,
       tableColumns,
       handleColumnsChange,
     ],
