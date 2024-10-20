@@ -200,7 +200,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
             title="Delete"
             Icon={IconTrash}
             onClick={() => setIsDeleteWebhookModalOpen(true)}
-            dataTestId="delete-webhook-button"
           />
           <ConfirmationModal
             confirmationPlaceholder="yes"

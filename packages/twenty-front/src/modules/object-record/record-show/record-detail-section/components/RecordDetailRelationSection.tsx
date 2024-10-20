@@ -165,10 +165,6 @@ export const RecordDetailRelationSection = ({
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
-        testId={fieldDefinition.label
-          .toLowerCase()
-          .replace(' ', '-')
-          .concat('-header')}
         title={fieldDefinition.label}
         link={
           isToManyObjects
@@ -195,10 +191,6 @@ export const RecordDetailRelationSection = ({
                     className="displayOnHover"
                     Icon={isToOneObject ? IconPencil : IconPlus}
                     accent="tertiary"
-                    testId={fieldDefinition.label
-                      .toLowerCase()
-                      .replace(' ', '-')
-                      .concat('-dropdown')}
                   />
                 }
                 dropdownComponents={

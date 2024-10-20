@@ -51,7 +51,6 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       size="small"
       Icon={IconPlayerPlay}
       onClick={handleExecute}
-      dataTestId="test-function-button"
     />
   );
   const PublishButton = (
@@ -62,7 +61,6 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       Icon={IconGitCommit}
       onClick={handlePublish}
       disabled={publishDisabled}
-      dataTestId="publish-function-button"
     />
   );
   const ResetButton = (
@@ -73,7 +71,6 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       Icon={IconRestore}
       onClick={handleReset}
       disabled={resetDisabled}
-      dataTestId="reset-function-button"
     />
   );
 

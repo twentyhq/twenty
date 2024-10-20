@@ -66,7 +66,6 @@ export const Notes = ({
               targetableObjects: [targetableObject],
             })
           }
-          dataTestId="add-note-button"
         />
       </AnimatedPlaceholderEmptyContainer>
     );

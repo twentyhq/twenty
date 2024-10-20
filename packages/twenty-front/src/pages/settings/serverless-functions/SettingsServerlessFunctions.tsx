@@ -20,7 +20,6 @@ export const SettingsServerlessFunctions = () => {
             title="New Function"
             accent="blue"
             size="small"
-            dataTestId="add-function-button"
           />
         </UndecoratedLink>
       }

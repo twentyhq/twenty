@@ -36,7 +36,6 @@ export const SettingsServerlessFunctionsTableEmpty = () => {
           Icon={IconPlus}
           title="New function"
           to={getSettingsPagePath(SettingsPath.NewServerlessFunction)}
-          dataTestId="add-function-empty-table-button"
         />
       </AnimatedPlaceholderEmptyContainer>
     </StyledEmptyFunctionsContainer>

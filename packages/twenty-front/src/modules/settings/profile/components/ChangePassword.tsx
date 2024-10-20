@@ -54,7 +54,6 @@ export const ChangePassword = () => {
         onClick={handlePasswordResetClick}
         variant="secondary"
         title="Change Password"
-        dataTestId="change-password-button"
       />
     </>
   );

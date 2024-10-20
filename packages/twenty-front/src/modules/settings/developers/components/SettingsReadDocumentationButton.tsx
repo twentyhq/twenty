@@ -12,7 +12,6 @@ export const SettingsReadDocumentationButton = () => {
       Icon={IconBook2}
       to={'https://docs.twenty.com'}
       target="_blank"
-      dataTestId="read-documentation-button"
     ></Button>
   );
 };

@@ -115,7 +115,6 @@ export const SettingsObjectIndexTable = ({
         placeholder="Search an index..."
         value={searchTerm}
         onChange={setSearchTerm}
-        dataTestId="index-search-input"
       />
       <Table>
         <StyledObjectIndexTableRow>

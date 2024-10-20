@@ -52,7 +52,6 @@ export const WorkspaceInviteLink = ({
           });
           navigator.clipboard.writeText(inviteLink);
         }}
-        dataTestId="copy-invite-link-button"
       />
     </StyledContainer>
   );

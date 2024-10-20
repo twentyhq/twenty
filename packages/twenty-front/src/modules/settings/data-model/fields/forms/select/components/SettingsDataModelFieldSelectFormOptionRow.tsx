@@ -59,7 +59,6 @@ const StyledColorSample = styled(ColorSample)`
 const StyledOptionInput = styled(TextInput)`
   flex-grow: 1;
   width: 100%;
-
   & input {
     height: ${({ theme }) => theme.spacing(6)};
   }

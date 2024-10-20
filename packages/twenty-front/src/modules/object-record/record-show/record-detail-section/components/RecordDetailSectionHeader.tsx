@@ -39,7 +39,6 @@ type RecordDetailSectionHeaderProps = {
   rightAdornment?: React.ReactNode;
   hideRightAdornmentOnMouseLeave?: boolean;
   areRecordsAvailable?: boolean;
-  testId?: string;
 };
 
 export const RecordDetailSectionHeader = ({
@@ -48,7 +47,6 @@ export const RecordDetailSectionHeader = ({
   rightAdornment,
   hideRightAdornmentOnMouseLeave = true,
   areRecordsAvailable = false,
-  testId,
 }: RecordDetailSectionHeaderProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -57,7 +55,6 @@ export const RecordDetailSectionHeader = ({
       areRecordsAvailable={areRecordsAvailable}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      data-testid={testId}
     >
       <StyledTitle>
         <StyledTitleLabel>{title}</StyledTitleLabel>

@@ -43,7 +43,6 @@ export const ViewPickerCreateButton = () => {
         focus={false}
         variant="secondary"
         disabled={viewPickerIsPersisting}
-        dataTestId="delete-view-button"
       />
     );
   }
@@ -60,7 +59,6 @@ export const ViewPickerCreateButton = () => {
         accent="blue"
         fullWidth
         justify="center"
-        dataTestId="redirect-settings-button"
       />
     );
   }
@@ -82,7 +80,6 @@ export const ViewPickerCreateButton = () => {
           (viewPickerType === ViewType.Kanban &&
             viewPickerKanbanFieldMetadataId === '')
         }
-        dataTestId="create-view-button"
       />
     );
   }

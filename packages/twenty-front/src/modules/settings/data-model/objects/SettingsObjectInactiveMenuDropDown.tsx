@@ -41,7 +41,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
         <LightIconButton
           Icon={IconDotsVertical}
           accent="tertiary"
-          testId="inactive-menu-dropdown"
+          testId="inactive-object-menu-dropdown"
         />
       }
       dropdownComponents={

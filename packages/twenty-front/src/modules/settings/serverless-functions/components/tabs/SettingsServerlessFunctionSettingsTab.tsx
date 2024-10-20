@@ -66,7 +66,6 @@ export const SettingsServerlessFunctionSettingsTab = ({
           variant="secondary"
           size="small"
           title="Delete function"
-          dataTestId="delete-function-button"
         />
       </Section>
       <ConfirmationModal

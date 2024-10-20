@@ -135,7 +135,6 @@ export const SettingsObjects = () => {
             title="Add object"
             accent="blue"
             size="small"
-            dataTestId="add-object-button"
           />
         </UndecoratedLink>
       }
@@ -160,7 +159,6 @@ export const SettingsObjects = () => {
               placeholder="Search an object..."
               value={searchTerm}
               onChange={setSearchTerm}
-              dataTestId="object-search-input"
             />
 
             <Table>
@@ -180,7 +178,7 @@ export const SettingsObjects = () => {
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
               {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
-                <TableSection title="Active" testId="active-section">
+                <TableSection title="Active">
                   {filteredActiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
@@ -205,7 +203,7 @@ export const SettingsObjects = () => {
                 </TableSection>
               )}
               {isNonEmptyArray(inactiveObjectMetadataItems) && (
-                <TableSection title="Inactive" testId="inactive-section">
+                <TableSection title="Inactive">
                   {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
@@ -217,7 +215,6 @@ export const SettingsObjects = () => {
                         totalObjectCount={objectSettingsItem.totalObjectCount}
                         action={
                           <SettingsObjectInactiveMenuDropDown
-                            data-testid="Test"
                             isCustomObject={
                               objectSettingsItem.objectMetadataItem.isCustom
                             }

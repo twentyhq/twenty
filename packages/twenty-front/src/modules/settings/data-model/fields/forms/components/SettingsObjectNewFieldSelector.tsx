@@ -108,7 +108,6 @@ export const SettingsObjectNewFieldSelector = ({
           placeholder="Search a type"
           value={searchQuery}
           onChange={setSearchQuery}
-          dataTestId="field-type-search-input"
         />
       </Section>
       <Controller

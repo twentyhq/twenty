@@ -195,7 +195,7 @@ export const SettingsObjectFieldTable = ({
           <TableHeader></TableHeader>
         </StyledObjectFieldTableRow>
         {isNonEmptyArray(filteredActiveItems) && (
-          <TableSection title="Active" testId="active-fields">
+          <TableSection title="Active">
             {filteredActiveItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
@@ -211,7 +211,6 @@ export const SettingsObjectFieldTable = ({
           <TableSection
             isInitiallyExpanded={mode === 'new-field' ? true : false}
             title="Inactive"
-            testId="inactive-fields"
           >
             {filteredDisabledItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow

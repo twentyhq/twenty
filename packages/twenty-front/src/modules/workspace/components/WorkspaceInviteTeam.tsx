@@ -148,7 +148,6 @@ export const WorkspaceInviteTeam = () => {
           title="Invite"
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}
-          dataTestId="invite-email-button"
         />
       </StyledContainer>
     </form>

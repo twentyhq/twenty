@@ -265,7 +265,7 @@ export const SettingsObjectFieldItemTableRow = ({
                 Icon={IconMinus}
                 accent="tertiary"
                 onClick={handleToggleField}
-                testId="test2"
+                testId="active-new-field-button"
               />
             )
           )
@@ -282,7 +282,7 @@ export const SettingsObjectFieldItemTableRow = ({
             Icon={IconPlus}
             accent="tertiary"
             onClick={handleToggleField}
-            testId="inactive-object-options-button"
+            testId="inactive-field-options-button"
           />
         )}
       </StyledIconTableCell>

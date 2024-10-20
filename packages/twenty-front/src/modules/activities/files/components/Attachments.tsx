@@ -96,7 +96,6 @@ export const Attachments = ({
               title="Add file"
               variant="secondary"
               onClick={handleUploadFileClick}
-              dataTestId="add-file-button"
             />
           </AnimatedPlaceholderEmptyContainer>
         )}
@@ -122,7 +121,6 @@ export const Attachments = ({
             variant="secondary"
             title="Add file"
             onClick={handleUploadFileClick}
-            dataTestId="add-file-button"
           ></Button>
         }
       />
