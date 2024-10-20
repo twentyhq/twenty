@@ -91,10 +91,7 @@ fi
 
 # Generate random strings for secrets
 echo "# === Randomly generated secrets ===" >>.env
-echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
-echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
-echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
-echo "FILE_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
 echo "" >>.env
 echo "POSTGRES_ADMIN_PASSWORD=$(openssl rand -base64 32)" >>.env
 

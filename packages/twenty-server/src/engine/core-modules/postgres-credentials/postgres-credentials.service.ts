@@ -9,16 +9,18 @@ import {
   decryptText,
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 export class PostgresCredentialsService {
   constructor(
     @InjectRepository(PostgresCredentials, 'core')
     private readonly postgresCredentialsRepository: Repository<PostgresCredentials>,
     private readonly environmentService: EnvironmentService,
+    private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
   async enablePostgresProxy(
@@ -27,7 +29,7 @@ export class PostgresCredentialsService {
     const user = `user_${randomBytes(4).toString('hex')}`;
     const password = randomBytes(16).toString('hex');
 
-    const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const key = this.jwtWrapperService.generateAppSecret('POSTGRES_PROXY');
     const passwordHash = encryptText(password, key);
 
     const existingCredentials =
@@ -81,7 +83,7 @@ export class PostgresCredentialsService {
       id: postgresCredentials.id,
     });
 
-    const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const key = this.jwtWrapperService.generateAppSecret('POSTGRES_PROXY');
 
     return {
       id: postgresCredentials.id,
@@ -105,7 +107,7 @@ export class PostgresCredentialsService {
       return null;
     }
 
-    const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const key = this.jwtWrapperService.generateAppSecret('POSTGRES_PROXY');
 
     return {
       id: postgresCredentials.id,

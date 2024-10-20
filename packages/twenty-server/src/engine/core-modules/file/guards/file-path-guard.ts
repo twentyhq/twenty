@@ -6,8 +6,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
@@ -25,7 +25,7 @@ export class FilePathGuard implements CanActivate {
       const decodedPayload = await this.jwtWrapperService.decode(
         payloadToDecode,
         {
-          secret: this.environmentService.get('FILE_TOKEN_SECRET'),
+          secret: this.jwtWrapperService.generateAppSecret('FILE'),
         } as any,
       );
 

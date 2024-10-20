@@ -125,11 +125,6 @@ export class EnvironmentVariables {
   @IsOptional()
   SERVER_URL: string;
 
-  // Json Web Token
-  // TODO: Remove
-  @IsString()
-  ACCESS_TOKEN_SECRET: string;
-
   @IsString()
   APP_SECRET: string;
 
@@ -137,11 +132,6 @@ export class EnvironmentVariables {
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
 
-  @IsString()
-  // TODO: Remove
-  REFRESH_TOKEN_SECRET: string;
-
-  @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN = '60d';
 
@@ -149,18 +139,9 @@ export class EnvironmentVariables {
   @IsOptional()
   REFRESH_TOKEN_COOL_DOWN = '1m';
 
-  @IsString()
-  // TODO: Remove
-  LOGIN_TOKEN_SECRET = '30m';
-
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN = '15m';
-
-  @IsString()
-  @IsOptional()
-  // TODO: Remove
-  FILE_TOKEN_SECRET = 'random_string';
 
   @IsDuration()
   @IsOptional()
