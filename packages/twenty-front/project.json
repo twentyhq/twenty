@@ -48,7 +48,6 @@
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
         ],
-        "cwd": "{projectRoot}",
         "maxWarnings": 0,
         "reportUnusedDisableDirectives": "error"
       },
