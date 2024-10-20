@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { LightButton } from '@/ui/input/button/components/LightButton';
@@ -11,31 +12,33 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useCallback } from 'react';
-import { IconLibraryPlus, IconPlus } from 'twenty-ui';
+import { IconLibraryPlus, IconPlus, isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 interface AdvancedFilterAddFilterRuleSelectProps {
-  viewId?: string;
-  currentViewFilterGroup: ViewFilterGroup;
-  childViewFiltersAndViewFilterGroups: (ViewFilterGroup | ViewFilter)[];
-  isFilterRuleGroupOptionVisible?: boolean;
+  parentViewFilterGroupId?: string;
 }
 
-export const AdvancedFilterAddFilterRuleSelect = (
-  props: AdvancedFilterAddFilterRuleSelectProps,
-) => {
-  const dropdownId = `advanced-filter-add-filter-rule-${props.currentViewFilterGroup.id}`;
+export const AdvancedFilterAddFilterRuleSelect = ({
+  parentViewFilterGroupId,
+}: AdvancedFilterAddFilterRuleSelectProps) => {
+  const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
+    useCurrentViewViewFilterGroup({
+      parentViewFilterGroupId,
+    });
+
+  const dropdownId = `advanced-filter-add-filter-rule-${currentViewFilterGroup.id}`;
+
+  const { currentViewId } = useGetCurrentView();
 
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
   const newPositionInViewFilterGroup =
-    (props.childViewFiltersAndViewFilterGroups[
-      props.childViewFiltersAndViewFilterGroups.length - 1
+    (childViewFiltersAndViewFilterGroups[
+      childViewFiltersAndViewFilterGroups.length - 1
     ]?.positionInViewFilterGroup ?? 0) + 1;
 
   const { closeDropdown } = useDropdown(dropdownId);
@@ -78,7 +81,7 @@ export const AdvancedFilterAddFilterRuleSelect = (
       definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
-      viewFilterGroupId: props.currentViewFilterGroup.id,
+      viewFilterGroupId: currentViewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     });
   };
@@ -86,15 +89,15 @@ export const AdvancedFilterAddFilterRuleSelect = (
   const handleAddFilterGroup = () => {
     closeDropdown();
 
-    if (!props.viewId) {
+    if (!currentViewId) {
       throw new Error('Missing view id');
     }
 
     const newViewFilterGroup = {
       id: v4(),
-      viewId: props.viewId,
+      viewId: currentViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.AND,
-      parentViewFilterGroupId: props.currentViewFilterGroup.id,
+      parentViewFilterGroupId: currentViewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     };
 
@@ -114,7 +117,9 @@ export const AdvancedFilterAddFilterRuleSelect = (
     });
   };
 
-  if (!props.isFilterRuleGroupOptionVisible) {
+  const isFilterRuleGroupOptionVisible = !isDefined(parentViewFilterGroupId);
+
+  if (!isFilterRuleGroupOptionVisible) {
     return (
       <LightButton
         Icon={IconPlus}
@@ -138,7 +143,7 @@ export const AdvancedFilterAddFilterRuleSelect = (
             text="Add rule"
             onClick={handleAddFilter}
           />
-          {props.isFilterRuleGroupOptionVisible && (
+          {isFilterRuleGroupOptionVisible && (
             <MenuItem
               LeftIcon={IconLibraryPlus}
               text="Add rule group"

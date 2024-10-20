@@ -2,7 +2,7 @@ import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filt
 import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
 import { AdvancedFilterRuleOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdown';
 import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import styled from '@emotion/styled';
 
 const StyledRow = styled.div`
@@ -33,42 +33,16 @@ interface AdvancedFilterViewFilterGroupProps {
 export const AdvancedFilterViewFilterGroup = (
   props: AdvancedFilterViewFilterGroupProps,
 ) => {
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
-
-  const viewFilters = currentViewWithCombinedFiltersAndSorts?.viewFilters;
-  const viewFilterGroups =
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups;
-
-  const currentViewFilterGroup = viewFilterGroups?.find((viewFilterGroup) =>
-    props.parentViewFilterGroupId
-      ? viewFilterGroup.parentViewFilterGroupId ===
-        props.parentViewFilterGroupId
-      : !viewFilterGroup.parentViewFilterGroupId,
-  );
+  const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
+    useCurrentViewViewFilterGroup({
+      parentViewFilterGroupId: props.parentViewFilterGroupId,
+    });
 
   if (!currentViewFilterGroup) {
     throw new Error(
       `Missing component view filter group for view filter group with parent id of '${props.parentViewFilterGroupId}'`,
     );
   }
-
-  const childViewFilters = viewFilters?.filter(
-    (viewFilter) => viewFilter.viewFilterGroupId === currentViewFilterGroup.id,
-  );
-
-  const childViewFilterGroups = viewFilterGroups?.filter(
-    (viewFilterGroup) =>
-      viewFilterGroup.parentViewFilterGroupId === currentViewFilterGroup.id,
-  );
-
-  const childViewFiltersAndViewFilterGroups = [
-    ...(childViewFilterGroups ?? []),
-    ...(childViewFilters ?? []),
-  ].sort((a, b) => {
-    const positionA = a.positionInViewFilterGroup ?? 0;
-    const positionB = b.positionInViewFilterGroup ?? 0;
-    return positionA - positionB;
-  });
 
   return (
     <StyledContainer isGrayBackground={!!props.parentViewFilterGroupId}>
@@ -107,12 +81,7 @@ export const AdvancedFilterViewFilterGroup = (
         ),
       )}
       <AdvancedFilterAddFilterRuleSelect
-        viewId={currentViewWithCombinedFiltersAndSorts?.id}
-        currentViewFilterGroup={currentViewFilterGroup}
-        childViewFiltersAndViewFilterGroups={
-          childViewFiltersAndViewFilterGroups
-        }
-        isFilterRuleGroupOptionVisible={!props.parentViewFilterGroupId}
+        parentViewFilterGroupId={props.parentViewFilterGroupId}
       />
     </StyledContainer>
   );
