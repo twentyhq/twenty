@@ -1,11 +1,11 @@
-import Editor, { Monaco, EditorProps } from '@monaco-editor/react';
-import dotenv from 'dotenv';
-import { AutoTypings } from 'monaco-editor-auto-typings';
-import { editor, MarkerSeverity } from 'monaco-editor';
-import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
+import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
+import { codeEditorTheme } from '@/ui/input/code-editor/utils/codeEditorTheme';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
+import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
+import dotenv from 'dotenv';
+import { MarkerSeverity, editor } from 'monaco-editor';
+import { AutoTypings } from 'monaco-editor-auto-typings';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledEditor = styled(Editor)`

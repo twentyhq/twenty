@@ -1,4 +1,4 @@
-import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 
 export const mockedTimelineActivities: Array<TimelineActivity> = [
   {

@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/eslint-plugin-project-structure/folderStructure.schema.json",
   "regexParameters": {
-    "camelCase": "^[a-zA-Z]+([A-Z][a-z]+)+"
+    "camelCase": "^[a-z]+([A-Za-z0-9]+)+"
   },
   "structure": [
     {
@@ -10,6 +10,8 @@
         {
           "name": "twenty-front",
           "children": [
+            { "name": "*", "children": [] },
+            { "name": "*" },
             {
               "name": "src",
               "children": [
@@ -17,7 +19,10 @@
                 { "name": "*" },
                 {
                   "name": "modules",
-                  "children": [{ "ruleId": "moduleFolderRule" }]
+                  "children": [
+                    { "ruleId": "moduleFolderRule" },
+                    { "name": "types", "ruleId": "doNotCheckLeafFolderRule" }
+                  ]
                 }
               ]
             }
@@ -28,8 +33,8 @@
   ],
   "rules": {
     "moduleFolderRule": {
-      "name": "^(?!utils$|hooks$|states|types|graphql|components|effect-components|constants|validation-schemas|context$)[a-z][a-z0-9]**(?:-[a-z0-9]+)**$",
-      "folderRecursionLimit": 3,
+      "name": "^(?!utils$|hooks$|states$|types$|graphql$|components$|effect-components$|constants$|validation-schemas$|contexts$|scopes$|services$|errors$)[a-z][a-z0-9]**(?:-[a-z0-9]+)**$",
+      "folderRecursionLimit": 6,
       "children": [
         { "ruleId": "moduleFolderRule" },
         { "name": "hooks", "ruleId": "hooksLeafFolderRule" },
@@ -41,7 +46,10 @@
         { "name": "effect-components", "ruleId": "doNotCheckLeafFolderRule" },
         { "name": "constants", "ruleId": "doNotCheckLeafFolderRule" },
         { "name": "validation-schemas", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "context", "ruleId": "doNotCheckLeafFolderRule" }
+        { "name": "contexts", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "scopes", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "services", "ruleId": "doNotCheckLeafFolderRule" },
+        { "name": "errors", "ruleId": "doNotCheckLeafFolderRule" }
       ]
     },
     "hooksLeafFolderRule": {
