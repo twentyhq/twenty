@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 import { Avatar, isDefined } from 'twenty-ui';
 
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -12,9 +11,11 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavorites } from '../hooks/useFavorites';
+import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
+import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
@@ -40,6 +41,8 @@ export const CurrentWorkspaceMemberFavorites = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { favorites, handleReorderFavorite } = useFavorites();
+  const { favoriteFolder } = useFavoriteFolders();
+  console.log(favoriteFolder);
   const loading = useIsPrefetchLoading();
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Favorites');
