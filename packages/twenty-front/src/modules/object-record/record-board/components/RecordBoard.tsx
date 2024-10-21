@@ -27,13 +27,13 @@ const StyledContainer = styled.div`
   flex-direction: row;
   min-height: calc(100% - 1px);
   height: 100%;
-  & > *:not(:first-child) {
-    border-left: 1px solid ${({ theme }) => theme.border.color.light};
-  }
 `;
 
 const StyledColumnContainer = styled.div`
   display: flex;
+  & > *:not(:first-child) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledContainerContainer = styled.div`

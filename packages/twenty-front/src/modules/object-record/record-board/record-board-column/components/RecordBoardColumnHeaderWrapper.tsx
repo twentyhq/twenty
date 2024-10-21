@@ -13,17 +13,11 @@ export const RecordBoardColumnHeaderWrapper = ({
   columnId,
 }: RecordBoardColumnHeaderWrapperProps) => {
   const {
-    isFirstColumnFamilyState,
-    isLastColumnFamilyState,
     columnsFamilySelector,
     recordIdsByColumnIdFamilyState,
   } = useRecordBoardStates();
 
   const columnDefinition = useRecoilValue(columnsFamilySelector(columnId));
-
-  const isFirstColumn = useRecoilValue(isFirstColumnFamilyState(columnId));
-
-  const isLastColumn = useRecoilValue(isLastColumnFamilyState(columnId));
 
   const recordIds = useRecoilValue(recordIdsByColumnIdFamilyState(columnId));
 
@@ -36,8 +30,6 @@ export const RecordBoardColumnHeaderWrapper = ({
       value={{
         columnId,
         columnDefinition: columnDefinition,
-        isFirstColumn: isFirstColumn,
-        isLastColumn: isLastColumn,
         recordCount: recordIds.length,
         recordIds,
       }}

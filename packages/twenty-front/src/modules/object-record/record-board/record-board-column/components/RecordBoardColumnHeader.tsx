@@ -59,11 +59,8 @@ const StyledRightContainer = styled.div`
   display: flex;
 `;
 
-const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
+const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
-  border-left: 1px solid
-    ${({ theme, isFirstColumn }) =>
-      isFirstColumn ? 'none' : theme.border.color.light};
   display: flex;
   flex-direction: column;
   max-width: 200px;
@@ -75,7 +72,7 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
 `;
 
 export const RecordBoardColumnHeader = () => {
-  const { columnDefinition, isFirstColumn, recordCount } = useContext(
+  const { columnDefinition, recordCount } = useContext(
     RecordBoardColumnContext,
   );
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
@@ -120,7 +117,7 @@ export const RecordBoardColumnHeader = () => {
     !isOpportunitiesCompanyFieldDisabled;
 
   return (
-    <StyledColumn isFirstColumn={isFirstColumn}>
+    <StyledColumn>
       <StyledHeader
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
