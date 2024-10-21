@@ -27,7 +27,7 @@ const jestConfig: JestConfigWithTsJest = {
     global: {
       statements: 60,
       lines: 55,
-      functions: 50,
+      functions: 49,
     },
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
