@@ -24,7 +24,9 @@ export const useColumnDefinitionsFromFieldMetadata = (
     [objectMetadataItem],
   );
 
-  const isArrayAndJsonFilterEnabled = useIsFeatureEnabled('IS_ARRAY_AND_JSON_FILTER_ENABLED')
+  const isArrayAndJsonFilterEnabled = useIsFeatureEnabled(
+    'IS_ARRAY_AND_JSON_FILTER_ENABLED',
+  );
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
     fields: activeFieldMetadataItems,

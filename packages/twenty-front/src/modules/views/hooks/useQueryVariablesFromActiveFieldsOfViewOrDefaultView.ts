@@ -20,7 +20,9 @@ export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
     objectMetadataItem,
   });
 
-  const isArrayAndJsonFilterEnabled = useIsFeatureEnabled('IS_ARRAY_AND_JSON_FILTER_ENABLED')
+  const isArrayAndJsonFilterEnabled = useIsFeatureEnabled(
+    'IS_ARRAY_AND_JSON_FILTER_ENABLED',
+  );
 
   const { filter, orderBy } = getQueryVariablesFromView({
     fieldMetadataItems: activeFieldMetadataItems,

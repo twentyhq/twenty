@@ -1,7 +1,7 @@
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import {
   FieldMetadataType,
-  RelationDefinitionType
+  RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
@@ -39,7 +39,9 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,
         FieldMetadataType.Phones,
-        ...(isArrayAndJsonFilterEnabled ? [FieldMetadataType.Array, FieldMetadataType.RawJson] : []),
+        ...(isArrayAndJsonFilterEnabled
+          ? [FieldMetadataType.Array, FieldMetadataType.RawJson]
+          : []),
       ].includes(field.type)
     ) {
       return acc;
