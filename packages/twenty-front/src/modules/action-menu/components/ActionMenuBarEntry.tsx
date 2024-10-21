@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
@@ -26,7 +26,11 @@ const StyledButton = styled.div<{ accent: MenuItemAccent }>`
     background: ${({ theme, accent }) =>
       accent === 'danger'
         ? theme.background.danger
-        : theme.background.tertiary};
+        : theme.background.transparent.light};
+  }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding: ${({ theme }) => theme.spacing(1)};
   }
 `;
 
