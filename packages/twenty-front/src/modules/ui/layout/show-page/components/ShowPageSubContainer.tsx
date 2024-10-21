@@ -18,6 +18,8 @@ import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPage
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
+import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
 import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
@@ -181,6 +183,14 @@ export const ShowPageSubContainer = ({
               workflowVersionId={targetableObject.id}
             />
           </>
+        );
+      case 'workflowRunFlow':
+        return (
+          <WorkflowRunVersionVisualizer workflowRunId={targetableObject.id} />
+        );
+      case 'workflowRunOutput':
+        return (
+          <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
         );
       default:
         return <></>;
