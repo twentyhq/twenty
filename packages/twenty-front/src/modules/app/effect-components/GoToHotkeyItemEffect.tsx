@@ -6,7 +6,7 @@ export const GoToHotkeyItemEffect = (props: {
 }) => {
   const { hotkey, pathToNavigateTo } = props;
 
-  useGoToHotkeys(hotkey, pathToNavigateTo);
+  useGoToHotkeys({ key: hotkey, location: pathToNavigateTo });
 
   return <></>;
 };

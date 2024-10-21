@@ -5,13 +5,24 @@ import { AppHotkeyScope } from '../types/AppHotkeyScope';
 
 import { useSequenceHotkeys } from './useSequenceScopedHotkeys';
 
-export const useGoToHotkeys = (key: Keys, location: string) => {
+type GoToHotkeysProps = {
+  key: Keys;
+  location: string;
+  preNavigateFunction?: () => void;
+};
+
+export const useGoToHotkeys = ({
+  key,
+  location,
+  preNavigateFunction,
+}: GoToHotkeysProps) => {
   const navigate = useNavigate();
 
   useSequenceHotkeys(
     'g',
     key,
     () => {
+      preNavigateFunction?.();
       navigate(location);
     },
     AppHotkeyScope.Goto,
