@@ -121,7 +121,6 @@ describe('calendarEventParticipants resolvers (integration)', () => {
       calendarEventParticipantDisplayName,
     );
 
-    expect(createdCalendarEventParticipant).toHaveProperty('displayName');
     expect(createdCalendarEventParticipant).toHaveProperty('id');
     expect(createdCalendarEventParticipant).toHaveProperty('handle');
     expect(createdCalendarEventParticipant).toHaveProperty('isOrganizer');

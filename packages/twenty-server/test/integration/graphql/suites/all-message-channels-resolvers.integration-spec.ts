@@ -205,11 +205,11 @@ describe('messageChannels resolvers (integration)', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-    const updatedmessageChannels = response.body.data.updateMessageChannels;
+    const updatedMessageChannels = response.body.data.updateMessageChannels;
 
-    expect(updatedmessageChannels).toHaveLength(2);
+    expect(updatedMessageChannels).toHaveLength(2);
 
-    updatedmessageChannels.forEach((messageChannel) => {
+    updatedMessageChannels.forEach((messageChannel) => {
       expect(messageChannel.handle).toEqual('New Handle');
     });
   });
@@ -226,9 +226,9 @@ describe('messageChannels resolvers (integration)', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-    const updatedmessageChannel = response.body.data.updateMessageChannel;
+    const updatedMessageChannel = response.body.data.updateMessageChannel;
 
-    expect(updatedmessageChannel.handle).toEqual('Updated Handle');
+    expect(updatedMessageChannel.handle).toEqual('Updated Handle');
   });
 
   it('4. should find many messageChannels with updated handle', async () => {

@@ -162,11 +162,11 @@ describe('favorites resolvers (integration)', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-    const updatedfavorites = response.body.data.updateFavorites;
+    const updatedFavorites = response.body.data.updateFavorites;
 
-    expect(updatedfavorites).toHaveLength(2);
+    expect(updatedFavorites).toHaveLength(2);
 
-    updatedfavorites.forEach((favorite) => {
+    updatedFavorites.forEach((favorite) => {
       expect(favorite.position).toEqual(NEW_FAVORITE_POSITION_1);
     });
   });
@@ -183,9 +183,9 @@ describe('favorites resolvers (integration)', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-    const updatedfavorite = response.body.data.updateFavorite;
+    const updatedFavorite = response.body.data.updateFavorite;
 
-    expect(updatedfavorite.position).toEqual(NEW_FAVORITE_POSITION_2);
+    expect(updatedFavorite.position).toEqual(NEW_FAVORITE_POSITION_2);
   });
 
   it('4. should find many favorites with updated position', async () => {
