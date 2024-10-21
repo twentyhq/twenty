@@ -39,7 +39,10 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       recordGqlFields: {
         id: true,
       },
-      filter: computeContextStoreFilters(contextStoreTargetedRecordsRule),
+      filter: computeContextStoreFilters(
+        contextStoreTargetedRecordsRule,
+        objectMetadataItem,
+      ),
       limit: 1,
       skip: contextStoreTargetedRecordsRule.mode === 'selection',
     });
