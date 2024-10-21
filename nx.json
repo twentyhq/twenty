@@ -113,7 +113,7 @@
       "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "storybook build",
+        "command": "VITE_DISABLE_ESLINT_CHECKER=true storybook build",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       }

@@ -26,7 +26,6 @@ const StyledColumnHeaderCell = styled.th<{
   isResizing?: boolean;
 }>`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
   text-align: left;

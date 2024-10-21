@@ -105,14 +105,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
-      docker run \
-        --name twenty_postgres \
-        -e POSTGRES_USER=postgres \
-        -e POSTGRES_PASSWORD=postgres \
-        -e POSTGRES_DB=default \
-        -v twenty_db_data:/var/lib/postgresql/data \
-        -p 5432:5432 \
-        twentycrm/twenty-postgres:latest
+      make postgres-on-docker
     ```
   </ArticleTab>
   <ArticleTab>
@@ -126,14 +119,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
-      docker run \
-        --name twenty_postgres \
-        -e POSTGRES_USER=postgres \
-        -e POSTGRES_PASSWORD=postgres \
-        -e POSTGRES_DB=default \
-        -v twenty_db_data:/var/lib/postgresql/data \
-        -p 5432:5432 \
-        twentycrm/twenty-postgres:latest
+      make postgres-on-docker
     ```
   </ArticleTab>
   <ArticleTab>
@@ -149,14 +135,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     Running Docker on WSL adds an extra layer of complexity.
     Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
     ```bash
-      docker run \
-        --name twenty_postgres \
-        -e POSTGRES_USER=postgres \
-        -e POSTGRES_PASSWORD=postgres \
-        -e POSTGRES_DB=default \
-        -v twenty_db_data:/var/lib/postgresql/data \
-        -p 5432:5432 \
-        twentycrm/twenty-postgres:latest
+      make postgres-on-docker
     ```
   </ArticleTab>
 </ArticleTabs>
@@ -171,7 +150,7 @@ Twenty requires a redis cache to provide the best performances
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
-    docker run -d --name my-redis-stack -p 6379:6379 redis/redis-stack-server:latest
+      make redis-on-docker
     ```
   </ArticleTab>
   <ArticleTab>
@@ -182,7 +161,7 @@ Twenty requires a redis cache to provide the best performances
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
-    docker run -d --name my-redis-stack -p 6379:6379 redis/redis-stack-server:latest
+      make redis-on-docker
     ```
   </ArticleTab>
   <ArticleTab>
@@ -191,7 +170,7 @@ Twenty requires a redis cache to provide the best performances
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
-    docker run -d --name my-redis-stack -p 6379:6379 redis/redis-stack-server:latest
+      make redis-on-docker
     ```
   </ArticleTab>
 </ArticleTabs>
@@ -246,13 +225,14 @@ Setup your database with the following command:
 npx nx database:reset twenty-server
 ```
 
-Start the server and the frontend:
+Start the server, the worker and the frontend services:
 ```bash
 npx nx start twenty-server
+npx nx worker twenty-server
 npx nx start twenty-front
 ```
 
-Alternatively, you can start both applications at once:
+Alternatively, you can start all services at once:
 ```bash
 npx nx start
 ```

@@ -12,6 +12,7 @@ type RecordBoardScopeProps = {
   onColumnsChange: (column: RecordGroupDefinition[]) => void;
 };
 
+/** @deprecated  */
 export const RecordBoardScope = ({
   children,
   recordBoardScopeId,

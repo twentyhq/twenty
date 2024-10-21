@@ -18,7 +18,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { GraphQLFormattedError } from 'graphql';
 import { ApolloManager } from '../types/apolloManager.interface';
-import { loggerLink } from '../utils';
+import { loggerLink } from '../utils/loggerLink';
 
 const logger = loggerLink(() => 'Twenty');
 

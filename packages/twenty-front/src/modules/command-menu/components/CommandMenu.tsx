@@ -16,7 +16,7 @@ import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainNa
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { Opportunity } from '@/opportunities/Opportunity';
+import { Opportunity } from '@/opportunities/types/Opportunity';
 import { Person } from '@/people/types/Person';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
