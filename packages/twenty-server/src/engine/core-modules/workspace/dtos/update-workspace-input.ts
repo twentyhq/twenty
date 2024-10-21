@@ -27,5 +27,10 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
+  isPublicInviteLinkEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
   allowImpersonation?: boolean;
 }

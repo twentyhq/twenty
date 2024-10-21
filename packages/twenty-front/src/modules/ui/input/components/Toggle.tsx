@@ -39,7 +39,7 @@ const StyledCircle = styled(motion.span)<{
 export type ToggleProps = {
   id?: string;
   value?: boolean;
-  onChange?: (value: boolean) => void;
+  onChange?: (value: boolean, e?: React.MouseEvent<HTMLDivElement>) => void;
   color?: string;
   toggleSize?: ToggleSize;
   className?: string;
