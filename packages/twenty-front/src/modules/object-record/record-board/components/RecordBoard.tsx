@@ -39,11 +39,13 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100% - 48px);;
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
