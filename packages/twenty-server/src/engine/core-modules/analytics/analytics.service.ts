@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { AxiosRequestConfig } from 'axios';
 
@@ -18,6 +19,7 @@ export class AnalyticsService {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly httpService: HttpService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(
@@ -58,7 +60,7 @@ export class AnalyticsService {
     const config: AxiosRequestConfig = {
       headers: {
         Authorization:
-          'Bearer ' + this.environmentService.get('TINYBIRD_TOKEN'),
+          'Bearer ' + this.environmentService.get('TINYBIRD_DATASOURCE_TOKEN'),
       },
     };
 
@@ -85,5 +87,23 @@ export class AnalyticsService {
     }
 
     return { success: true };
+  }
+
+  async generateJWT(workspaceId: string | null | undefined) {
+    const pipeId = 't_b49e0fe60f9e438eae81cb31c5260df2'; // refactor this pass as params
+    //perhaps a constant of name:pipeId??? better typing in this func^
+    const payload = {
+      name: 'my_demo_jwt',
+      workspace_id: this.environmentService.get('TINYBIRD_WORKSPACE_UUID'),
+      scopes: [
+        {
+          type: 'PIPES:READ',
+          resource: pipeId,
+          fixed_params: { workspaceId: workspaceId },
+        },
+      ],
+    };
+
+    return this.jwtService.sign(payload);
   }
 }
