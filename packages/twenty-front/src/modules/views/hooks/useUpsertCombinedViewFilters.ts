@@ -8,6 +8,7 @@ import { currentViewIdComponentState } from '@/views/states/currentViewIdCompone
 import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states/unsavedToDeleteViewFilterIdsComponentFamilyState';
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { shouldReplaceFilter } from '@/views/utils/shouldReplaceFilter';
 import { isDefined } from '~/utils/isDefined';
 
 export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
@@ -59,25 +60,16 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
         }
 
         const matchingFilterInCurrentView = currentView.viewFilters.find(
-          (viewFilter) =>
-            viewFilter.fieldMetadataId === upsertedFilter.fieldMetadataId &&
-            !viewFilter.viewFilterGroupId &&
-            !upsertedFilter.viewFilterGroupId,
+          (viewFilter) => shouldReplaceFilter(viewFilter, upsertedFilter),
         );
 
         const matchingFilterInUnsavedFilters = unsavedToUpsertViewFilters.find(
-          (viewFilter) =>
-            isDefined(viewFilter.fieldMetadataId) &&
-            viewFilter.fieldMetadataId === upsertedFilter.fieldMetadataId &&
-            !viewFilter.viewFilterGroupId &&
-            !upsertedFilter.viewFilterGroupId,
+          (viewFilter) => shouldReplaceFilter(viewFilter, upsertedFilter),
         );
 
         if (isDefined(matchingFilterInUnsavedFilters)) {
           const updatedFilters = unsavedToUpsertViewFilters.map((viewFilter) =>
-            viewFilter.fieldMetadataId ===
-              matchingFilterInUnsavedFilters.fieldMetadataId &&
-            !viewFilter.viewFilterGroupId
+            shouldReplaceFilter(viewFilter, matchingFilterInUnsavedFilters)
               ? { ...viewFilter, ...upsertedFilter, id: viewFilter.id }
               : viewFilter,
           );
