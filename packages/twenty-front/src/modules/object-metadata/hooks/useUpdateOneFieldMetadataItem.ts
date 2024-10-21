@@ -1,13 +1,12 @@
 import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import {
+  FieldMetadataType,
   UpdateOneFieldMetadataItemMutation,
   UpdateOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
-import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
@@ -45,8 +44,16 @@ export const useUpdateOneFieldMetadataItem = () => {
           label: updatePayload.label ?? undefined,
         },
       },
-      awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      optimisticResponse: {
+        updateOneField: {
+          id: fieldMetadataIdToUpdate,
+          updatedAt: new Date().toISOString(),
+          __typename: 'field',
+          createdAt: undefined,
+          type: '' as FieldMetadataType,
+          ...updatePayload,
+        } as UpdateOneFieldMetadataItemMutation['updateOneField'],
+      },
     });
   };
 
