@@ -37,7 +37,7 @@ export const AdvancedFilterRuleOptionsDropdown = ({
     viewFilterId,
   });
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
     if (isDefined(viewFilterId)) {
       deleteCombinedViewFilter(viewFilterId);
 
@@ -53,7 +53,13 @@ export const AdvancedFilterRuleOptionsDropdown = ({
     } else if (isDefined(currentViewFilterGroup)) {
       deleteCombinedViewFilterGroup(currentViewFilterGroup.id);
 
-      // TODO: Delete all child view filters
+      const childViewFilters = childViewFiltersAndViewFilterGroups.filter(
+        (child) => child.__typename === 'ViewFilter',
+      );
+
+      for (const childViewFilter of childViewFilters) {
+        await deleteCombinedViewFilter(childViewFilter.id);
+      }
     } else {
       throw new Error('No view filter or view filter group to remove');
     }
