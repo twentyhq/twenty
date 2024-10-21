@@ -176,6 +176,7 @@
     "scroll-into-view": "^1.16.2",
     "semver": "^7.5.4",
     "sharp": "^0.32.1",
+    "slash": "^5.1.0",
     "stripe": "^14.17.0",
     "ts-key-enum": "^2.0.12",
     "tslib": "^2.3.0",
