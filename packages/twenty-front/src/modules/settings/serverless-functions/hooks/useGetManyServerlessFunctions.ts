@@ -15,7 +15,6 @@ export const useGetManyServerlessFunctions = () => {
     client: apolloMetadataClient ?? undefined,
   });
   return {
-    serverlessFunctions:
-      data?.serverlessFunctions?.edges.map(({ node }) => node) || [],
+    serverlessFunctions: data?.findManyServerlessFunctions || [],
   };
 };
