@@ -1,13 +1,9 @@
-import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
+import { MouseEvent } from 'react';
 
-import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
-import {
-  LinkType,
-  SocialLink,
-} from '@/ui/navigation/link/components/SocialLink';
 import { checkUrlType } from '~/utils/checkUrlType';
 
+import { LinkType, RoundedLink, SocialLink } from 'twenty-ui';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 const StyledRawLink = styled(RoundedLink)`

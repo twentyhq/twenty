@@ -1,9 +1,8 @@
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
+import { AvatarChip, AvatarChipVariant, UndecoratedLink } from 'twenty-ui';
 
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MouseEvent } from 'react';
 
 export type RecordChipProps = {

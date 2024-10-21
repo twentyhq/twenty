@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconSettings, useIcons } from 'twenty-ui';
+import { IconSettings, UndecoratedLink, useIcons } from 'twenty-ui';
 
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -12,7 +12,6 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 

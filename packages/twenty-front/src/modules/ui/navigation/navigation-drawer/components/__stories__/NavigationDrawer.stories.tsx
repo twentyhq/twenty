@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
+  GithubVersionLink,
   IconAt,
   IconBell,
   IconBuildingSkyscraper,
@@ -18,18 +19,17 @@ import {
 
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '../NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
-
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
   component: NavigationDrawer,
@@ -148,6 +148,6 @@ export const Settings: Story = {
         </NavigationDrawerSection>
       </>
     ),
-    footer: <GithubVersionLink />,
+    footer: <GithubVersionLink version={jsonPage.version} />,
   },
 };

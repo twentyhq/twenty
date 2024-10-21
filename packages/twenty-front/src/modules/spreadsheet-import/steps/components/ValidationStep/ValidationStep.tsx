@@ -8,7 +8,7 @@ import {
 } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
-import { IconTrash } from 'twenty-ui';
+import { IconTrash, Toggle } from 'twenty-ui';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
@@ -25,7 +25,6 @@ import {
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Button } from '@/ui/input/button/components/Button';
-import { Toggle } from '@/ui/input/components/Toggle';
 import { isDefined } from '~/utils/isDefined';
 
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';

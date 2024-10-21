@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-
+import { ComponentWithRouterDecorator } from '@ui/testing';
 import { RoundedLink } from '../RoundedLink';
 
 const meta: Meta<typeof RoundedLink> = {

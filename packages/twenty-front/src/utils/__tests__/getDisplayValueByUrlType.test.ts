@@ -1,4 +1,4 @@
-import { LinkType } from '@/ui/navigation/link/components/SocialLink';
+import { LinkType } from 'twenty-ui';
 import { getDisplayValueByUrlType } from '~/utils/getDisplayValueByUrlType';
 
 describe('getDisplayValueByUrlType', () => {

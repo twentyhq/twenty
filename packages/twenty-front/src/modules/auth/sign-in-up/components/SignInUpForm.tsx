@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui';
+import { ActionLink, IconGoogle, IconMicrosoft } from 'twenty-ui';
 
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
@@ -24,7 +24,6 @@ import { captchaProviderState } from '@/client-config/states/captchaProviderStat
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`

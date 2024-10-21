@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { FONT_COMMON, THEME_COMMON, ThemeContext } from '@ui/theme';
 import { MouseEvent, useContext } from 'react';
-import { FONT_COMMON, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
 type RoundedLinkProps = {
   href: string;

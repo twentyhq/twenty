@@ -1,6 +1,4 @@
-import { IconComponent } from 'twenty-ui';
-
-import { Toggle, ToggleSize } from '@/ui/input/components/Toggle';
+import { IconComponent, Toggle, ToggleSize } from 'twenty-ui';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
