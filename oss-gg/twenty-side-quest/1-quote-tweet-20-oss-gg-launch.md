@@ -43,3 +43,9 @@ Your turn 👇
 
 » 13-October-2024 by Yash Parmar
 » Link to Tweet: https://x.com/yashp3020/status/1845720834716959009
+
+» 16-October-2024 by Harsh Bhat
+» Link to Tweet: https://x.com/HarshBhatX/status/1846252536241508392
+
+» 20-October-2024 by Naprila
+» Link to Tweet: https://x.com/mkprasad_821/status/1847886807314120762

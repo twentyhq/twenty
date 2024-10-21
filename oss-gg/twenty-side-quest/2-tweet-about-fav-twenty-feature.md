@@ -25,4 +25,10 @@ Your turn 👇
 
 » 13-October-2024 by Ali Yar Khan
 » Link to Tweet: https://x.com/Mr_Programmer14/status/1845530448245711197
+
+» 16-October-2024 by Harsh Bhat
+» Link to Tweet: https://x.com/HarshBhatX/status/1846075312691413066
+
+» 20-October-2024 by Naprila
+» Link to Tweet: https://x.com/mkprasad_821/status/1847895747707953205
 ---

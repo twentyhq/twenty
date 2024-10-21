@@ -9,9 +9,9 @@ export const SingleRecordActionMenuEntriesSetter = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const actionEffects = [
+    ManageFavoritesActionEffect,
     ExportRecordsActionEffect,
     DeleteRecordsActionEffect,
-    ManageFavoritesActionEffect,
   ];
   return (
     <>

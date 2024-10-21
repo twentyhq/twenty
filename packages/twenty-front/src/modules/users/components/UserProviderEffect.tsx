@@ -7,6 +7,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
+import { DateFormat } from '@/localization/constants/DateFormat';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
 import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
@@ -81,10 +83,10 @@ export const UserProviderEffect = () => {
             : detectTimeZone(),
         dateFormat: isDefined(workspaceMember.dateFormat)
           ? getDateFormatFromWorkspaceDateFormat(workspaceMember.dateFormat)
-          : detectDateFormat(),
+          : DateFormat[detectDateFormat()],
         timeFormat: isDefined(workspaceMember.timeFormat)
           ? getTimeFormatFromWorkspaceTimeFormat(workspaceMember.timeFormat)
-          : detectTimeFormat(),
+          : TimeFormat[detectTimeFormat()],
       });
     }
 

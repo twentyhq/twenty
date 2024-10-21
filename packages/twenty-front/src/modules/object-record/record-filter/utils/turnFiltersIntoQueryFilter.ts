@@ -25,7 +25,7 @@ import {
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { applyEmptyFilters } from '@/object-record/record-filter/utils/applyEmptyFilters';
-import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
+import { resolveFilterValue } from '@/views/view-filter-value/utils/resolveFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 

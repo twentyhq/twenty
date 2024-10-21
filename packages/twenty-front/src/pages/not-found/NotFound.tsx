@@ -11,7 +11,7 @@ import {
   AnimatedPlaceholderErrorTitle,
 } from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 
 const StyledBackDrop = styled.div`
   align-items: center;

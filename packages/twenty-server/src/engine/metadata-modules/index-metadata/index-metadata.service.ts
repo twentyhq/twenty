@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { InsertResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -28,7 +28,7 @@ export class IndexMetadataService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
-  async createIndex(
+  async createIndexMetadata(
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
@@ -45,41 +45,75 @@ export class IndexMetadataService {
 
     const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
-    let result: InsertResult;
+    let result: IndexMetadataEntity;
+
+    const existingIndex = await this.indexMetadataRepository.findOne({
+      where: {
+        name: indexName,
+        workspaceId,
+        objectMetadataId: objectMetadata.id,
+      },
+    });
+
+    if (existingIndex) {
+      throw new Error(
+        `Index ${indexName} on object metadata ${objectMetadata.nameSingular} already exists`,
+      );
+    }
 
     try {
-      result = await this.indexMetadataRepository.upsert(
-        {
-          name: indexName,
-          indexFieldMetadatas: fieldMetadataToIndex.map(
-            (fieldMetadata, index) => {
-              return {
-                fieldMetadataId: fieldMetadata.id,
-                order: index,
-              };
-            },
-          ),
-          workspaceId,
-          objectMetadataId: objectMetadata.id,
-          ...(isDefined(indexType) ? { indexType: indexType } : {}),
-          isCustom: isCustom,
-        },
-        {
-          conflictPaths: ['workspaceId', 'name', 'objectMetadataId'],
-          skipUpdateIfNoValuesChanged: true,
-        },
-      );
+      result = await this.indexMetadataRepository.save({
+        name: indexName,
+        indexFieldMetadatas: fieldMetadataToIndex.map(
+          (fieldMetadata, index) => ({
+            fieldMetadataId: fieldMetadata.id,
+            order: index,
+          }),
+        ),
+        workspaceId,
+        objectMetadataId: objectMetadata.id,
+        ...(isDefined(indexType) ? { indexType } : {}),
+        isCustom,
+      });
     } catch (error) {
       throw new Error(
         `Failed to create index ${indexName} on object metadata ${objectMetadata.nameSingular}`,
       );
     }
 
-    if (!result.identifiers.length) {
+    if (!result) {
       throw new Error(
         `Failed to return saved index ${indexName} on object metadata ${objectMetadata.nameSingular}`,
       );
     }
+
+    await this.createIndexCreationMigration(
+      workspaceId,
+      objectMetadata,
+      fieldMetadataToIndex,
+      isUnique,
+      isCustom,
+      indexType,
+      indexWhereClause,
+    );
+  }
+
+  async createIndexCreationMigration(
+    workspaceId: string,
+    objectMetadata: ObjectMetadataEntity,
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
+    isUnique: boolean,
+    isCustom: boolean,
+    indexType?: IndexType,
+    indexWhereClause?: string,
+  ) {
+    const tableName = computeObjectTargetTable(objectMetadata);
+
+    const columnNames: string[] = fieldMetadataToIndex.map(
+      (fieldMetadata) => fieldMetadata.name as string,
+    );
+
+    const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
     const migration = {
       name: tableName,
