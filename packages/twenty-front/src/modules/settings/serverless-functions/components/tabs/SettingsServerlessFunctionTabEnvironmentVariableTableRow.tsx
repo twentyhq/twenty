@@ -16,6 +16,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { EnvironmentVariable } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
 
 const StyledEditModeTableRow = styled(TableRow)`
   grid-template-columns: 180px auto 56px;
@@ -26,24 +27,19 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
-  envKey,
-  envValue,
+  envVariable,
   onChange,
   onDelete,
-  index,
   initialEditMode = false,
 }: {
-  envKey: string;
-  envValue: string;
-  onChange: (prevKey: string, newKey: string, newValue: string) => void;
+  envVariable: EnvironmentVariable;
+  onChange: (newEnvVariable: EnvironmentVariable) => void;
   onDelete: () => void;
-  index: number;
   initialEditMode?: boolean;
 }) => {
-  const [editedEnvKey, setEditedEnvKey] = useState<string>(envKey);
-  const [editedEnvValue, setEditedEnvValue] = useState<string>(envValue);
+  const [editedEnvVariable, setEditedEnvVariable] = useState(envVariable);
   const [editMode, setEditMode] = useState(initialEditMode);
-  const dropDownId = `settings-environment-variable-dropdown-${index}`;
+  const dropDownId = `settings-environment-variable-dropdown-${envVariable.id}`;
   const { closeDropdown, isDropdownOpen } = useDropdown(dropDownId);
 
   if (editMode && isDropdownOpen) {
@@ -55,16 +51,20 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
       <TableCell>
         <TextInputV2
           autoFocus
-          value={editedEnvKey}
-          onChange={setEditedEnvKey}
+          value={editedEnvVariable.key}
+          onChange={(newKey) =>
+            setEditedEnvVariable({ ...editedEnvVariable, key: newKey })
+          }
           placeholder="Name"
           fullWidth
         />
       </TableCell>
       <TableCell>
         <TextInputV2
-          value={editedEnvValue}
-          onChange={setEditedEnvValue}
+          value={editedEnvVariable.value}
+          onChange={(newValue) =>
+            setEditedEnvVariable({ ...editedEnvVariable, value: newValue })
+          }
           placeholder="Value"
           fullWidth
         />
@@ -74,11 +74,10 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
           accent={'tertiary'}
           Icon={IconX}
           onClick={() => {
-            if (editedEnvKey === '' && editedEnvValue === '') {
+            if (envVariable.key === '' && envVariable.value === '') {
               onDelete();
             }
-            setEditedEnvKey(envKey);
-            setEditedEnvValue(envValue);
+            setEditedEnvVariable(envVariable);
             setEditMode(false);
           }}
         />
@@ -86,12 +85,10 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
           accent={'tertiary'}
           Icon={IconCheck}
           disabled={
-            !editedEnvKey.match(/^[a-zA-Z]*$/) ||
-            editedEnvKey === '' ||
-            editedEnvValue === ''
+            editedEnvVariable.key === '' || editedEnvVariable.value === ''
           }
           onClick={() => {
-            onChange(envKey, editedEnvKey, editedEnvValue);
+            onChange(editedEnvVariable);
             setEditMode(false);
           }}
         />
@@ -99,8 +96,8 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
     </StyledEditModeTableRow>
   ) : (
     <StyledTableRow>
-      <TableCell>{envKey}</TableCell>
-      <TableCell>{envValue}</TableCell>
+      <TableCell>{envVariable.key}</TableCell>
+      <TableCell>{envVariable.value}</TableCell>
       <TableCell>
         <Dropdown
           dropdownMenuWidth="100px"
