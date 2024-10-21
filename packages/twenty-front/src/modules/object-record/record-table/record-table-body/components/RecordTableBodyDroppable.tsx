@@ -8,7 +8,6 @@ import { v4 } from 'uuid';
 const StyledTbody = styled.tbody<{
   theme: Theme;
 }>`
-
   &.first-columns-sticky {
     td:nth-of-type(1) {
       position: sticky;
