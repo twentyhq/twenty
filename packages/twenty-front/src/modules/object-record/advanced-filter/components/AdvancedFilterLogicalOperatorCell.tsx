@@ -10,7 +10,7 @@ const StyledText = styled.div`
 `;
 
 const StyledContainer = styled.div`
-  align-items: center;
+  align-items: start;
   display: flex;
   min-width: ${({ theme }) => theme.spacing(20)};
   color: ${({ theme }) => theme.font.color.tertiary};
