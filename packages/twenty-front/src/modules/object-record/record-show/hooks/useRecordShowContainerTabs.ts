@@ -29,8 +29,7 @@ export const useRecordShowContainerTabs = (
     targetObjectNameSingular === CoreObjectNameSingular.WorkflowVersion;
   const isWorkflowRun =
     isWorkflowEnabled &&
-    targetObjectNameSingular ===
-      CoreObjectNameSingular.WorkflowRun;
+    targetObjectNameSingular === CoreObjectNameSingular.WorkflowRun;
   const isWorkflowRelated = isWorkflow || isWorkflowVersion || isWorkflowRun;
 
   const isCompanyOrPerson = [
@@ -60,7 +59,7 @@ export const useRecordShowContainerTabs = (
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: isInRightDrawer || isWorkflowRelated
+      hide: isInRightDrawer || isWorkflowRelated,
     },
     {
       id: 'tasks',
@@ -84,7 +83,7 @@ export const useRecordShowContainerTabs = (
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: isWorkflowRelated
+      hide: isWorkflowRelated,
     },
     {
       id: 'emails',
