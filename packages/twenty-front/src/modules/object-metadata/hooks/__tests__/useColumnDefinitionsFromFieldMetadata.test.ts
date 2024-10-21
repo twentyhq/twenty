@@ -17,6 +17,7 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       allowImpersonation: false,
       activationStatus: WorkspaceActivationStatus.Active,
       metadataVersion: 1,
+      isPublicInviteLinkEnabled: false,
     });
   },
 });
