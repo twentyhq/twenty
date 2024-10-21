@@ -1,4 +1,3 @@
-import { Toggle } from '@/ui/input/components/Toggle';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { createPortal } from 'react-dom';
@@ -7,6 +6,7 @@ import {
   IconComponent,
   IconInfoCircle,
   TooltipDelay,
+  Toggle,
 } from 'twenty-ui';
 
 const StyledContainer = styled.div<{ disabled?: boolean }>`

@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { Checkbox } from '@/ui/input/components/Checkbox';
+import { Checkbox } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
