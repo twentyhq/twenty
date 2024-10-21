@@ -5,6 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
 import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
@@ -24,6 +25,7 @@ const meta: Meta<typeof ActionMenuBar> = {
             mode: 'selection',
             selectedRecordIds: ['1', '2', '3'],
           });
+          set(contextStoreNumberOfSelectedRecordsState, 3);
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
