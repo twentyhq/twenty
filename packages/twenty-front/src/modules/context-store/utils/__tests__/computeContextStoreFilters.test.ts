@@ -3,10 +3,9 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 describe('computeContextStoreFilters', () => {
-  const personObjectMetadataItem =
-    generatedMockObjectMetadataItems.find(
-      (item) => item.nameSingular === 'person',
-    )!;
+  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'person',
+  )!;
 
   it('should work for selection mode', () => {
     const contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule = {
@@ -31,14 +30,14 @@ describe('computeContextStoreFilters', () => {
       mode: 'exclusion',
       filters: [
         {
-          id: 'name-filter', 
-          variant: 'default', 
+          id: 'name-filter',
+          variant: 'default',
           fieldMetadataId: personObjectMetadataItem.fields.find(
             (field) => field.name === 'name',
           )!.id,
           value: 'John',
           displayValue: 'John',
-          displayAvatarUrl: undefined, 
+          displayAvatarUrl: undefined,
           operand: ViewFilterOperand.Contains,
           definition: {
             fieldMetadataId: personObjectMetadataItem.fields.find(
@@ -68,12 +67,11 @@ describe('computeContextStoreFilters', () => {
         {
           not: {
             id: {
-          in: ['1', '2', '3'],
+              in: ['1', '2', '3'],
             },
           },
         },
       ],
     });
   });
-
 });

@@ -18,7 +18,6 @@ export const RecordActionMenuEntriesSetter = () => {
     objectId: contextStoreCurrentObjectMetadataId ?? '',
   });
 
-
   if (!objectMetadataItem) {
     throw new Error(
       `Object metadata item not found for id ${contextStoreCurrentObjectMetadataId}`,
