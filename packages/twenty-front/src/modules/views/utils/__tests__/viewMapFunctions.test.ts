@@ -16,6 +16,7 @@ const baseDefinition = {
   fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
   label: 'label',
   iconName: 'iconName',
+  fieldName: 'fieldName',
 };
 
 describe('mapViewSortsToSorts', () => {

@@ -2,14 +2,12 @@ import { SettingsAccountsCalendarChannelsContainer } from '@/settings/accounts/c
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { IconCalendarEvent } from 'twenty-ui';
 
 export const SettingsAccountsCalendars = () => {
   return (
     <SubMenuTopBarContainer
-      Icon={IconCalendarEvent}
       title="Calendars"
       links={[
         {

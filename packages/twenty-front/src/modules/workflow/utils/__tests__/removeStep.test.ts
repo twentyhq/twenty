@@ -10,7 +10,9 @@ it('returns a deep copy of the provided steps array instead of mutating it', () 
         retryOnFailure: { value: true },
         continueOnFailure: { value: false },
       },
-      serverlessFunctionId: 'first',
+      input: {
+        serverlessFunctionId: 'first',
+      },
     },
     type: 'CODE',
     valid: true,
@@ -47,7 +49,9 @@ it('removes a step in a non-empty steps array', () => {
         retryOnFailure: { value: true },
         continueOnFailure: { value: false },
       },
-      serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+      input: {
+        serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+      },
     },
     type: 'CODE',
     valid: true,
@@ -67,7 +71,9 @@ it('removes a step in a non-empty steps array', () => {
             retryOnFailure: { value: true },
             continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          input: {
+            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          },
         },
         type: 'CODE',
         valid: true,
@@ -81,7 +87,9 @@ it('removes a step in a non-empty steps array', () => {
             retryOnFailure: { value: true },
             continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          input: {
+            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          },
         },
         type: 'CODE',
         valid: true,

@@ -5,7 +5,6 @@ import {
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
-  IconCurrencyDollar,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,7 +19,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
@@ -137,7 +136,6 @@ export const SettingsBilling = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconCurrencyDollar}
       title="Billing"
       links={[
         {

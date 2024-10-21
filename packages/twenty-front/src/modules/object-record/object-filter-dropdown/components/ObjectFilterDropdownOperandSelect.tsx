@@ -9,7 +9,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '../utils/getOperandLabel';
-import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
+import { getOperandsForFilterDefinition } from '../utils/getOperandsForFilterType';
 
 export const ObjectFilterDropdownOperandSelect = () => {
   const {
@@ -31,9 +31,9 @@ export const ObjectFilterDropdownOperandSelect = () => {
 
   const selectedFilter = useRecoilValue(selectedFilterState);
 
-  const operandsForFilterType = getOperandsForFilterType(
-    filterDefinitionUsedInDropdown?.type,
-  );
+  const operandsForFilterType = isDefined(filterDefinitionUsedInDropdown)
+    ? getOperandsForFilterDefinition(filterDefinitionUsedInDropdown)
+    : [];
 
   const handleOperandChange = (newOperand: ViewFilterOperand) => {
     const isValuelessOperand = [

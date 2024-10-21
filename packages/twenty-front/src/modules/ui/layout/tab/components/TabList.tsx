@@ -9,7 +9,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { Tab } from './Tab';
 
-type SingleTabProps = {
+export type SingleTabProps = {
   title: string;
   Icon?: IconComponent;
   id: string;
@@ -53,7 +53,7 @@ export const TabList = ({
 
   return (
     <TabListScope tabListScopeId={tabListId}>
-      <ScrollWrapper hideY contextProviderName="tabList">
+      <ScrollWrapper enableYScroll={false} contextProviderName="tabList">
         <StyledContainer className={className}>
           {tabs
             .filter((tab) => !tab.hide)

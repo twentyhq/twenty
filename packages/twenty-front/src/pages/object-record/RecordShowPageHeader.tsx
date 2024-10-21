@@ -1,6 +1,6 @@
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
-import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 
 export const RecordShowPageHeader = ({
   objectNameSingular,

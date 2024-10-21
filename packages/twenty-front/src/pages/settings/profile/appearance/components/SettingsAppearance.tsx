@@ -1,10 +1,10 @@
-import { H2Title, IconColorSwatch } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ColorSchemePicker } from '@/ui/input/color-scheme/components/ColorSchemePicker';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
@@ -14,7 +14,6 @@ export const SettingsAppearance = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconColorSwatch}
       title="Experience"
       links={[
         {

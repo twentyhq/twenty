@@ -113,11 +113,9 @@ const previewableTypes = [
   FieldMetadataType.DateTime,
   FieldMetadataType.Emails,
   FieldMetadataType.FullName,
-  FieldMetadataType.Link,
   FieldMetadataType.Links,
   FieldMetadataType.MultiSelect,
   FieldMetadataType.Number,
-  FieldMetadataType.Phone,
   FieldMetadataType.Phones,
   FieldMetadataType.Rating,
   FieldMetadataType.RawJson,
@@ -131,7 +129,9 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
+  if (!previewableTypes.includes(fieldMetadataItem.type)) {
+    return null;
+  }
 
   if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
     return (

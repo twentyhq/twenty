@@ -16,6 +16,7 @@ import {
   IconTool,
   IconUserCircle,
   IconUsers,
+  IconKey,
   MAIN_COLORS,
 } from 'twenty-ui';
 
@@ -39,38 +40,32 @@ import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 
-const StyledNavigationDrawerSection = styled(NavigationDrawerSection)<{
-  withLeftMargin?: boolean;
-}>`
-  margin-left: ${({ withLeftMargin, theme }) =>
-    withLeftMargin && theme.spacing(5)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
-`;
+type SettingsNavigationItem = {
+  label: string;
+  path: SettingsPath;
+  Icon: IconComponent;
+  indentationLevel?: NavigationDrawerItemIndentationLevel;
+  matchSubPages?: boolean;
+};
 
 const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
-  display: flex;
-  margin-top: ${({ theme }) => theme.spacing(5)};
-  width: 16px;
+  position: absolute;
+  left: ${({ theme }) => theme.spacing(-5)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  height: 75%;
 `;
 
 const StyledDeveloperSection = styled.div`
   display: flex;
   width: 100%;
   gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
 `;
 
 const StyledIconTool = styled(IconTool)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
-
-type SettingsNavigationItem = {
-  label: string;
-  path: SettingsPath;
-  Icon: IconComponent;
-  matchSubPages?: boolean;
-  indentationLevel?: NavigationDrawerItemIndentationLevel;
-};
 
 export const SettingsNavigationDrawerItems = () => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
@@ -85,6 +80,7 @@ export const SettingsNavigationDrawerItems = () => {
   );
   const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
@@ -96,14 +92,12 @@ export const SettingsNavigationDrawerItems = () => {
       label: 'Emails',
       path: SettingsPath.AccountsEmails,
       Icon: IconMail,
-      matchSubPages: true,
       indentationLevel: 2,
     },
     {
       label: 'Calendars',
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
-      matchSubPages: true,
       indentationLevel: 2,
     },
   ];
@@ -115,7 +109,7 @@ export const SettingsNavigationDrawerItems = () => {
     return matchPath(
       {
         path: pathName,
-        end: !accountSubSetting.matchSubPages,
+        end: accountSubSetting.matchSubPages === false,
       },
       currentPathName,
     );
@@ -123,7 +117,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <>
-      <StyledNavigationDrawerSection withLeftMargin>
+      <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="User" />
         <SettingsNavigationDrawerItem
           label="Profile"
@@ -140,6 +134,7 @@ export const SettingsNavigationDrawerItems = () => {
             label="Accounts"
             path={SettingsPath.Accounts}
             Icon={IconAt}
+            matchSubPages={false}
           />
           {accountSubSettings.map((navigationItem, index) => (
             <SettingsNavigationDrawerItem
@@ -156,8 +151,8 @@ export const SettingsNavigationDrawerItems = () => {
             />
           ))}
         </NavigationDrawerItemGroup>
-      </StyledNavigationDrawerSection>
-      <StyledNavigationDrawerSection withLeftMargin>
+      </NavigationDrawerSection>
+      <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <SettingsNavigationDrawerItem
           label="General"
@@ -180,7 +175,6 @@ export const SettingsNavigationDrawerItems = () => {
           label="Data model"
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
-          matchSubPages
         />
         <SettingsNavigationDrawerItem
           label="Integrations"
@@ -194,7 +188,14 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
-      </StyledNavigationDrawerSection>
+        {isSSOEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Security"
+            path={SettingsPath.Security}
+            Icon={IconKey}
+          />
+        )}
+      </NavigationDrawerSection>
       <AnimatePresence>
         {isAdvancedModeEnabled && (
           <motion.div
@@ -208,7 +209,7 @@ export const SettingsNavigationDrawerItems = () => {
               <StyledIconContainer>
                 <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
               </StyledIconContainer>
-              <StyledNavigationDrawerSection>
+              <NavigationDrawerSection>
                 <NavigationDrawerSectionTitle label="Developers" />
                 <SettingsNavigationDrawerItem
                   label="API & Webhooks"
@@ -222,12 +223,12 @@ export const SettingsNavigationDrawerItems = () => {
                     Icon={IconFunction}
                   />
                 )}
-              </StyledNavigationDrawerSection>
+              </NavigationDrawerSection>
             </StyledDeveloperSection>
           </motion.div>
         )}
       </AnimatePresence>
-      <StyledNavigationDrawerSection withLeftMargin>
+      <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
         <SettingsNavigationDrawerItem
           label="Releases"
@@ -239,7 +240,7 @@ export const SettingsNavigationDrawerItems = () => {
           onClick={signOut}
           Icon={IconDoorEnter}
         />
-      </StyledNavigationDrawerSection>
+      </NavigationDrawerSection>
     </>
   );
 };

@@ -52,7 +52,9 @@
         "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
-        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "ci": {
+          "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs"
+        },
         "fix": {}
       }
     },
@@ -67,7 +69,7 @@
     "test": {},
     "storybook:build": {
       "options": {
-        "env": { "NODE_OPTIONS": "--max_old_space_size=6000" }
+        "env": { "NODE_OPTIONS": "--max_old_space_size=6500" }
       }
     },
     "storybook:serve:dev": {

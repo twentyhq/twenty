@@ -5,7 +5,7 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconHierarchy2 } from 'twenty-ui';
+import { H2Title, IconArchive } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -27,7 +27,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 
 const objectEditFormSchema = z
@@ -107,7 +107,6 @@ export const SettingsObjectEdit = () => {
     <RecordFieldValueSelectorContextProvider>
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
-          Icon={IconHierarchy2}
           title="Edit"
           links={[
             {

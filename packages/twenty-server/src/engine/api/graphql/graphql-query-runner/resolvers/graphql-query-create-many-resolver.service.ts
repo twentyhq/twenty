@@ -93,12 +93,12 @@ export class GraphqlQueryCreateManyResolverService
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     return upsertedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord(
-        record,
-        objectMetadataMapItem.nameSingular,
-        1,
-        1,
-      ),
+      typeORMObjectRecordsParser.processRecord({
+        objectRecord: record,
+        objectName: objectMetadataMapItem.nameSingular,
+        take: 1,
+        totalCount: 1,
+      }),
     );
   }
 
@@ -107,6 +107,7 @@ export class GraphqlQueryCreateManyResolverService
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItem);
+
     args.data.forEach((record) => {
       if (record?.id) {
         assertIsValidUuid(record.id);

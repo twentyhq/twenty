@@ -3,14 +3,13 @@ import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { IconRocket } from 'twenty-ui';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 type ReleaseNote = {
@@ -107,7 +106,6 @@ export const Releases = () => {
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconRocket}
       title="Releases"
       links={[
         {

@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 import { H1Title, H1TitleFontColor } from 'twenty-ui';
 
+import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
-import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
-import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
+import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
+import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -18,7 +19,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
-import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
 
@@ -106,15 +106,11 @@ export const EmailThreads = ({
           fontColor={H1TitleFontColor.Primary}
         />
         {!firstQueryLoading && (
-          <Card>
-            {timelineThreads?.map((thread: TimelineThread, index: number) => (
-              <EmailThreadPreview
-                key={index}
-                divider={index < timelineThreads.length - 1}
-                thread={thread}
-              />
+          <ActivityList>
+            {timelineThreads?.map((thread: TimelineThread) => (
+              <EmailThreadPreview key={thread.id} thread={thread} />
             ))}
-          </Card>
+          </ActivityList>
         )}
         <CustomResolverFetchMoreLoader
           loading={isFetchingMore || firstQueryLoading}

@@ -6,9 +6,6 @@ import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { View } from '@/views/types/View';
 
 export const NavigationDrawerSectionForObjectMetadataItemsWrapper = ({
   isRemote,
@@ -21,8 +18,6 @@ export const NavigationDrawerSectionForObjectMetadataItemsWrapper = ({
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
     (item) => (isRemote ? item.isRemote : !item.isRemote),
   );
-
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
   if (loading && isDefined(currentUser)) {
@@ -33,7 +28,6 @@ export const NavigationDrawerSectionForObjectMetadataItemsWrapper = ({
     <NavigationDrawerSectionForObjectMetadataItems
       sectionTitle={isRemote ? 'Remote' : 'Workspace'}
       objectMetadataItems={filteredActiveObjectMetadataItems}
-      views={views}
       isRemote={isRemote}
     />
   );

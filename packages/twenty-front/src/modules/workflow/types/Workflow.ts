@@ -10,16 +10,17 @@ type BaseWorkflowStepSettings = {
 };
 
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
-  serverlessFunctionId: string;
+  input: {
+    serverlessFunctionId: string;
+  };
 };
 
 export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
-  subject?: string;
-  template?: string;
-  title?: string;
-  callToAction?: {
-    value: string;
-    href: string;
+  input: {
+    connectedAccountId: string;
+    email: string;
+    subject?: string;
+    body?: string;
   };
 };
 
@@ -81,6 +82,28 @@ export type WorkflowVersion = {
   steps: Array<WorkflowStep> | null;
   status: WorkflowVersionStatus;
   __typename: 'WorkflowVersion';
+};
+
+type StepRunOutput = {
+  id: string;
+  name: string;
+  type: string;
+  outputs: {
+    attemptCount: number;
+    result: object | undefined;
+    error: string | undefined;
+  }[];
+};
+
+export type WorkflowRunOutput = {
+  steps: Record<string, StepRunOutput>;
+};
+
+export type WorkflowRun = {
+  __typename: 'WorkflowRun';
+  id: string;
+  workflowVersionId: string;
+  output: WorkflowRunOutput;
 };
 
 export type Workflow = {

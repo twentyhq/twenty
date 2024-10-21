@@ -36,8 +36,6 @@
     "@nestjs/serve-static": "^4.0.1",
     "@nestjs/terminus": "^9.2.2",
     "@nestjs/typeorm": "^10.0.0",
-    "@nivo/calendar": "^0.84.0",
-    "@nivo/core": "^0.84.0",
     "@nx/eslint-plugin": "^17.2.8",
     "@octokit/graphql": "^7.0.2",
     "@ptc-org/nestjs-query-core": "^4.2.0",
@@ -178,6 +176,7 @@
     "scroll-into-view": "^1.16.2",
     "semver": "^7.5.4",
     "sharp": "^0.32.1",
+    "slash": "^5.1.0",
     "stripe": "^14.17.0",
     "ts-key-enum": "^2.0.12",
     "tslib": "^2.3.0",
@@ -296,6 +295,7 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-project-structure": "^3.7.2",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
@@ -340,7 +340,7 @@
   },
   "license": "AGPL-3.0",
   "name": "twenty",
-  "packageManager": "yarn@4.3.1",
+  "packageManager": "yarn@4.4.0",
   "resolutions": {
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
@@ -349,7 +349,7 @@
   "version": "0.2.1",
   "nx": {},
   "scripts": {
-    "start": "npx nx run-many -t start -p twenty-server twenty-front"
+    "start": "npx nx run-many -t start worker -p twenty-server twenty-front"
   },
   "workspaces": {
     "packages": [

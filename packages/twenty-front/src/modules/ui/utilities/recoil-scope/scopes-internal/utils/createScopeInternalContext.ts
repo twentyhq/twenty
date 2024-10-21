@@ -1,6 +1,5 @@
-import { Context, createContext } from 'react';
-
 import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
+import { Context, createContext } from 'react';
 
 type ScopeInternalContext<T extends RecoilComponentStateKey> =
   Context<T | null>;

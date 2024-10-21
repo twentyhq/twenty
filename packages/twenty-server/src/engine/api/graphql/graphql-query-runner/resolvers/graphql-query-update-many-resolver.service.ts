@@ -16,6 +16,7 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryUpdateManyResolverService
@@ -57,23 +58,26 @@ export class GraphqlQueryUpdateManyResolverService
       objectMetadataMapItem.nameSingular,
     );
 
+    const tableName = computeTableName(
+      objectMetadataMapItem.nameSingular,
+      objectMetadataMapItem.isCustom,
+    );
+
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
+      tableName,
       args.filter,
     );
 
     const data = formatData(args.data, objectMetadataMapItem);
 
-    const result = await withFilterQueryBuilder
+    const nonFormattedUpdatedObjectRecords = await withFilterQueryBuilder
       .update(data)
       .returning('*')
       .execute();
 
-    const nonFormattedUpdatedObjectRecords = result.raw;
-
     const updatedRecords = formatResult(
-      nonFormattedUpdatedObjectRecords,
+      nonFormattedUpdatedObjectRecords.raw,
       objectMetadataMapItem,
       objectMetadataMap,
     );
@@ -96,12 +100,12 @@ export class GraphqlQueryUpdateManyResolverService
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
     return updatedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord(
-        record,
-        objectMetadataMapItem.nameSingular,
-        1,
-        1,
-      ),
+      typeORMObjectRecordsParser.processRecord({
+        objectRecord: record,
+        objectName: objectMetadataMapItem.nameSingular,
+        take: 1,
+        totalCount: 1,
+      }),
     );
   }
 
@@ -110,6 +114,10 @@ export class GraphqlQueryUpdateManyResolverService
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataMapItem);
-    args.filter?.id?.in?.forEach((id: string) => assertIsValidUuid(id));
+    if (!args.filter) {
+      throw new Error('Filter is required');
+    }
+
+    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
 }

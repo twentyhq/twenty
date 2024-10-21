@@ -1,10 +1,10 @@
 import { Meta } from '@storybook/react';
 
+import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { SelectSheetStep } from '@/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 
 const meta: Meta<typeof SelectSheetStep> = {

@@ -81,14 +81,13 @@ export const RecordTableWithWrappers = ({
                 />
                 <DragSelect
                   dragSelectable={tableBodyRef}
-                  onDragSelectionStart={resetTableRowSelection}
+                  onDragSelectionStart={() => {
+                    resetTableRowSelection();
+                  }}
                   onDragSelectionChange={setRowSelected}
                 />
               </StyledTableInternalContainer>
-              <RecordTableInternalEffect
-                recordTableId={recordTableId}
-                tableBodyRef={tableBodyRef}
-              />
+              <RecordTableInternalEffect recordTableId={recordTableId} />
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>

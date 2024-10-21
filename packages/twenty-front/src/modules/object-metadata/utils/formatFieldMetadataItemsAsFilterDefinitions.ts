@@ -8,10 +8,12 @@ import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields,
+  isArrayAndJsonFilterEnabled,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
-}): FilterDefinition[] =>
-  fields.reduce((acc, field) => {
+  isArrayAndJsonFilterEnabled: boolean;
+}): FilterDefinition[] => {
+  return fields.reduce((acc, field) => {
     if (
       field.type === FieldMetadataType.Relation &&
       field.relationDefinition?.direction !==
@@ -26,10 +28,8 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.DateTime,
         FieldMetadataType.Date,
         FieldMetadataType.Text,
-        FieldMetadataType.Email,
         FieldMetadataType.Emails,
         FieldMetadataType.Number,
-        FieldMetadataType.Link,
         FieldMetadataType.Links,
         FieldMetadataType.FullName,
         FieldMetadataType.Address,
@@ -39,6 +39,9 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,
         FieldMetadataType.Phones,
+        ...(isArrayAndJsonFilterEnabled
+          ? [FieldMetadataType.Array, FieldMetadataType.RawJson]
+          : []),
       ].includes(field.type)
     ) {
       return acc;
@@ -46,6 +49,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
 
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
+};
 
 export const formatFieldMetadataItemAsFilterDefinition = ({
   field,
@@ -68,8 +72,6 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'DATE_TIME';
     case FieldMetadataType.Date:
       return 'DATE';
-    case FieldMetadataType.Link:
-      return 'LINK';
     case FieldMetadataType.Links:
       return 'LINKS';
     case FieldMetadataType.FullName:
@@ -78,12 +80,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'NUMBER';
     case FieldMetadataType.Currency:
       return 'CURRENCY';
-    case FieldMetadataType.Email:
-      return 'EMAIL';
     case FieldMetadataType.Emails:
       return 'EMAILS';
-    case FieldMetadataType.Phone:
-      return 'PHONE';
     case FieldMetadataType.Phones:
       return 'PHONES';
     case FieldMetadataType.Relation:
@@ -100,6 +98,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'ACTOR';
     case FieldMetadataType.Array:
       return 'ARRAY';
+    case FieldMetadataType.RawJson:
+      return 'RAW_JSON';
     default:
       return 'TEXT';
   }

@@ -176,15 +176,15 @@ export class GraphqlQueryFindManyResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
 
-    const result = typeORMObjectRecordsParser.createConnection(
+    const result = typeORMObjectRecordsParser.createConnection({
       objectRecords,
-      objectMetadataMapItem.nameSingular,
-      limit,
+      objectName: objectMetadataMapItem.nameSingular,
+      take: limit,
       totalCount,
-      orderByWithIdCondition,
+      order: orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
-    );
+    });
 
     return result;
   }

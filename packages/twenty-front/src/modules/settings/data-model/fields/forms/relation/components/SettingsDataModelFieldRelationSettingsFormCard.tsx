@@ -23,7 +23,6 @@ type SettingsDataModelFieldRelationSettingsFormCardProps = {
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  display: grid;
   flex: 1 1 100%;
 `;
 
@@ -60,7 +59,10 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
     initialRelationObjectMetadataItem,
     initialRelationType,
     initialRelationFieldMetadataItem,
-  } = useRelationSettingsFormInitialValues({ fieldMetadataItem });
+  } = useRelationSettingsFormInitialValues({
+    fieldMetadataItem,
+    objectMetadataItem,
+  });
 
   const relationObjectMetadataId = watchFormValue(
     'relation.objectMetadataId',
@@ -114,6 +116,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
       form={
         <SettingsDataModelFieldRelationForm
           fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
         />
       }
     />

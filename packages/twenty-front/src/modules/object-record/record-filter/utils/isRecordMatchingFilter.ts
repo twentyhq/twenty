@@ -5,30 +5,40 @@ import {
   ActorFilter,
   AddressFilter,
   AndObjectRecordFilter,
+  ArrayFilter,
   BooleanFilter,
   CurrencyFilter,
   DateFilter,
   EmailsFilter,
   FloatFilter,
   FullNameFilter,
+  LeafObjectRecordFilter,
   LinksFilter,
   NotObjectRecordFilter,
   OrObjectRecordFilter,
   PhonesFilter,
+  RawJsonFilter,
   RecordGqlOperationFilter,
   StringFilter,
-  URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { isMatchingArrayFilter } from '@/object-record/record-filter/utils/isMatchingArrayFilter';
 import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
 import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
+import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isMatchingRawJsonFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
+
+const isLeafFilter = (
+  filter: RecordGqlOperationFilter,
+): filter is LeafObjectRecordFilter => {
+  return !isAndFilter(filter) && !isOrFilter(filter) && !isNotFilter(filter);
+};
 
 const isAndFilter = (
   filter: RecordGqlOperationFilter,
@@ -51,7 +61,7 @@ export const isRecordMatchingFilter = ({
   filter: RecordGqlOperationFilter;
   objectMetadataItem: ObjectMetadataItem;
 }): boolean => {
-  if (Object.keys(filter).length === 0) {
+  if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
   }
 
@@ -121,6 +131,12 @@ export const isRecordMatchingFilter = ({
     );
   }
 
+  if (isLeafFilter(filter)) {
+    if (isDefined(record.deletedAt) && filter.deletedAt === undefined) {
+      return false;
+    }
+  }
+
   return Object.entries(filter).every(([filterKey, filterValue]) => {
     if (!isDefined(filterValue)) {
       throw new Error(
@@ -144,8 +160,6 @@ export const isRecordMatchingFilter = ({
     }
 
     switch (objectMetadataField.type) {
-      case FieldMetadataType.Email:
-      case FieldMetadataType.Phone:
       case FieldMetadataType.Select:
       case FieldMetadataType.Rating:
       case FieldMetadataType.MultiSelect:
@@ -155,21 +169,17 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.Link: {
-        const urlFilter = filterValue as URLFilter;
-
-        return (
-          (urlFilter.url === undefined ||
-            isMatchingStringFilter({
-              stringFilter: urlFilter.url,
-              value: record[filterKey].url,
-            })) &&
-          (urlFilter.label === undefined ||
-            isMatchingStringFilter({
-              stringFilter: urlFilter.label,
-              value: record[filterKey].label,
-            }))
-        );
+      case FieldMetadataType.Array: {
+        return isMatchingArrayFilter({
+          arrayFilter: filterValue as ArrayFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.RawJson: {
+        return isMatchingRawJsonFilter({
+          rawJsonFilter: filterValue as RawJsonFilter,
+          value: record[filterKey],
+        });
       }
       case FieldMetadataType.FullName: {
         const fullNameFilter = filterValue as FullNameFilter;
@@ -308,8 +318,11 @@ export const isRecordMatchingFilter = ({
           `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
         );
       }
+
       default: {
-        throw new Error('Not implemented yet');
+        throw new Error(
+          `Not implemented yet for field type "${objectMetadataField.type}"`,
+        );
       }
     }
   });

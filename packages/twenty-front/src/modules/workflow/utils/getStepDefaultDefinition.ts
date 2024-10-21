@@ -14,7 +14,9 @@ export const getStepDefaultDefinition = (
         type: 'CODE',
         valid: false,
         settings: {
-          serverlessFunctionId: '',
+          input: {
+            serverlessFunctionId: '',
+          },
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,
@@ -33,9 +35,12 @@ export const getStepDefaultDefinition = (
         type: 'SEND_EMAIL',
         valid: false,
         settings: {
-          subject: 'hello',
-          title: 'hello',
-          template: '{{title}}',
+          input: {
+            connectedAccountId: '',
+            email: '',
+            subject: '',
+            body: '',
+          },
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,

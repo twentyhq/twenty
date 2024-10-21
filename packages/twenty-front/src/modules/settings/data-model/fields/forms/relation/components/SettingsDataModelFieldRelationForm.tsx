@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -39,6 +40,7 @@ export type SettingsDataModelFieldRelationFormValues = z.infer<
 
 type SettingsDataModelFieldRelationFormProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type'>;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 const StyledContainer = styled.div`
@@ -79,6 +81,7 @@ const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES)
 
 export const SettingsDataModelFieldRelationForm = ({
   fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldRelationFormProps) => {
   const { control, watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldRelationFormValues>();
@@ -92,7 +95,10 @@ export const SettingsDataModelFieldRelationForm = ({
     initialRelationFieldMetadataItem,
     initialRelationObjectMetadataItem,
     initialRelationType,
-  } = useRelationSettingsFormInitialValues({ fieldMetadataItem });
+  } = useRelationSettingsFormInitialValues({
+    fieldMetadataItem,
+    objectMetadataItem,
+  });
 
   const selectedObjectMetadataItem = findObjectMetadataItemById(
     watchFormValue('relation.objectMetadataId'),

@@ -12,7 +12,10 @@ export const useIcons = () => {
   };
 
   const getIcon = (iconKey?: string | null) => {
-    if (!iconKey) return defaultIcon;
+    if (!iconKey) {
+      return defaultIcon;
+    }
+
     return icons[iconKey] ?? defaultIcon;
   };
 
