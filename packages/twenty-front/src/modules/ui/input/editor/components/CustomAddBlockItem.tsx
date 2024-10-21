@@ -1,9 +1,9 @@
-import { blockSchema } from '@/activities/blocks/schema';
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 
 import { useComponentsContext } from '@blocknote/react';
 
 type CustomAddBlockItemProps = {
-  editor: typeof blockSchema.BlockNoteEditor;
+  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   children: React.ReactNode; // Adding the children prop
 };
 

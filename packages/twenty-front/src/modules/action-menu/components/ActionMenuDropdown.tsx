@@ -64,7 +64,7 @@ export const ActionMenuDropdown = () => {
   return (
     <StyledContainerActionMenuDropdown
       position={actionMenuDropdownPosition}
-      className="context-menu"
+      className="action-menu-dropdown"
     >
       <Dropdown
         dropdownId={`action-menu-dropdown-${actionMenuId}`}

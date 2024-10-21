@@ -85,6 +85,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
               objectMetadataItemsForNavigationItems.map(
                 (objectMetadataItem) => (
                   <NavigationDrawerItemForObjectMetadataItem
+                    key={`navigation-drawer-item-${objectMetadataItem.id}`}
                     objectMetadataItem={objectMetadataItem}
                   />
                 ),

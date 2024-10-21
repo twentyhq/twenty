@@ -27,7 +27,13 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
+import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
+import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -43,7 +49,14 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
-      [Workspace, User, AppToken, FeatureFlagEntity],
+      [
+        Workspace,
+        User,
+        AppToken,
+        FeatureFlagEntity,
+        WorkspaceSSOIdentityProvider,
+        KeyValuePair,
+      ],
       'core',
     ),
     HttpModule,
@@ -52,7 +65,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceModule,
     OnboardingModule,
     WorkspaceDataSourceModule,
+    WorkspaceInvitationModule,
     ConnectedAccountModule,
+    WorkspaceSSOModule,
     FeatureFlagModule,
   ],
   controllers: [
@@ -60,11 +75,13 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     VerifyAuthController,
+    SSOAuthController,
   ],
   providers: [
     SignInUpService,
     AuthService,
     JwtAuthStrategy,
+    SamlAuthStrategy,
     AuthResolver,
     TokenService,
     GoogleAPIsService,

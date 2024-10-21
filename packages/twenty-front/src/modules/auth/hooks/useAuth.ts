@@ -32,6 +32,8 @@ import {
 import { isDefined } from '~/utils/isDefined';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { DateFormat } from '@/localization/constants/DateFormat';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
 import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
@@ -143,12 +145,12 @@ export const useAuth = () => {
             ? getDateFormatFromWorkspaceDateFormat(
                 user.workspaceMember.dateFormat,
               )
-            : detectDateFormat(),
+            : DateFormat[detectDateFormat()],
           timeFormat: isDefined(user.workspaceMember.timeFormat)
             ? getTimeFormatFromWorkspaceTimeFormat(
                 user.workspaceMember.timeFormat,
               )
-            : detectTimeFormat(),
+            : TimeFormat[detectTimeFormat()],
         });
       }
 

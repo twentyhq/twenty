@@ -1,15 +1,35 @@
 import { renderHook } from '@testing-library/react';
 import { Nullable } from 'twenty-ui';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+  onInitializeRecoilSnapshot: ({ set }) => {
+    set(currentWorkspaceState, {
+      id: '1',
+      featureFlags: [],
+      allowImpersonation: false,
+      activationStatus: WorkspaceActivationStatus.Active,
+      metadataVersion: 1,
+      isPublicInviteLinkEnabled: false,
+    });
+  },
+});
 
 describe('useColumnDefinitionsFromFieldMetadata', () => {
   it('should return empty definitions if no object is passed', () => {
     const { result } = renderHook(
       (objectMetadataItem?: Nullable<ObjectMetadataItem>) => {
         return useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+      },
+      {
+        wrapper: Wrapper,
       },
     );
 
@@ -32,6 +52,7 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       },
       {
         initialProps: companyObjectMetadata,
+        wrapper: Wrapper,
       },
     );
 
