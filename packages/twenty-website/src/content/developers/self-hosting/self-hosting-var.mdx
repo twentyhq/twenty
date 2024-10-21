@@ -51,14 +51,11 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Tokens
 
 <ArticleTable options={[
-    ['ACCESS_TOKEN_SECRET', '<random>', 'Secret used for the access tokens'],
+    ['APP_SECRET', '<random>', 'Secret used for encryption across the app'],
     ['ACCESS_TOKEN_EXPIRES_IN', '30m', 'Access token expiration time'],
-    ['LOGIN_TOKEN_SECRET', '<random>', 'Secret used for the login tokens'],
     ['LOGIN_TOKEN_EXPIRES_IN', '15m', 'Login token expiration time'],
-    ['REFRESH_TOKEN_SECRET', '<random>', 'Secret used for the refresh tokens'],
     ['REFRESH_TOKEN_EXPIRES_IN', '90d', 'Refresh token expiration time'],
     ['REFRESH_TOKEN_COOL_DOWN', '1m', 'Refresh token cooldown'],
-    ['FILE_TOKEN_SECRET', '<random>', 'Secret used for the file tokens'],
     ['FILE_TOKEN_EXPIRES_IN', '1d', 'File token expiration time'],
     ['API_TOKEN_EXPIRES_IN', '1000y', 'API token expiration time'],
     ]}></ArticleTable>

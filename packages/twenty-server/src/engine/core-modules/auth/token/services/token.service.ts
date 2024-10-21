@@ -46,6 +46,7 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { generateSecret } from 'src/utils/generate-secret';
 
 @Injectable()
 export class TokenService {
@@ -139,7 +140,7 @@ export class TokenService {
   }
 
   async generateRefreshToken(userId: string): Promise<AuthToken> {
-    const secret = this.environmentService.get('REFRESH_TOKEN_SECRET');
+    const secret = this.jwtWrapperService.generateAppSecret('REFRESH');
     const expiresIn = this.environmentService.get('REFRESH_TOKEN_EXPIRES_IN');
 
     if (!expiresIn) {
@@ -203,7 +204,7 @@ export class TokenService {
   }
 
   async generateLoginToken(email: string): Promise<AuthToken> {
-    const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const secret = this.jwtWrapperService.generateAppSecret('LOGIN');
     const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
 
     if (!expiresIn) {
@@ -232,7 +233,7 @@ export class TokenService {
     userId: string,
     workspaceId: string,
   ): Promise<AuthToken> {
-    const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const secret = generateSecret(workspaceId, 'LOGIN');
     const expiresIn = this.environmentService.get(
       'SHORT_TERM_TOKEN_EXPIRES_IN',
     );
@@ -271,7 +272,7 @@ export class TokenService {
     const jwtPayload = {
       sub: workspaceId,
     };
-    const secret = this.environmentService.get('ACCESS_TOKEN_SECRET');
+    const secret = generateSecret(workspaceId, 'ACCESS');
     let expiresIn: string | number;
 
     if (expiresAt) {
@@ -307,7 +308,7 @@ export class TokenService {
     }
     const decoded = await this.verifyJwt(
       token,
-      this.environmentService.get('ACCESS_TOKEN_SECRET'),
+      this.jwtWrapperService.generateAppSecret('ACCESS'),
     );
 
     const { user, apiKey, workspace, workspaceMemberId } =
@@ -317,7 +318,7 @@ export class TokenService {
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {
-    const loginTokenSecret = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const loginTokenSecret = this.jwtWrapperService.generateAppSecret('LOGIN');
 
     const payload = await this.verifyJwt(loginToken, loginTokenSecret);
 
@@ -330,7 +331,7 @@ export class TokenService {
     workspaceId: string;
   }> {
     const transientTokenSecret =
-      this.environmentService.get('LOGIN_TOKEN_SECRET');
+      this.jwtWrapperService.generateAppSecret('LOGIN');
 
     const payload = await this.verifyJwt(transientToken, transientTokenSecret);
 
@@ -513,7 +514,7 @@ export class TokenService {
   }
 
   async verifyRefreshToken(refreshToken: string) {
-    const secret = this.environmentService.get('REFRESH_TOKEN_SECRET');
+    const secret = this.jwtWrapperService.generateAppSecret('REFRESH');
     const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
     const jwtPayload = await this.verifyJwt(refreshToken, secret);
 

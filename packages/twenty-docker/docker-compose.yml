@@ -35,10 +35,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
-      LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
-      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
-      FILE_TOKEN_SECRET: ${FILE_TOKEN_SECRET}
+      APP_SECRET: ${APP_SECRET}
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
@@ -67,10 +64,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
-      LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
-      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
-      FILE_TOKEN_SECRET: ${FILE_TOKEN_SECRET}
+      APP_SECRET: ${APP_SECRET}
     depends_on:
       db:
         condition: service_healthy
