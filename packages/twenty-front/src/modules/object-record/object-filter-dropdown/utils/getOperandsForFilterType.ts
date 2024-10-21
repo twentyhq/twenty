@@ -18,7 +18,6 @@ export const getOperandsForFilterDefinition = (
     case 'FULL_NAME':
     case 'ADDRESS':
     case 'LINKS':
-    case 'ARRAY':
     case 'PHONES':
       return [
         ViewFilterOperand.Contains,
@@ -30,6 +29,12 @@ export const getOperandsForFilterDefinition = (
       return [
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
+    case 'RAW_JSON':
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
         ...emptyOperands,
       ];
     case 'DATE_TIME':
@@ -70,6 +75,12 @@ export const getOperandsForFilterDefinition = (
         ...emptyOperands,
       ];
     }
+    case 'ARRAY':
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
     default:
       return [];
   }

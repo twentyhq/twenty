@@ -1,6 +1,6 @@
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { CommandMenuEffect } from '@/app/effect-components/CommandMenuEffect';
-import { GotoHotkeys } from '@/app/effect-components/GotoHotkeysEffect';
+import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
@@ -45,7 +45,7 @@ export const AppRouterProviders = () => {
                             <StrictMode>
                               <PromiseRejectionEffect />
                               <CommandMenuEffect />
-                              <GotoHotkeys />
+                              <GotoHotkeysEffectsProvider />
                               <PageTitle title={pageTitle} />
                               <Outlet />
                             </StrictMode>

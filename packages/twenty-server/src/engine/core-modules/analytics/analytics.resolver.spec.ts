@@ -1,7 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpService } from '@nestjs/axios';
-
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 import { AnalyticsResolver } from './analytics.resolver';
 import { AnalyticsService } from './analytics.service';
@@ -13,13 +10,8 @@ describe('AnalyticsResolver', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AnalyticsResolver,
-        AnalyticsService,
         {
-          provide: EnvironmentService,
-          useValue: {},
-        },
-        {
-          provide: HttpService,
+          provide: AnalyticsService,
           useValue: {},
         },
       ],

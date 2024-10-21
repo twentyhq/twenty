@@ -9,5 +9,6 @@ export const TEXT_FILTER_TYPES = [
   'ADDRESS',
   'ACTOR',
   'ARRAY',
+  'RAW_JSON',
   'PHONES',
-] as const;
+];

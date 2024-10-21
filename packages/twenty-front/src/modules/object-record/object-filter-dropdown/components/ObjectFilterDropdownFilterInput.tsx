@@ -61,21 +61,19 @@ export const ObjectFilterDropdownFilterInput = ({
     <>
       {isConfigurable && selectedOperandInDropdown && (
         <>
-          {TEXT_FILTER_TYPES.includes(
-            filterDefinitionUsedInDropdown.type as any,
-          ) &&
+          {TEXT_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) &&
             !isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
               <ObjectFilterDropdownTextSearchInput />
             )}
           {NUMBER_FILTER_TYPES.includes(
-            filterDefinitionUsedInDropdown.type as any,
+            filterDefinitionUsedInDropdown.type,
           ) && <ObjectFilterDropdownNumberInput />}
           {filterDefinitionUsedInDropdown.type === 'RATING' && (
             <ObjectFilterDropdownRatingInput />
           )}
-          {DATE_FILTER_TYPES.includes(
-            filterDefinitionUsedInDropdown.type as any,
-          ) && <ObjectFilterDropdownDateInput />}
+          {DATE_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) && (
+            <ObjectFilterDropdownDateInput />
+          )}
           {filterDefinitionUsedInDropdown.type === 'RELATION' && (
             <>
               <ObjectFilterDropdownSearchInput />

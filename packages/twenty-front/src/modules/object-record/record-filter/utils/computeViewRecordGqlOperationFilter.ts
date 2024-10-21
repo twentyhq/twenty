@@ -7,6 +7,7 @@ import {
   DateFilter,
   EmailsFilter,
   FloatFilter,
+  RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
   StringFilter,
@@ -75,6 +76,34 @@ const computeFilterRecordGqlOperationFilter = (
               [correspondingField.name]: {
                 ilike: `%${filter.value}%`,
               } as StringFilter,
+            },
+          };
+        case ViewFilterOperand.IsEmpty:
+        case ViewFilterOperand.IsNotEmpty:
+          return getEmptyRecordGqlOperationFilter(
+            filter.operand,
+            correspondingField,
+            filter.definition,
+          );
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+          );
+      }
+    case 'RAW_JSON':
+      switch (filter.operand) {
+        case ViewFilterOperand.Contains:
+          return {
+            [correspondingField.name]: {
+              like: `%${filter.value}%`,
+            } as RawJsonFilter,
+          };
+        case ViewFilterOperand.DoesNotContain:
+          return {
+            not: {
+              [correspondingField.name]: {
+                like: `%${filter.value}%`,
+              } as RawJsonFilter,
             },
           };
         case ViewFilterOperand.IsEmpty:
