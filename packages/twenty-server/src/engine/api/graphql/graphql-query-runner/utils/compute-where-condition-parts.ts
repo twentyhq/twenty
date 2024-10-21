@@ -61,22 +61,22 @@ export const computeWhereConditionParts = (
       };
     case 'like':
       return {
-        sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'ilike':
       return {
-        sql: `"${objectNameSingular}"."${key}" ILIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text ILIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'startsWith':
       return {
-        sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'endsWith':
       return {
-        sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'contains':
@@ -95,11 +95,6 @@ export const computeWhereConditionParts = (
       return {
         sql: `NOT ("${objectNameSingular}"."${key}" && ARRAY[:...${key}${uuid}])`,
         params: { [`${key}${uuid}`]: value },
-      };
-    case 'contains_filter':
-      return {
-        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
-        params: { [`${key}${uuid}`]: `%${value}%` },
       };
 
     default:

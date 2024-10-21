@@ -8,8 +8,8 @@ export const isMatchingRawJsonFilter = ({
   value: string;
 }) => {
   switch (true) {
-    case rawJsonFilter.contains_filter !== undefined: {
-      const regexPattern = rawJsonFilter.contains_filter.replace(/%/g, '.*');
+    case rawJsonFilter.like !== undefined: {
+      const regexPattern = rawJsonFilter.like.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
 
       const stringValue = JSON.stringify(value);

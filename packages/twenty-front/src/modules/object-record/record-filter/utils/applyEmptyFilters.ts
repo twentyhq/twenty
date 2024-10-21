@@ -294,7 +294,11 @@ export const applyEmptyFilters = (
       break;
     case 'ARRAY':
       emptyRecordFilter = {
-        [correspondingField.name]: { not_contains: undefined } as ArrayFilter,
+        or: [
+          {
+            [correspondingField.name]: { is: 'NULL' } as ArrayFilter,
+          },
+        ],
       };
       break;
     case 'RAW_JSON':

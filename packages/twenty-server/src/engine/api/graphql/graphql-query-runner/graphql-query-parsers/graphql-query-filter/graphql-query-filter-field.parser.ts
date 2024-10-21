@@ -13,6 +13,8 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/utils/generate-obj
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
 
+const ARRAY_OPERATORS = ['in', 'contains', 'contains_any', 'not_contains'];
+
 export class GraphqlQueryFilterFieldParser {
   private fieldMetadataMap: FieldMetadataMap;
 
@@ -45,17 +47,13 @@ export class GraphqlQueryFilterFieldParser {
     const [[operator, value]] = Object.entries(filterValue);
 
     if (
-      operator === 'in' ||
-      operator === 'contains' ||
-      operator === 'contains_any' ||
-      operator === 'not_contains'
+      ARRAY_OPERATORS.includes(operator) &&
+      (!Array.isArray(value) || value.length === 0)
     ) {
-      if (!Array.isArray(value) || value.length === 0) {
-        throw new GraphqlQueryRunnerException(
-          `Invalid filter value for field ${key}. Expected non-empty array`,
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        );
-      }
+      throw new GraphqlQueryRunnerException(
+        `Invalid filter value for field ${key}. Expected non-empty array`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
     }
 
     const { sql, params } = computeWhereConditionParts(

@@ -105,7 +105,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
           case ViewFilterOperand.Contains:
             objectRecordFilters.push({
               [correspondingField.name]: {
-                contains_filter: `%${rawUIFilter.value}%`,
+                like: `%${rawUIFilter.value}%`,
               } as RawJsonFilter,
             });
             break;
@@ -113,7 +113,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             objectRecordFilters.push({
               not: {
                 [correspondingField.name]: {
-                  contains_filter: `%${rawUIFilter.value}%`,
+                  like: `%${rawUIFilter.value}%`,
                 } as RawJsonFilter,
               },
             });
@@ -888,6 +888,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             });
             break;
           }
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition,
+            );
+            break;
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.label} filter`,

@@ -106,12 +106,12 @@ export type PhonesFilter = {
 
 export type ArrayFilter = {
   contains?: string[];
-  contains_any?: string[];
   not_contains?: string[];
+  is?: IsFilter;
 };
 
 export type RawJsonFilter = {
-  contains_filter?: string;
+  like?: string;
   is?: IsFilter;
 };
 

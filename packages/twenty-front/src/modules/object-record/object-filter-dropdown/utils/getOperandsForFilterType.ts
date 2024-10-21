@@ -76,7 +76,11 @@ export const getOperandsForFilterDefinition = (
       ];
     }
     case 'ARRAY':
-      return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
     default:
       return [];
   }
