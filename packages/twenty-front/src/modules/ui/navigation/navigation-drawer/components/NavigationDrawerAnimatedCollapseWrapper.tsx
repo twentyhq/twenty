@@ -5,7 +5,9 @@ import styled from '@emotion/styled';
 import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
-const StyledAnimatedContainer = styled(motion.div)``;
+const StyledAnimatedContainer = styled(motion.span)`
+  display: block;
+`;
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,

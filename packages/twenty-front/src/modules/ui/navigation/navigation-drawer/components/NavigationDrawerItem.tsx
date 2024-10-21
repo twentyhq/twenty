@@ -104,13 +104,14 @@ const StyledItem = styled('button', {
   }
 `;
 
-const StyledItemElementsContainer = styled.div`
+const StyledItemElementsContainer = styled.span`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
-const StyledItemLabel = styled.div`
+const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -141,9 +142,13 @@ const StyledKeyBoardShortcut = styled.span`
   visibility: hidden;
 `;
 
-const StyledNavigationDrawerItemContainer = styled.div`
+const StyledNavigationDrawerItemContainer = styled.span`
   display: flex;
   width: 100%;
+`;
+
+const StyledSpacer = styled.span`
+  flex-grow: 1;
 `;
 
 export const NavigationDrawerItem = ({
@@ -219,6 +224,8 @@ export const NavigationDrawerItem = ({
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledItemLabel>{label}</StyledItemLabel>
           </NavigationDrawerAnimatedCollapseWrapper>
+
+          <StyledSpacer />
 
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
