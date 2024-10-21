@@ -18,7 +18,14 @@ export const RecordActionMenuEntriesSetter = () => {
     objectId: contextStoreCurrentObjectMetadataId ?? '',
   });
 
-  if (!objectMetadataItem || !contextStoreNumberOfSelectedRecords) {
+
+  if (!objectMetadataItem) {
+    throw new Error(
+      `Object metadata item not found for id ${contextStoreCurrentObjectMetadataId}`,
+    );
+  }
+
+  if (!contextStoreNumberOfSelectedRecords) {
     return null;
   }
 

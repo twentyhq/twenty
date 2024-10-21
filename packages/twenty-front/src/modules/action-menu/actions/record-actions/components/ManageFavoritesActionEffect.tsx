@@ -25,10 +25,10 @@ export const ManageFavoritesActionEffect = ({
   const selectedRecordId =
     contextStoreTargetedRecordsRule.mode === 'selection'
       ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
-      : '';
+      : undefined;
 
   const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId),
+    recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
   const foundFavorite = favorites?.find(

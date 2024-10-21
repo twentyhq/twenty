@@ -43,14 +43,14 @@ export const DeleteRecordsActionEffect = ({
     contextStoreTargetedRecordsRuleState,
   );
 
-  const filter = computeContextStoreFilters(
+  const graphqlFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
-    objectMetadataItem ?? undefined,
+    objectMetadataItem,
   );
 
   const { fetchAllRecordIds } = useFetchAllRecordIds({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    filter,
+    objectNameSingular: objectMetadataItem.nameSingular,
+    filter: graphqlFilter,
   });
 
   const handleDeleteClick = useCallback(async () => {
@@ -79,7 +79,7 @@ export const DeleteRecordsActionEffect = ({
     resetTableRowSelection,
   ]);
 
-  const isRemoteObject = objectMetadataItem?.isRemote ?? false;
+  const isRemoteObject = objectMetadataItem.isRemote;
 
   const canDelete =
     !isRemoteObject &&

@@ -6,7 +6,7 @@ import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVaria
 
 export const computeContextStoreFilters = (
   contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule,
-  objectMetadataItem?: ObjectMetadataItem,
+  objectMetadataItem: ObjectMetadataItem,
 ) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
 
