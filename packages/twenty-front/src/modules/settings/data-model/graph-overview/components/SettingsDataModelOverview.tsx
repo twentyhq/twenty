@@ -1,17 +1,17 @@
+import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import ReactFlow, {
-  applyEdgeChanges,
-  applyNodeChanges,
   Background,
   EdgeChange,
+  NodeChange,
+  applyEdgeChanges,
+  applyNodeChanges,
   getIncomers,
   getOutgoers,
-  NodeChange,
   useEdgesState,
   useNodesState,
   useReactFlow,
 } from 'reactflow';
-import styled from '@emotion/styled';
 import {
   IconLock,
   IconLockOpen,
@@ -24,7 +24,7 @@ import {
 import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewEffect';
 import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
-import { calculateHandlePosition } from '@/settings/data-model/graph-overview/util/calculateHandlePosition';
+import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
 import { Button } from '@/ui/input/button/components/Button';
 import { IconButtonGroup } from '@/ui/input/button/components/IconButtonGroup';
 import { isDefined } from '~/utils/isDefined';
