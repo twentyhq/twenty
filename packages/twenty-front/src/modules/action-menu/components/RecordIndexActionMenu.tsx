@@ -5,16 +5,16 @@ import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIn
 import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { useRecoilValue } from 'recoil';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordIndexActionMenu = ({
   actionMenuId,
 }: {
   actionMenuId: string;
 }) => {
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
+  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
   );
 
   return (

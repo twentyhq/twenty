@@ -1,8 +1,9 @@
-import { createState } from 'twenty-ui';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const contextStoreCurrentObjectMetadataIdState = createState<
-  string | null
->({
-  key: 'contextStoreCurrentObjectMetadataIdState',
-  defaultValue: null,
-});
+export const contextStoreCurrentObjectMetadataIdComponentState =
+  createComponentStateV2<string | null>({
+    key: 'contextStoreCurrentObjectMetadataIdComponentState',
+    defaultValue: null,
+    componentInstanceContext: ContextStoreComponentInstanceContext,
+  });

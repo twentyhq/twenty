@@ -1,12 +1,13 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import {
   ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleState,
 } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const JestContextStoreSetter = ({
   contextStoreTargetedRecordsRule = {
@@ -23,8 +24,9 @@ export const JestContextStoreSetter = ({
   const setContextStoreTargetedRecordsRule = useSetRecoilState(
     contextStoreTargetedRecordsRuleState,
   );
-  const setContextStoreCurrentObjectMetadataId = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
+
+  const setContextStoreCurrentObjectMetadataId = useSetRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({

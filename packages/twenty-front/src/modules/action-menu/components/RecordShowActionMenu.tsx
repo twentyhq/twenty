@@ -3,16 +3,16 @@ import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMen
 import { RecordShowActionMenuBar } from '@/action-menu/components/RecordShowActionMenuBar';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { useRecoilValue } from 'recoil';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordShowActionMenu = ({
   actionMenuId,
 }: {
   actionMenuId: string;
 }) => {
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
+  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
   );
 
   return (

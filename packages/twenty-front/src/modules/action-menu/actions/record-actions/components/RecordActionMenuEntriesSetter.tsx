@@ -1,9 +1,10 @@
 import { MultipleRecordsActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/MultipleRecordsActionMenuEntriesSetter';
 import { SingleRecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/SingleRecordActionMenuEntriesSetter';
 import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
 
 export const RecordActionMenuEntriesSetter = ({
@@ -15,8 +16,8 @@ export const RecordActionMenuEntriesSetter = ({
     contextStoreNumberOfSelectedRecordsState,
   );
 
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
+  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemById({

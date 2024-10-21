@@ -7,7 +7,6 @@ import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
@@ -25,7 +24,6 @@ import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowV
 import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
 import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualizerEffect';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
@@ -194,18 +192,6 @@ export const ShowPageSubContainer = ({
       default:
         return <></>;
     }
-  };
-
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: targetableObject.targetObjectNameSingular,
-  });
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    await deleteOneRecord(targetableObject.id);
-    setIsDeleting(false);
   };
 
   const [recordFromStore] = useRecoilState<ObjectRecord | null>(
