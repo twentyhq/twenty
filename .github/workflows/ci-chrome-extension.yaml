@@ -22,6 +22,8 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Check for changed files
         id: changed-files
