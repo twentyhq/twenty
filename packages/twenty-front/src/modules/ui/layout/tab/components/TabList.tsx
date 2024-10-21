@@ -31,7 +31,6 @@ const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
 `;
 
