@@ -1,14 +1,11 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { Avatar, AvatarType, getImageAbsoluteURI, IconComponent } from 'twenty-ui';
-import { NavigationBarItem } from './NavigationBarItem';
 import { useNavigate } from 'react-router-dom';
-import { workspaceLogoUrl } from '~/testing/mock-data/users';
+import { useRecoilValue } from 'recoil';
+import { Avatar, AvatarType, IconComponent } from 'twenty-ui';
 import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
+import { NavigationBarItem } from './NavigationBarItem';
 
-const theme = useTheme()
 const StyledContainer = styled.div`
 display: flex;
 gap: ${({ theme }) => theme.spacing(4)};
@@ -25,15 +22,11 @@ const StyledAvatar = styled(Avatar)`
 `;
 
 const FavoritesHighlight = styled.div`
-    width: 24,
-    backgroundColor: theme.background.transparent.lighter,
-    border: 1px solid ${theme.background.transparent.lighter},
-    borderRadius: theme.border.radius.sm,
+  width: 24px;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.background.transparent.lighter};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
-
-const currentWorkspace = useRecoilValue(currentWorkspaceState);
-const navigate = useNavigate()
-
 type NavigationBarProps = {
   activeItemName: string;
   favorites: {
@@ -59,10 +52,11 @@ export const NavigationBar = ({
   favorites,
   objectMetaData
 }: NavigationBarProps) => {
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const navigate = useNavigate()
 
   return (
   <StyledContainer>
-    <FavoritesHighlight>
       <NavigationBarItem 
         key="workspaceLogo" 
         Icon={() => (
@@ -91,7 +85,6 @@ export const NavigationBar = ({
         onClick={favItem.onClick}
       />
     ))}
-    </FavoritesHighlight>
     {objectMetaData.map((object) => (
       <NavigationBarItem
       key={object.id}
