@@ -52,8 +52,14 @@ export const AdvancedFilterButton = () => {
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+
   const objectMetadataId =
     currentViewWithCombinedFiltersAndSorts?.objectMetadataId;
+
+  if (!objectMetadataId) {
+    throw new Error('Object metadata id is missing from current view');
+  }
+
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId ?? null,
   });
