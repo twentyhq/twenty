@@ -4,6 +4,7 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -18,7 +19,7 @@ const ORDERED_STANDARD_OBJECTS = [
 
 const StyledObjectsMetaDataItemsWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${() => (useIsMobile() ? 'row' : 'column')};
   gap: ${({ theme }) => theme.betweenSiblingsGap};
   width: 100%;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
