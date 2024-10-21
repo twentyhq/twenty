@@ -234,12 +234,6 @@ export const ShowPageSubContainer = ({
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
           <StyledButtonContainer>
-            {/* <Button
-              Icon={IconTrash}
-              onClick={handleDelete}
-              disabled={isDeleting}
-              title={isDeleting ? 'Deleting...' : 'Delete'}
-            ></Button> */}
             <RecordShowActionMenu actionMenuId={'right-drawer-action-menu'} />
           </StyledButtonContainer>
         )}

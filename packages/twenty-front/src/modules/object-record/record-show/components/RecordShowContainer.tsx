@@ -40,7 +40,10 @@ export const RecordShowContainer = ({
 
   return (
     <>
-      <RecordShowContainerContextStoreEffect recordId={objectRecordId} />
+      <RecordShowContainerContextStoreEffect
+        recordId={objectRecordId}
+        objectNameSingular={objectNameSingular}
+      />
       {recordFromStore && recordFromStore.deletedAt && (
         <InformationBannerDeletedRecord
           recordId={objectRecordId}
