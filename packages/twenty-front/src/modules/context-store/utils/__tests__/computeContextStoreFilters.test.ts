@@ -41,9 +41,11 @@ describe('computeContextStoreFilters', () => {
           displayAvatarUrl: undefined, 
           operand: ViewFilterOperand.Contains,
           definition: {
-            fieldMetadataId: 'field1',
-            label: 'Label 1',
-            iconName: 'icon1',
+            fieldMetadataId: personObjectMetadataItem.fields.find(
+              (field) => field.name === 'name',
+            )!.id,
+            label: 'Name',
+            iconName: 'person',
             type: 'TEXT',
           },
         },
