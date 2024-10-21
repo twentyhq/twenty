@@ -58,7 +58,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx storybook:build twenty-front
   front-sb-test:
-    runs-on: ci-8-cores
+    runs-on: shipfox-8vcpu-ubuntu-2204
     timeout-minutes: 60
     needs: front-sb-build
     strategy:
@@ -81,50 +81,6 @@ jobs:
       - name: Skip if no relevant changes
         if: steps.changed-files.outputs.any_changed == 'false'
         run: echo "No relevant changes. Skipping CI." 
-
-      - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Install Playwright
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: cd packages/twenty-front && npx playwright install
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: storybook:build
-      - name: Front / Write .env
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx reset:env twenty-front
-      - name: Run storybook tests
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
-  front-sb-test-shipfox:
-    runs-on: shipfox-8vcpu-ubuntu-2204
-    timeout-minutes: 60
-    needs: front-sb-build
-    strategy:
-      matrix:
-        storybook_scope: [pages, modules]
-    env:
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-    steps:
-      - name: Fetch local actions
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            packages/twenty-front/**
-
-      - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed == 'false'
-        run: echo "No relevant changes. Skipping CI."
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'

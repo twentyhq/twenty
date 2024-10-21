@@ -74,7 +74,7 @@ export const RecordBoard = () => {
 
   useListenClickOutsideByClassName({
     classNames: ['record-board-card'],
-    excludeClassNames: ['bottom-bar', 'context-menu'],
+    excludeClassNames: ['bottom-bar', 'action-menu-dropdown'],
     callback: resetRecordSelection,
   });
 

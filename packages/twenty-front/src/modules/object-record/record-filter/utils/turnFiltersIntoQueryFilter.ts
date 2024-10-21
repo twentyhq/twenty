@@ -31,7 +31,7 @@ import { z } from 'zod';
 
 // TODO: break this down into smaller functions and make the whole thing immutable
 // Especially applyEmptyFilters
-export const turnObjectDropdownFilterIntoQueryFilter = (
+export const turnFiltersIntoQueryFilter = (
   rawUIFilters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
 ): RecordGqlOperationFilter | undefined => {
