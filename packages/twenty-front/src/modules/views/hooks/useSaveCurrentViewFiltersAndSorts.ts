@@ -141,7 +141,6 @@ export const useSaveCurrentViewFiltersAndSorts = (
               (vf) => vf.fieldMetadataId === viewFilter.fieldMetadataId,
             ),
         );
-
         await createViewFilterRecords(viewFiltersToCreate, view);
         await updateViewFilterRecords(viewFiltersToUpdate);
         await deleteViewFilterRecords(unsavedToDeleteViewFilterIds);

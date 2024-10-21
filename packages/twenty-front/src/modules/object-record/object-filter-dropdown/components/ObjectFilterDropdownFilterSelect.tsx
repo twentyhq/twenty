@@ -3,6 +3,8 @@ import { useContext } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
+import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
+import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -45,11 +47,26 @@ export const StyledInput = styled.input`
   }
 `;
 
-export const ObjectFilterDropdownFilterSelect = () => {
+interface ObjectFilterDropdownFilterSelectProps {
+  isAdvancedFilterButtonVisible?: boolean;
+}
+
+export const ObjectFilterDropdownFilterSelect = ({
+  isAdvancedFilterButtonVisible,
+}: ObjectFilterDropdownFilterSelectProps) => {
   const {
     setObjectFilterDropdownSearchInput,
     objectFilterDropdownSearchInputState,
+    advancedFilterViewFilterIdState,
   } = useFilterDropdown();
+
+  const advancedFilterViewFilterId = useRecoilValue(
+    advancedFilterViewFilterIdState,
+  );
+
+  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
+    advancedFilterViewFilterId,
+  );
 
   const objectFilterDropdownSearchInput = useRecoilValue(
     objectFilterDropdownSearchInputState,
@@ -110,8 +127,8 @@ export const ObjectFilterDropdownFilterSelect = () => {
     }
 
     resetSelectedItem();
-
     selectFilter({ filterDefinition: selectedFilterDefinition });
+    closeAdvancedFilterDropdown();
   };
 
   const shoudShowSeparator =
@@ -164,6 +181,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
+      {isAdvancedFilterButtonVisible && <AdvancedFilterButton />}
     </>
   );
 };

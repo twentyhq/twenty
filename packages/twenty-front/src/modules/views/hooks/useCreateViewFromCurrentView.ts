@@ -4,6 +4,7 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useCreateViewFiltersAndSorts } from '@/views/hooks/useCreateViewFiltersAndSorts';
+import { useGetViewFilterGroupsCombined } from '@/views/hooks/useGetCombinedViewFilterGroups';
 import { useGetViewFiltersCombined } from '@/views/hooks/useGetCombinedViewFilters';
 import { useGetViewSortsCombined } from '@/views/hooks/useGetCombinedViewSorts';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
@@ -40,6 +41,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { getViewSortsCombined } = useGetViewSortsCombined(viewBarComponentId);
   const { getViewFiltersCombined } =
     useGetViewFiltersCombined(viewBarComponentId);
+  const { getViewFilterGroupsCombined } =
+    useGetViewFilterGroupsCombined(viewBarComponentId);
 
   const createViewFromCurrentView = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -94,11 +97,14 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         await createViewFieldRecords(view.viewFields, newView);
 
         if (shouldCopyFiltersAndSorts === true) {
+          const sourceViewCombinedFilterGroups = getViewFilterGroupsCombined(
+            view.id,
+          );
           const sourceViewCombinedFilters = getViewFiltersCombined(view.id);
           const sourceViewCombinedSorts = getViewSortsCombined(view.id);
-
           await createViewFiltersAndSorts(
             newView.id,
+            sourceViewCombinedFilterGroups,
             sourceViewCombinedFilters,
             sourceViewCombinedSorts,
           );
@@ -111,6 +117,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createViewFieldRecords,
       getViewSortsCombined,
       getViewFiltersCombined,
+      getViewFilterGroupsCombined,
       currentViewIdCallbackState,
       getViewFromCache,
       isPersistingViewFieldsCallbackState,

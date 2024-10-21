@@ -1,3 +1,4 @@
+import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
@@ -59,11 +60,23 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
+    advancedFilterViewFilterIdState,
   } = useFilterDropdown();
 
   const setHotkeyScope = useSetHotkeyScope();
 
+  const advancedFilterViewFilterId = useRecoilValue(
+    advancedFilterViewFilterIdState,
+  );
+
+  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
+    advancedFilterViewFilterId,
+  );
+
   const handleSelectFilter = (availableFilterDefinition: FilterDefinition) => {
+    closeAdvancedFilterDropdown();
+    selectFilter({ filterDefinition: availableFilterDefinition });
+
     setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
     if (
@@ -86,8 +99,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const handleClick = () => {
     resetSelectedItem();
-
-    selectFilter({ filterDefinition });
 
     if (isACompositeField) {
       // TODO: create isCompositeFilterableFieldType type guard
