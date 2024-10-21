@@ -143,13 +143,14 @@ export const useExportRecordData = ({
   delayMs,
   filename,
   maximumRequests = 100,
-  objectNameSingular,
+  objectMetadataItem,
   pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   viewType,
 }: UseExportTableDataOptions) => {
-  const { processRecordsForCSVExport } =
-    useProcessRecordsForCSVExport(objectNameSingular);
+  const { processRecordsForCSVExport } = useProcessRecordsForCSVExport(
+    objectMetadataItem.nameSingular,
+  );
 
   const downloadCsv = useMemo(
     () =>
@@ -164,7 +165,7 @@ export const useExportRecordData = ({
   const { getTableData: download, progress } = useRecordData({
     delayMs,
     maximumRequests,
-    objectNameSingular,
+    objectMetadataItem,
     pageSize,
     recordIndexId,
     callback: downloadCsv,

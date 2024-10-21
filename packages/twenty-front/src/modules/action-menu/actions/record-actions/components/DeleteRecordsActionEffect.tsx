@@ -1,10 +1,9 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
 import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
@@ -16,28 +15,22 @@ import { IconTrash, isDefined } from 'twenty-ui';
 
 export const DeleteRecordsActionEffect = ({
   position,
+  objectMetadataItem,
 }: {
   position: number;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
-  );
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId,
-  });
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 
   const { resetTableRowSelection } = useRecordTable({
-    recordTableId: objectMetadataItem?.namePlural ?? '',
+    recordTableId: objectMetadataItem.namePlural,
   });
 
   const { deleteManyRecords } = useDeleteManyRecords({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
+    objectNameSingular: objectMetadataItem.nameSingular,
   });
 
   const { favorites, deleteFavorite } = useFavorites();

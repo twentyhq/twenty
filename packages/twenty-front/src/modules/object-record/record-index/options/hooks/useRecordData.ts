@@ -7,10 +7,9 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
@@ -28,7 +27,7 @@ export const percentage = (part: number, whole: number): number => {
 export type UseRecordDataOptions = {
   delayMs: number;
   maximumRequests?: number;
-  objectNameSingular: string;
+  objectMetadataItem: ObjectMetadataItem;
   pageSize?: number;
   recordIndexId: string;
   callback: (
@@ -45,9 +44,9 @@ type ExportProgress = {
 };
 
 export const useRecordData = ({
+  objectMetadataItem,
   delayMs,
   maximumRequests = 100,
-  objectNameSingular,
   pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   callback,
@@ -64,7 +63,7 @@ export const useRecordData = ({
   const { visibleTableColumnsSelector } = useRecordTableStates(recordIndexId);
 
   const { hiddenBoardFields } = useRecordIndexOptionsForBoard({
-    objectNameSingular,
+    objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
   });
@@ -80,21 +79,13 @@ export const useRecordData = ({
     contextStoreTargetedRecordsRuleState,
   );
 
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
-  );
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId,
-  });
-
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
-    objectMetadataItem ?? undefined,
+    objectMetadataItem,
   );
 
   const findManyRecordsParams = useFindManyParams(
-    objectNameSingular,
+    objectMetadataItem.nameSingular,
     recordIndexId,
   );
 

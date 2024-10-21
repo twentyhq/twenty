@@ -164,7 +164,12 @@ const WrapperWithEmptyResponse =
 
 describe('useRecordData', () => {
   const recordIndexId = 'people';
-  const objectNameSingular = 'person';
+  const objectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'person',
+  );
+  if (!objectMetadataItem) {
+    throw new Error('Object metadata item not found');
+  }
   describe('data fetching', () => {
     it('should handle no records', async () => {
       const callback = jest.fn();
@@ -173,7 +178,7 @@ describe('useRecordData', () => {
         () =>
           useRecordData({
             recordIndexId,
-            objectNameSingular,
+            objectMetadataItem,
             pageSize: 30,
             callback,
             delayMs: 0,
@@ -199,7 +204,7 @@ describe('useRecordData', () => {
         () =>
           useRecordData({
             recordIndexId,
-            objectNameSingular,
+            objectMetadataItem,
             callback,
             pageSize: 30,
 
@@ -228,7 +233,7 @@ describe('useRecordData', () => {
           return {
             tableData: useRecordData({
               recordIndexId,
-              objectNameSingular,
+              objectMetadataItem,
               callback,
               pageSize: 30,
               maximumRequests: 100,
@@ -238,7 +243,7 @@ describe('useRecordData', () => {
             useRecordBoardHook: useRecordBoard(recordIndexId),
             kanbanFieldName: useRecoilValue(kanbanFieldNameState),
             kanbanData: useRecordIndexOptionsForBoard({
-              objectNameSingular,
+              objectNameSingular: objectMetadataItem.nameSingular,
               recordBoardId: recordIndexId,
               viewBarId: recordIndexId,
             }),
@@ -321,7 +326,7 @@ describe('useRecordData', () => {
           return {
             tableData: useRecordData({
               recordIndexId,
-              objectNameSingular,
+              objectMetadataItem,
               callback,
               pageSize: 30,
               maximumRequests: 100,
@@ -331,7 +336,7 @@ describe('useRecordData', () => {
             setKanbanFieldName: useRecordBoard(recordIndexId),
             kanbanFieldName: useRecoilValue(kanbanFieldNameState),
             kanbanData: useRecordIndexOptionsForBoard({
-              objectNameSingular,
+              objectNameSingular: objectMetadataItem.nameSingular,
               recordBoardId: recordIndexId,
               viewBarId: recordIndexId,
             }),

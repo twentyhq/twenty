@@ -3,33 +3,25 @@ import {
   displayedExportProgress,
   useExportRecordData,
 } from '@/action-menu/hooks/useExportRecordData';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconFileExport } from 'twenty-ui';
 
 export const ExportRecordsActionEffect = ({
   position,
+  objectMetadataItem,
 }: {
   position: number;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
-  );
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId,
-  });
-
   const { progress, download } = useExportRecordData({
     delayMs: 100,
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordIndexId: objectMetadataItem?.namePlural ?? '',
-    filename: `${objectMetadataItem?.nameSingular}.csv`,
+    objectMetadataItem,
+    recordIndexId: objectMetadataItem.namePlural,
+    filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
   useEffect(() => {
