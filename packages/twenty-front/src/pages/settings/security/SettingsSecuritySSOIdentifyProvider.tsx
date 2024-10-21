@@ -3,9 +3,9 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import SettingsSSOIdentitiesProvidersForm from '@/settings/security/components/SettingsSSOIdentitiesProvidersForm';
 import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
-import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/schemas/SSOIdentityProviderSchema';
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { defaultIdpValues } from '@/settings/security/utils/SSOIdentityProviderDefaultValues';
+import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/SSOIdentityProviderDefaultValues';
+import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -25,7 +25,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
   const formConfig = useForm<SettingSecurityNewSSOIdentityFormValues>({
     mode: 'onChange',
     resolver: zodResolver(SSOIdentitiesProvidersParamsSchema),
-    defaultValues: Object.values(defaultIdpValues).reduce(
+    defaultValues: Object.values(sSOIdentityProviderDefaultValues).reduce(
       (acc, fn) => ({ ...acc, ...fn() }),
       {},
     ),
@@ -36,7 +36,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
   useEffect(
     () =>
       formConfig.reset({
-        ...defaultIdpValues[selectedType](),
+        ...sSOIdentityProviderDefaultValues[selectedType](),
         name: formConfig.getValues('name'),
       }),
     [formConfig, selectedType],

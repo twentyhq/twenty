@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/schemas/SSOIdentityProviderSchema';
+import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
 import { z } from 'zod';
 import { IdpType, SsoIdentityProviderStatus } from '~/generated/graphql';
 

@@ -3,7 +3,7 @@
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { IdpType } from '~/generated/graphql';
 
-export const defaultIdpValues: Record<
+export const sSOIdentityProviderDefaultValues: Record<
   IdpType,
   () => SettingSecurityNewSSOIdentityFormValues
 > = {
