@@ -4,16 +4,15 @@ import {
   RelationDefinitionType
 } from '~/generated-metadata/graphql';
 
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields,
+  isArrayAndJsonFilterEnabled,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
+  isArrayAndJsonFilterEnabled: boolean;
 }): FilterDefinition[] => {
-  const enabled = useIsFeatureEnabled('IS_ARRAY_AND_JSON_FILTER_ENABLED')
-
   return fields.reduce((acc, field) => {
     if (
       field.type === FieldMetadataType.Relation &&
@@ -40,7 +39,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,
         FieldMetadataType.Phones,
-        ...(enabled ? [FieldMetadataType.Array, FieldMetadataType.RawJson] : []),
+        ...(isArrayAndJsonFilterEnabled ? [FieldMetadataType.Array, FieldMetadataType.RawJson] : []),
       ].includes(field.type)
     ) {
       return acc;
