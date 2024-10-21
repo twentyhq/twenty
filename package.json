@@ -176,6 +176,7 @@
     "scroll-into-view": "^1.16.2",
     "semver": "^7.5.4",
     "sharp": "^0.32.1",
+    "slash": "^5.1.0",
     "stripe": "^14.17.0",
     "ts-key-enum": "^2.0.12",
     "tslib": "^2.3.0",
@@ -294,6 +295,7 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-project-structure": "^3.7.2",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
@@ -347,7 +349,7 @@
   "version": "0.2.1",
   "nx": {},
   "scripts": {
-    "start": "npx nx run-many -t start -p twenty-server twenty-front"
+    "start": "npx nx run-many -t start worker -p twenty-server twenty-front"
   },
   "workspaces": {
     "packages": [

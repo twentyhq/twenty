@@ -1,8 +1,7 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
 
 describe('detectDateFormat', () => {
-  it('should return DateFormat.MONTH_FIRST if the detected format starts with month', () => {
+  it('should return MONTH_FIRST if the detected format starts with month', () => {
     // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
@@ -16,10 +15,10 @@ describe('detectDateFormat', () => {
 
     const result = detectDateFormat();
 
-    expect(result).toBe(DateFormat.MONTH_FIRST);
+    expect(result).toBe('MONTH_FIRST');
   });
 
-  it('should return DateFormat.DAY_FIRST if the detected format starts with day', () => {
+  it('should return DAY_FIRST if the detected format starts with day', () => {
     // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
@@ -32,10 +31,10 @@ describe('detectDateFormat', () => {
 
     const result = detectDateFormat();
 
-    expect(result).toBe(DateFormat.DAY_FIRST);
+    expect(result).toBe('DAY_FIRST');
   });
 
-  it('should return DateFormat.YEAR_FIRST if the detected format starts with year', () => {
+  it('should return YEAR_FIRST if the detected format starts with year', () => {
     // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
@@ -48,10 +47,10 @@ describe('detectDateFormat', () => {
 
     const result = detectDateFormat();
 
-    expect(result).toBe(DateFormat.YEAR_FIRST);
+    expect(result).toBe('YEAR_FIRST');
   });
 
-  it('should return DateFormat.MONTH_FIRST by default if the detected format does not match any specific order', () => {
+  it('should return MONTH_FIRST by default if the detected format does not match any specific order', () => {
     // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
@@ -64,6 +63,6 @@ describe('detectDateFormat', () => {
 
     const result = detectDateFormat();
 
-    expect(result).toBe(DateFormat.MONTH_FIRST);
+    expect(result).toBe('MONTH_FIRST');
   });
 });

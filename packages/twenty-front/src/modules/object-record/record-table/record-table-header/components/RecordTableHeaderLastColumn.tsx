@@ -22,7 +22,6 @@ const StyledPlusIconHeaderCell = styled.th<{
   `;
   }};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   background-color: ${({ theme }) => theme.background.primary};
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};

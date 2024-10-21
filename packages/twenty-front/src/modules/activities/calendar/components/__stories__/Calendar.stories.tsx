@@ -1,10 +1,10 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { Meta, StoryObj } from '@storybook/react';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
-import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/queries/getTimelineCalendarEventsFromCompanyId';
+import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';

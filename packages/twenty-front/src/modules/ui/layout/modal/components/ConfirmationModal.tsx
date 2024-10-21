@@ -25,6 +25,7 @@ export type ConfirmationModalProps = {
   confirmationPlaceholder?: string;
   confirmationValue?: string;
   confirmButtonAccent?: ButtonAccent;
+  AdditionalButtons?: React.ReactNode;
 };
 
 const StyledConfirmationModal = styled(Modal)`
@@ -33,7 +34,8 @@ const StyledConfirmationModal = styled(Modal)`
   height: auto;
 `;
 
-const StyledCenteredButton = styled(Button)`
+export const StyledCenteredButton = styled(Button)`
+  box-sizing: border-box;
   justify-content: center;
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
@@ -68,6 +70,7 @@ export const ConfirmationModal = ({
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
+  AdditionalButtons,
 }: ConfirmationModalProps) => {
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
@@ -138,6 +141,9 @@ export const ConfirmationModal = ({
               title="Cancel"
               fullWidth
             />
+
+            {AdditionalButtons}
+
             <StyledCenteredButton
               onClick={handleConfirmClick}
               variant="secondary"
