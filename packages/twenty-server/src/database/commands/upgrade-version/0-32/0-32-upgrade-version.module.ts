@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-enforce-unique-constraints.command';
+import { SimplifySearchVectorExpressionCommand } from 'src/database/commands/upgrade-version/0-32/0-32-simplify-search-vector-expression';
 import { UpgradeTo0_32Command } from 'src/database/commands/upgrade-version/0-32/0-32-upgrade-version.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -21,6 +22,10 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     SearchModule,
     WorkspaceMigrationRunnerModule,
   ],
-  providers: [UpgradeTo0_32Command, EnforceUniqueConstraintsCommand],
+  providers: [
+    UpgradeTo0_32Command,
+    EnforceUniqueConstraintsCommand,
+    SimplifySearchVectorExpressionCommand,
+  ],
 })
 export class UpgradeTo0_32CommandModule {}
