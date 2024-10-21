@@ -8,11 +8,11 @@ import { NavigationBarItem } from './NavigationBarItem';
 
 const StyledContainer = styled.div`
 display: flex;
-gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(6)};
   justify-content: left;
   padding: ${({ theme }) => theme.spacing(3)};
   z-index: 1001;
-  overflow: scroll;
+  overflow-x: scroll;
   `;
 
 const StyledAvatar = styled(Avatar)`
@@ -67,7 +67,7 @@ export const NavigationBar = ({
           />
         )}
         isActive={false}
-        onClick={() => navigate("")}
+        onClick={() => navigate(getAbsoluteUrl('/'))}
       />
     {favorites.map((favItem) => (
       <NavigationBarItem
