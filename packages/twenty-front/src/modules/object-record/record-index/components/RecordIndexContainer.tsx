@@ -22,7 +22,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
-import { ActionMenu } from '@/action-menu/components/ActionMenu';
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -186,7 +186,7 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
-          <ActionMenu actionMenuId={recordIndexId} />
+          <RecordIndexActionMenu actionMenuId={recordIndexId} />
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>

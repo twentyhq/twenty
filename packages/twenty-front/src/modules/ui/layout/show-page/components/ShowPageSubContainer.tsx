@@ -1,3 +1,4 @@
+import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
@@ -12,7 +13,6 @@ import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Button } from '@/ui/input/button/components/Button';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
@@ -27,7 +27,6 @@ import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualiz
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconTrash } from 'twenty-ui';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -235,12 +234,13 @@ export const ShowPageSubContainer = ({
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
           <StyledButtonContainer>
-            <Button
+            {/* <Button
               Icon={IconTrash}
               onClick={handleDelete}
               disabled={isDeleting}
               title={isDeleting ? 'Deleting...' : 'Delete'}
-            ></Button>
+            ></Button> */}
+            <RecordShowActionMenu actionMenuId={'right-drawer-action-menu'} />
           </StyledButtonContainer>
         )}
       </StyledShowPageRightContainer>

@@ -2,6 +2,7 @@ import { InformationBannerDeletedRecord } from '@/information-banner/components/
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 
+import { RecordShowContainerContextStoreEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
@@ -39,6 +40,7 @@ export const RecordShowContainer = ({
 
   return (
     <>
+      <RecordShowContainerContextStoreEffect recordId={objectRecordId} />
       {recordFromStore && recordFromStore.deletedAt && (
         <InformationBannerDeletedRecord
           recordId={objectRecordId}

@@ -1,13 +1,18 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
-import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
+import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
+import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
+import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
+
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { useRecoilValue } from 'recoil';
 
-export const ActionMenu = ({ actionMenuId }: { actionMenuId: string }) => {
+export const RecordIndexActionMenu = ({
+  actionMenuId,
+}: {
+  actionMenuId: string;
+}) => {
   const contextStoreCurrentObjectMetadataId = useRecoilValue(
     contextStoreCurrentObjectMetadataIdState,
   );
@@ -18,10 +23,10 @@ export const ActionMenu = ({ actionMenuId }: { actionMenuId: string }) => {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: actionMenuId }}
         >
-          <ActionMenuBar />
-          <ActionMenuDropdown />
+          <RecordIndexActionMenuBar />
+          <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
-          <ActionMenuEffect />
+          <RecordIndexActionMenuEffect />
           <RecordActionMenuEntriesSetter />
         </ActionMenuComponentInstanceContext.Provider>
       )}

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ActionMenuBarEntry } from '@/action-menu/components/ActionMenuBarEntry';
+import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
@@ -18,7 +18,7 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionMenuBar = () => {
+export const RecordIndexActionMenuBar = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilValue(
     contextStoreNumberOfSelectedRecordsState,
   );
@@ -44,7 +44,7 @@ export const ActionMenuBar = () => {
     >
       <StyledLabel>{contextStoreNumberOfSelectedRecords} selected:</StyledLabel>
       {actionMenuEntries.map((entry, index) => (
-        <ActionMenuBarEntry key={index} entry={entry} />
+        <RecordIndexActionMenuBarEntry key={index} entry={entry} />
       ))}
     </BottomBar>
   );

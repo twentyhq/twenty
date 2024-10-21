@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-export const RecordShowPageContextStoreEffect = ({
+export const RecordShowContainerContextStoreEffect = ({
   recordId,
 }: {
   recordId: string;

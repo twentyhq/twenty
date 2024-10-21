@@ -7,7 +7,7 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-export const ActionMenuEffect = () => {
+export const RecordIndexActionMenuEffect = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilValue(
     contextStoreNumberOfSelectedRecordsState,
   );
