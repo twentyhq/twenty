@@ -1,9 +1,7 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
@@ -30,22 +28,9 @@ export const NavigationDrawerCollapseButton = ({
   className,
   direction = 'left',
 }: NavigationDrawerCollapseButtonProps) => {
-  const isSettingsPage = useIsSettingsPage();
-
   const setIsNavigationDrawerExpanded = useSetRecoilState(
     isNavigationDrawerExpandedState,
   );
-  const isNavigationDrawerExpanded = useRecoilValue(
-    isNavigationDrawerExpandedState,
-  );
-
-  // Check if the user is on the settings page and the navigation drawer is not expanded
-  // Then open it automatically
-  useEffect(() => {
-    if (!isNavigationDrawerExpanded && isSettingsPage) {
-      setIsNavigationDrawerExpanded(true);
-    }
-  }, [isSettingsPage]);
 
   return (
     <StyledCollapseButton

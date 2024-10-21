@@ -16,7 +16,6 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { matchPath, useLocation } from 'react-router-dom';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
