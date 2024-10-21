@@ -18,7 +18,6 @@ import { RecordValueSetterEffect } from '@/object-record/record-store/components
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
@@ -28,7 +27,13 @@ import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { AvatarChipVariant, IconEye, IconEyeOff } from 'twenty-ui';
+import {
+  AvatarChipVariant,
+  IconEye,
+  IconEyeOff,
+  Checkbox,
+  CheckboxVariant,
+} from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 

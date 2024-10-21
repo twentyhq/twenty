@@ -1,10 +1,10 @@
-import { Tag, ThemeColor } from 'twenty-ui';
-
 import {
+  Tag,
+  ThemeColor,
   Checkbox,
   CheckboxShape,
   CheckboxSize,
-} from '@/ui/input/components/Checkbox';
+} from 'twenty-ui';
 
 import {
   StyledMenuItemBase,

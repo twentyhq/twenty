@@ -3,7 +3,7 @@ import { useContext } from 'react';
 
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
-import { IconListViewGrip } from '@/ui/input/components/IconListViewGrip';
+import { IconListViewGrip } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   cursor: grab;

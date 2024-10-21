@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Toggle } from '@/ui/input/components/Toggle';
+import { Toggle } from 'twenty-ui';
 import { RemoteTableStatus } from '~/generated-metadata/graphql';
 
 export const SettingsIntegrationRemoteTableSyncStatusToggle = ({

@@ -1,8 +1,7 @@
-import { Toggle } from '@/ui/input/components/Toggle';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
-import { IconTool, MAIN_COLORS } from 'twenty-ui';
+import { IconTool, MAIN_COLORS, Toggle } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;

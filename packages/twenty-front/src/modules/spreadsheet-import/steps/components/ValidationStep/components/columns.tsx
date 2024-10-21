@@ -2,13 +2,11 @@ import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
-import { AppTooltip } from 'twenty-ui';
+import { AppTooltip, Checkbox, CheckboxVariant, Toggle } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { Fields, ImportedStructuredRow } from '@/spreadsheet-import/types';
-import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Toggle } from '@/ui/input/components/Toggle';
 import { isDefined } from '~/utils/isDefined';
 
 import { ImportedStructuredRowMetadata } from '../types';

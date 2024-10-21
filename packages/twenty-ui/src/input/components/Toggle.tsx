@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from '@ui/utilities';
 
 export type ToggleSize = 'small' | 'medium';
 

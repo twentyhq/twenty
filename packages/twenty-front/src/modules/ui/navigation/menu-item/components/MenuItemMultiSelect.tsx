@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { IconComponent, Tag, ThemeColor } from 'twenty-ui';
+import { IconComponent, Tag, ThemeColor, Checkbox } from 'twenty-ui';
 
-import { Checkbox } from '@/ui/input/components/Checkbox';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';

@@ -1,5 +1,6 @@
 export * from './components';
 export * from './display';
+export * from './input';
 export * from './layout';
 export * from './testing';
 export * from './theme';
