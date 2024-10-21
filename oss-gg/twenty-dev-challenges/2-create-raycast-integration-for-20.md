@@ -14,9 +14,6 @@ Please follow the following schema:
 
 Your turn 👇
 
-Link to code: [raycast-twenty]()
-
-
 ////////////////////////////
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) video Link: [video](https://twenty.com/)
