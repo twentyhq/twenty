@@ -14,6 +14,8 @@ import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRe
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { sortViewFilterGroupsOutermostFirst } from '@/views/utils/sortViewFilterGroupsOutermostFirst';
+import { isDefined } from 'twenty-ui';
 
 export const usePersistViewFilterGroupRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -40,38 +42,39 @@ export const usePersistViewFilterGroupRecords = () => {
 
   const apolloClient = useApolloClient();
 
-  const createViewFilterGroupRecords = useCallback(
-    (viewFilterGroupsToCreate: ViewFilterGroup[], view: GraphQLView) => {
-      if (!viewFilterGroupsToCreate.length) return;
+  const createViewFilterGroupRecord = useCallback(
+    async (viewFilterGroup: ViewFilterGroup, view: GraphQLView) => {
+      const result = await apolloClient.mutate<{
+        createViewFilterGroup: ViewFilterGroup;
+      }>({
+        mutation: createOneRecordMutation,
+        variables: {
+          input: {
+            viewId: view.id,
+            parentViewFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
+            logicalOperator: viewFilterGroup.logicalOperator,
+            positionInViewFilterGroup:
+              viewFilterGroup.positionInViewFilterGroup,
+          },
+        },
+        update: (cache, { data }) => {
+          const record = data?.createViewFilterGroup;
+          if (!record) return;
 
-      return Promise.all(
-        viewFilterGroupsToCreate.map((viewFilterGroup) =>
-          apolloClient.mutate<{ createViewFilterGroup: ViewFilterGroup }>({
-            mutation: createOneRecordMutation,
-            variables: {
-              input: {
-                viewId: view.id,
-                parentViewFilterGroupId:
-                  viewFilterGroup.parentViewFilterGroupId,
-                logicalOperator: viewFilterGroup.logicalOperator,
-                positionInViewFilterGroup:
-                  viewFilterGroup.positionInViewFilterGroup,
-              },
-            },
-            update: (cache, { data }) => {
-              const record = data?.createViewFilterGroup;
-              if (!record) return;
+          triggerCreateRecordsOptimisticEffect({
+            cache,
+            objectMetadataItem,
+            recordsToCreate: [record],
+            objectMetadataItems,
+          });
+        },
+      });
 
-              triggerCreateRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToCreate: [record],
-                objectMetadataItems,
-              });
-            },
-          }),
-        ),
-      );
+      if (!result.data) {
+        throw new Error('Failed to create view filter group');
+      }
+
+      return { newRecordId: result.data.createViewFilterGroup.id };
     },
     [
       apolloClient,
@@ -79,6 +82,48 @@ export const usePersistViewFilterGroupRecords = () => {
       objectMetadataItem,
       objectMetadataItems,
     ],
+  );
+
+  const createViewFilterGroupRecords = useCallback(
+    async (viewFilterGroupsToCreate: ViewFilterGroup[], view: GraphQLView) => {
+      if (!viewFilterGroupsToCreate.length) return [];
+
+      const viewFilterGroupsOutermostFirst = sortViewFilterGroupsOutermostFirst(
+        viewFilterGroupsToCreate,
+      );
+
+      const oldToNewId = new Map<string, string>();
+
+      for (const viewFilterGroup of viewFilterGroupsOutermostFirst) {
+        const newParentViewFilterGroupId = isDefined(
+          viewFilterGroup.parentViewFilterGroupId,
+        )
+          ? (oldToNewId.get(viewFilterGroup.parentViewFilterGroupId) ??
+            viewFilterGroup.parentViewFilterGroupId)
+          : undefined;
+
+        const { newRecordId } = await createViewFilterGroupRecord(
+          {
+            ...viewFilterGroup,
+            parentViewFilterGroupId: newParentViewFilterGroupId,
+          },
+          view,
+        );
+
+        oldToNewId.set(viewFilterGroup.id, newRecordId);
+      }
+
+      const newRecordIds = viewFilterGroupsToCreate.map((viewFilterGroup) => {
+        const newId = oldToNewId.get(viewFilterGroup.id);
+        if (!newId) {
+          throw new Error('Failed to create view filter group');
+        }
+        return newId;
+      });
+
+      return newRecordIds;
+    },
+    [createViewFilterGroupRecord],
   );
 
   const updateViewFilterGroupRecords = useCallback(

@@ -29,7 +29,7 @@ export const useCreateViewFiltersAndSorts = () => {
       return;
     }
 
-    const createViewFilterGroupsResult = await createViewFilterGroupRecords(
+    const newViewFilterGroupRecordIds = await createViewFilterGroupRecords(
       viewFilterGroupsToCreate,
       view,
     );
@@ -40,7 +40,7 @@ export const useCreateViewFiltersAndSorts = () => {
     >(
       viewFilterGroupsToCreate.map((viewFilterGroupToCreate, i) => [
         viewFilterGroupToCreate.id,
-        createViewFilterGroupsResult?.[i].data?.createViewFilterGroup.id,
+        newViewFilterGroupRecordIds[i],
       ]),
     );
 

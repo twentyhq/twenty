@@ -770,20 +770,18 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   filters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
   viewFilterGroups: ViewFilterGroup[],
-  viewFilterGroupId?: string,
+  currentViewFilterGroupId?: string,
 ): RecordGqlOperationFilter | undefined => {
-  const viewFilterGroup = viewFilterGroups.find((viewFilterGroup) =>
-    viewFilterGroupId
-      ? viewFilterGroup.id === viewFilterGroupId
-      : !viewFilterGroup.parentViewFilterGroupId,
+  const currentViewFilterGroup = viewFilterGroups.find(
+    (viewFilterGroup) => viewFilterGroup.id === currentViewFilterGroupId,
   );
 
-  if (!viewFilterGroup) {
+  if (!currentViewFilterGroup) {
     return undefined;
   }
 
   const groupFilters = filters.filter(
-    (filter) => filter.viewFilterGroupId === viewFilterGroupId,
+    (filter) => filter.viewFilterGroupId === currentViewFilterGroupId,
   );
 
   const groupRecordGqlOperationFilters = groupFilters
@@ -793,7 +791,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   const subGroupRecordGqlOperationFilters = viewFilterGroups
     .filter(
       (viewFilterGroup) =>
-        viewFilterGroup.parentViewFilterGroupId === viewFilterGroupId,
+        viewFilterGroup.parentViewFilterGroupId === currentViewFilterGroupId,
     )
     .map((subViewFilterGroup) =>
       computeViewFilterGroupRecordGqlOperationFilter(
@@ -805,7 +803,10 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
     )
     .filter(isDefined);
 
-  if (viewFilterGroup.logicalOperator === ViewFilterGroupLogicalOperator.AND) {
+  if (
+    currentViewFilterGroup.logicalOperator ===
+    ViewFilterGroupLogicalOperator.AND
+  ) {
     return {
       and: [
         ...groupRecordGqlOperationFilters,
@@ -813,7 +814,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
       ],
     };
   } else if (
-    viewFilterGroup.logicalOperator === ViewFilterGroupLogicalOperator.OR
+    currentViewFilterGroup.logicalOperator === ViewFilterGroupLogicalOperator.OR
   ) {
     return {
       or: [
@@ -823,7 +824,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
     };
   } else {
     throw new Error(
-      `Unknown logical operator ${viewFilterGroup.logicalOperator}`,
+      `Unknown logical operator ${currentViewFilterGroup.logicalOperator}`,
     );
   }
 };
@@ -833,10 +834,6 @@ export const computeViewRecordGqlOperationFilter = (
   fields: Pick<Field, 'id' | 'name'>[],
   viewFilterGroups: ViewFilterGroup[],
 ): RecordGqlOperationFilter => {
-  if (!viewFilterGroups) {
-    throw new Error('viewFilterGroups are required');
-  }
-
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] = filters
     .filter((filter) => !filter.viewFilterGroupId)
     .map((regularFilter) =>
@@ -844,11 +841,16 @@ export const computeViewRecordGqlOperationFilter = (
     )
     .filter(isDefined);
 
+  const outermostFilterGroupId = viewFilterGroups.find(
+    (viewFilterGroup) => !viewFilterGroup.parentViewFilterGroupId,
+  )?.id;
+
   const advancedRecordGqlOperationFilter =
     computeViewFilterGroupRecordGqlOperationFilter(
       filters,
       fields,
       viewFilterGroups,
+      outermostFilterGroupId,
     );
 
   const recordGqlOperationFilters = [
