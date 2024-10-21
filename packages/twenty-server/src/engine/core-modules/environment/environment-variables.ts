@@ -103,10 +103,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_TOKEN_EXPIRES_IN: string;
-
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
   TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @CastToPositiveNumber()

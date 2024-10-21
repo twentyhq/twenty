@@ -1,10 +1,10 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
 import { AxiosRequestConfig } from 'axios';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 type CreateEventInput = {
   action: string;
@@ -17,9 +17,9 @@ export class AnalyticsService {
   private readonly defaultDatasource = 'event';
 
   constructor(
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly environmentService: EnvironmentService,
     private readonly httpService: HttpService,
-    private readonly jwtService: JwtService,
   ) {}
 
   async create(
@@ -104,6 +104,9 @@ export class AnalyticsService {
       ],
     };
 
-    return this.jwtService.sign(payload);
+    return this.jwtWrapperService.sign(payload, {
+      secret: this.environmentService.get('TINYBIRD_GENERATE_JWT_TOKEN'),
+      expiresIn: '7d',
+    });
   }
 }

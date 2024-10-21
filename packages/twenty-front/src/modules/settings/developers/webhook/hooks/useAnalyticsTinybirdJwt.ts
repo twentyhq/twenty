@@ -1,8 +1,18 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isNull } from '@sniptt/guards';
 
-export const useAnalyticsTinybirdJwt = (): string | null | undefined => {
+export const useAnalyticsTinybirdJwt = (): string | undefined => {
   const currentUser = useRecoilValue(currentUserState);
-  return currentUser?.analyticsTinybirdJwt;
+
+  if (!currentUser) {
+    return undefined;
+  }
+
+  if (isNull(currentUser.analyticsTinybirdJwt)) {
+    return undefined;
+  }
+
+  return currentUser.analyticsTinybirdJwt;
 };
