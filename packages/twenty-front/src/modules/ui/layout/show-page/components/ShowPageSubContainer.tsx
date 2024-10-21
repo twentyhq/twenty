@@ -27,18 +27,7 @@ import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualiz
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  IconCalendarEvent,
-  IconCheckbox,
-  IconList,
-  IconMail,
-  IconNotes,
-  IconPaperclip,
-  IconPrinter,
-  IconSettings,
-  IconTimelineEvent,
-  IconTrash,
-} from 'twenty-ui';
+import { IconTrash } from 'twenty-ui';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -117,130 +106,28 @@ export const ShowPageSubContainer = ({
   );
   const activeTabId = useRecoilValue(activeTabIdState);
 
-  const targetObjectNameSingular =
-    targetableObject.targetObjectNameSingular as CoreObjectNameSingular;
-
-  const isCompanyOrPerson = [
-    CoreObjectNameSingular.Company,
-    CoreObjectNameSingular.Person,
-  ].includes(targetObjectNameSingular);
-
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
-  const isWorkflow =
-    isWorkflowEnabled &&
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.Workflow;
-  const isWorkflowVersion =
-    isWorkflowEnabled &&
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.WorkflowVersion;
-  const isWorkflowRun =
-    isWorkflowEnabled &&
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.WorkflowRun;
-
-  const isWorkflowRelated = isWorkflow || isWorkflowVersion || isWorkflowRun;
-
-  const shouldDisplayCalendarTab = isCompanyOrPerson;
-  const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
-
   const isMobile = useIsMobile();
 
   const isNewViewableRecordLoading = useRecoilValue(
     isNewViewableRecordLoadingState,
   );
 
-  const tabs = [
-    {
-      id: 'richText',
-      title: 'Note',
-      Icon: IconNotes,
-      hide:
-        loading ||
-        (targetableObject.targetObjectNameSingular !==
-          CoreObjectNameSingular.Note &&
-          targetableObject.targetObjectNameSingular !==
-            CoreObjectNameSingular.Task),
-    },
-    {
-      id: 'fields',
-      title: 'Fields',
-      Icon: IconList,
-      hide: !(isMobile || isInRightDrawer),
-    },
-    {
-      id: 'timeline',
-      title: 'Timeline',
-      Icon: IconTimelineEvent,
-      hide: !timeline || isInRightDrawer || isWorkflowRelated,
-    },
-    {
-      id: 'tasks',
-      title: 'Tasks',
-      Icon: IconCheckbox,
-      hide:
-        !tasks ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Note ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Task ||
-        isWorkflowRelated,
-    },
-    {
-      id: 'notes',
-      title: 'Notes',
-      Icon: IconNotes,
-      hide:
-        !notes ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Note ||
-        targetableObject.targetObjectNameSingular ===
-          CoreObjectNameSingular.Task ||
-        isWorkflowRelated,
-    },
-    {
-      id: 'files',
-      title: 'Files',
-      Icon: IconPaperclip,
-      hide: !notes || isWorkflowRelated,
-    },
-    {
-      id: 'emails',
-      title: 'Emails',
-      Icon: IconMail,
-      hide: !shouldDisplayEmailsTab,
-    },
-    {
-      id: 'calendar',
-      title: 'Calendar',
-      Icon: IconCalendarEvent,
-      hide: !shouldDisplayCalendarTab,
-    },
-    {
-      id: 'workflow',
-      title: 'Workflow',
-      Icon: IconSettings,
-      hide: !isWorkflow,
-    },
-    {
-      id: 'workflowVersion',
-      title: 'Flow',
-      Icon: IconSettings,
-      hide: !isWorkflowVersion,
-    },
-    {
-      id: 'workflowRunOutput',
-      title: 'Output',
-      Icon: IconPrinter,
-      hide: !isWorkflowRun,
-    },
-    {
-      id: 'workflowRunFlow',
-      title: 'Flow',
-      Icon: IconSettings,
-      hide: !isWorkflowRun,
-    },
-  ];
+  const summaryCard = (
+    <SummaryCard
+      objectNameSingular={targetableObject.targetObjectNameSingular}
+      objectRecordId={targetableObject.id}
+      isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
+      isInRightDrawer={isInRightDrawer}
+    />
+  );
+
+  const fieldsCard = (
+    <FieldsCard
+      objectNameSingular={targetableObject.targetObjectNameSingular}
+      objectRecordId={targetableObject.id}
+    />
+  );
+
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'timeline':
