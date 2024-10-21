@@ -21,8 +21,6 @@ export const ObjectMetadataItemsLoadEffect = () => {
       skip: !isLoggedIn,
     });
 
-  console.log('a', newObjectMetadataItems);
-
   const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(
     objectMetadataItemsState,
   );
