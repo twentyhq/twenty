@@ -17,6 +17,7 @@ export type Step = {
   output: any;
 };
 
+// TODO: Replace with actual available variables when backend is ready
 const MOCK_AVAILABLE_VARIABLES: Step[] = [
   {
     id: '1',
@@ -50,17 +51,22 @@ const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
 )`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: ${({ theme }) => theme.spacing(0)};
+  margin: ${({ theme }) => theme.spacing(2)};
 `;
 
 const SearchVariablesDropdown = ({
+  inputId,
   onSelect,
 }: {
+  inputId: string;
   onSelect: (value: any) => void;
 }) => {
   const theme = useTheme();
 
-  const { isDropdownOpen } = useDropdown(SEARCH_VARIABLES_DROPDOWN_ID);
+  const dropdownId = SEARCH_VARIABLES_DROPDOWN_ID + '-' + inputId;
+  const { isDropdownOpen } = useDropdown(dropdownId);
   const [selectedStep, setSelectedStep] = useState<Step | undefined>(undefined);
 
   const handleStepSelect = (stepId: string) => {
@@ -79,9 +85,9 @@ const SearchVariablesDropdown = ({
 
   return (
     <Dropdown
-      dropdownId={SEARCH_VARIABLES_DROPDOWN_ID}
+      dropdownId={dropdownId}
       dropdownHotkeyScope={{
-        scope: SEARCH_VARIABLES_DROPDOWN_ID,
+        scope: dropdownId,
       }}
       clickableComponent={
         <StyledDropdownVariableButtonContainer isUnfolded={isDropdownOpen}>

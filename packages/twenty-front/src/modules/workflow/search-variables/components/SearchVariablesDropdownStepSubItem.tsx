@@ -1,11 +1,12 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
+import { Step } from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { useState } from 'react';
 import { IconChevronLeft } from 'twenty-ui';
 
 type SearchVariablesDropdownStepSubItemProps = {
-  step: any;
-  onSelect: (value: any) => void;
+  step: Step;
+  onSelect: (value: string) => void;
   onBack: () => void;
 };
 
@@ -51,6 +52,7 @@ const SearchVariablesDropdownStepSubItem = ({
       </DropdownMenuHeader>
       {Object.entries(getCurrentObject()).map(([key, value]) => (
         <MenuItemSelect
+          key={key}
           selected={false}
           hovered={false}
           onClick={() => handleSelect(key)}
