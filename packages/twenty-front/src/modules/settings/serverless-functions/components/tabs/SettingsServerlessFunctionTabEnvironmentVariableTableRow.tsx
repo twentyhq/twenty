@@ -8,6 +8,7 @@ import {
   IconPencil,
   IconTrash,
   IconX,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -23,7 +24,7 @@ const StyledEditModeTableRow = styled(TableRow)`
 `;
 
 const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 180px auto 32px;
+  grid-template-columns: 180px 300px 32px;
 `;
 
 export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
@@ -96,8 +97,12 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
     </StyledEditModeTableRow>
   ) : (
     <StyledTableRow>
-      <TableCell>{envVariable.key}</TableCell>
-      <TableCell>{envVariable.value}</TableCell>
+      <TableCell>
+        <OverflowingTextWithTooltip text={envVariable.key} />
+      </TableCell>
+      <TableCell>
+        <OverflowingTextWithTooltip text={envVariable.value} />
+      </TableCell>
       <TableCell>
         <Dropdown
           dropdownMenuWidth="100px"
