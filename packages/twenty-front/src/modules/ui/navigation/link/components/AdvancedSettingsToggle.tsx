@@ -48,7 +48,7 @@ export const AdvancedSettingsToggle = () => {
     setIsAdvancedModeEnabled(newValue);
   };
 
-  const toggleAdvancedMode = () => {
+  const toogleAdvancedMode = () => {
     setIsAdvancedModeEnabled((current) => !current);
   };
 
@@ -58,7 +58,7 @@ export const AdvancedSettingsToggle = () => {
         <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
       </StyledIconContainer>
       <StyledToggleContainer>
-        <StyledText onClick={toggleAdvancedMode}>Advanced:</StyledText>
+        <StyledText onClick={toogleAdvancedMode}>Advanced:</StyledText>
         <Toggle
           onChange={onChange}
           color={MAIN_COLORS.yellow}
