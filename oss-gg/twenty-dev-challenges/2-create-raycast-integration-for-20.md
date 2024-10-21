@@ -14,10 +14,6 @@ Please follow the following schema:
 
 Your turn 👇
 
-Link to code: [raycast-twenty](https://github.com/Hitarthsheth07/Raycast-twenty)
-
-_NOTE_: **The extension will not work since API implementation is needed.**
-No API documentation is avilable for creating a new record. Provide endpoint and query details to complete the extension. 
 ////////////////////////////
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) video Link: [video](https://twenty.com/)
