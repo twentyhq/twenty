@@ -3,21 +3,22 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 class GraphqlTokenValidationProxy {
-  private tokenService: TokenService;
+  private accessTokenService: AccessTokenService;
 
-  constructor(tokenService: TokenService) {
-    this.tokenService = tokenService;
+  constructor(accessTokenService: AccessTokenService) {
+    this.accessTokenService = accessTokenService;
   }
 
   async validateToken(req: Request) {
     try {
-      return await this.tokenService.validateToken(req);
+      return await this.accessTokenService.validateToken(req);
     } catch (error) {
       const authGraphqlApiExceptionFilter = new AuthGraphqlApiExceptionFilter();
 
@@ -32,6 +33,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
 {
   constructor(
     private readonly tokenService: TokenService,
+    private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -69,7 +71,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
 
     try {
       const graphqlTokenValidationProxy = new GraphqlTokenValidationProxy(
-        this.tokenService,
+        this.accessTokenService,
       );
 
       data = await graphqlTokenValidationProxy.validateToken(req);

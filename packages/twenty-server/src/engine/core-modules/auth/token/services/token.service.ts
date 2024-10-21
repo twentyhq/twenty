@@ -3,12 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
 import { ExtractJwt } from 'passport-jwt';
-import { PasswordResetLinkEmail } from 'twenty-emails';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -19,40 +17,27 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
-import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import {
   ApiKeyToken,
   AuthToken,
   AuthTokens,
   PasswordResetToken,
 } from 'src/engine/core-modules/auth/dto/token.entity';
-import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
-import {
-  JwtAuthStrategy,
-  JwtPayload,
-} from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { generateSecret } from 'src/utils/generate-secret';
 
 @Injectable()
 export class TokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly jwtStrategy: JwtAuthStrategy,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -60,87 +45,10 @@ export class TokenService {
     private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly emailService: EmailService,
     private readonly sSSOService: SSOService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly accessTokenService: AccessTokenService,
+    private readonly loginTokenService: LoginTokenService,
   ) {}
-
-  async generateAccessToken(
-    userId: string,
-    workspaceId: string,
-  ): Promise<AuthToken> {
-    const expiresIn = this.environmentService.get('ACCESS_TOKEN_EXPIRES_IN');
-
-    if (!expiresIn) {
-      throw new AuthException(
-        'Expiration time for access token is not set',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['defaultWorkspace'],
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User is not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (!user.defaultWorkspace) {
-      throw new AuthException(
-        'User does not have a default workspace',
-        AuthExceptionCode.INVALID_DATA,
-      );
-    }
-
-    const tokenWorkspaceId = workspaceId ?? user.defaultWorkspaceId;
-    let tokenWorkspaceMemberId: string | undefined;
-
-    if (
-      user.defaultWorkspace.activationStatus ===
-      WorkspaceActivationStatus.ACTIVE
-    ) {
-      const workspaceMemberRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          tokenWorkspaceId,
-          'workspaceMember',
-        );
-
-      const workspaceMember = await workspaceMemberRepository.findOne({
-        where: {
-          userId: user.id,
-        },
-      });
-
-      if (!workspaceMember) {
-        throw new AuthException(
-          'User is not a member of the workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      tokenWorkspaceMemberId = workspaceMember.id;
-    }
-
-    const jwtPayload: JwtPayload = {
-      sub: user.id,
-      workspaceId: workspaceId ? workspaceId : user.defaultWorkspaceId,
-      workspaceMemberId: tokenWorkspaceMemberId,
-    };
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret('ACCESS', workspaceId),
-      }),
-      expiresAt,
-    };
-  }
 
   async generateRefreshToken(
     userId: string,
@@ -212,31 +120,6 @@ export class TokenService {
     return this.appTokenRepository.save(invitationToken);
   }
 
-  async generateLoginToken(email: string): Promise<AuthToken> {
-    const secret = this.jwtWrapperService.generateAppSecret('LOGIN');
-    const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
-
-    if (!expiresIn) {
-      throw new AuthException(
-        'Expiration time for access token is not set',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-    const jwtPayload = {
-      sub: email,
-    };
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
-        expiresIn,
-      }),
-      expiresAt,
-    };
-  }
-
   async generateTransientToken(
     workspaceMemberId: string,
     userId: string,
@@ -304,34 +187,6 @@ export class TokenService {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     return !!token;
-  }
-
-  async validateToken(request: Request): Promise<AuthContext> {
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
-
-    if (!token) {
-      throw new AuthException(
-        'missing authentication token',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    await this.jwtWrapperService.verifyWorkspaceToken(token, 'ACCESS');
-
-    const decoded = await this.jwtWrapperService.decode(token);
-
-    const { user, apiKey, workspace, workspaceMemberId } =
-      await this.jwtStrategy.validate(decoded as JwtPayload);
-
-    return { user, apiKey, workspace, workspaceMemberId };
-  }
-
-  async verifyLoginToken(loginToken: string): Promise<string> {
-    await this.jwtWrapperService.verifyWorkspaceToken(loginToken, 'LOGIN');
-
-    return this.jwtWrapperService.decode(loginToken, {
-      json: true,
-    }).sub;
   }
 
   async verifyTransientToken(transientToken: string): Promise<{
@@ -420,7 +275,10 @@ export class TokenService {
       defaultWorkspace: workspace,
     });
 
-    const token = await this.generateAccessToken(user.id, workspace.id);
+    const token = await this.accessTokenService.generateAccessToken(
+      user.id,
+      workspace.id,
+    );
     const refreshToken = await this.generateRefreshToken(user.id, workspace.id);
 
     return {
@@ -536,7 +394,7 @@ export class TokenService {
       );
     }
 
-    const accessToken = await this.generateAccessToken(
+    const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
       user.defaultWorkspaceId,
     );
@@ -544,7 +402,9 @@ export class TokenService {
       user.id,
       user.defaultWorkspaceId,
     );
-    const loginToken = await this.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
     return {
       accessToken,
@@ -643,7 +503,10 @@ export class TokenService {
       },
     );
 
-    const accessToken = await this.generateAccessToken(user.id, workspaceId);
+    const accessToken = await this.accessTokenService.generateAccessToken(
+      user.id,
+      workspaceId,
+    );
     const refreshToken = await this.generateRefreshToken(user.id, workspaceId);
 
     return {
@@ -721,126 +584,5 @@ export class TokenService {
       passwordResetToken: plainResetToken,
       passwordResetTokenExpiresAt: expiresAt,
     };
-  }
-
-  async sendEmailPasswordResetLink(
-    resetToken: PasswordResetToken,
-    email: string,
-  ): Promise<EmailPasswordResetLink> {
-    const user = await this.userRepository.findOneBy({
-      email,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
-    const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
-
-    const emailData = {
-      link: resetLink,
-      duration: ms(
-        differenceInMilliseconds(
-          resetToken.passwordResetTokenExpiresAt,
-          new Date(),
-        ),
-        {
-          long: true,
-        },
-      ),
-    };
-
-    const emailTemplate = PasswordResetLinkEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
-
-    this.emailService.send({
-      from: `${this.environmentService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-      to: email,
-      subject: 'Action Needed to Reset Password',
-      text,
-      html,
-    });
-
-    return { success: true };
-  }
-
-  async validatePasswordResetToken(
-    resetToken: string,
-  ): Promise<ValidatePasswordResetToken> {
-    const hashedResetToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
-
-    const token = await this.appTokenRepository.findOne({
-      where: {
-        value: hashedResetToken,
-        type: AppTokenType.PasswordResetToken,
-        expiresAt: MoreThan(new Date()),
-        revokedAt: IsNull(),
-      },
-    });
-
-    if (!token || !token.userId) {
-      throw new AuthException(
-        'Token is invalid',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const user = await this.userRepository.findOneBy({
-      id: token.userId,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    return {
-      id: user.id,
-      email: user.email,
-    };
-  }
-
-  async invalidatePasswordResetToken(
-    userId: string,
-  ): Promise<InvalidatePassword> {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    await this.appTokenRepository.update(
-      {
-        userId,
-        type: AppTokenType.PasswordResetToken,
-      },
-      {
-        revokedAt: new Date(),
-      },
-    );
-
-    return { success: true };
   }
 }

@@ -32,6 +32,7 @@ import { UserExists } from 'src/engine/core-modules/auth/dto/user-exists.entity'
 import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -41,6 +42,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly accessTokenService: AccessTokenService,
     private readonly tokenService: TokenService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
@@ -150,7 +152,7 @@ export class AuthService {
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
 
-    const accessToken = await this.tokenService.generateAccessToken(
+    const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
       user.defaultWorkspaceId,
     );
@@ -215,7 +217,7 @@ export class AuthService {
       );
     }
 
-    const accessToken = await this.tokenService.generateAccessToken(
+    const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
       user.defaultWorkspaceId,
     );

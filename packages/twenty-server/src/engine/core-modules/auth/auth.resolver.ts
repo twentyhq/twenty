@@ -10,12 +10,19 @@ import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/em
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
 import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
+import {
+  GenerateJWTOutput,
+  GenerateJWTOutputWithAuthTokens,
+  GenerateJWTOutputWithSSOAUTH,
+} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -24,11 +31,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import {
-  GenerateJWTOutput,
-  GenerateJWTOutputWithAuthTokens,
-  GenerateJWTOutputWithSSOAUTH,
-} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -51,6 +53,8 @@ export class AuthResolver {
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
+    private resetPasswordService: ResetPasswordService,
+    private loginTokenService: LoginTokenService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -87,7 +91,9 @@ export class AuthResolver {
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
     const user = await this.authService.challenge(challengeInput);
-    const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
     return { loginToken };
   }
@@ -100,7 +106,9 @@ export class AuthResolver {
       fromSSO: false,
     });
 
-    const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
     return { loginToken };
   }
@@ -141,7 +149,7 @@ export class AuthResolver {
 
   @Mutation(() => Verify)
   async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
-    const email = await this.tokenService.verifyLoginToken(
+    const email = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
 
@@ -240,7 +248,7 @@ export class AuthResolver {
       emailPasswordResetInput.email,
     );
 
-    return await this.tokenService.sendEmailPasswordResetLink(
+    return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
     );
@@ -252,18 +260,20 @@ export class AuthResolver {
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
   ): Promise<InvalidatePassword> {
     const { id } =
-      await this.tokenService.validatePasswordResetToken(passwordResetToken);
+      await this.resetPasswordService.validatePasswordResetToken(
+        passwordResetToken,
+      );
 
     await this.authService.updatePassword(id, newPassword);
 
-    return await this.tokenService.invalidatePasswordResetToken(id);
+    return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }
 
   @Query(() => ValidatePasswordResetToken)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetToken> {
-    return this.tokenService.validatePasswordResetToken(
+    return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
   }

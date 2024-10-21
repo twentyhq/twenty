@@ -15,6 +15,7 @@ import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oau
 import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 
 @Controller('auth/google')
@@ -22,6 +23,7 @@ import { TokenService } from 'src/engine/core-modules/auth/token/services/token.
 export class GoogleAuthController {
   constructor(
     private readonly tokenService: TokenService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
   ) {}
 
@@ -55,7 +57,9 @@ export class GoogleAuthController {
       fromSSO: true,
     });
 
-    const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
     return res.redirect(this.tokenService.computeRedirectURI(loginToken.token));
   }
