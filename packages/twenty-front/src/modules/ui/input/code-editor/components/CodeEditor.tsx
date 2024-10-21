@@ -95,10 +95,12 @@ export const CodeEditor = ({
         };
       `;
 
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(
-          environmentDefinition,
-          'ts:process-env.d.ts',
-        );
+        monaco.languages.typescript.typescriptDefaults.setExtraLibs([
+          {
+            content: environmentDefinition,
+            filePath: 'ts:process-env.d.ts',
+          },
+        ]);
       }
 
       await AutoTypings.create(editor, {
