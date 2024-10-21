@@ -1,6 +1,7 @@
 import { Toggle } from '@/ui/input/components/Toggle';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
+import { useId } from 'react';
 import { useRecoilState } from 'recoil';
 import { IconTool, MAIN_COLORS } from 'twenty-ui';
 
@@ -12,7 +13,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledText = styled.span`
+const StyledLabel = styled.label`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -41,6 +42,7 @@ export const AdvancedSettingsToggle = () => {
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useRecoilState(
     isAdvancedModeEnabledState,
   );
+  const inputId = useId();
 
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
@@ -52,8 +54,10 @@ export const AdvancedSettingsToggle = () => {
         <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
       </StyledIconContainer>
       <StyledToggleContainer>
-        <StyledText>Advanced:</StyledText>
+        <StyledLabel htmlFor={inputId}>Advanced:</StyledLabel>
+
         <Toggle
+          id={inputId}
           onChange={onChange}
           color={MAIN_COLORS.yellow}
           value={isAdvancedModeEnabled}
