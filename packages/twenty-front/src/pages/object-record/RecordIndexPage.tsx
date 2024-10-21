@@ -14,6 +14,8 @@ import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from '~/utils/string/capitalize';
+import { CurrentViewComponentInstanceContextProvider } from '@/views/states/contexts/CurrentViewComponentInstanceContext';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -66,13 +68,21 @@ export const RecordIndexPage = () => {
           onCreateRecord: handleCreateRecord,
         }}
       >
-        <PageTitle title={`${capitalize(objectNamePlural)}`} />
-        <RecordIndexPageHeader />
-        <PageBody>
-          <StyledIndexContainer>
-            <RecordIndexContainer />
-          </StyledIndexContainer>
-        </PageBody>
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: recordIndexId }}
+        >
+          <CurrentViewComponentInstanceContextProvider
+            recordIndexId={recordIndexId}
+          >
+            <PageTitle title={`${capitalize(objectNamePlural)}`} />
+            <RecordIndexPageHeader />
+            <PageBody>
+              <StyledIndexContainer>
+                <RecordIndexContainer />
+              </StyledIndexContainer>
+            </PageBody>
+          </CurrentViewComponentInstanceContextProvider>
+        </ViewComponentInstanceContext.Provider>
       </RecordIndexRootPropsContext.Provider>
     </PageContainer>
   );

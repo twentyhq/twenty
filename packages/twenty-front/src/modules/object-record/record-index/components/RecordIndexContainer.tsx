@@ -30,7 +30,6 @@ import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown'
 import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ViewBar } from '@/views/components/ViewBar';
-import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -40,8 +39,9 @@ import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
-import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -68,6 +68,10 @@ export const RecordIndexContainer = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const recordGroupDefinitionCallbackState = useRecoilComponentCallbackStateV2(
+    recordGroupDefinitionState,
+  );
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
@@ -124,7 +128,7 @@ export const RecordIndexContainer = () => {
         setColumns(newGroupDefinitions);
 
         const existingRecordIndexGroupDefinitions = snapshot
-          .getLoadable(recordIndexGroupDefinitionsState)
+          .getLoadable(recordGroupDefinitionCallbackState)
           .getValue();
 
         if (
@@ -133,110 +137,102 @@ export const RecordIndexContainer = () => {
             newGroupDefinitions,
           )
         ) {
-          set(recordIndexGroupDefinitionsState, newGroupDefinitions);
+          set(recordGroupDefinitionCallbackState, newGroupDefinitions);
         }
       },
-    [objectMetadataItem, setColumns],
+    [objectMetadataItem, recordGroupDefinitionCallbackState, setColumns],
   );
+
+  console.log('RECORD INDEX ID: ', recordIndexId);
 
   return (
     <StyledContainer>
       <InformationBannerWrapper />
-      <ViewComponentInstanceContext.Provider
-        value={{ instanceId: recordIndexId }}
-      >
-        <RecordFieldValueSelectorContextProvider>
-          <SpreadsheetImportProvider>
-            <StyledContainerWithPadding>
-              <ViewBar
-                viewBarId={recordIndexId}
-                optionsDropdownButton={
-                  <RecordIndexOptionsDropdown
-                    recordIndexId={recordIndexId}
-                    objectNameSingular={objectNameSingular}
-                    viewType={recordIndexViewType ?? ViewType.Table}
-                  />
+      <RecordFieldValueSelectorContextProvider>
+        <SpreadsheetImportProvider>
+          <StyledContainerWithPadding>
+            <ViewBar
+              viewBarId={recordIndexId}
+              optionsDropdownButton={
+                <RecordIndexOptionsDropdown
+                  recordIndexId={recordIndexId}
+                  objectNameSingular={objectNameSingular}
+                  viewType={recordIndexViewType ?? ViewType.Table}
+                />
+              }
+              onCurrentViewChange={(view) => {
+                if (!view) {
+                  return;
                 }
-                onCurrentViewChange={(view) => {
-                  if (!view) {
-                    return;
-                  }
 
-                  onViewFieldsChange(view.viewFields);
-                  onViewGroupsChange(view.viewGroups);
-                  setTableFilters(
-                    mapViewFiltersToFilters(
-                      view.viewFilters,
-                      filterDefinitions,
-                    ),
-                  );
-                  setRecordIndexFilters(
-                    mapViewFiltersToFilters(
-                      view.viewFilters,
-                      filterDefinitions,
-                    ),
-                  );
-                  setTableSorts(
-                    mapViewSortsToSorts(view.viewSorts, sortDefinitions),
-                  );
-                  setRecordIndexSorts(
-                    mapViewSortsToSorts(view.viewSorts, sortDefinitions),
-                  );
-                  setRecordIndexViewType(view.type);
-                  setRecordIndexViewKanbanFieldMetadataIdState(
-                    view.kanbanFieldMetadataId,
-                  );
-                  setRecordIndexIsCompactModeActive(view.isCompact);
-                }}
-              />
-              <RecordIndexViewBarEffect
-                objectNamePlural={objectNamePlural}
-                viewBarId={recordIndexId}
-              />
-            </StyledContainerWithPadding>
-          </SpreadsheetImportProvider>
+                onViewFieldsChange(view.viewFields);
+                onViewGroupsChange(view.viewGroups);
+                setTableFilters(
+                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+                );
+                setRecordIndexFilters(
+                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+                );
+                setTableSorts(
+                  mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+                );
+                setRecordIndexSorts(
+                  mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+                );
+                setRecordIndexViewType(view.type);
+                setRecordIndexViewKanbanFieldMetadataIdState(
+                  view.kanbanFieldMetadataId,
+                );
+                setRecordIndexIsCompactModeActive(view.isCompact);
+              }}
+            />
+            <RecordIndexViewBarEffect
+              objectNamePlural={objectNamePlural}
+              viewBarId={recordIndexId}
+            />
+          </StyledContainerWithPadding>
+        </SpreadsheetImportProvider>
 
-          {recordIndexViewType === ViewType.Table && (
-            <>
-              <RecordIndexTableContainer
-                recordTableId={recordIndexId}
-                viewBarId={recordIndexId}
-              />
-              <RecordIndexTableContainerEffect
-                objectNameSingular={objectNameSingular}
-                recordTableId={recordIndexId}
-                viewBarId={recordIndexId}
-              />
-            </>
-          )}
-          {recordIndexViewType === ViewType.Kanban && (
-            <StyledContainerWithPadding fullHeight>
-              <RecordIndexBoardContainer
-                recordBoardId={recordIndexId}
-                viewBarId={recordIndexId}
-                objectNameSingular={objectNameSingular}
-              />
-              <RecordIndexBoardDataLoader
-                objectNameSingular={objectNameSingular}
-                recordBoardId={recordIndexId}
-              />
-              <RecordIndexBoardDataLoaderEffect
-                objectNameSingular={objectNameSingular}
-                recordBoardId={recordIndexId}
-              />
-            </StyledContainerWithPadding>
-          )}
-          <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: recordIndexId }}
-          >
-            <ActionMenuEffect />
-            <RecordActionMenuEntriesSetter />
-            <ActionMenuBar />
-            <ActionMenuDropdown />
-            <ActionMenuConfirmationModals />
-          </ActionMenuComponentInstanceContext.Provider>
-        </RecordFieldValueSelectorContextProvider>
-      </ViewComponentInstanceContext.Provider>
+        {recordIndexViewType === ViewType.Table && (
+          <>
+            <RecordIndexTableContainer
+              recordTableId={recordIndexId}
+              viewBarId={recordIndexId}
+            />
+            <RecordIndexTableContainerEffect
+              objectNameSingular={objectNameSingular}
+              recordTableId={recordIndexId}
+              viewBarId={recordIndexId}
+            />
+          </>
+        )}
+        {recordIndexViewType === ViewType.Kanban && (
+          <StyledContainerWithPadding fullHeight>
+            <RecordIndexBoardContainer
+              recordBoardId={recordIndexId}
+              viewBarId={recordIndexId}
+              objectNameSingular={objectNameSingular}
+            />
+            <RecordIndexBoardDataLoader
+              objectNameSingular={objectNameSingular}
+              recordBoardId={recordIndexId}
+            />
+            <RecordIndexBoardDataLoaderEffect
+              objectNameSingular={objectNameSingular}
+              recordBoardId={recordIndexId}
+            />
+          </StyledContainerWithPadding>
+        )}
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: recordIndexId }}
+        >
+          <ActionMenuEffect />
+          <RecordActionMenuEntriesSetter />
+          <ActionMenuBar />
+          <ActionMenuDropdown />
+          <ActionMenuConfirmationModals />
+        </ActionMenuComponentInstanceContext.Provider>
+      </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );
 };

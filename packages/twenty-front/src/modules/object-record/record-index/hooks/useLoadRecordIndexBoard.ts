@@ -13,7 +13,8 @@ import { recordIndexIsCompactModeActiveState } from '@/object-record/record-inde
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
-import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
+import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
@@ -44,8 +45,8 @@ export const useLoadRecordIndexBoard = ({
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
-  const recordIndexGroupDefinitions = useRecoilValue(
-    recordIndexGroupDefinitionsState,
+  const recordIndexGroupDefinitions = useRecoilComponentValueV2(
+    recordGroupDefinitionState,
   );
   useEffect(() => {
     setColumns(recordIndexGroupDefinitions);

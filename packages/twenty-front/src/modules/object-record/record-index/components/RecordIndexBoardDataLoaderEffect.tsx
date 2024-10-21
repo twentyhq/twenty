@@ -10,7 +10,8 @@ import { recordIndexIsCompactModeActiveState } from '@/object-record/record-inde
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
+import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type RecordIndexBoardDataLoaderEffectProps = {
   objectNameSingular: string;
@@ -29,8 +30,8 @@ export const RecordIndexBoardDataLoaderEffect = ({
     recordIndexFieldDefinitionsState,
   );
 
-  const recordIndexGroupDefinitions = useRecoilValue(
-    recordIndexGroupDefinitionsState,
+  const recordIndexGroupDefinitions = useRecoilComponentValueV2(
+    recordGroupDefinitionState,
   );
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(

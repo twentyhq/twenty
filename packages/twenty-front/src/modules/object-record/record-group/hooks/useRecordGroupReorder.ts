@@ -1,13 +1,13 @@
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { recordIndexGroupDefinitionsState } from '@/object-record/record-index/states/recordIndexGroupDefinitionsState';
 import { mapGroupDefinitionsToViewGroups } from '@/views/utils/mapGroupDefinitionsToViewGroups';
 import { useRecordGroupStates } from '@/object-record/record-group/hooks/useRecordGroupStates';
+import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 type UseRecordGroupHandlersParams = {
   objectNameSingular: string;
@@ -18,8 +18,8 @@ export const useRecordGroupReorder = ({
   objectNameSingular,
   viewBarId,
 }: UseRecordGroupHandlersParams) => {
-  const setRecordIndexGroupDefinitions = useSetRecoilState(
-    recordIndexGroupDefinitionsState,
+  const setRecordIndexGroupDefinitions = useSetRecoilComponentStateV2(
+    recordGroupDefinitionState,
   );
 
   const { visibleRecordGroups } = useRecordGroupStates({
