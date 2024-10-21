@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { useGenerateCombinedSearchRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedSearchRecordsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
@@ -81,16 +80,6 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
     limit,
   });
 
-  const multiSelectQueryForSelectedIds =
-    useGenerateCombinedFindManyRecordsQuery({
-      operationSignatures: objectMetadataItemsUsedInSelectedIdsQuery.map(
-        (objectMetadataItem) => ({
-          objectNameSingular: objectMetadataItem.nameSingular,
-          variables: {},
-        }),
-      ),
-    });
-
   const multiSelectSearchQueryForSelectedIds =
     useGenerateCombinedSearchRecordsQuery({
       operationSignatures: objectMetadataItemsUsedInSelectedIdsQuery.map(
@@ -112,7 +101,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
         ...selectedAndMatchesSearchFilterTextFilterPerMetadataItem,
         ...limitPerMetadataItem,
       },
-      skip: !isDefined(multiSelectQueryForSelectedIds),
+      skip: !isDefined(multiSelectSearchQueryForSelectedIds),
     },
   );
 
