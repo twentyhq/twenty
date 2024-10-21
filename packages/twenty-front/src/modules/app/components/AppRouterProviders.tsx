@@ -15,7 +15,7 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { StrictMode } from 'react';

@@ -66,7 +66,9 @@ const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   column-gap: ${({ theme }) => theme.spacing(2)};
   color: ${({ variant, theme }) =>
-    variant === 'placeholder' ? theme.font.color.extraLight : null};
+    variant === 'placeholder'
+      ? theme.font.color.extraLight
+      : theme.font.color.primary};
 `;
 
 const StyledSourceHandle = styled(Handle)`
