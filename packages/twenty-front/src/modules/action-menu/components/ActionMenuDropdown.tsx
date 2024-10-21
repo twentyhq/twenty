@@ -8,6 +8,7 @@ import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionM
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -74,13 +75,15 @@ export const ActionMenuDropdown = () => {
         data-select-disable
         dropdownMenuWidth={width}
         dropdownComponents={actionMenuEntries.map((item, index) => (
-          <MenuItem
-            key={index}
-            LeftIcon={item.Icon}
-            onClick={item.onClick}
-            accent={item.accent}
-            text={item.label}
-          />
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              key={index}
+              LeftIcon={item.Icon}
+              onClick={item.onClick}
+              accent={item.accent}
+              text={item.label}
+            />
+          </DropdownMenuItemsContainer>
         ))}
       />
     </StyledContainerActionMenuDropdown>
