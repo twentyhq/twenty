@@ -19,6 +19,7 @@ import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-t
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { softFocusPositionComponentState } from '@/object-record/record-table/states/softFocusPositionComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
@@ -132,6 +133,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     selectedRowIdsSelector: extractComponentReadOnlySelector(
       selectedRowIdsComponentSelector,
+      scopeId,
+    ),
+    unselectedRowIdsSelector: extractComponentReadOnlySelector(
+      unselectedRowIdsComponentSelector,
       scopeId,
     ),
     visibleTableColumnsSelector: extractComponentReadOnlySelector(

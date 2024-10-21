@@ -48,15 +48,28 @@ git config --global user.name "Your Name"
 git config --global user.email "youremail@domain.com"
 ```
 
-3. Install Node.js, nvm, yarn
+3. Install nvm, node.js and yarn
+<ArticleWarning>
+
+Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contributors use the same version.
+
+</ArticleWarning>
+
 ```bash
 sudo apt-get install curl
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+Close and reopen your terminal to use nvm. Then run the following commands.
+
+```bash
+
+nvm install # installs recommended node version
+
+nvm use # use recommended node version
 
 corepack enable
 ```
-Close and reopen your terminal to start using nvm. 
 
 </ArticleTab>
 </ArticleTabs>
@@ -186,17 +199,8 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 ## Step 6: Installing dependencies
-
-<ArticleWarning>
-
-Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contributors use the same version.
-
-</ArticleWarning>
-
-To build Twenty server and seed some data into your database, run the following commands:
+To build Twenty server and seed some data into your database, run the following command:
 ```bash
-nvm install # installs recommended node version
-nvm use # use recommended node version
 yarn
 ```
 

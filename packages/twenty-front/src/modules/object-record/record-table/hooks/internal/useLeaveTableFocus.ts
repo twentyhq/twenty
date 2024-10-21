@@ -6,20 +6,18 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
-import { useSetHasUserSelectedAllRows } from './useSetAllRowSelectedState';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const disableSoftFocus = useDisableSoftFocus(recordTableId);
   const closeCurrentCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const setHasUserSelectedAllRows = useSetHasUserSelectedAllRows(recordTableId);
-
-  const selectAllRows = useSetHasUserSelectedAllRows(recordTableId);
-
   const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
+
+  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -33,6 +31,8 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
           .getLoadable(currentHotkeyScopeState)
           .getValue();
 
+        resetTableRowSelection();
+
         if (!isSoftFocusActive) {
           return;
         }
@@ -43,15 +43,12 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
 
         closeCurrentCellInEditMode();
         disableSoftFocus();
-        setHasUserSelectedAllRows(false);
-        selectAllRows(false);
       },
     [
       closeCurrentCellInEditMode,
       disableSoftFocus,
       isSoftFocusActiveState,
-      selectAllRows,
-      setHasUserSelectedAllRows,
+      resetTableRowSelection,
     ],
   );
 };

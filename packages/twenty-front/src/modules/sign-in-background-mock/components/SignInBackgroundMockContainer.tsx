@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
 
-import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { ViewType } from '@/views/types/ViewType';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -26,13 +24,7 @@ export const SignInBackgroundMockContainer = () => {
         <ViewBar
           viewBarId={viewBarId}
           onCurrentViewChange={async () => {}}
-          optionsDropdownButton={
-            <RecordIndexOptionsDropdown
-              recordIndexId={recordIndexId}
-              objectNameSingular={objectNameSingular}
-              viewType={ViewType.Table}
-            />
-          }
+          optionsDropdownButton={<></>}
         />
         <SignInBackgroundMockContainerEffect
           objectNamePlural={objectNamePlural}

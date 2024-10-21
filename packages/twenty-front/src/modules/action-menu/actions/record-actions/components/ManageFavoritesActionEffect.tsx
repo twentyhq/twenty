@@ -1,8 +1,7 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -10,29 +9,27 @@ import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
 
 export const ManageFavoritesActionEffect = ({
   position,
+  objectMetadataItem,
 }: {
   position: number;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const contextStoreTargetedRecordIds = useRecoilValue(
-    contextStoreTargetedRecordIdsState,
-  );
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
+  const contextStoreTargetedRecordsRule = useRecoilValue(
+    contextStoreTargetedRecordsRuleState,
   );
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
-  const selectedRecordId = contextStoreTargetedRecordIds[0];
+  const selectedRecordId =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      : undefined;
 
   const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId),
+    recordStoreFamilyState(selectedRecordId ?? ''),
   );
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId,
-  });
 
   const foundFavorite = favorites?.find(
     (favorite) => favorite.recordId === selectedRecordId,

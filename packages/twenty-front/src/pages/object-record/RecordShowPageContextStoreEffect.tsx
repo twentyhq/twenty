@@ -1,5 +1,6 @@
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,8 +11,8 @@ export const RecordShowPageContextStoreEffect = ({
 }: {
   recordId: string;
 }) => {
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilState(
+    contextStoreTargetedRecordsRuleState,
   );
 
   const setContextStoreCurrentObjectMetadataId = useSetRecoilState(
@@ -24,19 +25,32 @@ export const RecordShowPageContextStoreEffect = ({
     objectNameSingular: objectNameSingular ?? '',
   });
 
+  const setContextStoreNumberOfSelectedRecords = useSetRecoilState(
+    contextStoreNumberOfSelectedRecordsState,
+  );
+
   useEffect(() => {
-    setContextStoreTargetedRecordIds([recordId]);
+    setContextStoreTargetedRecordsRule({
+      mode: 'selection',
+      selectedRecordIds: [recordId],
+    });
     setContextStoreCurrentObjectMetadataId(objectMetadataItem?.id);
+    setContextStoreNumberOfSelectedRecords(1);
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
+      setContextStoreTargetedRecordsRule({
+        mode: 'selection',
+        selectedRecordIds: [],
+      });
       setContextStoreCurrentObjectMetadataId(null);
+      setContextStoreNumberOfSelectedRecords(0);
     };
   }, [
     recordId,
-    setContextStoreTargetedRecordIds,
+    setContextStoreTargetedRecordsRule,
     setContextStoreCurrentObjectMetadataId,
     objectMetadataItem?.id,
+    setContextStoreNumberOfSelectedRecords,
   ]);
 
   return null;

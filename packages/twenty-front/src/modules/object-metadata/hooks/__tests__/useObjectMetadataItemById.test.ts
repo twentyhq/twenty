@@ -33,16 +33,11 @@ describe('useObjectMetadataItemById', () => {
     expect(objectMetadataItem?.id).toBe(opportunityObjectMetadata.id);
   });
 
-  it('should return null when invalid ID is provided', async () => {
-    const { result } = renderHook(
-      () => useObjectMetadataItemById({ objectId: 'invalid-id' }),
-      {
+  it('should throw an error when invalid ID is provided', async () => {
+    expect(() =>
+      renderHook(() => useObjectMetadataItemById({ objectId: 'invalid-id' }), {
         wrapper: Wrapper,
-      },
-    );
-
-    const { objectMetadataItem } = result.current;
-
-    expect(objectMetadataItem).toBeNull();
+      }),
+    ).toThrow(`Object metadata item not found for id invalid-id`);
   });
 });

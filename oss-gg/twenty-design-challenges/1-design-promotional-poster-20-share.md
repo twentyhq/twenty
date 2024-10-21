@@ -29,4 +29,7 @@ Your turn 👇
 » 17-October-2024 by [Atharva Deshmukh](https://oss.gg/Atharva-3000) poster Link: [poster](https://x.com/0x_atharva/status/1846915861191577697)
 
 » 20-October-2024 by [Naprila](https://oss.gg/Naprila) poster Link: [poster](https://x.com/mkprasad_821/status/1848037527921254625)
+
+» 21-October-2024 by [sateshcharan](https://oss.gg/sateshcharan) poster Link: [poster](https://x.com/sateshcharans/status/1848358958970396727)
+
 ---
