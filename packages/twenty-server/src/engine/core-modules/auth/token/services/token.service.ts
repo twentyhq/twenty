@@ -6,7 +6,6 @@ import crypto from 'crypto';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import { Request } from 'express';
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import ms from 'ms';
 import { ExtractJwt } from 'passport-jwt';
 import { PasswordResetLinkEmail } from 'twenty-emails';
@@ -66,7 +65,7 @@ export class TokenService {
 
   async generateAccessToken(
     userId: string,
-    workspaceId?: string,
+    workspaceId: string,
   ): Promise<AuthToken> {
     const expiresIn = this.environmentService.get('ACCESS_TOKEN_EXPIRES_IN');
 
@@ -134,13 +133,21 @@ export class TokenService {
     };
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload),
+      token: this.jwtWrapperService.sign(jwtPayload, {
+        secret: this.jwtWrapperService.generateAppSecret('ACCESS', workspaceId),
+      }),
       expiresAt,
     };
   }
 
-  async generateRefreshToken(userId: string): Promise<AuthToken> {
-    const secret = this.jwtWrapperService.generateAppSecret('REFRESH');
+  async generateRefreshToken(
+    userId: string,
+    workspaceId: string,
+  ): Promise<AuthToken> {
+    const secret = this.jwtWrapperService.generateAppSecret(
+      'REFRESH',
+      workspaceId,
+    );
     const expiresIn = this.environmentService.get('REFRESH_TOKEN_EXPIRES_IN');
 
     if (!expiresIn) {
@@ -306,10 +313,10 @@ export class TokenService {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
-    const decoded = await this.verifyJwt(
-      token,
-      this.jwtWrapperService.generateAppSecret('ACCESS'),
-    );
+
+    await this.jwtWrapperService.verifyWorkspaceToken(token, 'ACCESS');
+
+    const decoded = await this.jwtWrapperService.decode(token);
 
     const { user, apiKey, workspace, workspaceMemberId } =
       await this.jwtStrategy.validate(decoded as JwtPayload);
@@ -318,11 +325,11 @@ export class TokenService {
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {
-    const loginTokenSecret = this.jwtWrapperService.generateAppSecret('LOGIN');
+    await this.jwtWrapperService.verifyWorkspaceToken(loginToken, 'LOGIN');
 
-    const payload = await this.verifyJwt(loginToken, loginTokenSecret);
-
-    return payload.sub;
+    return this.jwtWrapperService.decode(loginToken, {
+      json: true,
+    }).sub;
   }
 
   async verifyTransientToken(transientToken: string): Promise<{
@@ -330,10 +337,9 @@ export class TokenService {
     userId: string;
     workspaceId: string;
   }> {
-    const transientTokenSecret =
-      this.jwtWrapperService.generateAppSecret('LOGIN');
+    await this.jwtWrapperService.verifyWorkspaceToken(transientToken, 'LOGIN');
 
-    const payload = await this.verifyJwt(transientToken, transientTokenSecret);
+    const payload = await this.jwtWrapperService.decode(transientToken);
 
     return {
       workspaceMemberId: payload.sub,
@@ -384,7 +390,7 @@ export class TokenService {
     });
 
     const token = await this.generateAccessToken(user.id, workspaceId);
-    const refreshToken = await this.generateRefreshToken(user.id);
+    const refreshToken = await this.generateRefreshToken(user.id, workspaceId);
 
     return {
       tokens: {
@@ -503,7 +509,10 @@ export class TokenService {
       user.id,
       user.defaultWorkspaceId,
     );
-    const refreshToken = await this.generateRefreshToken(user.id);
+    const refreshToken = await this.generateRefreshToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
     const loginToken = await this.generateLoginToken(user.email);
 
     return {
@@ -514,9 +523,10 @@ export class TokenService {
   }
 
   async verifyRefreshToken(refreshToken: string) {
-    const secret = this.jwtWrapperService.generateAppSecret('REFRESH');
     const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
-    const jwtPayload = await this.verifyJwt(refreshToken, secret);
+
+    await this.jwtWrapperService.verifyWorkspaceToken(refreshToken, 'REFRESH');
+    const jwtPayload = await this.jwtWrapperService.decode(refreshToken);
 
     if (!(jwtPayload.jti && jwtPayload.sub)) {
       throw new AuthException(
@@ -589,7 +599,7 @@ export class TokenService {
 
     const {
       user,
-      token: { id },
+      token: { id, workspaceId },
     } = await this.verifyRefreshToken(token);
 
     // Revoke old refresh token
@@ -602,8 +612,8 @@ export class TokenService {
       },
     );
 
-    const accessToken = await this.generateAccessToken(user.id);
-    const refreshToken = await this.generateRefreshToken(user.id);
+    const accessToken = await this.generateAccessToken(user.id, workspaceId);
+    const refreshToken = await this.generateRefreshToken(user.id, workspaceId);
 
     return {
       accessToken,
@@ -615,32 +625,6 @@ export class TokenService {
     return `${this.environmentService.get(
       'FRONT_BASE_URL',
     )}/verify?loginToken=${loginToken}`;
-  }
-
-  async verifyJwt(token: string, secret?: string) {
-    try {
-      return this.jwtWrapperService.verify(
-        token,
-        secret ? { secret } : undefined,
-      );
-    } catch (error) {
-      if (error instanceof TokenExpiredError) {
-        throw new AuthException(
-          'Token has expired.',
-          AuthExceptionCode.UNAUTHENTICATED,
-        );
-      } else if (error instanceof JsonWebTokenError) {
-        throw new AuthException(
-          'Token invalid.',
-          AuthExceptionCode.UNAUTHENTICATED,
-        );
-      } else {
-        throw new AuthException(
-          'Unknown token error.',
-          AuthExceptionCode.INVALID_INPUT,
-        );
-      }
-    }
   }
 
   async generatePasswordResetToken(email: string): Promise<PasswordResetToken> {

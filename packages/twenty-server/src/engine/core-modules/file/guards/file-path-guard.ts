@@ -16,26 +16,33 @@ export class FilePathGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const query = request.query;
 
-    if (query && query['token']) {
-      const payloadToDecode = query['token'];
-      const decodedPayload = await this.jwtWrapperService.decode(
-        payloadToDecode,
-        {
-          secret: this.jwtWrapperService.generateAppSecret('FILE'),
-        } as any,
-      );
-
-      const expirationDate = decodedPayload?.['expiration_date'];
-      const workspaceId = decodedPayload?.['workspace_id'];
-
-      const isExpired = await this.isExpired(expirationDate);
-
-      if (isExpired) {
-        return false;
-      }
-
-      request.workspaceId = workspaceId;
+    if (!query || !query['token']) {
+      return false;
     }
+
+    const payload = await this.jwtWrapperService.verifyWorkspaceToken(
+      query['token'],
+      'FILE',
+    );
+
+    if (!payload.workspaceId) {
+      return false;
+    }
+
+    const decodedPayload = await this.jwtWrapperService.decode(query['token'], {
+      json: true,
+    });
+
+    const expirationDate = decodedPayload?.['expiration_date'];
+    const workspaceId = decodedPayload?.['workspace_id'];
+
+    const isExpired = await this.isExpired(expirationDate);
+
+    if (isExpired) {
+      return false;
+    }
+
+    request.workspaceId = workspaceId;
 
     return true;
   }

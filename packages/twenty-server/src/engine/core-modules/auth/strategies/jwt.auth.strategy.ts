@@ -40,7 +40,22 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtWrapperService.generateAppSecret('ACCESS'),
+      secretOrKeyProvider: async (request, rawJwtToken, done) => {
+        try {
+          const decodedToken = this.jwtWrapperService.decode(
+            rawJwtToken,
+          ) as JwtPayload;
+          const workspaceId = decodedToken.workspaceId;
+          const secret = this.jwtWrapperService.generateAppSecret(
+            'ACCESS',
+            workspaceId,
+          );
+
+          done(null, secret);
+        } catch (error) {
+          done(error, null);
+        }
+      },
     });
   }
 

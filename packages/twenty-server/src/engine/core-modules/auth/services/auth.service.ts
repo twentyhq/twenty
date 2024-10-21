@@ -152,8 +152,14 @@ export class AuthService {
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
 
-    const accessToken = await this.tokenService.generateAccessToken(user.id);
-    const refreshToken = await this.tokenService.generateRefreshToken(user.id);
+    const accessToken = await this.tokenService.generateAccessToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
+    const refreshToken = await this.tokenService.generateRefreshToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
 
     return {
       user,
@@ -211,8 +217,14 @@ export class AuthService {
       );
     }
 
-    const accessToken = await this.tokenService.generateAccessToken(user.id);
-    const refreshToken = await this.tokenService.generateRefreshToken(user.id);
+    const accessToken = await this.tokenService.generateAccessToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
+    const refreshToken = await this.tokenService.generateRefreshToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
 
     return {
       user,

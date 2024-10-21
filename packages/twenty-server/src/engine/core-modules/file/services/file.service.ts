@@ -34,7 +34,10 @@ export class FileService {
     const fileTokenExpiresIn = this.environmentService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
-    const secret = this.jwtWrapperService.generateAppSecret('FILE');
+    const secret = this.jwtWrapperService.generateAppSecret(
+      'FILE',
+      payloadToEncode.workspace_id,
+    );
 
     const expirationDate = addMilliseconds(new Date(), ms(fileTokenExpiresIn));
 

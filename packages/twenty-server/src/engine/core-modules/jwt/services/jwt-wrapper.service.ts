@@ -1,11 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 
 import { createHash } from 'crypto';
 
 import * as jwt from 'jsonwebtoken';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+
+type WorkspaceTokenType =
+  | 'ACCESS'
+  | 'LOGIN'
+  | 'REFRESH'
+  | 'FILE'
+  | 'POSTGRES_PROXY'
+  | 'REMOTE_SERVER';
 
 @Injectable()
 export class JwtWrapperService {
@@ -27,20 +39,49 @@ export class JwtWrapperService {
     return this.jwtService.verify(token, options);
   }
 
-  decode<T = any>(payload: string, options: jwt.DecodeOptions): T {
+  decode<T = any>(payload: string, options?: jwt.DecodeOptions): T {
     return this.jwtService.decode(payload, options);
   }
 
-  generateAppSecret(
-    type:
-      | 'ACCESS'
-      | 'LOGIN'
-      | 'REFRESH'
-      | 'FILE'
-      | 'POSTGRES_PROXY'
-      | 'REMOTE_SERVER',
-    workspaceId?: string,
-  ): string {
+  verifyWorkspaceToken(
+    token: string,
+    type: WorkspaceTokenType,
+    options?: JwtVerifyOptions,
+  ) {
+    const payload = this.decode(token, {
+      json: true,
+    });
+
+    if (!payload.sub) {
+      throw new UnauthorizedException('No payload sub');
+    }
+
+    try {
+      return this.jwtService.verify(token, {
+        ...options,
+        secret: this.generateAppSecret(type, payload.workspaceId),
+      });
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new AuthException(
+          'Token has expired.',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        throw new AuthException(
+          'Token invalid.',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
+      } else {
+        throw new AuthException(
+          'Unknown token error.',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+    }
+  }
+
+  generateAppSecret(type: WorkspaceTokenType, workspaceId?: string): string {
     const appSecret = this.environmentService.get('APP_SECRET');
 
     if (!appSecret) {
