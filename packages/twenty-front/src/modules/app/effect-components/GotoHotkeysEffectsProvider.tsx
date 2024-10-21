@@ -7,7 +7,7 @@ import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-export const GotoHotkeys = () => {
+export const GotoHotkeysEffectsProvider = () => {
   const { nonSystemActiveObjectMetadataItems } =
     useNonSystemActiveObjectMetadataItems();
 
@@ -23,7 +23,7 @@ export const GotoHotkeys = () => {
           set(navigationDrawerExpandedMemorizedState, true);
           set(navigationMemorizedUrlState, location.pathname + location.search);
         },
-      [],
+      [location.pathname, location.search],
     ),
   });
 
