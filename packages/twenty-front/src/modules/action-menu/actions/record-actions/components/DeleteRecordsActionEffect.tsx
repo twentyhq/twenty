@@ -1,7 +1,7 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';

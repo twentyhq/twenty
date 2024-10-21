@@ -5,7 +5,7 @@ import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states
 import {
   ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleState,
-} from '@/context-store/states/contextStoreTargetedRecordsState';
+} from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
 export const JestContextStoreSetter = ({

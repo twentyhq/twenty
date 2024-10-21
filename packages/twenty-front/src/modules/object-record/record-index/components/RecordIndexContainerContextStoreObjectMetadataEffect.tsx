@@ -5,7 +5,7 @@ import { RecordIndexRootPropsContext } from '@/object-record/record-index/contex
 import { useContext, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-export const RecordIndexContainerContextStoreEffect = () => {
+export const RecordIndexContainerContextStoreObjectMetadataEffect = () => {
   const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
     contextStoreCurrentObjectMetadataIdState,
   );

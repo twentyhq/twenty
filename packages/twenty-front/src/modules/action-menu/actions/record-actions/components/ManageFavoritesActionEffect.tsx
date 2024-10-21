@@ -1,6 +1,6 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsState';
+import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
