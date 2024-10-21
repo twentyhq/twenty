@@ -81,7 +81,10 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v11
         with:
-          files: 'package.json, packages/twenty-server/**, packages/twenty-emails/**'
+          files: |
+            package.json
+            packages/twenty-server/**
+            packages/twenty-emails/**
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -125,7 +128,10 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v11
         with:
-          files: 'package.json, packages/twenty-server/**, packages/twenty-emails/**'
+          files: |
+            package.json
+            packages/twenty-server/**
+            packages/twenty-emails/**
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
