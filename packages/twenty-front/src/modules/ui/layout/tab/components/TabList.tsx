@@ -1,4 +1,3 @@
-import { SerializedStyles } from '@emotion/react';
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { useRecoilValue } from 'recoil';
@@ -10,11 +9,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { Tab } from './Tab';
 
-interface StyledContainerProps {
-  css?: SerializedStyles;
-}
-
-type SingleTabProps = {
+export type SingleTabProps = {
   title: string;
   Icon?: IconComponent;
   id: string;
@@ -28,18 +23,15 @@ type TabListProps = {
   tabs: SingleTabProps[];
   loading?: boolean;
   className?: string;
-  css?: SerializedStyles;
 };
 
-const StyledContainer = styled.div<StyledContainerProps>`
+const StyledContainer = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
   height: 40px;
   user-select: none;
-  ${(props) => props.css}
 `;
 
 export const TabList = ({
@@ -47,7 +39,6 @@ export const TabList = ({
   tabListId,
   loading,
   className,
-  css,
 }: TabListProps) => {
   const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || '';
 
@@ -62,7 +53,7 @@ export const TabList = ({
   return (
     <TabListScope tabListScopeId={tabListId}>
       <ScrollWrapper enableYScroll={false} contextProviderName="tabList">
-        <StyledContainer className={className} css={css}>
+        <StyledContainer className={className}>
           {tabs
             .filter((tab) => !tab.hide)
             .map((tab) => (

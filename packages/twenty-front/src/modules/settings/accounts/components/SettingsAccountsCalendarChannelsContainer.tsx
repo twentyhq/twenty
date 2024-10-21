@@ -12,7 +12,6 @@ import { SettingsNewAccountSection } from '@/settings/accounts/components/Settin
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { css } from '@emotion/react';
 import React from 'react';
 
 const StyledCalenderContainer = styled.div`
@@ -67,9 +66,6 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
           <TabList
             tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
             tabs={tabs}
-            css={css`
-              padding: 0;
-            `}
           />
         </StyledCalenderContainer>
       )}

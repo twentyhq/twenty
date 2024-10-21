@@ -1,4 +1,4 @@
-import { blockSchema } from '@/activities/blocks/schema';
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { CustomAddBlockItem } from '@/ui/input/editor/components/CustomAddBlockItem';
 import { CustomSideMenuOptions } from '@/ui/input/editor/components/CustomSideMenuOptions';
 import {
@@ -13,7 +13,7 @@ import styled from '@emotion/styled';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui';
 
 type CustomSideMenuProps = {
-  editor: typeof blockSchema.BlockNoteEditor;
+  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
 };
 
 const StyledDivToCreateGap = styled.div`
