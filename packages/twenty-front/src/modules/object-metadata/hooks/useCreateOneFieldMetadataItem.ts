@@ -1,5 +1,4 @@
 import { ApolloClient, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import {
   CreateFieldInput,
@@ -8,7 +7,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
-import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { v4 } from 'uuid';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
@@ -30,8 +28,6 @@ export const useCreateOneFieldMetadataItem = () => {
           field: input,
         },
       },
-      awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
       optimisticResponse: {
         createOneField: {
           ...input,

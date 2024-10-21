@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -21,31 +21,30 @@ export const ObjectMetadataItemsLoadEffect = () => {
       skip: !isLoggedIn,
     });
 
-  const updateObjectMetadataItems = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const toSetObjectMetadataItems =
-          isUndefinedOrNull(currentUser) ||
-          currentWorkspace?.activationStatus !==
-            WorkspaceActivationStatus.Active
-            ? generatedMockObjectMetadataItems
-            : newObjectMetadataItems;
+  console.log('a', newObjectMetadataItems);
 
-        if (
-          !isDeeplyEqual(
-            snapshot.getLoadable(objectMetadataItemsState).getValue(),
-            toSetObjectMetadataItems,
-          )
-        ) {
-          set(objectMetadataItemsState, toSetObjectMetadataItems);
-        }
-      },
-    [currentUser, currentWorkspace?.activationStatus, newObjectMetadataItems],
+  const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(
+    objectMetadataItemsState,
   );
 
   useEffect(() => {
-    updateObjectMetadataItems();
-  }, [updateObjectMetadataItems]);
+    const toSetObjectMetadataItems =
+      isUndefinedOrNull(currentUser) ||
+      currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active
+        ? generatedMockObjectMetadataItems
+        : newObjectMetadataItems;
+
+    console.log(toSetObjectMetadataItems);
+    if (!isDeeplyEqual(objectMetadataItems, toSetObjectMetadataItems)) {
+      setObjectMetadataItems(toSetObjectMetadataItems);
+    }
+  }, [
+    currentUser,
+    currentWorkspace?.activationStatus,
+    newObjectMetadataItems,
+    objectMetadataItems,
+    setObjectMetadataItems,
+  ]);
 
   return <></>;
 };

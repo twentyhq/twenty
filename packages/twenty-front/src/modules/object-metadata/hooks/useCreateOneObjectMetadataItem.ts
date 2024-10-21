@@ -1,5 +1,4 @@
 import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
@@ -10,7 +9,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
-import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { v4 } from 'uuid';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
@@ -35,18 +33,18 @@ export const useCreateOneObjectMetadataItem = () => {
       variables: {
         input: { object: input },
       },
-      awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
       optimisticResponse: {
         createOneObject: {
           ...input,
           createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          labelIdentifierFieldMetadataId: '',
+          imageIdentifierFieldMetadataId: '',
           __typename: 'object',
           id: v4(),
           dataSourceId: '',
           isCustom: false,
-          isActive: false,
-          updatedAt: undefined,
+          isActive: true,
         },
       },
     });

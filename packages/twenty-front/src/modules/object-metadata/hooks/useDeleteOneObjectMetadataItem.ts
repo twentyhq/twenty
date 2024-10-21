@@ -1,5 +1,4 @@
 import { ApolloClient, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import {
   DeleteOneObjectMetadataItemMutation,
@@ -7,7 +6,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { DELETE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
-import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
@@ -28,8 +26,6 @@ export const useDeleteOneObjectMetadataItem = () => {
       variables: {
         idToDelete,
       },
-      awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
       optimisticResponse: {
         deleteOneObject: {
           id: idToDelete,
