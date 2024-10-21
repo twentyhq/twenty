@@ -52,6 +52,8 @@ export const AdvancedFilterRuleOptionsDropdown = ({
       }
     } else if (isDefined(currentViewFilterGroup)) {
       deleteCombinedViewFilterGroup(currentViewFilterGroup.id);
+
+      // TODO: Delete all child view filters
     } else {
       throw new Error('No view filter or view filter group to remove');
     }
