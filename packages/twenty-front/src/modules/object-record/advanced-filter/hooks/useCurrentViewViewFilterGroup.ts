@@ -3,18 +3,15 @@ import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 
 export const useCurrentViewViewFilterGroup = ({
-  parentViewFilterGroupId,
+  currentViewFilterGroupId,
 }: {
-  parentViewFilterGroupId?: string;
+  currentViewFilterGroupId?: string;
 }) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const currentViewFilterGroup =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.find(
-      (viewFilterGroup) =>
-        parentViewFilterGroupId
-          ? viewFilterGroup.parentViewFilterGroupId === parentViewFilterGroupId
-          : !viewFilterGroup.parentViewFilterGroupId,
+      (viewFilterGroup) => viewFilterGroup.id === currentViewFilterGroupId,
     );
 
   if (!currentViewFilterGroup) {

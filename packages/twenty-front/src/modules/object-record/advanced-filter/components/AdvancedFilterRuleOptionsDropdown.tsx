@@ -1,4 +1,5 @@
 import { AdvancedFilterRuleOptionsDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdownButton';
+import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -8,9 +9,7 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { isDefined } from 'twenty-ui';
 
-type AdvancedFilterRuleOptionsDropdownProps = {
-  parentViewFilterGroupId?: string;
-} & (
+type AdvancedFilterRuleOptionsDropdownProps =
   | {
       viewFilterId: string;
       viewFilterGroupId?: never;
@@ -18,11 +17,9 @@ type AdvancedFilterRuleOptionsDropdownProps = {
   | {
       viewFilterId?: never;
       viewFilterGroupId: string;
-    }
-);
+    };
 
 export const AdvancedFilterRuleOptionsDropdown = ({
-  parentViewFilterGroupId,
   viewFilterId,
   viewFilterGroupId,
 }: AdvancedFilterRuleOptionsDropdownProps) => {
@@ -33,8 +30,12 @@ export const AdvancedFilterRuleOptionsDropdown = ({
 
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
     useCurrentViewViewFilterGroup({
-      parentViewFilterGroupId: parentViewFilterGroupId,
+      currentViewFilterGroupId: viewFilterGroupId,
     });
+
+  const currentViewFilter = useCurrentViewFilter({
+    viewFilterId,
+  });
 
   const handleRemove = () => {
     if (isDefined(viewFilterId)) {
@@ -43,8 +44,11 @@ export const AdvancedFilterRuleOptionsDropdown = ({
       const isOnlyViewFilterInGroup =
         childViewFiltersAndViewFilterGroups.length === 1;
 
-      if (isOnlyViewFilterInGroup && isDefined(parentViewFilterGroupId)) {
-        deleteCombinedViewFilterGroup(parentViewFilterGroupId);
+      if (
+        isOnlyViewFilterInGroup &&
+        isDefined(currentViewFilter?.viewFilterGroupId)
+      ) {
+        deleteCombinedViewFilterGroup(currentViewFilter.viewFilterGroupId);
       }
     } else if (isDefined(currentViewFilterGroup)) {
       deleteCombinedViewFilterGroup(currentViewFilterGroup.id);

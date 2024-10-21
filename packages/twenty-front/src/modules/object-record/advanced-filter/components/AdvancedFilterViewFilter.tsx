@@ -27,6 +27,10 @@ export const AdvancedFilterViewFilter = ({
 }: AdvancedFilterViewFilterProps) => {
   const filter = useCurrentViewFilter({ viewFilterId });
 
+  if (!filter) {
+    return null;
+  }
+
   return (
     <ObjectFilterDropdownScope filterScopeId={filter.id}>
       <StyledRow>

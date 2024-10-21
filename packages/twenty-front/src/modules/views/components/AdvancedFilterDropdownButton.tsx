@@ -48,6 +48,15 @@ export const AdvancedFilterDropdownButton = () => {
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups,
   ]);
 
+  const outermostViewFilterGroupId =
+    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.find(
+      (viewFilterGroup) => !viewFilterGroup.parentViewFilterGroupId,
+    )?.id;
+
+  if (!outermostViewFilterGroupId) {
+    return null;
+  }
+
   return (
     <Dropdown
       dropdownId={ADVANCED_FILTER_DROPDOWN_ID}
@@ -57,7 +66,11 @@ export const AdvancedFilterDropdownButton = () => {
           advancedFilterCount={advancedViewFilterIds?.length}
         />
       }
-      dropdownComponents={<AdvancedFilterViewFilterGroup />}
+      dropdownComponents={
+        <AdvancedFilterViewFilterGroup
+          viewFilterGroupId={outermostViewFilterGroupId}
+        />
+      }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"

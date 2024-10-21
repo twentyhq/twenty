@@ -17,7 +17,7 @@ export const AdvancedFilterViewFilterValueInput = ({
 
   const filter = useCurrentViewFilter({ viewFilterId });
 
-  const isDisabled = !filter.fieldMetadataId || !filter.operand;
+  const isDisabled = !filter?.fieldMetadataId || !filter.operand;
 
   const {
     setFilterDefinitionUsedInDropdown,

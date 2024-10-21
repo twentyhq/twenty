@@ -6,7 +6,7 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 export const useCurrentViewFilter = ({
   viewFilterId,
 }: {
-  viewFilterId: string;
+  viewFilterId?: string;
 }) => {
   const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
@@ -19,7 +19,7 @@ export const useCurrentViewFilter = ({
   );
 
   if (!viewFilter) {
-    throw new Error('View filter not found in current view');
+    return undefined;
   }
 
   const [filter] = mapViewFiltersToFilters(

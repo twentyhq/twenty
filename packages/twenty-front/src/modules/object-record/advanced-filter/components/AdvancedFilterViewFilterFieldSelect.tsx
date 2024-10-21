@@ -25,7 +25,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
 
   const filter = useCurrentViewFilter({ viewFilterId });
 
-  const selectedFieldLabel = filter.definition.label;
+  const selectedFieldLabel = filter?.definition.label ?? '';
 
   const { setAdvancedFilterViewFilterGroupId, setAdvancedFilterViewFilterId } =
     useFilterDropdown();
@@ -52,8 +52,8 @@ export const AdvancedFilterViewFilterFieldSelect = ({
           />
         }
         onOpen={() => {
-          setAdvancedFilterViewFilterId(filter.id);
-          setAdvancedFilterViewFilterGroupId(filter.viewFilterGroupId);
+          setAdvancedFilterViewFilterId(filter?.id);
+          setAdvancedFilterViewFilterGroupId(filter?.viewFilterGroupId);
         }}
         dropdownComponents={
           shouldShowCompositeSelectionSubMenu ? (

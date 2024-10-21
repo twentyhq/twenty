@@ -26,15 +26,15 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
 `;
 
 type AdvancedFilterViewFilterGroupProps = {
-  parentViewFilterGroupId?: string;
+  viewFilterGroupId: string;
 };
 
 export const AdvancedFilterViewFilterGroup = ({
-  parentViewFilterGroupId,
+  viewFilterGroupId,
 }: AdvancedFilterViewFilterGroupProps) => {
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
     useCurrentViewViewFilterGroup({
-      parentViewFilterGroupId,
+      currentViewFilterGroupId: viewFilterGroupId,
     });
 
   if (!currentViewFilterGroup) {
@@ -42,17 +42,17 @@ export const AdvancedFilterViewFilterGroup = ({
   }
 
   return (
-    <StyledContainer isGrayBackground={!!parentViewFilterGroupId}>
+    <StyledContainer
+      isGrayBackground={!!currentViewFilterGroup.parentViewFilterGroupId}
+    >
       {childViewFiltersAndViewFilterGroups.map((child, i) =>
         child.__typename === 'ViewFilterGroup' ? (
           <StyledRow key={child.id}>
             <AdvancedFilterLogicalOperatorCell
               index={i}
-              viewFilterGroup={currentViewFilterGroup}
+              viewFilterGroup={child}
             />
-            <AdvancedFilterViewFilterGroup
-              parentViewFilterGroupId={currentViewFilterGroup.id}
-            />
+            <AdvancedFilterViewFilterGroup viewFilterGroupId={child.id} />
             <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
           </StyledRow>
         ) : (
@@ -67,7 +67,7 @@ export const AdvancedFilterViewFilterGroup = ({
         ),
       )}
       <AdvancedFilterAddFilterRuleSelect
-        parentViewFilterGroupId={parentViewFilterGroupId}
+        currentViewFilterGroupId={viewFilterGroupId}
       />
     </StyledContainer>
   );

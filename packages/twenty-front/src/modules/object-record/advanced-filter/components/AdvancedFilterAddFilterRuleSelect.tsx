@@ -20,15 +20,15 @@ import { IconLibraryPlus, IconPlus, isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
-  parentViewFilterGroupId?: string;
+  currentViewFilterGroupId?: string;
 };
 
 export const AdvancedFilterAddFilterRuleSelect = ({
-  parentViewFilterGroupId,
+  currentViewFilterGroupId,
 }: AdvancedFilterAddFilterRuleSelectProps) => {
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
     useCurrentViewViewFilterGroup({
-      parentViewFilterGroupId,
+      currentViewFilterGroupId,
     });
 
   const dropdownId = `advanced-filter-add-filter-rule-${currentViewFilterGroup?.id}`;
@@ -123,7 +123,9 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     });
   };
 
-  const isFilterRuleGroupOptionVisible = !isDefined(parentViewFilterGroupId);
+  const isFilterRuleGroupOptionVisible = !isDefined(
+    currentViewFilterGroup?.parentViewFilterGroupId,
+  );
 
   if (!isFilterRuleGroupOptionVisible) {
     return (
