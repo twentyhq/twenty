@@ -14,6 +14,7 @@ import { onEntityCountChangeComponentState } from '@/object-record/record-table/
 import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { resizedFieldKeyComponentState } from '@/object-record/record-table/states/resizedFieldKeyComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
@@ -104,6 +105,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     resizeFieldOffsetState: extractComponentState(
       resizeFieldOffsetComponentState,
+      scopeId,
+    ),
+    resizedFieldKeyState: extractComponentState(
+      resizedFieldKeyComponentState,
       scopeId,
     ),
     isSoftFocusOnTableCellFamilyState: extractComponentFamilyState(
