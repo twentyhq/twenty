@@ -1,4 +1,5 @@
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
 import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useEffect } from 'react';
@@ -24,12 +25,17 @@ export const RecordShowPageContextStoreEffect = ({
     objectNameSingular: objectNameSingular ?? '',
   });
 
+  const setContextStoreNumberOfSelectedRecords = useSetRecoilState(
+    contextStoreNumberOfSelectedRecordsState,
+  );
+
   useEffect(() => {
     setContextStoreTargetedRecordsRule({
       mode: 'selection',
       selectedRecordIds: [recordId],
     });
     setContextStoreCurrentObjectMetadataId(objectMetadataItem?.id);
+    setContextStoreNumberOfSelectedRecords(1);
 
     return () => {
       setContextStoreTargetedRecordsRule({
@@ -37,12 +43,14 @@ export const RecordShowPageContextStoreEffect = ({
         selectedRecordIds: [],
       });
       setContextStoreCurrentObjectMetadataId(null);
+      setContextStoreNumberOfSelectedRecords(0);
     };
   }, [
     recordId,
     setContextStoreTargetedRecordsRule,
     setContextStoreCurrentObjectMetadataId,
     objectMetadataItem?.id,
+    setContextStoreNumberOfSelectedRecords,
   ]);
 
   return null;
