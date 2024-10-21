@@ -60,7 +60,7 @@ export class AnalyticsService {
     const config: AxiosRequestConfig = {
       headers: {
         Authorization:
-          'Bearer ' + this.environmentService.get('TINYBIRD_DATASOURCE_TOKEN'),
+          'Bearer ' + this.environmentService.get('TINYBIRD_INGEST_TOKEN'),
       },
     };
 
@@ -89,7 +89,7 @@ export class AnalyticsService {
     return { success: true };
   }
 
-  async generateJWT(workspaceId: string | null | undefined) {
+  async generateWorkspaceJwt(workspaceId: string | undefined) {
     const pipeId = 't_b49e0fe60f9e438eae81cb31c5260df2'; // refactor this pass as params
     //perhaps a constant of name:pipeId??? better typing in this func^
     const payload = {

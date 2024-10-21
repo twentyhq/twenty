@@ -91,11 +91,11 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  ANALYTICS_ENABLED = true;
+  ANALYTICS_ENABLED = false;
 
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_DATASOURCE_TOKEN: string;
+  TINYBIRD_INGEST_TOKEN: string;
 
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
@@ -107,7 +107,7 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_JWT_TOKEN: string;
+  TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @CastToPositiveNumber()
   @IsNumber()

@@ -5,15 +5,19 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useGraphData = (webhookId: string) => {
   const { enqueueSnackBar } = useSnackBar();
-  const supportTinybirdJwt = useAnalyticsTinybirdJwt();
+  const analyticsTinybirdJwt = useAnalyticsTinybirdJwt();
   const fetchGraphData = async (
     windowLengthGraphOption: '7D' | '1D' | '12H' | '4H',
   ) => {
     try {
+      if (typeof analyticsTinybirdJwt !== 'string') {
+        throw new Error('No analyticsTinybirdJwt found');
+      }
+
       return await fetchGraphDataOrThrow({
         webhookId,
         windowLength: windowLengthGraphOption,
-        tinybirdJwt: supportTinybirdJwt ?? undefined,
+        tinybirdJwt: analyticsTinybirdJwt,
       });
     } catch (error) {
       enqueueSnackBar('Something went wrong while fetching webhook usage', {

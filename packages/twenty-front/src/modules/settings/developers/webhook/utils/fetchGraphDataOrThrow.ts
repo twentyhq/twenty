@@ -4,7 +4,7 @@ import { WEBHOOK_GRAPH_API_OPTIONS_MAP } from '@/settings/developers/webhook/con
 type fetchGraphDataOrThrowProps = {
   webhookId: string;
   windowLength: '7D' | '1D' | '12H' | '4H';
-  tinybirdJwt?: string;
+  tinybirdJwt: string;
 };
 
 export const fetchGraphDataOrThrow = async ({

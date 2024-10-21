@@ -56,7 +56,7 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
-    private readonly analyticsservice: AnalyticsService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   @Query(() => User)
@@ -161,8 +161,8 @@ export class UserResolver {
   })
   async analyticsTinybirdJwt(
     @AuthWorkspace() workspace: Workspace | undefined,
-  ): Promise<string | null> {
-    return await this.analyticsservice.generateJWT(workspace?.id);
+  ): Promise<string> {
+    return await this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 
   @Mutation(() => String)
