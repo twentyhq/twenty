@@ -1,3 +1,4 @@
+export * from './accessibility';
 export * from './components';
 export * from './display';
 export * from './layout';

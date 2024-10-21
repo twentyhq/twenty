@@ -46,17 +46,16 @@ export const useSetRecordTableData = ({
         const recordIds = newRecords.map((record) => record.id);
 
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
-          set(tableRowIdsState, recordIds);
-        }
-
-        if (hasUserSelectedAllRows) {
-          for (const rowId of recordIds) {
-            set(isRowSelectedFamilyState(rowId), true);
+          if (hasUserSelectedAllRows) {
+            for (const rowId of recordIds) {
+              set(isRowSelectedFamilyState(rowId), true);
+            }
           }
-        }
 
-        set(numberOfTableRowsState, totalCount ?? 0);
-        onEntityCountChange(totalCount);
+          set(tableRowIdsState, recordIds);
+          set(numberOfTableRowsState, totalCount ?? 0);
+          onEntityCountChange(totalCount);
+        }
       },
     [
       numberOfTableRowsState,

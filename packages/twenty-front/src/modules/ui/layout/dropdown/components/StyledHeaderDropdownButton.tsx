@@ -5,9 +5,11 @@ type StyledDropdownButtonProps = {
   isActive?: boolean;
 };
 
-export const StyledHeaderDropdownButton = styled.div<StyledDropdownButtonProps>`
+export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProps>`
+  font-family: inherit;
   align-items: center;
   background: ${({ theme }) => theme.background.primary};
+  border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ isActive, theme, color }) =>
     color ?? (isActive ? theme.color.blue : theme.font.color.secondary)};

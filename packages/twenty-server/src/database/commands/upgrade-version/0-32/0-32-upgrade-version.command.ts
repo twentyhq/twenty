@@ -4,6 +4,7 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { SimplifySearchVectorExpressionCommand } from 'src/database/commands/upgrade-version/0-32/0-32-simplify-search-vector-expression';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -23,6 +24,7 @@ export class UpgradeTo0_32Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly enforceUniqueConstraintsCommand: EnforceUniqueConstraintsCommand,
+    private readonly simplifySearchVectorExpressionCommand: SimplifySearchVectorExpressionCommand,
   ) {
     super(workspaceRepository);
   }
@@ -38,6 +40,12 @@ export class UpgradeTo0_32Command extends ActiveWorkspacesCommandRunner {
         ...options,
         force: true,
       },
+      workspaceIds,
+    );
+
+    await this.simplifySearchVectorExpressionCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
       workspaceIds,
     );
 

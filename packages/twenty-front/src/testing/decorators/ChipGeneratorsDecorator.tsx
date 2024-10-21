@@ -1,7 +1,7 @@
 import { Decorator } from '@storybook/react';
 import { useMemo } from 'react';
 
-import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
+import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { getRecordChipGenerators } from '@/object-record/utils/getRecordChipGenerators';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 

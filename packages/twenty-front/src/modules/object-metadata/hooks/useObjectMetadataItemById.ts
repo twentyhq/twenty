@@ -6,7 +6,7 @@ import { isDefined } from '~/utils/isDefined';
 export const useObjectMetadataItemById = ({
   objectId,
 }: {
-  objectId: string | null;
+  objectId: string;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -15,9 +15,7 @@ export const useObjectMetadataItemById = ({
   );
 
   if (!isDefined(objectMetadataItem)) {
-    return {
-      objectMetadataItem: null,
-    };
+    throw new Error(`Object metadata item not found for id ${objectId}`);
   }
 
   return {

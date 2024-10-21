@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { useEffect } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
+import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
 
