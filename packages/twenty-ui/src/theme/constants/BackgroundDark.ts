@@ -25,6 +25,7 @@ export const BACKGROUND_DARK = {
   },
   overlayPrimary: RGBA(GRAY_SCALE.gray80, 0.8),
   overlaySecondary: RGBA(GRAY_SCALE.gray80, 0.4),
+  overlayTertiary: RGBA(GRAY_SCALE.gray80, 0.08),
   radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
   radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
   primaryInverted: GRAY_SCALE.gray20,

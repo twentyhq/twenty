@@ -23,7 +23,7 @@ export const RecordShowActionMenu = ({
         >
           <RecordShowActionMenuBar />
           <ActionMenuConfirmationModals />
-          <RecordActionMenuEntriesSetter />
+          <RecordActionMenuEntriesSetter actionMenuType="recordShow" />
         </ActionMenuComponentInstanceContext.Provider>
       )}
     </>

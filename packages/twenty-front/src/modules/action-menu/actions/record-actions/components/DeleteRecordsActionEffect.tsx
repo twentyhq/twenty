@@ -1,4 +1,5 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
 import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
 import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -9,6 +10,7 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconTrash, isDefined } from 'twenty-ui';
@@ -16,9 +18,11 @@ import { IconTrash, isDefined } from 'twenty-ui';
 export const DeleteRecordsActionEffect = ({
   position,
   objectMetadataItem,
+  actionMenuType,
 }: {
   position: number;
   objectMetadataItem: ObjectMetadataItem;
+  actionMenuType: ActionMenuType;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
@@ -52,6 +56,8 @@ export const DeleteRecordsActionEffect = ({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: graphqlFilter,
   });
+
+  const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
     const recordIdsToDelete = await fetchAllRecordIds();
@@ -112,10 +118,19 @@ export const DeleteRecordsActionEffect = ({
             }? ${
               contextStoreNumberOfSelectedRecords === 1 ? 'It' : 'They'
             } can be recovered from the Options menu.`}
-            onConfirmClick={() => handleDeleteClick()}
+            onConfirmClick={() => {
+              handleDeleteClick();
+
+              if (actionMenuType === 'recordShow') {
+                closeRightDrawer();
+              }
+            }}
             deleteButtonText={`Delete ${
               contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
+            modalVariant={
+              actionMenuType === 'recordShow' ? 'tertiary' : 'primary'
+            }
           />
         ),
       });
@@ -127,6 +142,7 @@ export const DeleteRecordsActionEffect = ({
       removeActionMenuEntry('delete');
     };
   }, [
+    actionMenuType,
     addActionMenuEntry,
     canDelete,
     contextStoreNumberOfSelectedRecords,

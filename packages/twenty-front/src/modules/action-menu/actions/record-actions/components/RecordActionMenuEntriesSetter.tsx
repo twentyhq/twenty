@@ -1,11 +1,16 @@
 import { MultipleRecordsActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/MultipleRecordsActionMenuEntriesSetter';
 import { SingleRecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/SingleRecordActionMenuEntriesSetter';
+import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
 import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
 import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilValue } from 'recoil';
 
-export const RecordActionMenuEntriesSetter = () => {
+export const RecordActionMenuEntriesSetter = ({
+  actionMenuType,
+}: {
+  actionMenuType: ActionMenuType;
+}) => {
   const contextStoreNumberOfSelectedRecords = useRecoilValue(
     contextStoreNumberOfSelectedRecordsState,
   );
@@ -32,6 +37,7 @@ export const RecordActionMenuEntriesSetter = () => {
     return (
       <SingleRecordActionMenuEntriesSetter
         objectMetadataItem={objectMetadataItem}
+        actionMenuType={actionMenuType}
       />
     );
   }
@@ -39,6 +45,7 @@ export const RecordActionMenuEntriesSetter = () => {
   return (
     <MultipleRecordsActionMenuEntriesSetter
       objectMetadataItem={objectMetadataItem}
+      actionMenuType={actionMenuType}
     />
   );
 };
