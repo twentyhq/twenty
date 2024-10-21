@@ -152,7 +152,7 @@ export const RecordIndexContainer = () => {
             optionsDropdownButton={
               <RecordIndexOptionsDropdown
                 recordIndexId={recordIndexId}
-                objectNameSingular={objectNameSingular}
+                objectMetadataItem={objectMetadataItem}
                 viewType={recordIndexViewType ?? ViewType.Table}
               />
             }

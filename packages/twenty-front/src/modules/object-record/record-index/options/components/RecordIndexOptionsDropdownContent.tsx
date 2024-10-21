@@ -127,7 +127,7 @@ export const RecordIndexOptionsDropdownContent = ({
     visibleRecordGroups,
     viewGroupFieldMetadataItem,
   } = useRecordGroupStates({
-    objectNameSingular,
+    objectNameSingular: objectMetadataItem.nameSingular,
   });
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
@@ -135,7 +135,7 @@ export const RecordIndexOptionsDropdownContent = ({
     });
   const { handleOrderChange: handleRecordGroupOrderChange } =
     useRecordGroupReorder({
-      objectNameSingular,
+      objectNameSingular: objectMetadataItem.nameSingular,
       viewBarId: recordIndexId,
     });
 
