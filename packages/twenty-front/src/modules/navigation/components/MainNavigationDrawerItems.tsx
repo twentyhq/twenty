@@ -40,7 +40,6 @@ export const MainNavigationDrawerItems = () => {
             Icon={IconSearch}
             onClick={toggleCommandMenu}
             keyboard={['⌘', 'K']}
-            role="button"
           />
           <NavigationDrawerItem
             label="Settings"
