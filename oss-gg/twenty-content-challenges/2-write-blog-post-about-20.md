@@ -18,4 +18,6 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) blog Link: [blog](https://twenty.com/)
 
+» 19-October-2024 by [Thefool76](https://oss.gg/thefool76) blog Link: [blog](https://k5lo7h.hashnode.dev/twenty-crm-a-fresh-start-for-modern-businesses)
+
 ---
