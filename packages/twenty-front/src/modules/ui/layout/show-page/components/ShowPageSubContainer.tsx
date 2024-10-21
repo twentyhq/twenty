@@ -3,7 +3,7 @@ import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
-import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
+import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -18,6 +18,8 @@ import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPage
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
+import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
 import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
@@ -61,13 +63,13 @@ const StyledGreyBox = styled.div<{ isInRightDrawer: boolean }>`
 
 const StyledButtonContainer = styled.div`
   align-items: center;
-  bottom: 0;
+  background: ${({ theme }) => theme.background.secondary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  bottom: 0;
+  box-sizing: border-box;
   display: flex;
   justify-content: flex-end;
   padding: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-  box-sizing: border-box;
   position: absolute;
   width: 100%;
 `;
@@ -181,6 +183,14 @@ export const ShowPageSubContainer = ({
               workflowVersionId={targetableObject.id}
             />
           </>
+        );
+      case 'workflowRunFlow':
+        return (
+          <WorkflowRunVersionVisualizer workflowRunId={targetableObject.id} />
+        );
+      case 'workflowRunOutput':
+        return (
+          <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
         );
       default:
         return <></>;

@@ -8,6 +8,7 @@ import {
   IconMail,
   IconNotes,
   IconPaperclip,
+  IconPrinter,
   IconSettings,
   IconTimelineEvent,
 } from 'twenty-ui';
@@ -26,6 +27,10 @@ export const useRecordShowContainerTabs = (
   const isWorkflowVersion =
     isWorkflowEnabled &&
     targetObjectNameSingular === CoreObjectNameSingular.WorkflowVersion;
+  const isWorkflowRun =
+    isWorkflowEnabled &&
+    targetObjectNameSingular === CoreObjectNameSingular.WorkflowRun;
+  const isWorkflowRelated = isWorkflow || isWorkflowVersion || isWorkflowRun;
 
   const isCompanyOrPerson = [
     CoreObjectNameSingular.Company,
@@ -54,7 +59,7 @@ export const useRecordShowContainerTabs = (
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: isInRightDrawer || isWorkflow || isWorkflowVersion,
+      hide: isInRightDrawer || isWorkflowRelated,
     },
     {
       id: 'tasks',
@@ -63,8 +68,7 @@ export const useRecordShowContainerTabs = (
       hide:
         targetObjectNameSingular === CoreObjectNameSingular.Note ||
         targetObjectNameSingular === CoreObjectNameSingular.Task ||
-        isWorkflow ||
-        isWorkflowVersion,
+        isWorkflowRelated,
     },
     {
       id: 'notes',
@@ -73,14 +77,13 @@ export const useRecordShowContainerTabs = (
       hide:
         targetObjectNameSingular === CoreObjectNameSingular.Note ||
         targetObjectNameSingular === CoreObjectNameSingular.Task ||
-        isWorkflow ||
-        isWorkflowVersion,
+        isWorkflowRelated,
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: isWorkflow || isWorkflowVersion,
+      hide: isWorkflowRelated,
     },
     {
       id: 'emails',
@@ -102,9 +105,21 @@ export const useRecordShowContainerTabs = (
     },
     {
       id: 'workflowVersion',
-      title: 'Workflow Version',
+      title: 'Flow',
       Icon: IconSettings,
       hide: !isWorkflowVersion,
+    },
+    {
+      id: 'workflowRunOutput',
+      title: 'Output',
+      Icon: IconPrinter,
+      hide: !isWorkflowRun,
+    },
+    {
+      id: 'workflowRunFlow',
+      title: 'Flow',
+      Icon: IconSettings,
+      hide: !isWorkflowRun,
     },
   ];
 };

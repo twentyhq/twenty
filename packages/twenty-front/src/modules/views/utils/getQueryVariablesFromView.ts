@@ -3,7 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
+import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
@@ -35,7 +35,7 @@ export const getQueryVariablesFromView = ({
     fields: fieldMetadataItems,
   });
 
-  const filter = turnObjectDropdownFilterIntoQueryFilter(
+  const filter = turnFiltersIntoQueryFilter(
     mapViewFiltersToFilters(viewFilters, filterDefinitions),
     objectMetadataItem?.fields ?? [],
   );
