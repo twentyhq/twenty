@@ -26,4 +26,8 @@ Your turn 👇
 
 » 16-October-2024 by [harshsbhat](https://oss.gg/harshsbhat) Logo Link: [logo](https://drive.google.com/file/d/1jmqwNvlSyWSY1-pCG63TAtDvCoVa8xg-/view?usp=sharing) » tweet Link: [tweet](https://x.com/HarshBhatX/status/1846234658712772977)
 
+» 17-October-2024 by [shlok-py](https://oss.gg/shlok-py) Logo Link: [logo](https://drive.google.com/file/d/1BakHRLJul6DcNbLyeOXgJO9Ap4DpUxO9/view?usp=sharing) » tweet Link: [tweet](https://x.com/koirala_shlok/status/1846910669658247201)
+
+» 20-October-2024 by [Naprila](https://oss.gg/Naprila) Logo Link: [logo](https://drive.google.com/file/d/105fWXNtOkOPkU31AV0FDZKOdrJ8XLwBb/view?usp=drivesdk) » tweet Link: [tweet](https://x.com/mkprasad_821/status/1847978789713695133)
+
 ---

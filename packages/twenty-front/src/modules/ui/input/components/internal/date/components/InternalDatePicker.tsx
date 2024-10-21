@@ -17,7 +17,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
-} from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
+} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
