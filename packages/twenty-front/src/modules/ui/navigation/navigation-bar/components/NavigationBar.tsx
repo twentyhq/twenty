@@ -7,13 +7,13 @@ import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
 import { NavigationBarItem } from './NavigationBarItem';
 
 const StyledContainer = styled.div`
-display: flex;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(6)};
   justify-content: left;
   padding: ${({ theme }) => theme.spacing(3)};
   z-index: 1001;
   overflow-x: scroll;
-  `;
+`;
 
 const StyledAvatar = styled(Avatar)`
   :hover {
@@ -22,7 +22,6 @@ const StyledAvatar = styled(Avatar)`
 `;
 
 const FavoritesHighlight = styled.div`
-  width: 24px;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.background.transparent.lighter};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -40,28 +39,30 @@ type NavigationBarProps = {
     onClick: () => void;
   }[];
   objectMetaData: {
-    id: string,
-    Icon: IconComponent,
-    isActive: boolean,
-    onclick: () => void
+    id: string;
+    Icon: IconComponent;
+    isActive: boolean;
+    onclick: () => void;
   }[];
 };
 
 export const NavigationBar = ({
   activeItemName,
   favorites,
-  objectMetaData
+  objectMetaData,
 }: NavigationBarProps) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
-  <StyledContainer>
-      <NavigationBarItem 
-        key="workspaceLogo" 
+    <StyledContainer>
+      <NavigationBarItem
+        key="workspaceLogo"
         Icon={() => (
           <StyledAvatar
-            avatarUrl={getAbsoluteUrl(currentWorkspace?.logo as string) ?? undefined}
+            avatarUrl={
+              getAbsoluteUrl(currentWorkspace?.logo as string) ?? undefined
+            }
             placeholder="Workspace Logo"
             className="fav-avatar"
           />
@@ -69,29 +70,32 @@ export const NavigationBar = ({
         isActive={false}
         onClick={() => navigate(getAbsoluteUrl('/'))}
       />
-    {favorites.map((favItem) => (
-      <NavigationBarItem
-        key={favItem.id}
-        Icon={() => (
-          <StyledAvatar
-            placeholderColorSeed={favItem.recordId}
-            avatarUrl={favItem.avatarUrl}
-            type={favItem.avatarType}
-            placeholder={favItem.labelIdentifier}
-            className="fav-avatar"
+      {favorites.map((favItem) => (
+        <FavoritesHighlight>
+          <NavigationBarItem
+            key={favItem.id}
+            Icon={() => (
+              <StyledAvatar
+                placeholderColorSeed={favItem.recordId}
+                avatarUrl={favItem.avatarUrl}
+                type={favItem.avatarType}
+                placeholder={favItem.labelIdentifier}
+                className="fav-avatar"
+              />
+            )}
+            isActive={false}
+            onClick={favItem.onClick}
           />
-        )}
-        isActive={false}
-        onClick={favItem.onClick}
-      />
-    ))}
-    {objectMetaData.map((object) => (
-      <NavigationBarItem
-      key={object.id}
-      Icon={object.Icon}
-      isActive={object.isActive}
-      onClick={object.onclick}
-      />
-    ))}
-  </StyledContainer>
-)};
+        </FavoritesHighlight>
+      ))}
+      {objectMetaData.map((object) => (
+        <NavigationBarItem
+          key={object.id}
+          Icon={object.Icon}
+          isActive={object.isActive}
+          onClick={object.onclick}
+        />
+      ))}
+    </StyledContainer>
+  );
+};
