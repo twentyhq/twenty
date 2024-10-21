@@ -17,6 +17,10 @@ const StyledHeaderContainer = styled.div`
     position: sticky;
     top: 0;
   }
+
+  & > *:not(:first-child) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 export const RecordBoardHeader = () => {
