@@ -95,7 +95,15 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_TOKEN: string;
+  TINYBIRD_INGEST_TOKEN: string;
+
+  @IsString()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
+  TINYBIRD_WORKSPACE_UUID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
+  TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @CastToPositiveNumber()
   @IsNumber()
