@@ -95,7 +95,15 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_TOKEN: string;
+  TINYBIRD_INGEST_TOKEN: string;
+
+  @IsString()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
+  TINYBIRD_WORKSPACE_UUID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
+  TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @CastToPositiveNumber()
   @IsNumber()
@@ -204,6 +212,15 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_SSO_ENABLED = false;
+
+  @IsString()
+  @IsOptional()
+  ENTERPRISE_KEY: string;
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
@@ -422,6 +439,9 @@ export class EnvironmentVariables {
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
+
+  @ValidateIf((env) => env.ENTERPRISE_KEY)
+  SESSION_STORE_SECRET: string;
 
   @CastToBoolean()
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;

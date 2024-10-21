@@ -77,6 +77,7 @@ const StyledButton = styled.button<
   justify-content: center;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  max-height: ${({ theme }) => theme.spacing(8)};
   width: ${({ fullWidth, width }) =>
     fullWidth ? '100%' : width ? `${width}px` : 'auto'};
   ${({ theme, variant, disabled }) => {

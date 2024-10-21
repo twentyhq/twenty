@@ -104,6 +104,17 @@ export type PhonesFilter = {
   primaryPhoneCountryCode?: StringFilter;
 };
 
+export type ArrayFilter = {
+  contains?: string[];
+  not_contains?: string[];
+  is?: IsFilter;
+};
+
+export type RawJsonFilter = {
+  like?: string;
+  is?: IsFilter;
+};
+
 export type LeafFilter =
   | UUIDFilter
   | StringFilter
@@ -117,6 +128,8 @@ export type LeafFilter =
   | LinksFilter
   | ActorFilter
   | PhonesFilter
+  | ArrayFilter
+  | RawJsonFilter
   | undefined;
 
 export type AndObjectRecordFilter = {
