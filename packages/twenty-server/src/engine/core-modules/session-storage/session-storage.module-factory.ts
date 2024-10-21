@@ -6,6 +6,7 @@ import session from 'express-session';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
+import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 
 export const getSessionStorageOptions = (
   environmentService: EnvironmentService,
@@ -33,25 +34,16 @@ export const getSessionStorageOptions = (
       return sessionStorage;
     }
     case CacheStorageType.Redis: {
-      const host = environmentService.get('REDIS_HOST');
-      const port = environmentService.get('REDIS_PORT');
+      const connectionString = environmentService.get('REDIS_URL');
 
-      if (!(host && port)) {
+      if (!connectionString) {
         throw new Error(
-          `${cacheStorageType} session storage requires host: ${host} and port: ${port} to be defined, check your .env file`,
+          `${CacheStorageType.Redis} session storage requires REDIS_URL to be defined, check your .env file`,
         );
       }
 
-      const username = environmentService.get('REDIS_USERNAME');
-      const password = environmentService.get('REDIS_PASSWORD');
-
       const redisClient = createClient({
-        socket: {
-          host,
-          port,
-        },
-        username,
-        password,
+        url: connectionString,
       });
 
       redisClient.connect().catch((err) => {
