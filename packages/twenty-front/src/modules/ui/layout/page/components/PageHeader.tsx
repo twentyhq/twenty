@@ -32,7 +32,6 @@ const StyledTopBarContainer = styled.div`
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
 
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
     box-sizing: border-box;
@@ -112,7 +111,7 @@ export const PageHeader = ({
   );
 
   return (
-    <StyledTopBarContainer >
+    <StyledTopBarContainer>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>
