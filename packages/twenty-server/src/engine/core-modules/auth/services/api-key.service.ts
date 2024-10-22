@@ -1,0 +1,44 @@
+import { Injectable } from '@nestjs/common';
+
+import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { generateSecret } from 'src/utils/generate-secret';
+
+@Injectable()
+export class ApiKeyService {
+  constructor(
+    private readonly jwtWrapperService: JwtWrapperService,
+    private readonly environmentService: EnvironmentService,
+  ) {}
+
+  async generateApiKeyToken(
+    workspaceId: string,
+    apiKeyId?: string,
+    expiresAt?: Date | string,
+  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
+    if (!apiKeyId) {
+      return;
+    }
+    const jwtPayload = {
+      sub: workspaceId,
+    };
+    const secret = generateSecret(workspaceId, 'ACCESS');
+    let expiresIn: string | number;
+
+    if (expiresAt) {
+      expiresIn = Math.floor(
+        (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
+      );
+    } else {
+      expiresIn = this.environmentService.get('API_TOKEN_EXPIRES_IN');
+    }
+    const token = this.jwtWrapperService.sign(jwtPayload, {
+      secret,
+      expiresIn,
+      jwtid: apiKeyId,
+    });
+
+    return { token };
+  }
+}

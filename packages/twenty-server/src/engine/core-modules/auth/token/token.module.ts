@@ -8,7 +8,7 @@ import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.aut
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
@@ -26,14 +26,14 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     WorkspaceSSOModule,
   ],
   providers: [
-    TokenService,
+    RenewTokenService,
     JwtAuthStrategy,
     AccessTokenService,
     LoginTokenService,
     RefreshTokenService,
   ],
   exports: [
-    TokenService,
+    RenewTokenService,
     AccessTokenService,
     LoginTokenService,
     RefreshTokenService,

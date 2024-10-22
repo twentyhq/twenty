@@ -21,9 +21,12 @@ import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/d
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
+import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -46,19 +49,20 @@ import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { TokenService } from './token/services/token.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
     private authService: AuthService,
-    private tokenService: TokenService,
+    private renewTokenService: RenewTokenService,
     private userService: UserService,
+    private apiKeyService: ApiKeyService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
+    private oauthService: OAuthService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -121,7 +125,7 @@ export class AuthResolver {
   async exchangeAuthorizationCode(
     @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
   ) {
-    const tokens = await this.tokenService.verifyAuthorizationCode(
+    const tokens = await this.oauthService.verifyAuthorizationCode(
       exchangeAuthCodeInput,
     );
 
@@ -217,7 +221,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthTokens)
   async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
-    const tokens = await this.tokenService.generateTokensFromRefreshToken(
+    const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
       args.appToken,
     );
 
@@ -239,7 +243,7 @@ export class AuthResolver {
     @Args() args: ApiKeyTokenInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ApiKeyToken | undefined> {
-    return await this.tokenService.generateApiKeyToken(
+    return await this.apiKeyService.generateApiKeyToken(
       workspaceId,
       args.apiKeyId,
       args.expiresAt,

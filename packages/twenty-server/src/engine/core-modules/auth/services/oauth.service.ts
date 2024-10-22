@@ -12,61 +12,22 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
-import {
-  ApiKeyToken,
-  AuthToken,
-} from 'src/engine/core-modules/auth/dto/token.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { generateSecret } from 'src/utils/generate-secret';
 
 @Injectable()
-export class TokenService {
+export class OAuthService {
   constructor(
-    private readonly jwtWrapperService: JwtWrapperService,
-    private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly accessTokenService: AccessTokenService,
-    private readonly loginTokenService: LoginTokenService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly loginTokenService: LoginTokenService,
   ) {}
-
-  async generateApiKeyToken(
-    workspaceId: string,
-    apiKeyId?: string,
-    expiresAt?: Date | string,
-  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
-    if (!apiKeyId) {
-      return;
-    }
-    const jwtPayload = {
-      sub: workspaceId,
-    };
-    const secret = generateSecret(workspaceId, 'ACCESS');
-    let expiresIn: string | number;
-
-    if (expiresAt) {
-      expiresIn = Math.floor(
-        (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
-      );
-    } else {
-      expiresIn = this.environmentService.get('API_TOKEN_EXPIRES_IN');
-    }
-    const token = this.jwtWrapperService.sign(jwtPayload, {
-      secret,
-      expiresIn,
-      jwtid: apiKeyId,
-    });
-
-    return { token };
-  }
 
   async verifyAuthorizationCode(
     exchangeAuthCodeInput: ExchangeAuthCodeInput,
@@ -189,47 +150,6 @@ export class TokenService {
       accessToken,
       refreshToken,
       loginToken,
-    };
-  }
-
-  async generateTokensFromRefreshToken(token: string): Promise<{
-    accessToken: AuthToken;
-    refreshToken: AuthToken;
-  }> {
-    if (!token) {
-      throw new AuthException(
-        'Refresh token not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const {
-      user,
-      token: { id, workspaceId },
-    } = await this.refreshTokenService.verifyRefreshToken(token);
-
-    // Revoke old refresh token
-    await this.appTokenRepository.update(
-      {
-        id,
-      },
-      {
-        revokedAt: new Date(),
-      },
-    );
-
-    const accessToken = await this.accessTokenService.generateAccessToken(
-      user.id,
-      workspaceId,
-    );
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      user.id,
-      workspaceId,
-    );
-
-    return {
-      accessToken,
-      refreshToken,
     };
   }
 }

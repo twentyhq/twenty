@@ -11,14 +11,15 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
+import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
+import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -88,7 +89,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     JwtAuthStrategy,
     SamlAuthStrategy,
     AuthResolver,
-    TokenService,
     GoogleAPIsService,
     AppTokenService,
     AccessTokenService,
@@ -96,7 +96,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ResetPasswordService,
     SwitchWorkspaceService,
     TransientTokenService,
+    ApiKeyService,
+    OAuthService,
   ],
-  exports: [TokenService, AccessTokenService, LoginTokenService],
+  exports: [AccessTokenService, LoginTokenService],
 })
 export class AuthModule {}
