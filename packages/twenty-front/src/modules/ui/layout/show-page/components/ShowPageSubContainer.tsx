@@ -41,6 +41,7 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 
 const StyledTabListContainer = styled.div`
   align-items: center;
+  padding-left: ${({ theme }) => theme.spacing(2)};
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
