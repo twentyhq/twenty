@@ -23,4 +23,7 @@ Your turn 👇
 » 11-October-2024 by Bhavesh Mishra
 » Link to gif: https://shorturl.at/yln9H
 
+» 22-October-2024 by Zia Ur Rehman Khan
+» Link to gif: https://giphy.com/gifs/MG5FQSrG1mxf1N5qnA
+
 ---
