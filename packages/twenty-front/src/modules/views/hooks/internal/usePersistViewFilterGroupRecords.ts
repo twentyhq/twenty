@@ -91,10 +91,6 @@ export const usePersistViewFilterGroupRecords = () => {
 
       const oldToNewId = new Map<string, string>();
 
-      console.log({
-        viewFilterGroupsToCreate
-      })
-
       for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
         const newParentViewFilterGroupId = isDefined(
           viewFilterGroupToCreate.parentViewFilterGroupId,
