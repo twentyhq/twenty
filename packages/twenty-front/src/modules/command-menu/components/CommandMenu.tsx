@@ -342,7 +342,7 @@ export const CommandMenu = () => {
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledCommandMenu ref={commandMenuRef}>
+        <StyledCommandMenu ref={commandMenuRef} className="command-menu">
           <StyledInputContainer>
             <StyledInput
               autoFocus
