@@ -1,9 +1,12 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { AvatarChip, AvatarChipVariant, ChipSize } from 'twenty-ui';
 
 export type RecordIdentifierChipProps = {
   objectNameSingular: string;
@@ -17,6 +20,7 @@ export const RecordIdentifierChip = ({
   variant,
 }: RecordIdentifierChipProps) => {
   const { onIndexIdentifierClick } = useContext(RecordIndexRootPropsContext);
+  const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
@@ -38,6 +42,11 @@ export const RecordIdentifierChip = ({
       variant={variant}
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}
+      size={
+        recordIndexViewType === ViewType.Kanban
+          ? ChipSize.Large
+          : ChipSize.Small
+      }
     />
   );
 };
