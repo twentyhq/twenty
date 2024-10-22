@@ -1,11 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Section } from '@react-email/components';
-import pick from 'lodash.pick';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { H2Title } from 'twenty-ui';
-import { z } from 'zod';
-
 import { useUpdateOneDatabaseConnection } from '@/databases/hooks/useUpdateOneDatabaseConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -21,7 +13,13 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Section } from '@react-email/components';
+import pick from 'lodash.pick';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { Breadcrumb, H2Title } from 'twenty-ui';
+import { z } from 'zod';
 import {
   RemoteServer,
   RemoteTable,
