@@ -1,6 +1,5 @@
 ARG POSTGRES_VERSION=15
 ARG SPILO_VERSION=3.2-p1
-ARG PG_GRAPHQL_VERSION=1.5.6
 ARG WRAPPERS_VERSION=0.2.0
 
 # Build the mysql_fdw extension
@@ -38,10 +37,9 @@ WORKDIR /build/openssl
 RUN ./config && make && make install
 
 
-# Extend the Spilo image with the pg_graphql and mysql_fdw extensions
+# Extend the Spilo image with the mysql_fdw extensions
 FROM ghcr.io/zalando/spilo-${POSTGRES_VERSION}:${SPILO_VERSION}
 ARG POSTGRES_VERSION
-ARG PG_GRAPHQL_VERSION
 ARG WRAPPERS_VERSION
 ARG TARGETARCH
 
@@ -62,14 +60,6 @@ RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_
 
 COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/lib/libcrypto*  /usr/lib/
 COPY --from=build-libssl /usr/local/lib/engines-1.1 /usr/lib/engines-1.1
-
-# Copy pg_graphql
-COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
-    /usr/share/postgresql/${POSTGRES_VERSION}/extension
-COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.control \
-    /usr/share/postgresql/${POSTGRES_VERSION}/extension
-COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.so \
-    /usr/lib/postgresql/${POSTGRES_VERSION}/lib/pg_graphql.so
 
 # Copy mysql_fdw
 COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw.so \

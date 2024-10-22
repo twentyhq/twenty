@@ -1,10 +1,12 @@
 import {
   ActorFilter,
   AddressFilter,
+  ArrayFilter,
   CurrencyFilter,
   DateFilter,
   EmailsFilter,
   FloatFilter,
+  RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
   StringFilter,
@@ -286,6 +288,24 @@ export const applyEmptyFilters = (
             [correspondingField.name]: {
               name: { is: 'NULL' },
             } as ActorFilter,
+          },
+        ],
+      };
+      break;
+    case 'ARRAY':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: { is: 'NULL' } as ArrayFilter,
+          },
+        ],
+      };
+      break;
+    case 'RAW_JSON':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: { is: 'NULL' } as RawJsonFilter,
           },
         ],
       };

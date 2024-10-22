@@ -4,13 +4,13 @@ import {
   IconCalendarEvent,
   IconMailCog,
   MOBILE_VIEWPORT,
+  UndecoratedLink,
 } from 'twenty-ui';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Section } from '@/ui/layout/section/components/Section';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { useTheme } from '@emotion/react';
 
 const StyledCardsContainer = styled.div`

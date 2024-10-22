@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
-import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/util/buildRecordFromImportedStructuredRow';
+import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';

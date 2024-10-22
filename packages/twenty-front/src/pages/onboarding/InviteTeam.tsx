@@ -10,7 +10,7 @@ import {
 } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconCopy } from 'twenty-ui';
+import { ActionLink, AnimatedTranslation, IconCopy } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -25,7 +25,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { AnimatedTranslation } from '@/ui/utilities/animation/components/AnimatedTranslation';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -50,6 +49,10 @@ const StyledButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 200px;
+`;
+
+const StyledActionSkipLinkContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(3)} 0 0;
 `;
 
 const validationSchema = z.object({
@@ -150,6 +153,10 @@ export const InviteTeam = () => {
     [enqueueSnackBar, sendInvitation, setNextOnboardingStatus],
   );
 
+  const handleSkip = async () => {
+    await onSubmit({ emails: [] });
+  };
+
   useScopedHotkeys(
     [Key.Enter],
     () => {
@@ -170,7 +177,7 @@ export const InviteTeam = () => {
         Get the most out of your workspace by inviting your team.
       </SubTitle>
       <StyledAnimatedContainer>
-        {fields.map((field, index) => (
+        {fields.map((_field, index) => (
           <Controller
             key={index}
             name={`emails.${index}.email`}
@@ -217,6 +224,9 @@ export const InviteTeam = () => {
           fullWidth
         />
       </StyledButtonContainer>
+      <StyledActionSkipLinkContainer>
+        <ActionLink onClick={handleSkip}>Skip</ActionLink>
+      </StyledActionSkipLinkContainer>
     </>
   );
 };

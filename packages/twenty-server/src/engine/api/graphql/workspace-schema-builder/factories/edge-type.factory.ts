@@ -5,15 +5,15 @@ import { GraphQLOutputType } from 'graphql';
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { CursorScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   TypeMapperService,
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
-import { CursorScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
 import { EdgeTypeDefinitionKind } from './edge-type-definition.factory';
+import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
 
 @Injectable()
 export class EdgeTypeFactory {
@@ -27,7 +27,7 @@ export class EdgeTypeFactory {
   public create(
     objectMetadata: ObjectMetadataInterface,
     kind: EdgeTypeDefinitionKind,
-    buildOtions: WorkspaceBuildSchemaOptions,
+    buildOptions: WorkspaceBuildSchemaOptions,
     typeOptions: TypeOptions,
   ): GraphQLOutputType {
     if (kind === EdgeTypeDefinitionKind.Cursor) {
@@ -44,7 +44,7 @@ export class EdgeTypeFactory {
         `Node type for ${objectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
         {
           objectMetadata,
-          buildOtions,
+          buildOptions,
         },
       );
 
