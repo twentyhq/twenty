@@ -44,7 +44,7 @@ export class ServerlessFunctionService {
   ) {}
 
   async findManyServerlessFunctions(where) {
-    return await this.serverlessFunctionRepository.findBy(where);
+    return this.serverlessFunctionRepository.findBy(where);
   }
 
   async getServerlessFunctionSourceCode(
@@ -165,7 +165,7 @@ export class ServerlessFunctionService {
       },
     );
 
-    return await this.serverlessFunctionRepository.findOneBy({
+    return this.serverlessFunctionRepository.findOneBy({
       id: existingServerlessFunction.id,
     });
   }
@@ -245,7 +245,7 @@ export class ServerlessFunctionService {
       },
     );
 
-    return await this.serverlessFunctionRepository.findOneBy({
+    return this.serverlessFunctionRepository.findOneBy({
       id: existingServerlessFunction.id,
     });
   }
@@ -300,7 +300,7 @@ export class ServerlessFunctionService {
 
     await this.serverlessService.build(createdServerlessFunction, 'draft');
 
-    return await this.serverlessFunctionRepository.findOneBy({
+    return this.serverlessFunctionRepository.findOneBy({
       id: createdServerlessFunction.id,
     });
   }

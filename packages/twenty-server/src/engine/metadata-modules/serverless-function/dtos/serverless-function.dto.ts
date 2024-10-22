@@ -11,6 +11,7 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 import {
+  IsArray,
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -59,6 +60,7 @@ export class ServerlessFunctionDTO {
   @Field({ nullable: true })
   latestVersion: string;
 
+  @IsArray()
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
 
