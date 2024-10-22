@@ -12,13 +12,13 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { useSearchParams } from 'react-router-dom';
+import { AnimatedEaseIn } from 'twenty-ui';
 import {
-  useAddUserToWorkspaceMutation,
   useAddUserToWorkspaceByInviteTokenMutation,
+  useAddUserToWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useSearchParams } from 'react-router-dom';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
