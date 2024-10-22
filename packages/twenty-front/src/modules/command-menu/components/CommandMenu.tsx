@@ -3,6 +3,7 @@ import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copi
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Note } from '@/activities/types/Note';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuActions } from '@/command-menu/components/CommandMenuActions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
@@ -10,6 +11,7 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { Command, CommandType } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
+import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
@@ -333,6 +335,10 @@ export const CommandMenu = () => {
     isOpportunitiesLoading ||
     isCompaniesLoading;
 
+  const mainContextStoreComponentInstanceId = useRecoilValue(
+    mainContextStoreComponentInstanceIdState,
+  );
+
   return (
     <>
       {isCommandMenuOpened && (
@@ -393,6 +399,13 @@ export const CommandMenu = () => {
                         />
                       </SelectableItem>
                     </CommandGroup>
+                  )}
+                  {mainContextStoreComponentInstanceId && (
+                    <CommandMenuActions
+                      mainContextStoreComponentInstanceId={
+                        mainContextStoreComponentInstanceId
+                      }
+                    />
                   )}
                   <CommandGroup heading="Create">
                     {matchingCreateCommand.map((cmd) => (
