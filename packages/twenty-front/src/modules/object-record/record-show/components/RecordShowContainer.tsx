@@ -3,6 +3,7 @@ import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer
 
 import { SetMainContextStoreComponentInstanceIdEffect } from '@/context-store/components/SetMainContextStoreComponentInstanceIdEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
@@ -50,6 +51,12 @@ export const RecordShowContainer = ({
         objectNameSingular={objectNameSingular}
       />
       {!isInRightDrawer && <SetMainContextStoreComponentInstanceIdEffect />}
+      {recordFromStore && recordFromStore.deletedAt && (
+        <InformationBannerDeletedRecord
+          recordId={objectRecordId}
+          objectNameSingular={objectNameSingular}
+        />
+      )}
       <ShowPageContainer>
         <ShowPageSubContainer
           tabs={tabs}
