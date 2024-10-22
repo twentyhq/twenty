@@ -179,8 +179,7 @@ export const CommandMenu = () => {
       searchInput: deferredCommandMenuSearch ?? undefined,
     });
 
-  const { loading: isNotesLoading, records: notes } =
-  useSearchRecords<Note>({
+  const { loading: isNotesLoading, records: notes } = useSearchRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
     limit: 3,
