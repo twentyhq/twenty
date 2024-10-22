@@ -71,6 +71,7 @@ export type AuthProviders = {
   magicLink: Scalars['Boolean']['output'];
   microsoft: Scalars['Boolean']['output'];
   password: Scalars['Boolean']['output'];
+  sso: Scalars['Boolean']['output'];
 };
 
 export type AuthToken = {
@@ -271,6 +272,15 @@ export type DeleteOneRelationInput = {
   id: Scalars['UUID']['input'];
 };
 
+export type DeleteSsoInput = {
+  identityProviderId: Scalars['String']['input'];
+};
+
+export type DeleteSsoOutput = {
+  __typename?: 'DeleteSsoOutput';
+  identityProviderId: Scalars['String']['output'];
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   ColumnsAdded = 'COLUMNS_ADDED',
@@ -278,6 +288,20 @@ export enum DistantTableUpdate {
   ColumnsTypeChanged = 'COLUMNS_TYPE_CHANGED',
   TableDeleted = 'TABLE_DELETED'
 }
+
+export type EditSsoInput = {
+  id: Scalars['String']['input'];
+  status: SsoIdentityProviderStatus;
+};
+
+export type EditSsoOutput = {
+  __typename?: 'EditSsoOutput';
+  id: Scalars['String']['output'];
+  issuer: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  status: SsoIdentityProviderStatus;
+  type: IdpType;
+};
 
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
@@ -368,6 +392,20 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
+export type FindAvailableSsoidpInput = {
+  email: Scalars['String']['input'];
+};
+
+export type FindAvailableSsoidpOutput = {
+  __typename?: 'FindAvailableSSOIDPOutput';
+  id: Scalars['String']['output'];
+  issuer: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  status: SsoIdentityProviderStatus;
+  type: IdpType;
+  workspace: WorkspaceNameAndId;
+};
+
 export type FindManyRemoteTablesInput = {
   /** The id of the remote server. */
   id: Scalars['ID']['input'];
@@ -381,12 +419,44 @@ export type FullName = {
   lastName: Scalars['String']['output'];
 };
 
+export type GenerateJwt = GenerateJwtOutputWithAuthTokens | GenerateJwtOutputWithSsoauth;
+
+export type GenerateJwtOutputWithAuthTokens = {
+  __typename?: 'GenerateJWTOutputWithAuthTokens';
+  authTokens: AuthTokens;
+  reason: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
+export type GenerateJwtOutputWithSsoauth = {
+  __typename?: 'GenerateJWTOutputWithSSOAUTH';
+  availableSSOIDPs: Array<FindAvailableSsoidpOutput>;
+  reason: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
+export type GetAuthorizationUrlInput = {
+  identityProviderId: Scalars['String']['input'];
+};
+
+export type GetAuthorizationUrlOutput = {
+  __typename?: 'GetAuthorizationUrlOutput';
+  authorizationURL: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
 export type GetServerlessFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID']['input'];
   /** The version of the function */
   version?: Scalars['String']['input'];
 };
+
+export enum IdpType {
+  Oidc = 'OIDC',
+  Saml = 'SAML'
+}
 
 export type IndexConnection = {
   __typename?: 'IndexConnection';
@@ -457,12 +527,14 @@ export type Mutation = {
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
   createOneRelation: Relation;
   createOneRemoteServer: RemoteServer;
   createOneServerlessFunction: ServerlessFunction;
+  createSAMLIdentityProvider: SetupSsoOutput;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
@@ -470,16 +542,20 @@ export type Mutation = {
   deleteOneRelation: Relation;
   deleteOneRemoteServer: RemoteServer;
   deleteOneServerlessFunction: ServerlessFunction;
+  deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteUser: User;
   deleteWorkspaceInvitation: Scalars['String']['output'];
   disablePostgresProxy: PostgresCredentials;
+  editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
+  findAvailableSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   generateApiKeyToken: ApiKeyToken;
-  generateJWT: AuthTokens;
+  generateJWT: GenerateJwt;
   generateTransientToken: TransientToken;
+  getAuthorizationUrl: GetAuthorizationUrlOutput;
   impersonate: Verify;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
@@ -547,6 +623,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateOidcIdentityProviderArgs = {
+  input: SetupOidcSsoInput;
+};
+
+
 export type MutationCreateOneAppTokenArgs = {
   input: CreateOneAppTokenInput;
 };
@@ -574,6 +655,11 @@ export type MutationCreateOneRemoteServerArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateSamlIdentityProviderArgs = {
+  input: SetupSamlSsoInput;
 };
 
 
@@ -607,8 +693,18 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 };
 
 
+export type MutationDeleteSsoIdentityProviderArgs = {
+  input: DeleteSsoInput;
+};
+
+
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String']['input'];
+};
+
+
+export type MutationEditSsoIdentityProviderArgs = {
+  input: EditSsoInput;
 };
 
 
@@ -629,6 +725,11 @@ export type MutationExecuteOneServerlessFunctionArgs = {
 };
 
 
+export type MutationFindAvailableSsoIdentityProvidersArgs = {
+  input: FindAvailableSsoidpInput;
+};
+
+
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String']['input'];
   expiresAt: Scalars['String']['input'];
@@ -637,6 +738,11 @@ export type MutationGenerateApiKeyTokenArgs = {
 
 export type MutationGenerateJwtArgs = {
   workspaceId: Scalars['String']['input'];
+};
+
+
+export type MutationGetAuthorizationUrlArgs = {
+  input: GetAuthorizationUrlInput;
 };
 
 
@@ -863,6 +969,7 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
+  listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
   relation: Relation;
@@ -1080,6 +1187,12 @@ export type RunWorkflowVersionInput = {
   workflowVersionId: Scalars['String']['input'];
 };
 
+export enum SsoIdentityProviderStatus {
+  Active = 'Active',
+  Error = 'Error',
+  Inactive = 'Inactive'
+}
+
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']['output']>;
@@ -1140,6 +1253,31 @@ export enum ServerlessFunctionSyncStatus {
 export type SessionEntity = {
   __typename?: 'SessionEntity';
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type SetupOidcSsoInput = {
+  clientID: Scalars['String']['input'];
+  clientSecret: Scalars['String']['input'];
+  issuer: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
+export type SetupSamlSsoInput = {
+  certificate: Scalars['String']['input'];
+  fingerprint?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  issuer: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  ssoURL: Scalars['String']['input'];
+};
+
+export type SetupSsoOutput = {
+  __typename?: 'SetupSsoOutput';
+  id: Scalars['String']['output'];
+  issuer: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  status: SsoIdentityProviderStatus;
+  type: IdpType;
 };
 
 /** Sort Directions */
@@ -1331,11 +1469,13 @@ export type UpdateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
   domainName?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
+  isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
   __typename?: 'User';
+  analyticsTinybirdJwt?: Maybe<Scalars['String']['output']>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
@@ -1430,6 +1570,7 @@ export type Workspace = {
   featureFlags?: Maybe<Array<FeatureFlag>>;
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
+  isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   metadataVersion: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -1501,6 +1642,12 @@ export enum WorkspaceMemberTimeFormatEnum {
   Hour_24 = 'HOUR_24',
   System = 'SYSTEM'
 }
+
+export type WorkspaceNameAndId = {
+  __typename?: 'WorkspaceNameAndId';
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+};
 
 export type Field = {
   __typename?: 'field';
