@@ -98,7 +98,9 @@ export const useFavorites = () => {
       folderId: folder.id,
       folderName: folder.name,
       favorites: sortFavorites(
-        favorites.filter((favorite) => favorite.favoriteFolderId === folder.id),
+        favorites.filter((favorite) =>
+          favorite.favoriteFolderId?.includes(folder.id),
+        ),
         favoriteRelationFieldMetadataItems,
         getObjectRecordIdentifierByNameSingular,
         true,

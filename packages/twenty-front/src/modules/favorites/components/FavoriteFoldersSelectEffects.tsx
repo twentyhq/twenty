@@ -20,14 +20,11 @@ export const FavoriteFoldersMultiSelectEffect = () => {
   );
 
   useEffect(() => {
-    console.log('Effect - favoriteFolder:', favoriteFolder);
-
     if (isDefined(favoriteFolder)) {
-      const folderIds = favoriteFolder.map((folder) => folder.id);
-      console.log('Effect - Setting folder IDs:', folderIds);
-      setFavoriteFoldersIdsMultiSelect(folderIds);
+      setFavoriteFoldersIdsMultiSelect(favoriteFolder);
     }
   }, [favoriteFolder, setFavoriteFoldersIdsMultiSelect]);
+
   // Reset checked folders when component unmounts
   useEffect(() => {
     return () => {
