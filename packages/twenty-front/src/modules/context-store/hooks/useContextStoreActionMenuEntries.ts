@@ -2,7 +2,7 @@ import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreActionMenuEntriesComponentState } from '@/context-store/states/contextStoreActionMenuEntriesComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
-export const useActionMenuEntries = () => {
+export const useContextStoreActionMenuEntries = () => {
   const setActionMenuEntries = useSetRecoilComponentStateV2(
     contextStoreActionMenuEntriesComponentState,
   );

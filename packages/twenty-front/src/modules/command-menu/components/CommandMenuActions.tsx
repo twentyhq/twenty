@@ -9,6 +9,10 @@ export const CommandMenuActions = ({
 }: {
   mainContextStoreComponentInstanceId: string;
 }) => {
+  console.log(
+    'mainContextStoreComponentInstanceId',
+    mainContextStoreComponentInstanceId,
+  );
   const actionMenuEntries = useRecoilComponentValueV2(
     contextStoreActionMenuEntriesComponentSelector,
     mainContextStoreComponentInstanceId,
