@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
+import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
@@ -41,6 +42,7 @@ export class ServerlessFunctionService {
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly environmentService: EnvironmentService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   async findManyServerlessFunctions(where) {
@@ -115,7 +117,31 @@ export class ServerlessFunctionService {
       );
     }
 
-    return this.serverlessService.execute(functionToExecute, payload, version);
+    const resultServerlessFunction = await this.serverlessService.execute(
+      functionToExecute,
+      payload,
+      version,
+    );
+    const eventInput = {
+      action: 'serverlessFunction.executed',
+      payload: {
+        duration: resultServerlessFunction.duration,
+        status: resultServerlessFunction.status,
+        ...(resultServerlessFunction.error && {
+          errorType: resultServerlessFunction.error.errorType,
+        }),
+        functionId: functionToExecute.id,
+        functionName: functionToExecute.name,
+      },
+    };
+
+    this.analyticsService.create(
+      eventInput,
+      'serverless-function',
+      workspaceId,
+    );
+
+    return resultServerlessFunction;
   }
 
   async publishOneServerlessFunction(id: string, workspaceId: string) {
