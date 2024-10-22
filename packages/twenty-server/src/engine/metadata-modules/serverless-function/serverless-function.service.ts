@@ -274,12 +274,15 @@ export class ServerlessFunctionService {
     serverlessFunctionInput: CreateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    const createdServerlessFunction =
+    const serverlessFunctionToCreate =
       await this.serverlessFunctionRepository.create({
         ...serverlessFunctionInput,
         workspaceId,
         layerVersion: LAST_LAYER_VERSION,
       });
+
+    const createdServerlessFunction =
+      await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
 
     const draftFileFolder = getServerlessFolder({
       serverlessFunction: createdServerlessFunction,
