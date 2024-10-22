@@ -72,18 +72,20 @@ done
 echo "📁 Creating directory '$dir_name'"
 mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
-# Fetch docker-compose.yml from the branch corresponding to the version or main
+# Copy the twenty/packages/twenty-docker/docker-compose.yml file in it
 echo -e "\t• Copying docker-compose.yml"
-curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$version/packages/twenty-docker/docker-compose.yml
+curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml
 
-# Set REDIS_URL or REDIS_HOST depending on the version
+# Copy twenty/packages/twenty-docker/.env.example to .env
 echo -e "\t• Setting up .env file"
-curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$version/packages/twenty-docker/.env.example
+curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/.env.example
 
 # Replace TAG=latest by TAG=<latest_release or version input>
 if [[ $(uname) == "Darwin" ]]; then
+  # Running on macOS
   sed -i '' "s/TAG=latest/TAG=$version/g" .env
 else
+  # Assuming Linux
   sed -i'' "s/TAG=latest/TAG=$version/g" .env
 fi
 
