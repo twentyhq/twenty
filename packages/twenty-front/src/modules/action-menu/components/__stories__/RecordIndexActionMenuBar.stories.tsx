@@ -5,8 +5,8 @@ import { RecoilRoot } from 'recoil';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
 import { IconCheckbox, IconTrash } from 'twenty-ui';
@@ -21,11 +21,21 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
-          set(contextStoreTargetedRecordsRuleState, {
-            mode: 'selection',
-            selectedRecordIds: ['1', '2', '3'],
-          });
-          set(contextStoreNumberOfSelectedRecordsState, 3);
+          set(
+            contextStoreTargetedRecordsRuleComponentState.atomFamily({
+              instanceId: 'story-action-menu',
+            }),
+            {
+              mode: 'selection',
+              selectedRecordIds: ['1', '2', '3'],
+            },
+          );
+          set(
+            contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+              instanceId: 'story-action-menu',
+            }),
+            3,
+          );
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',

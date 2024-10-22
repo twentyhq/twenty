@@ -23,7 +23,8 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -102,8 +103,8 @@ export const RecordIndexContainer = () => {
     [columnDefinitions, setTableColumns],
   );
 
-  const setContextStoreTargetedRecordsRule = useSetRecoilState(
-    contextStoreTargetedRecordsRuleState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   return (

@@ -1,10 +1,9 @@
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 export const RecordShowContainerContextStoreEffect = ({
   recordId,
@@ -13,8 +12,8 @@ export const RecordShowContainerContextStoreEffect = ({
   recordId: string;
   objectNameSingular: string;
 }) => {
-  const setContextStoreTargetedRecordsRule = useSetRecoilState(
-    contextStoreTargetedRecordsRuleState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   const setContextStoreCurrentObjectMetadataId = useSetRecoilComponentStateV2(
@@ -25,8 +24,8 @@ export const RecordShowContainerContextStoreEffect = ({
     objectNameSingular: objectNameSingular,
   });
 
-  const setContextStoreNumberOfSelectedRecords = useSetRecoilState(
-    contextStoreNumberOfSelectedRecordsState,
+  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
   useEffect(() => {

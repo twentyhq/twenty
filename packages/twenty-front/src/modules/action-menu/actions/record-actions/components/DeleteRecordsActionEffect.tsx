@@ -1,7 +1,7 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
-import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -11,8 +11,8 @@ import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconTrash, isDefined } from 'twenty-ui';
 
 export const DeleteRecordsActionEffect = ({
@@ -39,12 +39,12 @@ export const DeleteRecordsActionEffect = ({
 
   const { favorites, deleteFavorite } = useFavorites();
 
-  const contextStoreNumberOfSelectedRecords = useRecoilValue(
-    contextStoreNumberOfSelectedRecordsState,
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilValue(
-    contextStoreTargetedRecordsRuleState,
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   const graphqlFilter = computeContextStoreFilters(

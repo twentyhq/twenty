@@ -5,7 +5,7 @@ import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIn
 import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordIndexActionMenu = ({

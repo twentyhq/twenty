@@ -1,4 +1,4 @@
-import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
