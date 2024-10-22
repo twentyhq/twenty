@@ -41,7 +41,7 @@ import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types
 
 const StyledFilterRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 250px 250px auto;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   align-items: center;
@@ -73,12 +73,21 @@ export const SettingsDevelopersWebhooksDetail = () => {
     objectRecordId: webhookId,
     onCompleted: (data) => {
       setDescription(data?.description ?? '');
-      setOperations(
-        data?.operations.map((op: string) => {
-          const [object, action] = op.split('.');
-          return { object, action };
-        }) ?? [WEBHOOK_EMPTY_OPERATION],
-      );
+      const baseOperations = data?.operations
+        ? data.operations.map((op: string) => {
+            const [object, action] = op.split('.');
+            return { object, action };
+          })
+        : data?.operation
+          ? [
+              {
+                object: data.operation.split('.')[0],
+                action: data.operation.split('.')[1],
+              },
+            ]
+          : [];
+
+      setOperations(addEmptyOperationIfNecessary(baseOperations));
       setIsDirty(false);
     },
   });
@@ -135,11 +144,24 @@ export const SettingsDevelopersWebhooksDetail = () => {
     await updateOneRecord({
       idToUpdate: webhookId,
       updateOneRecordInput: {
+        operation: cleanedOperations?.[0],
         operations: cleanedOperations,
         description: description,
       },
     });
     navigate(developerPath);
+  };
+
+  const addEmptyOperationIfNecessary = (
+    newOperations: WebhookOperationType[],
+  ) => {
+    if (
+      !newOperations.some((op) => op.object === '*' && op.action === '*') &&
+      !newOperations.some((op) => op.object === null || op.action === null)
+    ) {
+      return [...newOperations, WEBHOOK_EMPTY_OPERATION];
+    }
+    return newOperations;
   };
 
   const updateOperation = (
@@ -148,27 +170,20 @@ export const SettingsDevelopersWebhooksDetail = () => {
     value: string | null,
   ) => {
     const newOperations = [...operations];
+
     newOperations[index] = {
       ...newOperations[index],
       [field]: value,
     };
-    setOperations(newOperations);
-    setIsDirty(true);
 
-    if (
-      !newOperations.some((op) => op.object === '*' && op.action === '*') &&
-      !newOperations.some((op) => op.object === null || op.action === null)
-    ) {
-      setOperations([...newOperations, WEBHOOK_EMPTY_OPERATION]);
-    }
+    setOperations(addEmptyOperationIfNecessary(newOperations));
+    setIsDirty(true);
   };
 
   const removeOperation = (index: number) => {
-    if (index > 0) {
-      const newOperations = operations.filter((_, i) => i !== index);
-      setOperations(newOperations);
-      setIsDirty(true);
-    }
+    const newOperations = operations.filter((_, i) => i !== index);
+    setOperations(newOperations);
+    setIsDirty(true);
   };
 
   if (!webhookData?.targetUrl) {
@@ -250,7 +265,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 }}
               />
 
-              {index > 0 ? (
+              {operations.length > 1 ? (
                 <IconButton
                   onClick={() => removeOperation(index)}
                   variant="tertiary"
