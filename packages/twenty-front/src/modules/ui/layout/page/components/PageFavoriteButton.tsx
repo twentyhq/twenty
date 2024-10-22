@@ -7,8 +7,6 @@ type PageFavoriteButtonProps = {
   onClick: () => void;
 };
 
-////awdawdawd
-
 export const PageFavoriteButton = ({
   isFavorite,
   onClick,
