@@ -35,7 +35,6 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -43,7 +42,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,

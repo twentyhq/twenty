@@ -46,6 +46,18 @@ describe('isFieldValueEmpty', () => {
         fieldValue: { foo: 'bar' },
       }),
     ).toBe(false);
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: relationFieldDefinition,
+        fieldValue: [],
+      }),
+    ).toBe(true);
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: relationFieldDefinition,
+        fieldValue: [{ id: '123' }],
+      }),
+    ).toBe(false);
   });
 
   it('should return correct value for select field', () => {

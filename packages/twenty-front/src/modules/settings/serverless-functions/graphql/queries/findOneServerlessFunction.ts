@@ -3,8 +3,8 @@ import { SERVERLESS_FUNCTION_FRAGMENT } from '@/settings/serverless-functions/gr
 
 export const FIND_ONE_SERVERLESS_FUNCTION = gql`
   ${SERVERLESS_FUNCTION_FRAGMENT}
-  query GetOneServerlessFunction($id: UUID!) {
-    serverlessFunction(id: $id) {
+  query GetOneServerlessFunction($input: ServerlessFunctionIdInput!) {
+    findOneServerlessFunction(input: $input) {
       ...ServerlessFunctionFields
     }
   }

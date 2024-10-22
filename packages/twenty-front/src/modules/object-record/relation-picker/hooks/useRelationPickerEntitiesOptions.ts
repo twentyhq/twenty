@@ -18,24 +18,15 @@ export const useRelationPickerEntitiesOptions = ({
     RelationPickerScopeInternalContext,
   );
 
-  const { searchQueryState, relationPickerSearchFilterState } =
-    useRelationPickerScopedStates({
-      relationPickerScopedId: scopeId,
-    });
+  const { relationPickerSearchFilterState } = useRelationPickerScopedStates({
+    relationPickerScopedId: scopeId,
+  });
   const relationPickerSearchFilter = useRecoilValue(
     relationPickerSearchFilterState,
   );
 
-  const searchQuery = useRecoilValue(searchQueryState);
   const entities = useFilteredSearchEntityQuery({
-    filters: [
-      {
-        fieldNames:
-          searchQuery?.computeFilterFields?.(relationObjectNameSingular) ?? [],
-        filter: relationPickerSearchFilter,
-      },
-    ],
-    orderByField: 'createdAt',
+    searchFilter: relationPickerSearchFilter,
     selectedIds: selectedRelationRecordIds,
     excludeRecordIds: excludedRelationRecordIds,
     objectNameSingular: relationObjectNameSingular,
