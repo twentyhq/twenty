@@ -5,8 +5,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ClipboardEvent } from 'react';
 
-import { blockSchema } from '@/activities/blocks/schema';
-import { getSlashMenu } from '@/activities/blocks/slashMenu';
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
 import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
 import {
   CustomSlashMenu,
@@ -14,7 +14,7 @@ import {
 } from '@/ui/input/editor/components/CustomSlashMenu';
 
 interface BlockEditorProps {
-  editor: typeof blockSchema.BlockNoteEditor;
+  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
   onBlur?: () => void;
   onPaste?: (event: ClipboardEvent) => void;
