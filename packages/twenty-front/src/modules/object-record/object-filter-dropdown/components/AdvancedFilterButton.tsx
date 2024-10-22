@@ -73,34 +73,39 @@ export const AdvancedFilterButton = () => {
       throw new Error('Missing current view id');
     }
 
-    const newViewFilterGroup = {
-      id: v4(),
-      viewId: currentViewId,
-      logicalOperator: ViewFilterGroupLogicalOperator.AND,
-    };
+    const alreadyHasAdvancedFilterGroup =
+      (currentViewWithCombinedFiltersAndSorts?.viewFilterGroups?.length ?? 0) > 0;
 
-    upsertCombinedViewFilterGroup(newViewFilterGroup);
+    if(!alreadyHasAdvancedFilterGroup) {
+      const newViewFilterGroup = {
+        id: v4(),
+        viewId: currentViewId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+      };
 
-    const defaultFilterDefinition =
-      availableFilterDefinitions.find(
-        (filterDefinition) =>
-          filterDefinition.fieldMetadataId ===
-          objectMetadataItem?.labelIdentifierFieldMetadataId,
-      ) ?? availableFilterDefinitions?.[0];
+      upsertCombinedViewFilterGroup(newViewFilterGroup);
 
-    if (!defaultFilterDefinition) {
-      throw new Error('Missing default filter definition');
+      const defaultFilterDefinition =
+        availableFilterDefinitions.find(
+          (filterDefinition) =>
+            filterDefinition.fieldMetadataId ===
+            objectMetadataItem?.labelIdentifierFieldMetadataId,
+        ) ?? availableFilterDefinitions?.[0];
+
+      if (!defaultFilterDefinition) {
+        throw new Error('Missing default filter definition');
+      }
+
+      upsertCombinedViewFilter({
+        id: v4(),
+        fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
+        operand: getOperandsForFilterDefinition(defaultFilterDefinition)[0],
+        definition: defaultFilterDefinition,
+        value: '',
+        displayValue: '',
+        viewFilterGroupId: newViewFilterGroup.id,
+      });
     }
-
-    upsertCombinedViewFilter({
-      id: v4(),
-      fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
-      operand: getOperandsForFilterDefinition(defaultFilterDefinition)[0],
-      definition: defaultFilterDefinition,
-      value: '',
-      displayValue: '',
-      viewFilterGroupId: newViewFilterGroup.id,
-    });
 
     openAdvancedFilterDropdown();
     closeObjectFilterDropdown();
