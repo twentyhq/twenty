@@ -3,10 +3,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { RecoilRoot } from 'recoil';
 
-import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
-import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
+import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
@@ -15,16 +15,16 @@ const deleteMock = jest.fn();
 const markAsDoneMock = jest.fn();
 const addToFavoritesMock = jest.fn();
 
-const meta: Meta<typeof ActionMenuDropdown> = {
-  title: 'Modules/ActionMenu/ActionMenuDropdown',
-  component: ActionMenuDropdown,
+const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
+  title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',
+  component: RecordIndexActionMenuDropdown,
   decorators: [
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
           set(
             extractComponentState(
-              actionMenuDropdownPositionComponentState,
+              recordIndexActionMenuDropdownPositionComponentState,
               'action-menu-dropdown-story',
             ),
             { x: 10, y: 10 },
@@ -87,7 +87,7 @@ const meta: Meta<typeof ActionMenuDropdown> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ActionMenuDropdown>;
+type Story = StoryObj<typeof RecordIndexActionMenuDropdown>;
 
 export const Default: Story = {
   args: {

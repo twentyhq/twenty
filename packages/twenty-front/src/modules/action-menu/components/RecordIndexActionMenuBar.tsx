@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
 
-import { ActionMenuBarEntry } from '@/action-menu/components/ActionMenuBarEntry';
+import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
-import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useRecoilValue } from 'recoil';
 
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -18,9 +17,9 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionMenuBar = () => {
-  const contextStoreNumberOfSelectedRecords = useRecoilValue(
-    contextStoreNumberOfSelectedRecordsState,
+export const RecordIndexActionMenuBar = () => {
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
@@ -44,7 +43,7 @@ export const ActionMenuBar = () => {
     >
       <StyledLabel>{contextStoreNumberOfSelectedRecords} selected:</StyledLabel>
       {actionMenuEntries.map((entry, index) => (
-        <ActionMenuBarEntry key={index} entry={entry} />
+        <RecordIndexActionMenuBarEntry key={index} entry={entry} />
       ))}
     </BottomBar>
   );

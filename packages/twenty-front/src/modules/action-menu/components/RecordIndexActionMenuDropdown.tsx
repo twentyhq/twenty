@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
 
 import { PositionType } from '../types/PositionType';
 
-import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -34,7 +34,7 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   width: auto;
 `;
 
-export const ActionMenuDropdown = () => {
+export const RecordIndexActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
@@ -45,7 +45,7 @@ export const ActionMenuDropdown = () => {
 
   const actionMenuDropdownPosition = useRecoilValue(
     extractComponentState(
-      actionMenuDropdownPositionComponentState,
+      recordIndexActionMenuDropdownPositionComponentState,
       `action-menu-dropdown-${actionMenuId}`,
     ),
   );
