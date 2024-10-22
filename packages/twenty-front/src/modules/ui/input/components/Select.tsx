@@ -9,6 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
+import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isDefined } from '~/utils/isDefined';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
