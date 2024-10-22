@@ -64,6 +64,6 @@ export class MicrosoftAuthController {
       user.email,
     );
 
-    return res.redirect(this.tokenService.computeRedirectURI(loginToken.token));
+    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
   }
 }

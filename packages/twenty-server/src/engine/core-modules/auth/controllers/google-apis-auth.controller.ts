@@ -17,7 +17,7 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -27,7 +27,7 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 export class GoogleAPIsAuthController {
   constructor(
     private readonly googleAPIsService: GoogleAPIsService,
-    private readonly tokenService: TokenService,
+    private readonly transientTokenService: TransientTokenService,
     private readonly environmentService: EnvironmentService,
     private readonly onboardingService: OnboardingService,
   ) {}
@@ -58,7 +58,7 @@ export class GoogleAPIsAuthController {
     } = user;
 
     const { workspaceMemberId, userId, workspaceId } =
-      await this.tokenService.verifyTransientToken(transientToken);
+      await this.transientTokenService.verifyTransientToken(transientToken);
 
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 

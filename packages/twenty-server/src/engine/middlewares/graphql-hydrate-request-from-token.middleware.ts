@@ -1,10 +1,10 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 
 import { NextFunction, Request, Response } from 'express';
+import { ExtractJwt } from 'passport-jwt';
 
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
@@ -32,7 +32,6 @@ export class GraphQLHydrateRequestFromTokenMiddleware
   implements NestMiddleware
 {
   constructor(
-    private readonly tokenService: TokenService,
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -61,7 +60,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
     ];
 
     if (
-      !this.tokenService.isTokenPresent(req) &&
+      !this.isTokenPresent(req) &&
       (!body?.operationName || excludedOperations.includes(body.operationName))
     ) {
       return next();
@@ -104,5 +103,11 @@ export class GraphQLHydrateRequestFromTokenMiddleware
     }
 
     next();
+  }
+
+  isTokenPresent(request: Request): boolean {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
+    return !!token;
   }
 }

@@ -3,16 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { addMilliseconds } from 'date-fns';
-import { Request } from 'express';
-import ms from 'ms';
-import { ExtractJwt } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
-import {
-  AppToken,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -45,66 +38,6 @@ export class TokenService {
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
-  async generateInvitationToken(workspaceId: string, email: string) {
-    const expiresIn = this.environmentService.get(
-      'INVITATION_TOKEN_EXPIRES_IN',
-    );
-
-    if (!expiresIn) {
-      throw new AuthException(
-        'Expiration time for invitation token is not set',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    const invitationToken = this.appTokenRepository.create({
-      workspaceId,
-      expiresAt,
-      type: AppTokenType.InvitationToken,
-      value: crypto.randomBytes(32).toString('hex'),
-      context: {
-        email,
-      },
-    });
-
-    return this.appTokenRepository.save(invitationToken);
-  }
-
-  async generateTransientToken(
-    workspaceMemberId: string,
-    userId: string,
-    workspaceId: string,
-  ): Promise<AuthToken> {
-    const secret = generateSecret(workspaceId, 'LOGIN');
-    const expiresIn = this.environmentService.get(
-      'SHORT_TERM_TOKEN_EXPIRES_IN',
-    );
-
-    if (!expiresIn) {
-      throw new AuthException(
-        'Expiration time for access token is not set',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-    const jwtPayload = {
-      sub: workspaceMemberId,
-      userId,
-      workspaceId,
-    };
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
-        expiresIn,
-      }),
-      expiresAt,
-    };
-  }
-
   async generateApiKeyToken(
     workspaceId: string,
     apiKeyId?: string,
@@ -133,28 +66,6 @@ export class TokenService {
     });
 
     return { token };
-  }
-
-  isTokenPresent(request: Request): boolean {
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
-
-    return !!token;
-  }
-
-  async verifyTransientToken(transientToken: string): Promise<{
-    workspaceMemberId: string;
-    userId: string;
-    workspaceId: string;
-  }> {
-    await this.jwtWrapperService.verifyWorkspaceToken(transientToken, 'LOGIN');
-
-    const payload = await this.jwtWrapperService.decode(transientToken);
-
-    return {
-      workspaceMemberId: payload.sub,
-      userId: payload.userId,
-      workspaceId: payload.workspaceId,
-    };
   }
 
   async verifyAuthorizationCode(
@@ -320,11 +231,5 @@ export class TokenService {
       accessToken,
       refreshToken,
     };
-  }
-
-  computeRedirectURI(loginToken: string): string {
-    return `${this.environmentService.get(
-      'FRONT_BASE_URL',
-    )}/verify?loginToken=${loginToken}`;
   }
 }

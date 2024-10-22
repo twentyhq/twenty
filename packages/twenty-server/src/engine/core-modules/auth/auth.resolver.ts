@@ -24,6 +24,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -57,6 +58,7 @@ export class AuthResolver {
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
+    private transientTokenService: TransientTokenService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -140,11 +142,12 @@ export class AuthResolver {
     if (!workspaceMember) {
       return;
     }
-    const transientToken = await this.tokenService.generateTransientToken(
-      workspaceMember.id,
-      user.id,
-      user.defaultWorkspaceId,
-    );
+    const transientToken =
+      await this.transientTokenService.generateTransientToken(
+        workspaceMember.id,
+        user.id,
+        user.defaultWorkspaceId,
+      );
 
     return { transientToken };
   }

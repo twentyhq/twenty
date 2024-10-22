@@ -398,4 +398,10 @@ export class AuthService {
 
     return workspace;
   }
+
+  computeRedirectURI(loginToken: string): string {
+    return `${this.environmentService.get(
+      'FRONT_BASE_URL',
+    )}/verify?loginToken=${loginToken}`;
+  }
 }

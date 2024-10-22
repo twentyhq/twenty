@@ -16,13 +16,11 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAuthController {
   constructor(
-    private readonly tokenService: TokenService,
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
   ) {}
@@ -61,6 +59,6 @@ export class GoogleAuthController {
       user.email,
     );
 
-    return res.redirect(this.tokenService.computeRedirectURI(loginToken.token));
+    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
   }
 }

@@ -19,6 +19,7 @@ import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.a
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -94,6 +95,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     LoginTokenService,
     ResetPasswordService,
     SwitchWorkspaceService,
+    TransientTokenService,
   ],
   exports: [TokenService, AccessTokenService, LoginTokenService],
 })
