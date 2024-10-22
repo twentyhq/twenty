@@ -5,47 +5,13 @@ import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/S
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SearchVariablesDropdownStepItem } from '@/workflow/search-variables/components/SearchVariablesDropdownStepItem';
 import SearchVariablesDropdownStepSubItem from '@/workflow/search-variables/components/SearchVariablesDropdownStepSubItem';
+import { AVAILABLE_VARIABLES_MOCK } from '@/workflow/search-variables/constants/AvailableVariablesMock';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/search-variables/constants/SearchVariablesDropdownId';
+import { WorkflowStepMock } from '@/workflow/search-variables/types/WorkflowStepMock';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconVariable } from 'twenty-ui';
-
-export type Step = {
-  id: string;
-  name: string;
-  output: any;
-};
-
-// TODO: Replace with actual available variables when backend is ready
-const MOCK_AVAILABLE_VARIABLES: Step[] = [
-  {
-    id: '1',
-    name: 'Person is Created',
-    output: {
-      userId: '1',
-      recordId: '123',
-      objectMetadataItem: {
-        id: '1234',
-        nameSingular: 'person',
-        namePlural: 'people',
-      },
-      properties: {
-        after: {
-          name: 'John Doe',
-          email: 'john.doe@email.com',
-        },
-      },
-    },
-  },
-  {
-    id: '2',
-    name: 'Send Email',
-    output: {
-      success: true,
-    },
-  },
-];
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
@@ -61,17 +27,19 @@ const SearchVariablesDropdown = ({
   onSelect,
 }: {
   inputId: string;
-  onSelect: (value: any) => void;
+  onSelect: (value: string) => void;
 }) => {
   const theme = useTheme();
 
-  const dropdownId = SEARCH_VARIABLES_DROPDOWN_ID + '-' + inputId;
+  const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
   const { isDropdownOpen } = useDropdown(dropdownId);
-  const [selectedStep, setSelectedStep] = useState<Step | undefined>(undefined);
+  const [selectedStep, setSelectedStep] = useState<
+    WorkflowStepMock | undefined
+  >(undefined);
 
   const handleStepSelect = (stepId: string) => {
     setSelectedStep(
-      MOCK_AVAILABLE_VARIABLES.find((step) => step.id === stepId),
+      AVAILABLE_VARIABLES_MOCK.find((step) => step.id === stepId),
     );
   };
 
@@ -95,7 +63,7 @@ const SearchVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <DropdownMenu style={{ zIndex: 2001 }}>
+        <DropdownMenu>
           <DropdownMenuItemsContainer>
             {selectedStep ? (
               <SearchVariablesDropdownStepSubItem
@@ -105,7 +73,7 @@ const SearchVariablesDropdown = ({
               />
             ) : (
               <SearchVariablesDropdownStepItem
-                steps={MOCK_AVAILABLE_VARIABLES}
+                steps={AVAILABLE_VARIABLES_MOCK}
                 onSelect={handleStepSelect}
               />
             )}

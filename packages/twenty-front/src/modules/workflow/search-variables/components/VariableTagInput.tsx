@@ -1,14 +1,13 @@
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { getVariableTag } from '@/workflow/search-variables/utils/getVariableTag';
 import { initializeEditorContent } from '@/workflow/search-variables/utils/initializeEditorContent';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
-import { VariableTag } from '@/workflow/search-variables/utils/variableTag';
 import styled from '@emotion/styled';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import { EditorContent, useEditor } from '@tiptap/react';
-import React from 'react';
 import { isDefined } from 'twenty-ui';
 
 const StyledContainer = styled.div`
@@ -98,19 +97,19 @@ interface VariableTagInputProps {
   placeholder?: string;
 }
 
-const VariableTagInput: React.FC<VariableTagInputProps> = ({
+export const VariableTagInput = ({
   inputId,
   label,
   value,
   placeholder,
   onChange,
-}) => {
+}: VariableTagInputProps) => {
   const editor = useEditor({
     extensions: [
       Document,
       Paragraph,
       Text,
-      VariableTag,
+      getVariableTag(),
       Placeholder.configure({
         placeholder,
       }),

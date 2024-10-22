@@ -1,11 +1,12 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { Step } from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { WorkflowStepMock } from '@/workflow/search-variables/types/WorkflowStepMock';
+import { isObject } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconChevronLeft } from 'twenty-ui';
 
 type SearchVariablesDropdownStepSubItemProps = {
-  step: Step;
+  step: WorkflowStepMock;
   onSelect: (value: string) => void;
   onBack: () => void;
 };
@@ -17,17 +18,17 @@ const SearchVariablesDropdownStepSubItem = ({
 }: SearchVariablesDropdownStepSubItemProps) => {
   const [currentPath, setCurrentPath] = useState<string[]>([]);
 
-  const getCurrentObject = () => {
-    let current = step.output;
+  const getSelectedObject = () => {
+    let selected = step.output;
     for (const key of currentPath) {
-      current = current[key];
+      selected = selected[key];
     }
-    return current;
+    return selected;
   };
 
   const handleSelect = (key: string) => {
-    const current = getCurrentObject();
-    if (typeof current[key] === 'object' && current[key] !== null) {
+    const selectedObject = getSelectedObject();
+    if (isObject(selectedObject[key]) && selectedObject[key] !== null) {
       setCurrentPath([...currentPath, key]);
     } else {
       onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
@@ -50,7 +51,7 @@ const SearchVariablesDropdownStepSubItem = ({
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         {headerLabel}
       </DropdownMenuHeader>
-      {Object.entries(getCurrentObject()).map(([key, value]) => (
+      {Object.entries(getSelectedObject()).map(([key, value]) => (
         <MenuItemSelect
           key={key}
           selected={false}

@@ -1,9 +1,9 @@
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { Step } from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { WorkflowStepMock } from '@/workflow/search-variables/types/WorkflowStepMock';
 
 type SearchVariablesDropdownStepItemProps = {
-  steps: Step[];
-  onSelect: (value: any) => void;
+  steps: WorkflowStepMock[];
+  onSelect: (value: string) => void;
 };
 
 export const SearchVariablesDropdownStepItem = ({

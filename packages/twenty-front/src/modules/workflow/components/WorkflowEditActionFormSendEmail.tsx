@@ -6,7 +6,7 @@ import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerG
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
-import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
+import { VariableTagInput } from '@/workflow/search-variables/components/VariableTagInput';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
