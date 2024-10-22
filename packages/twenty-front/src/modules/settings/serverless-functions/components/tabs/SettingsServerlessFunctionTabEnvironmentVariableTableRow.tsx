@@ -96,7 +96,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
       </TableCell>
     </StyledEditModeTableRow>
   ) : (
-    <StyledTableRow>
+    <StyledTableRow onClick={() => setEditMode(true)}>
       <TableCell>
         <OverflowingTextWithTooltip text={envVariable.key} />
       </TableCell>
