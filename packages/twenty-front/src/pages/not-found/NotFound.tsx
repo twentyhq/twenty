@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import {
   AnimatedPlaceholder,
@@ -11,6 +11,7 @@ import {
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
+  UndecoratedLink,
 } from 'twenty-ui';
 
 const StyledBackDrop = styled.div`
