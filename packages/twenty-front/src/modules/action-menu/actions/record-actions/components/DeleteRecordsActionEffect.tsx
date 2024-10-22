@@ -122,7 +122,7 @@ export const DeleteRecordsActionEffect = ({
             onConfirmClick={() => {
               handleDeleteClick();
 
-              if (actionMenuType === 'recordShow') {
+              if (actionMenuType === 'recordShowInRightDrawer') {
                 closeRightDrawer();
               }
             }}
@@ -130,7 +130,9 @@ export const DeleteRecordsActionEffect = ({
               contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
             modalVariant={
-              actionMenuType === 'recordShow' ? 'tertiary' : 'primary'
+              actionMenuType === 'recordShowInRightDrawer'
+                ? 'tertiary'
+                : 'primary'
             }
           />
         ),

@@ -1,1 +1,4 @@
-export type ActionMenuType = 'recordIndex' | 'recordShow';
+export type ActionMenuType =
+  | 'recordIndex'
+  | 'recordShow'
+  | 'recordShowInRightDrawer';

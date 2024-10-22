@@ -63,7 +63,11 @@ export const RecordShowContainer = ({
       {contextStoreCurrentObjectMetadataId && (
         <>
           <ActionMenuConfirmationModals />
-          <RecordActionMenuEntriesSetter actionMenuType="recordShow" />
+          <RecordActionMenuEntriesSetter
+            actionMenuType={
+              isInRightDrawer ? 'recordShowInRightDrawer' : 'recordShow'
+            }
+          />
         </>
       )}
       {recordFromStore && recordFromStore.deletedAt && (
