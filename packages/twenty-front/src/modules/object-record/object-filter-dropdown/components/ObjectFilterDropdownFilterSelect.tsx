@@ -47,7 +47,7 @@ export const StyledInput = styled.input`
   }
 `;
 
-interface ObjectFilterDropdownFilterSelectProps {
+type ObjectFilterDropdownFilterSelectProps = {
   isAdvancedFilterButtonVisible?: boolean;
 }
 
