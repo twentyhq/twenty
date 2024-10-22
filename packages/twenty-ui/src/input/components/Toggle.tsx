@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
+import { VisibilityHiddenInput } from '@ui/accessibility';
 import { motion } from 'framer-motion';
-import { VisibilityHiddenInput } from 'twenty-ui';
 
 export type ToggleSize = 'small' | 'medium';
 
