@@ -43,10 +43,6 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
   const dropDownId = `settings-environment-variable-dropdown-${envVariable.id}`;
   const { closeDropdown, isDropdownOpen } = useDropdown(dropDownId);
 
-  if (editMode && isDropdownOpen) {
-    closeDropdown();
-  }
-
   return editMode ? (
     <StyledEditModeTableRow>
       <TableCell>
@@ -122,6 +118,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
                   LeftIcon={IconPencil}
                   onClick={() => {
                     setEditMode(true);
+                    closeDropdown();
                   }}
                 />
                 <MenuItem
