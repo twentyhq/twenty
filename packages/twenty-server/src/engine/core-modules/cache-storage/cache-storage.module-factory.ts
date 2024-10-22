@@ -20,9 +20,9 @@ export const cacheStorageModuleFactory = (
       return cacheModuleOptions;
     }
     case CacheStorageType.Redis: {
-      const connectionString = environmentService.get('REDIS_URL');
+      const redisUrl = environmentService.get('REDIS_URL');
 
-      if (!connectionString) {
+      if (!redisUrl) {
         throw new Error(
           `${cacheStorageType} cache storage requires REDIS_URL to be defined, check your .env file`,
         );
@@ -31,7 +31,7 @@ export const cacheStorageModuleFactory = (
       return {
         ...cacheModuleOptions,
         store: redisStore,
-        url: connectionString,
+        url: redisUrl,
       };
     }
     default:

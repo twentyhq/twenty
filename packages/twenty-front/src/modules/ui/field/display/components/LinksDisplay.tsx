@@ -1,14 +1,9 @@
-import { useMemo } from 'react';
 import { styled } from '@linaria/react';
-import { THEME_COMMON } from 'twenty-ui';
+import { useMemo } from 'react';
+import { LinkType, RoundedLink, SocialLink, THEME_COMMON } from 'twenty-ui';
 
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
-import {
-  LinkType,
-  SocialLink,
-} from '@/ui/navigation/link/components/SocialLink';
 import { checkUrlType } from '~/utils/checkUrlType';
 import { isDefined } from '~/utils/isDefined';
 import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';

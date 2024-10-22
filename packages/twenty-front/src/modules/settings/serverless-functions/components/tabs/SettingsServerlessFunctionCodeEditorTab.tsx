@@ -80,9 +80,11 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   const HeaderTabList = (
     <StyledTabList
       tabListId={SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}
-      tabs={files.map((file) => {
-        return { id: file.path, title: file.path.split('/').at(-1) || '' };
-      })}
+      tabs={files
+        .filter((file) => file.path !== '.env')
+        .map((file) => {
+          return { id: file.path, title: file.path.split('/').at(-1) || '' };
+        })}
     />
   );
 
