@@ -35,6 +35,7 @@ export class CallWebhookJob {
         action: 'webhook.response',
         payload: {
           status: response.status,
+          success: true,
           url: data.targetUrl,
           webhookId: data.webhookId,
           eventName: data.eventName,
@@ -46,10 +47,11 @@ export class CallWebhookJob {
       const eventInput = {
         action: 'webhook.response',
         payload: {
-          status: err.response.status,
           url: data.targetUrl,
           webhookId: data.webhookId,
           eventName: data.eventName,
+          success: false,
+          ...(err.response && { status: err.response.status }),
         },
       };
 
