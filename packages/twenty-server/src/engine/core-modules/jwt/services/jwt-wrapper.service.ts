@@ -52,7 +52,8 @@ export class JwtWrapperService {
       json: true,
     });
 
-    if (!payload.sub) {
+    // TODO: check if this is really needed
+    if (type !== 'FILE' && !payload.sub) {
       throw new UnauthorizedException('No payload sub');
     }
 

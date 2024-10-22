@@ -36,14 +36,14 @@ export class FileService {
     );
     const secret = this.jwtWrapperService.generateAppSecret(
       'FILE',
-      payloadToEncode.workspace_id,
+      payloadToEncode.workspaceId,
     );
 
     const expirationDate = addMilliseconds(new Date(), ms(fileTokenExpiresIn));
 
     const signedPayload = this.jwtWrapperService.sign(
       {
-        expiration_date: expirationDate,
+        expirationDate: expirationDate,
         ...payloadToEncode,
       },
       {

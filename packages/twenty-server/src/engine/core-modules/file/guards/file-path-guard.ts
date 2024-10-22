@@ -33,8 +33,8 @@ export class FilePathGuard implements CanActivate {
       json: true,
     });
 
-    const expirationDate = decodedPayload?.['expiration_date'];
-    const workspaceId = decodedPayload?.['workspace_id'];
+    const expirationDate = decodedPayload?.['expirationDate'];
+    const workspaceId = decodedPayload?.['workspaceId'];
 
     const isExpired = await this.isExpired(expirationDate);
 
