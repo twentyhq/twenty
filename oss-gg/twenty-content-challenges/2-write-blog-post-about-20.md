@@ -18,4 +18,6 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) blog Link: [blog](https://twenty.com/)
 
+» 22-October-2024 by [Khaan25](https://oss.gg/Khaan25) blog Link: [blog](https://medium.com/@ziaurzai/twenty-crm-modern-solution-for-modern-problems-a0b65fec9d6c)
+
 ---
