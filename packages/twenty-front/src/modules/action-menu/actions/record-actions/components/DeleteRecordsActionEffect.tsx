@@ -145,6 +145,7 @@ export const DeleteRecordsActionEffect = ({
     actionMenuType,
     addActionMenuEntry,
     canDelete,
+    closeRightDrawer,
     contextStoreNumberOfSelectedRecords,
     handleDeleteClick,
     isDeleteRecordsModalOpen,
