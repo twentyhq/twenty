@@ -54,7 +54,6 @@ export const AdvancedFilterDropdownButton = () => {
       (viewFilterGroup) => !viewFilterGroup.parentViewFilterGroupId,
     )?.id;
 
-
   if (!outermostViewFilterGroupId) {
     return null;
   }
