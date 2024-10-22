@@ -57,11 +57,10 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
     environmentVariablesList,
   );
   const filteredEnvVariable = useMemo(() => {
-    return envVariables.filter((envVariable) =>
-      envVariable.key
-        .toLowerCase()
-        .concat(envVariable.value.toLowerCase())
-        .includes(searchTerm.toLowerCase()),
+    return envVariables.filter(
+      (envVariable) =>
+        envVariable.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        envVariable.value.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [envVariables, searchTerm]);
 
