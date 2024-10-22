@@ -27,6 +27,7 @@ describe('useLimitPerMetadataItem', () => {
       nameSingular: 'nameSingular',
       updatedAt: 'updatedAt',
       fields: [],
+      indexMetadatas: [],
     },
   ];
 

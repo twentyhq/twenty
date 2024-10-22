@@ -54,6 +54,11 @@ export const Default: Story = {
             soon={true}
           />
           <NavigationDrawerItem
+            label="Search"
+            Icon={IconSearch}
+            keyboard={['⌘', 'K']}
+          />
+          <NavigationDrawerItem
             label="Settings"
             to="/settings/profile"
             Icon={IconSettings}
@@ -84,9 +89,8 @@ export const Default: Story = {
   },
 };
 
-export const Submenu: Story = {
+export const Settings: Story = {
   args: {
-    isSubMenu: true,
     title: 'Settings',
     children: (
       <>
