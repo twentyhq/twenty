@@ -10,7 +10,7 @@ import {
 } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { AnimatedTranslation, IconCopy } from 'twenty-ui';
+import { ActionLink, AnimatedTranslation, IconCopy } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -49,6 +49,10 @@ const StyledButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 200px;
+`;
+
+const StyledActionSkipLinkContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(3)} 0 0;
 `;
 
 const validationSchema = z.object({
@@ -149,6 +153,10 @@ export const InviteTeam = () => {
     [enqueueSnackBar, sendInvitation, setNextOnboardingStatus],
   );
 
+  const handleSkip = async () => {
+    await onSubmit({ emails: [] });
+  };
+
   useScopedHotkeys(
     [Key.Enter],
     () => {
@@ -169,7 +177,7 @@ export const InviteTeam = () => {
         Get the most out of your workspace by inviting your team.
       </SubTitle>
       <StyledAnimatedContainer>
-        {fields.map((field, index) => (
+        {fields.map((_field, index) => (
           <Controller
             key={index}
             name={`emails.${index}.email`}
@@ -216,6 +224,9 @@ export const InviteTeam = () => {
           fullWidth
         />
       </StyledButtonContainer>
+      <StyledActionSkipLinkContainer>
+        <ActionLink onClick={handleSkip}>Skip</ActionLink>
+      </StyledActionSkipLinkContainer>
     </>
   );
 };
