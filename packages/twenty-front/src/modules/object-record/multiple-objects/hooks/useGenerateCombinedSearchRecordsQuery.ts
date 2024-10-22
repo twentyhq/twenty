@@ -6,8 +6,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { isObjectMetadataItemSearchable } from '@/object-record/multiple-objects/hooks/utils/isObjectMetadataItemSearchable';
 import { getSearchRecordsQueryResponseField } from '@/object-record/utils/getSearchRecordsQueryResponseField';
+import { isObjectMetadataItemSearchable } from '@/object-record/utils/isObjectMetadataItemSearchable';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
