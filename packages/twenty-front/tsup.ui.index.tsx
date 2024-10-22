@@ -1,12 +1,6 @@
 import { ThemeType } from 'twenty-ui';
 
 export { ThemeProvider } from '@emotion/react';
-
-declare module '@emotion/react' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  export interface Theme extends ThemeType {}
-}
-
 export * from 'twenty-ui';
 export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar';
 export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar';
@@ -33,7 +27,15 @@ export * from './src/modules/ui/input/components/Select';
 export * from './src/modules/ui/input/components/TextArea';
 export * from './src/modules/ui/input/components/TextInput';
 export * from './src/modules/ui/input/editor/components/BlockEditor';
+<<<<<<< HEAD
 export * from './src/modules/ui/navigation/bread-crumb/components/Breadcrumb';
+=======
+export * from './src/modules/ui/navigation/link/components/ActionLink';
+export * from './src/modules/ui/navigation/link/components/ContactLink';
+export * from './src/modules/ui/navigation/link/components/RawLink';
+export * from './src/modules/ui/navigation/link/components/RoundedLink';
+export * from './src/modules/ui/navigation/link/components/SocialLink';
+>>>>>>> main
 export * from './src/modules/ui/navigation/menu-item/components/MenuItem';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemCommand';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemDraggable';
@@ -47,3 +49,7 @@ export * from './src/modules/ui/navigation/menu-item/components/MenuItemToggle';
 export * from './src/modules/ui/navigation/navigation-bar/components/NavigationBar';
 export * from './src/modules/ui/navigation/step-bar/components/StepBar';
 
+declare module '@emotion/react' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  export interface Theme extends ThemeType {}
+}

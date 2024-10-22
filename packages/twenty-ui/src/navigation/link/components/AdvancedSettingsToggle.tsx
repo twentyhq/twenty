@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { IconTool } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { MAIN_COLORS } from '@ui/theme';
+import { useId } from 'react';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -11,7 +12,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledText = styled.span`
+const StyledLabel = styled.label`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -36,10 +37,10 @@ const StyledIconTool = styled(IconTool)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-interface AdvancedSettingsToggleProps {
+type AdvancedSettingsToggleProps = {
   isAdvancedModeEnabled: boolean;
   setIsAdvancedModeEnabled: (enabled: boolean) => void;
-}
+};
 
 export const AdvancedSettingsToggle = ({
   isAdvancedModeEnabled,
@@ -48,6 +49,7 @@ export const AdvancedSettingsToggle = ({
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };
+  const inputId = useId();
 
   return (
     <StyledContainer>
@@ -55,8 +57,10 @@ export const AdvancedSettingsToggle = ({
         <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
       </StyledIconContainer>
       <StyledToggleContainer>
-        <StyledText>Advanced:</StyledText>
+        <StyledLabel htmlFor={inputId}>Advanced:</StyledLabel>
+
         <Toggle
+          id={inputId}
           onChange={onChange}
           color={MAIN_COLORS.yellow}
           value={isAdvancedModeEnabled}
