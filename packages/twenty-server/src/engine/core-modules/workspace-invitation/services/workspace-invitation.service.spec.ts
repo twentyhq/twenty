@@ -3,7 +3,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -123,6 +126,7 @@ describe('WorkspaceInvitationService', () => {
       jest.spyOn(service, 'createWorkspaceInvitation').mockResolvedValue({
         context: { email: 'test@example.com' },
         value: 'token-value',
+        type: AppTokenType.InvitationToken,
       } as AppToken);
       jest
         .spyOn(environmentService, 'get')
