@@ -130,6 +130,7 @@ const mocks: MockedResponse[] = [
 const WrapperWithResponse = getJestMetadataAndApolloMocksAndContextStoreWrapper(
   {
     apolloMocks: mocks,
+    componentInstanceId: 'recordIndexId',
     contextStoreTargetedRecordsRule: {
       mode: 'selection',
       selectedRecordIds: [],
@@ -155,6 +156,7 @@ const graphqlEmptyResponse = [
 const WrapperWithEmptyResponse =
   getJestMetadataAndApolloMocksAndContextStoreWrapper({
     apolloMocks: graphqlEmptyResponse,
+    componentInstanceId: 'recordIndexId',
     contextStoreTargetedRecordsRule: {
       mode: 'selection',
       selectedRecordIds: [],
@@ -207,7 +209,6 @@ describe('useRecordData', () => {
             objectMetadataItem,
             callback,
             pageSize: 30,
-
             delayMs: 0,
           }),
         { wrapper: WrapperWithResponse },

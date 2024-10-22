@@ -1,3 +1,4 @@
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
@@ -10,6 +11,7 @@ export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
   onInitializeRecoilSnapshot,
   contextStoreTargetedRecordsRule,
   contextStoreCurrentObjectMetadataNameSingular,
+  componentInstanceId,
 }: {
   apolloMocks:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
@@ -17,6 +19,7 @@ export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
   contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
   contextStoreCurrentObjectMetadataNameSingular?: string;
+  componentInstanceId: string;
 }) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks,
@@ -24,14 +27,20 @@ export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
   });
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
-      <JestContextStoreSetter
-        contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
-        contextStoreCurrentObjectMetadataNameSingular={
-          contextStoreCurrentObjectMetadataNameSingular
-        }
+      <ContextStoreComponentInstanceContext.Provider
+        value={{
+          instanceId: componentInstanceId,
+        }}
       >
-        {children}
-      </JestContextStoreSetter>
+        <JestContextStoreSetter
+          contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
+          contextStoreCurrentObjectMetadataNameSingular={
+            contextStoreCurrentObjectMetadataNameSingular
+          }
+        >
+          {children}
+        </JestContextStoreSetter>
+      </ContextStoreComponentInstanceContext.Provider>
     </Wrapper>
   );
 };
