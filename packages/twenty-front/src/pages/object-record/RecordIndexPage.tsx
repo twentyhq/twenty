@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 
-import { SetMainContextStoreComponentInstanceIdEffect } from '@/context-store/components/SetMainContextStoreComponentInstanceIdEffect';
+import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -82,7 +82,7 @@ export const RecordIndexPage = () => {
             >
               <RecordIndexContainerContextStoreObjectMetadataEffect />
               <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-              <SetMainContextStoreComponentInstanceIdEffect />
+              <MainContextStoreComponentInstanceIdSetterEffect />
               <RecordIndexContainer />
             </ContextStoreComponentInstanceContext.Provider>
           </StyledIndexContainer>

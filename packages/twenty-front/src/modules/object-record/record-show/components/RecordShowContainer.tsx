@@ -3,7 +3,7 @@ import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer
 
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { SetMainContextStoreComponentInstanceIdEffect } from '@/context-store/components/SetMainContextStoreComponentInstanceIdEffect';
+import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
@@ -59,7 +59,7 @@ export const RecordShowContainer = ({
         recordId={objectRecordId}
         objectNameSingular={objectNameSingular}
       />
-      {!isInRightDrawer && <SetMainContextStoreComponentInstanceIdEffect />}
+      {!isInRightDrawer && <MainContextStoreComponentInstanceIdSetterEffect />}
       {contextStoreCurrentObjectMetadataId && (
         <>
           <ActionMenuConfirmationModals />
