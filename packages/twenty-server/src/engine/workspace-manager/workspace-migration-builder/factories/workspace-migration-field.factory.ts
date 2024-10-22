@@ -92,6 +92,9 @@ export class WorkspaceMigrationFieldFactory {
         continue;
       }
 
+      const positionInCreation =
+        fieldMetadata.type === FieldMetadataType.TS_VECTOR ? 1 : 0;
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(
@@ -107,7 +110,9 @@ export class WorkspaceMigrationFieldFactory {
 
       workspaceMigrations.push({
         workspaceId: fieldMetadata.workspaceId,
-        name: generateMigrationName(`create-${fieldMetadata.name}`),
+        name: generateMigrationName(
+          `create-${fieldMetadata.name}-${positionInCreation}`,
+        ),
         isCustom: false,
         migrations,
       });
