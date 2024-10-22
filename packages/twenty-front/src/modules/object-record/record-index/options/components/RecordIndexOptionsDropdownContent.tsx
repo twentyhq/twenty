@@ -9,15 +9,18 @@ import {
   IconRotate2,
   IconSettings,
   IconTag,
+  UndecoratedLink,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
+
 import {
   displayedExportProgress,
-  useExportTableData,
-} from '@/object-record/record-index/options/hooks/useExportTableData';
+  useExportRecordData,
+} from '@/action-menu/hooks/useExportRecordData';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -28,7 +31,6 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
@@ -44,14 +46,14 @@ type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
 
 type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
-  objectNameSingular: string;
+  objectMetadataItem: ObjectMetadataItem;
   viewType: ViewType;
 };
 
 export const RecordIndexOptionsDropdownContent = ({
   viewType,
   recordIndexId,
-  objectNameSingular,
+  objectMetadataItem,
 }: RecordIndexOptionsDropdownContentProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -68,7 +70,7 @@ export const RecordIndexOptionsDropdownContent = ({
   };
 
   const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular: objectNameSingular,
+    objectNameSingular: objectMetadataItem.nameSingular,
   });
 
   const settingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
@@ -92,7 +94,7 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
     useHandleToggleTrashColumnFilter({
-      objectNameSingular,
+      objectNameSingular: objectMetadataItem.nameSingular,
       viewBarId: recordIndexId,
     });
 
@@ -104,7 +106,7 @@ export const RecordIndexOptionsDropdownContent = ({
     isCompactModeActive,
     setAndPersistIsCompactModeActive,
   } = useRecordIndexOptionsForBoard({
-    objectNameSingular,
+    objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
   });
@@ -126,12 +128,12 @@ export const RecordIndexOptionsDropdownContent = ({
       : handleColumnVisibilityChange;
 
   const { openObjectRecordsSpreasheetImportDialog } =
-    useOpenObjectRecordsSpreasheetImportDialog(objectNameSingular);
+    useOpenObjectRecordsSpreasheetImportDialog(objectMetadataItem.nameSingular);
 
-  const { progress, download } = useExportTableData({
+  const { progress, download } = useExportRecordData({
     delayMs: 100,
-    filename: `${objectNameSingular}.csv`,
-    objectNameSingular,
+    filename: `${objectMetadataItem.nameSingular}.csv`,
+    objectMetadataItem,
     recordIndexId,
     viewType,
   });

@@ -77,7 +77,7 @@ export const DateTimeSettings = () => {
         );
         dateTime[settingName] =
           (value as DateFormat) === DateFormat.SYSTEM
-            ? detectDateFormat()
+            ? DateFormat[detectDateFormat()]
             : (value as DateFormat);
         break;
       }
@@ -87,7 +87,7 @@ export const DateTimeSettings = () => {
         );
         dateTime[settingName] =
           (value as TimeFormat) === TimeFormat.SYSTEM
-            ? detectTimeFormat()
+            ? TimeFormat[detectTimeFormat()]
             : (value as TimeFormat);
         break;
       }

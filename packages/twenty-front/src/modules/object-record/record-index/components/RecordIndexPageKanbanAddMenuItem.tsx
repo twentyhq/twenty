@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { Tag } from 'twenty-ui';
 
 const StyledMenuItem = styled(MenuItem)`
-  width: 200px;
+  width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
 type RecordIndexPageKanbanAddMenuItemProps = {

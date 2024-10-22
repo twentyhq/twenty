@@ -52,7 +52,9 @@
         "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
-        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "ci": {
+          "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs"
+        },
         "fix": {}
       }
     },
