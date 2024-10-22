@@ -155,6 +155,10 @@ export const InviteTeam = () => {
     [enqueueSnackBar, sendInvitation, setNextOnboardingStatus],
   );
 
+  const handleSkip = async () => {
+    await onSubmit({ emails: [] });
+  };
+
   useScopedHotkeys(
     [Key.Enter],
     () => {
@@ -223,13 +227,7 @@ export const InviteTeam = () => {
         />
       </StyledButtonContainer>
       <StyledActionSkipLinkContainer>
-        <ActionLink
-          onClick={handleSubmit(async () => {
-            await onSubmit({ emails: [] });
-          })}
-        >
-          Skip
-        </ActionLink>
+        <ActionLink onClick={handleSkip}>Skip</ActionLink>
       </StyledActionSkipLinkContainer>
     </>
   );
