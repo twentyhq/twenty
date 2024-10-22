@@ -1,10 +1,10 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { contextStoreActionMenuEntriesComponentState } from '@/context-store/states/contextStoreActionMenuEntriesComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const useActionMenuEntries = () => {
   const setActionMenuEntries = useSetRecoilComponentStateV2(
-    actionMenuEntriesComponentState,
+    contextStoreActionMenuEntriesComponentState,
   );
 
   const addActionMenuEntry = (entry: ActionMenuEntry) => {

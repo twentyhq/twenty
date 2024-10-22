@@ -1,6 +1,6 @@
-import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { contextStoreActionMenuEntriesComponentSelector } from '@/context-store/states/contextStoreActionMenuEntriesComponentSelector';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -10,7 +10,7 @@ export const CommandMenuActions = ({
   mainContextStoreComponentInstanceId: string;
 }) => {
   const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentSelector,
+    contextStoreActionMenuEntriesComponentSelector,
     mainContextStoreComponentInstanceId,
   );
 

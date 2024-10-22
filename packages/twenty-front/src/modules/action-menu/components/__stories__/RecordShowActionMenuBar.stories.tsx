@@ -3,8 +3,8 @@ import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { RecordShowActionMenuBar } from '@/action-menu/components/RecordShowActionMenuBar';
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { contextStoreActionMenuEntriesComponentState } from '@/context-store/states/contextStoreActionMenuEntriesComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
@@ -43,7 +43,7 @@ const meta: Meta<typeof RecordShowActionMenuBar> = {
             1,
           );
           set(
-            actionMenuEntriesComponentState.atomFamily({
+            contextStoreActionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
             new Map([
