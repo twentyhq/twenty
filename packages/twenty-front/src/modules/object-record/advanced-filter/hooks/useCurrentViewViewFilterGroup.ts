@@ -1,20 +1,21 @@
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { isDefined } from 'twenty-ui';
 
 export const useCurrentViewViewFilterGroup = ({
-  currentViewFilterGroupId,
+  viewFilterGroupId,
 }: {
-  currentViewFilterGroupId?: string;
+  viewFilterGroupId?: string;
 }) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const currentViewFilterGroup =
+  const viewFilterGroup =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.find(
-      (viewFilterGroup) => viewFilterGroup.id === currentViewFilterGroupId,
+      (viewFilterGroup) => viewFilterGroup.id === viewFilterGroupId,
     );
 
-  if (!currentViewFilterGroup) {
+  if (!isDefined(viewFilterGroup)) {
     return {
       currentViewFilterGroup: undefined,
       childViewFiltersAndViewFilterGroups: [] as (
@@ -27,13 +28,13 @@ export const useCurrentViewViewFilterGroup = ({
   const childViewFilters =
     currentViewWithCombinedFiltersAndSorts?.viewFilters.filter(
       (viewFilter) =>
-        viewFilter.viewFilterGroupId === currentViewFilterGroup.id,
+        viewFilter.viewFilterGroupId === viewFilterGroup.id,
     );
 
   const childViewFilterGroups =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.filter(
       (viewFilterGroup) =>
-        viewFilterGroup.parentViewFilterGroupId === currentViewFilterGroup.id,
+        viewFilterGroup.parentViewFilterGroupId === viewFilterGroup.id,
     );
 
   const childViewFiltersAndViewFilterGroups = [
@@ -45,5 +46,7 @@ export const useCurrentViewViewFilterGroup = ({
     return positionA - positionB;
   });
 
-  return { currentViewFilterGroup, childViewFiltersAndViewFilterGroups };
+  const lastChildPosition = childViewFiltersAndViewFilterGroups[childViewFiltersAndViewFilterGroups.length - 1]?.positionInViewFilterGroup ?? 0;
+
+  return { currentViewFilterGroup: viewFilterGroup, childViewFiltersAndViewFilterGroups, lastChildPosition };
 };

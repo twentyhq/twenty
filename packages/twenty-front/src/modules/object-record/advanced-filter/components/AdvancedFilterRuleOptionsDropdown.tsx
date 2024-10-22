@@ -30,7 +30,7 @@ export const AdvancedFilterRuleOptionsDropdown = ({
 
   const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
     useCurrentViewViewFilterGroup({
-      currentViewFilterGroupId: viewFilterGroupId,
+      viewFilterGroupId,
     });
 
   const currentViewFilter = useCurrentViewFilter({

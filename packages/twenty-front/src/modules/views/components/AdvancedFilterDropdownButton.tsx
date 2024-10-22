@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
-import { AdvancedFilterViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterGroup';
+import { AdvancedFilterRootLevelViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootLevelViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
@@ -38,6 +38,7 @@ export const AdvancedFilterDropdownButton = () => {
     for (const viewFilterGroupId of viewFilterGroupIds) {
       await deleteCombinedViewFilterGroup(viewFilterGroupId);
     }
+
     for (const viewFilterId of advancedViewFilterIds) {
       await deleteCombinedViewFilter(viewFilterId);
     }
@@ -53,6 +54,7 @@ export const AdvancedFilterDropdownButton = () => {
       (viewFilterGroup) => !viewFilterGroup.parentViewFilterGroupId,
     )?.id;
 
+
   if (!outermostViewFilterGroupId) {
     return null;
   }
@@ -67,14 +69,14 @@ export const AdvancedFilterDropdownButton = () => {
         />
       }
       dropdownComponents={
-        <AdvancedFilterViewFilterGroup
-          viewFilterGroupId={outermostViewFilterGroupId}
+        <AdvancedFilterRootLevelViewFilterGroup
+          rootLevelViewFilterGroupId={outermostViewFilterGroupId}
         />
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
-      dropdownMenuWidth={560}
+      dropdownMenuWidth={800}
       onClickOutside={handleDropdownClickOutside}
       onClose={handleDropdownClose}
     />

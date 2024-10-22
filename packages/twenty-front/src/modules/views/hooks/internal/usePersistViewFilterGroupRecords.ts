@@ -14,7 +14,6 @@ import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRe
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { sortViewFilterGroupsOutermostFirst } from '@/views/utils/sortViewFilterGroupsOutermostFirst';
 import { isDefined } from 'twenty-ui';
 
 export const usePersistViewFilterGroupRecords = () => {
@@ -50,6 +49,7 @@ export const usePersistViewFilterGroupRecords = () => {
         mutation: createOneRecordMutation,
         variables: {
           input: {
+            id: viewFilterGroup.id,
             viewId: view.id,
             parentViewFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
             logicalOperator: viewFilterGroup.logicalOperator,
@@ -88,29 +88,30 @@ export const usePersistViewFilterGroupRecords = () => {
     async (viewFilterGroupsToCreate: ViewFilterGroup[], view: GraphQLView) => {
       if (!viewFilterGroupsToCreate.length) return [];
 
-      const viewFilterGroupsOutermostFirst = sortViewFilterGroupsOutermostFirst(
-        viewFilterGroupsToCreate,
-      );
 
       const oldToNewId = new Map<string, string>();
 
-      for (const viewFilterGroup of viewFilterGroupsOutermostFirst) {
+      console.log({
+        viewFilterGroupsToCreate
+      })
+
+      for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {
         const newParentViewFilterGroupId = isDefined(
-          viewFilterGroup.parentViewFilterGroupId,
+          viewFilterGroupToCreate.parentViewFilterGroupId,
         )
-          ? (oldToNewId.get(viewFilterGroup.parentViewFilterGroupId) ??
-            viewFilterGroup.parentViewFilterGroupId)
+          ? (oldToNewId.get(viewFilterGroupToCreate.parentViewFilterGroupId) ??
+            viewFilterGroupToCreate.parentViewFilterGroupId)
           : undefined;
 
         const { newRecordId } = await createViewFilterGroupRecord(
           {
-            ...viewFilterGroup,
+            ...viewFilterGroupToCreate,
             parentViewFilterGroupId: newParentViewFilterGroupId,
           },
           view,
         );
 
-        oldToNewId.set(viewFilterGroup.id, newRecordId);
+        oldToNewId.set(viewFilterGroupToCreate.id, newRecordId);
       }
 
       const newRecordIds = viewFilterGroupsToCreate.map((viewFilterGroup) => {

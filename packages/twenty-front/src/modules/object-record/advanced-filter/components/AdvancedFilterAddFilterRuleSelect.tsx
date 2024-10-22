@@ -1,5 +1,4 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { LightButton } from '@/ui/input/button/components/LightButton';
@@ -12,7 +11,6 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
-import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useCallback } from 'react';
@@ -20,32 +18,22 @@ import { IconLibraryPlus, IconPlus, isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
-  currentViewFilterGroupId?: string;
+  viewFilterGroup: ViewFilterGroup;
+  lastChildPosition?: number;
 };
 
 export const AdvancedFilterAddFilterRuleSelect = ({
-  currentViewFilterGroupId,
+  viewFilterGroup,
+  lastChildPosition = 0,
 }: AdvancedFilterAddFilterRuleSelectProps) => {
-  const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups } =
-    useCurrentViewViewFilterGroup({
-      currentViewFilterGroupId,
-    });
-
-  const dropdownId = `advanced-filter-add-filter-rule-${currentViewFilterGroup?.id}`;
+  const dropdownId = `advanced-filter-add-filter-rule-${viewFilterGroup.id}`;
 
   const { currentViewId } = useGetCurrentView();
 
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
-  const lastChildRule: ViewFilter | ViewFilterGroup | undefined =
-    childViewFiltersAndViewFilterGroups[
-      childViewFiltersAndViewFilterGroups.length - 1
-    ];
-
-  const newPositionInViewFilterGroup = isDefined(lastChildRule)
-    ? (lastChildRule.positionInViewFilterGroup ?? 0) + 1
-    : 0;
+  const newPositionInViewFilterGroup = lastChildPosition + 1;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -93,7 +81,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
-      viewFilterGroupId: currentViewFilterGroup?.id,
+      viewFilterGroupId: viewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     });
   };
@@ -109,7 +97,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       id: v4(),
       viewId: currentViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.AND,
-      parentViewFilterGroupId: currentViewFilterGroup?.id,
+      parentViewFilterGroupId: viewFilterGroup.id,
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     };
 
@@ -130,7 +118,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   };
 
   const isFilterRuleGroupOptionVisible = !isDefined(
-    currentViewFilterGroup?.parentViewFilterGroupId,
+    viewFilterGroup.parentViewFilterGroupId,
   );
 
   if (!isFilterRuleGroupOptionVisible) {
