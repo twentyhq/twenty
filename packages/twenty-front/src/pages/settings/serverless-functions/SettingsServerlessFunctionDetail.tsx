@@ -217,6 +217,7 @@ export const SettingsServerlessFunctionDetail = () => {
             formValues={formValues}
             serverlessFunctionId={serverlessFunctionId}
             onChange={onChange}
+            onCodeChange={onCodeChange}
           />
         );
       default:
