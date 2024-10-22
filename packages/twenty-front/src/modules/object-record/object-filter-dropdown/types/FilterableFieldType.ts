@@ -19,4 +19,5 @@ export type FilterableFieldType = PickLiteral<
   | 'MULTI_SELECT'
   | 'ACTOR'
   | 'ARRAY'
+  | 'RAW_JSON'
 >;

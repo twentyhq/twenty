@@ -1,11 +1,7 @@
+import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import styled from '@emotion/styled';
 import { JSX, ReactNode } from 'react';
-
-import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
-import {
-  Breadcrumb,
-  BreadcrumbProps,
-} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { Breadcrumb, BreadcrumbProps } from 'twenty-ui';
 import { PageBody } from './PageBody';
 import { PageHeader } from './PageHeader';
 

@@ -72,23 +72,25 @@ export const SettingsServerlessFunctionCodeEditor = ({
         );
 
         const environmentDefinition = `
-        declare namespace NodeJS {
-          interface ProcessEnv {
-            ${Object.keys(environmentVariables)
-              .map((key) => `${key}: string;`)
-              .join('\n')}
+          declare namespace NodeJS {
+            interface ProcessEnv {
+              ${Object.keys(environmentVariables)
+                .map((key) => `${key}: string;`)
+                .join('\n')}
+            }
           }
-        }
+  
+          declare const process: {
+            env: NodeJS.ProcessEnv;
+          };
+        `;
 
-        declare const process: {
-          env: NodeJS.ProcessEnv;
-        };
-      `;
-
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(
-          environmentDefinition,
-          'ts:process-env.d.ts',
-        );
+        monaco.languages.typescript.typescriptDefaults.setExtraLibs([
+          {
+            content: environmentDefinition,
+            filePath: 'ts:process-env.d.ts',
+          },
+        ]);
       }
 
       await AutoTypings.create(editor, {
