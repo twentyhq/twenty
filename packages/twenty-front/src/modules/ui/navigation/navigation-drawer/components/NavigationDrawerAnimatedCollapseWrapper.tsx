@@ -1,11 +1,13 @@
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useTheme } from '@emotion/react';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
-const StyledAnimatedContainer = styled(motion.div)``;
+const StyledAnimatedContainer = styled(motion.span)`
+  display: block;
+`;
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,

@@ -4,7 +4,7 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyTextContainer,

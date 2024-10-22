@@ -1,12 +1,13 @@
-import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
-import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
+import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 import {
   VariableDateViewFilterValueDirection,
-  variableDateViewFilterValuePartsSchema,
   VariableDateViewFilterValueUnit,
-} from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
+  variableDateViewFilterValuePartsSchema,
+} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
