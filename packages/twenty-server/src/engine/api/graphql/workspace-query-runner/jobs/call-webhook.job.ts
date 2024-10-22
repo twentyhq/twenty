@@ -26,19 +26,24 @@ export class CallWebhookJob {
 
   @Process(CallWebhookJob.name)
   async handle(data: CallWebhookJobData): Promise<void> {
+    const commonPayload = {
+      url: data.targetUrl,
+      webhookId: data.webhookId,
+      eventName: data.eventName,
+    };
+
     try {
       const response = await this.httpService.axiosRef.post(
         data.targetUrl,
         data,
       );
+      const success = response.status >= 200 && response.status < 300;
       const eventInput = {
         action: 'webhook.response',
         payload: {
           status: response.status,
-          success: true,
-          url: data.targetUrl,
-          webhookId: data.webhookId,
-          eventName: data.eventName,
+          success,
+          ...commonPayload,
         },
       };
 
@@ -47,10 +52,8 @@ export class CallWebhookJob {
       const eventInput = {
         action: 'webhook.response',
         payload: {
-          url: data.targetUrl,
-          webhookId: data.webhookId,
-          eventName: data.eventName,
           success: false,
+          ...commonPayload,
           ...(err.response && { status: err.response.status }),
         },
       };
