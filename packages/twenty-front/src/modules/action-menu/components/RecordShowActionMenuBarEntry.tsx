@@ -35,6 +35,8 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
+// For now, this component is the same as RecordIndexActionMenuBarEntry but they
+// will probably diverge in the future
 export const RecordShowActionMenuBarEntry = ({
   entry,
 }: RecordShowActionMenuBarEntryProps) => {
