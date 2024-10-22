@@ -5,8 +5,15 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
 import { useTheme } from '@emotion/react';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-const StyledAnimationGroupContainer = styled(motion.div)``;
+const StyledAnimationGroupContainer = styled(motion.div)`
+  display: flex;
+  flex-direction: ${() => (useIsMobile() ? 'row' : 'column')};
+  gap: ${({ theme }) => (useIsMobile() ? theme.spacing(2) : '')};
+  align-items: ${() => (useIsMobile() ? 'center' : '')};
+  /* border:1px solid red; */
+`;
 
 type NavigationDrawerItemsCollapsedContainerProps = {
   isGroup?: boolean;
@@ -22,6 +29,7 @@ export const NavigationDrawerItemsCollapsedContainer = ({
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
+  const isMobile = useIsMobile();
   const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
   let animate: AnimationControls | TargetAndTransition = {
     width: 'auto',
@@ -32,7 +40,7 @@ export const NavigationDrawerItemsCollapsedContainer = ({
     animate = { width: 24 };
     if (isGroup) {
       animate = {
-        width: 24,
+        width: isMobile ? '100%' : 24,
         backgroundColor: theme.background.transparent.lighter,
         border: `1px solid ${theme.background.transparent.lighter}`,
         borderRadius: theme.border.radius.sm,

@@ -77,7 +77,7 @@ const StyledItem = styled('div', {
   padding-top: ${({ theme }) => theme.spacing(1)};
 
   margin-top: ${({ indentationLevel }) =>
-    indentationLevel === 2 ? '2px' : '0'};
+    indentationLevel === 2 && !useIsMobile() ? '2px' : '0'};
 
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
 

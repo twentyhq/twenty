@@ -12,9 +12,10 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavorites } from '../hooks/useFavorites';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
@@ -25,7 +26,13 @@ const StyledAvatar = styled(Avatar)`
     cursor: grab;
   }
 `;
-
+//todoketan
+const CurrentWorkspaceMemberFavoritesWrapper = styled.div<{
+  isMobile: boolean;
+}>`
+  display: flex;
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
+`;
 const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
   :active {
     cursor: grabbing;
@@ -38,7 +45,7 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
 
 export const CurrentWorkspaceMemberFavorites = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
+  const isMobile = useIsMobile();
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
   const { toggleNavigationSection, isNavigationSectionOpenState } =
@@ -65,7 +72,7 @@ export const CurrentWorkspaceMemberFavorites = () => {
     <DraggableList
       onDragEnd={handleReorderFavorite}
       draggableItems={
-        <>
+        <CurrentWorkspaceMemberFavoritesWrapper isMobile={isMobile}>
           {currentWorkspaceMemberFavorites.map((favorite, index) => {
             const {
               id,
@@ -100,7 +107,7 @@ export const CurrentWorkspaceMemberFavorites = () => {
               />
             );
           })}
-        </>
+        </CurrentWorkspaceMemberFavoritesWrapper>
       }
     />
   );
