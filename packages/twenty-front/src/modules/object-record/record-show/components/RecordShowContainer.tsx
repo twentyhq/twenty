@@ -2,6 +2,7 @@ import { InformationBannerDeletedRecord } from '@/information-banner/components/
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordShowContainerContextStoreEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
@@ -39,7 +40,11 @@ export const RecordShowContainer = ({
   );
 
   return (
-    <>
+    <ContextStoreComponentInstanceContext.Provider
+      value={{
+        instanceId: 'record-show',
+      }}
+    >
       <RecordShowContainerContextStoreEffect
         recordId={objectRecordId}
         objectNameSingular={objectNameSingular}
@@ -62,6 +67,6 @@ export const RecordShowContainer = ({
           isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
         />
       </ShowPageContainer>
-    </>
+    </ContextStoreComponentInstanceContext.Provider>
   );
 };
