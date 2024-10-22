@@ -1,28 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
-import { WorkflowCodeStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
+import { WorkflowCodeStepInput } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
 
 @Injectable()
-export class CodeWorkflowAction {
+export class CodeWorkflowAction implements WorkflowAction {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
-  async execute({
-    step,
-    payload,
-  }: {
-    step: WorkflowCodeStep;
-    payload?: object;
-  }): Promise<WorkflowActionResult> {
+  async execute(
+    workflowStepInput: WorkflowCodeStepInput,
+  ): Promise<WorkflowActionResult> {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
@@ -34,9 +32,9 @@ export class CodeWorkflowAction {
 
     const result =
       await this.serverlessFunctionService.executeOneServerlessFunction(
-        step.settings.serverlessFunctionId,
+        workflowStepInput.serverlessFunctionId,
         workspaceId,
-        payload || {},
+        {}, // TODO: input will be dynamically calculated from function input
       );
 
     if (result.error) {

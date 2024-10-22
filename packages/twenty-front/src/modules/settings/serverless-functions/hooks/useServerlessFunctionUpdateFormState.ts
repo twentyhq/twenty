@@ -29,8 +29,9 @@ export const useServerlessFunctionUpdateFormState = (
     code: undefined,
   });
 
-  const { serverlessFunction } =
-    useGetOneServerlessFunction(serverlessFunctionId);
+  const { serverlessFunction } = useGetOneServerlessFunction({
+    id: serverlessFunctionId,
+  });
 
   const { loading } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,

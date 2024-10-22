@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { H2Title, Toggle } from 'twenty-ui';
 
 import {
   MessageChannel,
@@ -9,7 +9,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
-import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
+import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
@@ -29,6 +30,10 @@ const StyledDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledToggle = styled(Toggle)`
+  margin-left: auto;
 `;
 
 export const SettingsAccountsMessageChannelDetails = ({
@@ -99,23 +104,31 @@ export const SettingsAccountsMessageChannelDetails = ({
         />
       </Section>
       <Section>
-        <SettingsAccountsToggleSettingCard
-          parameters={[
-            {
-              title: 'Exclude non-professional emails',
-              description:
-                'Don’t create contacts from/to Gmail, Outlook emails',
-              value: !!messageChannel.excludeNonProfessionalEmails,
-              onToggle: handleIsNonProfessionalEmailExcludedToggle,
-            },
-            {
-              title: 'Exclude group emails',
-              description: 'Don’t sync emails from team@ support@ noreply@...',
-              value: !!messageChannel.excludeGroupEmails,
-              onToggle: handleIsGroupEmailExcludedToggle,
-            },
-          ]}
-        />
+        <Card>
+          <SettingsOptionCardContent
+            title="Exclude non-professional emails"
+            description="Don’t create contacts from/to Gmail, Outlook emails"
+            divider
+            onClick={() =>
+              handleIsNonProfessionalEmailExcludedToggle(
+                !messageChannel.excludeNonProfessionalEmails,
+              )
+            }
+          >
+            <StyledToggle value={messageChannel.excludeNonProfessionalEmails} />
+          </SettingsOptionCardContent>
+          <SettingsOptionCardContent
+            title="Exclude group emails"
+            description="Don’t sync emails from team@ support@ noreply@..."
+            onClick={() =>
+              handleIsGroupEmailExcludedToggle(
+                !messageChannel.excludeGroupEmails,
+              )
+            }
+          >
+            <StyledToggle value={messageChannel.excludeGroupEmails} />
+          </SettingsOptionCardContent>
+        </Card>
       </Section>
     </StyledDetailsContainer>
   );
