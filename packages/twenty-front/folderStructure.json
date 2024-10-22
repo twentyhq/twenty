@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/eslint-plugin-project-structure/folderStructure.schema.json",
   "regexParameters": {
-    "camelCase": "^[a-z]+([A-Za-z0-9]+)+"
+    "camelCase": "^[a-z]+[A-Za-z0-9]+"
   },
   "structure": [
     {

@@ -8,6 +8,7 @@ export const AppRouter = () => {
   const billing = useRecoilValue(billingState);
   const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
@@ -21,6 +22,7 @@ export const AppRouter = () => {
         isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
+        isSSOEnabled,
       )}
     />
   );

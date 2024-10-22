@@ -19,7 +19,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const StyledTopBarContainer = styled.div<{ width?: number }>`
+const StyledTopBarContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -31,7 +31,6 @@ const StyledTopBarContainer = styled.div<{ width?: number }>`
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
-  width: ${({ width }) => width + 'px' || '100%'};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
@@ -91,7 +90,6 @@ type PageHeaderProps = {
   navigateToNextRecord?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
-  width?: number;
 };
 
 export const PageHeader = ({
@@ -105,7 +103,6 @@ export const PageHeader = ({
   navigateToNextRecord,
   Icon,
   children,
-  width,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
@@ -114,7 +111,7 @@ export const PageHeader = ({
   );
 
   return (
-    <StyledTopBarContainer width={width}>
+    <StyledTopBarContainer>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>
