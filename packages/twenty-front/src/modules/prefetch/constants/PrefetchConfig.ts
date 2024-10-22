@@ -5,7 +5,6 @@ import { findAllFavoritesOperationSignatureFactory } from '@/prefetch/graphql/op
 import { findAllViewsOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllViewsOperationSignatureFactory';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 
-
 export const PREFETCH_CONFIG: Record<
   PrefetchKey,
   {

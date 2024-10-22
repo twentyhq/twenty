@@ -3,7 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
+import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolder';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
@@ -56,7 +56,7 @@ export const MainNavigationDrawerItems = () => {
 
       {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 
-      <CurrentWorkspaceMemberFavorites />
+      <CurrentWorkspaceMemberFavoritesFolders />
 
       {isWorkspaceFavoriteEnabled ? (
         <WorkspaceFavorites />

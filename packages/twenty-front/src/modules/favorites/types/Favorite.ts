@@ -10,6 +10,6 @@ export type Favorite = {
   link: string;
   recordId: string;
   workspaceMemberId: string;
-
+  favoriteFolderId?: string;
   __typename: 'Favorite';
 };

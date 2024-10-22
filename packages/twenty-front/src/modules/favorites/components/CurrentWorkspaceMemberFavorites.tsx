@@ -1,25 +1,14 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { Avatar, isDefined } from 'twenty-ui';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { Avatar, AvatarType, IconFolder } from 'twenty-ui';
 
-import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
-import { useFavorites } from '../hooks/useFavorites';
-
-const StyledContainer = styled(NavigationDrawerSection)`
-  width: 100%;
-`;
+import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
+import { useLocation } from 'react-router-dom';
 
 const StyledAvatar = styled(Avatar)`
   :hover {
@@ -27,101 +16,92 @@ const StyledAvatar = styled(Avatar)`
   }
 `;
 
-const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
-  :active {
-    cursor: grabbing;
+type CurrentWorkspaceMemberFavoritesProps = {
+  folder: {
+    folderId: string;
+    folderName: string;
+    favorites: Array<{
+      id: string;
+      labelIdentifier: string;
+      avatarUrl: string;
+      avatarType: AvatarType;
+      link: string;
+      recordId: string;
+    }>;
+  };
+  isGroup: boolean;
+  handleReorderFavorite: OnDragEndResponder;
+  isOpen: boolean;
+  onToggle: (folderId: string) => void;
+};
 
-    .fav-avatar:hover {
-      cursor: grabbing;
-    }
-  }
-`;
+export const CurrentWorkspaceMemberFavorites = ({
+  folder,
+  isGroup,
+  handleReorderFavorite,
+  isOpen,
+  onToggle,
+}: CurrentWorkspaceMemberFavoritesProps) => {
+  const currentPath = useLocation().pathname;
 
-export const CurrentWorkspaceMemberFavorites = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const { favorites, handleReorderFavorite } = useFavorites();
-  const { favoriteFolder } = useFavoriteFolders();
-  console.log(favoriteFolder);
-  const loading = useIsPrefetchLoading();
-  const { toggleNavigationSection, isNavigationSectionOpenState } =
-    useNavigationSection('Favorites');
-  const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
-
-  if (loading && isDefined(currentWorkspaceMember)) {
-    return <FavoritesSkeletonLoader />;
-  }
-
-  const currentWorkspaceMemberFavorites = favorites.filter(
-    (favorite) => favorite.workspaceMemberId === currentWorkspaceMember?.id,
+  const selectedFavoriteIndex = folder.favorites.findIndex(
+    (favorite) => favorite.link === currentPath,
   );
 
-  if (
-    !currentWorkspaceMemberFavorites ||
-    currentWorkspaceMemberFavorites.length === 0
-  )
-    return <></>;
-
-  const isGroup = currentWorkspaceMemberFavorites.length > 1;
-
-  const draggableListContent = (
-    <DraggableList
-      onDragEnd={handleReorderFavorite}
-      draggableItems={
-        <>
-          {currentWorkspaceMemberFavorites.map((favorite, index) => {
-            const {
-              id,
-              labelIdentifier,
-              avatarUrl,
-              avatarType,
-              link,
-              recordId,
-            } = favorite;
-
-            return (
-              <DraggableItem
-                key={id}
-                draggableId={id}
-                index={index}
-                itemComponent={
-                  <StyledNavigationDrawerItem
-                    key={id}
-                    label={labelIdentifier}
-                    Icon={() => (
-                      <StyledAvatar
-                        placeholderColorSeed={recordId}
-                        avatarUrl={avatarUrl}
-                        type={avatarType}
-                        placeholder={labelIdentifier}
-                        className="fav-avatar"
-                      />
-                    )}
-                    to={link}
-                  />
-                }
-              />
-            );
-          })}
-        </>
-      }
-    />
-  );
+  const subItemArrayLength = folder.favorites.length;
 
   return (
-    <StyledContainer>
-      <NavigationDrawerAnimatedCollapseWrapper>
-        <NavigationDrawerSectionTitle
-          label="Favorites"
-          onClick={() => toggleNavigationSection()}
-        />
-      </NavigationDrawerAnimatedCollapseWrapper>
-
-      {isNavigationSectionOpen && (
+    <NavigationDrawerItemsCollapsedContainer
+      key={folder.folderId}
+      isGroup={isGroup}
+    >
+      <NavigationDrawerItem
+        key={folder.folderId}
+        label={folder.folderName}
+        Icon={IconFolder}
+        onClick={() => onToggle(folder.folderId)}
+        active={isOpen}
+      />
+      {isOpen && (
         <NavigationDrawerItemsCollapsedContainer isGroup={isGroup}>
-          {draggableListContent}
+          <DraggableList
+            onDragEnd={handleReorderFavorite}
+            draggableItems={
+              <>
+                {folder.favorites.map((favorite, index) => (
+                  <DraggableItem
+                    key={favorite.id}
+                    draggableId={favorite.id}
+                    index={index}
+                    itemComponent={
+                      <NavigationDrawerSubItem
+                        key={favorite.id}
+                        label={favorite.labelIdentifier}
+                        Icon={() => (
+                          <StyledAvatar
+                            placeholderColorSeed={favorite.recordId}
+                            avatarUrl={favorite.avatarUrl}
+                            type={favorite.avatarType}
+                            placeholder={favorite.labelIdentifier}
+                            className="fav-avatar"
+                          />
+                        )}
+                        to={favorite.link}
+                        active={favorite.link === currentPath}
+                        subItemState={getNavigationSubItemState({
+                          index,
+                          arrayLength: subItemArrayLength,
+                          selectedIndex: selectedFavoriteIndex,
+                        })}
+                      />
+                    }
+                  />
+                ))}
+              </>
+            }
+          />
         </NavigationDrawerItemsCollapsedContainer>
       )}
-    </StyledContainer>
+    </NavigationDrawerItemsCollapsedContainer>
   );
 };

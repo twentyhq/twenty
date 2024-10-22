@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { Favorite } from '@/favorites/types/Favorite';
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
@@ -17,6 +18,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useFavorites = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { favoriteFolder } = useFavoriteFolders();
 
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
@@ -35,7 +37,7 @@ export const useFavorites = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const { records: favorites, isDataPrefetched } = usePrefetchedData<Favorite>(
+  const { records: favorites } = usePrefetchedData<Favorite>(
     PrefetchKey.AllFavorites,
     {
       workspaceMemberId: {
@@ -58,7 +60,8 @@ export const useFavorites = () => {
       favoriteObjectMetadataItem.fields.filter(
         (fieldMetadataItem) =>
           fieldMetadataItem.type === FieldMetadataType.Relation &&
-          fieldMetadataItem.name !== 'workspaceMember',
+          fieldMetadataItem.name !== 'workspaceMember' &&
+          fieldMetadataItem.name !== 'favoriteFolder',
       ),
     [favoriteObjectMetadataItem.fields],
   );
@@ -78,7 +81,6 @@ export const useFavorites = () => {
     favorites,
     getObjectRecordIdentifierByNameSingular,
   ]);
-
   const workspaceFavoritesSorted = useMemo(() => {
     return sortFavorites(
       workspaceFavorites.filter((favorite) => favorite.viewId),
@@ -90,6 +92,23 @@ export const useFavorites = () => {
     favoriteRelationFieldMetadataItems,
     getObjectRecordIdentifierByNameSingular,
     workspaceFavorites,
+  ]);
+  const favoritesByFolder = useMemo(() => {
+    return favoriteFolder.map((folder) => ({
+      folderId: folder.id,
+      folderName: folder.name,
+      favorites: sortFavorites(
+        favorites.filter((favorite) => favorite.favoriteFolderId === folder.id),
+        favoriteRelationFieldMetadataItems,
+        getObjectRecordIdentifierByNameSingular,
+        true,
+      ),
+    }));
+  }, [
+    favoriteFolder,
+    favorites,
+    favoriteRelationFieldMetadataItems,
+    getObjectRecordIdentifierByNameSingular,
   ]);
 
   const createFavorite = (
@@ -156,6 +175,7 @@ export const useFavorites = () => {
   return {
     favorites: favoritesSorted,
     workspaceFavorites: workspaceFavoritesSorted,
+    favoritesByFolder,
     createFavorite,
     handleReorderFavorite,
     deleteFavorite,

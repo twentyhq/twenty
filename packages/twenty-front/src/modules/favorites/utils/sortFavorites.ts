@@ -39,6 +39,7 @@ export const sortFavorites = (
               ? objectRecordIdentifier.linkToShowPage
               : '',
             workspaceMemberId: favorite.workspaceMemberId,
+            favoriteFolderId: favorite.favoriteFolderId,
           } as Favorite;
         }
       }
