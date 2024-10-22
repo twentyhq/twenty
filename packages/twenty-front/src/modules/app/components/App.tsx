@@ -1,6 +1,5 @@
 import { AppRouter } from '@/app/components/AppRouter';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -21,13 +20,7 @@ export const App = () => {
             <IconsProvider>
               <ExceptionHandlerProvider>
                 <HelmetProvider>
-                  <ContextStoreComponentInstanceContext.Provider
-                    value={{
-                      instanceId: 'global',
-                    }}
-                  >
-                    <AppRouter />
-                  </ContextStoreComponentInstanceContext.Provider>
+                  <AppRouter />
                 </HelmetProvider>
               </ExceptionHandlerProvider>
             </IconsProvider>
