@@ -49,3 +49,6 @@ Your turn 👇
 
 » 20-October-2024 by Naprila
 » Link to Tweet: https://x.com/mkprasad_821/status/1847886807314120762
+
+» 22-October-2024 by Ritansh Rajput
+» Link to Tweet: https://x.com/Ritansh_Dev/status/1848641904511975838
