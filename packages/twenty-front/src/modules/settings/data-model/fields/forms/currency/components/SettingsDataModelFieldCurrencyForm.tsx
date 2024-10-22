@@ -55,6 +55,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
         render={({ field: { onChange, value } }) => (
           <Select
             fullWidth
+            dropdownWidth={250}
             disabled={disabled}
             label="Default Unit"
             dropdownId="currency-unit-select"
