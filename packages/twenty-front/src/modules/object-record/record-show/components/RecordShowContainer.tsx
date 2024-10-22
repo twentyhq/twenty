@@ -43,7 +43,7 @@ export const RecordShowContainer = ({
   return (
     <ContextStoreComponentInstanceContext.Provider
       value={{
-        instanceId: 'record-show',
+        instanceId: `record-show-${objectRecordId}`,
       }}
     >
       <RecordShowContainerContextStoreEffect

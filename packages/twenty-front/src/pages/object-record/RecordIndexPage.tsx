@@ -77,7 +77,7 @@ export const RecordIndexPage = () => {
           <StyledIndexContainer>
             <ContextStoreComponentInstanceContext.Provider
               value={{
-                instanceId: 'record-index',
+                instanceId: `record-index-${objectMetadataItem.id}`,
               }}
             >
               <RecordIndexContainerContextStoreObjectMetadataEffect />
