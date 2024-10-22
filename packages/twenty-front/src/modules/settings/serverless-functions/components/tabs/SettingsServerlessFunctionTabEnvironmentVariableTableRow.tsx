@@ -41,7 +41,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
   const [editedEnvVariable, setEditedEnvVariable] = useState(envVariable);
   const [editMode, setEditMode] = useState(initialEditMode);
   const dropDownId = `settings-environment-variable-dropdown-${envVariable.id}`;
-  const { closeDropdown, isDropdownOpen } = useDropdown(dropDownId);
+  const { closeDropdown } = useDropdown(dropDownId);
 
   return editMode ? (
     <StyledEditModeTableRow>
