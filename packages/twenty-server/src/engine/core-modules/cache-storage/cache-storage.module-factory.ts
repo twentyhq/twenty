@@ -1,13 +1,14 @@
 import { CacheModuleOptions } from '@nestjs/common';
 
 import { redisStore } from 'cache-manager-redis-yet';
-import IORedis from 'ioredis';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 export const cacheStorageModuleFactory = (
   environmentService: EnvironmentService,
+  redisClientService: RedisClientService,
 ): CacheModuleOptions => {
   const cacheStorageType = environmentService.get('CACHE_STORAGE_TYPE');
   const cacheStorageTtl = environmentService.get('CACHE_STORAGE_TTL');
@@ -21,18 +22,10 @@ export const cacheStorageModuleFactory = (
       return cacheModuleOptions;
     }
     case CacheStorageType.Redis: {
-      const connectionString = environmentService.get('REDIS_URL');
-
-      if (!connectionString) {
-        throw new Error(
-          `${cacheStorageType} cache storage requires REDIS_URL to be defined, check your .env file`,
-        );
-      }
-
       return {
         ...cacheModuleOptions,
         store: redisStore,
-        client: new IORedis(connectionString),
+        client: redisClientService.getClient(),
       };
     }
     default:

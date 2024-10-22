@@ -1,5 +1,3 @@
-import IORedis from 'ioredis';
-
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
   BullMQDriverFactoryOptions,
@@ -8,6 +6,7 @@ import {
   PgBossDriverFactoryOptions,
   SyncDriverFactoryOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 /**
  * MessageQueue Module factory
@@ -16,6 +15,7 @@ import {
  */
 export const messageQueueModuleFactory = async (
   environmentService: EnvironmentService,
+  redisClientService: RedisClientService,
 ): Promise<MessageQueueModuleOptions> => {
   const driverType = environmentService.get('MESSAGE_QUEUE_TYPE');
 
@@ -37,18 +37,10 @@ export const messageQueueModuleFactory = async (
       } satisfies PgBossDriverFactoryOptions;
     }
     case MessageQueueDriverType.BullMQ: {
-      const connectionString = environmentService.get('REDIS_URL');
-
-      if (!connectionString) {
-        throw new Error(
-          `${MessageQueueDriverType.BullMQ} message queue requires REDIS_URL to be defined, check your .env file`,
-        );
-      }
-
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: new IORedis(connectionString),
+          connection: redisClientService.getClient(),
         },
       } satisfies BullMQDriverFactoryOptions;
     }
