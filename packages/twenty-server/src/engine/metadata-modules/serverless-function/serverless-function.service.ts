@@ -123,7 +123,7 @@ export class ServerlessFunctionService {
       version,
     );
     const eventInput = {
-      action: 'function.execute',
+      action: 'serverlessFunction.executed',
       payload: {
         duration: resultServerlessFunction.duration,
         status: resultServerlessFunction.status,
