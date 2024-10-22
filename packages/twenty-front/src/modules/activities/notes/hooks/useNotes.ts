@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { currentNotesQueryVariablesState } from '@/activities/notes/states/currentNotesQueryVariablesState';
-import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timelineActivities/constants/FindManyTimelineActivitiesOrderBy';
+import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline-activities/constants/FindManyTimelineActivitiesOrderBy';
 import { Note } from '@/activities/types/Note';
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';

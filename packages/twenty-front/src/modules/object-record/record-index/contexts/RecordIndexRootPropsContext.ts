@@ -1,3 +1,4 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { createRootPropsContext } from '~/utils/createRootPropsContext';
 
 export type RecordIndexRootPropsContextProps = {
@@ -6,6 +7,7 @@ export type RecordIndexRootPropsContextProps = {
   onCreateRecord: () => void;
   objectNamePlural: string;
   objectNameSingular: string;
+  objectMetadataItem: ObjectMetadataItem;
   recordIndexId: string;
 };
 

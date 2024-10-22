@@ -14,7 +14,7 @@ export class StandardObjectFactory {
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Omit<PartialWorkspaceEntity, 'fields'>[] {
+  ): Omit<PartialWorkspaceEntity, 'fields' | 'indexMetadatas'>[] {
     return standardObjectMetadataDefinitions
       .map((metadata) =>
         this.createObjectMetadata(metadata, context, workspaceFeatureFlagsMap),
@@ -26,7 +26,7 @@ export class StandardObjectFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Omit<PartialWorkspaceEntity, 'fields'> | undefined {
+  ): Omit<PartialWorkspaceEntity, 'fields' | 'indexMetadatas'> | undefined {
     const workspaceEntityMetadataArgs =
       metadataArgsStorage.filterEntities(target);
 

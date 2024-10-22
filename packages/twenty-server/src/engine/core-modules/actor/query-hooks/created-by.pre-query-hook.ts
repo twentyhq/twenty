@@ -101,7 +101,7 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
 
     for (const datum of payload.data) {
       // Front-end can fill the source field
-      if (createdBy && (!datum.createdBy || !datum.createdBy.name)) {
+      if (createdBy && (!datum.createdBy || !datum.createdBy?.name)) {
         datum.createdBy = {
           ...createdBy,
           source: datum.createdBy?.source ?? createdBy.source,

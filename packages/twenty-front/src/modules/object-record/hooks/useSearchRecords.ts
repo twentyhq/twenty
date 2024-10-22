@@ -1,6 +1,3 @@
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -13,11 +10,14 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSearchRecordsQueryResponseField } from '@/object-record/utils/getSearchRecordsQueryResponseField';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier &
-  RecordGqlOperationVariables & {
+  Pick<RecordGqlOperationVariables, 'filter' | 'limit'> & {
     onError?: (error?: Error) => void;
     skip?: boolean;
     recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -30,6 +30,7 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
   searchInput,
   limit,
   skip,
+  filter,
   recordGqlFields,
   fetchPolicy,
 }: UseSearchRecordsParams) => {
@@ -43,15 +44,17 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
   });
 
   const { enqueueSnackBar } = useSnackBar();
-
-  const { data, loading, error } = useQuery<RecordGqlOperationSearchResult>(
-    searchRecordsQuery,
-    {
+  const { data, loading, error, previousData } =
+    useQuery<RecordGqlOperationSearchResult>(searchRecordsQuery, {
       skip:
-        skip || !objectMetadataItem || !currentWorkspaceMember || !searchInput,
+        skip ||
+        !objectMetadataItem ||
+        !currentWorkspaceMember ||
+        !isDefined(searchInput),
       variables: {
         search: searchInput,
         limit: limit,
+        filter: filter,
       },
       fetchPolicy: fetchPolicy,
       onError: (error) => {
@@ -66,14 +69,15 @@ export const useSearchRecords = <T extends ObjectRecord = ObjectRecord>({
           },
         );
       },
-    },
-  );
+    });
+
+  const effectiveData = loading ? previousData : data;
 
   const queryResponseField = getSearchRecordsQueryResponseField(
     objectMetadataItem.namePlural,
   );
 
-  const result = data?.[queryResponseField];
+  const result = effectiveData?.[queryResponseField];
 
   const records = useMemo(
     () =>
