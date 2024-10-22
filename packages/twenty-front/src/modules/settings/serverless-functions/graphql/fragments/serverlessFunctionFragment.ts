@@ -8,6 +8,7 @@ export const SERVERLESS_FUNCTION_FRAGMENT = gql`
     runtime
     syncStatus
     latestVersion
+    publishedVersions
     createdAt
     updatedAt
   }
