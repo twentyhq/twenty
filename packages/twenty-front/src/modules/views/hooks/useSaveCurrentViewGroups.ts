@@ -1,14 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
+import { ViewGroup } from '@/views/types/ViewGroup';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
-import { ViewGroup } from '@/views/types/ViewGroup';
-import { isPersistingViewGroupsComponentState } from '@/views/states/isPersistingViewGroupsComponentState';
 
 export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
   const { createViewGroupRecords, updateViewGroupRecords } =
@@ -18,11 +17,6 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
     currentViewIdComponentState,
-    viewBarComponentId,
-  );
-
-  const isPersistingViewGroupsCallbackState = useRecoilComponentCallbackStateV2(
-    isPersistingViewGroupsComponentState,
     viewBarComponentId,
   );
 
@@ -36,8 +30,6 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
         if (!currentViewId) {
           return;
         }
-
-        set(isPersistingViewGroupsCallbackState, true);
 
         const view = await getViewFromCache(currentViewId);
 
@@ -89,14 +81,11 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
           createViewGroupRecords(viewGroupsToCreate, view),
           updateViewGroupRecords(viewGroupsToUpdate),
         ]);
-
-        set(isPersistingViewGroupsCallbackState, false);
       },
     [
       createViewGroupRecords,
       currentViewIdCallbackState,
       getViewFromCache,
-      isPersistingViewGroupsCallbackState,
       updateViewGroupRecords,
     ],
   );

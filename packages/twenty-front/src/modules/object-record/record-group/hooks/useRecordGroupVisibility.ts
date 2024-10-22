@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
-import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { mapGroupDefinitionsToViewGroups } from '@/views/utils/mapGroupDefinitionsToViewGroups';
+import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
+import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 
 type UseRecordGroupVisibilityParams = {
   viewBarId: string;
@@ -32,7 +32,9 @@ export const useRecordGroupVisibility = ({
 
       setRecordIndexGroupDefinitions(updatedGroupsDefinitions);
 
-      saveViewGroups(mapGroupDefinitionsToViewGroups(updatedGroupsDefinitions));
+      saveViewGroups(
+        mapRecordGroupDefinitionsToViewGroups(updatedGroupsDefinitions),
+      );
     },
     [
       recordIndexGroupDefinitions,

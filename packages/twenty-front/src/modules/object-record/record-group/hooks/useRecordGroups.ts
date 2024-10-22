@@ -4,13 +4,13 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-type UseRecordGroupStatesParams = {
+type UseRecordGroupsParams = {
   objectNameSingular: string;
 };
 
-export const useRecordGroupStates = ({
+export const useRecordGroups = ({
   objectNameSingular,
-}: UseRecordGroupStatesParams) => {
+}: UseRecordGroupsParams) => {
   const recordIndexGroupDefinitions = useRecoilComponentValueV2(
     recordGroupDefinitionState,
   );

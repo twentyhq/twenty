@@ -1,13 +1,13 @@
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
 
-import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { mapGroupDefinitionsToViewGroups } from '@/views/utils/mapGroupDefinitionsToViewGroups';
-import { useRecordGroupStates } from '@/object-record/record-group/hooks/useRecordGroupStates';
+import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
+import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type UseRecordGroupHandlersParams = {
   objectNameSingular: string;
@@ -22,7 +22,7 @@ export const useRecordGroupReorder = ({
     recordGroupDefinitionState,
   );
 
-  const { visibleRecordGroups } = useRecordGroupStates({
+  const { visibleRecordGroups } = useRecordGroups({
     objectNameSingular,
   });
 
@@ -47,7 +47,7 @@ export const useRecordGroupReorder = ({
       );
 
       setRecordIndexGroupDefinitions(updatedGroups);
-      saveViewGroups(mapGroupDefinitionsToViewGroups(updatedGroups));
+      saveViewGroups(mapRecordGroupDefinitionsToViewGroups(updatedGroups));
     },
     [saveViewGroups, setRecordIndexGroupDefinitions, visibleRecordGroups],
   );

@@ -45,7 +45,7 @@ const StyledContainerContainer = styled.div`
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100% - 48px);;
+  height: calc(100% - 48px);
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
@@ -68,11 +68,6 @@ export const RecordBoard = () => {
 
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
-
-  // const isPersistingViewGroups = useRecoilComponentValueV2(
-  //   isPersistingViewGroupsComponentState,
-  //   recordBoardId,
-  // );
 
   useListenClickOutsideByClassName({
     classNames: ['record-board-card'],

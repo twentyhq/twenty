@@ -1,12 +1,12 @@
 import { isDefined } from '~/utils/isDefined';
 
-import { ViewGroup } from '@/views/types/ViewGroup';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   RecordGroupDefinition,
   RecordGroupDefinitionNoValue,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ViewGroup } from '@/views/types/ViewGroup';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const mapViewGroupsToGroupDefinitions = ({
@@ -35,7 +35,7 @@ export const mapViewGroupsToGroupDefinitions = ({
       `Select Field ${objectMetadataItem.nameSingular} has no options`,
     );
   }
-  const groupDefinitionsFromViewGroups = viewGroups
+  const recordGroupDefinitionsFromViewGroups = viewGroups
     .map((viewGroup) => {
       // It's actually check right above
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -66,14 +66,14 @@ export const mapViewGroupsToGroupDefinitions = ({
       type: RecordGroupDefinitionType.NoValue,
       value: null,
       position:
-        groupDefinitionsFromViewGroups
+        recordGroupDefinitionsFromViewGroups
           .map((option) => option.position)
           .reduce((a, b) => Math.max(a, b), 0) + 1,
       isVisible: true,
     } satisfies RecordGroupDefinitionNoValue;
 
-    return [...groupDefinitionsFromViewGroups, noValueColumn];
+    return [...recordGroupDefinitionsFromViewGroups, noValueColumn];
   }
 
-  return groupDefinitionsFromViewGroups;
+  return recordGroupDefinitionsFromViewGroups;
 };

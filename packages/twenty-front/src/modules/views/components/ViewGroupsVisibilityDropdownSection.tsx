@@ -6,16 +6,16 @@ import {
 import { useRef } from 'react';
 import { IconEye, IconEyeOff, Tag } from 'twenty-ui';
 
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import {
   RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { isDefined } from '~/utils/isDefined';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
+import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
+import { isDefined } from '~/utils/isDefined';
 
 type ViewGroupsVisibilityDropdownSectionProps = {
   viewGroups: RecordGroupDefinition[];
@@ -53,31 +53,6 @@ export const ViewGroupsVisibilityDropdownSection = ({
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const renderItem = (
-    viewGroup: RecordGroupDefinition,
-    viewGroupIndex: number,
-  ) => {
-    const isNoValueType = viewGroup.type === RecordGroupDefinitionType.NoValue;
-
-    return (
-      <MenuItemDraggable
-        key={viewGroup.id}
-        text={
-          <Tag
-            variant={!isNoValueType ? 'solid' : 'outline'}
-            color={!isNoValueType ? viewGroup.color : 'transparent'}
-            text={viewGroup.title}
-            weight={!isNoValueType ? 'regular' : 'medium'}
-          />
-        }
-        iconButtons={getIconButtons(viewGroupIndex, viewGroup)}
-        accent={showDragGrip ? 'placeholder' : 'default'}
-        showGrip={showDragGrip}
-        isDragDisabled={!isDraggable}
-      />
-    );
-  };
-
   return (
     <div ref={ref}>
       {showSubheader && (
@@ -87,9 +62,35 @@ export const ViewGroupsVisibilityDropdownSection = ({
         {!!viewGroups.length && (
           <>
             {!isDraggable ? (
-              viewGroups.map((viewGroup, viewGroupIndex) =>
-                renderItem(viewGroup, viewGroupIndex),
-              )
+              viewGroups.map((viewGroup, viewGroupIndex) => (
+                <MenuItemDraggable
+                  key={viewGroup.id}
+                  text={
+                    <Tag
+                      variant={
+                        viewGroup.type !== RecordGroupDefinitionType.NoValue
+                          ? 'solid'
+                          : 'outline'
+                      }
+                      color={
+                        viewGroup.type !== RecordGroupDefinitionType.NoValue
+                          ? viewGroup.color
+                          : 'transparent'
+                      }
+                      text={viewGroup.title}
+                      weight={
+                        viewGroup.type !== RecordGroupDefinitionType.NoValue
+                          ? 'regular'
+                          : 'medium'
+                      }
+                    />
+                  }
+                  iconButtons={getIconButtons(viewGroupIndex, viewGroup)}
+                  accent={showDragGrip ? 'placeholder' : 'default'}
+                  showGrip={showDragGrip}
+                  isDragDisabled={!isDraggable}
+                />
+              ))
             ) : (
               <DraggableList
                 onDragEnd={handleOnDrag}
@@ -100,7 +101,41 @@ export const ViewGroupsVisibilityDropdownSection = ({
                         key={viewGroup.id}
                         draggableId={viewGroup.id}
                         index={viewGroupIndex + 1}
-                        itemComponent={renderItem(viewGroup, viewGroupIndex)}
+                        itemComponent={
+                          <MenuItemDraggable
+                            key={viewGroup.id}
+                            text={
+                              <Tag
+                                variant={
+                                  viewGroup.type !==
+                                  RecordGroupDefinitionType.NoValue
+                                    ? 'solid'
+                                    : 'outline'
+                                }
+                                color={
+                                  viewGroup.type !==
+                                  RecordGroupDefinitionType.NoValue
+                                    ? viewGroup.color
+                                    : 'transparent'
+                                }
+                                text={viewGroup.title}
+                                weight={
+                                  viewGroup.type !==
+                                  RecordGroupDefinitionType.NoValue
+                                    ? 'regular'
+                                    : 'medium'
+                                }
+                              />
+                            }
+                            iconButtons={getIconButtons(
+                              viewGroupIndex,
+                              viewGroup,
+                            )}
+                            accent={showDragGrip ? 'placeholder' : 'default'}
+                            showGrip={showDragGrip}
+                            isDragDisabled={!isDraggable}
+                          />
+                        }
                       />
                     ))}
                   </>
