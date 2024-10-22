@@ -6,7 +6,7 @@ import {
   UriFunction,
 } from '@apollo/client';
 
-import { loggerLink } from '@/apollo/utils';
+import { loggerLink } from '@/apollo/utils/loggerLink';
 import {
   AuthTokenPair,
   RenewTokenDocument,

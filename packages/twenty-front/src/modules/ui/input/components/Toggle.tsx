@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-
-import { isDefined } from '~/utils/isDefined';
+import { VisibilityHiddenInput } from 'twenty-ui';
 
 export type ToggleSize = 'small' | 'medium';
 
@@ -10,10 +8,10 @@ type ContainerProps = {
   isOn: boolean;
   color?: string;
   toggleSize: ToggleSize;
-  disabled?: boolean;
+  'data-disabled'?: boolean;
 };
 
-const StyledContainer = styled.div<ContainerProps>`
+const StyledContainer = styled.label<ContainerProps>`
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
     isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};
@@ -23,13 +21,15 @@ const StyledContainer = styled.div<ContainerProps>`
   height: ${({ toggleSize }) => (toggleSize === 'small' ? 16 : 20)}px;
   transition: background-color 0.3s ease;
   width: ${({ toggleSize }) => (toggleSize === 'small' ? 24 : 32)}px;
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  opacity: ${({ 'data-disabled': disabled }) => (disabled ? 0.5 : 1)};
+  pointer-events: ${({ 'data-disabled': disabled }) =>
+    disabled ? 'none' : 'auto'};
 `;
 
-const StyledCircle = styled(motion.div)<{
+const StyledCircle = styled(motion.span)<{
   size: ToggleSize;
 }>`
+  display: block;
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: 50%;
   height: ${({ size }) => (size === 'small' ? 12 : 16)}px;
@@ -37,8 +37,9 @@ const StyledCircle = styled(motion.div)<{
 `;
 
 export type ToggleProps = {
+  id?: string;
   value?: boolean;
-  onChange?: (value: boolean) => void;
+  onChange?: (value: boolean, e?: React.MouseEvent<HTMLDivElement>) => void;
   color?: string;
   toggleSize?: ToggleSize;
   className?: string;
@@ -46,49 +47,39 @@ export type ToggleProps = {
 };
 
 export const Toggle = ({
-  value,
+  id,
+  value = false,
   onChange,
   color,
   toggleSize = 'medium',
   className,
   disabled,
 }: ToggleProps) => {
-  const [isOn, setIsOn] = useState(value ?? false);
-
   const circleVariants = {
     on: { x: toggleSize === 'small' ? 10 : 14 },
     off: { x: 2 },
   };
 
-  const handleChange = () => {
-    setIsOn(!isOn);
-
-    if (isDefined(onChange)) {
-      onChange(!isOn);
-    }
-  };
-
-  useEffect(() => {
-    setIsOn((isOn) => {
-      if (value !== isOn) {
-        return value ?? false;
-      }
-
-      return isOn;
-    });
-  }, [value, setIsOn]);
-
   return (
     <StyledContainer
-      onClick={handleChange}
-      isOn={isOn}
+      isOn={value}
       color={color}
       toggleSize={toggleSize}
       className={className}
-      disabled={disabled}
+      data-disabled={disabled}
     >
+      <VisibilityHiddenInput
+        id={id}
+        type="checkbox"
+        checked={value}
+        disabled={disabled}
+        onChange={(event) => {
+          onChange?.(event.target.checked);
+        }}
+      />
+
       <StyledCircle
-        animate={isOn ? 'on' : 'off'}
+        animate={value ? 'on' : 'off'}
         variants={circleVariants}
         size={toggleSize}
       />

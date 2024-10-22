@@ -25,7 +25,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -148,17 +148,18 @@ export const SettingsWorkspaceMembers = () => {
       ]}
     >
       <SettingsPageContainer>
-        {currentWorkspace?.inviteHash && (
-          <Section>
-            <H2Title
-              title="Invite by link"
-              description="Share this link to invite users to join your workspace"
-            />
-            <WorkspaceInviteLink
-              inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
-            />
-          </Section>
-        )}
+        {currentWorkspace?.inviteHash &&
+          currentWorkspace?.isPublicInviteLinkEnabled && (
+            <Section>
+              <H2Title
+                title="Invite by link"
+                description="Share this link to invite users to join your workspace"
+              />
+              <WorkspaceInviteLink
+                inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
+              />
+            </Section>
+          )}
         <Section>
           <H2Title
             title="Members"
