@@ -210,7 +210,7 @@ export const RecordTableHeaderCell = ({
         tableColumnsByKey[column.fieldMetadataId].size +
           (resizedFieldKey === column.fieldMetadataId ? resizeFieldOffset : 0) +
           24,
-        COLUMN_MIN_WIDTH, // TODO: take reference from here
+        COLUMN_MIN_WIDTH,
       )}
       onMouseEnter={() => setIconVisibility(true)}
       onMouseLeave={() => setIconVisibility(false)}
