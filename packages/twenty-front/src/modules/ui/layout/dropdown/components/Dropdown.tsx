@@ -17,7 +17,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
-
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
@@ -36,6 +36,7 @@ type DropdownProps = {
   dropdownId: string;
   dropdownPlacement?: Placement;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  mobileDropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
   dropdownStrategy?: 'fixed' | 'absolute';
   disableBlur?: boolean;
@@ -49,6 +50,7 @@ export const Dropdown = ({
   className,
   clickableComponent,
   dropdownComponents,
+  mobileDropdownWidth,
   dropdownMenuWidth,
   hotkey,
   dropdownId,
@@ -64,10 +66,14 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
+  const { isDropdownOpen, toggleDropdown, closeDropdown } =
     useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
+  const dropdownWidth =
+    mobileDropdownWidth && window.innerWidth <= MOBILE_VIEWPORT
+      ? mobileDropdownWidth
+      : dropdownMenuWidth;
 
   if (isDefined(dropdownOffset.x)) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
@@ -143,7 +149,7 @@ export const Dropdown = ({
           <FloatingPortal>
             <DropdownMenu
               disableBlur={disableBlur}
-              width={dropdownMenuWidth ?? dropdownWidth}
+              width={dropdownWidth}
               data-select-disable
               ref={refs.setFloating}
               style={floatingStyles}
@@ -155,7 +161,7 @@ export const Dropdown = ({
         {isDropdownOpen && !usePortal && (
           <DropdownMenu
             disableBlur={disableBlur}
-            width={dropdownMenuWidth ?? dropdownWidth}
+            width={dropdownWidth}
             data-select-disable
             ref={refs.setFloating}
             style={floatingStyles}

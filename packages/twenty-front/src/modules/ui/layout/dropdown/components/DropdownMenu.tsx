@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
-
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
   disableBorder?: boolean;
   width?: `${string}px` | `${number}%` | 'auto' | number;
+  mobileDropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
 }>`
   backdrop-filter: ${({ theme, disableBlur }) =>
     disableBlur ? 'none' : theme.blur.medium};
@@ -25,8 +26,15 @@ const StyledDropdownMenu = styled.div<{
 
   flex-direction: column;
   z-index: 30;
-  width: ${({ width = 160 }) =>
-    typeof width === 'number' ? `${width}px` : width};
+  width: ${({ width = 160, mobileDropdownWidth }) => {
+    const isMobileViewport = MOBILE_VIEWPORT;
+    if (Boolean(isMobileViewport) && Boolean(mobileDropdownWidth)) {
+      return typeof mobileDropdownWidth === 'number'
+        ? `${mobileDropdownWidth}px`
+        : mobileDropdownWidth;
+    }
+    return typeof width === 'number' ? `${width}px` : width;
+  }};
 `;
 
 export const DropdownMenu = StyledDropdownMenu;
