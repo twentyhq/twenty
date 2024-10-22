@@ -19,4 +19,7 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) Figma Link: [Figma](https://twenty.com/)
 
+» 22-October-2024 by [rajeevDewangan](https://oss.gg/rajeevDewangan) Figma Link: [Figma](https://www.figma.com/design/XE21QdkFuy0IJHtmW7TURa/Twenty-(rajeevDewangan)?node-id=0-1&node-type=canvas&t=BYBulCT6hpJu6E8G-0)
+
+
 ---
