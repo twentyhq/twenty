@@ -58,9 +58,9 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
   );
   const filteredEnvVariable = useMemo(() => {
     return envVariables.filter(
-      (envVariable) =>
-        envVariable.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        envVariable.value.toLowerCase().includes(searchTerm.toLowerCase()),
+      ({ key, value }) =>
+        key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        value.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [envVariables, searchTerm]);
 
@@ -68,10 +68,8 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
     newEnvVariables: EnvironmentVariable[],
   ) => {
     return newEnvVariables.reduce(
-      (acc, envVariable) =>
-        envVariable.key.length > 0 && envVariable.value.length > 0
-          ? `${acc}\n${envVariable.key}=${envVariable.value}`
-          : acc,
+      (acc, { key, value }) =>
+        key.length > 0 && value.length > 0 ? `${acc}\n${key}=${value}` : acc,
       '',
     );
   };
@@ -103,10 +101,10 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
                 initialEditMode={newEnvVarAdded && envVariable.value === ''}
                 onChange={(newEnvVariable) => {
                   const newEnvVariables = envVariables.reduce(
-                    (acc, envVariable) => {
-                      if (envVariable.id === newEnvVariable.id) {
+                    (acc, { id, key }) => {
+                      if (id === newEnvVariable.id) {
                         acc.push(newEnvVariable);
-                      } else if (envVariable.key !== newEnvVariable.key) {
+                      } else if (key !== newEnvVariable.key) {
                         acc.push(envVariable);
                       }
                       return acc;
@@ -121,7 +119,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
                 }}
                 onDelete={() => {
                   const newEnvVariables = envVariables.filter(
-                    (envVar) => envVar.id !== envVariable.id,
+                    ({ id }) => id !== envVariable.id,
                   );
                   setEnvVariables(newEnvVariables);
                   onCodeChange(
