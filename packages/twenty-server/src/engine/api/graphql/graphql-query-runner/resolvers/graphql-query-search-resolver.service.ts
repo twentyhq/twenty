@@ -13,7 +13,6 @@ import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-bu
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { isDefined } from 'src/utils/is-defined';
@@ -24,7 +23,6 @@ export class GraphqlQuerySearchResolverService
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async resolve<
@@ -61,7 +59,8 @@ export class GraphqlQuerySearchResolverService
         hasPreviousPage: false,
       });
     }
-    const searchTerms = this.formatSearchTerms(args.searchInput);
+    const searchTerms = this.formatSearchTerms(args.searchInput, 'and');
+    const searchTermsOr = this.formatSearchTerms(args.searchInput, 'or');
 
     const limit = args?.limit ?? QUERY_MAX_RECORDS;
 
@@ -86,11 +85,22 @@ export class GraphqlQuerySearchResolverService
           : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`,
         searchTerms === '' ? {} : { searchTerms },
       )
+      .orWhere(
+        searchTermsOr === ''
+          ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
+          : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTermsOr)`,
+        searchTermsOr === '' ? {} : { searchTermsOr },
+      )
       .orderBy(
-        `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
+        `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
+        'DESC',
+      )
+      .addOrderBy(
+        `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`,
         'DESC',
       )
       .setParameter('searchTerms', searchTerms)
+      .setParameter('searchTermsOr', searchTermsOr)
       .take(limit)
       .getMany()) as ObjectRecord[];
 
@@ -110,7 +120,10 @@ export class GraphqlQuerySearchResolverService
     });
   }
 
-  private formatSearchTerms(searchTerm: string) {
+  private formatSearchTerms(
+    searchTerm: string,
+    operator: 'and' | 'or' = 'and',
+  ) {
     if (searchTerm === '') {
       return '';
     }
@@ -121,7 +134,7 @@ export class GraphqlQuerySearchResolverService
       return `${escapedWord}:*`;
     });
 
-    return formattedWords.join(' | ');
+    return formattedWords.join(` ${operator === 'and' ? '&' : '|'} `);
   }
 
   async validate(
