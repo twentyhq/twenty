@@ -1,18 +1,16 @@
-import AnimatedPlaceholder, {
-  AnimatedPlaceholderType,
-} from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import {
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
-
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { Button } from '@/ui/input/button/components/Button';
 import { useContext } from 'react';
-import { IconComponent } from 'twenty-ui';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  AnimatedPlaceholderType,
+  IconComponent,
+} from 'twenty-ui';
 
 type RecordTableEmptyStateDisplayProps = {
   animatedPlaceholderType: AnimatedPlaceholderType;

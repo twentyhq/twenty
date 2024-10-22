@@ -41,10 +41,8 @@ spec:
               value: "https://crm.example.com:443"
             - name: "PG_DATABASE_URL"
               value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
-            - name: "REDIS_HOST"
-              value: "twentycrm-redis.twentycrm.svc.cluster.local"
-            - name: "REDIS_PORT"
-              value: 6379
+            - name: "REDIS_URL"
+              value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
             - name: ENABLE_DB_MIGRATIONS
               value: "true"
             - name: SIGN_IN_PREFILLED

@@ -149,10 +149,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
-    await this.indexMetadataService.createIndex(
+    await this.indexMetadataService.createIndexMetadata(
       relationMetadataInput.workspaceId,
       toObjectMetadata,
       [foreignKeyFieldMetadata, deletedFieldMetadata],
+      false,
       false,
     );
 

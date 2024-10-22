@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconTrash } from 'twenty-ui';
 
+import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -11,7 +12,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { SettingsDeveloppersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
+import { SettingsDevelopersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
 import { SettingsDevelopersWebhookUsageGraphEffect } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraphEffect';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -20,9 +21,10 @@ import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
 
 const StyledFilterRow = styled.div`
   display: flex;
@@ -32,6 +34,8 @@ const StyledFilterRow = styled.div`
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
+
   const navigate = useNavigate();
   const { webhookId = '' } = useParams();
 
@@ -178,10 +182,10 @@ export const SettingsDevelopersWebhooksDetail = () => {
             />
           </StyledFilterRow>
         </Section>
-        {isAnalyticsV2Enabled ? (
+        {isAnalyticsEnabled && isAnalyticsV2Enabled ? (
           <>
             <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
-            <SettingsDeveloppersWebhookUsageGraph />
+            <SettingsDevelopersWebhookUsageGraph webhookId={webhookId} />
           </>
         ) : (
           <></>

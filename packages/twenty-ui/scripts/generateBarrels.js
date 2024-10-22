@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import path from 'path';
+import slash from 'slash';
 
 const extensions = ['.ts', '.tsx'];
 const excludedExtensions = [
@@ -73,10 +74,10 @@ moduleDirectories.forEach((moduleDirectoryPath) => {
 
       return directFilesPaths.map((filePath) => {
         const fileName = filePath.split('.').slice(0, -1).join('.');
-        return `export * from './${path.relative(
+        return `export * from './${slash(path.relative(
           moduleDirectoryPath,
           path.join(directoryPath, fileName),
-        )}';`;
+        ))}';`;
       });
     })
     .sort((a, b) => a.localeCompare(b))
@@ -92,7 +93,7 @@ moduleDirectories.forEach((moduleDirectoryPath) => {
 const mainBarrelExports = moduleDirectories
   .map(
     (moduleDirectoryPath) =>
-      `export * from './${path.relative(srcPath, moduleDirectoryPath)}';`,
+      `export * from './${slash(path.relative(srcPath, moduleDirectoryPath))}';`,
   )
   .sort((a, b) => a.localeCompare(b))
   .join('\n');

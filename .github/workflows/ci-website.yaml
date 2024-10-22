@@ -3,13 +3,10 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'package.json'
-      - 'packages/twenty-website/**'
+
   pull_request:
-    paths:
-      - 'package.json'
-      - 'packages/twenty-website/**'
+    
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -27,13 +24,29 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          files: 'package.json, packages/twenty-website/**'
+
       - name: Install dependencies
+        if: steps.changed-files.outputs.changed == 'true' 
         uses: ./.github/workflows/actions/yarn-install
+
       - name: Website / Run migrations
+        if: steps.changed-files.outputs.changed == 'true' 
         run: npx nx database:migrate twenty-website 
         env:
           DATABASE_PG_URL: postgres://twenty:twenty@localhost:5432/default
       - name: Website / Build Website
+        if: steps.changed-files.outputs.changed == 'true' 
         run: npx nx build twenty-website
         env:
           DATABASE_PG_URL: postgres://twenty:twenty@localhost:5432/default
+
+      - name: Mark as VALID
+        if: steps.changed-files.outputs.changed != 'true'  # If no changes, mark as valid
+        run: echo "No relevant changes detected. CI is valid."    

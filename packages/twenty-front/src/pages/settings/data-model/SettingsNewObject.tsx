@@ -17,7 +17,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
