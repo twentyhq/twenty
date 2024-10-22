@@ -1,4 +1,4 @@
-import { ConnectionOptions } from 'tls';
+import IORedis from 'ioredis';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
@@ -48,7 +48,7 @@ export const messageQueueModuleFactory = async (
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: connectionString as ConnectionOptions,
+          connection: new IORedis(connectionString),
         },
       } satisfies BullMQDriverFactoryOptions;
     }

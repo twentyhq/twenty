@@ -1,6 +1,7 @@
 import { CacheModuleOptions } from '@nestjs/common';
 
 import { redisStore } from 'cache-manager-redis-yet';
+import IORedis from 'ioredis';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -31,7 +32,7 @@ export const cacheStorageModuleFactory = (
       return {
         ...cacheModuleOptions,
         store: redisStore,
-        url: connectionString,
+        client: new IORedis(connectionString),
       };
     }
     default:
