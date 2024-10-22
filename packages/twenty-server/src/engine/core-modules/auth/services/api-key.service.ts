@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { generateSecret } from 'src/utils/generate-secret';
 
 @Injectable()
 export class ApiKeyService {
@@ -23,7 +22,10 @@ export class ApiKeyService {
     const jwtPayload = {
       sub: workspaceId,
     };
-    const secret = generateSecret(workspaceId, 'ACCESS');
+    const secret = this.jwtWrapperService.generateAppSecret(
+      'ACCESS',
+      workspaceId,
+    );
     let expiresIn: string | number;
 
     if (expiresAt) {

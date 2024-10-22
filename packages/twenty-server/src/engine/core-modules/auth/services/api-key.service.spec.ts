@@ -5,10 +5,6 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 
 import { ApiKeyService } from './api-key.service';
 
-jest.mock('src/utils/generate-secret', () => ({
-  generateSecret: jest.fn().mockReturnValue('mocked-secret'),
-}));
-
 describe('ApiKeyService', () => {
   let service: ApiKeyService;
   let jwtWrapperService: JwtWrapperService;
@@ -22,6 +18,7 @@ describe('ApiKeyService', () => {
           provide: JwtWrapperService,
           useValue: {
             sign: jest.fn(),
+            generateAppSecret: jest.fn().mockReturnValue('mocked-secret'),
           },
         },
         {
@@ -56,6 +53,9 @@ describe('ApiKeyService', () => {
 
       jest.spyOn(environmentService, 'get').mockReturnValue('1h');
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'generateAppSecret')
+        .mockReturnValue('mocked-secret');
 
       const result = await service.generateApiKeyToken(workspaceId, apiKeyId);
 
@@ -77,6 +77,9 @@ describe('ApiKeyService', () => {
       const mockToken = 'mock-token';
 
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'generateAppSecret')
+        .mockReturnValue('mocked-secret');
 
       await service.generateApiKeyToken(workspaceId, apiKeyId, expiresAt);
 

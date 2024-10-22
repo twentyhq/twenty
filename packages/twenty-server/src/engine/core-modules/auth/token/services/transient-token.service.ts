@@ -10,7 +10,6 @@ import {
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { generateSecret } from 'src/utils/generate-secret';
 
 @Injectable()
 export class TransientTokenService {
@@ -24,7 +23,10 @@ export class TransientTokenService {
     userId: string,
     workspaceId: string,
   ): Promise<AuthToken> {
-    const secret = generateSecret(workspaceId, 'LOGIN');
+    const secret = this.jwtWrapperService.generateAppSecret(
+      'LOGIN',
+      workspaceId,
+    );
     const expiresIn = this.environmentService.get(
       'SHORT_TERM_TOKEN_EXPIRES_IN',
     );
