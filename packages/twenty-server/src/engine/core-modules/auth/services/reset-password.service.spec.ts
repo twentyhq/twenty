@@ -12,6 +12,7 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { ResetPasswordService } from './reset-password.service';
 
@@ -35,9 +36,13 @@ describe('ResetPasswordService', () => {
           useClass: Repository,
         },
         {
+          provide: getRepositoryToken(Workspace, 'core'),
+          useClass: Repository,
+        },
+        {
           provide: EmailService,
           useValue: {
-            send: jest.fn(),
+            send: jest.fn().mockResolvedValue({ success: true }),
           },
         },
         {
@@ -131,7 +136,6 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(environmentService, 'get')
         .mockReturnValue('http://localhost:3000');
-      jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
 
       const result = await service.sendEmailPasswordResetLink(
         mockToken,

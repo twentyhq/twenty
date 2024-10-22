@@ -24,7 +24,6 @@ import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/val
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class ResetPasswordService {
@@ -34,7 +33,6 @@ export class ResetPasswordService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(Workspace, 'core')
     private readonly emailService: EmailService,
   ) {}
 
