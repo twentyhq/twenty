@@ -93,6 +93,7 @@ export const ObjectFilterDropdownFilterInput = ({
             'ADDRESS',
             'ACTOR',
             'ARRAY',
+            'RAW_JSON',
             'PHONES',
           ].includes(filterDefinitionUsedInDropdown.type) &&
             !isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (

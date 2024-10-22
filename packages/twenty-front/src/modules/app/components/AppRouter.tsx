@@ -1,4 +1,4 @@
-import { createAppRouter } from '@/app/utils/createAppRouter';
+import { useCreateAppRouter } from '@/app/hooks/useCreateAppRouter';
 import { billingState } from '@/client-config/states/billingState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { RouterProvider } from 'react-router-dom';
@@ -8,6 +8,7 @@ export const AppRouter = () => {
   const billing = useRecoilValue(billingState);
   const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
@@ -17,10 +18,11 @@ export const AppRouter = () => {
 
   return (
     <RouterProvider
-      router={createAppRouter(
+      router={useCreateAppRouter(
         isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
+        isSSOEnabled,
       )}
     />
   );
