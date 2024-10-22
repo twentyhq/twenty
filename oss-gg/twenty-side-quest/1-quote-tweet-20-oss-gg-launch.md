@@ -29,5 +29,5 @@ Your turn 👇
 » 11-October-2024 by Aritra Sadhukhan
 » Link to Tweet: https://x.com/AritraDevelops/status/1844670236512878646
 
-» 22-October-2024 by Aritra Sadhukhan
+» 22-October-2024 by Zia Ur Rehman Khan
 » Link to Tweet: https://x.com/zia_webdev/status/1848659210243871165
