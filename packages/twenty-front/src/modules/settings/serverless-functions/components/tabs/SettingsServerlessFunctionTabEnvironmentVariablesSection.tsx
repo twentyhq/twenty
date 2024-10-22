@@ -95,43 +95,45 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = ({
           <TableHeader>Value</TableHeader>
           <TableHeader></TableHeader>
         </StyledTableRow>
-        <StyledTableBody>
-          {filteredEnvVariable.map((envVariable) => (
-            <SettingsServerlessFunctionTabEnvironmentVariableTableRow
-              key={envVariable.id}
-              envVariable={envVariable}
-              initialEditMode={newEnvVarAdded && envVariable.value === ''}
-              onChange={(newEnvVariable) => {
-                const newEnvVariables = envVariables.reduce(
-                  (acc, envVariable) => {
-                    if (envVariable.id === newEnvVariable.id) {
-                      acc.push(newEnvVariable);
-                    } else if (envVariable.key !== newEnvVariable.key) {
-                      acc.push(envVariable);
-                    }
-                    return acc;
-                  },
-                  [] as EnvironmentVariable[],
-                );
-                setEnvVariables(newEnvVariables);
-                onCodeChange(
-                  '.env',
-                  getFormattedEnvironmentVariables(newEnvVariables),
-                );
-              }}
-              onDelete={() => {
-                const newEnvVariables = envVariables.filter(
-                  (envVar) => envVar.id !== envVariable.id,
-                );
-                setEnvVariables(newEnvVariables);
-                onCodeChange(
-                  '.env',
-                  getFormattedEnvironmentVariables(newEnvVariables),
-                );
-              }}
-            />
-          ))}
-        </StyledTableBody>
+        {filteredEnvVariable.length > 0 && (
+          <StyledTableBody>
+            {filteredEnvVariable.map((envVariable) => (
+              <SettingsServerlessFunctionTabEnvironmentVariableTableRow
+                key={envVariable.id}
+                envVariable={envVariable}
+                initialEditMode={newEnvVarAdded && envVariable.value === ''}
+                onChange={(newEnvVariable) => {
+                  const newEnvVariables = envVariables.reduce(
+                    (acc, envVariable) => {
+                      if (envVariable.id === newEnvVariable.id) {
+                        acc.push(newEnvVariable);
+                      } else if (envVariable.key !== newEnvVariable.key) {
+                        acc.push(envVariable);
+                      }
+                      return acc;
+                    },
+                    [] as EnvironmentVariable[],
+                  );
+                  setEnvVariables(newEnvVariables);
+                  onCodeChange(
+                    '.env',
+                    getFormattedEnvironmentVariables(newEnvVariables),
+                  );
+                }}
+                onDelete={() => {
+                  const newEnvVariables = envVariables.filter(
+                    (envVar) => envVar.id !== envVariable.id,
+                  );
+                  setEnvVariables(newEnvVariables);
+                  onCodeChange(
+                    '.env',
+                    getFormattedEnvironmentVariables(newEnvVariables),
+                  );
+                }}
+              />
+            ))}
+          </StyledTableBody>
+        )}
       </Table>
       <StyledButtonContainer>
         <Button
