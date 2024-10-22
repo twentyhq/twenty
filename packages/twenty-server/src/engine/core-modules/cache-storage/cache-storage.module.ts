@@ -7,6 +7,7 @@ import { FlushCacheCommand } from 'src/engine/core-modules/cache-storage/command
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Global()
 @Module({
@@ -15,7 +16,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
       isGlobal: true,
       imports: [ConfigModule],
       useFactory: cacheStorageModuleFactory,
-      inject: [EnvironmentService],
+      inject: [EnvironmentService, RedisClientService],
     }),
   ],
   providers: [
