@@ -1,19 +1,19 @@
+import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { ComponentDecorator, IconCheckbox, IconTrash } from 'twenty-ui';
-import { ActionMenuBarEntry } from '../ActionMenuBarEntry';
 
-const meta: Meta<typeof ActionMenuBarEntry> = {
-  title: 'Modules/ActionMenu/ActionMenuBarEntry',
-  component: ActionMenuBarEntry,
+const meta: Meta<typeof RecordIndexActionMenuBarEntry> = {
+  title: 'Modules/ActionMenu/RecordIndexActionMenuBarEntry',
+  component: RecordIndexActionMenuBarEntry,
   decorators: [ComponentDecorator],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ActionMenuBarEntry>;
+type Story = StoryObj<typeof RecordIndexActionMenuBarEntry>;
 
 const deleteMock = jest.fn();
 const markAsDoneMock = jest.fn();

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
-type ActionMenuBarEntryProps = {
+type RecordIndexActionMenuBarEntryProps = {
   entry: ActionMenuEntry;
 };
 
@@ -35,7 +35,9 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionMenuBarEntry = ({ entry }: ActionMenuBarEntryProps) => {
+export const RecordIndexActionMenuBarEntry = ({
+  entry,
+}: RecordIndexActionMenuBarEntryProps) => {
   const theme = useTheme();
   return (
     <StyledButton

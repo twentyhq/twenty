@@ -1,5 +1,6 @@
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { createState } from 'twenty-ui';
+import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
 type ContextStoreTargetedRecordsRuleSelectionMode = {
   mode: 'selection';
@@ -16,11 +17,12 @@ export type ContextStoreTargetedRecordsRule =
   | ContextStoreTargetedRecordsRuleSelectionMode
   | ContextStoreTargetedRecordsRuleExclusionMode;
 
-export const contextStoreTargetedRecordsRuleState =
-  createState<ContextStoreTargetedRecordsRule>({
-    key: 'contextStoreTargetedRecordsRuleState',
+export const contextStoreTargetedRecordsRuleComponentState =
+  createComponentStateV2<ContextStoreTargetedRecordsRule>({
+    key: 'contextStoreTargetedRecordsRuleComponentState',
     defaultValue: {
       mode: 'selection',
       selectedRecordIds: [],
     },
+    componentInstanceContext: ContextStoreComponentInstanceContext,
   });

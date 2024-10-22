@@ -1,5 +1,5 @@
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
-import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
+import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -188,7 +188,7 @@ export const RecordBoardCard = ({
 
   const setActionMenuDropdownPosition = useSetRecoilState(
     extractComponentState(
-      actionMenuDropdownPositionComponentState,
+      recordIndexActionMenuDropdownPositionComponentState,
       `action-menu-dropdown-${recordBoardId}`,
     ),
   );
