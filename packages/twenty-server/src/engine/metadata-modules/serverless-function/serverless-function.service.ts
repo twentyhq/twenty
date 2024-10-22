@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { basename, dirname, join } from 'path';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import deepEqual from 'deep-equal';
 import { Repository } from 'typeorm';
 
@@ -34,7 +33,7 @@ import {
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
-export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
+export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
@@ -42,8 +41,10 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly environmentService: EnvironmentService,
-  ) {
-    super(serverlessFunctionRepository);
+  ) {}
+
+  async findManyServerlessFunctions(where) {
+    return this.serverlessFunctionRepository.findBy(where);
   }
 
   async getServerlessFunctionSourceCode(
@@ -51,12 +52,11 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     id: string,
     version: string,
   ): Promise<{ [filePath: string]: string } | undefined> {
-    const serverlessFunction = await this.serverlessFunctionRepository.findOne({
-      where: {
+    const serverlessFunction =
+      await this.serverlessFunctionRepository.findOneBy({
         id,
         workspaceId,
-      },
-    });
+      });
 
     if (!serverlessFunction) {
       throw new ServerlessFunctionException(
@@ -101,12 +101,12 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
   ): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
 
-    const functionToExecute = await this.serverlessFunctionRepository.findOne({
-      where: {
+    const functionToExecute = await this.serverlessFunctionRepository.findOneBy(
+      {
         id,
         workspaceId,
       },
-    });
+    );
 
     if (!functionToExecute) {
       throw new ServerlessFunctionException(
@@ -120,9 +120,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
   async publishOneServerlessFunction(id: string, workspaceId: string) {
     const existingServerlessFunction =
-      await this.serverlessFunctionRepository.findOne({
-        where: { id, workspaceId },
-      });
+      await this.serverlessFunctionRepository.findOneBy({ id, workspaceId });
 
     if (!existingServerlessFunction) {
       throw new ServerlessFunctionException(
@@ -154,17 +152,29 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       existingServerlessFunction,
     );
 
-    await super.updateOne(existingServerlessFunction.id, {
-      latestVersion: newVersion,
-    });
+    const newPublishedVersions = [
+      ...existingServerlessFunction.publishedVersions,
+      newVersion,
+    ];
 
-    return await this.findById(existingServerlessFunction.id);
+    await this.serverlessFunctionRepository.update(
+      existingServerlessFunction.id,
+      {
+        latestVersion: newVersion,
+        publishedVersions: newPublishedVersions,
+      },
+    );
+
+    return this.serverlessFunctionRepository.findOneBy({
+      id: existingServerlessFunction.id,
+    });
   }
 
   async deleteOneServerlessFunction(id: string, workspaceId: string) {
     const existingServerlessFunction =
-      await this.serverlessFunctionRepository.findOne({
-        where: { id, workspaceId },
+      await this.serverlessFunctionRepository.findOneBy({
+        id,
+        workspaceId,
       });
 
     if (!existingServerlessFunction) {
@@ -174,7 +184,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
     }
 
-    await super.deleteOne(id);
+    await this.serverlessFunctionRepository.delete(id);
 
     await this.serverlessService.delete(existingServerlessFunction);
 
@@ -192,8 +202,9 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     workspaceId: string,
   ) {
     const existingServerlessFunction =
-      await this.serverlessFunctionRepository.findOne({
-        where: { id: serverlessFunctionInput.id, workspaceId },
+      await this.serverlessFunctionRepository.findOneBy({
+        id: serverlessFunctionInput.id,
+        workspaceId,
       });
 
     if (!existingServerlessFunction) {
@@ -203,11 +214,14 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
     }
 
-    await super.updateOne(existingServerlessFunction.id, {
-      name: serverlessFunctionInput.name,
-      description: serverlessFunctionInput.description,
-      syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
-    });
+    await this.serverlessFunctionRepository.update(
+      existingServerlessFunction.id,
+      {
+        name: serverlessFunctionInput.name,
+        description: serverlessFunctionInput.description,
+        syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
+      },
+    );
 
     const fileFolder = getServerlessFolder({
       serverlessFunction: existingServerlessFunction,
@@ -224,11 +238,16 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     }
 
     await this.serverlessService.build(existingServerlessFunction, 'draft');
-    await super.updateOne(existingServerlessFunction.id, {
-      syncStatus: ServerlessFunctionSyncStatus.READY,
-    });
+    await this.serverlessFunctionRepository.update(
+      existingServerlessFunction.id,
+      {
+        syncStatus: ServerlessFunctionSyncStatus.READY,
+      },
+    );
 
-    return await this.findById(existingServerlessFunction.id);
+    return this.serverlessFunctionRepository.findOneBy({
+      id: existingServerlessFunction.id,
+    });
   }
 
   async getAvailablePackages() {
@@ -255,11 +274,15 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     serverlessFunctionInput: CreateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    const createdServerlessFunction = await super.createOne({
-      ...serverlessFunctionInput,
-      workspaceId,
-      layerVersion: LAST_LAYER_VERSION,
-    });
+    const serverlessFunctionToCreate =
+      await this.serverlessFunctionRepository.create({
+        ...serverlessFunctionInput,
+        workspaceId,
+        layerVersion: LAST_LAYER_VERSION,
+      });
+
+    const createdServerlessFunction =
+      await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
 
     const draftFileFolder = getServerlessFolder({
       serverlessFunction: createdServerlessFunction,
@@ -277,7 +300,9 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
     await this.serverlessService.build(createdServerlessFunction, 'draft');
 
-    return await this.findById(createdServerlessFunction.id);
+    return this.serverlessFunctionRepository.findOneBy({
+      id: createdServerlessFunction.id,
+    });
   }
 
   private async throttleExecution(workspaceId: string) {

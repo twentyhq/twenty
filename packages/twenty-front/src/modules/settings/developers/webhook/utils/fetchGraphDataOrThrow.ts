@@ -4,22 +4,24 @@ import { WEBHOOK_GRAPH_API_OPTIONS_MAP } from '@/settings/developers/webhook/con
 type fetchGraphDataOrThrowProps = {
   webhookId: string;
   windowLength: '7D' | '1D' | '12H' | '4H';
+  tinybirdJwt: string;
 };
 
 export const fetchGraphDataOrThrow = async ({
   webhookId,
   windowLength,
+  tinybirdJwt,
 }: fetchGraphDataOrThrowProps) => {
   const queryString = new URLSearchParams({
     ...WEBHOOK_GRAPH_API_OPTIONS_MAP[windowLength],
     webhookIdRequest: webhookId,
   }).toString();
-  const token = 'REPLACE_ME';
+
   const response = await fetch(
     `https://api.eu-central-1.aws.tinybird.co/v0/pipes/getWebhooksAnalyticsV2.json?${queryString}`,
     {
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + tinybirdJwt,
       },
     },
   );
