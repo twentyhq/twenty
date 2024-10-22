@@ -22,6 +22,7 @@ import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/val
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -55,6 +56,7 @@ export class AuthResolver {
     private userService: UserService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
+    private switchWorkspaceService: SwitchWorkspaceService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -178,7 +180,7 @@ export class AuthResolver {
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
   ): Promise<GenerateJWTOutputWithAuthTokens | GenerateJWTOutputWithSSOAUTH> {
-    const result = await this.tokenService.switchWorkspace(
+    const result = await this.switchWorkspaceService.switchWorkspace(
       user,
       args.workspaceId,
     );
@@ -202,10 +204,11 @@ export class AuthResolver {
     return {
       success: true,
       reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH',
-      authTokens: await this.tokenService.generateSwitchWorkspaceToken(
-        user,
-        result.workspace,
-      ),
+      authTokens:
+        await this.switchWorkspaceService.generateSwitchWorkspaceToken(
+          user,
+          result.workspace,
+        ),
     };
   }
 
@@ -244,9 +247,10 @@ export class AuthResolver {
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
   ): Promise<EmailPasswordResetLink> {
-    const resetToken = await this.tokenService.generatePasswordResetToken(
-      emailPasswordResetInput.email,
-    );
+    const resetToken =
+      await this.resetPasswordService.generatePasswordResetToken(
+        emailPasswordResetInput.email,
+      );
 
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,

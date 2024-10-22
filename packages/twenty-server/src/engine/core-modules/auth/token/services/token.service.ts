@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
+import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
 import { ExtractJwt } from 'passport-jwt';
-import { IsNull, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   AppToken,
@@ -22,16 +22,13 @@ import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange
 import {
   ApiKeyToken,
   AuthToken,
-  AuthTokens,
-  PasswordResetToken,
 } from 'src/engine/core-modules/auth/dto/token.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { generateSecret } from 'src/utils/generate-secret';
 
 @Injectable()
@@ -43,55 +40,10 @@ export class TokenService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    private readonly sSSOService: SSOService,
     private readonly accessTokenService: AccessTokenService,
     private readonly loginTokenService: LoginTokenService,
+    private readonly refreshTokenService: RefreshTokenService,
   ) {}
-
-  async generateRefreshToken(
-    userId: string,
-    workspaceId: string,
-  ): Promise<AuthToken> {
-    const secret = this.jwtWrapperService.generateAppSecret(
-      'REFRESH',
-      workspaceId,
-    );
-    const expiresIn = this.environmentService.get('REFRESH_TOKEN_EXPIRES_IN');
-
-    if (!expiresIn) {
-      throw new AuthException(
-        'Expiration time for access token is not set',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    const refreshTokenPayload = {
-      userId,
-      expiresAt,
-      type: AppTokenType.RefreshToken,
-    };
-    const jwtPayload = {
-      sub: userId,
-    };
-
-    const refreshToken = this.appTokenRepository.create(refreshTokenPayload);
-
-    await this.appTokenRepository.save(refreshToken);
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
-        expiresIn,
-        // Jwtid will be used to link RefreshToken entity to this token
-        jwtid: refreshToken.id,
-      }),
-      expiresAt,
-    };
-  }
 
   async generateInvitationToken(workspaceId: string, email: string) {
     const expiresIn = this.environmentService.get(
@@ -205,90 +157,6 @@ export class TokenService {
     };
   }
 
-  async switchWorkspace(user: User, workspaceId: string) {
-    const userExists = await this.userRepository.findBy({ id: user.id });
-
-    if (!userExists) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      relations: ['workspaceUsers', 'workspaceSSOIdentityProviders'],
-    });
-
-    if (!workspace) {
-      throw new AuthException(
-        'workspace doesnt exist',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (
-      !workspace.workspaceUsers
-        .map((userWorkspace) => userWorkspace.userId)
-        .includes(user.id)
-    ) {
-      throw new AuthException(
-        'user does not belong to workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    if (workspace.workspaceSSOIdentityProviders.length > 0) {
-      return {
-        useSSOAuth: true,
-        workspace,
-        availableSSOIdentityProviders:
-          await this.sSSOService.listSSOIdentityProvidersByWorkspaceId(
-            workspaceId,
-          ),
-      } as {
-        useSSOAuth: true;
-        workspace: Workspace;
-        availableSSOIdentityProviders: Awaited<
-          ReturnType<
-            typeof this.sSSOService.listSSOIdentityProvidersByWorkspaceId
-          >
-        >;
-      };
-    }
-
-    return {
-      useSSOAuth: false,
-      workspace,
-    } as {
-      useSSOAuth: false;
-      workspace: Workspace;
-    };
-  }
-
-  async generateSwitchWorkspaceToken(
-    user: User,
-    workspace: Workspace,
-  ): Promise<AuthTokens> {
-    await this.userRepository.save({
-      id: user.id,
-      defaultWorkspace: workspace,
-    });
-
-    const token = await this.accessTokenService.generateAccessToken(
-      user.id,
-      workspace.id,
-    );
-    const refreshToken = await this.generateRefreshToken(user.id, workspace.id);
-
-    return {
-      tokens: {
-        accessToken: token,
-        refreshToken,
-      },
-    };
-  }
-
   async verifyAuthorizationCode(
     exchangeAuthCodeInput: ExchangeAuthCodeInput,
   ): Promise<ExchangeAuthCode> {
@@ -398,7 +266,7 @@ export class TokenService {
       user.id,
       user.defaultWorkspaceId,
     );
-    const refreshToken = await this.generateRefreshToken(
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(
       user.id,
       user.defaultWorkspaceId,
     );
@@ -411,70 +279,6 @@ export class TokenService {
       refreshToken,
       loginToken,
     };
-  }
-
-  async verifyRefreshToken(refreshToken: string) {
-    const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
-
-    await this.jwtWrapperService.verifyWorkspaceToken(refreshToken, 'REFRESH');
-    const jwtPayload = await this.jwtWrapperService.decode(refreshToken);
-
-    if (!(jwtPayload.jti && jwtPayload.sub)) {
-      throw new AuthException(
-        'This refresh token is malformed',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const token = await this.appTokenRepository.findOneBy({
-      id: jwtPayload.jti,
-    });
-
-    if (!token) {
-      throw new AuthException(
-        "This refresh token doesn't exist",
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const user = await this.userRepository.findOne({
-      where: { id: jwtPayload.sub },
-      relations: ['appTokens'],
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    // Check if revokedAt is less than coolDown
-    if (
-      token.revokedAt &&
-      token.revokedAt.getTime() <= Date.now() - ms(coolDown)
-    ) {
-      // Revoke all user refresh tokens
-      await Promise.all(
-        user.appTokens.map(async ({ id, type }) => {
-          if (type === AppTokenType.RefreshToken) {
-            await this.appTokenRepository.update(
-              { id },
-              {
-                revokedAt: new Date(),
-              },
-            );
-          }
-        }),
-      );
-
-      throw new AuthException(
-        'Suspicious activity detected, this refresh token has been revoked. All tokens have been revoked.',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    return { user, token };
   }
 
   async generateTokensFromRefreshToken(token: string): Promise<{
@@ -491,7 +295,7 @@ export class TokenService {
     const {
       user,
       token: { id, workspaceId },
-    } = await this.verifyRefreshToken(token);
+    } = await this.refreshTokenService.verifyRefreshToken(token);
 
     // Revoke old refresh token
     await this.appTokenRepository.update(
@@ -507,7 +311,10 @@ export class TokenService {
       user.id,
       workspaceId,
     );
-    const refreshToken = await this.generateRefreshToken(user.id, workspaceId);
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(
+      user.id,
+      workspaceId,
+    );
 
     return {
       accessToken,
@@ -519,70 +326,5 @@ export class TokenService {
     return `${this.environmentService.get(
       'FRONT_BASE_URL',
     )}/verify?loginToken=${loginToken}`;
-  }
-
-  async generatePasswordResetToken(email: string): Promise<PasswordResetToken> {
-    const user = await this.userRepository.findOneBy({
-      email,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const expiresIn = this.environmentService.get(
-      'PASSWORD_RESET_TOKEN_EXPIRES_IN',
-    );
-
-    if (!expiresIn) {
-      throw new AuthException(
-        'PASSWORD_RESET_TOKEN_EXPIRES_IN constant value not found',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const existingToken = await this.appTokenRepository.findOne({
-      where: {
-        userId: user.id,
-        type: AppTokenType.PasswordResetToken,
-        expiresAt: MoreThan(new Date()),
-        revokedAt: IsNull(),
-      },
-    });
-
-    if (existingToken) {
-      const timeToWait = ms(
-        differenceInMilliseconds(existingToken.expiresAt, new Date()),
-        { long: true },
-      );
-
-      throw new AuthException(
-        `Token has already been generated. Please wait for ${timeToWait} to generate again.`,
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const plainResetToken = crypto.randomBytes(32).toString('hex');
-    const hashedResetToken = crypto
-      .createHash('sha256')
-      .update(plainResetToken)
-      .digest('hex');
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    await this.appTokenRepository.save({
-      userId: user.id,
-      value: hashedResetToken,
-      expiresAt,
-      type: AppTokenType.PasswordResetToken,
-    });
-
-    return {
-      passwordResetToken: plainResetToken,
-      passwordResetTokenExpiresAt: expiresAt,
-    };
   }
 }

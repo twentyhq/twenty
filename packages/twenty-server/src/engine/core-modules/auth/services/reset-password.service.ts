@@ -21,32 +21,21 @@ import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-p
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
-import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class ResetPasswordService {
   constructor(
-    private readonly jwtWrapperService: JwtWrapperService,
-    private readonly jwtStrategy: JwtAuthStrategy,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
-    private readonly sSSOService: SSOService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly accessTokenService: AccessTokenService,
   ) {}
 
   async generatePasswordResetToken(email: string): Promise<PasswordResetToken> {
