@@ -27,15 +27,6 @@ export * from './src/modules/ui/input/components/Select';
 export * from './src/modules/ui/input/components/TextArea';
 export * from './src/modules/ui/input/components/TextInput';
 export * from './src/modules/ui/input/editor/components/BlockEditor';
-<<<<<<< HEAD
-export * from './src/modules/ui/navigation/bread-crumb/components/Breadcrumb';
-=======
-export * from './src/modules/ui/navigation/link/components/ActionLink';
-export * from './src/modules/ui/navigation/link/components/ContactLink';
-export * from './src/modules/ui/navigation/link/components/RawLink';
-export * from './src/modules/ui/navigation/link/components/RoundedLink';
-export * from './src/modules/ui/navigation/link/components/SocialLink';
->>>>>>> main
 export * from './src/modules/ui/navigation/menu-item/components/MenuItem';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemCommand';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemDraggable';
