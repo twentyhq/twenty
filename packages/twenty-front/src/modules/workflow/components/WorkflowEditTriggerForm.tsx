@@ -69,6 +69,7 @@ export const WorkflowEditTriggerForm = ({
   const triggerEvent = isDefined(trigger)
     ? splitWorkflowTriggerEventName(trigger.settings.eventName)
     : undefined;
+
   const availableMetadata: Array<SelectOption<string>> =
     activeObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
