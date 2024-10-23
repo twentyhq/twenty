@@ -5,11 +5,9 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 const actions = [
   {
     ActionEffect: ExportRecordsActionEffect,
-    onActionExecutedCallback: () => {},
   },
   {
     ActionEffect: DeleteRecordsActionEffect,
-    onActionExecutedCallback: () => {},
   },
 ];
 
@@ -20,12 +18,11 @@ export const MultipleRecordsActionMenuEntriesSetter = ({
 }) => {
   return (
     <>
-      {actions.map(({ ActionEffect, onActionExecutedCallback }, index) => (
+      {actions.map(({ ActionEffect }, index) => (
         <ActionEffect
           key={index}
           position={index}
           objectMetadataItem={objectMetadataItem}
-          onActionExecutedCallback={onActionExecutedCallback}
         />
       ))}
     </>
