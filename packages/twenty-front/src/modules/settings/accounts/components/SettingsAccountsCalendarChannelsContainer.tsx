@@ -14,7 +14,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import React from 'react';
 
-const StyledCalenderContainer = styled.div`
+const StyledCalendarContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
@@ -62,12 +62,12 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
   return (
     <>
       {tabs.length > 1 && (
-        <StyledCalenderContainer>
+        <StyledCalendarContainer>
           <TabList
             tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
             tabs={tabs}
           />
-        </StyledCalenderContainer>
+        </StyledCalendarContainer>
       )}
       {calendarChannels.map((calendarChannel) => (
         <React.Fragment key={calendarChannel.id}>
