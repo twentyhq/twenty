@@ -88,7 +88,7 @@ const getColumnExpression = (
       )
     `;
     case FieldMetadataType.RICH_TEXT:
-      return `COALESCE(jsonb_path_query_array(${quotedColumnName}::jsonb, '$.**."text"'::jsonpath)::text, '')`;
+      return `COALESCE(jsonb_path_query_array(${quotedColumnName}::jsonb, '$[*].content[*]."text"'::jsonpath)::text, '')`;
     default:
       return `COALESCE(${quotedColumnName}, '')`;
   }
