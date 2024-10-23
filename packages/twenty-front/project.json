@@ -70,6 +70,12 @@
     "storybook:build": {
       "options": {
         "env": { "NODE_OPTIONS": "--max_old_space_size=6500" }
+      },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
     "storybook:serve:dev": {
@@ -82,7 +88,13 @@
       }
     },
     "storybook:serve:static": {
-      "options": { "port": 6006 }
+      "options": { "port": 6006 },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+      }
     },
     "storybook:coverage": {
       "configurations": {
@@ -104,9 +116,6 @@
     },
     "storybook:serve-and-test:static": {
       "options": {
-        "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
-        ],
         "port": 6006
       },
       "configurations": {
@@ -114,15 +123,6 @@
         "modules": { "scope": "modules" },
         "pages": { "scope": "pages" },
         "performance": { "scope": "performance" }
-      }
-    },
-    "storybook:serve-and-test:static:performance": {},
-    "storybook:test:no-coverage": {
-      "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
-        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
     "graphql:generate": {

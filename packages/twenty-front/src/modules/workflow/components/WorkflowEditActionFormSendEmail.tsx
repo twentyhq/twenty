@@ -5,8 +5,8 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
+import { VariableTagInput } from '@/workflow/search-variables/components/VariableTagInput';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
@@ -208,7 +208,8 @@ export const WorkflowEditActionFormSendEmail = (
             name="email"
             control={form.control}
             render={({ field }) => (
-              <TextInput
+              <VariableTagInput
+                inputId="email-input"
                 label="Email"
                 placeholder="Enter receiver email (use {{variable}} for dynamic content)"
                 value={field.value}
@@ -223,7 +224,8 @@ export const WorkflowEditActionFormSendEmail = (
             name="subject"
             control={form.control}
             render={({ field }) => (
-              <TextInput
+              <VariableTagInput
+                inputId="email-subject-input"
                 label="Subject"
                 placeholder="Enter email subject (use {{variable}} for dynamic content)"
                 value={field.value}
