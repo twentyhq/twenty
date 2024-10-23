@@ -74,16 +74,19 @@ export const ActionMenuDropdown = () => {
         }}
         data-select-disable
         dropdownMenuWidth={width}
-        dropdownComponents={actionMenuEntries.map((item, index) => (
-          <DropdownMenuItemsContainer key={index}>
-            <MenuItem
-              LeftIcon={item.Icon}
-              onClick={item.onClick}
-              accent={item.accent}
-              text={item.label}
-            />
+        dropdownComponents={
+          <DropdownMenuItemsContainer>
+            {actionMenuEntries.map((item, index) => (
+              <MenuItem
+                key={index}
+                LeftIcon={item.Icon}
+                onClick={item.onClick}
+                accent={item.accent}
+                text={item.label}
+              />
+            ))}
           </DropdownMenuItemsContainer>
-        ))}
+        }
       />
     </StyledContainerActionMenuDropdown>
   );
