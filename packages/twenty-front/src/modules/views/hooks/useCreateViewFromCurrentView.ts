@@ -163,6 +163,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       currentViewIdCallbackState,
       getViewFromCache,
       isPersistingViewFieldsCallbackState,
+      createViewGroupRecords,
     ],
   );
 
