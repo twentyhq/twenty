@@ -53,5 +53,6 @@ const config: StorybookConfig = {
       // Add dependencies to pre-optimization
     });
   },
+  logLevel: 'error',
 };
 export default config;
