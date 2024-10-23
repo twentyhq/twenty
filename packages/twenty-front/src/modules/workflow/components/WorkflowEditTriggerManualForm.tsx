@@ -47,7 +47,7 @@ export const WorkflowEditTriggerManualForm = ({
         label="Available"
         fullWidth
         disabled={readonly}
-        value={trigger.settings.type}
+        value={trigger.settings.availability}
         options={[
           {
             label: 'When record(s) are selected',
@@ -75,7 +75,7 @@ export const WorkflowEditTriggerManualForm = ({
         }}
       />
 
-      {trigger.settings.type === 'WHEN_RECORD_SELECTED' ? (
+      {trigger.settings.availability === 'WHEN_RECORD_SELECTED' ? (
         <Select
           dropdownId={`${inputRootId}-object`}
           label="Object"
@@ -91,7 +91,7 @@ export const WorkflowEditTriggerManualForm = ({
             onTriggerUpdate({
               ...trigger,
               settings: {
-                type: 'WHEN_RECORD_SELECTED',
+                availability: 'WHEN_RECORD_SELECTED',
                 objectType: updatedObject,
               },
             });

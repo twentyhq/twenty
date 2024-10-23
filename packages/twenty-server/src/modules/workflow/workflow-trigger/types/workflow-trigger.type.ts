@@ -25,13 +25,15 @@ export type WorkflowManualTrigger = BaseTrigger & {
   type: WorkflowTriggerType.MANUAL;
   settings:
     | {
-        type: WorkflowManualTriggerAvailability.EVERYWHERE;
+        availability: WorkflowManualTriggerAvailability.EVERYWHERE;
       }
     | {
-        type: WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED;
+        availability: WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED;
         objectType: string;
       };
 };
+
+export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger

@@ -15,12 +15,12 @@ export const getManualTriggerDefaultSettings = ({
   switch (availability) {
     case 'EVERYWHERE': {
       return {
-        type: 'EVERYWHERE',
+        availability: 'EVERYWHERE',
       };
     }
     case 'WHEN_RECORD_SELECTED': {
       return {
-        type: 'WHEN_RECORD_SELECTED',
+        availability: 'WHEN_RECORD_SELECTED',
         objectType: activeObjectMetadataItems[0].nameSingular,
       };
     }
