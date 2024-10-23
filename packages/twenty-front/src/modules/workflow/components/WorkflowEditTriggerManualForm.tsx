@@ -1,49 +1,11 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { WorkflowManualTrigger } from '@/workflow/types/Workflow';
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useId } from 'react';
 import { IconCheckbox, IconHandMove, IconSquare } from 'twenty-ui';
-
-const StyledTriggerHeader = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledTriggerHeaderTitle = styled.p`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  font-size: ${({ theme }) => theme.font.size.xl};
-
-  margin: ${({ theme }) => theme.spacing(3)} 0;
-`;
-
-const StyledTriggerHeaderType = styled.p`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin: 0;
-`;
-
-const StyledTriggerHeaderIconContainer = styled.div`
-  align-self: flex-start;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledTriggerSettings = styled.div`
-  padding: ${({ theme }) => theme.spacing(6)};
-  display: flex;
-  flex-direction: column;
-  row-gap: ${({ theme }) => theme.spacing(4)};
-`;
 
 type WorkflowEditTriggerManualFormProps =
   | {
@@ -75,75 +37,67 @@ export const WorkflowEditTriggerManualForm = ({
     }));
 
   return (
-    <>
-      <StyledTriggerHeader>
-        <StyledTriggerHeaderIconContainer>
-          <IconHandMove color={theme.font.color.tertiary} />
-        </StyledTriggerHeaderIconContainer>
+    <WorkflowEditGenericFormBase
+      HeaderIcon={<IconHandMove color={theme.font.color.tertiary} />}
+      headerTitle="Manual Trigger"
+      headerType="Trigger · Manual"
+    >
+      <Select
+        dropdownId={`${inputRootId}-availability`}
+        label="Available"
+        fullWidth
+        disabled={readonly}
+        value={trigger.settings.type}
+        options={[
+          {
+            label: 'When record(s) are selected',
+            value: 'WHEN_RECORD_SELECTED',
+            Icon: IconCheckbox,
+          },
+          {
+            label: 'When no record(s) are selected',
+            value: 'EVERYWHERE',
+            Icon: IconSquare,
+          },
+        ]}
+        onChange={(updatedTriggerType) => {
+          if (readonly === true) {
+            return;
+          }
 
-        <StyledTriggerHeaderTitle>Manual Trigger</StyledTriggerHeaderTitle>
+          onTriggerUpdate({
+            ...trigger,
+            settings: getManualTriggerDefaultSettings({
+              availability: updatedTriggerType,
+              activeObjectMetadataItems,
+            }),
+          });
+        }}
+      />
 
-        <StyledTriggerHeaderType>Trigger · Manual</StyledTriggerHeaderType>
-      </StyledTriggerHeader>
-
-      <StyledTriggerSettings>
+      {trigger.settings.type === 'WHEN_RECORD_SELECTED' ? (
         <Select
-          dropdownId={`${inputRootId}-availability`}
-          label="Available"
+          dropdownId={`${inputRootId}-object`}
+          label="Object"
           fullWidth
+          value={trigger.settings.objectType}
+          options={availableMetadata}
           disabled={readonly}
-          value={trigger.settings.type}
-          options={[
-            {
-              label: 'When record(s) are selected',
-              value: 'WHEN_RECORD_SELECTED',
-              Icon: IconCheckbox,
-            },
-            {
-              label: 'When no record(s) are selected',
-              value: 'EVERYWHERE',
-              Icon: IconSquare,
-            },
-          ]}
-          onChange={(updatedTriggerType) => {
+          onChange={(updatedObject) => {
             if (readonly === true) {
               return;
             }
 
             onTriggerUpdate({
               ...trigger,
-              settings: getManualTriggerDefaultSettings({
-                availability: updatedTriggerType,
-                activeObjectMetadataItems,
-              }),
+              settings: {
+                type: 'WHEN_RECORD_SELECTED',
+                objectType: updatedObject,
+              },
             });
           }}
         />
-
-        {trigger.settings.type === 'WHEN_RECORD_SELECTED' ? (
-          <Select
-            dropdownId={`${inputRootId}-object`}
-            label="Object"
-            fullWidth
-            value={trigger.settings.objectType}
-            options={availableMetadata}
-            disabled={readonly}
-            onChange={(updatedObject) => {
-              if (readonly === true) {
-                return;
-              }
-
-              onTriggerUpdate({
-                ...trigger,
-                settings: {
-                  type: 'WHEN_RECORD_SELECTED',
-                  objectType: updatedObject,
-                },
-              });
-            }}
-          />
-        ) : null}
-      </StyledTriggerSettings>
-    </>
+      ) : null}
+    </WorkflowEditGenericFormBase>
   );
 };

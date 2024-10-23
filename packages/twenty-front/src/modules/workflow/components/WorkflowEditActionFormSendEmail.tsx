@@ -5,24 +5,16 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
-import { VariableTagInput } from '@/workflow/search-variables/components/VariableTagInput';
+import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { IconMail, IconPlus, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-
-const StyledTriggerSettings = styled.div`
-  padding: ${({ theme }) => theme.spacing(6)};
-  display: flex;
-  flex-direction: column;
-  row-gap: ${({ theme }) => theme.spacing(4)};
-`;
 
 type WorkflowEditActionFormSendEmailProps =
   | {
@@ -174,87 +166,85 @@ export const WorkflowEditActionFormSendEmail = (
 
   return (
     !loading && (
-      <WorkflowEditActionFormBase
-        ActionIcon={<IconMail color={theme.color.blue} />}
-        actionTitle="Send Email"
-        actionType="Email"
+      <WorkflowEditGenericFormBase
+        HeaderIcon={<IconMail color={theme.color.blue} />}
+        headerTitle="Send Email"
+        headerType="Email"
       >
-        <StyledTriggerSettings>
-          <Controller
-            name="connectedAccountId"
-            control={form.control}
-            render={({ field }) => (
-              <Select
-                dropdownId="select-connected-account-id"
-                label="Account"
-                fullWidth
-                emptyOption={emptyOption}
-                value={field.value}
-                options={connectedAccountOptions}
-                callToActionButton={{
-                  onClick: () =>
-                    triggerGoogleApisOAuth({ redirectLocation: redirectUrl }),
-                  Icon: IconPlus,
-                  text: 'Add account',
-                }}
-                onChange={(connectedAccountId) => {
-                  field.onChange(connectedAccountId);
-                  handleSave(true);
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="email"
-            control={form.control}
-            render={({ field }) => (
-              <VariableTagInput
-                inputId="email-input"
-                label="Email"
-                placeholder="Enter receiver email (use {{variable}} for dynamic content)"
-                value={field.value}
-                onChange={(email) => {
-                  field.onChange(email);
-                  handleSave();
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="subject"
-            control={form.control}
-            render={({ field }) => (
-              <VariableTagInput
-                inputId="email-subject-input"
-                label="Subject"
-                placeholder="Enter email subject (use {{variable}} for dynamic content)"
-                value={field.value}
-                onChange={(email) => {
-                  field.onChange(email);
-                  handleSave();
-                }}
-              />
-            )}
-          />
+        <Controller
+          name="connectedAccountId"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              dropdownId="select-connected-account-id"
+              label="Account"
+              fullWidth
+              emptyOption={emptyOption}
+              value={field.value}
+              options={connectedAccountOptions}
+              callToActionButton={{
+                onClick: () =>
+                  triggerGoogleApisOAuth({ redirectLocation: redirectUrl }),
+                Icon: IconPlus,
+                text: 'Add account',
+              }}
+              onChange={(connectedAccountId) => {
+                field.onChange(connectedAccountId);
+                handleSave(true);
+              }}
+            />
+          )}
+        />
+        <Controller
+          name="email"
+          control={form.control}
+          render={({ field }) => (
+            <VariableTagInput
+              inputId="email-input"
+              label="Email"
+              placeholder="Enter receiver email (use {{variable}} for dynamic content)"
+              value={field.value}
+              onChange={(email) => {
+                field.onChange(email);
+                handleSave();
+              }}
+            />
+          )}
+        />
+        <Controller
+          name="subject"
+          control={form.control}
+          render={({ field }) => (
+            <VariableTagInput
+              inputId="email-subject-input"
+              label="Subject"
+              placeholder="Enter email subject (use {{variable}} for dynamic content)"
+              value={field.value}
+              onChange={(email) => {
+                field.onChange(email);
+                handleSave();
+              }}
+            />
+          )}
+        />
 
-          <Controller
-            name="body"
-            control={form.control}
-            render={({ field }) => (
-              <TextArea
-                label="Body"
-                placeholder="Enter email body (use {{variable}} for dynamic content)"
-                value={field.value}
-                minRows={4}
-                onChange={(email) => {
-                  field.onChange(email);
-                  handleSave();
-                }}
-              />
-            )}
-          />
-        </StyledTriggerSettings>
-      </WorkflowEditActionFormBase>
+        <Controller
+          name="body"
+          control={form.control}
+          render={({ field }) => (
+            <TextArea
+              label="Body"
+              placeholder="Enter email body (use {{variable}} for dynamic content)"
+              value={field.value}
+              minRows={4}
+              onChange={(email) => {
+                field.onChange(email);
+                handleSave();
+              }}
+            />
+          )}
+        />
+      </WorkflowEditGenericFormBase>
     )
   );
 };
