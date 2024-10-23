@@ -49,8 +49,20 @@ const config: StorybookConfig = {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite');
 
+    console.log(process.env);
+    console.log(process.env.STORYBOOK_SCOPE);
     return mergeConfig(config, {
-      // Add dependencies to pre-optimization
+      rollupOptions: {
+        external:
+          process.env.STORYBOOK_SCOPE === 'performance'
+            ? [new RegExp('.*')]
+            : [],
+      },
+      resolve: {
+        alias: {
+          'react-dom/client': 'react-dom/profiling',
+        },
+      },
     });
   },
 };
