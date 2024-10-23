@@ -25,7 +25,7 @@ export class WorkspaceMigrationService {
     workspaceId: string,
   ): Promise<WorkspaceMigrationEntity[]> {
     const pendingMigrations = await this.workspaceMigrationRepository.find({
-      order: { name: 'ASC' },
+      order: { createdAt: 'ASC', name: 'ASC' },
       where: {
         appliedAt: IsNull(),
         workspaceId,
@@ -37,34 +37,15 @@ export class WorkspaceMigrationService {
     const getType = (name: string) =>
       name.split('-')[1] as keyof typeof typeOrder;
 
-    const getPositionOptional = (name: string): number | undefined => {
-      const position = name.split('-')[3];
-
-      return position ? parseInt(position) : undefined;
-    };
-
     return pendingMigrations.sort((a, b) => {
       if (a.createdAt.getTime() !== b.createdAt.getTime()) {
         return a.createdAt.getTime() - b.createdAt.getTime();
       }
 
-      const typeOrderDiff =
-        (typeOrder[getType(a.name)] || 4) - (typeOrder[getType(b.name)] || 4);
-
-      if (typeOrderDiff !== 0) {
-        return typeOrderDiff;
-      }
-
-      const positionA = getPositionOptional(a.name);
-      const positionB = getPositionOptional(b.name);
-
-      if (positionA !== undefined && positionB !== undefined) {
-        if (positionA !== positionB) {
-          return positionA - positionB;
-        }
-      }
-
-      return a.name.localeCompare(b.name);
+      return (
+        (typeOrder[getType(a.name)] || 4) - (typeOrder[getType(b.name)] || 4) ||
+        a.name.localeCompare(b.name)
+      );
     });
   }
 
