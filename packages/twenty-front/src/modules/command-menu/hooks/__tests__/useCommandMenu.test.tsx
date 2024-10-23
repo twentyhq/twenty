@@ -153,11 +153,11 @@ describe('useCommandMenu', () => {
       result.current.commandMenu.setObjectsInCommandMenu([
         {
           id: 'b88745ce-9021-4316-a018-8884e02d05ca',
-          nameSingular: 'task',
-          namePlural: 'tasks',
-          labelSingular: 'Task',
-          labelPlural: 'Tasks',
-          description: 'A task',
+          nameSingular: 'rocket',
+          namePlural: 'rockets',
+          labelSingular: 'Rocket',
+          labelPlural: 'Rockets',
+          description: 'A rocket',
           icon: 'IconCheckbox',
           isCustom: true,
           isRemote: false,
