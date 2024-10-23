@@ -12,6 +12,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -98,9 +99,7 @@ export const useFavorites = () => {
       folderId: folder.id,
       folderName: folder.name,
       favorites: sortFavorites(
-        favorites.filter((favorite) =>
-          favorite.favoriteFolderId?.includes(folder.id),
-        ),
+        favorites.filter((favorite) => favorite.favoriteFolderId === folder.id),
         favoriteRelationFieldMetadataItems,
         getObjectRecordIdentifierByNameSingular,
         true,
@@ -114,13 +113,15 @@ export const useFavorites = () => {
   ]);
 
   const createFavorite = (
-    targetRecord: Record<string, any>,
+    targetRecord: ObjectRecord,
     targetObjectNameSingular: string,
+    favoriteFolderId?: string,
   ) => {
     createOneFavorite({
       [targetObjectNameSingular]: targetRecord,
       position: favorites.length + 1,
       workspaceMemberId: currentWorkspaceMember?.id,
+      favoriteFolderId,
     });
   };
 

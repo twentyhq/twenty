@@ -1,8 +1,7 @@
-import { useCallback } from 'react';
-
 import { FavoriteFoldersMultiSelect } from '@/favorites/components/FavoriteFoldersMultiSelect';
 import { FavoriteFoldersMultiSelectEffect } from '@/favorites/components/FavoriteFoldersSelectEffects';
 import { FavoriteFoldersScope } from '@/favorites/scopes/FavoriteFoldersScope';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -11,22 +10,17 @@ import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButt
 type FavoriteFoldersDropdownProps = {
   dropdownId: string;
   isFavorite: boolean;
-  onRemoveFavorite: () => void;
+  record?: ObjectRecord;
+  objectNameSingular: string;
 };
 
 export const FavoriteFoldersDropdown = ({
   dropdownId,
   isFavorite,
-  onRemoveFavorite,
+  record,
+  objectNameSingular,
 }: FavoriteFoldersDropdownProps) => {
   const { closeDropdown } = useDropdown(dropdownId);
-
-  const handleFavoriteClick = useCallback(() => {
-    if (isFavorite) {
-      onRemoveFavorite();
-      closeDropdown();
-    }
-  }, [isFavorite, onRemoveFavorite, closeDropdown]);
 
   return (
     <FavoriteFoldersScope favoriteFoldersScopeId={dropdownId}>
@@ -34,16 +28,15 @@ export const FavoriteFoldersDropdown = ({
         <Dropdown
           dropdownId={dropdownId}
           dropdownPlacement="bottom-start"
-          clickableComponent={
-            <PageFavoriteButton
-              isFavorite={isFavorite}
-              onClick={handleFavoriteClick}
-            />
-          }
+          clickableComponent={<PageFavoriteButton isFavorite={isFavorite} />}
           dropdownComponents={
             <>
               <FavoriteFoldersMultiSelectEffect />
-              <FavoriteFoldersMultiSelect onSubmit={closeDropdown} />
+              <FavoriteFoldersMultiSelect
+                onSubmit={closeDropdown}
+                record={record}
+                objectNameSingular={objectNameSingular}
+              />
             </>
           }
           dropdownHotkeyScope={{

@@ -1,24 +1,50 @@
 import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
-import { favoriteFoldersLoadingFamilyState } from '@/favorites/states/favoriteFoldersLoadingFamilyState';
-import { favoriteFoldersMultiSelectCheckedFamilyState } from '@/favorites/states/favoriteFoldersMultiSelectCheckedFamilyState';
-import { favoriteFoldersIdsMultiSelectFamilyState } from '@/favorites/states/favoriteFoldersMultiSelectFamilyState';
-import { favoriteFoldersSearchFilterFamilyState } from '@/favorites/states/favoriteFoldersSearchFilterFamilyState';
-import { selectedFavoriteFoldersFamilyState } from '@/favorites/states/selectedFavoriteFoldersFamilyState';
+import { favoriteFolderMultiSelectComponentFamilyState } from '@/favorites/states/favoriteFolderMultiSelectComponentFamilyState';
+import { favoriteFoldersIdsMultiSelectComponentState } from '@/favorites/states/favoriteFoldersIdsMultiSelectComponentState';
+import { favoriteFoldersLoadingComponentState } from '@/favorites/states/favoriteFoldersLoadingComponentState';
+import { favoriteFoldersMultiSelectCheckedComponentState } from '@/favorites/states/favoriteFoldersMultiSelectCheckedComponentState';
+import { favoriteFoldersSearchFilterComponentState } from '@/favorites/states/favoriteFoldersSearchFilterComponentState';
 
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useFavoriteFoldersScopedStates = () => {
   const scopeId = useAvailableScopeIdOrThrow(
     FavoriteFoldersScopeInternalContext,
   );
 
+  const favoriteFoldersSearchFilterState = extractComponentState(
+    favoriteFoldersSearchFilterComponentState,
+    scopeId,
+  );
+
+  const favoriteFoldersIdsMultiSelectState = extractComponentState(
+    favoriteFoldersIdsMultiSelectComponentState,
+    scopeId,
+  );
+
+  const favoriteFoldersLoadingState = extractComponentState(
+    favoriteFoldersLoadingComponentState,
+    scopeId,
+  );
+
+  const favoriteFoldersMultiSelectCheckedState = extractComponentState(
+    favoriteFoldersMultiSelectCheckedComponentState,
+    scopeId,
+  );
+
+  const favoriteFolderMultiSelectFamilyState = extractComponentFamilyState(
+    favoriteFolderMultiSelectComponentFamilyState,
+    scopeId,
+  );
+
   return {
-    favoritesSearchFilterState: favoriteFoldersSearchFilterFamilyState(scopeId),
-    selectedFavoritesState: selectedFavoriteFoldersFamilyState(scopeId),
-    favoriteFoldersIdsMultiSelectState:
-      favoriteFoldersIdsMultiSelectFamilyState(scopeId),
-    favoriteFoldersLoadingState: favoriteFoldersLoadingFamilyState(scopeId),
-    favoriteFoldersMultiSelectCheckedState:
-      favoriteFoldersMultiSelectCheckedFamilyState(scopeId),
+    scopeId,
+    favoriteFoldersSearchFilterState,
+    favoriteFoldersIdsMultiSelectState,
+    favoriteFoldersLoadingState,
+    favoriteFoldersMultiSelectCheckedState,
+    favoriteFolderMultiSelectFamilyState,
   };
 };

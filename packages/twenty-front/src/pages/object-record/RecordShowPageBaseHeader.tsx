@@ -1,13 +1,11 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButton';
 import { FavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 
 type RecordShowPageBaseHeaderProps = {
   isFavorite: boolean;
-  handleFavoriteButtonClick: () => void;
   record: ObjectRecord | undefined;
   objectMetadataItem: ObjectMetadataItem;
   objectNameSingular: string;
@@ -15,7 +13,6 @@ type RecordShowPageBaseHeaderProps = {
 
 export const RecordShowPageBaseHeader = ({
   isFavorite,
-  handleFavoriteButtonClick,
   record,
   objectMetadataItem,
   objectNameSingular,
@@ -27,11 +24,8 @@ export const RecordShowPageBaseHeader = ({
       <FavoriteFoldersDropdown
         dropdownId={dropdownId}
         isFavorite={isFavorite}
-        onRemoveFavorite={handleFavoriteButtonClick}
-      />
-      <PageFavoriteButton
-        isFavorite={isFavorite}
-        onClick={handleFavoriteButtonClick}
+        record={record}
+        objectNameSingular={objectNameSingular}
       />
       <ShowPageAddButton
         key="add"
