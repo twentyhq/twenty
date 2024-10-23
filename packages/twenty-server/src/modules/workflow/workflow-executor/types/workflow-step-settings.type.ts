@@ -11,6 +11,7 @@ type BaseWorkflowStepSettings = {
 
 export type WorkflowCodeStepInput = {
   serverlessFunctionId: string;
+  serverlessFunctionVersion: string;
 };
 
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
@@ -27,3 +28,7 @@ export type WorkflowSendEmailStepInput = {
 export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
   input: WorkflowSendEmailStepInput;
 };
+
+export type WorkflowStepSettings =
+  | WorkflowSendEmailStepSettings
+  | WorkflowCodeStepSettings;

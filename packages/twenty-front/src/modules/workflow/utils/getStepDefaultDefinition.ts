@@ -17,6 +17,7 @@ export const getStepDefaultDefinition = (
           input: {
             serverlessFunctionId: '',
           },
+          outputSchema: {},
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,
@@ -40,6 +41,9 @@ export const getStepDefaultDefinition = (
             email: '',
             subject: '',
             body: '',
+          },
+          outputSchema: {
+            success: 'boolean',
           },
           errorHandlingOptions: {
             continueOnFailure: {

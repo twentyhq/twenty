@@ -1,4 +1,10 @@
+type OutputType = 'string' | 'number' | 'boolean' | 'undefined' | 'null';
+
+type OutputSchema = { [key: string]: OutputType | OutputSchema };
+
 type BaseWorkflowStepSettings = {
+  input: object;
+  outputSchema: OutputSchema;
   errorHandlingOptions: {
     retryOnFailure: {
       value: boolean;
@@ -21,6 +27,9 @@ export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
     email: string;
     subject?: string;
     body?: string;
+  };
+  outputSchema: {
+    success: OutputType;
   };
 };
 
