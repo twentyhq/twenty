@@ -2,7 +2,16 @@ import { DeleteRecordsActionEffect } from '@/action-menu/actions/record-actions/
 import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/components/ExportRecordsActionEffect';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-const actionEffects = [ExportRecordsActionEffect, DeleteRecordsActionEffect];
+const actions = [
+  {
+    ActionEffect: ExportRecordsActionEffect,
+    onActionExecutedCallback: () => {},
+  },
+  {
+    ActionEffect: DeleteRecordsActionEffect,
+    onActionExecutedCallback: () => {},
+  },
+];
 
 export const MultipleRecordsActionMenuEntriesSetter = ({
   objectMetadataItem,
@@ -11,11 +20,12 @@ export const MultipleRecordsActionMenuEntriesSetter = ({
 }) => {
   return (
     <>
-      {actionEffects.map((ActionEffect, index) => (
+      {actions.map(({ ActionEffect, onActionExecutedCallback }, index) => (
         <ActionEffect
           key={index}
           position={index}
           objectMetadataItem={objectMetadataItem}
+          onActionExecutedCallback={onActionExecutedCallback}
         />
       ))}
     </>

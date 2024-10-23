@@ -5,7 +5,11 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordActionMenuEntriesSetter = () => {
+export const RecordActionMenuEntriesSetter = ({
+  isInRightDrawer = false,
+}: {
+  isInRightDrawer?: boolean;
+}) => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
@@ -32,6 +36,7 @@ export const RecordActionMenuEntriesSetter = () => {
     return (
       <SingleRecordActionMenuEntriesSetter
         objectMetadataItem={objectMetadataItem}
+        isInRightDrawer={isInRightDrawer}
       />
     );
   }
