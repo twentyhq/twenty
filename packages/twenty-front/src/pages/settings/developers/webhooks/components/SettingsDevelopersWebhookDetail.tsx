@@ -39,9 +39,12 @@ import { useRecoilValue } from 'recoil';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
+const OBJECT_DROPDOWN_WIDTH = 340;
+const ACTION_DROPDOWN_WIDTH = 140;
+
 const StyledFilterRow = styled.div`
   display: grid;
-  grid-template-columns: 250px 250px auto;
+  grid-template-columns: ${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   align-items: center;
@@ -110,7 +113,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
       { value: '*', label: 'All Objects', Icon: IconNorthStar },
       ...objectMetadataItems.map((item) => ({
         value: item.nameSingular,
-        label: item.labelSingular,
+        label: item.labelPlural,
         Icon: getIcon(item.icon),
       })),
     ],
@@ -119,9 +122,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const actionOptions: SelectOption<string>[] = [
     { value: '*', label: 'All Actions', Icon: IconNorthStar },
-    { value: 'create', label: 'Create', Icon: IconPlus },
-    { value: 'update', label: 'Update', Icon: IconRefresh },
-    { value: 'delete', label: 'Delete', Icon: IconTrash },
+    { value: 'create', label: 'Created', Icon: IconPlus },
+    { value: 'update', label: 'Updated', Icon: IconRefresh },
+    { value: 'delete', label: 'Deleted', Icon: IconTrash },
   ];
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
@@ -157,7 +160,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   ) => {
     if (
       !newOperations.some((op) => op.object === '*' && op.action === '*') &&
-      !newOperations.some((op) => op.object === null || op.action === null)
+      !newOperations.some((op) => op.object === null)
     ) {
       return [...newOperations, WEBHOOK_EMPTY_OPERATION];
     }
@@ -182,7 +185,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const removeOperation = (index: number) => {
     const newOperations = operations.filter((_, i) => i !== index);
-    setOperations(newOperations);
+    setOperations(addEmptyOperationIfNecessary(newOperations));
     setIsDirty(true);
   };
 
@@ -244,28 +247,28 @@ export const SettingsDevelopersWebhooksDetail = () => {
           {operations.map((operation, index) => (
             <StyledFilterRow key={index}>
               <Select
-                fullWidth
+                withSearchInput
+                dropdownWidth={OBJECT_DROPDOWN_WIDTH}
                 dropdownId={`object-webhook-type-select-${index}`}
                 value={operation.object}
                 onChange={(object) => updateOperation(index, 'object', object)}
                 options={fieldTypeOptions}
-                emptyOption={{ value: null, label: 'Object', Icon: IconBox }}
+                emptyOption={{
+                  value: null,
+                  label: 'Choose an object',
+                  Icon: IconBox,
+                }}
               />
 
               <Select
-                fullWidth
+                dropdownWidth={ACTION_DROPDOWN_WIDTH}
                 dropdownId={`operation-webhook-type-select-${index}`}
                 value={operation.action}
                 onChange={(action) => updateOperation(index, 'action', action)}
                 options={actionOptions}
-                emptyOption={{
-                  value: null,
-                  label: 'Action',
-                  Icon: IconHandClick,
-                }}
               />
 
-              {operations.length > 1 ? (
+              {index < operations.length - 1 ? (
                 <IconButton
                   onClick={() => removeOperation(index)}
                   variant="tertiary"

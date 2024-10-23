@@ -1,4 +1,4 @@
 export type WebhookOperationType = {
   object: string | null;
-  action: string | null;
+  action: string;
 };
