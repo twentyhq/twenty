@@ -33,8 +33,8 @@ export const MainNavigationDrawerItems = () => {
 
   return (
     <>
-      {!isMobile && (
-        <NavigationDrawerSection>
+      {(
+        <NavigationDrawerSection isMobile={isMobile}>
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}

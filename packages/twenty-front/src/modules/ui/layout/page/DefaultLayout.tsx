@@ -3,7 +3,6 @@ import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
-import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
@@ -41,10 +40,12 @@ const StyledLayout = styled.div`
   }
 `;
 
-const StyledPageContainer = styled(motion.div)`
+const StyledPageContainer = styled(motion.div)<{
+  isMobile?: boolean;
+}>`
   display: flex;
   flex: 1 1 auto;
-  flex-direction: row;
+  flex-direction: ${({ isMobile }) => (isMobile ? 'column-reverse' : 'row')};
   min-height: 0;
 `;
 
@@ -79,6 +80,7 @@ export const DefaultLayout = () => {
         <KeyboardShortcutMenu />
 
         <StyledPageContainer
+          isMobile={isMobile}
           animate={{
             marginLeft:
               isSettingsPage && !isMobile
@@ -113,7 +115,7 @@ export const DefaultLayout = () => {
             )}
           </StyledMainContainer>
         </StyledPageContainer>
-        {isMobile && <MobileNavigationBar />}
+        {/* {isMobile && <MobileNavigationBar />} */}
       </StyledLayout>
     </>
   );

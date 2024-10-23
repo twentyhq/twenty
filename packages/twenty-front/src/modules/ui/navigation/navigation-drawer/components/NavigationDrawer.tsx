@@ -33,10 +33,10 @@ const StyledContainer = styled.div<{
 }>`
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
   width: ${NAV_DRAWER_WIDTHS.menu.desktop.expanded}px;
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   padding: ${({ theme, isSettings, isMobile }) =>
     isSettings
       ? isMobile
@@ -50,11 +50,13 @@ const StyledContainer = styled.div<{
     padding-right: 20px;
   }
 `;
-const StyledItemsContainer = styled.div`
+const StyledItemsContainer = styled.div<{
+  isMobile?: boolean;
+}>`
   display: flex;
-  flex-direction: column;
   margin-bottom: auto;
   overflow: hidden;
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   flex: 1;
 `;
 
@@ -118,7 +120,9 @@ export const NavigationDrawer = ({
             showCollapseButton={isHovered}
           />
         )}
-        <StyledItemsContainer>{children}</StyledItemsContainer>
+        <StyledItemsContainer isMobile={isMobile}>
+          {children}
+        </StyledItemsContainer>
         {footer}
       </StyledContainer>
     </StyledAnimatedContainer>

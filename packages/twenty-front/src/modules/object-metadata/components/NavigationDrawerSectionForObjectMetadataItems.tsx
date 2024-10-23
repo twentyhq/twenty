@@ -1,9 +1,9 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -16,15 +16,29 @@ const ORDERED_STANDARD_OBJECTS = [
   'note',
 ];
 
-const StyledObjectsMetaDataItemsWrapper = styled.div`
+const StyledObjectsMetaDataItemsWrapper = styled.div<{
+  isMobile?: boolean;
+}>`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ isMobile }) => isMobile ? "row" : "column"};
   gap: ${({ theme }) => theme.betweenSiblingsGap};
   width: 100%;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
   flex: 1;
   overflow-y: auto;
 `;
+
+const NavigationDrawerSection = styled.div<{
+  isMobile?: boolean;
+}>`
+  display: flex;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  flex-shrink: 1;
+  overflow: hidden;
+  flex-direction: ${({ isMobile }) => isMobile ? "row" : "column"};
+  flex-grow: ${({ isMobile }) => isMobile ? 1 : 0};
+  `;
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
@@ -38,6 +52,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+  const isMobile = useIsMobile()
 
   const sortedStandardObjectMetadataItems = [...objectMetadataItems]
     .filter((item) => ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))
@@ -72,7 +87,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 
   return (
     objectMetadataItems.length > 0 && (
-      <NavigationDrawerSection>
+      <NavigationDrawerSection isMobile={isMobile}>
         <NavigationDrawerAnimatedCollapseWrapper>
           <NavigationDrawerSectionTitle
             label={sectionTitle}
@@ -80,7 +95,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
           />
         </NavigationDrawerAnimatedCollapseWrapper>
         <ScrollWrapper contextProviderName="navigationDrawer">
-          <StyledObjectsMetaDataItemsWrapper>
+          <StyledObjectsMetaDataItemsWrapper isMobile={isMobile}>
             {isNavigationSectionOpen &&
               objectMetadataItemsForNavigationItems.map(
                 (objectMetadataItem) => (
