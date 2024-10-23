@@ -53,6 +53,9 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon: string;
 
+  @Field({ nullable: true })
+  shortcut: string;
+
   @FilterableField()
   isCustom: boolean;
 

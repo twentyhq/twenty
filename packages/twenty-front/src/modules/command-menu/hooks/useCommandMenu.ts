@@ -83,8 +83,8 @@ export const useCommandMenu = () => {
               to: `/objects/${item.namePlural}`,
               label: `Go to ${item.labelPlural}`,
               type: CommandType.Navigate,
-              firstHotKey: 'G',
-              secondHotKey: item.labelPlural[0],
+              firstHotKey: item.shortcut ? 'G' : undefined,
+              secondHotKey: item.shortcut,
               Icon: ALL_ICONS[
                 (item?.icon as keyof typeof ALL_ICONS) ?? 'IconArrowUpRight'
               ],
