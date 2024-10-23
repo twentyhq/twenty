@@ -1,7 +1,7 @@
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
-import { getVariableTag } from '@/workflow/search-variables/utils/getVariableTag';
 import { initializeEditorContent } from '@/workflow/search-variables/utils/initializeEditorContent';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
+import { VariableTag } from '@/workflow/search-variables/utils/variableTag';
 import styled from '@emotion/styled';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -116,10 +116,10 @@ export const VariableTagInput = ({
       Document,
       Paragraph,
       Text,
-      getVariableTag(),
       Placeholder.configure({
         placeholder,
       }),
+      VariableTag,
     ],
     editable: true,
     onCreate: ({ editor }) => {
