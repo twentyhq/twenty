@@ -24,7 +24,6 @@ export const ProfilerWrapper = ({
   const handleRender: ProfilerOnRenderCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       (id, phase, actualDurationInMs) => {
-        console.log('handleRender', id, phase, actualDurationInMs);
         const dataPointId = getProfilingQueueIdentifier(
           profilingId,
           testIndex,
