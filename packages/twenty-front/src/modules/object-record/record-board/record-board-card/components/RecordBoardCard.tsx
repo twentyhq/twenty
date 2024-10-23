@@ -30,6 +30,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseInOut,
   AvatarChipVariant,
+  ChipSize,
   IconEye,
   IconEyeOff,
 } from 'twenty-ui';
@@ -295,6 +296,7 @@ export const RecordBoardCard = ({
               objectNameSingular={objectMetadataItem.nameSingular}
               record={record as ObjectRecord}
               variant={AvatarChipVariant.Transparent}
+              size={ChipSize.Large}
             />
           )}
 
