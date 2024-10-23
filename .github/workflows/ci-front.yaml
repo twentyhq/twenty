@@ -45,6 +45,12 @@ jobs:
       - name: Diagnostic disk space issue
         if: steps.changed-files.outputs.any_changed == 'true'
         run: df -h
+      - name: Clean Storybook cache and build
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          rm -rf packages/twenty-front/storybook-static
+          rm -rf packages/twenty-front/node_modules/.cache/storybook
+          rm -rf packages/twenty-front/node_modules/.cache/sb-vite
       - name: Front / Restore Storybook Task Cache
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/task-cache
