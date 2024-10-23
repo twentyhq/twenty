@@ -27,18 +27,11 @@ export const GotoHotkeysEffectsProvider = () => {
     ),
   });
 
-  return nonSystemActiveObjectMetadataItems.map((objectMetadataItem) => {
-    // Skip creating hotkeys for custom objects
-    if (objectMetadataItem.isCustom === true) {
-      return null;
-    }
-
-    return (
-      <GoToHotkeyItemEffect
-        key={`go-to-hokey-item-${objectMetadataItem.id}`}
-        hotkey={objectMetadataItem.namePlural[0]}
-        pathToNavigateTo={`/objects/${objectMetadataItem.namePlural}`}
-      />
-    );
-  });
+  return nonSystemActiveObjectMetadataItems.map((objectMetadataItem) => (
+    <GoToHotkeyItemEffect
+      key={`go-to-hokey-item-${objectMetadataItem.id}`}
+      hotkey={objectMetadataItem.namePlural[0]}
+      pathToNavigateTo={`/objects/${objectMetadataItem.namePlural}`}
+    />
+  ));
 };

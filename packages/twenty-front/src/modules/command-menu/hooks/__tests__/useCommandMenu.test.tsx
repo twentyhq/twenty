@@ -143,39 +143,4 @@ describe('useCommandMenu', () => {
 
     expect(result.current.commandMenuCommands.length).toBe(2);
   });
-
-  it('should not add hotkeys to commands from custom objects', () => {
-    const { result } = renderHooks();
-
-    expect(result.current.commandMenuCommands).toHaveLength(1);
-
-    act(() => {
-      result.current.commandMenu.setObjectsInCommandMenu([
-        {
-          id: 'b88745ce-9021-4316-a018-8884e02d05ca',
-          nameSingular: 'task',
-          namePlural: 'tasks',
-          labelSingular: 'Task',
-          labelPlural: 'Tasks',
-          description: 'A task',
-          icon: 'IconCheckbox',
-          isCustom: true,
-          isRemote: false,
-          isActive: true,
-          isSystem: false,
-          createdAt: '2024-09-12T20:23:46.041Z',
-          updatedAt: '2024-09-13T08:36:53.426Z',
-          labelIdentifierFieldMetadataId:
-            'ab7901eb-43e1-4dc7-8f3b-cdee2857eb9a',
-          imageIdentifierFieldMetadataId: null,
-          fields: [],
-          indexMetadatas: [],
-        },
-      ]);
-    });
-
-    expect(result.current.commandMenuCommands).toHaveLength(2);
-    expect(result.current.commandMenuCommands[0].firstHotKey).toBeUndefined();
-    expect(result.current.commandMenuCommands[0].secondHotKey).toBeUndefined();
-  });
 });
