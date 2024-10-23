@@ -26,6 +26,13 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
+      const isEmptyTriggerNode = selectedNode.type === 'empty-trigger';
+      if (isEmptyTriggerNode) {
+        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType);
+
+        return;
+      }
+
       const isCreateStepNode = selectedNode.type === 'create-step';
       if (isCreateStepNode) {
         if (selectedNode.data.nodeType !== 'create-step') {
