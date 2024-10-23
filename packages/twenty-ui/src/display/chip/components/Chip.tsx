@@ -39,7 +39,7 @@ const StyledContainer = withTheme(styled.div<
   Pick<
     ChipProps,
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
-  > & { theme: Theme }
+  > & { theme: Theme } & { role: 'button' }
 >`
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -133,6 +133,7 @@ export const Chip = ({
       size={size}
       variant={variant}
       onClick={onClick}
+      role="button"
     >
       {leftComponent}
       <OverflowingTextWithTooltip
