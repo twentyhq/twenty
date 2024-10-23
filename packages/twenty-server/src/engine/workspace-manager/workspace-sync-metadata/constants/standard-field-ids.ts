@@ -282,6 +282,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
+  searchVector: '20202020-7ea8-44d4-9d4c-51dd2a757950',
 };
 
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
