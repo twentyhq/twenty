@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { MouseEvent, useMemo, useRef, useState } from 'react';
+import { MouseEvent, useMemo, useRef, useState } from 'react';
 import { IconChevronDown, IconComponent } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -10,8 +10,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
+import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectOption<Value extends string | number | null> = {
   value: Value;
