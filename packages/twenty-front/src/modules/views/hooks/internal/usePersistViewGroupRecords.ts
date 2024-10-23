@@ -43,6 +43,7 @@ export const usePersistViewGroupRecords = () => {
                 isVisible: viewGroup.isVisible,
                 position: viewGroup.position,
                 id: v4(),
+                fieldValue: viewGroup.fieldValue,
               },
             },
             update: (cache, { data }) => {
