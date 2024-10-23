@@ -4,11 +4,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { graphql, HttpResponse } from 'msw';
 import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
-import { IconsProvider } from 'twenty-ui';
+import { IconsProvider, AppPath } from 'twenty-ui';
 
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import indexAppPath from '@/navigation/utils/indexAppPath';
-import { AppPath } from '@/types/AppPath';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 

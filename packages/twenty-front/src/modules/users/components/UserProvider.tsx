@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';

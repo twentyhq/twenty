@@ -4,8 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
-import { AppPath } from '@/types/AppPath';
-
+import { AppPath } from 'twenty-ui';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';

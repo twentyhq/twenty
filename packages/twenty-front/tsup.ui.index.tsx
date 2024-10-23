@@ -4,7 +4,6 @@ export { ThemeProvider } from '@emotion/react';
 export * from 'twenty-ui';
 export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar';
 export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar';
-export * from './src/modules/ui/input/button/components/Button';
 export * from './src/modules/ui/input/button/components/ButtonGroup';
 export * from './src/modules/ui/input/button/components/FloatingButton';
 export * from './src/modules/ui/input/button/components/FloatingButtonGroup';

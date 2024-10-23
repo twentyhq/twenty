@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedUserData } from '~/testing/mock-data/users';
 

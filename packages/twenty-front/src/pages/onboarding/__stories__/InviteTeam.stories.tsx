@@ -4,7 +4,7 @@ import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 
 import { OnboardingStatus } from '~/generated/graphql';
-import { AppPath } from '~/modules/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import {

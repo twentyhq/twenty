@@ -1,3 +1,3 @@
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 
 export const UNTESTED_APP_PATHS = [AppPath.Settings, AppPath.Developers];

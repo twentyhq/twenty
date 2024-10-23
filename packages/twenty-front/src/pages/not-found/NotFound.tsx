@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -12,6 +11,7 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
   UndecoratedLink,
+  AppPath,
 } from 'twenty-ui';
 
 const StyledBackDrop = styled.div`

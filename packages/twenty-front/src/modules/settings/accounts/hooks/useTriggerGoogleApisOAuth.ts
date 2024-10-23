@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   CalendarChannelVisibility,

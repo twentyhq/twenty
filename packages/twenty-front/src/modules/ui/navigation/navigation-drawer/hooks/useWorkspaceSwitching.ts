@@ -2,7 +2,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { useGenerateJwtMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';

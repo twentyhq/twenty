@@ -1,12 +1,17 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { AnimatedEaseIn, IconCheck, RGBA, UndecoratedLink } from 'twenty-ui';
+import {
+  AnimatedEaseIn,
+  IconCheck,
+  RGBA,
+  UndecoratedLink,
+  AppPath,
+} from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { OnboardingStatus } from '~/generated/graphql';
 

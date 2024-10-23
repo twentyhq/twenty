@@ -4,9 +4,8 @@ import {
   CatalogDecorator,
   CatalogStory,
   ComponentDecorator,
-  MAIN_COLOR_NAMES,
-  ThemeColor,
-} from 'twenty-ui';
+} from '@ui/testing';
+import { ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
 
 import { Status } from '../Status';
 

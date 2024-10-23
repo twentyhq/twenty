@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { AppPath } from '@/types/AppPath';
-import { isDefined } from 'twenty-ui';
+import { isDefined, AppPath } from 'twenty-ui';
 import { SettingsObjectDetailPageContent } from '~/pages/settings/data-model/SettingsObjectDetailPageContent';
 
 export const SettingsObjectDetailPage = () => {

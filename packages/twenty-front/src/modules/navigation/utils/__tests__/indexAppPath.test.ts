@@ -1,4 +1,4 @@
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 
 import indexAppPath from '../indexAppPath';
 

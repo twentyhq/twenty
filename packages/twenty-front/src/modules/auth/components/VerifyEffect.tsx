@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();

@@ -10,7 +10,7 @@ import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';

@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { HttpResponse, graphql } from 'msw';
 
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { OnboardingStatus } from '~/generated/graphql';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';

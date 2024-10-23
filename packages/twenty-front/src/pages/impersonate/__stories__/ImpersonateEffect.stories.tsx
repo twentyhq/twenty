@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import {
   PageDecorator,
   PageDecoratorArgs,

@@ -3,7 +3,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-ui';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
