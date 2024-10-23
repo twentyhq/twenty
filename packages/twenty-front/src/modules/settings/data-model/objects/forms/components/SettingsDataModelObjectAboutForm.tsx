@@ -199,7 +199,7 @@ export const SettingsDataModelObjectAboutForm = ({
             defaultValue={objectMetadataItem?.labelPlural}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                label={'Singular'}
+                label={'Plural'}
                 placeholder={'Listings'}
                 value={value}
                 onChange={(value) => {

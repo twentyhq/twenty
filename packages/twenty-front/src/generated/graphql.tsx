@@ -1151,7 +1151,6 @@ export type UpdateBillingEntity = {
 };
 
 export type UpdateObjectPayload = {
-  shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
@@ -1161,6 +1160,7 @@ export type UpdateObjectPayload = {
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
+  shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOneObjectInput = {
@@ -1460,7 +1460,6 @@ export type IndexFilter = {
 
 export type Object = {
   __typename?: 'object';
-  shouldSyncLabelAndName: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
@@ -1478,6 +1477,7 @@ export type Object = {
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
   nameSingular: Scalars['String'];
+  shouldSyncLabelAndName: Scalars['Boolean'];
   updatedAt: Scalars['DateTime'];
 };
 
