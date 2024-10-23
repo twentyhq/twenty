@@ -4,9 +4,9 @@ import { userEvent, within } from '@storybook/testing-library';
 import { RecoilRoot } from 'recoil';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { contextStoreActionMenuEntriesComponentState } from '@/context-store/states/contextStoreActionMenuEntriesComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
@@ -30,7 +30,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             { x: 10, y: 10 },
           );
           set(
-            contextStoreActionMenuEntriesComponentState.atomFamily({
+            actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
             new Map([

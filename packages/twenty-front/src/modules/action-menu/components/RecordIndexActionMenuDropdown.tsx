@@ -3,10 +3,10 @@ import { useRecoilValue } from 'recoil';
 
 import { PositionType } from '../types/PositionType';
 
+import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
-import { contextStoreActionMenuEntriesComponentSelector } from '@/context-store/states/contextStoreActionMenuEntriesComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -36,7 +36,7 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
 
 export const RecordIndexActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
-    contextStoreActionMenuEntriesComponentSelector,
+    actionMenuEntriesComponentSelector,
   );
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
