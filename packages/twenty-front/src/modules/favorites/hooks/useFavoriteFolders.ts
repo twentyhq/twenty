@@ -26,7 +26,7 @@ export const useFavoriteFolders = () => {
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
   });
 
-  const { createOneRecord: createOneFavorite } = useCreateOneRecord({
+  const { createOneRecord: createFavoriteFolder } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
   });
 
@@ -41,5 +41,6 @@ export const useFavoriteFolders = () => {
 
   return {
     favoriteFolder,
+    createFavoriteFolder,
   };
 };

@@ -1,3 +1,5 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -20,11 +22,14 @@ export const useMultiFavoriteFolder = ({
     favoriteFoldersMultiSelectCheckedState,
   } = useFavoriteFoldersScopedStates();
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const favoriteFoldersIdsMultiSelect = useRecoilValue(
     favoriteFoldersIdsMultiSelectState,
   );
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites();
+  const { createFavoriteFolder, favoriteFolder } = useFavoriteFolders();
 
   const getFoldersByIds = useRecoilCallback(
     ({ snapshot }) =>
@@ -93,8 +98,19 @@ export const useMultiFavoriteFolder = ({
     ],
   );
 
+  const createFolder = async (name: string) => {
+    if (!name.trim()) return;
+
+    await createFavoriteFolder({
+      workspaceMemberId: currentWorkspaceMember?.id,
+      name: name.trim(),
+      position: (favoriteFolder?.length || 0) + 1,
+    });
+  };
+
   return {
     getFoldersByIds,
     toggleFolderSelection,
+    createFolder,
   };
 };

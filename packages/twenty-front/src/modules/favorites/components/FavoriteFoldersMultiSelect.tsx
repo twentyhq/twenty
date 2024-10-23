@@ -1,4 +1,5 @@
-import { useCallback, useRef } from 'react';
+import styled from '@emotion/styled';
+import { useCallback, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -8,14 +9,32 @@ import { useMultiFavoriteFolder } from '@/favorites/hooks/useMultiFavoriteFolder
 import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
 
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { IconPlus } from 'twenty-ui';
+
+const StyledDropdownContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const StyledMainDropdown = styled.div<{ isVisible: boolean }>`
+  pointer-events: ${({ isVisible }) => (isVisible ? 'auto' : 'none')};
+
+  transition: all 150ms ease-in-out;
+`;
+
+const StyledDropdownMenuInput = styled(DropdownMenuInput)`
+  font-size: ${({ theme }) => theme.font.size.md};
+`;
 
 type FavoriteFoldersMultiSelectProps = {
   onSubmit?: () => void;
@@ -31,6 +50,8 @@ export const FavoriteFoldersMultiSelect = ({
   objectNameSingular,
 }: FavoriteFoldersMultiSelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isCreatingNewFolder, setIsCreatingNewFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
 
   const scopeId = useAvailableScopeIdOrThrow(
     FavoriteFoldersScopeInternalContext,
@@ -41,10 +62,11 @@ export const FavoriteFoldersMultiSelect = ({
     favoriteFoldersMultiSelectCheckedState,
   } = useFavoriteFoldersScopedStates();
 
-  const { getFoldersByIds, toggleFolderSelection } = useMultiFavoriteFolder({
-    record,
-    objectNameSingular,
-  });
+  const { getFoldersByIds, toggleFolderSelection, createFolder } =
+    useMultiFavoriteFolder({
+      record,
+      objectNameSingular,
+    });
 
   const favoriteFoldersSearchFilter = useRecoilValue(
     favoriteFoldersSearchFilterState,
@@ -67,10 +89,14 @@ export const FavoriteFoldersMultiSelect = ({
   useScopedHotkeys(
     Key.Escape,
     () => {
+      if (isCreatingNewFolder) {
+        setIsCreatingNewFolder(false);
+        return;
+      }
       onSubmit?.();
     },
     scopeId,
-    [onSubmit],
+    [onSubmit, isCreatingNewFolder],
   );
 
   const handleFilterChange = useCallback(
@@ -79,6 +105,14 @@ export const FavoriteFoldersMultiSelect = ({
     },
     [debouncedSetSearchFilter],
   );
+
+  const handleCreateFolder = async () => {
+    if (!newFolderName.trim()) return;
+
+    await createFolder(newFolderName);
+    setNewFolderName('');
+    setIsCreatingNewFolder(false);
+  };
 
   const folders = getFoldersByIds();
   const filteredFolders = folders.filter((folder) =>
@@ -93,47 +127,69 @@ export const FavoriteFoldersMultiSelect = ({
 
   return (
     <DropdownMenu ref={containerRef} data-select-disable>
-      <DropdownMenuSearchInput
-        value={favoriteFoldersSearchFilter}
-        onChange={handleFilterChange}
-        autoFocus
-      />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {showNoFolderOption && (
-          <MenuItem
-            key={NO_FOLDER_ID}
-            LeftIcon={() => (
-              <Checkbox
-                checked={favoriteFoldersMultiSelectChecked.includes(
-                  NO_FOLDER_ID,
-                )}
-                onChange={() => toggleFolderSelection(NO_FOLDER_ID)}
-              />
-            )}
-            text="No folder"
+      <StyledDropdownContainer>
+        {isCreatingNewFolder ? (
+          <StyledDropdownMenuInput
+            autoFocus
+            value={newFolderName}
+            onChange={(event) => setNewFolderName(event.target.value)}
+            onEnter={handleCreateFolder}
+            rightComponent={
+              <LightIconButton Icon={IconPlus} onClick={handleCreateFolder} />
+            }
           />
-        )}
-        {showNoFolderOption && filteredFolders.length > 0 && (
-          <DropdownMenuSeparator />
-        )}
-        {filteredFolders.length > 0
-          ? filteredFolders.map((folder) => (
+        ) : (
+          <StyledMainDropdown isVisible={!isCreatingNewFolder}>
+            <DropdownMenuSearchInput
+              value={favoriteFoldersSearchFilter}
+              onChange={handleFilterChange}
+              autoFocus
+            />
+            <DropdownMenuSeparator />
+            <DropdownMenuItemsContainer hasMaxHeight>
+              {showNoFolderOption && (
+                <MenuItem
+                  key={NO_FOLDER_ID}
+                  LeftIcon={() => (
+                    <Checkbox
+                      checked={favoriteFoldersMultiSelectChecked.includes(
+                        NO_FOLDER_ID,
+                      )}
+                      onChange={() => toggleFolderSelection(NO_FOLDER_ID)}
+                    />
+                  )}
+                  text="No folder"
+                />
+              )}
+              {showNoFolderOption && filteredFolders.length > 0 && (
+                <DropdownMenuSeparator />
+              )}
+              {filteredFolders.length > 0
+                ? filteredFolders.map((folder) => (
+                    <MenuItem
+                      key={folder.id}
+                      LeftIcon={() => (
+                        <Checkbox
+                          checked={favoriteFoldersMultiSelectChecked.includes(
+                            folder.id,
+                          )}
+                          onChange={() => toggleFolderSelection(folder.id)}
+                        />
+                      )}
+                      text={folder.name}
+                    />
+                  ))
+                : !showNoFolderOption && <MenuItem text="No folders found" />}
+              <DropdownMenuSeparator />
               <MenuItem
-                key={folder.id}
-                LeftIcon={() => (
-                  <Checkbox
-                    checked={favoriteFoldersMultiSelectChecked.includes(
-                      folder.id,
-                    )}
-                    onChange={() => toggleFolderSelection(folder.id)}
-                  />
-                )}
-                text={folder.name}
+                onClick={() => setIsCreatingNewFolder(true)}
+                text="Add folder"
+                LeftIcon={IconPlus}
               />
-            ))
-          : !showNoFolderOption && <MenuItem text="No folders found" />}
-      </DropdownMenuItemsContainer>
+            </DropdownMenuItemsContainer>
+          </StyledMainDropdown>
+        )}
+      </StyledDropdownContainer>
     </DropdownMenu>
   );
 };
