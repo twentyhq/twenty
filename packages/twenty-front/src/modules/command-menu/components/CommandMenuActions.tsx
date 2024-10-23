@@ -22,7 +22,7 @@ export const CommandMenuActions = ({
 
   const actionCommands = useMemo(() => {
     return actionMenuEntries?.map((actionMenuEntry) => ({
-      id: actionMenuEntry.label,
+      id: actionMenuEntry.key,
       label: actionMenuEntry.label,
       Icon: actionMenuEntry.Icon,
       onCommandClick: actionMenuEntry.onClick,
