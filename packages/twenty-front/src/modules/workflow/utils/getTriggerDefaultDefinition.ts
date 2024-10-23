@@ -5,6 +5,7 @@ import {
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 
 export const getTriggerDefaultDefinition = ({
   type,
@@ -31,10 +32,10 @@ export const getTriggerDefaultDefinition = ({
     case 'MANUAL': {
       return {
         type,
-        settings: {
-          type: 'WHEN_RECORD_SELECTED',
-          objectType: activeObjectMetadataItems[0].nameSingular,
-        },
+        settings: getManualTriggerDefaultSettings({
+          availability: 'WHEN_RECORD_SELECTED',
+          activeObjectMetadataItems,
+        }),
       };
     }
     default: {

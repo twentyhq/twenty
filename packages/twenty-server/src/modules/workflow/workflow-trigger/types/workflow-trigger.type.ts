@@ -16,7 +16,7 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   };
 };
 
-export enum WorkflowManualTriggerAvaibility {
+export enum WorkflowManualTriggerAvailability {
   EVERYWHERE = 'EVERYWHERE',
   WHEN_RECORD_SELECTED = 'WHEN_RECORD_SELECTED',
 }
@@ -25,10 +25,10 @@ export type WorkflowManualTrigger = BaseTrigger & {
   type: WorkflowTriggerType.MANUAL;
   settings:
     | {
-        type: WorkflowManualTriggerAvaibility.EVERYWHERE;
+        type: WorkflowManualTriggerAvailability.EVERYWHERE;
       }
     | {
-        type: WorkflowManualTriggerAvaibility.WHEN_RECORD_SELECTED;
+        type: WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED;
         objectType: string;
       };
 };

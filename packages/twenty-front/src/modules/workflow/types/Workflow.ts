@@ -72,7 +72,9 @@ export type WorkflowManualTrigger = BaseTrigger & {
       };
 };
 
-export type WorkflowManualTriggerAvaibility =
+export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
+
+export type WorkflowManualTriggerAvailability =
   WorkflowManualTrigger['settings']['type'];
 
 export type WorkflowTrigger =

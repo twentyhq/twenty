@@ -179,6 +179,8 @@ export {
   IconPlayerPlay,
   IconPlayerStop,
   IconPlaylistAdd,
+  IconHandMove,
+  IconSquare,
   IconPlaystationSquare,
   IconPlug,
   IconPlus,
