@@ -9,13 +9,14 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { isDefined } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledContainer = styled.div`
   display: inline-flex;
   flex-direction: column;
 `;
 
-const StyledLabel = styled.label`
+const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -104,6 +105,12 @@ export const VariableTagInput = ({
   placeholder,
   onChange,
 }: VariableTagInputProps) => {
+  const deboucedOnUpdate = useDebouncedCallback((editor) => {
+    const jsonContent = editor.getJSON();
+    const parsedContent = parseEditorContent(jsonContent);
+    onChange?.(parsedContent);
+  }, 500);
+
   const editor = useEditor({
     extensions: [
       Document,
@@ -121,16 +128,9 @@ export const VariableTagInput = ({
       }
     },
     onUpdate: ({ editor }) => {
-      const jsonContent = editor.getJSON();
-      const parsedContent = parseEditorContent(jsonContent);
-      onChange?.(parsedContent);
+      deboucedOnUpdate(editor);
     },
   });
-
-  const insertVariableTag = (variable: string) => {
-    // @ts-expect-error - insertVariableTag is missing from the EditorCommands type but it is defined in the VariableTag extension
-    editor.commands.insertVariableTag(variable);
-  };
 
   if (!editor) {
     return null;
@@ -144,10 +144,7 @@ export const VariableTagInput = ({
           <EditorContent className="editor-content" editor={editor} />
         </StyledEditor>
         <StyledSearchVariablesDropdownContainer>
-          <SearchVariablesDropdown
-            inputId={inputId}
-            onSelect={(variable: string) => insertVariableTag(variable)}
-          />
+          <SearchVariablesDropdown inputId={inputId} editor={editor} />
         </StyledSearchVariablesDropdownContainer>
       </StyledInputContainer>
     </StyledContainer>

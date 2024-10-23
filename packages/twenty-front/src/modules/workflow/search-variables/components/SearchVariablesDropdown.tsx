@@ -10,6 +10,7 @@ import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/search-variables/consta
 import { WorkflowStepMock } from '@/workflow/search-variables/types/WorkflowStepMock';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Editor } from '@tiptap/react';
 import { useState } from 'react';
 import { IconVariable } from 'twenty-ui';
 
@@ -24,10 +25,10 @@ const StyledDropdownVariableButtonContainer = styled(
 
 const SearchVariablesDropdown = ({
   inputId,
-  onSelect,
+  editor,
 }: {
   inputId: string;
-  onSelect: (value: string) => void;
+  editor: Editor;
 }) => {
   const theme = useTheme();
 
@@ -37,6 +38,10 @@ const SearchVariablesDropdown = ({
     WorkflowStepMock | undefined
   >(undefined);
 
+  const insertVariableTag = (variable: string) => {
+    editor.commands.insertVariableTag(variable);
+  };
+
   const handleStepSelect = (stepId: string) => {
     setSelectedStep(
       AVAILABLE_VARIABLES_MOCK.find((step) => step.id === stepId),
@@ -44,7 +49,7 @@ const SearchVariablesDropdown = ({
   };
 
   const handleSubItemSelect = (subItem: string) => {
-    onSelect(subItem);
+    insertVariableTag(subItem);
   };
 
   const handleBack = () => {

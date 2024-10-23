@@ -28,7 +28,7 @@ const SearchVariablesDropdownStepSubItem = ({
 
   const handleSelect = (key: string) => {
     const selectedObject = getSelectedObject();
-    if (isObject(selectedObject[key]) && selectedObject[key] !== null) {
+    if (isObject(selectedObject[key])) {
       setCurrentPath([...currentPath, key]);
     } else {
       onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
@@ -44,7 +44,7 @@ const SearchVariablesDropdownStepSubItem = ({
   };
 
   const headerLabel =
-    currentPath.length === 0 ? step.name : currentPath[currentPath.length - 1];
+    currentPath.length === 0 ? step.name : currentPath.at(-1);
 
   return (
     <>
@@ -58,7 +58,7 @@ const SearchVariablesDropdownStepSubItem = ({
           hovered={false}
           onClick={() => handleSelect(key)}
           text={key}
-          hasSubMenu={typeof value === 'object'}
+          hasSubMenu={isObject(value)}
           LeftIcon={undefined}
         />
       ))}

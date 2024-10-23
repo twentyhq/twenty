@@ -1,5 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { Editor } from '@tiptap/react';
-import { isDefined } from 'twenty-ui';
 
 const REGEX_VARIABLE_TAG = /(\{\{[^}]+\}\})/;
 
@@ -19,7 +19,7 @@ export const initializeEditorContent = (editor: Editor, content: string) => {
       return;
     }
 
-    if (isDefined(part.trim())) {
+    if (isNonEmptyString(part)) {
       editor.commands.insertContent(part);
     }
   });

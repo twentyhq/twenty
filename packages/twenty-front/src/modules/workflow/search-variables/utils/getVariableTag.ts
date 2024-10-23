@@ -1,6 +1,14 @@
 import { Node } from '@tiptap/core';
 import { mergeAttributes, RawCommands } from '@tiptap/react';
 
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    variableTag: {
+      insertVariableTag: (variable: string) => ReturnType;
+    };
+  }
+}
+
 export const getVariableTag = () =>
   Node.create({
     name: 'variableTag',
@@ -11,6 +19,12 @@ export const getVariableTag = () =>
     addAttributes: () => ({
       variable: {
         default: null,
+        parseHTML: (element) => element.getAttribute('data-variable'),
+        renderHTML: (attributes) => {
+          return {
+            'data-variable': attributes.variable,
+          };
+        },
       },
     }),
 
