@@ -88,7 +88,6 @@ export const usePersistViewFilterGroupRecords = () => {
     async (viewFilterGroupsToCreate: ViewFilterGroup[], view: GraphQLView) => {
       if (!viewFilterGroupsToCreate.length) return [];
 
-
       const oldToNewId = new Map<string, string>();
 
       for (const viewFilterGroupToCreate of viewFilterGroupsToCreate) {

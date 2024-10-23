@@ -75,11 +75,11 @@ export const useSaveCurrentViewFiltersAndSorts = (
     deleteViewFilterRecords,
   } = usePersistViewFilterRecords();
 
-  const { 
+  const {
     createViewFilterGroupRecords,
     deleteViewFilterGroupRecords,
-    updateViewFilterGroupRecords
-  } = usePersistViewFilterGroupRecords()
+    updateViewFilterGroupRecords,
+  } = usePersistViewFilterGroupRecords();
 
   const { resetUnsavedViewStates } =
     useResetUnsavedViewStates(viewBarComponentId);
@@ -199,14 +199,16 @@ export const useSaveCurrentViewFiltersAndSorts = (
         const viewFilterGroupsToCreate = unsavedToUpsertViewFilterGroups.filter(
           (viewFilterGroup) =>
             !view.viewFilterGroups?.some(
-              (viewFilterGroupToFilter) => viewFilterGroupToFilter.id === viewFilterGroup.id,
+              (viewFilterGroupToFilter) =>
+                viewFilterGroupToFilter.id === viewFilterGroup.id,
             ),
         );
 
         const viewFilterGroupsToUpdate = unsavedToUpsertViewFilterGroups.filter(
           (viewFilterGroup) =>
             view.viewFilterGroups?.some(
-              (viewFilterGroupToFilter) => viewFilterGroupToFilter.id === viewFilterGroup.id,
+              (viewFilterGroupToFilter) =>
+                viewFilterGroupToFilter.id === viewFilterGroup.id,
             ),
         );
 
@@ -215,12 +217,12 @@ export const useSaveCurrentViewFiltersAndSorts = (
         await deleteViewFilterGroupRecords(unsavedToDeleteViewFilterGroupIds);
       },
     [
-      createViewFilterRecords,
-      deleteViewFilterRecords,
       getViewFromCache,
-      unsavedToDeleteViewFilterIdsCallbackState,
-      unsavedToUpsertViewFiltersCallbackState,
-      updateViewFilterRecords,
+      createViewFilterGroupRecords,
+      deleteViewFilterGroupRecords,
+      unsavedToDeleteViewFilterGroupIdsCallbackState,
+      unsavedToUpsertViewFilterGroupsCallbackState,
+      updateViewFilterGroupRecords,
     ],
   );
 
@@ -248,6 +250,7 @@ export const useSaveCurrentViewFiltersAndSorts = (
       resetUnsavedViewStates,
       saveViewFilters,
       saveViewSorts,
+      saveViewFilterGroups,
     ],
   );
 

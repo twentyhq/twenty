@@ -49,7 +49,7 @@ export const StyledInput = styled.input`
 
 type ObjectFilterDropdownFilterSelectProps = {
   isAdvancedFilterButtonVisible?: boolean;
-}
+};
 
 export const ObjectFilterDropdownFilterSelect = ({
   isAdvancedFilterButtonVisible,

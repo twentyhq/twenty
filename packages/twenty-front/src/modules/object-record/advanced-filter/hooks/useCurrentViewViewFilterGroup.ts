@@ -27,8 +27,7 @@ export const useCurrentViewViewFilterGroup = ({
 
   const childViewFilters =
     currentViewWithCombinedFiltersAndSorts?.viewFilters.filter(
-      (viewFilter) =>
-        viewFilter.viewFilterGroupId === viewFilterGroup.id,
+      (viewFilter) => viewFilter.viewFilterGroupId === viewFilterGroup.id,
     );
 
   const childViewFilterGroups =
@@ -46,7 +45,14 @@ export const useCurrentViewViewFilterGroup = ({
     return positionA - positionB;
   });
 
-  const lastChildPosition = childViewFiltersAndViewFilterGroups[childViewFiltersAndViewFilterGroups.length - 1]?.positionInViewFilterGroup ?? 0;
+  const lastChildPosition =
+    childViewFiltersAndViewFilterGroups[
+      childViewFiltersAndViewFilterGroups.length - 1
+    ]?.positionInViewFilterGroup ?? 0;
 
-  return { currentViewFilterGroup: viewFilterGroup, childViewFiltersAndViewFilterGroups, lastChildPosition };
+  return {
+    currentViewFilterGroup: viewFilterGroup,
+    childViewFiltersAndViewFilterGroups,
+    lastChildPosition,
+  };
 };

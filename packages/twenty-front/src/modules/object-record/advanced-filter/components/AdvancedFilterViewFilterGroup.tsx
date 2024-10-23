@@ -32,10 +32,13 @@ type AdvancedFilterViewFilterGroupProps = {
 export const AdvancedFilterViewFilterGroup = ({
   viewFilterGroupId,
 }: AdvancedFilterViewFilterGroupProps) => {
-  const { currentViewFilterGroup, childViewFiltersAndViewFilterGroups, lastChildPosition } =
-    useCurrentViewViewFilterGroup({
-      viewFilterGroupId,
-    });
+  const {
+    currentViewFilterGroup,
+    childViewFiltersAndViewFilterGroups,
+    lastChildPosition,
+  } = useCurrentViewViewFilterGroup({
+    viewFilterGroupId,
+  });
 
   if (!currentViewFilterGroup) {
     return null;
@@ -46,16 +49,15 @@ export const AdvancedFilterViewFilterGroup = ({
       isGrayBackground={!!currentViewFilterGroup.parentViewFilterGroupId}
     >
       {childViewFiltersAndViewFilterGroups.map((child, i) => (
-          <StyledRow key={child.id}>
-            <AdvancedFilterLogicalOperatorCell
-              index={i}
-              viewFilterGroup={currentViewFilterGroup}
-            />
-            <AdvancedFilterViewFilter viewFilterId={child.id} />
-            <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
-          </StyledRow>
-        ),
-      )}
+        <StyledRow key={child.id}>
+          <AdvancedFilterLogicalOperatorCell
+            index={i}
+            viewFilterGroup={currentViewFilterGroup}
+          />
+          <AdvancedFilterViewFilter viewFilterId={child.id} />
+          <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
+        </StyledRow>
+      ))}
       <AdvancedFilterAddFilterRuleSelect
         viewFilterGroup={currentViewFilterGroup}
         lastChildPosition={lastChildPosition}

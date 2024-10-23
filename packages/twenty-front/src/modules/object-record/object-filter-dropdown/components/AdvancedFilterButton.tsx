@@ -74,9 +74,10 @@ export const AdvancedFilterButton = () => {
     }
 
     const alreadyHasAdvancedFilterGroup =
-      (currentViewWithCombinedFiltersAndSorts?.viewFilterGroups?.length ?? 0) > 0;
+      (currentViewWithCombinedFiltersAndSorts?.viewFilterGroups?.length ?? 0) >
+      0;
 
-    if(!alreadyHasAdvancedFilterGroup) {
+    if (!alreadyHasAdvancedFilterGroup) {
       const newViewFilterGroup = {
         id: v4(),
         viewId: currentViewId,

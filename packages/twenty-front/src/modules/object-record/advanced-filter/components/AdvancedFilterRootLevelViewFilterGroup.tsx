@@ -27,17 +27,20 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   overflow: hidden;
 `;
 
-type AdvancedFilterViewFilterGroupProps = {
+type AdvancedFilterRootLevelViewFilterGroupProps = {
   rootLevelViewFilterGroupId: string;
 };
 
 export const AdvancedFilterRootLevelViewFilterGroup = ({
   rootLevelViewFilterGroupId,
-}: AdvancedFilterViewFilterGroupProps) => {
-  const { currentViewFilterGroup: rootLevelViewFilterGroup, childViewFiltersAndViewFilterGroups, lastChildPosition } =
-    useCurrentViewViewFilterGroup({
-      viewFilterGroupId: rootLevelViewFilterGroupId,
-    });
+}: AdvancedFilterRootLevelViewFilterGroupProps) => {
+  const {
+    currentViewFilterGroup: rootLevelViewFilterGroup,
+    childViewFiltersAndViewFilterGroups,
+    lastChildPosition,
+  } = useCurrentViewViewFilterGroup({
+    viewFilterGroupId: rootLevelViewFilterGroupId,
+  });
 
   if (!isDefined(rootLevelViewFilterGroup)) {
     return null;
