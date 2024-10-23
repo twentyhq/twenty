@@ -35,7 +35,7 @@ export const GotoHotkeysEffectsProvider = () => {
 
     return (
       <GoToHotkeyItemEffect
-        key={`go-to-hotkey-item-${objectMetadataItem.id}`}
+        key={`go-to-hokey-item-${objectMetadataItem.id}`}
         hotkey={objectMetadataItem.namePlural[0]}
         pathToNavigateTo={`/objects/${objectMetadataItem.namePlural}`}
       />
