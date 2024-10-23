@@ -1,5 +1,5 @@
 import { Node } from '@tiptap/core';
-import { mergeAttributes, RawCommands } from '@tiptap/react';
+import { mergeAttributes } from '@tiptap/react';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -49,15 +49,16 @@ export const VariableTag = Node.create({
     ];
   },
 
-  // @ts-expect-error - addCommands is missing from the NodeConfig type
   addCommands: () => ({
     insertVariableTag:
       (variable: string) =>
-      ({ commands }: { commands: Partial<RawCommands> }) => {
-        return commands.insertContent?.({
+      ({ commands }) => {
+        commands.insertContent?.({
           type: 'variableTag',
           attrs: { variable },
         });
+
+        return true;
       },
   }),
 });
