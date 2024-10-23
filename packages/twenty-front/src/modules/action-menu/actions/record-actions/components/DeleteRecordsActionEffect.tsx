@@ -1,5 +1,5 @@
+import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
-import { useContextStoreActionMenuEntries } from '@/context-store/hooks/useContextStoreActionMenuEntries';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -24,8 +24,7 @@ export const DeleteRecordsActionEffect = ({
   objectMetadataItem: ObjectMetadataItem;
   actionMenuType: ActionMenuType;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } =
-    useContextStoreActionMenuEntries();
+  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);

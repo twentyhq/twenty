@@ -1,8 +1,8 @@
+import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import {
   displayedExportProgress,
   useExportRecordData,
 } from '@/action-menu/hooks/useExportRecordData';
-import { useContextStoreActionMenuEntries } from '@/context-store/hooks/useContextStoreActionMenuEntries';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { useEffect } from 'react';
@@ -15,8 +15,7 @@ export const ExportRecordsActionEffect = ({
   position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } =
-    useContextStoreActionMenuEntries();
+  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const { progress, download } = useExportRecordData({
     delayMs: 100,

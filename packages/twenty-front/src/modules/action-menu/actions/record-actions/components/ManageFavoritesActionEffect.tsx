@@ -1,4 +1,4 @@
-import { useContextStoreActionMenuEntries } from '@/context-store/hooks/useContextStoreActionMenuEntries';
+import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -15,8 +15,7 @@ export const ManageFavoritesActionEffect = ({
   position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } =
-    useContextStoreActionMenuEntries();
+  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
