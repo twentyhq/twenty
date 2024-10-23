@@ -27,7 +27,7 @@ export const RecordBoardHeader = () => {
   return (
     <StyledHeaderContainer id="record-board-header">
       {columnIds.map((columnId) => (
-        <RecordBoardColumnHeaderWrapper columnId={columnId} />
+        <RecordBoardColumnHeaderWrapper columnId={columnId} key={columnId} />
       ))}
     </StyledHeaderContainer>
   );

@@ -22,12 +22,9 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { ActionMenuBar } from '@/action-menu/components/ActionMenuBar';
-import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { ActionMenuDropdown } from '@/action-menu/components/ActionMenuDropdown';
-import { ActionMenuEffect } from '@/action-menu/components/ActionMenuEffect';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -106,6 +103,10 @@ export const RecordIndexContainer = () => {
     [columnDefinitions, setTableColumns],
   );
 
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
   return (
     <StyledContainer>
       <InformationBannerWrapper />
@@ -119,7 +120,7 @@ export const RecordIndexContainer = () => {
               optionsDropdownButton={
                 <RecordIndexOptionsDropdown
                   recordIndexId={recordIndexId}
-                  objectNameSingular={objectNameSingular}
+                  objectMetadataItem={objectMetadataItem}
                   viewType={recordIndexViewType ?? ViewType.Table}
                 />
               }
@@ -135,6 +136,13 @@ export const RecordIndexContainer = () => {
                 setRecordIndexFilters(
                   mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
                 );
+                setContextStoreTargetedRecordsRule((prev) => ({
+                  ...prev,
+                  filters: mapViewFiltersToFilters(
+                    view.viewFilters,
+                    filterDefinitions,
+                  ),
+                }));
                 setTableSorts(
                   mapViewSortsToSorts(view.viewSorts, sortDefinitions),
                 );
@@ -179,15 +187,7 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
-          <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: recordIndexId }}
-          >
-            <ActionMenuEffect />
-            <RecordActionMenuEntriesSetter />
-            <ActionMenuBar />
-            <ActionMenuDropdown />
-            <ActionMenuConfirmationModals />
-          </ActionMenuComponentInstanceContext.Provider>
+          <RecordIndexActionMenu actionMenuId={recordIndexId} />
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>
