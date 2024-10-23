@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { Avatar, isDefined } from 'twenty-ui';
+import { Avatar, IconFolderPlus, isDefined } from 'twenty-ui';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
@@ -37,7 +37,7 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
   const currentPath = useLocation().pathname;
-
+  const [isCreatingNewFolder, setIsCreatingNewFolder] = useState(false);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { favorites, handleReorderFavorite, favoritesByFolder } =
     useFavorites();
@@ -45,6 +45,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+  const toggleNewFolder = () => setIsCreatingNewFolder((current) => !current);
 
   if (loading && isDefined(currentWorkspaceMember)) {
     return <FavoritesSkeletonLoader />;
@@ -71,10 +72,13 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
         <NavigationDrawerSectionTitle
           label="Favorites"
           onClick={() => toggleNavigationSection()}
+          rightIcon={<IconFolderPlus size={14} />}
+          onRightIconClick={toggleNewFolder}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (
         <>
+          {isCreatingNewFolder && <></>}
           {favoritesByFolder.map((folder) => (
             <CurrentWorkspaceMemberFavorites
               key={folder.folderId}
