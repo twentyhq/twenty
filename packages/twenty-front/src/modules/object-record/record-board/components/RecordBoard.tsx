@@ -11,7 +11,7 @@ import { useRecordBoardStates } from '@/object-record/record-board/hooks/interna
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
-import { getDraggedRecordPosition } from '@/object-record/record-board/utils/get-dragged-record-position.util';
+import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -66,7 +66,7 @@ export const RecordBoard = () => {
 
   useListenClickOutsideByClassName({
     classNames: ['record-board-card'],
-    excludeClassNames: ['bottom-bar', 'context-menu'],
+    excludeClassNames: ['bottom-bar', 'action-menu-dropdown'],
     callback: resetRecordSelection,
   });
 

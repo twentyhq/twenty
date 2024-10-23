@@ -113,6 +113,52 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query('SearchWorkspaceMembers', () => {
+      return HttpResponse.json({
+        data: {
+          searchWorkspaceMembers: {
+            edges: mockWorkspaceMembers.map((member) => ({
+              node: {
+                ...member,
+                messageParticipants: {
+                  edges: [],
+                  __typename: 'MessageParticipantConnection',
+                },
+                authoredAttachments: {
+                  edges: [],
+                  __typename: 'AttachmentConnection',
+                },
+                authoredComments: {
+                  edges: [],
+                  __typename: 'CommentConnection',
+                },
+                accountOwnerForCompanies: {
+                  edges: [],
+                  __typename: 'CompanyConnection',
+                },
+                authoredActivities: {
+                  edges: [],
+                  __typename: 'ActivityConnection',
+                },
+                favorites: {
+                  edges: [],
+                  __typename: 'FavoriteConnection',
+                },
+                connectedAccounts: {
+                  edges: [],
+                  __typename: 'ConnectedAccountConnection',
+                },
+                assignedActivities: {
+                  edges: [],
+                  __typename: 'ActivityConnection',
+                },
+              },
+              cursor: null,
+            })),
+          },
+        },
+      });
+    }),
     graphql.query('FindManyViewFields', ({ variables }) => {
       const viewId = variables.filter.view.eq;
 

@@ -1,4 +1,3 @@
-import { Toggle } from '@/ui/input/components/Toggle';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { createPortal } from 'react-dom';
@@ -6,6 +5,7 @@ import {
   AppTooltip,
   IconComponent,
   IconInfoCircle,
+  Toggle,
   TooltipDelay,
 } from 'twenty-ui';
 

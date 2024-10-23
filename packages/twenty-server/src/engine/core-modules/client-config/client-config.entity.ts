@@ -18,6 +18,9 @@ class AuthProviders {
 
   @Field(() => Boolean)
   auth0: boolean;
+
+  @Field(() => Boolean)
+  sso: boolean;
 }
 
 @ObjectType()
@@ -90,6 +93,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   debugMode: boolean;
+
+  @Field(() => Boolean)
+  analyticsEnabled: boolean;
 
   @Field(() => Support)
   support: Support;

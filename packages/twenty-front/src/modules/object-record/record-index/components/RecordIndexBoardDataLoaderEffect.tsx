@@ -2,8 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -12,6 +11,7 @@ import { recordIndexIsCompactModeActiveState } from '@/object-record/record-inde
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -121,32 +121,23 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
-  );
-
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
-
-  useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+    setContextStoreTargetedRecords({
+      mode: 'selection',
+      selectedRecordIds: selectedRecordIds,
+    });
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
-      setContextStoreCurrentObjectMetadataItem(null);
+      setContextStoreTargetedRecords({
+        mode: 'selection',
+        selectedRecordIds: [],
+      });
     };
-  }, [
-    objectMetadataItem?.id,
-    selectedRecordIds,
-    setContextStoreCurrentObjectMetadataItem,
-    setContextStoreTargetedRecordIds,
-  ]);
+  }, [selectedRecordIds, setContextStoreTargetedRecords]);
 
   return <></>;
 };

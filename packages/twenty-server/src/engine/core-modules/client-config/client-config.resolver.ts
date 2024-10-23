@@ -16,6 +16,7 @@ export class ClientConfigResolver {
         magicLink: false,
         password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+        sso: this.environmentService.get('AUTH_SSO_ENABLED'),
         auth0: this.environmentService.get('AUTH_AUTH0_ENABLED'),
       },
       billing: {
@@ -49,6 +50,7 @@ export class ClientConfigResolver {
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',
         ),
       },
+      analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
     };
 
     return Promise.resolve(clientConfig);
