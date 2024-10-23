@@ -31,7 +31,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
@@ -145,6 +145,8 @@ export const CommandMenu = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };
+
+  const [actionCommands, setActionCommands] = useState<Command[]>([]);
 
   const isMobile = useIsMobile();
 
@@ -290,6 +292,14 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
+  const matchingActionCommands = actionCommands.filter(
+    (cmd) =>
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
+        : true) && cmd.type === CommandType.Action,
+  );
+
   useListenClickOutside({
     refs: [commandMenuRef],
     callback: closeCommandMenu,
@@ -315,6 +325,7 @@ export const CommandMenu = () => {
 
   const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
+    .concat(matchingActionCommands.map((cmd) => cmd.id))
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people?.map((person) => person.id))
@@ -323,12 +334,14 @@ export const CommandMenu = () => {
     .concat(notes?.map((note) => note.id));
 
   const isNoResults =
+    !matchingActionCommands.length &&
     !matchingCreateCommand.length &&
     !matchingNavigateCommand.length &&
     !people?.length &&
     !companies?.length &&
     !notes?.length &&
     !opportunities?.length;
+
   const isLoading =
     isPeopleLoading ||
     isNotesLoading ||
@@ -370,6 +383,7 @@ export const CommandMenu = () => {
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
                     const command = [
+                      ...actionCommands,
                       ...copilotCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
@@ -405,6 +419,8 @@ export const CommandMenu = () => {
                       mainContextStoreComponentInstanceId={
                         mainContextStoreComponentInstanceId
                       }
+                      matchingActionCommands={matchingActionCommands}
+                      setActionCommands={setActionCommands}
                     />
                   )}
                   <CommandGroup heading="Create">
