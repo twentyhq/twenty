@@ -43,8 +43,7 @@ const SearchVariablesDropdownStepSubItem = ({
     }
   };
 
-  const headerLabel =
-    currentPath.length === 0 ? step.name : currentPath.at(-1);
+  const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
 
   return (
     <>
