@@ -14,8 +14,6 @@ export * from './src/modules/ui/input/button/components/LightButton';
 export * from './src/modules/ui/input/button/components/LightIconButton';
 export * from './src/modules/ui/input/button/components/MainButton';
 export * from './src/modules/ui/input/button/components/RoundedIconButton';
-export * from './src/modules/ui/input/color-scheme/components/ColorSchemeCard';
-export * from './src/modules/ui/input/color-scheme/components/ColorSchemePicker';
 export * from './src/modules/ui/input/components/AutosizeTextInput';
 export * from './src/modules/ui/input/components/Checkbox';
 export * from './src/modules/ui/input/components/EntityTitleDoubleTextInput';

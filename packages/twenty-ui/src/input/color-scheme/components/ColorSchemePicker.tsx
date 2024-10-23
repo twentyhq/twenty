@@ -1,10 +1,8 @@
-import React from 'react';
 import styled from '@emotion/styled';
 
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-
+import { ColorScheme } from '@ui/input/types/ColorScheme';
+import { MOBILE_VIEWPORT } from '@ui/theme';
 import { ColorSchemeCard } from './ColorSchemeCard';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;
