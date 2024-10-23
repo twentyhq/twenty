@@ -1,7 +1,13 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconPlus, IconTool, MAIN_COLORS } from 'twenty-ui';
+import {
+  IconPlus,
+  IconTool,
+  MAIN_COLORS,
+  CardContent,
+  CardFooter,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import {
@@ -15,8 +21,6 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { LightButton } from '@/ui/input/button/components/LightButton';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
