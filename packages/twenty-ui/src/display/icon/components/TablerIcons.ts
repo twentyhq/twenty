@@ -223,6 +223,7 @@ export {
   IconUser,
   IconUserCircle,
   IconUsers,
+  IconVariable,
   IconVideo,
   IconWand,
   IconWorld,
