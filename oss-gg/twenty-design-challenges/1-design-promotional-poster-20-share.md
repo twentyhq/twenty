@@ -1,5 +1,5 @@
 **Side Quest**: Design a promotional poster of Twenty and share it on social media.
-**Points**: 300 Points
+**Points**: 50 Points
 **Proof**: Add your oss handle and poster link to the list below.
 
 Please follow the following schema:
