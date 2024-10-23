@@ -3,6 +3,7 @@ import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer
 
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
@@ -55,39 +56,45 @@ export const RecordShowContainer = ({
         instanceId: `record-show-${objectRecordId}`,
       }}
     >
-      <RecordShowContainerContextStoreEffect
-        recordId={objectRecordId}
-        objectNameSingular={objectNameSingular}
-      />
-      {!isInRightDrawer && <MainContextStoreComponentInstanceIdSetterEffect />}
-      {contextStoreCurrentObjectMetadataId && (
-        <>
-          <ActionMenuConfirmationModals />
-          <RecordActionMenuEntriesSetter
-            actionMenuType={
-              isInRightDrawer ? 'recordShowInRightDrawer' : 'recordShow'
-            }
-          />
-        </>
-      )}
-      {recordFromStore && recordFromStore.deletedAt && (
-        <InformationBannerDeletedRecord
+      <ActionMenuComponentInstanceContext.Provider
+        value={{ instanceId: `record-show-${objectRecordId}` }}
+      >
+        <RecordShowContainerContextStoreEffect
           recordId={objectRecordId}
           objectNameSingular={objectNameSingular}
         />
-      )}
-      <ShowPageContainer>
-        <ShowPageSubContainer
-          tabs={tabs}
-          targetableObject={{
-            id: objectRecordId,
-            targetObjectNameSingular: objectMetadataItem?.nameSingular,
-          }}
-          isInRightDrawer={isInRightDrawer}
-          loading={isPrefetchLoading || loading || recordLoading}
-          isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
-        />
-      </ShowPageContainer>
+        {!isInRightDrawer && (
+          <MainContextStoreComponentInstanceIdSetterEffect />
+        )}
+        {contextStoreCurrentObjectMetadataId && (
+          <>
+            <ActionMenuConfirmationModals />
+            <RecordActionMenuEntriesSetter
+              actionMenuType={
+                isInRightDrawer ? 'recordShowInRightDrawer' : 'recordShow'
+              }
+            />
+          </>
+        )}
+        {recordFromStore && recordFromStore.deletedAt && (
+          <InformationBannerDeletedRecord
+            recordId={objectRecordId}
+            objectNameSingular={objectNameSingular}
+          />
+        )}
+        <ShowPageContainer>
+          <ShowPageSubContainer
+            tabs={tabs}
+            targetableObject={{
+              id: objectRecordId,
+              targetObjectNameSingular: objectMetadataItem?.nameSingular,
+            }}
+            isInRightDrawer={isInRightDrawer}
+            loading={isPrefetchLoading || loading || recordLoading}
+            isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
+          />
+        </ShowPageContainer>
+      </ActionMenuComponentInstanceContext.Provider>
     </ContextStoreComponentInstanceContext.Provider>
   );
 };

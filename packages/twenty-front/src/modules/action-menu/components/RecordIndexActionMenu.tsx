@@ -5,23 +5,26 @@ import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIn
 import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordIndexActionMenu = ({
-  actionMenuId,
-}: {
-  actionMenuId: string;
-}) => {
+export const RecordIndexActionMenu = () => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
+
+  const contextStoreComponentInstanceId =
+    useAvailableComponentInstanceIdOrThrow(
+      ContextStoreComponentInstanceContext,
+    );
 
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
         <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: actionMenuId }}
+          value={{ instanceId: contextStoreComponentInstanceId }}
         >
           <RecordIndexActionMenuBar />
           <RecordIndexActionMenuDropdown />

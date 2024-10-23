@@ -187,7 +187,7 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
-          <RecordIndexActionMenu actionMenuId={recordIndexId} />
+          <RecordIndexActionMenu />
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>
