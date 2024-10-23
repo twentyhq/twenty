@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
+import { useCallback } from 'react';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
@@ -31,6 +31,7 @@ export const usePersistViewGroupRecords = () => {
   const createViewGroupRecords = useCallback(
     (viewGroupsToCreate: ViewGroup[], view: GraphQLView) => {
       if (!viewGroupsToCreate.length) return;
+
       return Promise.all(
         viewGroupsToCreate.map((viewGroup) =>
           apolloClient.mutate({

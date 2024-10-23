@@ -5,26 +5,13 @@ export const enum RecordGroupDefinitionType {
   NoValue = 'no-value',
 }
 
-export type RecordGroupDefinitionNoValue = {
-  id: 'no-value';
-  type: RecordGroupDefinitionType.NoValue;
-  title: 'No Value';
-  position: number;
-  value: null;
-  isVisible: boolean;
-};
-
-export type RecordGroupDefinitionValue = {
+export type RecordGroupDefinition = {
   id: string;
   fieldMetadataId: string;
-  type: RecordGroupDefinitionType.Value;
+  type: RecordGroupDefinitionType;
   title: string;
-  value: string;
-  color: ThemeColor;
+  value: string | null;
+  color: ThemeColor | 'transparent';
   position: number;
   isVisible: boolean;
 };
-
-export type RecordGroupDefinition =
-  | RecordGroupDefinitionValue
-  | RecordGroupDefinitionNoValue;

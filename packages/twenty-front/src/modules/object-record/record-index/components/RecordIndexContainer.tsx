@@ -34,7 +34,7 @@ import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
+import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -116,7 +116,7 @@ export const RecordIndexContainer = () => {
   const onViewGroupsChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewGroups: ViewGroup[]) => {
-        const newGroupDefinitions = mapViewGroupsToGroupDefinitions({
+        const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
           objectMetadataItem,
           viewGroups,
         });

@@ -3,13 +3,12 @@ import { isDefined } from '~/utils/isDefined';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   RecordGroupDefinition,
-  RecordGroupDefinitionNoValue,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const mapViewGroupsToGroupDefinitions = ({
+export const mapViewGroupsToRecordGroupDefinitions = ({
   objectMetadataItem,
   viewGroups,
 }: {
@@ -70,7 +69,9 @@ export const mapViewGroupsToGroupDefinitions = ({
           .map((option) => option.position)
           .reduce((a, b) => Math.max(a, b), 0) + 1,
       isVisible: true,
-    } satisfies RecordGroupDefinitionNoValue;
+      fieldMetadataId: selectFieldMetadataItem.id,
+      color: 'transparent',
+    } satisfies RecordGroupDefinition;
 
     return [...recordGroupDefinitionsFromViewGroups, noValueColumn];
   }

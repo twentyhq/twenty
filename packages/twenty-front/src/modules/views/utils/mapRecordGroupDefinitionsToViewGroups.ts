@@ -7,9 +7,8 @@ export const mapRecordGroupDefinitionsToViewGroups = (
   return groupDefinitions.map(
     (groupDefinition): ViewGroup => ({
       __typename: 'ViewGroup',
-      id: groupDefinition.id || '',
-      // TODO: This should be a fieldMetadataId
-      fieldMetadataId: '',
+      id: groupDefinition.id,
+      fieldMetadataId: groupDefinition.fieldMetadataId,
       position: groupDefinition.position,
       isVisible: groupDefinition.isVisible ?? true,
       fieldValue: groupDefinition.value ?? '',

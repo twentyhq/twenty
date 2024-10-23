@@ -59,6 +59,7 @@ type RecordIndexOptionsDropdownContentProps = {
   viewType: ViewType;
 };
 
+// TODO: Break this component down
 export const RecordIndexOptionsDropdownContent = ({
   viewType,
   recordIndexId,
