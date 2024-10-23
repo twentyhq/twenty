@@ -3,15 +3,16 @@ import styled from '@emotion/styled';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
-} from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+  UndecoratedLink,
+} from 'twenty-ui';
 
 const StyledBackDrop = styled.div`
   align-items: center;

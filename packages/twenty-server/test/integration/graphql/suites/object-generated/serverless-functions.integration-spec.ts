@@ -6,20 +6,17 @@ describe('serverlessFunctionsResolver (e2e)', () => {
   it('should find many serverlessFunctions', () => {
     const queryData = {
       query: `
-        query serverlessFunctions {
-          serverlessFunctions {
-            edges {
-              node {
-                id
-                name
-                description
-                runtime
-                latestVersion
-                syncStatus
-                createdAt
-                updatedAt
-              }
-            }
+        query GetManyServerlessFunctions {
+          findManyServerlessFunctions {
+            id
+            name
+            description
+            runtime
+            syncStatus
+            latestVersion
+            publishedVersions
+            createdAt
+            updatedAt
           }
         }
       `,
@@ -35,24 +32,23 @@ describe('serverlessFunctionsResolver (e2e)', () => {
         expect(res.body.errors).toBeUndefined();
       })
       .expect((res) => {
-        const data = res.body.data.serverlessFunctions;
+        const serverlessFunctions = res.body.data.findManyServerlessFunctions;
 
-        expect(data).toBeDefined();
-        expect(Array.isArray(data.edges)).toBe(true);
+        expect(serverlessFunctions).toBeDefined();
+        expect(Array.isArray(serverlessFunctions)).toBe(true);
 
-        const edges = data.edges;
+        if (serverlessFunctions.length > 0) {
+          const serverlessFunction = serverlessFunctions[0];
 
-        if (edges.length > 0) {
-          const serverlessFunctions = edges[0].node;
-
-          expect(serverlessFunctions).toHaveProperty('id');
-          expect(serverlessFunctions).toHaveProperty('name');
-          expect(serverlessFunctions).toHaveProperty('description');
-          expect(serverlessFunctions).toHaveProperty('runtime');
-          expect(serverlessFunctions).toHaveProperty('latestVersion');
-          expect(serverlessFunctions).toHaveProperty('syncStatus');
-          expect(serverlessFunctions).toHaveProperty('createdAt');
-          expect(serverlessFunctions).toHaveProperty('updatedAt');
+          expect(serverlessFunction).toHaveProperty('id');
+          expect(serverlessFunction).toHaveProperty('name');
+          expect(serverlessFunction).toHaveProperty('description');
+          expect(serverlessFunction).toHaveProperty('runtime');
+          expect(serverlessFunction).toHaveProperty('syncStatus');
+          expect(serverlessFunction).toHaveProperty('latestVersion');
+          expect(serverlessFunction).toHaveProperty('publishedVersions');
+          expect(serverlessFunction).toHaveProperty('createdAt');
+          expect(serverlessFunction).toHaveProperty('updatedAt');
         }
       });
   });
