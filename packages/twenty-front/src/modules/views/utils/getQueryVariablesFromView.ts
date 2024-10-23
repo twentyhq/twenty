@@ -13,10 +13,12 @@ export const getQueryVariablesFromView = ({
   view,
   fieldMetadataItems,
   objectMetadataItem,
+  isArrayAndJsonFilterEnabled,
 }: {
   view: View | null | undefined;
   fieldMetadataItems: FieldMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
+  isArrayAndJsonFilterEnabled: boolean;
 }) => {
   if (!isDefined(view)) {
     return {
@@ -29,6 +31,7 @@ export const getQueryVariablesFromView = ({
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
     fields: fieldMetadataItems,
+    isArrayAndJsonFilterEnabled,
   });
 
   const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({

@@ -36,7 +36,7 @@ export class WorkspaceInvitationService {
     private readonly onboardingService: OnboardingService,
   ) {}
 
-  private async getOneWorkspaceInvitation(workspaceId: string, email: string) {
+  async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
       .where('"appToken"."workspaceId" = :workspaceId', {
@@ -160,7 +160,7 @@ export class WorkspaceInvitationService {
       },
     });
 
-    if (!appToken || !appToken.context || !('email' in appToken.context)) {
+    if (!appToken || !appToken.context?.email) {
       throw new WorkspaceInvitationException(
         'Invalid appToken',
         WorkspaceInvitationExceptionCode.INVALID_INVITATION,

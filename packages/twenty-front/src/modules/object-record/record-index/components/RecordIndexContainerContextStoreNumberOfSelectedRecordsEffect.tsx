@@ -1,22 +1,23 @@
-import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useContext, useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
   () => {
-    const setContextStoreNumberOfSelectedRecords = useSetRecoilState(
-      contextStoreNumberOfSelectedRecordsState,
+    const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
+      contextStoreNumberOfSelectedRecordsComponentState,
     );
 
-    const contextStoreTargetedRecordsRule = useRecoilValue(
-      contextStoreTargetedRecordsRuleState,
+    const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+      contextStoreTargetedRecordsRuleComponentState,
     );
 
     const { objectNamePlural } = useContext(RecordIndexRootPropsContext);

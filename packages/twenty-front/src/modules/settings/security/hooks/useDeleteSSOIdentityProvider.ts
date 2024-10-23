@@ -1,0 +1,40 @@
+/* @license Enterprise */
+
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { useSetRecoilState } from 'recoil';
+import {
+  DeleteSsoIdentityProviderMutationVariables,
+  useDeleteSsoIdentityProviderMutation,
+} from '~/generated/graphql';
+
+export const useDeleteSSOIdentityProvider = () => {
+  const [deleteSsoIdentityProviderMutation] =
+    useDeleteSsoIdentityProviderMutation();
+
+  const setSSOIdentitiesProviders = useSetRecoilState(
+    SSOIdentitiesProvidersState,
+  );
+
+  const deleteSSOIdentityProvider = async ({
+    identityProviderId,
+  }: DeleteSsoIdentityProviderMutationVariables['input']) => {
+    return await deleteSsoIdentityProviderMutation({
+      variables: {
+        input: { identityProviderId },
+      },
+      onCompleted: (data) => {
+        setSSOIdentitiesProviders((SSOIdentitiesProviders) =>
+          SSOIdentitiesProviders.filter(
+            (identityProvider) =>
+              identityProvider.id !==
+              data.deleteSSOIdentityProvider.identityProviderId,
+          ),
+        );
+      },
+    });
+  };
+
+  return {
+    deleteSSOIdentityProvider,
+  };
+};
