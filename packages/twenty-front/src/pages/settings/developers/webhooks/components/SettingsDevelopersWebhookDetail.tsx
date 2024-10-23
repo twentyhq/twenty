@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   H2Title,
   IconBox,
-  IconHandClick,
   IconNorthStar,
   IconPlus,
   IconRefresh,
