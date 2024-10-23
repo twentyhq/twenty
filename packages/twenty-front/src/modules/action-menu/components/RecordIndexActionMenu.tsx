@@ -30,7 +30,7 @@ export const RecordIndexActionMenu = () => {
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordIndexActionMenuEffect />
-          <RecordActionMenuEntriesSetter actionMenuType="recordIndex" />
+          <RecordActionMenuEntriesSetter />
         </ActionMenuComponentInstanceContext.Provider>
       )}
     </>

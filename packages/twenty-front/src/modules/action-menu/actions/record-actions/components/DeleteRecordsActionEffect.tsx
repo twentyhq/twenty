@@ -1,5 +1,4 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -18,11 +17,11 @@ import { IconTrash, isDefined } from 'twenty-ui';
 export const DeleteRecordsActionEffect = ({
   position,
   objectMetadataItem,
-  actionMenuType,
+  onActionExecutedCallback,
 }: {
   position: number;
   objectMetadataItem: ObjectMetadataItem;
-  actionMenuType: ActionMenuType;
+  onActionExecutedCallback?: () => void;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
@@ -120,19 +119,11 @@ export const DeleteRecordsActionEffect = ({
             } can be recovered from the Options menu.`}
             onConfirmClick={() => {
               handleDeleteClick();
-
-              if (actionMenuType === 'recordShowInRightDrawer') {
-                closeRightDrawer();
-              }
+              onActionExecutedCallback?.();
             }}
             deleteButtonText={`Delete ${
               contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
-            modalVariant={
-              actionMenuType === 'recordShowInRightDrawer'
-                ? 'tertiary'
-                : 'primary'
-            }
           />
         ),
       });
@@ -144,13 +135,13 @@ export const DeleteRecordsActionEffect = ({
       removeActionMenuEntry('delete');
     };
   }, [
-    actionMenuType,
     addActionMenuEntry,
     canDelete,
     closeRightDrawer,
     contextStoreNumberOfSelectedRecords,
     handleDeleteClick,
     isDeleteRecordsModalOpen,
+    onActionExecutedCallback,
     position,
     removeActionMenuEntry,
   ]);
