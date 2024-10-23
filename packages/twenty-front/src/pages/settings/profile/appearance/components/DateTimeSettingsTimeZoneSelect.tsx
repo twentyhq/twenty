@@ -21,6 +21,7 @@ export const DateTimeSettingsTimeZoneSelect = ({
     <Select
       dropdownId="settings-accounts-calendar-time-zone"
       dropdownWidth={416}
+      mobileDropdownWidth={300}
       label="Time zone"
       fullWidth
       value={value}

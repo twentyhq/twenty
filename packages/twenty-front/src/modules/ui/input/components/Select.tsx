@@ -31,6 +31,7 @@ export type SelectProps<Value extends string | number | null> = {
   disableBlur?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
+  mobileDropdownWidth?: `${string}px` | 'auto' | number;
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
   label?: string;
@@ -89,6 +90,7 @@ export const Select = <Value extends string | number | null>({
   disableBlur = false,
   dropdownId,
   dropdownWidth = 176,
+  mobileDropdownWidth,
   emptyOption,
   fullWidth,
   label,
@@ -157,6 +159,7 @@ export const Select = <Value extends string | number | null>({
         <Dropdown
           dropdownId={dropdownId}
           dropdownMenuWidth={dropdownWidth}
+          mobileDropdownWidth={mobileDropdownWidth}
           dropdownPlacement="bottom-start"
           clickableComponent={selectControl}
           disableBlur={disableBlur}
