@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
-
+import { ComponentDecorator } from '@ui/testing';
 import { ColorPickerButton } from '../ColorPickerButton';
 
 const meta: Meta<typeof ColorPickerButton> = {

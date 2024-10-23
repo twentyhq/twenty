@@ -1,11 +1,10 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconChevronRight } from 'twenty-ui';
+import { useNavigate } from 'react-router-dom';
+import { IconChevronRight, LightIconButton } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RemoteServer } from '~/generated-metadata/graphql';
 
 type SettingsIntegrationDatabaseConnectionsListCardProps = {

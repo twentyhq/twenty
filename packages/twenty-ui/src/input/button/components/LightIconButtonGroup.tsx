@@ -1,6 +1,6 @@
-import { FunctionComponent, MouseEvent, ReactElement } from 'react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from '@ui/display';
+import { FunctionComponent, MouseEvent, ReactElement } from 'react';
 
 import { LightIconButton, LightIconButtonProps } from './LightIconButton';
 
