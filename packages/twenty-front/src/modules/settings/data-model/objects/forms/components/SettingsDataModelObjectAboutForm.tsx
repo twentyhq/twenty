@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { SyncObjectLabelAndNameToggle } from '@/settings/data-model/objects/SyncObjectLabelAndNameToggle';
+import { SyncObjectLabelAndNameToggle } from '@/settings/data-model/objects/forms/components/SyncObjectLabelAndNameToggle';
 import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';

@@ -1,7 +1,6 @@
-import { Toggle } from '@/ui/input/components/Toggle';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconRefresh, MAIN_COLORS } from 'twenty-ui';
+import { IconRefresh, MAIN_COLORS, Toggle } from 'twenty-ui';
 
 const StyledToggleContainer = styled.div`
   align-items: center;
