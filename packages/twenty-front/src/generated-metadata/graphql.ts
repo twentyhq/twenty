@@ -196,6 +196,7 @@ export type CreateObjectInput = {
   nameSingular: Scalars['String']['input'];
   primaryKeyColumnType?: InputMaybe<Scalars['String']['input']>;
   primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']['input']>;
+  shortcut?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateOneAppTokenInput = {
@@ -1433,6 +1434,7 @@ export type UpdateObjectPayload = {
   labelSingular?: InputMaybe<Scalars['String']['input']>;
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
+  shortcut?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateOneFieldMetadataInput = {
@@ -1774,6 +1776,7 @@ export type Object = {
   labelSingular: Scalars['String']['output'];
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
+  shortcut?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
