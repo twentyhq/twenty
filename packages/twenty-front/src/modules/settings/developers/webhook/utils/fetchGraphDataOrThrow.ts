@@ -14,7 +14,7 @@ export const fetchGraphDataOrThrow = async ({
 }: fetchGraphDataOrThrowProps) => {
   const queryString = new URLSearchParams({
     ...WEBHOOK_GRAPH_API_OPTIONS_MAP[windowLength],
-    webhookIdRequest: webhookId,
+    webhookId,
   }).toString();
 
   const response = await fetch(

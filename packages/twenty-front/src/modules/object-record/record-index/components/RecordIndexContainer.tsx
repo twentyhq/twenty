@@ -22,8 +22,9 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
-import { ActionMenu } from '@/action-menu/components/ActionMenu';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewField } from '@/views/types/ViewField';
@@ -102,8 +103,8 @@ export const RecordIndexContainer = () => {
     [columnDefinitions, setTableColumns],
   );
 
-  const setContextStoreTargetedRecordsRule = useSetRecoilState(
-    contextStoreTargetedRecordsRuleState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   return (
@@ -186,7 +187,7 @@ export const RecordIndexContainer = () => {
               />
             </StyledContainerWithPadding>
           )}
-          <ActionMenu actionMenuId={recordIndexId} />
+          <RecordIndexActionMenu actionMenuId={recordIndexId} />
         </RecordFieldValueSelectorContextProvider>
       </ViewComponentInstanceContext.Provider>
     </StyledContainer>

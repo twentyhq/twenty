@@ -7,6 +7,7 @@ global.fetch = jest.fn();
 describe('fetchGraphDataOrThrow', () => {
   const mockWebhookId = 'test-webhook-id';
   const mockWindowLength = '7D';
+  const mockTinybirdJwt = 'test-jwt';
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -27,6 +28,7 @@ describe('fetchGraphDataOrThrow', () => {
     const result = await fetchGraphDataOrThrow({
       webhookId: mockWebhookId,
       windowLength: mockWindowLength,
+      tinybirdJwt: mockTinybirdJwt,
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
@@ -71,6 +73,7 @@ describe('fetchGraphDataOrThrow', () => {
       fetchGraphDataOrThrow({
         webhookId: mockWebhookId,
         windowLength: mockWindowLength,
+        tinybirdJwt: mockTinybirdJwt,
       }),
     ).rejects.toThrow('Something went wrong while fetching webhook usage');
   });
@@ -85,13 +88,14 @@ describe('fetchGraphDataOrThrow', () => {
     await fetchGraphDataOrThrow({
       webhookId: mockWebhookId,
       windowLength: '1D',
+      tinybirdJwt: mockTinybirdJwt,
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining(
         new URLSearchParams({
           ...WEBHOOK_GRAPH_API_OPTIONS_MAP['1D'],
-          webhookIdRequest: mockWebhookId,
+          webhookId: mockWebhookId,
         }).toString(),
       ),
       expect.any(Object),
