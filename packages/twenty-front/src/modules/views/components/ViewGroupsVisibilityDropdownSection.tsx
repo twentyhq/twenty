@@ -51,6 +51,15 @@ export const ViewGroupsVisibilityDropdownSection = ({
     return iconButtons.length ? iconButtons : undefined;
   };
 
+  const noValueViewGroups =
+    viewGroups.filter(
+      (viewGroup) => viewGroup.type === RecordGroupDefinitionType.NoValue,
+    ) ?? [];
+
+  const viewGroupsWithoutNoValueGroups = viewGroups.filter(
+    (viewGroup) => viewGroup.type !== RecordGroupDefinitionType.NoValue,
+  );
+
   const ref = useRef<HTMLDivElement>(null);
 
   return (
@@ -62,86 +71,119 @@ export const ViewGroupsVisibilityDropdownSection = ({
         {!!viewGroups.length && (
           <>
             {!isDraggable ? (
-              viewGroups.map((viewGroup, viewGroupIndex) => (
-                <MenuItemDraggable
-                  key={viewGroup.id}
-                  text={
-                    <Tag
-                      variant={
-                        viewGroup.type !== RecordGroupDefinitionType.NoValue
-                          ? 'solid'
-                          : 'outline'
-                      }
-                      color={
-                        viewGroup.type !== RecordGroupDefinitionType.NoValue
-                          ? viewGroup.color
-                          : 'transparent'
-                      }
-                      text={viewGroup.title}
-                      weight={
-                        viewGroup.type !== RecordGroupDefinitionType.NoValue
-                          ? 'regular'
-                          : 'medium'
-                      }
-                    />
-                  }
-                  iconButtons={getIconButtons(viewGroupIndex, viewGroup)}
-                  accent={showDragGrip ? 'placeholder' : 'default'}
-                  showGrip={showDragGrip}
-                  isDragDisabled={!isDraggable}
-                />
-              ))
+              viewGroupsWithoutNoValueGroups.map(
+                (viewGroup, viewGroupIndex) => (
+                  <MenuItemDraggable
+                    key={viewGroup.id}
+                    text={
+                      <Tag
+                        variant={
+                          viewGroup.type !== RecordGroupDefinitionType.NoValue
+                            ? 'solid'
+                            : 'outline'
+                        }
+                        color={
+                          viewGroup.type !== RecordGroupDefinitionType.NoValue
+                            ? viewGroup.color
+                            : 'transparent'
+                        }
+                        text={viewGroup.title}
+                        weight={
+                          viewGroup.type !== RecordGroupDefinitionType.NoValue
+                            ? 'regular'
+                            : 'medium'
+                        }
+                      />
+                    }
+                    iconButtons={getIconButtons(viewGroupIndex, viewGroup)}
+                    accent={showDragGrip ? 'placeholder' : 'default'}
+                    showGrip={showDragGrip}
+                    isDragDisabled={!isDraggable}
+                  />
+                ),
+              )
             ) : (
               <DraggableList
                 onDragEnd={handleOnDrag}
                 draggableItems={
                   <>
-                    {viewGroups.map((viewGroup, viewGroupIndex) => (
-                      <DraggableItem
-                        key={viewGroup.id}
-                        draggableId={viewGroup.id}
-                        index={viewGroupIndex + 1}
-                        itemComponent={
-                          <MenuItemDraggable
-                            key={viewGroup.id}
-                            text={
-                              <Tag
-                                variant={
-                                  viewGroup.type !==
-                                  RecordGroupDefinitionType.NoValue
-                                    ? 'solid'
-                                    : 'outline'
-                                }
-                                color={
-                                  viewGroup.type !==
-                                  RecordGroupDefinitionType.NoValue
-                                    ? viewGroup.color
-                                    : 'transparent'
-                                }
-                                text={viewGroup.title}
-                                weight={
-                                  viewGroup.type !==
-                                  RecordGroupDefinitionType.NoValue
-                                    ? 'regular'
-                                    : 'medium'
-                                }
-                              />
-                            }
-                            iconButtons={getIconButtons(
-                              viewGroupIndex,
-                              viewGroup,
-                            )}
-                            accent={showDragGrip ? 'placeholder' : 'default'}
-                            showGrip={showDragGrip}
-                            isDragDisabled={!isDraggable}
-                          />
-                        }
-                      />
-                    ))}
+                    {viewGroupsWithoutNoValueGroups.map(
+                      (viewGroup, viewGroupIndex) => (
+                        <DraggableItem
+                          key={viewGroup.id}
+                          draggableId={viewGroup.id}
+                          index={viewGroupIndex + 1}
+                          itemComponent={
+                            <MenuItemDraggable
+                              key={viewGroup.id}
+                              text={
+                                <Tag
+                                  variant={
+                                    viewGroup.type !==
+                                    RecordGroupDefinitionType.NoValue
+                                      ? 'solid'
+                                      : 'outline'
+                                  }
+                                  color={
+                                    viewGroup.type !==
+                                    RecordGroupDefinitionType.NoValue
+                                      ? viewGroup.color
+                                      : 'transparent'
+                                  }
+                                  text={viewGroup.title}
+                                  weight={
+                                    viewGroup.type !==
+                                    RecordGroupDefinitionType.NoValue
+                                      ? 'regular'
+                                      : 'medium'
+                                  }
+                                />
+                              }
+                              iconButtons={getIconButtons(
+                                viewGroupIndex,
+                                viewGroup,
+                              )}
+                              accent={showDragGrip ? 'placeholder' : 'default'}
+                              showGrip={showDragGrip}
+                              isDragDisabled={!isDraggable}
+                            />
+                          }
+                        />
+                      ),
+                    )}
                   </>
                 }
               />
             )}
+            {noValueViewGroups.map((viewGroup) => (
+              <MenuItemDraggable
+                key={viewGroup.id}
+                text={
+                  <Tag
+                    variant={
+                      viewGroup.type !== RecordGroupDefinitionType.NoValue
+                        ? 'solid'
+                        : 'outline'
+                    }
+                    color={
+                      viewGroup.type !== RecordGroupDefinitionType.NoValue
+                        ? viewGroup.color
+                        : 'transparent'
+                    }
+                    text={viewGroup.title}
+                    weight={
+                      viewGroup.type !== RecordGroupDefinitionType.NoValue
+                        ? 'regular'
+                        : 'medium'
+                    }
+                  />
+                }
+                accent={showDragGrip ? 'placeholder' : 'default'}
+                showGrip={true}
+                isDragDisabled={true}
+                isHoverDisabled
+              />
+            ))}
           </>
         )}
       </DropdownMenuItemsContainer>
