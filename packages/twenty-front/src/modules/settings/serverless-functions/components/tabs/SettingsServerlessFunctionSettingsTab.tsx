@@ -13,15 +13,18 @@ import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { H2Title } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { SettingsServerlessFunctionTabEnvironmentVariablesSection } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
   serverlessFunctionId,
   onChange,
+  onCodeChange,
 }: {
   formValues: ServerlessFunctionFormValues;
   serverlessFunctionId: string;
   onChange: (key: string) => (value: string) => void;
+  onCodeChange: (filePath: string, value: string) => void;
 }) => {
   const navigate = useNavigate();
   const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
@@ -57,6 +60,10 @@ export const SettingsServerlessFunctionSettingsTab = ({
       <SettingsServerlessFunctionNewForm
         formValues={formValues}
         onChange={onChange}
+      />
+      <SettingsServerlessFunctionTabEnvironmentVariablesSection
+        formValues={formValues}
+        onCodeChange={onCodeChange}
       />
       <Section>
         <H2Title title="Danger zone" description="Delete this function" />

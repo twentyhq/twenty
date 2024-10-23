@@ -6,9 +6,10 @@ export type NavigationDrawerItemBreadcrumbProps = {
 };
 
 const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
-  margin-left: 7.5px;
-
   height: 28px;
+
+  margin-left: 7.5px;
+  margin-right: ${({ theme }) => theme.spacing(2)};
   width: 9px;
 `;
 

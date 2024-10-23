@@ -1,8 +1,12 @@
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
+  BullMQDriverFactoryOptions,
   MessageQueueDriverType,
   MessageQueueModuleOptions,
+  PgBossDriverFactoryOptions,
+  SyncDriverFactoryOptions,
 } from 'src/engine/core-modules/message-queue/interfaces';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 /**
  * MessageQueue Module factory
@@ -11,6 +15,7 @@ import {
  */
 export const messageQueueModuleFactory = async (
   environmentService: EnvironmentService,
+  redisClientService: RedisClientService,
 ): Promise<MessageQueueModuleOptions> => {
   const driverType = environmentService.get('MESSAGE_QUEUE_TYPE');
 
@@ -19,7 +24,7 @@ export const messageQueueModuleFactory = async (
       return {
         type: MessageQueueDriverType.Sync,
         options: {},
-      };
+      } satisfies SyncDriverFactoryOptions;
     }
     case MessageQueueDriverType.PgBoss: {
       const connectionString = environmentService.get('PG_DATABASE_URL');
@@ -29,25 +34,15 @@ export const messageQueueModuleFactory = async (
         options: {
           connectionString,
         },
-      };
+      } satisfies PgBossDriverFactoryOptions;
     }
     case MessageQueueDriverType.BullMQ: {
-      const host = environmentService.get('REDIS_HOST');
-      const port = environmentService.get('REDIS_PORT');
-      const username = environmentService.get('REDIS_USERNAME');
-      const password = environmentService.get('REDIS_PASSWORD');
-
       return {
         type: MessageQueueDriverType.BullMQ,
         options: {
-          connection: {
-            host,
-            port,
-            username,
-            password,
-          },
+          connection: redisClientService.getClient(),
         },
-      };
+      } satisfies BullMQDriverFactoryOptions;
     }
     default:
       throw new Error(

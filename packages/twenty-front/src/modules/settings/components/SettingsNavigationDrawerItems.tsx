@@ -16,6 +16,7 @@ import {
   IconTool,
   IconUserCircle,
   IconUsers,
+  IconKey,
   MAIN_COLORS,
 } from 'twenty-ui';
 
@@ -43,8 +44,8 @@ type SettingsNavigationItem = {
   label: string;
   path: SettingsPath;
   Icon: IconComponent;
-  matchSubPages?: boolean;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
+  matchSubPages?: boolean;
 };
 
 const StyledIconContainer = styled.div`
@@ -79,6 +80,7 @@ export const SettingsNavigationDrawerItems = () => {
   );
   const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
@@ -90,14 +92,12 @@ export const SettingsNavigationDrawerItems = () => {
       label: 'Emails',
       path: SettingsPath.AccountsEmails,
       Icon: IconMail,
-      matchSubPages: true,
       indentationLevel: 2,
     },
     {
       label: 'Calendars',
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
-      matchSubPages: true,
       indentationLevel: 2,
     },
   ];
@@ -109,7 +109,7 @@ export const SettingsNavigationDrawerItems = () => {
     return matchPath(
       {
         path: pathName,
-        end: !accountSubSetting.matchSubPages,
+        end: accountSubSetting.matchSubPages === false,
       },
       currentPathName,
     );
@@ -134,6 +134,7 @@ export const SettingsNavigationDrawerItems = () => {
             label="Accounts"
             path={SettingsPath.Accounts}
             Icon={IconAt}
+            matchSubPages={false}
           />
           {accountSubSettings.map((navigationItem, index) => (
             <SettingsNavigationDrawerItem
@@ -174,7 +175,6 @@ export const SettingsNavigationDrawerItems = () => {
           label="Data model"
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
-          matchSubPages
         />
         <SettingsNavigationDrawerItem
           label="Integrations"
@@ -186,6 +186,13 @@ export const SettingsNavigationDrawerItems = () => {
             label="CRM Migration"
             path={SettingsPath.CRMMigration}
             Icon={IconCode}
+          />
+        )}
+        {isSSOEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Security"
+            path={SettingsPath.Security}
+            Icon={IconKey}
           />
         )}
       </NavigationDrawerSection>
