@@ -108,7 +108,6 @@
     "storybook:build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["^build"],
       "inputs": ["^default", "excludeTests"],
       "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
