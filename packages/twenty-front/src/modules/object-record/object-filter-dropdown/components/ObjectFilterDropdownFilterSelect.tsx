@@ -17,6 +17,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -135,6 +136,14 @@ export const ObjectFilterDropdownFilterSelect = ({
     visibleColumnsFilterDefinitions.length > 0 &&
     hiddenColumnsFilterDefinitions.length > 0;
 
+  const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView();
+
+  const shouldShowAdvancedFilterButton =
+    isDefined(currentViewId) &&
+    isDefined(currentViewWithCombinedFiltersAndSorts?.objectMetadataId) &&
+    isAdvancedFilterButtonVisible;
+
   return (
     <>
       <StyledInput
@@ -181,7 +190,7 @@ export const ObjectFilterDropdownFilterSelect = ({
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
-      {isAdvancedFilterButtonVisible && <AdvancedFilterButton />}
+      {shouldShowAdvancedFilterButton && <AdvancedFilterButton />}
     </>
   );
 };

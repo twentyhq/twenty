@@ -45,13 +45,12 @@ export const AdvancedFilterButton = () => {
     OBJECT_FILTER_DROPDOWN_ID,
   );
 
-  const { currentViewId } = useGetCurrentView();
+  const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView();
 
   const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
-
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const objectMetadataId =
     currentViewWithCombinedFiltersAndSorts?.objectMetadataId;
