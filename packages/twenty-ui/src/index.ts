@@ -2,6 +2,7 @@ export * from './accessibility';
 export * from './components';
 export * from './display';
 export * from './input';
+export * from './feedback';
 export * from './layout';
 export * from './navigation';
 export * from './testing';

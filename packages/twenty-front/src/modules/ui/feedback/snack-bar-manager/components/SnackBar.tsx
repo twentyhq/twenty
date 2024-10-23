@@ -8,10 +8,10 @@ import {
   IconSquareRoundedCheck,
   IconX,
   MOBILE_VIEWPORT,
+  ProgressBar,
+  useProgressAnimation,
 } from 'twenty-ui';
 
-import { ProgressBar } from '@/ui/feedback/progress-bar/components/ProgressBar';
-import { useProgressAnimation } from '@/ui/feedback/progress-bar/hooks/useProgressAnimation';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { isDefined } from '~/utils/isDefined';

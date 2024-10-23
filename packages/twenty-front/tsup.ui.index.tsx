@@ -2,8 +2,6 @@ import { ThemeType } from 'twenty-ui';
 
 export { ThemeProvider } from '@emotion/react';
 export * from 'twenty-ui';
-export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar';
-export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar';
 export * from './src/modules/ui/input/button/components/Button';
 export * from './src/modules/ui/input/button/components/ButtonGroup';
 export * from './src/modules/ui/input/button/components/FloatingButton';
@@ -23,6 +21,7 @@ export * from './src/modules/ui/input/components/IconPicker';
 export * from './src/modules/ui/input/components/ImageInput';
 export * from './src/modules/ui/input/components/Radio';
 export * from './src/modules/ui/input/components/RadioGroup';
+export * from './src/modules/ui/input/button/components/Button';
 export * from './src/modules/ui/input/components/Select';
 export * from './src/modules/ui/input/components/TextArea';
 export * from './src/modules/ui/input/components/TextInput';
