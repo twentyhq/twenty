@@ -12,10 +12,8 @@ type RecordBoardColumnHeaderWrapperProps = {
 export const RecordBoardColumnHeaderWrapper = ({
   columnId,
 }: RecordBoardColumnHeaderWrapperProps) => {
-  const {
-    columnsFamilySelector,
-    recordIdsByColumnIdFamilyState,
-  } = useRecordBoardStates();
+  const { columnsFamilySelector, recordIdsByColumnIdFamilyState } =
+    useRecordBoardStates();
 
   const columnDefinition = useRecoilValue(columnsFamilySelector(columnId));
 

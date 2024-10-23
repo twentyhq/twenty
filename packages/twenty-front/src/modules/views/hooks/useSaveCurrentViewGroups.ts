@@ -21,7 +21,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
   );
 
   const saveViewGroups = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ snapshot }) =>
       async (viewGroupsToSave: ViewGroup[]) => {
         const currentViewId = snapshot
           .getLoadable(currentViewIdCallbackState)

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
@@ -13,16 +13,16 @@ type UseRecordGroupVisibilityParams = {
 export const useRecordGroupVisibility = ({
   viewBarId,
 }: UseRecordGroupVisibilityParams) => {
-  const [recordIndexGroupDefinitions, setRecordIndexGroupDefinitions] =
-    useRecoilComponentStateV2(recordGroupDefinitionState);
+  const [recordGroupDefinitions, setRecordGroupDefinitions] =
+    useRecoilComponentStateV2(recordGroupDefinitionsComponentState);
 
   const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);
 
   const handleVisibilityChange = useCallback(
-    async (updatedGroupDefinition: RecordGroupDefinition) => {
-      const updatedGroupsDefinitions = recordIndexGroupDefinitions.map(
+    async (updatedRecordGroupDefinition: RecordGroupDefinition) => {
+      const updatedRecordGroupDefinitions = recordGroupDefinitions.map(
         (groupDefinition) =>
-          groupDefinition.id === updatedGroupDefinition.id
+          groupDefinition.id === updatedRecordGroupDefinition.id
             ? {
                 ...groupDefinition,
                 isVisible: !groupDefinition.isVisible,
@@ -30,17 +30,13 @@ export const useRecordGroupVisibility = ({
             : groupDefinition,
       );
 
-      setRecordIndexGroupDefinitions(updatedGroupsDefinitions);
+      setRecordGroupDefinitions(updatedRecordGroupDefinitions);
 
       saveViewGroups(
-        mapRecordGroupDefinitionsToViewGroups(updatedGroupsDefinitions),
+        mapRecordGroupDefinitionsToViewGroups(updatedRecordGroupDefinitions),
       );
     },
-    [
-      recordIndexGroupDefinitions,
-      setRecordIndexGroupDefinitions,
-      saveViewGroups,
-    ],
+    [recordGroupDefinitions, setRecordGroupDefinitions, saveViewGroups],
   );
 
   return {

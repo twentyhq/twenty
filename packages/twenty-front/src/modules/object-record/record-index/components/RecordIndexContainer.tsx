@@ -25,7 +25,7 @@ import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/compone
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -65,8 +65,8 @@ export const RecordIndexContainer = () => {
     objectNameSingular,
   } = useContext(RecordIndexRootPropsContext);
 
-  const recordGroupDefinitionCallbackState = useRecoilComponentCallbackStateV2(
-    recordGroupDefinitionState,
+  const recordGroupDefinitionsCallbackState = useRecoilComponentCallbackStateV2(
+    recordGroupDefinitionsComponentState,
   );
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
@@ -124,7 +124,7 @@ export const RecordIndexContainer = () => {
         setColumns(newGroupDefinitions);
 
         const existingRecordIndexGroupDefinitions = snapshot
-          .getLoadable(recordGroupDefinitionCallbackState)
+          .getLoadable(recordGroupDefinitionsCallbackState)
           .getValue();
 
         if (
@@ -133,10 +133,10 @@ export const RecordIndexContainer = () => {
             newGroupDefinitions,
           )
         ) {
-          set(recordGroupDefinitionCallbackState, newGroupDefinitions);
+          set(recordGroupDefinitionsCallbackState, newGroupDefinitions);
         }
       },
-    [objectMetadataItem, recordGroupDefinitionCallbackState, setColumns],
+    [objectMetadataItem, recordGroupDefinitionsCallbackState, setColumns],
   );
 
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(

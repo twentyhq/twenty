@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type UseRecordGroupsParams = {
@@ -11,8 +11,8 @@ type UseRecordGroupsParams = {
 export const useRecordGroups = ({
   objectNameSingular,
 }: UseRecordGroupsParams) => {
-  const recordIndexGroupDefinitions = useRecoilComponentValueV2(
-    recordGroupDefinitionState,
+  const recordGroupDefinitions = useRecoilComponentValueV2(
+    recordGroupDefinitionsComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -20,11 +20,11 @@ export const useRecordGroups = ({
   });
 
   const viewGroupFieldMetadataItem = useMemo(() => {
-    if (recordIndexGroupDefinitions.length === 0) return null;
+    if (recordGroupDefinitions.length === 0) return null;
     // We're assuming that all groups have the same fieldMetadataId for now
     const fieldMetadataId =
-      'fieldMetadataId' in recordIndexGroupDefinitions[0]
-        ? recordIndexGroupDefinitions[0].fieldMetadataId
+      'fieldMetadataId' in recordGroupDefinitions[0]
+        ? recordGroupDefinitions[0].fieldMetadataId
         : null;
 
     if (!fieldMetadataId) return null;
@@ -32,23 +32,22 @@ export const useRecordGroups = ({
     return objectMetadataItem.fields.find(
       (field) => field.id === fieldMetadataId,
     );
-  }, [objectMetadataItem, recordIndexGroupDefinitions]);
+  }, [objectMetadataItem, recordGroupDefinitions]);
 
   const visibleRecordGroups = useMemo(
     () =>
-      recordIndexGroupDefinitions
+      recordGroupDefinitions
         .filter((boardGroup) => boardGroup.isVisible)
         .sort(
           (boardGroupA, boardGroupB) =>
             boardGroupA.position - boardGroupB.position,
         ),
-    [recordIndexGroupDefinitions],
+    [recordGroupDefinitions],
   );
 
   const hiddenRecordGroups = useMemo(
-    () =>
-      recordIndexGroupDefinitions.filter((boardGroup) => !boardGroup.isVisible),
-    [recordIndexGroupDefinitions],
+    () => recordGroupDefinitions.filter((boardGroup) => !boardGroup.isVisible),
+    [recordGroupDefinitions],
   );
 
   return {

@@ -4,7 +4,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
@@ -31,7 +31,7 @@ export const RecordIndexBoardDataLoaderEffect = ({
   );
 
   const recordIndexGroupDefinitions = useRecoilComponentValueV2(
-    recordGroupDefinitionState,
+    recordGroupDefinitionsComponentState,
   );
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
@@ -70,7 +70,9 @@ export const RecordIndexBoardDataLoaderEffect = ({
     setColumns(recordIndexGroupDefinitions);
   }, [recordIndexGroupDefinitions, setColumns]);
 
-  // FixMe: Why do we have 2 useEffects for setFieldDefinitions?
+  // TODO: Remove this duplicate useEffect by ensuring it's not here because
+  // We want it to be triggered by a change of objectMetadataItem, which would be an anti-pattern
+  // As it is an unnecessary dependency
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);

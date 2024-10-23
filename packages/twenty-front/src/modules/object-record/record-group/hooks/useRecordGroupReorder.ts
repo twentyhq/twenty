@@ -2,7 +2,7 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
 
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
-import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
@@ -18,8 +18,8 @@ export const useRecordGroupReorder = ({
   objectNameSingular,
   viewBarId,
 }: UseRecordGroupHandlersParams) => {
-  const setRecordIndexGroupDefinitions = useSetRecoilComponentStateV2(
-    recordGroupDefinitionState,
+  const setRecordGroupDefinitions = useSetRecoilComponentStateV2(
+    recordGroupDefinitionsComponentState,
   );
 
   const { visibleRecordGroups } = useRecordGroups({
@@ -46,10 +46,10 @@ export const useRecordGroupReorder = ({
         (group, index) => ({ ...group, position: index }),
       );
 
-      setRecordIndexGroupDefinitions(updatedGroups);
+      setRecordGroupDefinitions(updatedGroups);
       saveViewGroups(mapRecordGroupDefinitionsToViewGroups(updatedGroups));
     },
-    [saveViewGroups, setRecordIndexGroupDefinitions, visibleRecordGroups],
+    [saveViewGroups, setRecordGroupDefinitions, visibleRecordGroups],
   );
 
   return {
