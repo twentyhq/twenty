@@ -22,21 +22,22 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
-import { ActionMenu } from '@/action-menu/components/ActionMenu';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewField } from '@/views/types/ViewField';
+import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { ViewGroup } from '@/views/types/ViewGroup';
-import { mapViewGroupsToGroupDefinitions } from '@/views/utils/mapViewGroupsToGroupDefinitions';
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { recordGroupDefinitionState } from '@/object-record/record-group/states/recordGroupDefinitionState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -138,8 +139,8 @@ export const RecordIndexContainer = () => {
     [objectMetadataItem, recordGroupDefinitionCallbackState, setColumns],
   );
 
-  const setContextStoreTargetedRecordsRule = useSetRecoilState(
-    contextStoreTargetedRecordsRuleState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   return (
@@ -170,8 +171,8 @@ export const RecordIndexContainer = () => {
                 mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
               );
               setContextStoreTargetedRecordsRule((prev) => ({
-                  ...prev,
-                  filters: mapViewFiltersToFilters(
+                ...prev,
+                filters: mapViewFiltersToFilters(
                   view.viewFilters,
                   filterDefinitions,
                 ),
@@ -194,7 +195,6 @@ export const RecordIndexContainer = () => {
             viewBarId={recordIndexId}
           />
         </SpreadsheetImportProvider>
-
         {recordIndexViewType === ViewType.Table && (
           <>
             <RecordIndexTableContainer
@@ -221,7 +221,7 @@ export const RecordIndexContainer = () => {
             />
           </StyledContainerWithPadding>
         )}
-        <ActionMenu actionMenuId={recordIndexId} />
+        <RecordIndexActionMenu actionMenuId={recordIndexId} />
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );

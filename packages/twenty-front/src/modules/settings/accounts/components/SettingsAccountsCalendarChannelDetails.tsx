@@ -2,13 +2,12 @@ import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
+import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { Card } from '@/ui/layout/card/components/Card';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { H2Title } from 'twenty-ui';
+import { H2Title, Toggle } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
-import { Card } from '@/ui/layout/card/components/Card';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import { Toggle } from '@/ui/input/components/Toggle';
 
 const StyledDetailsContainer = styled.div`
   display: flex;

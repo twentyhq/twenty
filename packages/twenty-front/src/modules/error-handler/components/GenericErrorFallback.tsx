@@ -1,18 +1,19 @@
+import { ThemeProvider, useTheme } from '@emotion/react';
+import isEmpty from 'lodash.isempty';
 import { useEffect, useState } from 'react';
 import { FallbackProps } from 'react-error-boundary';
 import { useLocation } from 'react-router-dom';
-import { ThemeProvider, useTheme } from '@emotion/react';
-import isEmpty from 'lodash.isempty';
-import { IconRefresh, THEME_LIGHT } from 'twenty-ui';
-
-import { Button } from '@/ui/input/button/components/Button';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
+  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+  IconRefresh,
+  THEME_LIGHT,
+} from 'twenty-ui';
+
+import { Button } from '@/ui/input/button/components/Button';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type GenericErrorFallbackProps = FallbackProps;
