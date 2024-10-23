@@ -7,6 +7,7 @@ import {
   GraphqlApiType,
   RestApiService,
 } from 'src/engine/api/rest/rest-api.service';
+import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 
 @Injectable()
 export class RestApiCoreService {
@@ -33,10 +34,14 @@ export class RestApiCoreService {
     return await this.restApiService.call(GraphqlApiType.CORE, request, data);
   }
 
+  @LogExecutionTime()
   async createMany(request: Request) {
+    //TODO : write this within try catch?
+
     const data = await this.coreQueryBuilderFactory.createMany(request);
 
-    return await this.restApiService.call(GraphqlApiType.CORE, request, data);
+    // TODO: emit create event
+    return data;
   }
 
   async update(request: Request) {

@@ -26,6 +26,9 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
+import { RestMetadataMiddleware } from 'src/engine/middlewares/rest-metadata.middleware';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 
 @Module({
@@ -53,6 +56,9 @@ import { CoreEngineModule } from './engine/core-modules/core-engine.module';
     RestApiModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),
+
+    DataSourceModule,
+    WorkspaceMetadataCacheModule,
   ],
 })
 export class AppModule {
@@ -86,5 +92,9 @@ export class AppModule {
     consumer
       .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
+
+    consumer
+      .apply(RestMetadataMiddleware)
+      .forRoutes({ path: 'rest/batch/*', method: RequestMethod.ALL });
   }
 }
