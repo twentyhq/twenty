@@ -1,4 +1,4 @@
-import { RecordShowActionMenuBar } from '@/action-menu/components/RecordShowActionMenuBar';
+import { RecordShowRightDrawerActionMenuBar } from '@/action-menu/components/RecordShowRightDrawerActionMenuBar';
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
@@ -221,7 +221,7 @@ export const ShowPageSubContainer = ({
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
           <StyledButtonContainer>
-            <RecordShowActionMenuBar />
+            <RecordShowRightDrawerActionMenuBar />
           </StyledButtonContainer>
         )}
       </StyledShowPageRightContainer>
