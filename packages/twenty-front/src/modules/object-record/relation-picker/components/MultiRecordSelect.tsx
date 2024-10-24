@@ -46,15 +46,13 @@ export const MultiRecordSelect = ({
     RelationPickerScopeInternalContext,
   );
 
-  const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
+  const { objectRecordsIdsMultiSelectState } =
     useObjectRecordMultiSelectScopedStates(relationPickerScopedId);
 
   const { resetSelectedItem } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
-  const recordMultiSelectIsLoading = useRecoilValue(
-    recordMultiSelectIsLoadingState,
-  );
+
   const objectRecordsIdsMultiSelect = useRecoilValue(
     objectRecordsIdsMultiSelectState,
   );
