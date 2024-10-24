@@ -18,6 +18,4 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) blog Link: [blog](https://twenty.com/)
 
-» 24-October-2024 by [Khaan25](https://oss.gg/Khaan25) blog Link: [blog](https://medium.com/@ziaurzai/detailed-guide-on-self-hosting-twenty-crm-on-your-server-troubleshooting-and-best-practices-1f2ca15cd6eb)
-
 ---
