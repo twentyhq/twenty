@@ -7,7 +7,6 @@ import { AppPath } from '@ui/utilities/types/AppPath';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-
 export type InfoAccent = 'blue' | 'danger';
 export type InfoProps = {
   accent?: InfoAccent;
