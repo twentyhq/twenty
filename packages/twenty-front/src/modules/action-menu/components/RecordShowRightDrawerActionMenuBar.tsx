@@ -2,7 +2,7 @@ import { RecordShowActionMenuBarEntry } from '@/action-menu/components/RecordSho
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordShowActionMenuBar = () => {
+export const RecordShowRightDrawerActionMenuBar = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );

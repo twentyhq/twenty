@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -9,7 +9,9 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
+import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { COMMAND_MENU_COMMANDS } from '@/command-menu/constants/CommandMenuCommands';
+import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ALL_ICONS } from '@ui/display/icon/providers/internal/AllIcons';
 import { sortByProperty } from '~/utils/array/sortByProperty';
@@ -27,10 +29,43 @@ export const useCommandMenu = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const openCommandMenu = useCallback(() => {
-    setIsCommandMenuOpened(true);
-    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
-  }, [setHotkeyScopeAndMemorizePreviousScope, setIsCommandMenuOpened]);
+  const mainContextStoreComponentInstanceId = useRecoilValue(
+    mainContextStoreComponentInstanceIdState,
+  );
+
+  const openCommandMenu = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        if (isDefined(mainContextStoreComponentInstanceId)) {
+          const actionMenuEntries = snapshot.getLoadable(
+            actionMenuEntriesComponentSelector.selectorFamily({
+              instanceId: mainContextStoreComponentInstanceId,
+            }),
+          );
+
+          const actionCommands = actionMenuEntries
+            .getValue()
+            ?.map((actionMenuEntry) => ({
+              id: actionMenuEntry.key,
+              label: actionMenuEntry.label,
+              Icon: actionMenuEntry.Icon,
+              onCommandClick: actionMenuEntry.onClick,
+              type: CommandType.Action,
+            }));
+
+          setCommands(actionCommands);
+        }
+
+        setIsCommandMenuOpened(true);
+        setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+      },
+    [
+      mainContextStoreComponentInstanceId,
+      setCommands,
+      setHotkeyScopeAndMemorizePreviousScope,
+      setIsCommandMenuOpened,
+    ],
+  );
 
   const closeCommandMenu = useRecoilCallback(
     ({ snapshot }) =>
