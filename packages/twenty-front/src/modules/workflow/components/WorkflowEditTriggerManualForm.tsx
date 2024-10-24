@@ -5,7 +5,6 @@ import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/constants/Manual
 import { WorkflowManualTrigger } from '@/workflow/types/Workflow';
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
-import { useId } from 'react';
 import { IconHandMove } from 'twenty-ui';
 
 type WorkflowEditTriggerManualFormProps =
@@ -27,8 +26,6 @@ export const WorkflowEditTriggerManualForm = ({
 }: WorkflowEditTriggerManualFormProps) => {
   const theme = useTheme();
 
-  const inputRootId = useId();
-
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
@@ -44,7 +41,7 @@ export const WorkflowEditTriggerManualForm = ({
       headerType="Trigger · Manual"
     >
       <Select
-        dropdownId={`${inputRootId}-availability`}
+        dropdownId="workflow-edit-manual-trigger-availability"
         label="Available"
         fullWidth
         disabled={readonly}
@@ -67,7 +64,7 @@ export const WorkflowEditTriggerManualForm = ({
 
       {trigger.settings.availability === 'WHEN_RECORD_SELECTED' ? (
         <Select
-          dropdownId={`${inputRootId}-object`}
+          dropdownId="workflow-edit-manual-trigger-object"
           label="Object"
           fullWidth
           value={trigger.settings.objectType}
