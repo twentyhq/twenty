@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isArray, isNonEmptyArray, isString } from '@sniptt/guards';
 
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -32,6 +32,7 @@ import { isFieldRichText } from '@/object-record/record-field/types/guards/isFie
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { isFieldTsVector } from '@/object-record/record-field/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { isDefined } from '~/utils/isDefined';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -57,7 +58,6 @@ export const isFieldValueEmpty = ({
     isFieldNumber(fieldDefinition) ||
     isFieldRating(fieldDefinition) ||
     isFieldBoolean(fieldDefinition) ||
-    isFieldRelation(fieldDefinition) ||
     isFieldRawJson(fieldDefinition) ||
     isFieldRichText(fieldDefinition) ||
     isFieldPosition(fieldDefinition)
@@ -72,11 +72,19 @@ export const isFieldValueEmpty = ({
     );
   }
 
+  if (isFieldRelation(fieldDefinition)) {
+    if (isArray(fieldValue)) {
+      return !isNonEmptyArray(fieldValue);
+    }
+    return isValueEmpty(fieldValue);
+  }
+
   if (isFieldMultiSelect(fieldDefinition) || isFieldArray(fieldDefinition)) {
     return (
       !isFieldArrayValue(fieldValue) ||
       !isFieldMultiSelectValue(fieldValue, selectOptionValues) ||
-      !isDefined(fieldValue)
+      !isDefined(fieldValue) ||
+      !isNonEmptyArray(fieldValue)
     );
   }
 
@@ -128,6 +136,10 @@ export const isFieldValueEmpty = ({
       !isFieldPhonesValue(fieldValue) ||
       isValueEmpty(fieldValue.primaryPhoneNumber)
     );
+  }
+
+  if (isFieldTsVector(fieldDefinition)) {
+    return false;
   }
 
   throw new Error(

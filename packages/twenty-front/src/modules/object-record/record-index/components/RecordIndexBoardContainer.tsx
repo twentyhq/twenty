@@ -46,9 +46,10 @@ export const RecordIndexBoardContainer = ({
         createOneRecord,
         updateOneRecord,
         deleteOneRecord,
+        recordBoardId,
       }}
     >
-      <RecordBoard recordBoardId={recordBoardId} />
+      <RecordBoard />
     </RecordBoardContext.Provider>
   );
 };

@@ -69,7 +69,9 @@ export const PhoneCountryPickerDropdownButton = ({
 
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
-  const { isDropdownOpen, closeDropdown } = useDropdown('country-picker');
+  const { isDropdownOpen, closeDropdown } = useDropdown(
+    CountryPickerHotkeyScope.CountryPicker,
+  );
 
   const handleChange = (countryCode: string) => {
     onChange(countryCode);

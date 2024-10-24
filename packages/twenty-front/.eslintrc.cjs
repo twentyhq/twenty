@@ -21,7 +21,14 @@ module.exports = {
       parserOptions: {
         project: ['packages/twenty-front/tsconfig.{json,*.json}'],
       },
-      rules: {},
+      plugins: ['project-structure'],
+      settings: {
+        'project-structure/folder-structure-config-path':
+          'packages/twenty-front/folderStructure.json',
+      },
+      rules: {
+        'project-structure/folder-structure': 'error',
+      },
     },
   ],
 };

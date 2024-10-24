@@ -13,6 +13,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { sleep } from '~/utils/sleep';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -132,7 +133,7 @@ export const useDeleteManyRecords = ({
         })
         .catch((error: Error) => {
           cachedRecords.forEach((cachedRecord) => {
-            if (!cachedRecord) {
+            if (isUndefinedOrNull(cachedRecord?.id)) {
               return;
             }
 
