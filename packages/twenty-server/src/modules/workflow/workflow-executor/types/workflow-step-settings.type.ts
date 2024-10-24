@@ -1,4 +1,8 @@
+export type OutputSchema = object;
+
 type BaseWorkflowStepSettings = {
+  input: object;
+  outputSchema: OutputSchema;
   errorHandlingOptions: {
     retryOnFailure: {
       value: boolean;
@@ -12,6 +16,7 @@ type BaseWorkflowStepSettings = {
 export type WorkflowCodeStepInput = {
   serverlessFunctionId: string;
   serverlessFunctionVersion: string;
+  payloadInput: object;
 };
 
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {

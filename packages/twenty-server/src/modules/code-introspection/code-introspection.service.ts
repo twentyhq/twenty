@@ -7,6 +7,7 @@ import {
   Project,
   SyntaxKind,
 } from 'ts-morph';
+import { faker } from '@faker-js/faker';
 
 import {
   CodeIntrospectionException,
@@ -88,5 +89,67 @@ export class CodeIntrospectionService {
       name: parameter.getName(),
       type: parameter.getType().getText(),
     };
+  }
+
+  public generateInputData(fileContent: string, fileName = 'temp.ts') {
+    const parameters = this.analyze(fileContent, fileName);
+    const fakeData = this.generateFakeDataFromParams(parameters);
+
+    return fakeData;
+  }
+
+  private generateFakeDataFromParams(
+    params: FunctionParameter[],
+  ): Record<string, any> {
+    const data: Record<string, any> = {};
+
+    params.forEach((param) => {
+      const type = param.type;
+
+      data[param.name] = this.generateFakeValueFromType(type);
+    });
+
+    return data;
+  }
+
+  private generateFakeValueFromType(type: string): any {
+    if (type === 'string') {
+      return faker.lorem.word();
+    } else if (type === 'number') {
+      return faker.number.int();
+    } else if (type === 'boolean') {
+      return faker.datatype.boolean();
+    } else if (type === 'Date') {
+      return faker.date.recent();
+    } else if (type.endsWith('[]')) {
+      const elementType = type.replace('[]', '');
+
+      return Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, () =>
+        this.generateFakeValueFromType(elementType),
+      );
+    } else if (type.startsWith('{') && type.endsWith('}')) {
+      return this.generateFakeObjectFromTypeString(type);
+    } else {
+      return null;
+    }
+  }
+
+  private generateFakeObjectFromTypeString(type: string): Record<string, any> {
+    const objData: Record<string, any> = {};
+
+    // Remove curly braces and split the object structure
+    const properties = type
+      .slice(1, -1)
+      .split(';')
+      .map((p) => p.trim())
+      .filter((p) => p);
+
+    properties.forEach((property) => {
+      const [key, valueType] = property.split(':').map((s) => s.trim());
+
+      objData[key] = this.generateFakeValueFromType(valueType);
+    });
+
+    return objData;
   }
 }

@@ -1,11 +1,18 @@
+import { OutputSchema } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
+
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
 }
 
+type BaseWorkflowTriggerSettings = {
+  input?: object;
+  outputSchema: OutputSchema;
+};
+
 type BaseTrigger = {
   name: string;
   type: WorkflowTriggerType;
-  input?: object;
+  settings: BaseWorkflowTriggerSettings;
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {
