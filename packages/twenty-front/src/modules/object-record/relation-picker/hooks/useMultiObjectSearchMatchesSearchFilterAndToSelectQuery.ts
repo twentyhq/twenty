@@ -12,6 +12,7 @@ import {
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { formatSearchResults } from '@/object-record/relation-picker/hooks/useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery';
+import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
@@ -35,7 +36,10 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
     .filter(({ isSystem, isRemote }) => !isSystem && !isRemote)
     .filter(({ nameSingular }) => {
       return !excludedObjects?.includes(nameSingular as CoreObjectNameSingular);
-    });
+    })
+    .filter((object) =>
+      isObjectMetadataItemSearchableInCombinedRequest(object),
+    );
 
   const objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem =
     Object.fromEntries(
