@@ -4,7 +4,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { TextArea } from '@/ui/input/components/TextArea';
 import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
 import { VariableTagInput } from '@/workflow/search-variables/components/VariableTagInput';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
@@ -241,15 +240,16 @@ export const WorkflowEditActionFormSendEmail = (
             name="body"
             control={form.control}
             render={({ field }) => (
-              <TextArea
+              <VariableTagInput
+                inputId="email-body-input"
                 label="Body"
                 placeholder="Enter email body (use {{variable}} for dynamic content)"
                 value={field.value}
-                minRows={4}
                 onChange={(email) => {
                   field.onChange(email);
                   handleSave();
                 }}
+                multiline
               />
             )}
           />

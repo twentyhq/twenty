@@ -1,5 +1,7 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useStartNodeCreation } from '@/workflow/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
@@ -13,6 +15,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
   const { startNodeCreation } = useStartNodeCreation();
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
+  const setHotkeyScope = useSetHotkeyScope();
+
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
   const handleSelectionChange = useCallback(
@@ -38,9 +42,11 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       }
 
       setWorkflowSelectedNode(selectedNode.id);
+      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       openRightDrawer(RightDrawerPages.WorkflowStepEdit);
     },
     [
+      setHotkeyScope,
       closeRightDrawer,
       openRightDrawer,
       setWorkflowSelectedNode,

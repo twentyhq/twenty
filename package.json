@@ -49,6 +49,7 @@
     "@stoplight/elements": "^8.0.5",
     "@swc/jest": "^0.2.29",
     "@tabler/icons-react": "^2.44.0",
+    "@tiptap/extension-hard-break": "^2.9.1",
     "@types/dompurify": "^3.0.5",
     "@types/facepaint": "^1.2.5",
     "@types/lodash.camelcase": "^4.3.7",
