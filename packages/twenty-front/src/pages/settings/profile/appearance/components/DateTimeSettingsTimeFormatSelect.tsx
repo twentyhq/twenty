@@ -20,7 +20,7 @@ export const DateTimeSettingsTimeFormatSelect = ({
 
   const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
 
-  const systemTimeFormat = detectTimeFormat();
+  const systemTimeFormat = TimeFormat[detectTimeFormat()];
 
   return (
     <Select

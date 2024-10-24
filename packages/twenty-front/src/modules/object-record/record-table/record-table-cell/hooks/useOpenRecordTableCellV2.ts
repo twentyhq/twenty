@@ -22,6 +22,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -41,7 +42,7 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
-  const { onIndexIdentifierClick } = useContext(RecordIndexRootPropsContext);
+  const { indexIdentifierUrl } = useContext(RecordIndexRootPropsContext);
   const moveEditModeToTableCellPosition =
     useMoveEditModeToTableCellPosition(tableScopeId);
 
@@ -60,6 +61,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const setViewableRecordNameSingular = useSetRecoilState(
     viewableRecordNameSingularState,
   );
+
+  const navigate = useNavigate();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot }) =>
@@ -95,7 +98,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         if (isFirstColumnCell && !isEmpty && !isActionButtonClick) {
           leaveTableFocus();
 
-          onIndexIdentifierClick(recordId);
+          navigate(indexIdentifierUrl(recordId));
 
           return;
         }
@@ -143,7 +146,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       openRightDrawer,
       setViewableRecordId,
       setViewableRecordNameSingular,
-      onIndexIdentifierClick,
+      indexIdentifierUrl,
+      navigate,
     ],
   );
 

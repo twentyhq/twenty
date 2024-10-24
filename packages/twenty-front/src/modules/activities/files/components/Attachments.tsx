@@ -1,6 +1,15 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef, useState } from 'react';
-import { IconPlus } from 'twenty-ui';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Button,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  IconPlus,
+} from 'twenty-ui';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
@@ -8,15 +17,6 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/input/button/components/Button';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import {
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAttachmentsContainer = styled.div`

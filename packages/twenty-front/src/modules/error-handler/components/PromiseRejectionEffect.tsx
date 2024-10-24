@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -20,7 +20,7 @@ export const PromiseRejectionEffect = () => {
           },
         );
       } else {
-        enqueueSnackBar(`Error: ${event.reason}`, {
+        enqueueSnackBar(`${error.message}`, {
           variant: SnackBarVariant.Error,
         });
       }

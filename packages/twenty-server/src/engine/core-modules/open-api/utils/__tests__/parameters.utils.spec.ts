@@ -84,7 +84,7 @@ describe('computeParameters', () => {
         in: 'query',
         description: `Filters objects returned.  
     Should have the following shape: **field_1[COMPARATOR]:value_1,field_2[COMPARATOR]:value_2...
-    To filter on nested objects use **field.nestedField[COMPARATOR]:value_1
+    To filter on composite type fields use **field.subField[COMPARATOR]:value_1
     **
     Available comparators are **${Object.values(FilterComparators).join(
       '**, **',
@@ -106,7 +106,7 @@ describe('computeParameters', () => {
           },
           simpleNested: {
             value: 'emails.primaryEmail[eq]:foo99@example.com',
-            description: 'A simple nested filter param',
+            description: 'A simple composite type filter param',
           },
           complex: {
             value:

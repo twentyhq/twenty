@@ -34,10 +34,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 <ArticleTable options={[
     ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
     ['PG_SSL_ALLOW_SELF_SIGNED', 'false', 'Allow self signed certificates'],
-    ['REDIS_HOST', '127.0.0.1', 'Redis connection host'],
-    ['REDIS_PORT', '6379', 'Redis connection port'],
-    ['REDIS_USERNAME', 'redis_username', 'Redis connection username'],
-    ['REDIS_PASSWORD', 'redis_pwd', 'Redis connection password'],
+    ['REDIS_URL', 'redis://localhost:6379', 'Redis connection url'],
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
     ['PORT', '3000', 'Port'],
@@ -63,7 +60,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['REFRESH_TOKEN_COOL_DOWN', '1m', 'Refresh token cooldown'],
     ['FILE_TOKEN_SECRET', '<random>', 'Secret used for the file tokens'],
     ['FILE_TOKEN_EXPIRES_IN', '1d', 'File token expiration time'],
-    ['API_TOKEN_EXPIRES_IN', '1000y', 'Api token expiration time'],
+    ['API_TOKEN_EXPIRES_IN', '1000y', 'API token expiration time'],
     ]}></ArticleTable>
 
 ### Auth
@@ -94,10 +91,10 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['EMAIL_FROM_NAME', 'John from YourDomain', 'Global name From: header used to send emails'],
     ['EMAIL_SYSTEM_ADDRESS', 'system@yourdomain.com', 'Email address used as a destination to send internal system notification'],
     ['EMAIL_DRIVER', 'logger', "Email driver: 'logger' (to log emails in console) or 'smtp'"],
-    ['EMAIL_SMTP_HOST', '', 'Email Smtp Host'],
-    ['EMAIL_SMTP_PORT', '', 'Email Smtp Port'],
-    ['EMAIL_SMTP_USER', '', 'Email Smtp User'],
-    ['EMAIL_SMTP_PASSWORD', '', 'Email Smtp Password'],
+    ['EMAIL_SMTP_HOST', '', 'Email SMTP Host'],
+    ['EMAIL_SMTP_PORT', '', 'Email SMTP Port'],
+    ['EMAIL_SMTP_USER', '', 'Email SMTP User'],
+    ['EMAIL_SMTP_PASSWORD', '', 'Email SMTP Password'],
   ]}></ArticleTable>
 
 #### Email SMTP Server configuration examples
@@ -146,7 +143,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['STORAGE_S3_ENDPOINT', '', 'Use if a different Endpoint is needed (for example Google)'],
     ['STORAGE_S3_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
     ['STORAGE_S3_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
-    ['STORAGE_LOCAL_PATH', '.local-storage', 'data path (local storage)'],
+    ['STORAGE_LOCAL_PATH', '.local-storage', 'Data path (local storage)'],
     ]}></ArticleTable>
 
 ### Custom Code Execution
@@ -204,7 +201,7 @@ This feature is WIP and is not yet useful for most users.
 
 <ArticleTable options={[
     ['SUPPORT_DRIVER', 'front', "Support driver ('front' or 'none')"],
-    ['SUPPORT_FRONT_HMAC_KEY', '<secret>', 'Suport chat key'],
+    ['SUPPORT_FRONT_HMAC_KEY', '<secret>', 'Support chat key'],
     ['SUPPORT_FRONT_CHAT_ID', '<id>', 'Support chat id'],
     ]}></ArticleTable>
 

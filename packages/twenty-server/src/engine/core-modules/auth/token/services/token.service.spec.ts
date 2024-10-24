@@ -17,6 +17,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { TokenService } from './token.service';
 
@@ -46,6 +47,12 @@ describe('TokenService', () => {
         },
         {
           provide: EmailService,
+          useValue: {
+            send: jest.fn(),
+          },
+        },
+        {
+          provide: SSOService,
           useValue: {
             send: jest.fn(),
           },

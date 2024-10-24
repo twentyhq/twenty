@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -17,7 +17,7 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
+import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);

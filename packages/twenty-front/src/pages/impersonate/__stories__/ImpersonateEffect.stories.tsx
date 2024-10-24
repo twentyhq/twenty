@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -8,6 +7,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
+import { AppPath } from '@/types/AppPath';
 import { ImpersonateEffect } from '../ImpersonateEffect';
 
 const meta: Meta<PageDecoratorArgs> = {

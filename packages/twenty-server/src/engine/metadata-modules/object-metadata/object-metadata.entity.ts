@@ -75,6 +75,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ nullable: true, type: 'uuid' })
   imageIdentifierFieldMetadataId?: string | null;
 
+  @Column({ default: true })
+  shouldSyncLabelAndName: boolean;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
@@ -86,7 +89,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @OneToMany(() => IndexMetadataEntity, (index) => index.objectMetadata, {
     cascade: true,
   })
-  indexes: Relation<IndexMetadataEntity[]>;
+  indexMetadatas: Relation<IndexMetadataEntity[]>;
 
   @OneToMany(
     () => RelationMetadataEntity,
