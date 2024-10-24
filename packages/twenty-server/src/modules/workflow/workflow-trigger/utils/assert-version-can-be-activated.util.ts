@@ -7,7 +7,11 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  WorkflowManualTriggerAvailability,
+  WorkflowManualTriggerSettings,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export function assertVersionCanBeActivated(
   workflowVersion: WorkflowVersionWorkspaceEntity,
@@ -68,6 +72,9 @@ function assertTriggerSettingsAreValid(
     case WorkflowTriggerType.DATABASE_EVENT:
       assertDatabaseEventTriggerSettingsAreValid(settings);
       break;
+    case WorkflowTriggerType.MANUAL:
+      assertManualTriggerSettingsAreValid(settings);
+      break;
     default:
       throw new WorkflowTriggerException(
         'Invalid trigger type for enabling workflow trigger',
@@ -82,5 +89,31 @@ function assertDatabaseEventTriggerSettingsAreValid(settings: any) {
       'No event name provided in database event trigger',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
     );
+  }
+}
+
+function assertManualTriggerSettingsAreValid(
+  settings: WorkflowManualTriggerSettings,
+) {
+  switch (settings.availability) {
+    case WorkflowManualTriggerAvailability.EVERYWHERE: {
+      break;
+    }
+    case WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED: {
+      if (typeof settings.objectType !== 'string') {
+        throw new WorkflowTriggerException(
+          'No object type in manual trigger',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      break;
+    }
+    default: {
+      throw new WorkflowTriggerException(
+        'Invalid manual trigger availability',
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+      );
+    }
   }
 }

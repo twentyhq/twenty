@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-const StyledTriggerHeader = styled.div`
+const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   display: flex;
@@ -9,7 +9,7 @@ const StyledTriggerHeader = styled.div`
   padding: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledTriggerHeaderTitle = styled.p`
+const StyledHeaderTitle = styled.p`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   font-size: ${({ theme }) => theme.font.size.xl};
@@ -17,12 +17,12 @@ const StyledTriggerHeaderTitle = styled.p`
   margin: ${({ theme }) => theme.spacing(3)} 0;
 `;
 
-const StyledTriggerHeaderType = styled.p`
+const StyledHeaderType = styled.p`
   color: ${({ theme }) => theme.font.color.tertiary};
   margin: 0;
 `;
 
-const StyledTriggerHeaderIconContainer = styled.div`
+const StyledHeaderIconContainer = styled.div`
   align-self: flex-start;
   display: flex;
   justify-content: center;
@@ -32,30 +32,35 @@ const StyledTriggerHeaderIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const WorkflowEditActionFormBase = ({
-  ActionIcon,
-  actionTitle,
-  actionType,
+const StyledContentContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(6)};
+  display: flex;
+  flex-direction: column;
+  row-gap: ${({ theme }) => theme.spacing(4)};
+`;
+
+export const WorkflowEditGenericFormBase = ({
+  HeaderIcon,
+  headerTitle,
+  headerType,
   children,
 }: {
-  ActionIcon: React.ReactNode;
-  actionTitle: string;
-  actionType: string;
+  HeaderIcon: React.ReactNode;
+  headerTitle: string;
+  headerType: string;
   children: React.ReactNode;
 }) => {
   return (
     <>
-      <StyledTriggerHeader>
-        <StyledTriggerHeaderIconContainer>
-          {ActionIcon}
-        </StyledTriggerHeaderIconContainer>
+      <StyledHeader>
+        <StyledHeaderIconContainer>{HeaderIcon}</StyledHeaderIconContainer>
 
-        <StyledTriggerHeaderTitle>{actionTitle}</StyledTriggerHeaderTitle>
+        <StyledHeaderTitle>{headerTitle}</StyledHeaderTitle>
 
-        <StyledTriggerHeaderType>{actionType}</StyledTriggerHeaderType>
-      </StyledTriggerHeader>
+        <StyledHeaderType>{headerType}</StyledHeaderType>
+      </StyledHeader>
 
-      {children}
+      <StyledContentContainer>{children}</StyledContentContainer>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
 import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
-import { WorkflowEditTriggerForm } from '@/workflow/components/WorkflowEditTriggerForm';
+import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
+import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
   WorkflowAction,
   WorkflowTrigger,
@@ -41,12 +42,36 @@ export const WorkflowStepDetail = ({
 
   switch (stepDefinition.type) {
     case 'trigger': {
-      return (
-        <WorkflowEditTriggerForm
-          trigger={stepDefinition.definition}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-        />
+      if (!isDefined(stepDefinition.definition)) {
+        throw new Error(
+          'Expected the trigger to be defined at this point. Ensure the trigger has been set with a default value before trying to edit it.',
+        );
+      }
+
+      switch (stepDefinition.definition.type) {
+        case 'DATABASE_EVENT': {
+          return (
+            <WorkflowEditTriggerDatabaseEventForm
+              trigger={stepDefinition.definition}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+            />
+          );
+        }
+        case 'MANUAL': {
+          return (
+            <WorkflowEditTriggerManualForm
+              trigger={stepDefinition.definition}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+            />
+          );
+        }
+      }
+
+      return assertUnreachable(
+        stepDefinition.definition,
+        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
       );
     }
     case 'action': {
@@ -70,6 +95,11 @@ export const WorkflowStepDetail = ({
           );
         }
       }
+
+      return assertUnreachable(
+        stepDefinition.definition,
+        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
+      );
     }
   }
 

@@ -24,6 +24,7 @@ import {
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
+import { assertNever } from 'src/utils/assert';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -315,9 +316,13 @@ export class WorkflowTriggerWorkspaceService {
           workflowVersion.trigger,
           manager,
         );
-        break;
-      default:
-        break;
+
+        return;
+      case WorkflowTriggerType.MANUAL:
+        return;
+      default: {
+        assertNever(workflowVersion.trigger);
+      }
     }
   }
 
@@ -333,9 +338,12 @@ export class WorkflowTriggerWorkspaceService {
           workflowVersion.workflowId,
           manager,
         );
-        break;
+
+        return;
+      case WorkflowTriggerType.MANUAL:
+        return;
       default:
-        break;
+        assertNever(workflowVersion.trigger);
     }
   }
 

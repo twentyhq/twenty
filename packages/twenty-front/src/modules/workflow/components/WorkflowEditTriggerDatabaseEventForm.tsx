@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { OBJECT_EVENT_TRIGGERS } from '@/workflow/constants/ObjectEventTriggers';
-import { WorkflowTrigger } from '@/workflow/types/Workflow';
+import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -45,23 +45,23 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-type WorkflowEditTriggerFormProps =
+type WorkflowEditTriggerDatabaseEventFormProps =
   | {
-      trigger: WorkflowTrigger | undefined;
+      trigger: WorkflowDatabaseEventTrigger;
       readonly: true;
       onTriggerUpdate?: undefined;
     }
   | {
-      trigger: WorkflowTrigger | undefined;
+      trigger: WorkflowDatabaseEventTrigger;
       readonly?: false;
-      onTriggerUpdate: (trigger: WorkflowTrigger) => void;
+      onTriggerUpdate: (trigger: WorkflowDatabaseEventTrigger) => void;
     };
 
-export const WorkflowEditTriggerForm = ({
+export const WorkflowEditTriggerDatabaseEventForm = ({
   trigger,
   readonly,
   onTriggerUpdate,
-}: WorkflowEditTriggerFormProps) => {
+}: WorkflowEditTriggerDatabaseEventFormProps) => {
   const theme = useTheme();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -102,7 +102,7 @@ export const WorkflowEditTriggerForm = ({
 
         <StyledTriggerHeaderType>
           {isDefined(selectedEvent)
-            ? `Trigger . Record is ${selectedEvent.label}`
+            ? `Trigger · Record is ${selectedEvent.label}`
             : '-'}
         </StyledTriggerHeaderType>
       </StyledTriggerHeader>

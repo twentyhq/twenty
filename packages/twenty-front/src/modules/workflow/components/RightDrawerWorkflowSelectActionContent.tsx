@@ -24,18 +24,16 @@ export const RightDrawerWorkflowSelectActionContent = ({
   });
 
   return (
-    <>
-      <StyledActionListContainer>
-        {ACTIONS.map((action) => (
-          <MenuItem
-            LeftIcon={action.icon}
-            text={action.label}
-            onClick={() => {
-              return createStep(action.type);
-            }}
-          />
-        ))}
-      </StyledActionListContainer>
-    </>
+    <StyledActionListContainer>
+      {ACTIONS.map((action) => (
+        <MenuItem
+          LeftIcon={action.icon}
+          text={action.label}
+          onClick={() => {
+            return createStep(action.type);
+          }}
+        />
+      ))}
+    </StyledActionListContainer>
   );
 };
