@@ -1,6 +1,5 @@
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { IconDotsVertical } from 'twenty-ui';
+import { IconButton, IconDotsVertical } from 'twenty-ui';
 
 type AdvancedFilterRuleOptionsDropdownButtonProps = {
   dropdownId: string;
