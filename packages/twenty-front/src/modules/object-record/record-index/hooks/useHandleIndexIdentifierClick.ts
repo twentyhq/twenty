@@ -18,15 +18,15 @@ export const useHandleIndexIdentifierClick = ({
     recordIndexId,
   );
 
-  const handleIndexIdentifierClick = (recordId: string) => {
+  const indexIdentifierUrl = (recordId: string) => {
     const showPageURL = buildShowPageURL(
       objectMetadataItem.nameSingular,
       recordId,
       currentViewId,
     );
 
-    navigate(showPageURL);
+    return showPageURL;
   };
 
-  return { handleIndexIdentifierClick };
+  return { indexIdentifierUrl };
 };

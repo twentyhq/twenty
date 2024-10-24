@@ -39,7 +39,7 @@ const StyledContainer = withTheme(styled.div<
   Pick<
     ChipProps,
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
-  > & { theme: Theme } & { role: 'button' }
+  > & { theme: Theme }
 >`
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -139,7 +139,6 @@ export const Chip = ({
       size={size}
       variant={variant}
       onClick={onClick}
-      role="button"
       className={className}
     >
       {leftComponent}

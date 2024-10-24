@@ -3,6 +3,7 @@ import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipSize, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { UndecoratedLink } from '@ui/navigation';
 import { ThemeContext } from '@ui/theme';
 import { isDefined } from '@ui/utilities/isDefined';
 import { Nullable } from '@ui/utilities/types/Nullable';
@@ -20,6 +21,7 @@ export type AvatarChipProps = {
   className?: string;
   placeholderColorSeed?: string;
   onClick?: (event: MouseEvent) => void;
+  to?: string;
 };
 
 export enum AvatarChipVariant {
@@ -48,15 +50,16 @@ export const AvatarChip = ({
   className,
   placeholderColorSeed,
   onClick,
+  to,
   size = ChipSize.Small,
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
-  return (
+  const chip = (
     <Chip
       label={name}
       variant={
-        isDefined(onClick)
+        isDefined(onClick) || isDefined(to)
           ? variant === AvatarChipVariant.Regular
             ? ChipVariant.Highlighted
             : ChipVariant.Regular
@@ -92,9 +95,17 @@ export const AvatarChip = ({
           />
         )
       }
-      clickable={isDefined(onClick)}
-      onClick={onClick}
+      clickable={isDefined(onClick) || isDefined(to)}
+      onClick={to ? undefined : onClick}
       className={className}
     />
+  );
+
+  return to ? (
+    <UndecoratedLink to={to} onClick={onClick}>
+      {chip}
+    </UndecoratedLink>
+  ) : (
+    chip
   );
 };
