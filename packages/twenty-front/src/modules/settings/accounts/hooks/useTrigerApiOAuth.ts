@@ -8,21 +8,35 @@ import {
   useGenerateTransientTokenMutation,
 } from '~/generated/graphql';
 
-export const useTriggerGoogleApisOAuth = () => {
+const getProviderUrl = (provider: string) => {
+  switch (provider) {
+    case 'google':
+      return 'google-apis';
+    case 'microsoft':
+      return 'microsoft-apis';
+    default:
+      throw new Error(`Provider ${provider} is not supported`);
+  }
+};
+
+export const useTriggerApisOAuth = () => {
   const [generateTransientToken] = useGenerateTransientTokenMutation();
 
-  const triggerGoogleApisOAuth = useCallback(
-    async ({
-      redirectLocation,
-      messageVisibility,
-      calendarVisibility,
-      loginHint,
-    }: {
-      redirectLocation?: AppPath | string;
-      messageVisibility?: MessageChannelVisibility;
-      calendarVisibility?: CalendarChannelVisibility;
-      loginHint?: string;
-    } = {}) => {
+  const triggerApisOAuth = useCallback(
+    async (
+      provider: string,
+      {
+        redirectLocation,
+        messageVisibility,
+        calendarVisibility,
+        loginHint,
+      }: {
+        redirectLocation?: AppPath | string;
+        messageVisibility?: MessageChannelVisibility;
+        calendarVisibility?: CalendarChannelVisibility;
+        loginHint?: string;
+      } = {},
+    ) => {
       const authServerUrl = REACT_APP_SERVER_BASE_URL;
 
       const transientToken = await generateTransientToken();
@@ -46,10 +60,10 @@ export const useTriggerGoogleApisOAuth = () => {
 
       params += loginHint ? `&loginHint=${loginHint}` : '';
 
-      window.location.href = `${authServerUrl}/auth/google-apis?${params}`;
+      window.location.href = `${authServerUrl}/auth/${getProviderUrl(provider)}?${params}`;
     },
     [generateTransientToken],
   );
 
-  return { triggerGoogleApisOAuth };
+  return { triggerApisOAuth };
 };

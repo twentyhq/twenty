@@ -14,6 +14,7 @@ import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-e
 import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
 import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
 import { GoogleCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/google-calendar-driver.module';
+import { MicrosoftCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/microsoft-calendar-driver.module';
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
 import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
@@ -39,6 +40,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
     GoogleCalendarDriverModule,
+    MicrosoftCalendarDriverModule,
     BillingModule,
     RefreshAccessTokenManagerModule,
     CalendarEventParticipantManagerModule,

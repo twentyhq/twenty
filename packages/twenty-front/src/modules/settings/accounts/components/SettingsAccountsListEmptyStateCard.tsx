@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { IconGoogle } from 'twenty-ui';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTrigerApiOauth';
 import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -16,6 +16,7 @@ const StyledHeader = styled(CardHeader)`
 const StyledBody = styled(CardContent)`
   display: flex;
   justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 type SettingsAccountsListEmptyStateCardProps = {
@@ -25,11 +26,7 @@ type SettingsAccountsListEmptyStateCardProps = {
 export const SettingsAccountsListEmptyStateCard = ({
   label,
 }: SettingsAccountsListEmptyStateCardProps) => {
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-
-  const handleOnClick = async () => {
-    await triggerGoogleApisOAuth();
-  };
+  const { triggerApisOAuth } = useTriggerApisOAuth();
 
   return (
     <Card>
@@ -39,7 +36,13 @@ export const SettingsAccountsListEmptyStateCard = ({
           Icon={IconGoogle}
           title="Connect with Google"
           variant="secondary"
-          onClick={handleOnClick}
+          onClick={() => triggerApisOAuth('google')}
+        />
+        <Button
+          Icon={IconMicrosoft}
+          title="Connect with Microsoft"
+          variant="secondary"
+          onClick={() => triggerApisOAuth('microsoft')}
         />
       </StyledBody>
     </Card>

@@ -2,7 +2,7 @@ import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTrigerApiOauth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
@@ -47,7 +47,8 @@ export const WorkflowEditActionFormSendEmail = (
 ) => {
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
+
   const workflowId = useRecoilValue(workflowIdState);
   const redirectUrl = `/object/workflow/${workflowId}`;
 
@@ -75,7 +76,7 @@ export const WorkflowEditActionFormSendEmail = (
       !isDefined(scopes) ||
       !isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))
     ) {
-      await triggerGoogleApisOAuth({
+      await triggerApisOAuth('google', {
         redirectLocation: redirectUrl,
         loginHint: connectedAccount.handle,
       });
