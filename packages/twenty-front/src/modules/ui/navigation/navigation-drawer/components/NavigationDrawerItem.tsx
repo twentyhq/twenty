@@ -9,6 +9,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -36,6 +37,7 @@ export type NavigationDrawerItemProps = {
   soon?: boolean;
   count?: number;
   keyboard?: string[];
+  rightOptions?: ReactNode;
 };
 
 type StyledItemProps = Pick<
@@ -164,6 +166,7 @@ export const NavigationDrawerItem = ({
   count,
   keyboard,
   subItemState,
+  rightOptions,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -246,6 +249,7 @@ export const NavigationDrawerItem = ({
               </StyledKeyBoardShortcut>
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
+          {rightOptions && rightOptions}
         </StyledItemElementsContainer>
       </StyledItem>
     </StyledNavigationDrawerItemContainer>

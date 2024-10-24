@@ -53,8 +53,7 @@ const StyledRightContainer = styled.div`
 
 const StyledErrorDiv = styled.div`
   color: ${({ theme }) => theme.color.red};
-  padding: 0 ${({ theme }) => theme.spacing(2)}
-    ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => `0 ${theme.spacing(2)} ${theme.spacing(1)}`};
 `;
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;

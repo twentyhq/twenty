@@ -11,6 +11,7 @@ export enum CoreObjectNameSingular {
   ConnectedAccount = 'connectedAccount',
   TimelineActivity = 'timelineActivity',
   Favorite = 'favorite',
+  FavoriteFolder = 'favoriteFolder',
   Message = 'message',
   MessageChannel = 'messageChannel',
   MessageParticipant = 'messageParticipant',

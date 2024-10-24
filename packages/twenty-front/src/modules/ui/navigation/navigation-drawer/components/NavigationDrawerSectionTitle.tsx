@@ -1,20 +1,9 @@
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-
-import { currentUserState } from '@/auth/states/currentUserState';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useRecoilValue } from 'recoil';
+import React from 'react';
 import { isDefined } from 'twenty-ui';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-type NavigationDrawerSectionTitleProps = {
-  onClick?: () => void;
-  label: string;
-};
-
-const StyledTitle = styled.div<{ onClick?: () => void }>`
+const StyledTitle = styled.div`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.light};
@@ -23,38 +12,74 @@ const StyledTitle = styled.div<{ onClick?: () => void }>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   height: ${({ theme }) => theme.spacing(5)};
   padding: ${({ theme }) => theme.spacing(1)};
+  justify-content: space-between;
 
-  ${({ onClick, theme }) =>
-    !isUndefinedOrNull(onClick)
-      ? `&:hover {
-          cursor: pointer;
-          background-color:${theme.background.transparent.light};
-        }`
-      : ''}
+  &:hover {
+    cursor: pointer;
+    background-color: ${({ theme }) => theme.background.transparent.light};
+  }
 `;
+
+const StyledLabel = styled.div`
+  flex-grow: 1;
+`;
+
+type StyledRightIconProps = {
+  isMobile: boolean;
+};
+
+const StyledRightIcon = styled.div<StyledRightIconProps>`
+  cursor: pointer;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  transition: opacity 150ms ease-in-out;
+  opacity: ${({ isMobile }) => (isMobile ? 1 : 0)};
+
+  .title-container:hover & {
+    opacity: 1;
+  }
+
+  &:active {
+    cursor: pointer;
+  }
+`;
+
+type NavigationDrawerSectionTitleProps = {
+  onClick?: () => void;
+  onRightIconClick?: () => void;
+  label: string;
+  rightIcon?: React.ReactNode;
+};
 
 export const NavigationDrawerSectionTitle = ({
   onClick,
+  onRightIconClick,
   label,
+  rightIcon,
 }: NavigationDrawerSectionTitleProps) => {
-  const currentUser = useRecoilValue(currentUserState);
-  const loading = useIsPrefetchLoading();
-  const isNavigationDrawerExpanded = useRecoilValue(
-    isNavigationDrawerExpandedState,
-  );
+  const isMobile = useIsMobile();
 
-  const isSettingsPage = useIsSettingsPage();
+  const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (isDefined(onClick)) {
+      onClick();
+    }
+  };
 
-  if (loading && isDefined(currentUser)) {
-    return <NavigationDrawerSectionTitleSkeletonLoader />;
-  }
+  const handleRightIconClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (isDefined(onRightIconClick)) {
+      onRightIconClick();
+    }
+  };
+
   return (
-    <StyledTitle
-      onClick={
-        isNavigationDrawerExpanded || isSettingsPage ? onClick : undefined
-      }
-    >
-      {label}
+    <StyledTitle className="title-container" onClick={handleTitleClick}>
+      <StyledLabel>{label}</StyledLabel>
+      {rightIcon && (
+        <StyledRightIcon isMobile={isMobile} onClick={handleRightIconClick}>
+          {rightIcon}
+        </StyledRightIcon>
+      )}
     </StyledTitle>
   );
 };

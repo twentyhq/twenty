@@ -10,5 +10,14 @@ export const useIsPrefetchLoading = () => {
   const areFavoritesPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
   );
-  return !areViewsPrefetched || !areFavoritesPrefetched;
+
+  const areFavoritesFolderPrefetched = useRecoilValue(
+    prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
+  );
+
+  return (
+    !areViewsPrefetched ||
+    !areFavoritesPrefetched ||
+    !areFavoritesFolderPrefetched
+  );
 };
