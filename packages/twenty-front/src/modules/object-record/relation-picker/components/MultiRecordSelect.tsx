@@ -67,9 +67,6 @@ export const MultiRecordSelect = ({
   const relationPickerSearchFilter = useRecoilValue(
     relationPickerSearchFilterState,
   );
-  const debouncedSetSearchFilter = useDebouncedCallback(setSearchFilter, 100, {
-    leading: true,
-  });
 
   useEffect(() => {
     setHotkeyScope(relationPickerScopedId);
@@ -93,9 +90,9 @@ export const MultiRecordSelect = ({
 
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSetSearchFilter(event.currentTarget.value);
+      setSearchFilter(event.currentTarget.value);
     },
-    [debouncedSetSearchFilter],
+    [setSearchFilter],
   );
 
   return (
@@ -114,36 +111,30 @@ export const MultiRecordSelect = ({
         />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight hasMinHeight>
-          {recordMultiSelectIsLoading ? (
-            <MenuItem text="Loading..." />
-          ) : (
-            <>
-              <SelectableList
-                selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
-                selectableItemIdArray={objectRecordsIdsMultiSelect}
-                hotkeyScope={relationPickerScopedId}
-                onEnter={(selectedId) => {
-                  onChange?.(selectedId);
-                  resetSelectedItem();
-                }}
-              >
-                {objectRecordsIdsMultiSelect?.map((recordId) => {
-                  return (
-                    <MultipleObjectRecordSelectItem
-                      key={recordId}
-                      objectRecordId={recordId}
-                      onChange={(recordId) => {
-                        onChange?.(recordId);
-                        resetSelectedItem();
-                      }}
-                    />
-                  );
-                })}
-              </SelectableList>
-              {objectRecordsIdsMultiSelect?.length === 0 && (
-                <MenuItem text="No result" />
-              )}
-            </>
+          <SelectableList
+            selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
+            selectableItemIdArray={objectRecordsIdsMultiSelect}
+            hotkeyScope={relationPickerScopedId}
+            onEnter={(selectedId) => {
+              onChange?.(selectedId);
+              resetSelectedItem();
+            }}
+          >
+            {objectRecordsIdsMultiSelect?.map((recordId) => {
+              return (
+                <MultipleObjectRecordSelectItem
+                  key={recordId}
+                  objectRecordId={recordId}
+                  onChange={(recordId) => {
+                    onChange?.(recordId);
+                    resetSelectedItem();
+                  }}
+                />
+              );
+            })}
+          </SelectableList>
+          {objectRecordsIdsMultiSelect?.length === 0 && (
+            <MenuItem text="No result" />
           )}
         </DropdownMenuItemsContainer>
         {isDefined(onCreate) && (
