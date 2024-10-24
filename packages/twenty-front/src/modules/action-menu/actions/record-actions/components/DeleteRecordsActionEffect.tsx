@@ -17,11 +17,9 @@ import { IconTrash, isDefined } from 'twenty-ui';
 export const DeleteRecordsActionEffect = ({
   position,
   objectMetadataItem,
-  onActionExecutedCallback,
 }: {
   position: number;
   objectMetadataItem: ObjectMetadataItem;
-  onActionExecutedCallback?: () => void;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
@@ -119,7 +117,7 @@ export const DeleteRecordsActionEffect = ({
             } can be recovered from the Options menu.`}
             onConfirmClick={() => {
               handleDeleteClick();
-              onActionExecutedCallback?.();
+              // onActionExecutedCallback?.();
             }}
             deleteButtonText={`Delete ${
               contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
@@ -141,7 +139,7 @@ export const DeleteRecordsActionEffect = ({
     contextStoreNumberOfSelectedRecords,
     handleDeleteClick,
     isDeleteRecordsModalOpen,
-    onActionExecutedCallback,
+    // onActionExecutedCallback,
     position,
     removeActionMenuEntry,
   ]);

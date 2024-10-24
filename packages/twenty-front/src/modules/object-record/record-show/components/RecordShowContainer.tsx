@@ -1,18 +1,12 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type RecordShowContainerProps = {
   objectNameSingular: string;
@@ -45,52 +39,31 @@ export const RecordShowContainer = ({
     isInRightDrawer,
   );
 
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
-    `record-show-${objectRecordId}`,
-  );
-
   return (
-    <ContextStoreComponentInstanceContext.Provider
-      value={{
-        instanceId: `record-show-${objectRecordId}`,
-      }}
-    >
-      <ActionMenuComponentInstanceContext.Provider
-        value={{ instanceId: `record-show-${objectRecordId}` }}
-      >
-        <RecordShowContainerContextStoreEffect
+    <>
+      <RecordShowContainerContextStoreEffect
+        recordId={objectRecordId}
+        objectNameSingular={objectNameSingular}
+      />
+      {!isInRightDrawer && <MainContextStoreComponentInstanceIdSetterEffect />}
+      {recordFromStore && recordFromStore.deletedAt && (
+        <InformationBannerDeletedRecord
           recordId={objectRecordId}
           objectNameSingular={objectNameSingular}
         />
-        {!isInRightDrawer && (
-          <MainContextStoreComponentInstanceIdSetterEffect />
-        )}
-        {contextStoreCurrentObjectMetadataId && (
-          <>
-            <ActionMenuConfirmationModals />
-            <RecordActionMenuEntriesSetter isInRightDrawer={isInRightDrawer} />
-          </>
-        )}
-        {recordFromStore && recordFromStore.deletedAt && (
-          <InformationBannerDeletedRecord
-            recordId={objectRecordId}
-            objectNameSingular={objectNameSingular}
-          />
-        )}
-        <ShowPageContainer>
-          <ShowPageSubContainer
-            tabs={tabs}
-            targetableObject={{
-              id: objectRecordId,
-              targetObjectNameSingular: objectMetadataItem?.nameSingular,
-            }}
-            isInRightDrawer={isInRightDrawer}
-            loading={isPrefetchLoading || loading || recordLoading}
-            isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
-          />
-        </ShowPageContainer>
-      </ActionMenuComponentInstanceContext.Provider>
-    </ContextStoreComponentInstanceContext.Provider>
+      )}
+      <ShowPageContainer>
+        <ShowPageSubContainer
+          tabs={tabs}
+          targetableObject={{
+            id: objectRecordId,
+            targetObjectNameSingular: objectMetadataItem?.nameSingular,
+          }}
+          isInRightDrawer={isInRightDrawer}
+          loading={isPrefetchLoading || loading || recordLoading}
+          isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
+        />
+      </ShowPageContainer>
+    </>
   );
 };
