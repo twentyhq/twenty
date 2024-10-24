@@ -10,6 +10,7 @@ import {
   MultiObjectRecordQueryResult,
   useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
 import { isDefined } from '~/utils/isDefined';
 
 export const formatSearchResults = (
@@ -42,7 +43,10 @@ export const useMultiObjectSearchMatchesSearchFilterQuery = ({
     .filter(({ isSystem, isRemote }) => !isSystem && !isRemote)
     .filter(({ nameSingular }) => {
       return !excludedObjects?.includes(nameSingular as CoreObjectNameSingular);
-    });
+    })
+    .filter((objectMetadataItem) =>
+      isObjectMetadataItemSearchableInCombinedRequest(objectMetadataItem),
+    );
 
   const { limitPerMetadataItem } = useLimitPerMetadataItem({
     objectMetadataItems,
