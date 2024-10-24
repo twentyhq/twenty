@@ -113,7 +113,7 @@ export const MultiRecordSelect = ({
           autoFocus
         />
         <DropdownMenuSeparator />
-        <DropdownMenuItemsContainer hasMaxHeight>
+        <DropdownMenuItemsContainer hasMaxHeight hasMinHeight>
           {recordMultiSelectIsLoading ? (
             <MenuItem text="Loading..." />
           ) : (
