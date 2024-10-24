@@ -24,13 +24,30 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledShortcutLabel = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledSeparator = styled.div<{ size: 'sm' | 'md' }>`
+  background: ${({ theme }) => theme.border.color.light};
+  height: ${({ theme, size }) => theme.spacing(size === 'sm' ? 4 : 8)};
+  margin: 0 ${({ theme }) => theme.spacing(1)};
+  width: 1px;
+`;
+
 export const RecordIndexActionMenuBarAllActionsButton = () => {
   const theme = useTheme();
   const { openCommandMenu } = useCommandMenu();
   return (
-    <StyledButton onClick={() => openCommandMenu()}>
-      <IconLayoutSidebarRightExpand size={theme.icon.size.md} />
-      <StyledButtonLabel>All Actions</StyledButtonLabel>
-    </StyledButton>
+    <>
+      <StyledSeparator size="md" />
+      <StyledButton onClick={() => openCommandMenu()}>
+        <IconLayoutSidebarRightExpand size={theme.icon.size.md} />
+        <StyledButtonLabel>All Actions</StyledButtonLabel>
+        <StyledSeparator size="sm" />
+        <StyledShortcutLabel>⌘K</StyledShortcutLabel>
+      </StyledButton>
+    </>
   );
 };
