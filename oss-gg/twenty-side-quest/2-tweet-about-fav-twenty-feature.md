@@ -23,4 +23,17 @@ Your turn 👇
 » 11-October-2024 by Bhavesh Mishra
 » Link to Tweet: https://x.com/thefool1135/status/1844456500380696969
 
----
+» 13-October-2024 by Ali Yar Khan
+» Link to Tweet: https://x.com/Mr_Programmer14/status/1845530448245711197
+
+» 16-October-2024 by Harsh Bhat
+» Link to Tweet: https://x.com/HarshBhatX/status/1846075312691413066
+
+» 20-October-2024 by Naprila
+» Link to Tweet: https://x.com/mkprasad_821/status/1847895747707953205
+
+» 22-October-2024 by Zia Ur Rehman Khan
+» Link to Tweet: https://x.com/zia_webdev/status/1848660000190697633
+
+» 23-October-2024 by Rajeev Dewangan
+» Link to Tweet: https://x.com/rajeevdew/status/1849110473272442991

@@ -18,4 +18,8 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) blog Link: [blog](https://twenty.com/)
 
+» 21-October-2024 by [sateshcharan](https://oss.gg/sateshcharan) blog Link: [blog](https://dev.to/sateshcharan/streamlined-self-hosting-with-twenty-crm-1-click-docker-compose-setup-188o)
+
+» 23-October-2024 by [Thefool76](https://oss.gg/thefool76) blog Link: [blog](https://k5lo7h.hashnode.dev/a-detailed-guide-to-self-host-twenty-crm-on-you-local-server)
+
 ---

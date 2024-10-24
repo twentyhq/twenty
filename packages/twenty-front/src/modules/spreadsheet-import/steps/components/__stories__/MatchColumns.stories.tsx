@@ -1,10 +1,10 @@
 import { Meta } from '@storybook/react';
 
+import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
-import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 

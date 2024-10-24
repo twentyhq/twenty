@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { MouseEvent, useMemo, useRef, useState } from 'react';
+import { MouseEvent, useMemo, useRef, useState } from 'react';
 import { IconChevronDown, IconComponent } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -10,8 +10,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectOption<Value extends string | number | null> = {
   value: Value;
@@ -73,6 +74,7 @@ const StyledLabel = styled.span`
 const StyledControlLabel = styled.div`
   align-items: center;
   display: flex;
+  overflow: hidden;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -136,7 +138,7 @@ export const Select = <Value extends string | number | null>({
             stroke={theme.icon.stroke.sm}
           />
         )}
-        {selectedOption?.label}
+        <EllipsisDisplay> {selectedOption?.label} </EllipsisDisplay>
       </StyledControlLabel>
       <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
     </StyledControlContainer>

@@ -1,6 +1,6 @@
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { CommandMenuEffect } from '@/app/effect-components/CommandMenuEffect';
-import { GotoHotkeys } from '@/app/effect-components/GotoHotkeysEffect';
+import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
@@ -15,7 +15,7 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { StrictMode } from 'react';
@@ -45,7 +45,7 @@ export const AppRouterProviders = () => {
                             <StrictMode>
                               <PromiseRejectionEffect />
                               <CommandMenuEffect />
-                              <GotoHotkeys />
+                              <GotoHotkeysEffectsProvider />
                               <PageTitle title={pageTitle} />
                               <Outlet />
                             </StrictMode>

@@ -1,7 +1,6 @@
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { IconExternalLink } from 'twenty-ui';
+import { IconExternalLink, UndecoratedLink } from 'twenty-ui';
 
 export const RightDrawerTopBarExpandButton = ({ to }: { to: string }) => {
   const { closeRightDrawer } = useRightDrawer();

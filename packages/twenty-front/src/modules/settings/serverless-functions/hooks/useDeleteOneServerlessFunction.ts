@@ -3,7 +3,7 @@ import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { DELETE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/deleteOneServerlessFunction';
 import {
-  DeleteServerlessFunctionInput,
+  ServerlessFunctionIdInput,
   DeleteOneServerlessFunctionMutation,
   DeleteOneServerlessFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -19,7 +19,7 @@ export const useDeleteOneServerlessFunction = () => {
   });
 
   const deleteOneServerlessFunction = async (
-    input: DeleteServerlessFunctionInput,
+    input: ServerlessFunctionIdInput,
   ) => {
     return await mutate({
       variables: {
