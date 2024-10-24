@@ -75,8 +75,9 @@ const getColumnExpression = (
 ): string => {
   const quotedColumnName = `"${columnName}"`;
 
-  if (fieldType === FieldMetadataType.EMAILS) {
-    return `
+  switch (fieldType) {
+    case FieldMetadataType.EMAILS:
+      return `
       COALESCE(
         replace(
           ${quotedColumnName},
@@ -86,7 +87,9 @@ const getColumnExpression = (
         ''
       )
     `;
-  } else {
-    return `COALESCE(${quotedColumnName}, '')`;
+    case FieldMetadataType.RICH_TEXT:
+      return `COALESCE(jsonb_path_query_array(${quotedColumnName}::jsonb, '$[*].content[*]."text"'::jsonpath)::text, '')`;
+    default:
+      return `COALESCE(${quotedColumnName}, '')`;
   }
 };

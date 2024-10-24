@@ -1,12 +1,3 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
-import { Controller } from 'react-hook-form';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { Key } from 'ts-key-enum';
-import { IconGoogle, IconMicrosoft, IconKey } from 'twenty-ui';
-
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
@@ -14,15 +5,27 @@ import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
+import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
+import { Controller } from 'react-hook-form';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
+import {
+  ActionLink,
+  IconGoogle,
+  IconKey,
+  IconMicrosoft,
+  MainButton,
+} from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { SignInUpStep } from '@/auth/states/signInUpStepState';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

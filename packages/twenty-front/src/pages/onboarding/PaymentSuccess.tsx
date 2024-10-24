@@ -1,16 +1,17 @@
-import React from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { IconCheck, RGBA } from 'twenty-ui';
-
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
-import { MainButton } from '@/ui/input/button/components/MainButton';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import {
+  AnimatedEaseIn,
+  IconCheck,
+  MainButton,
+  RGBA,
+  UndecoratedLink,
+} from 'twenty-ui';
 import { OnboardingStatus } from '~/generated/graphql';
 
 const StyledCheckContainer = styled.div`

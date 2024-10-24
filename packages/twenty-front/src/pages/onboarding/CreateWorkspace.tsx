@@ -1,10 +1,10 @@
-import { useCallback } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title } from 'twenty-ui';
+import { H2Title, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -17,7 +17,6 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import {
   OnboardingStatus,

@@ -1,3 +1,14 @@
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,23 +21,14 @@ import {
 } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconCopy } from 'twenty-ui';
+import {
+  ActionLink,
+  AnimatedTranslation,
+  IconCopy,
+  LightButton,
+  MainButton,
+} from 'twenty-ui';
 import { z } from 'zod';
-
-import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { LightButton } from '@/ui/input/button/components/LightButton';
-import { MainButton } from '@/ui/input/button/components/MainButton';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { AnimatedTranslation } from '@/ui/utilities/animation/components/AnimatedTranslation';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
@@ -50,6 +52,10 @@ const StyledButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 200px;
+`;
+
+const StyledActionSkipLinkContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(3)} 0 0;
 `;
 
 const validationSchema = z.object({
@@ -150,6 +156,10 @@ export const InviteTeam = () => {
     [enqueueSnackBar, sendInvitation, setNextOnboardingStatus],
   );
 
+  const handleSkip = async () => {
+    await onSubmit({ emails: [] });
+  };
+
   useScopedHotkeys(
     [Key.Enter],
     () => {
@@ -170,7 +180,7 @@ export const InviteTeam = () => {
         Get the most out of your workspace by inviting your team.
       </SubTitle>
       <StyledAnimatedContainer>
-        {fields.map((field, index) => (
+        {fields.map((_field, index) => (
           <Controller
             key={index}
             name={`emails.${index}.email`}
@@ -217,6 +227,9 @@ export const InviteTeam = () => {
           fullWidth
         />
       </StyledButtonContainer>
+      <StyledActionSkipLinkContainer>
+        <ActionLink onClick={handleSkip}>Skip</ActionLink>
+      </StyledActionSkipLinkContainer>
     </>
   );
 };
