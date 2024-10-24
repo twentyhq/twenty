@@ -3,6 +3,7 @@ import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { MouseEvent } from 'react';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -22,8 +23,8 @@ export const RecordChip = ({
     record,
   });
 
-  const handleClick = (event: React.MouseEvent<Element>) => {
-    event.stopPropagation();
+  const handleClick = (e: MouseEvent<Element>) => {
+    e.stopPropagation();
   };
 
   return (

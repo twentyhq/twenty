@@ -3,11 +3,13 @@ import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipSize, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
-import { UndecoratedLink } from '@ui/navigation';
 import { ThemeContext } from '@ui/theme';
 import { isDefined } from '@ui/utilities/isDefined';
 import { Nullable } from '@ui/utilities/types/Nullable';
 import { MouseEvent, useContext } from 'react';
+
+// Import Link from react-router-dom instead of UndecoratedLink
+import { Link } from 'react-router-dom';
 
 export type AvatarChipProps = {
   name: string;
@@ -37,6 +39,12 @@ const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
   height: 14px;
   border-radius: 4px;
   background-color: ${({ backgroundColor }) => backgroundColor};
+`;
+
+// Ideally we would use the UndecoratedLink component from @ui/navigation
+// but it led to a bug probably linked to circular dependencies, which was hard to solve
+const StyledLink = styled(Link)`
+  text-decoration: none;
 `;
 
 export const AvatarChip = ({
@@ -102,9 +110,9 @@ export const AvatarChip = ({
   );
 
   return to ? (
-    <UndecoratedLink to={to} onClick={onClick}>
+    <StyledLink to={to} onClick={onClick}>
       {chip}
-    </UndecoratedLink>
+    </StyledLink>
   ) : (
     chip
   );

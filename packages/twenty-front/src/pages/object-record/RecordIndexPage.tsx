@@ -67,7 +67,7 @@ export const RecordIndexPage = () => {
           objectNameSingular,
           objectMetadataItem,
           onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          indexIdentifierUrl: indexIdentifierUrl,
+          indexIdentifierUrl,
           onCreateRecord: handleCreateRecord,
         }}
       >
