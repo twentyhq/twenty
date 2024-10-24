@@ -1,4 +1,5 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import { ActionMenuContext } from '@/action-menu/states/contexts/ActionMenuContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -11,7 +12,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
 
 export const DeleteRecordsActionEffect = ({
@@ -90,6 +91,9 @@ export const DeleteRecordsActionEffect = ({
     contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
     contextStoreNumberOfSelectedRecords > 0;
 
+  const { isInRightDrawer, onActionExecutedCallback } =
+    useContext(ActionMenuContext);
+
   useEffect(() => {
     if (canDelete) {
       addActionMenuEntry({
@@ -117,7 +121,10 @@ export const DeleteRecordsActionEffect = ({
             } can be recovered from the Options menu.`}
             onConfirmClick={() => {
               handleDeleteClick();
-              // onActionExecutedCallback?.();
+              onActionExecutedCallback?.();
+              if (isInRightDrawer) {
+                closeRightDrawer();
+              }
             }}
             deleteButtonText={`Delete ${
               contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
@@ -139,7 +146,7 @@ export const DeleteRecordsActionEffect = ({
     contextStoreNumberOfSelectedRecords,
     handleDeleteClick,
     isDeleteRecordsModalOpen,
-    // onActionExecutedCallback,
+    onActionExecutedCallback,
     position,
     removeActionMenuEntry,
   ]);
