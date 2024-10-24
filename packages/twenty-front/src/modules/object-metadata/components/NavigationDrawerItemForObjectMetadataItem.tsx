@@ -15,6 +15,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
+  mobileNavigationDrawer?:boolean;
 };
 
 const SubItemsWrapper = styled.div`
@@ -24,6 +25,7 @@ const SubItemsWrapper = styled.div`
 `;
 
 export const NavigationDrawerItemForObjectMetadataItem = ({
+  mobileNavigationDrawer,
   objectMetadataItem,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
@@ -71,6 +73,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         to={navigationPath}
         Icon={getIcon(objectMetadataItem.icon)}
         active={isActive}
+        mobileNavigationDrawer={mobileNavigationDrawer}
       />
       {shouldSubItemsBeDisplayed && (
         <SubItemsWrapper>

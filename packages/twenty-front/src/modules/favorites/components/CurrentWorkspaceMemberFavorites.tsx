@@ -43,7 +43,11 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
   }
 `;
 
-export const CurrentWorkspaceMemberFavorites = () => {
+export const CurrentWorkspaceMemberFavorites = ({
+  mobileNavigationDrawer,
+}: {
+  mobileNavigationDrawer?: boolean;
+}) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const isMobile = useIsMobile();
   const { favorites, handleReorderFavorite } = useFavorites();
@@ -90,6 +94,7 @@ export const CurrentWorkspaceMemberFavorites = () => {
                 index={index}
                 itemComponent={
                   <StyledNavigationDrawerItem
+                    mobileNavigationDrawer={mobileNavigationDrawer}
                     key={id}
                     label={labelIdentifier}
                     Icon={() => (
@@ -114,12 +119,14 @@ export const CurrentWorkspaceMemberFavorites = () => {
 
   return (
     <StyledContainer>
-      <NavigationDrawerAnimatedCollapseWrapper>
-        <NavigationDrawerSectionTitle
-          label="Favorites"
-          onClick={() => toggleNavigationSection()}
-        />
-      </NavigationDrawerAnimatedCollapseWrapper>
+      {!isMobile && (
+        <NavigationDrawerAnimatedCollapseWrapper>
+          <NavigationDrawerSectionTitle
+            label="Favorites"
+            onClick={() => toggleNavigationSection()}
+          />
+        </NavigationDrawerAnimatedCollapseWrapper>
+      )}
 
       {isNavigationSectionOpen && (
         <NavigationDrawerItemsCollapsedContainer isGroup={isGroup}>

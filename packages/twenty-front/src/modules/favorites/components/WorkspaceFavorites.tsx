@@ -3,7 +3,11 @@ import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 
-export const WorkspaceFavorites = () => {
+export const WorkspaceFavorites = ({
+  mobileNavigationDrawer ,
+}: {
+  mobileNavigationDrawer?: boolean;
+}) => {
   const { activeObjectMetadataItems: objectMetadataItemsToDisplay } =
     useFilteredObjectMetadataItemsForWorkspaceFavorites();
 
@@ -15,6 +19,7 @@ export const WorkspaceFavorites = () => {
 
   return (
     <NavigationDrawerSectionForObjectMetadataItems
+      mobileNavigationDrawer={mobileNavigationDrawer}
       sectionTitle={'Workspace'}
       objectMetadataItems={objectMetadataItemsToDisplay}
       isRemote={false}

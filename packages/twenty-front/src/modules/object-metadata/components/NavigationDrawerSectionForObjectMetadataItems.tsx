@@ -4,6 +4,7 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
@@ -20,22 +21,25 @@ const ORDERED_STANDARD_OBJECTS = [
 const StyledObjectsMetaDataItemsWrapper = styled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'row' : 'column')};
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  gap: ${({ theme }) => (useIsMobile() ? '' : theme.betweenSiblingsGap)};
   width: 100%;
   margin-bottom: ${({ theme }) => (useIsMobile() ? '' : theme.spacing(3))};
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
 `;
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
   isRemote,
   objectMetadataItems,
+  mobileNavigationDrawer,
 }: {
   sectionTitle: string;
   isRemote: boolean;
   objectMetadataItems: ObjectMetadataItem[];
+  mobileNavigationDrawer?:boolean,
 }) => {
+  const isMobile = useIsMobile();
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
@@ -74,18 +78,21 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   return (
     objectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
-        <NavigationDrawerAnimatedCollapseWrapper>
-          <NavigationDrawerSectionTitle
-            label={sectionTitle}
-            onClick={() => toggleNavigationSection()}
-          />
-        </NavigationDrawerAnimatedCollapseWrapper>
+        {!isMobile && (
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <NavigationDrawerSectionTitle
+              label={sectionTitle}
+              onClick={() => toggleNavigationSection()}
+            />
+          </NavigationDrawerAnimatedCollapseWrapper>
+        )}
         <ScrollWrapper contextProviderName="navigationDrawer">
           <StyledObjectsMetaDataItemsWrapper>
             {isNavigationSectionOpen &&
               objectMetadataItemsForNavigationItems.map(
                 (objectMetadataItem) => (
                   <NavigationDrawerItemForObjectMetadataItem
+                    mobileNavigationDrawer={mobileNavigationDrawer}
                     objectMetadataItem={objectMetadataItem}
                   />
                 ),

@@ -6,7 +6,11 @@ import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/o
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 
-export const NavigationDrawerOpenedSection = () => {
+export const NavigationDrawerOpenedSection = ({
+  mobileNavigationDrawer = false,
+}: {
+  mobileNavigationDrawer?: boolean;
+}) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
     (item) => !item.isRemote,
@@ -42,7 +46,7 @@ export const NavigationDrawerOpenedSection = () => {
 
   return (
     shouldDisplayObjectInOpenedSection && (
-      <NavigationDrawerSectionForObjectMetadataItems
+      <NavigationDrawerSectionForObjectMetadataItems mobileNavigationDrawer={mobileNavigationDrawer}
         sectionTitle={'Opened'}
         objectMetadataItems={[objectMetadataItem]}
         isRemote={false}

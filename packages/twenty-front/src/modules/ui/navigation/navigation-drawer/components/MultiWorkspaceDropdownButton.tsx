@@ -10,6 +10,7 @@ import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/c
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -68,7 +69,7 @@ export const MultiWorkspaceDropdownButton = ({
 }: MultiWorkspaceDropdownButtonProps) => {
   const theme = useTheme();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-
+  const isMobile = useIsMobile();
   const [isMultiWorkspaceDropdownOpen, setToggleMultiWorkspaceDropdown] =
     useState(false);
 
@@ -105,15 +106,20 @@ export const MultiWorkspaceDropdownButton = ({
               ) ?? ''
             }
           />
-          <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
-          </NavigationDrawerAnimatedCollapseWrapper>
-          <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledIconChevronDown
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          </NavigationDrawerAnimatedCollapseWrapper>
+
+          {!isMobile && (
+            <>
+              <NavigationDrawerAnimatedCollapseWrapper>
+                <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
+              </NavigationDrawerAnimatedCollapseWrapper>
+              <NavigationDrawerAnimatedCollapseWrapper>
+                <StyledIconChevronDown
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </NavigationDrawerAnimatedCollapseWrapper>
+            </>
+          )}
         </StyledContainer>
       }
       dropdownComponents={

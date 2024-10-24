@@ -36,6 +36,7 @@ export type NavigationDrawerItemProps = {
   soon?: boolean;
   count?: number;
   keyboard?: string[];
+  mobileNavigationDrawer?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -71,10 +72,14 @@ const StyledItem = styled('div', {
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.md};
 
-  padding-bottom: ${({ theme }) => useIsMobile() ? theme.spacing(1.5):theme.spacing(1)};
-  padding-left: ${({ theme }) => useIsMobile() ? theme.spacing(2):theme.spacing(1)};
-  padding-right: ${({ theme }) => useIsMobile() ? theme.spacing(2):theme.spacing(1)};
-  padding-top: ${({ theme }) => useIsMobile() ? theme.spacing(1.5):theme.spacing(1)};
+  padding-bottom: ${({ theme }) =>
+    useIsMobile() ? theme.spacing(1.5) : theme.spacing(1)};
+  padding-left: ${({ theme }) =>
+    useIsMobile() ? theme.spacing(2) : theme.spacing(1)};
+  padding-right: ${({ theme }) =>
+    useIsMobile() ? theme.spacing(2) : theme.spacing(1)};
+  padding-top: ${({ theme }) =>
+    useIsMobile() ? theme.spacing(1.5) : theme.spacing(1)};
 
   margin-top: ${({ indentationLevel }) =>
     indentationLevel === 2 && !useIsMobile() ? '2px' : '0'};
@@ -158,6 +163,7 @@ export const NavigationDrawerItem = ({
   count,
   keyboard,
   subItemState,
+  mobileNavigationDrawer,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -215,7 +221,9 @@ export const NavigationDrawerItem = ({
             />
           )}
 
-          <NavigationDrawerAnimatedCollapseWrapper>
+          <NavigationDrawerAnimatedCollapseWrapper
+            mobileNavigationDrawer={mobileNavigationDrawer}
+          >
             <StyledItemLabel>{label}</StyledItemLabel>
           </NavigationDrawerAnimatedCollapseWrapper>
 

@@ -9,21 +9,23 @@ const StyledAnimatedContainer = styled(motion.div)``;
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,
+  mobileNavigationDrawer,
 }: {
   children: React.ReactNode;
+  mobileNavigationDrawer?: boolean;
 }) => {
   const theme = useTheme();
-  const isSettingsPage = useIsSettingsPage();
+  // const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
 
-  if (isSettingsPage) {
-    return children;
-  }
+  // if (isSettingsPage) {
+  //   return children;
+  // }
 
   const animate: AnimationControls | TargetAndTransition =
-    isNavigationDrawerExpanded
+    isNavigationDrawerExpanded && !mobileNavigationDrawer
       ? {
           opacity: 1,
           width: 'auto',
