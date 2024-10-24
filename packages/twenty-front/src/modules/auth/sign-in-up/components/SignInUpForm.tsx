@@ -26,11 +26,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { isDefined } from '~/utils/isDefined';
-
-const validateEmail = (email: string) => {
-  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-  return emailRegex.test(email);
-};
+import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -112,7 +108,7 @@ export const SignInUpForm = () => {
 
   const isEmailValid = useMemo(() => {
     const email = form.watch('email');
-    return validateEmail(email);
+    return emailSchema.safeParse(email).success;
   }, [form.watch('email')]);
 
   const isEmailStepSubmitButtonDisabledCondition =
