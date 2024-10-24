@@ -1,3 +1,4 @@
+import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/favoriteFoldersDropdownId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
@@ -17,12 +18,10 @@ export const RecordShowPageBaseHeader = ({
   objectMetadataItem,
   objectNameSingular,
 }: RecordShowPageBaseHeaderProps) => {
-  const dropdownId = `favorite-folders-dropdown`;
-
   return (
     <>
       <FavoriteFoldersDropdown
-        dropdownId={dropdownId}
+        dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
         isFavorite={isFavorite}
         record={record}
         objectNameSingular={objectNameSingular}

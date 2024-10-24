@@ -9,6 +9,7 @@ import { useMultiFavoriteFolder } from '@/favorites/hooks/useMultiFavoriteFolder
 import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
+import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/favoriteFoldersDropdownId';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -68,7 +69,7 @@ export const FavoriteFoldersMultiSelect = ({
     FavoriteFoldersScopeInternalContext,
   );
 
-  const { closeDropdown } = useDropdown('favorite-folders-dropdown');
+  const { closeDropdown } = useDropdown(FAVORITE_FOLDERS_DROPDOWN_ID);
 
   const {
     favoriteFoldersSearchFilterState,

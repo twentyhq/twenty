@@ -13,6 +13,7 @@ import {
   IconTrash,
 } from 'twenty-ui';
 
+import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -130,11 +131,11 @@ export const CurrentWorkspaceMemberFavorites = ({
     <Dropdown
       dropdownId={`favorite-folder-${folder.folderId}`}
       dropdownHotkeyScope={{
-        scope: 'favorite-folder',
+        scope: FavoriteFolderHotkeyScope.FavoriteFolderRightIconDropdown,
       }}
       data-select-disable
       clickableComponent={
-        <StyledIconDotsVertical isMobile={isMobile} size={theme.icon.size.sm} />
+        <StyledIconDotsVertical isMobile={isMobile} size={theme.icon.size.md} />
       }
       dropdownPlacement="right"
       dropdownOffset={{ y: -15 }}

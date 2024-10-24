@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
+import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
@@ -153,7 +154,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               onSubmit={handleSubmitFolder}
               onCancel={handleCancel}
               onClickOutside={handleClickOutside}
-              hotkeyScope="favorites-folder-input"
+              hotkeyScope={
+                FavoriteFolderHotkeyScope.FavoriteFolderNavigationInput
+              }
             />
           )}
           {favoritesByFolder.map((folder) => (
