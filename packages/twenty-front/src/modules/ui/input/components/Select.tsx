@@ -11,6 +11,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { isDefined } from '~/utils/isDefined';
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectOption<Value extends string | number | null> = {
@@ -73,6 +74,7 @@ const StyledLabel = styled.span`
 const StyledControlLabel = styled.div`
   align-items: center;
   display: flex;
+  overflow: hidden;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -136,7 +138,7 @@ export const Select = <Value extends string | number | null>({
             stroke={theme.icon.stroke.sm}
           />
         )}
-        {selectedOption?.label}
+        <EllipsisDisplay> {selectedOption?.label} </EllipsisDisplay>
       </StyledControlLabel>
       <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
     </StyledControlContainer>

@@ -13,9 +13,7 @@ import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
-import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Opportunity } from '@/opportunities/types/Opportunity';
 import { Person } from '@/people/types/Person';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -181,16 +179,11 @@ export const CommandMenu = () => {
       searchInput: deferredCommandMenuSearch ?? undefined,
     });
 
-  const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
+  const { loading: isNotesLoading, records: notes } = useSearchRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
-    filter: deferredCommandMenuSearch
-      ? makeOrFilterVariables([
-          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
-        ])
-      : undefined,
     limit: 3,
+    searchInput: deferredCommandMenuSearch ?? undefined,
   });
 
   const { loading: isOpportunitiesLoading, records: opportunities } =

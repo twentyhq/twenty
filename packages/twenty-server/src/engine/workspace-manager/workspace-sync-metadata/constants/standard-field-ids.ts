@@ -282,6 +282,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
+  searchVector: '20202020-7ea8-44d4-9d4c-51dd2a757950',
 };
 
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
@@ -408,6 +409,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
 export const WEBHOOK_STANDARD_FIELD_IDS = {
   targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
   operation: '20202020-15b7-458e-bf30-74770a54410c',
+  operations: '20202020-15b7-458e-bf30-74770a54411c',
   description: '20202020-15b7-458e-bf30-74770a54410d',
 };
 
