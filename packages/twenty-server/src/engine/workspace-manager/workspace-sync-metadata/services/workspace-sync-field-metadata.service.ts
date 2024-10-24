@@ -143,6 +143,7 @@ export class WorkspaceSyncFieldMetadataService {
     ] of standardObjectStandardFieldMetadataMap) {
       const originalObjectMetadata =
         originalObjectMetadataMap[standardObjectId];
+
       const computedStandardFieldMetadataCollection = computeStandardFields(
         standardFieldMetadataCollection,
         originalObjectMetadata,

@@ -6,11 +6,13 @@ import {
   ForwardedRef,
   InputHTMLAttributes,
   forwardRef,
+  useId,
   useRef,
   useState,
 } from 'react';
 import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -20,7 +22,7 @@ const StyledContainer = styled.div<
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 
-const StyledLabel = styled.span`
+const StyledLabel = styled.label`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -127,6 +129,7 @@ export type TextInputV2ComponentProps = Omit<
   LeftIcon?: IconComponent;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
+  dataTestId?: string;
 };
 
 const TextInputV2Component = (
@@ -151,6 +154,7 @@ const TextInputV2Component = (
     LeftIcon,
     autoComplete,
     maxLength,
+    dataTestId,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -166,9 +170,15 @@ const TextInputV2Component = (
     setPasswordVisible(!passwordVisible);
   };
 
+  const inputId = useId();
+
   return (
     <StyledContainer className={className} fullWidth={fullWidth ?? false}>
-      {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
+      {label && (
+        <StyledLabel htmlFor={inputId}>
+          {label + (required ? '*' : '')}
+        </StyledLabel>
+      )}
       <StyledInputContainer>
         {!!LeftIcon && (
           <StyledLeftIconContainer>
@@ -178,6 +188,8 @@ const TextInputV2Component = (
           </StyledLeftIconContainer>
         )}
         <StyledInput
+          id={inputId}
+          data-testid={dataTestId}
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
@@ -185,7 +197,9 @@ const TextInputV2Component = (
           onBlur={onBlur}
           type={passwordVisible ? 'text' : type}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange?.(event.target.value);
+            onChange?.(
+              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+            );
           }}
           onKeyDown={onKeyDown}
           {...{

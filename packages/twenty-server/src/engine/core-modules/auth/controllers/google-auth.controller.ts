@@ -9,12 +9,13 @@ import {
 
 import { Response } from 'express';
 
+import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
 import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -33,9 +34,16 @@ export class GoogleAuthController {
 
   @Get('redirect')
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
+  @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
-    const { firstName, lastName, email, picture, workspaceInviteHash } =
-      req.user;
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    } = req.user;
 
     const user = await this.authService.signInUp({
       email,
@@ -43,6 +51,7 @@ export class GoogleAuthController {
       lastName,
       picture,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       fromSSO: true,
     });
 

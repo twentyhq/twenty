@@ -3,8 +3,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
@@ -23,7 +26,6 @@ const StyledColumnHeaderCell = styled.th<{
   isResizing?: boolean;
 }>`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
   text-align: left;
@@ -90,12 +92,16 @@ const StyledHeaderIcon = styled.div`
 
 export const RecordTableHeaderCell = ({
   column,
-  createRecord,
+  objectMetadataNameSingular,
 }: {
   column: ColumnDefinition<FieldMetadata>;
-  createRecord: () => void;
+  objectMetadataNameSingular: string;
 }) => {
   const { resizeFieldOffsetState, tableColumnsState } = useRecordTableStates();
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectMetadataNameSingular,
+  });
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
@@ -185,6 +191,14 @@ export const RecordTableHeaderCell = ({
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
+  const { createNewTableRecord } = useCreateNewTableRecord();
+
+  const handlePlusButtonClick = () => {
+    createNewTableRecord();
+  };
+
+  const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
+
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -200,16 +214,18 @@ export const RecordTableHeaderCell = ({
     >
       <StyledColumnHeadContainer>
         <RecordTableColumnHeadWithDropdown column={column} />
-        {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
-          <StyledHeaderIcon>
-            <LightIconButton
-              Icon={IconPlus}
-              size="small"
-              accent="tertiary"
-              onClick={createRecord}
-            />
-          </StyledHeaderIcon>
-        )}
+        {(useIsMobile() || iconVisibility) &&
+          !!column.isLabelIdentifier &&
+          !isReadOnly && (
+            <StyledHeaderIcon>
+              <LightIconButton
+                Icon={IconPlus}
+                size="small"
+                accent="tertiary"
+                onClick={handlePlusButtonClick}
+              />
+            </StyledHeaderIcon>
+          )}
       </StyledColumnHeadContainer>
       {!disableColumnResize && (
         <StyledResizeHandler

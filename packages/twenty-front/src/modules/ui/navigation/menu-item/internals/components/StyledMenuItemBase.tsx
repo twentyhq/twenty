@@ -8,12 +8,12 @@ export type MenuItemBaseProps = {
   accent?: MenuItemAccent;
   isKeySelected?: boolean;
   isHoverBackgroundDisabled?: boolean;
+  hovered?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
-
   align-items: center;
 
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -69,7 +69,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 `;
 
 export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
   overflow: hidden;
@@ -106,10 +106,14 @@ export const StyledMenuItemRightContent = styled.div`
 
 export const StyledDraggableItem = styled.div`
   cursor: grab;
+
+  align-items: center;
+  display: flex;
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isIconDisplayedOnHoverOnly?: boolean;
+  cursor?: 'drag' | 'default' | 'not-allowed';
 }>`
   ${({ isIconDisplayedOnHoverOnly, theme }) =>
     isIconDisplayedOnHoverOnly &&
@@ -131,4 +135,15 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   & .hoverable-buttons {
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
+
+  cursor: ${({ cursor }) => {
+    switch (cursor) {
+      case 'drag':
+        return 'grab';
+      case 'not-allowed':
+        return 'not-allowed';
+      default:
+        return 'pointer';
+    }
+  }};
 `;

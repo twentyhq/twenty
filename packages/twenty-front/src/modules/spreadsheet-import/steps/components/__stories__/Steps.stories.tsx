@@ -5,16 +5,16 @@ import { within } from '@storybook/test';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { Steps } from '../Steps';
+import { SpreadsheetImportStepperContainer } from '../SpreadsheetImportStepperContainer';
 
-const meta: Meta<typeof Steps> = {
+const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
   title: 'Modules/SpreadsheetImport/Steps',
-  component: Steps,
+  component: SpreadsheetImportStepperContainer,
   decorators: [ComponentWithRecoilScopeDecorator, SnackBarDecorator],
 };
 
 export default meta;
-type Story = StoryObj<typeof Steps>;
+type Story = StoryObj<typeof SpreadsheetImportStepperContainer>;
 
 export const Default: Story = {
   play: async () => {

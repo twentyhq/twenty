@@ -2,14 +2,14 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WORKFLOW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const workflowsAllView = async (
+export const workflowsAllView = (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
     name: 'All Workflows',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.workflow].id,
     type: 'table',
-    key: null,
+    key: 'INDEX',
     position: 0,
     icon: 'IconSettingsAutomation',
     kanbanFieldMetadataId: '',
@@ -27,7 +27,7 @@ export const workflowsAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.workflow].fields[
-            WORKFLOW_STANDARD_FIELD_IDS.publishedVersionId
+            WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId
           ],
         position: 1,
         isVisible: true,

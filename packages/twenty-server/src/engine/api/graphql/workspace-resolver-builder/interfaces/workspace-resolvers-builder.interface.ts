@@ -22,6 +22,7 @@ export enum ResolverArgsType {
   DeleteMany = 'DeleteMany',
   RestoreMany = 'RestoreMany',
   DestroyMany = 'DestroyMany',
+  DestroyOne = 'DestroyOne',
 }
 
 export interface FindManyResolverArgs<
@@ -45,6 +46,14 @@ export interface FindDuplicatesResolverArgs<
 > {
   ids?: string[];
   data?: Data[];
+}
+
+export interface SearchResolverArgs<
+  Filter extends RecordFilter = RecordFilter,
+> {
+  searchInput?: string;
+  filter?: Filter;
+  limit?: number;
 }
 
 export interface CreateOneResolverArgs<
@@ -88,6 +97,10 @@ export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
 
+export interface DestroyOneResolverArgs {
+  id: string;
+}
+
 export interface DestroyManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -118,4 +131,5 @@ export type ResolverArgs =
   | UpdateManyResolverArgs
   | UpdateOneResolverArgs
   | DestroyManyResolverArgs
-  | RestoreManyResolverArgs;
+  | RestoreManyResolverArgs
+  | SearchResolverArgs;

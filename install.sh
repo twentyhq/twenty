@@ -45,7 +45,7 @@ trap on_exit EXIT
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
 version=${VERSION:-$(curl -s https://api.github.com/repos/twentyhq/twenty/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)}
-branch=${BRANCH:-main}
+branch=${BRANCH:-$version}
 
 echo "🚀 Using version $version and branch $branch"
 
@@ -72,7 +72,7 @@ done
 echo "📁 Creating directory '$dir_name'"
 mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
-# Copy the twenty/packages/twenty-docker/docker-compose.yml file in it
+# Copy twenty/packages/twenty-docker/docker-compose.yml in it
 echo -e "\t• Copying docker-compose.yml"
 curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml
 
@@ -112,8 +112,10 @@ if command -v nc &> /dev/null; then
     read -p "Enter a new port number: " new_port
     if [[ $(uname) == "Darwin" ]]; then
       sed -i '' "s/$port:$port/$new_port:$port/g" docker-compose.yml
+      sed -E -i '' "s|^SERVER_URL=http://localhost:[0-9]+|SERVER_URL=http://localhost:$new_port|g" .env
     else
       sed -i'' "s/$port:$port/$new_port:$port/g" docker-compose.yml
+      sed -E -i'' "s|^SERVER_URL=http://localhost:[0-9]+|SERVER_URL=http://localhost:$new_port|g" .env
     fi
     port=$new_port
   done

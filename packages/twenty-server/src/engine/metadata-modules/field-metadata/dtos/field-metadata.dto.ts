@@ -5,7 +5,6 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { GraphQLJSON } from 'graphql-type-json';
 import {
   Authorize,
   FilterableField,
@@ -13,6 +12,7 @@ import {
   QueryOptions,
   Relation,
 } from '@ptc-org/nestjs-query-graphql';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
@@ -23,17 +23,21 @@ import {
   IsUUID,
   Validate,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
-import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
+import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
 registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',
@@ -43,7 +47,7 @@ registerEnumType(FieldMetadataType, {
 @ObjectType('field')
 @Authorize({
   authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
+    workspaceId: { eq: context?.req?.workspace?.id },
   }),
 })
 @QueryOptions({
@@ -55,6 +59,9 @@ registerEnumType(FieldMetadataType, {
   nullable: true,
 })
 @Relation('fromRelationMetadata', () => RelationMetadataDTO, {
+  nullable: true,
+})
+@Relation('object', () => ObjectMetadataDTO, {
   nullable: true,
 })
 export class FieldMetadataDTO<
@@ -111,11 +118,19 @@ export class FieldMetadataDTO<
   @Field({ nullable: true })
   isNullable?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isUnique?: boolean;
+
   @Validate(IsFieldMetadataDefaultValue)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   defaultValue?: FieldMetadataDefaultValue<T>;
 
+  @Transform(({ value }) =>
+    transformEnumValue(value as FieldMetadataDefaultOption[]),
+  )
   @Validate(IsFieldMetadataOptions)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
@@ -127,6 +142,8 @@ export class FieldMetadataDTO<
 
   @HideField()
   workspaceId: string;
+
+  objectMetadataId: string;
 
   @IsDateString()
   @Field()

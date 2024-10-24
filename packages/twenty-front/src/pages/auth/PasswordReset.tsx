@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -22,7 +23,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { AnimatedEaseIn } from 'twenty-ui';
 import {
   useUpdatePasswordViaResetTokenMutation,
   useValidatePasswordResetTokenQuery,
@@ -174,7 +175,7 @@ export const PasswordReset = () => {
               highlightColor={theme.background.secondary}
             >
               <Skeleton
-                height={32}
+                height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
                 count={2}
                 style={{
                   marginBottom: theme.spacing(2),

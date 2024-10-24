@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
-import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
 import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
-import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 import { WorkspaceExtendedEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-extended-entity-metadata-args.interface';
+import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
 import { WorkspaceIndexMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-index-metadata-args.interface';
 import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
+import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 
 export class MetadataArgsStorage {
   private readonly entities: WorkspaceEntityMetadataArgs[] = [];
@@ -69,10 +69,6 @@ export class MetadataArgsStorage {
   ): WorkspaceExtendedEntityMetadataArgs | undefined;
 
   filterExtendedEntities(
-    target: (Function | string)[],
-  ): WorkspaceExtendedEntityMetadataArgs[];
-
-  filterExtendedEntities(
     target: (Function | string) | (Function | string)[],
   ):
     | WorkspaceExtendedEntityMetadataArgs
@@ -84,8 +80,6 @@ export class MetadataArgsStorage {
   }
 
   filterFields(target: Function | string): WorkspaceFieldMetadataArgs[];
-
-  filterFields(target: (Function | string)[]): WorkspaceFieldMetadataArgs[];
 
   filterFields(
     target: (Function | string) | (Function | string)[],
@@ -107,8 +101,6 @@ export class MetadataArgsStorage {
 
   filterIndexes(target: Function | string): WorkspaceIndexMetadataArgs[];
 
-  filterIndexes(target: (Function | string)[]): WorkspaceIndexMetadataArgs[];
-
   filterIndexes(
     target: (Function | string) | (Function | string)[],
   ): WorkspaceIndexMetadataArgs[] {
@@ -120,10 +112,6 @@ export class MetadataArgsStorage {
   ): WorkspaceDynamicRelationMetadataArgs[];
 
   filterDynamicRelations(
-    target: (Function | string)[],
-  ): WorkspaceDynamicRelationMetadataArgs[];
-
-  filterDynamicRelations(
     target: (Function | string) | (Function | string)[],
   ): WorkspaceDynamicRelationMetadataArgs[] {
     return this.filterByTarget(this.dynamicRelations, target);
@@ -131,10 +119,6 @@ export class MetadataArgsStorage {
 
   filterJoinColumns(
     target: Function | string,
-  ): WorkspaceJoinColumnsMetadataArgs[];
-
-  filterJoinColumns(
-    target: (Function | string)[],
   ): WorkspaceJoinColumnsMetadataArgs[];
 
   filterJoinColumns(

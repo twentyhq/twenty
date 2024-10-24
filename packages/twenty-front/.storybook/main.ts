@@ -50,9 +50,10 @@ const config: StorybookConfig = {
     const { mergeConfig } = await import('vite');
 
     return mergeConfig(config, {
-      // Add dependencies to pre-optimization
-      optimizeDeps: {
-        exclude: ['@tabler/icons-react'],
+      resolve: {
+        alias: {
+          'react-dom/client': 'react-dom/profiling',
+        },
       },
     });
   },

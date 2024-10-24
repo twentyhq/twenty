@@ -5,7 +5,7 @@ import { Response } from 'express';
 import {
   FileStorageException,
   FileStorageExceptionCode,
-} from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import {
   checkFilePath,
@@ -43,6 +43,10 @@ export class FileController {
         filename,
         workspaceId,
       );
+
+      fileStream.on('error', () => {
+        res.status(500).send({ error: 'Internal server error' });
+      });
 
       fileStream.pipe(res);
     } catch (error) {

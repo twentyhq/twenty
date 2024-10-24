@@ -1,4 +1,4 @@
-import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id';
+import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
 
 describe('computeGmailCategoryLabelId', () => {
   it('should return correct category label id', () => {

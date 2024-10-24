@@ -1,4 +1,3 @@
-import { COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 
 export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
@@ -15,7 +14,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     type: 'NUMBER',
   },
   {
-    fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
+    fieldMetadataId: 'REPLACE_ME',
     label: 'Name',
     iconName: 'IconBuildingSkyscraper',
     type: 'TEXT',
@@ -44,13 +43,13 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     fieldMetadataId: '20202020-a61d-4b78-b998-3fd88b4f73a1',
     label: 'Linkedin',
     iconName: 'IconBrandLinkedin',
-    type: 'LINK',
+    type: 'LINKS',
   },
   {
     fieldMetadataId: '20202020-46e3-479a-b8f4-77137c74daa6',
     label: 'X',
     iconName: 'IconBrandX',
-    type: 'LINK',
+    type: 'LINKS',
   },
   {
     fieldMetadataId: '20202020-4a5a-466f-92d9-c3870d9502a9',

@@ -1,8 +1,8 @@
 import { MouseEvent } from 'react';
 
-import { ContactLink } from '@/ui/navigation/link/components/ContactLink';
 import { isDefined } from '~/utils/isDefined';
 
+import { ContactLink } from 'twenty-ui';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 const validateEmail = (email: string) => {
@@ -20,7 +20,7 @@ const validateEmail = (email: string) => {
 };
 
 type EmailDisplayProps = {
-  value: string | null;
+  value: string | null | undefined;
 };
 
 export const EmailDisplay = ({ value }: EmailDisplayProps) => {

@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 
-import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
-import { ViewType } from '@/views/types/ViewType';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -21,29 +20,24 @@ export const SignInBackgroundMockContainer = () => {
 
   return (
     <StyledContainer>
-      <ViewBar
-        viewBarId={viewBarId}
-        onCurrentViewChange={async () => {}}
-        optionsDropdownButton={
-          <RecordIndexOptionsDropdown
-            recordIndexId={recordIndexId}
-            objectNameSingular={objectNameSingular}
-            viewType={ViewType.Table}
-          />
-        }
-      />
-      <SignInBackgroundMockContainerEffect
-        objectNamePlural={objectNamePlural}
-        recordTableId={recordIndexId}
-        viewId={viewBarId}
-      />
-      <RecordTableWithWrappers
-        objectNameSingular={objectNameSingular}
-        recordTableId={recordIndexId}
-        viewBarId={viewBarId}
-        createRecord={async () => {}}
-        updateRecordMutation={() => {}}
-      />
+      <ViewComponentInstanceContext.Provider value={{ instanceId: viewBarId }}>
+        <ViewBar
+          viewBarId={viewBarId}
+          onCurrentViewChange={async () => {}}
+          optionsDropdownButton={<></>}
+        />
+        <SignInBackgroundMockContainerEffect
+          objectNamePlural={objectNamePlural}
+          recordTableId={recordIndexId}
+          viewId={viewBarId}
+        />
+        <RecordTableWithWrappers
+          objectNameSingular={objectNameSingular}
+          recordTableId={recordIndexId}
+          viewBarId={viewBarId}
+          updateRecordMutation={() => {}}
+        />
+      </ViewComponentInstanceContext.Provider>
     </StyledContainer>
   );
 };

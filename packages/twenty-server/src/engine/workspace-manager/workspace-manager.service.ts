@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -17,6 +19,7 @@ export class WorkspaceManagerService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -35,8 +38,6 @@ export class WorkspaceManagerService {
         workspaceId,
         schemaName,
       );
-
-    await this.setWorkspaceMaxRow(workspaceId, schemaName);
 
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
@@ -66,48 +67,12 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
-    await this.setWorkspaceMaxRow(workspaceId, schemaName);
-
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
     });
 
     await this.prefillWorkspaceWithDemoObjects(dataSourceMetadata, workspaceId);
-  }
-
-  /**
-   *
-   * Check if the workspace schema has already been created or not
-   *
-   * @param workspaceId
-   * @Returns Promise<boolean>
-   */
-  public async doesDataSourceExist(workspaceId: string): Promise<boolean> {
-    const dataSource =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    return dataSource.length > 0;
-  }
-
-  /**
-   *
-   * We are updating the pg_graphql max_rows from 30 (default value) to 60
-   *
-   * @params workspaceId, schemaName
-   * @param workspaceId
-   */
-  private async setWorkspaceMaxRow(workspaceId, schemaName) {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
-    await workspaceDataSource.query(
-      `comment on schema ${schemaName} is e'@graphql({"max_rows": 60})'`,
-    );
   }
 
   /**
@@ -133,10 +98,16 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsWorkflowEnabled,
+      workspaceId,
+    );
+
     await standardObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      isWorkflowEnabled,
     );
   }
 
@@ -163,10 +134,16 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsWorkflowEnabled,
+      workspaceId,
+    );
+
     await demoObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      isWorkflowEnabled,
     );
   }
 

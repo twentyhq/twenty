@@ -1,27 +1,27 @@
 import {
-  Injectable,
+  CanActivate,
   ExecutionContext,
+  Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { getRequest } from 'src/utils/extract-request';
+import { Observable } from 'rxjs';
+
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
-export class DemoEnvGuard extends AuthGuard(['jwt']) {
-  constructor(private readonly environmentService: EnvironmentService) {
-    super();
-  }
+export class DemoEnvGuard implements CanActivate {
+  constructor(private readonly environmentService: EnvironmentService) {}
 
-  getRequest(context: ExecutionContext) {
-    return getRequest(context);
-  }
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const ctx = GqlExecutionContext.create(context);
+    const request = ctx.getContext().req;
 
-  // TODO: input should be typed
-  handleRequest(err: any, user: any) {
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
-    const currentUserWorkspaceId = user?.workspace?.id;
+    const currentUserWorkspaceId = request.workspace?.id;
 
     if (!currentUserWorkspaceId) {
       throw new UnauthorizedException('Unauthorized for not logged in user');
@@ -31,6 +31,6 @@ export class DemoEnvGuard extends AuthGuard(['jwt']) {
       throw new UnauthorizedException('Unauthorized for demo workspace');
     }
 
-    return user;
+    return true;
   }
 }

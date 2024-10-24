@@ -1,14 +1,16 @@
 import {
   FieldMetadataDefaultActor,
+  FieldMetadataDefaultArray,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueLinks,
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValuePhones,
   FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
@@ -25,8 +27,8 @@ type FieldMetadataDefaultValueMapping = {
     | FieldMetadataDefaultValueString
     | FieldMetadataDefaultValueUuidFunction;
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.PHONES]: FieldMetadataDefaultValuePhones;
+  [FieldMetadataType.EMAILS]: FieldMetadataDefaultValueEmails;
   [FieldMetadataType.DATE_TIME]:
     | FieldMetadataDefaultValueDateTime
     | FieldMetadataDefaultValueNowFunction;
@@ -37,7 +39,6 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
   [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
@@ -48,6 +49,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
+  [FieldMetadataType.ARRAY]: FieldMetadataDefaultArray;
 };
 
 export type FieldMetadataClassValidation =

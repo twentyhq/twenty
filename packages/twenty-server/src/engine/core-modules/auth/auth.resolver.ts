@@ -16,13 +16,19 @@ import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/d
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { CaptchaGuard } from 'src/engine/integrations/captcha/captcha.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import {
+  GenerateJWTOutput,
+  GenerateJWTOutputWithAuthTokens,
+  GenerateJWTOutputWithSSOAUTH,
+} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -36,7 +42,7 @@ import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { TokenService } from './services/token.service';
+import { TokenService } from './token/services/token.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -111,11 +117,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => TransientToken)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateTransientToken(
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<TransientToken | void> {
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
 
     if (!workspaceMember) {
       return;
@@ -123,7 +133,7 @@ export class AuthResolver {
     const transientToken = await this.tokenService.generateTransientToken(
       workspaceMember.id,
       user.id,
-      user.defaultWorkspace.id,
+      user.defaultWorkspaceId,
     );
 
     return { transientToken };
@@ -141,7 +151,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeApp)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: User,
@@ -154,18 +164,41 @@ export class AuthResolver {
     return authorizedApp;
   }
 
-  @Mutation(() => AuthTokens)
-  @UseGuards(JwtAuthGuard)
+  @Mutation(() => GenerateJWTOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateJWT(
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
-  ): Promise<AuthTokens> {
-    const token = await this.tokenService.generateSwitchWorkspaceToken(
+  ): Promise<GenerateJWTOutputWithAuthTokens | GenerateJWTOutputWithSSOAUTH> {
+    const result = await this.tokenService.switchWorkspace(
       user,
       args.workspaceId,
     );
 
-    return token;
+    if (result.useSSOAuth) {
+      return {
+        success: true,
+        reason: 'WORKSPACE_USE_SSO_AUTH',
+        availableSSOIDPs: result.availableSSOIdentityProviders.map(
+          (identityProvider) => ({
+            ...identityProvider,
+            workspace: {
+              id: result.workspace.id,
+              displayName: result.workspace.displayName,
+            },
+          }),
+        ),
+      };
+    }
+
+    return {
+      success: true,
+      reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH',
+      authTokens: await this.tokenService.generateSwitchWorkspaceToken(
+        user,
+        result.workspace,
+      ),
+    };
   }
 
   @Mutation(() => AuthTokens)
@@ -177,7 +210,7 @@ export class AuthResolver {
     return { tokens: tokens };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   @Mutation(() => Verify)
   async impersonate(
     @Args() impersonateInput: ImpersonateInput,
@@ -186,7 +219,7 @@ export class AuthResolver {
     return await this.authService.impersonate(impersonateInput.userId, user);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WorkspaceAuthGuard)
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
     @Args() args: ApiKeyTokenInput,

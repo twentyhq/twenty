@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { WorkflowStatusWorkspaceService } from 'src/modules/workflow/workflow-status/workflow-status.workspace-service';
+import { WorkflowStatusesUpdateJob } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
+import { WorkflowVersionStatusListener } from 'src/modules/workflow/workflow-status/listeners/workflow-version-status.listener';
 
 @Module({
-  providers: [WorkflowStatusWorkspaceService],
-  exports: [WorkflowStatusWorkspaceService],
+  providers: [WorkflowStatusesUpdateJob, WorkflowVersionStatusListener],
 })
 export class WorkflowStatusModule {}

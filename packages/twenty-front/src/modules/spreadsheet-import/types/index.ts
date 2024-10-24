@@ -1,9 +1,9 @@
-import { IconComponent } from 'twenty-ui';
+import { IconComponent, ThemeColor } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
 import { ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // Is modal visible.
@@ -47,7 +47,7 @@ export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // Headers matching accuracy: 1 for strict and up for more flexible matching
   autoMapDistance?: number;
   // Initial Step state to be rendered on load
-  initialStepState?: StepState;
+  initialStepState?: SpreadsheetImportStep;
   // Sets SheetJS dateNF option. If date parsing is applied, date will be formatted e.g. "yyyy-mm-dd hh:mm:ss", "m/d/yy h:mm", 'mmm-yy', etc.
   dateFormat?: string;
   // Sets SheetJS "raw" option. If true, parsing will only be applied to xlsx date fields.
@@ -66,25 +66,6 @@ export type ImportedStructuredRow<T extends string> = {
 
 // Data model RSI uses for spreadsheet imports
 export type Fields<T extends string> = ReadonlyDeep<Field<T>[]>;
-
-export type Field<T extends string> = {
-  // Icon
-  icon: IconComponent | null | undefined;
-  // UI-facing field label
-  label: string;
-  // Field's unique identifier
-  key: T;
-  // UI-facing additional information displayed via tooltip and ? icon
-  description?: string;
-  // Alternate labels used for fields' auto-matching, e.g. "fname" -> "firstName"
-  alternateMatches?: string[];
-  // Validations used for field entries
-  fieldValidationDefinitions?: FieldValidationDefinition[];
-  // Field entry component, default: Input
-  fieldType: Checkbox | Select | Input;
-  // UI-facing values shown to user as field examples pre-upload phase
-  example?: string;
-};
 
 export type Checkbox = {
   type: 'checkbox';
@@ -107,10 +88,33 @@ export type SelectOption = {
   value: string;
   // Disabled option when already select
   disabled?: boolean;
+  // Option color
+  color?: ThemeColor;
 };
 
 export type Input = {
   type: 'input';
+};
+
+export type SpreadsheetImportFieldType = Checkbox | Select | Input;
+
+export type Field<T extends string> = {
+  // Icon
+  icon: IconComponent | null | undefined;
+  // UI-facing field label
+  label: string;
+  // Field's unique identifier
+  key: T;
+  // UI-facing additional information displayed via tooltip and ? icon
+  description?: string;
+  // Alternate labels used for fields' auto-matching, e.g. "fname" -> "firstName"
+  alternateMatches?: string[];
+  // Validations used for field entries
+  fieldValidationDefinitions?: FieldValidationDefinition[];
+  // Field entry component, default: Input
+  fieldType: SpreadsheetImportFieldType;
+  // UI-facing values shown to user as field examples pre-upload phase
+  example?: string;
 };
 
 export type FieldValidationDefinition =

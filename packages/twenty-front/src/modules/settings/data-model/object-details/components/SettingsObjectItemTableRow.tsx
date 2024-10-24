@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
+import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -23,6 +23,12 @@ export const StyledObjectTableRow = styled(TableRow)`
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledNameLabel = styled.div`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const StyledActionTableCell = styled(TableCell)`
@@ -46,9 +52,15 @@ export const SettingsObjectMetadataItemTableRow = ({
     <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
       <StyledNameTableCell>
         {!!Icon && (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon
+            style={{ minWidth: theme.icon.size.md }}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         )}
-        {objectMetadataItem.labelPlural}
+        <StyledNameLabel title={objectMetadataItem.labelPlural}>
+          {objectMetadataItem.labelPlural}
+        </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>
         <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />

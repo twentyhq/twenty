@@ -19,14 +19,12 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
-import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -34,12 +32,11 @@ import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
@@ -56,7 +53,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
@@ -107,13 +104,6 @@ export class WorkspaceResolver {
     return this.workspaceService.deleteWorkspace(id);
   }
 
-  @ResolveField(() => String, { nullable: true })
-  async currentCacheVersion(
-    @Parent() workspace: Workspace,
-  ): Promise<string | null> {
-    return this.workspaceCacheVersionService.getVersion(workspace.id);
-  }
-
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
@@ -133,26 +123,17 @@ export class WorkspaceResolver {
   @ResolveField(() => String)
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
-      const workspaceLogoToken = await this.fileService.encodeFileToken({
-        workspace_id: workspace.id,
-      });
+      try {
+        const workspaceLogoToken = await this.fileService.encodeFileToken({
+          workspace_id: workspace.id,
+        });
 
-      return `${workspace.logo}?token=${workspaceLogoToken}`;
+        return `${workspace.logo}?token=${workspaceLogoToken}`;
+      } catch (e) {
+        return workspace.logo;
+      }
     }
 
     return workspace.logo ?? '';
-  }
-
-  @Mutation(() => SendInviteLink)
-  async sendInviteLink(
-    @Args() sendInviteLinkInput: SendInviteLinkInput,
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<SendInviteLink> {
-    return await this.workspaceService.sendInviteLink(
-      sendInviteLinkInput.emails,
-      workspace,
-      user,
-    );
   }
 }

@@ -2,15 +2,14 @@ import { Logger } from '@nestjs/common';
 
 import { Any, IsNull } from 'typeorm';
 
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelWorkspaceEntity,
@@ -29,8 +28,6 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
   );
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -62,10 +59,16 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       return;
     }
 
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    const connectedAccount = await connectedAccountRepository.findOne({
+      where: {
+        id: connectedAccountId,
+      },
+    });
 
     if (!connectedAccount) {
       throw new Error(
@@ -81,16 +84,16 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     const directionFilter =
       contactAutoCreationPolicy ===
       MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED
-        ? Any(['incoming', 'outgoing'])
-        : 'outgoing';
+        ? Any([MessageDirection.INCOMING, MessageDirection.OUTGOING])
+        : MessageDirection.OUTGOING;
 
     const contactsToCreate = await messageParticipantRepository.find({
       where: {
         message: {
           messageChannelMessageAssociations: {
             messageChannelId,
+            direction: directionFilter,
           },
-          direction: directionFilter,
         },
         personId: IsNull(),
         workspaceMemberId: IsNull(),

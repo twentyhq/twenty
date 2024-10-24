@@ -6,7 +6,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationBuilderModule } from 'src/engine/workspace-manager/workspace-migration-builder/workspace-migration-builder.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
@@ -35,7 +35,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
       'metadata',
     ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
-    WorkspaceCacheVersionModule,
+    WorkspaceMetadataVersionModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,

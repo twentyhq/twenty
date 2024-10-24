@@ -4,17 +4,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadata } from './FieldMetadata';
 
-export type FieldDefinitionRelationType =
-  | 'FROM_MANY_OBJECTS'
-  | 'FROM_ONE_OBJECT'
-  | 'TO_MANY_OBJECTS'
-  | 'TO_ONE_OBJECT';
-
-export type RelationDirections = {
-  from: FieldDefinitionRelationType;
-  to: FieldDefinitionRelationType;
-};
-
 export type FieldDefinition<T extends FieldMetadata> = {
   fieldMetadataId: string;
   label: string;
@@ -27,4 +16,7 @@ export type FieldDefinition<T extends FieldMetadata> = {
   infoTooltipContent?: string;
   defaultValue?: any;
   editButtonIcon?: IconComponent;
+  settings?: {
+    decimals?: number;
+  };
 };

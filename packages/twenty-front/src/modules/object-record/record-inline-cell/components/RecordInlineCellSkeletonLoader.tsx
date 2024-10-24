@@ -1,6 +1,7 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { StyledSkeletonDiv } from './RecordInlineCellContainer';
 
 export const RecordInlineCellSkeletonLoader = () => {
@@ -13,7 +14,10 @@ export const RecordInlineCellSkeletonLoader = () => {
       borderRadius={4}
     >
       <StyledSkeletonDiv>
-        <Skeleton width={154} height={16} />
+        <Skeleton
+          width={154}
+          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+        />
       </StyledSkeletonDiv>
     </SkeletonTheme>
   );

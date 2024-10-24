@@ -28,11 +28,13 @@
     }
   },
   "files": [],
-  "exclude": ["**/object-metadata/utils/getObjectMetadataItemsMock.ts"],
   "include": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./tsconfig.dev.json"
+    },
+    {
+      "path": "./tsconfig.build.json"
     },
     {
       "path": "./tsconfig.spec.json"

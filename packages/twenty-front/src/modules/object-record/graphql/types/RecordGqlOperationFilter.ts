@@ -92,6 +92,27 @@ export type LinksFilter = {
 
 export type ActorFilter = {
   name?: StringFilter;
+  source?: IsFilter;
+};
+
+export type EmailsFilter = {
+  primaryEmail?: StringFilter;
+};
+
+export type PhonesFilter = {
+  primaryPhoneNumber?: StringFilter;
+  primaryPhoneCountryCode?: StringFilter;
+};
+
+export type ArrayFilter = {
+  contains?: string[];
+  not_contains?: string[];
+  is?: IsFilter;
+};
+
+export type RawJsonFilter = {
+  like?: string;
+  is?: IsFilter;
 };
 
 export type LeafFilter =
@@ -106,6 +127,9 @@ export type LeafFilter =
   | AddressFilter
   | LinksFilter
   | ActorFilter
+  | PhonesFilter
+  | ArrayFilter
+  | RawJsonFilter
   | undefined;
 
 export type AndObjectRecordFilter = {

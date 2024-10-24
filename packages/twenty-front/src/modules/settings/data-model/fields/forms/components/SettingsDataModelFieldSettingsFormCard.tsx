@@ -9,6 +9,10 @@ import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/f
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
+import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
+import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
+import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
+import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
@@ -30,6 +34,14 @@ const currencyFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Currency) })
   .merge(settingsDataModelFieldCurrencyFormSchema);
 
+const dateFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Date) })
+  .merge(settingsDataModelFieldDateFormSchema);
+
+const dateTimeFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.DateTime) })
+  .merge(settingsDataModelFieldDateFormSchema);
+
 const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Relation) })
   .merge(settingsDataModelFieldRelationFormSchema);
@@ -42,6 +54,10 @@ const multiSelectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.MultiSelect) })
   .merge(settingsDataModelFieldMultiSelectFormSchema);
 
+const numberFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Number) })
+  .merge(settingsDataModelFieldNumberFormSchema);
+
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
@@ -51,6 +67,9 @@ const otherFieldsFormSchema = z.object({
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
         FieldMetadataType.MultiSelect,
+        FieldMetadataType.Date,
+        FieldMetadataType.DateTime,
+        FieldMetadataType.Number,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
   ),
@@ -61,16 +80,22 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   [
     booleanFieldFormSchema,
     currencyFieldFormSchema,
+    dateFieldFormSchema,
+    dateTimeFieldFormSchema,
     relationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
+    numberFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
 
 type SettingsDataModelFieldSettingsFormCardProps = {
-  disableCurrencyForm?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
+  isCreatingField?: boolean;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'isCustom'
+  > &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
@@ -80,17 +105,18 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 `;
 
 const previewableTypes = [
+  FieldMetadataType.Array,
   FieldMetadataType.Address,
   FieldMetadataType.Boolean,
   FieldMetadataType.Currency,
   FieldMetadataType.Date,
   FieldMetadataType.DateTime,
+  FieldMetadataType.Emails,
   FieldMetadataType.FullName,
-  FieldMetadataType.Link,
   FieldMetadataType.Links,
   FieldMetadataType.MultiSelect,
   FieldMetadataType.Number,
-  FieldMetadataType.Phone,
+  FieldMetadataType.Phones,
   FieldMetadataType.Rating,
   FieldMetadataType.RawJson,
   FieldMetadataType.Relation,
@@ -99,11 +125,13 @@ const previewableTypes = [
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
-  disableCurrencyForm,
+  isCreatingField,
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
+  if (!previewableTypes.includes(fieldMetadataItem.type)) {
+    return null;
+  }
 
   if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
     return (
@@ -117,7 +145,20 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Currency) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
-        disabled={disableCurrencyForm}
+        disabled={!isCreatingField}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (
+    fieldMetadataItem.type === FieldMetadataType.Date ||
+    fieldMetadataItem.type === FieldMetadataType.DateTime
+  ) {
+    return (
+      <SettingsDataModelFieldDateSettingsFormCard
+        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -127,6 +168,16 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Relation) {
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Number) {
+    return (
+      <SettingsDataModelFieldNumberSettingsFormCard
+        disabled={fieldMetadataItem.isCustom === false}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />

@@ -20,7 +20,7 @@ export const ObjectTasks = ({
   return (
     <StyledContainer>
       <ObjectFilterDropdownScope filterScopeId="entity-tasks-filter-scope">
-        <TaskGroups targetableObjects={[targetableObject]} showAddButton />
+        <TaskGroups targetableObjects={[targetableObject]} />
       </ObjectFilterDropdownScope>
     </StyledContainer>
   );

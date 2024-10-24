@@ -6,32 +6,38 @@ import {
   NavigationDrawerItem,
   NavigationDrawerItemProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 
 type SettingsNavigationDrawerItemProps = Pick<
   NavigationDrawerItemProps,
-  'Icon' | 'label' | 'level' | 'soon'
+  'Icon' | 'label' | 'indentationLevel' | 'soon'
 > & {
   matchSubPages?: boolean;
   path: SettingsPath;
+  subItemState?: NavigationDrawerSubItemState;
 };
 
 export const SettingsNavigationDrawerItem = ({
   Icon,
   label,
-  level,
-  matchSubPages = false,
+  indentationLevel,
+  matchSubPages = true,
   path,
   soon,
+  subItemState,
 }: SettingsNavigationDrawerItemProps) => {
   const href = getSettingsPagePath(path);
+  const pathName = useResolvedPath(href).pathname;
+
   const isActive = !!useMatch({
-    path: useResolvedPath(href).pathname,
+    path: pathName,
     end: !matchSubPages,
   });
 
   return (
     <NavigationDrawerItem
-      level={level}
+      indentationLevel={indentationLevel}
+      subItemState={subItemState}
       label={label}
       to={href}
       Icon={Icon}

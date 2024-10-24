@@ -41,8 +41,8 @@ const makeRequest = async () => {
 
   await client.mutate({
     mutation: gql`
-      mutation Track($type: String!, $data: JSON!) {
-        track(type: $type, data: $data) {
+      mutation Track($action: String!, $payload: JSON!) {
+        track(action: $action, payload: $payload) {
           success
         }
       }

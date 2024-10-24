@@ -25,7 +25,7 @@ services:
       PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      MESSAGE_QUEUE_TYPE: ${MESSAGE_QUEUE_TYPE}
+      REDIS_URL: ${REDIS_URL:-redis://localhost:6379}
 
       ENABLE_DB_MIGRATIONS: "true"
 
@@ -34,6 +34,7 @@ services:
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
       LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
@@ -57,7 +58,7 @@ services:
       PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      MESSAGE_QUEUE_TYPE: ${MESSAGE_QUEUE_TYPE}
+      REDIS_URL: ${REDIS_URL:-redis://localhost:6379}
 
       ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
 
@@ -65,6 +66,7 @@ services:
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
       LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
@@ -87,6 +89,12 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: always
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
     restart: always
 
 volumes:

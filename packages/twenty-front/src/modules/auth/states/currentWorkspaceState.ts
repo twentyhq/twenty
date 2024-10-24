@@ -13,7 +13,8 @@ export type CurrentWorkspace = Pick<
   | 'activationStatus'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
-  | 'currentCacheVersion'
+  | 'isPublicInviteLinkEnabled'
+  | 'metadataVersion'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

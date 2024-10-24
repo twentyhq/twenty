@@ -1,16 +1,17 @@
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -60,11 +61,21 @@ export const RecordIndexBoardDataLoaderEffect = ({
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
   const navigate = useNavigate();
-  const navigateToSelectSettings = useCallback(() => {
-    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
-  }, [navigate, objectMetadataItem]);
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
 
-  const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
+  const navigateToSelectSettings = useCallback(() => {
+    setNavigationMemorizedUrl(location.pathname + location.search);
+    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
+  }, [
+    navigate,
+    objectMetadataItem,
+    location.pathname,
+    location.search,
+    setNavigationMemorizedUrl,
+  ]);
 
   useEffect(() => {
     setObjectSingularName(objectNameSingular);
@@ -110,16 +121,23 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
-    objectMetadataItem,
-    selectedRecordIds,
-    callback: resetRecordSelection,
-  });
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
 
   useEffect(() => {
-    setActionBarEntries?.();
-    setContextMenuEntries?.();
-  }, [setActionBarEntries, setContextMenuEntries]);
+    setContextStoreTargetedRecords({
+      mode: 'selection',
+      selectedRecordIds: selectedRecordIds,
+    });
+
+    return () => {
+      setContextStoreTargetedRecords({
+        mode: 'selection',
+        selectedRecordIds: [],
+      });
+    };
+  }, [selectedRecordIds, setContextStoreTargetedRecords]);
 
   return <></>;
 };

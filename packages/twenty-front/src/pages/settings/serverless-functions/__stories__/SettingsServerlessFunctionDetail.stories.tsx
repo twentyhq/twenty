@@ -1,4 +1,3 @@
-import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { graphql, http, HttpResponse } from 'msw';
@@ -38,8 +37,6 @@ const meta: Meta<PageDecoratorArgs> = {
                 description: '',
                 syncStatus: 'READY',
                 runtime: 'nodejs18.x',
-                sourceCodeFullPath: SOURCE_CODE_FULL_PATH,
-                sourceCodeHash: '42d2734b3dc8a7b45a16803ed7f417bc',
                 updatedAt: '2024-02-24T10:23:10.673Z',
                 createdAt: '2024-02-24T10:23:10.673Z',
               },
@@ -47,7 +44,7 @@ const meta: Meta<PageDecoratorArgs> = {
           });
         }),
         http.get(getImageAbsoluteURI(SOURCE_CODE_FULL_PATH) || '', () => {
-          return HttpResponse.text(DEFAULT_CODE);
+          return HttpResponse.text('export const handler = () => {}');
         }),
       ],
     },

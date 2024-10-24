@@ -1,23 +1,23 @@
 import { Scope } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { Not } from 'typeorm';
 
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
   CalendarChannelSyncStage,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
-export type BlocklistReimportCalendarEventsJobData = {
-  workspaceId: string;
-  workspaceMemberId: string;
-};
+export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
+  ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
+>;
 
 @Processor({
   queueName: MessageQueue.calendarQueue,
@@ -26,39 +26,38 @@ export type BlocklistReimportCalendarEventsJobData = {
 export class BlocklistReimportCalendarEventsJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
   @Process(BlocklistReimportCalendarEventsJob.name)
   async handle(data: BlocklistReimportCalendarEventsJobData): Promise<void> {
-    const { workspaceId, workspaceMemberId } = data;
-
-    const connectedAccounts =
-      await this.connectedAccountRepository.getAllByWorkspaceMemberId(
-        workspaceMemberId,
-        workspaceId,
-      );
-
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      return;
-    }
+    const workspaceId = data.workspaceId;
 
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
 
-    await calendarChannelRepository.update(
-      {
-        connectedAccountId: Any(
-          connectedAccounts.map((connectedAccount) => connectedAccount.id),
-        ),
-      },
-      {
-        syncStage:
-          CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
-      },
-    );
+    for (const eventPayload of data.events) {
+      const workspaceMemberId =
+        eventPayload.properties.before.workspaceMemberId;
+
+      const calendarChannels = await calendarChannelRepository.find({
+        select: ['id'],
+        where: {
+          connectedAccount: {
+            accountOwnerId: workspaceMemberId,
+          },
+          syncStage: Not(
+            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+          ),
+        },
+      });
+
+      await this.calendarChannelSyncStatusService.resetAndScheduleFullCalendarEventListFetch(
+        calendarChannels.map((calendarChannel) => calendarChannel.id),
+        workspaceId,
+      );
+    }
   }
 }

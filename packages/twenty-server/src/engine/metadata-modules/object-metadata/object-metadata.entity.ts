@@ -69,9 +69,6 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: true })
   isAuditLogged: boolean;
 
-  @Column({ nullable: true, type: 'boolean' })
-  isSoftDeletable?: boolean | null;
-
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId?: string | null;
 
@@ -89,7 +86,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @OneToMany(() => IndexMetadataEntity, (index) => index.objectMetadata, {
     cascade: true,
   })
-  indexes: Relation<IndexMetadataEntity[]>;
+  indexMetadatas: Relation<IndexMetadataEntity[]>;
 
   @OneToMany(
     () => RelationMetadataEntity,

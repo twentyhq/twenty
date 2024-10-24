@@ -9,6 +9,9 @@ import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isR
 
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 import { ComponentByRightDrawerPage } from '@/ui/layout/right-drawer/types/ComponentByRightDrawerPage';
+import { RightDrawerWorkflowEditStep } from '@/workflow/components/RightDrawerWorkflowEditStep';
+import { RightDrawerWorkflowSelectAction } from '@/workflow/components/RightDrawerWorkflowSelectAction';
+import { RightDrawerWorkflowViewStep } from '@/workflow/components/RightDrawerWorkflowViewStep';
 import { isDefined } from 'twenty-ui';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
@@ -35,6 +38,11 @@ const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
   [RightDrawerPages.ViewCalendarEvent]: <RightDrawerCalendarEvent />,
   [RightDrawerPages.ViewRecord]: <RightDrawerRecord />,
   [RightDrawerPages.Copilot]: <RightDrawerAIChat />,
+  [RightDrawerPages.WorkflowStepSelectAction]: (
+    <RightDrawerWorkflowSelectAction />
+  ),
+  [RightDrawerPages.WorkflowStepEdit]: <RightDrawerWorkflowEditStep />,
+  [RightDrawerPages.WorkflowStepView]: <RightDrawerWorkflowViewStep />,
 };
 
 export const RightDrawerRouter = () => {

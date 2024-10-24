@@ -1,6 +1,6 @@
-import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import React from 'react';
 import { IconComponent } from 'twenty-ui';
 
 export type IconButtonSize = 'medium' | 'small';
@@ -33,11 +33,9 @@ const StyledButton = styled.button<
           case 'default':
             return css`
               background: ${theme.background.secondary};
-              border-color: ${!disabled
-                ? focus
-                  ? theme.color.blue
-                  : theme.background.transparent.light
-                : 'transparent'};
+              border-color: ${focus
+                ? theme.color.blue
+                : theme.background.transparent.light};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.accent.tertiary}`
@@ -233,7 +231,7 @@ const StyledButton = styled.button<
 
   white-space: nowrap;
 
-  width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
 
   &:focus {
     outline: none;

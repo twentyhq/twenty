@@ -37,12 +37,10 @@ type RecordTableWithWrappersProps = {
   recordTableId: string;
   viewBarId: string;
   updateRecordMutation: (params: any) => void;
-  createRecord: () => Promise<void>;
 };
 
 export const RecordTableWithWrappers = ({
   updateRecordMutation,
-  createRecord,
   objectNameSingular,
   recordTableId,
   viewBarId,
@@ -70,7 +68,7 @@ export const RecordTableWithWrappers = ({
 
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
-      <ScrollWrapper>
+      <ScrollWrapper contextProviderName="recordTableWithWrappers">
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>
@@ -80,18 +78,16 @@ export const RecordTableWithWrappers = ({
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={handleColumnsChange}
-                  createRecord={createRecord}
                 />
                 <DragSelect
                   dragSelectable={tableBodyRef}
-                  onDragSelectionStart={resetTableRowSelection}
+                  onDragSelectionStart={() => {
+                    resetTableRowSelection();
+                  }}
                   onDragSelectionChange={setRowSelected}
                 />
               </StyledTableInternalContainer>
-              <RecordTableInternalEffect
-                recordTableId={recordTableId}
-                tableBodyRef={tableBodyRef}
-              />
+              <RecordTableInternalEffect recordTableId={recordTableId} />
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>

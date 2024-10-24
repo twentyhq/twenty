@@ -1,19 +1,27 @@
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceCustomEntity } from 'src/engine/twenty-orm/decorators/workspace-custom-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -21,9 +29,13 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-@WorkspaceCustomEntity({
-  softDelete: true,
-})
+export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
+  {
+    name: DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+    type: FieldMetadataType.TEXT,
+  },
+];
+@WorkspaceCustomEntity()
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
@@ -138,4 +150,19 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: TimelineActivityWorkspaceEntity[];
+
+  @WorkspaceField({
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_CUSTOM_OBJECT,
+    ),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  [SEARCH_VECTOR_FIELD.name]: any;
 }

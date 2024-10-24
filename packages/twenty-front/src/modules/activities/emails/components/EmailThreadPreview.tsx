@@ -1,29 +1,14 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 import { Avatar, GRAY_SCALE } from 'twenty-ui';
 
+import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
-
-const StyledCardContent = styled(CardContent)<{
-  visibility: MessageChannelVisibility;
-}>`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(12)};
-  padding: ${({ theme }) => theme.spacing(0, 4)};
-  cursor: ${({ visibility }) =>
-    visibility === MessageChannelVisibility.ShareEverything
-      ? 'pointer'
-      : 'default'};
-`;
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
@@ -82,16 +67,10 @@ const StyledReceivedAt = styled.div`
 `;
 
 type EmailThreadPreviewProps = {
-  divider?: boolean;
   thread: TimelineThread;
 };
 
-export const EmailThreadPreview = ({
-  divider,
-  thread,
-}: EmailThreadPreviewProps) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
+export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   const { openEmailThread } = useEmailThread();
 
   const visibility = thread.visibility;
@@ -143,24 +122,32 @@ export const EmailThreadPreview = ({
     ],
   );
 
+  const isDisabled = visibility !== MessageChannelVisibility.ShareEverything;
+
   return (
-    <StyledCardContent
-      ref={cardRef}
+    <ActivityRow
       onClick={(event) => handleThreadClick(event)}
-      divider={divider}
-      visibility={visibility}
+      disabled={isDisabled}
     >
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
             avatarUrl={thread?.firstParticipant?.avatarUrl}
             placeholder={thread.firstParticipant.displayName}
+            placeholderColorSeed={
+              thread.firstParticipant.workspaceMemberId ||
+              thread.firstParticipant.personId
+            }
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
             <StyledAvatar
               avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
               placeholder={thread.lastTwoParticipants[0].displayName}
+              placeholderColorSeed={
+                thread.lastTwoParticipants[0].workspaceMemberId ||
+                thread.lastTwoParticipants[0].personId
+              }
               type="rounded"
             />
           )}
@@ -193,6 +180,6 @@ export const EmailThreadPreview = ({
       <StyledReceivedAt>
         {formatToHumanReadableDate(thread.lastMessageReceivedAt)}
       </StyledReceivedAt>
-    </StyledCardContent>
+    </ActivityRow>
   );
 };

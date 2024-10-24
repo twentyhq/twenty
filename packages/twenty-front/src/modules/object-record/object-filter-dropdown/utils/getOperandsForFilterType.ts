@@ -1,9 +1,9 @@
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { FilterType } from '../types/FilterType';
-
-export const getOperandsForFilterType = (
-  filterType: FilterType | null | undefined,
+export const getOperandsForFilterDefinition = (
+  filterDefinition: FilterDefinition,
 ): ViewFilterOperand[] => {
   const emptyOperands = [
     ViewFilterOperand.IsEmpty,
@@ -12,15 +12,13 @@ export const getOperandsForFilterType = (
 
   const relationOperands = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
 
-  switch (filterType) {
+  switch (filterDefinition.type) {
     case 'TEXT':
-    case 'EMAIL':
+    case 'EMAILS':
     case 'FULL_NAME':
     case 'ADDRESS':
-    case 'PHONE':
-    case 'LINK':
     case 'LINKS':
-    case 'ACTOR':
+    case 'PHONES':
       return [
         ViewFilterOperand.Contains,
         ViewFilterOperand.DoesNotContain,
@@ -28,11 +26,27 @@ export const getOperandsForFilterType = (
       ];
     case 'CURRENCY':
     case 'NUMBER':
-    case 'DATE_TIME':
-    case 'DATE':
       return [
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
+    case 'RAW_JSON':
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
+    case 'DATE_TIME':
+    case 'DATE':
+      return [
+        ViewFilterOperand.Is,
+        ViewFilterOperand.IsRelative,
+        ViewFilterOperand.IsInPast,
+        ViewFilterOperand.IsInFuture,
+        ViewFilterOperand.IsToday,
+        ViewFilterOperand.IsBefore,
+        ViewFilterOperand.IsAfter,
         ...emptyOperands,
       ];
     case 'RATING':
@@ -46,6 +60,27 @@ export const getOperandsForFilterType = (
       return [...relationOperands, ...emptyOperands];
     case 'SELECT':
       return [...relationOperands];
+    case 'ACTOR': {
+      if (isActorSourceCompositeFilter(filterDefinition)) {
+        return [
+          ViewFilterOperand.Is,
+          ViewFilterOperand.IsNot,
+          ...emptyOperands,
+        ];
+      }
+
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
+    }
+    case 'ARRAY':
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
     default:
       return [];
   }

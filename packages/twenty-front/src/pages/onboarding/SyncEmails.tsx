@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconGoogle } from 'twenty-ui';
+import { ActionLink, IconGoogle } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -14,7 +14,6 @@ import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerG
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   CalendarChannelVisibility,
@@ -54,11 +53,11 @@ export const SyncEmails = () => {
         ? CalendarChannelVisibility.ShareEverything
         : CalendarChannelVisibility.Metadata;
 
-    await triggerGoogleApisOAuth(
-      AppPath.Index,
-      visibility,
-      calendarChannelVisibility,
-    );
+    await triggerGoogleApisOAuth({
+      redirectLocation: AppPath.Index,
+      messageVisibility: visibility,
+      calendarVisibility: calendarChannelVisibility,
+    });
   };
 
   const continueWithoutSync = async () => {

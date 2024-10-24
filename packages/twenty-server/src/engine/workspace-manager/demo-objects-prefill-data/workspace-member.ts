@@ -5,7 +5,7 @@ import { DEMO_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/demo/users';
 export const DEMO_SEED_WORKSPACE_MEMBER_IDS = {
   NOAH: '20202020-0687-4c41-b707-ed1bfca972a2',
   HUGO: '20202020-77d5-4cb6-b60a-f4a835a85d62',
-  JULIA: '20202020-1553-45c6-a028-5a9064cce07e',
+  TIM: '20202020-1553-45c6-a028-5a9064cce07e',
 };
 
 export const workspaceMemberPrefillData = async (
@@ -21,6 +21,7 @@ export const workspaceMemberPrefillData = async (
       'nameLastName',
       'locale',
       'colorScheme',
+      'userEmail',
       'userId',
     ])
     .orIgnore()
@@ -31,6 +32,7 @@ export const workspaceMemberPrefillData = async (
         nameLastName: 'A',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'noah@demo.dev',
         userId: DEMO_SEED_USER_IDS.NOAH,
       },
       {
@@ -39,15 +41,17 @@ export const workspaceMemberPrefillData = async (
         nameLastName: 'I',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'hugo@demo.dev',
         userId: DEMO_SEED_USER_IDS.HUGO,
       },
       {
-        id: DEMO_SEED_WORKSPACE_MEMBER_IDS.JULIA,
-        nameFirstName: 'Julia',
-        nameLastName: 'S',
+        id: DEMO_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        nameFirstName: 'Tim',
+        nameLastName: 'Apple',
         locale: 'en',
         colorScheme: 'Light',
-        userId: DEMO_SEED_USER_IDS.JULIA,
+        userEmail: 'tim@apple.dev',
+        userId: DEMO_SEED_USER_IDS.TIM,
       },
     ])
     .execute();

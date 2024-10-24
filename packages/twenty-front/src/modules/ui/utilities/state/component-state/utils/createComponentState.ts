@@ -1,6 +1,6 @@
 import { AtomEffect, atomFamily } from 'recoil';
 
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
 type CreateComponentStateType<ValueType> = {
   key: string;
@@ -13,7 +13,7 @@ export const createComponentState = <ValueType>({
   defaultValue,
   effects,
 }: CreateComponentStateType<ValueType>) => {
-  return atomFamily<ValueType, ComponentStateKey>({
+  return atomFamily<ValueType, RecoilComponentStateKey>({
     key,
     default: defaultValue,
     effects: effects,

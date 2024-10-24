@@ -1,7 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing';
-import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
+import { renderHook } from '@testing-library/react';
 
 import {
   query,
@@ -9,8 +6,10 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useDeleteManyRecords';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { act } from 'react';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const people = [
+const personIds = [
   'a7286b9a-c039-4a89-9567-2dfa7953cda9',
   '37faabcd-cb39-4a0a-8618-7e3fda9afca0',
 ];
@@ -29,13 +28,9 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useDeleteManyRecords', () => {
   it('works as expected', async () => {
@@ -47,7 +42,7 @@ describe('useDeleteManyRecords', () => {
     );
 
     await act(async () => {
-      const res = await result.current.deleteManyRecords(people);
+      const res = await result.current.deleteManyRecords(personIds);
       expect(res).toBeDefined();
       expect(res[0]).toHaveProperty('id');
     });

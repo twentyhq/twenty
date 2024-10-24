@@ -4,10 +4,7 @@ import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFiel
 import { v4 } from 'uuid';
 
 export const generateDefaultFieldValue = (
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'defaultValue' | 'type' | 'fromRelationMetadata'
-  >,
+  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue' | 'type'>,
 ) => {
   const defaultValue = isFieldValueEmpty({
     fieldValue: fieldMetadataItem.defaultValue,

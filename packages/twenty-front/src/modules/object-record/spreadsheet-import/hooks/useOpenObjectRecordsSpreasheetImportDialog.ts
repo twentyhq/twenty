@@ -1,12 +1,15 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
-import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/util/buildRecordFromImportedStructuredRow';
+import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 export const useOpenObjectRecordsSpreasheetImportDialog = (
   objectNameSingular: string,
@@ -37,7 +40,8 @@ export const useOpenObjectRecordsSpreasheetImportDialog = (
           (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
           fieldMetadataItem.name !== 'createdAt' &&
           (fieldMetadataItem.type !== FieldMetadataType.Relation ||
-            fieldMetadataItem.toRelationMetadata),
+            fieldMetadataItem.relationDefinition?.direction ===
+              RelationDefinitionType.ManyToOne),
       )
       .sort((fieldMetadataItemA, fieldMetadataItemB) =>
         fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),

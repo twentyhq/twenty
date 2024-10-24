@@ -1,6 +1,5 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -8,7 +7,6 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -22,7 +20,6 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -167,27 +164,6 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('opportunity')
   opportunityId: string | null;
-
-  @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.workflow,
-    type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workflow',
-    description: 'Attachment workflow',
-    icon: 'IconSettingsAutomation',
-    inverseSideTarget: () => WorkflowWorkspaceEntity,
-    inverseSideFieldKey: 'attachments',
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
-  })
-  workflow: Relation<WorkflowWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('workflow')
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKey.IsWorkflowEnabled,
-  })
-  workflowId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

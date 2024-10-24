@@ -1,16 +1,22 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
-import { v4 } from 'uuid';
 
+import { SetMainContextStoreComponentInstanceIdEffect } from '@/context-store/components/SetMainContextStoreComponentInstanceIdEffect';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
+import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
+import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
+import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
+import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { useRecoilCallback } from 'recoil';
 import { capitalize } from '~/utils/string/capitalize';
 
 const StyledIndexContainer = styled.div`
@@ -23,35 +29,65 @@ export const RecordIndexPage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const recordIndexId = objectNamePlural ?? '';
-  const setHotkeyScope = useSetHotkeyScope();
 
-  const { setSelectedTableCellEditMode } = useSelectedTableCellEditMode({
-    scopeId: recordIndexId,
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
   });
 
-  const { setPendingRecordId } = useRecordTable({
-    recordTableId: recordIndexId,
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
   });
 
-  const handleAddButtonClick = async () => {
-    setPendingRecordId(v4());
-    setSelectedTableCellEditMode(-1, 0);
-    setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
+  const { createNewTableRecord } = useCreateNewTableRecord(recordIndexId);
+
+  const handleCreateRecord = () => {
+    createNewTableRecord();
   };
+
+  const { handleIndexIdentifierClick } = useHandleIndexIdentifierClick({
+    objectMetadataItem,
+    recordIndexId,
+  });
+
+  const handleIndexRecordsLoaded = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        // TODO: find a better way to reset this state ?
+        set(lastShowPageRecordIdState, null);
+      },
+    [],
+  );
 
   return (
     <PageContainer>
-      <PageTitle title={`${capitalize(objectNamePlural)}`} />
-      <RecordIndexPageHeader createRecord={handleAddButtonClick} />
-      <PageBody>
-        <StyledIndexContainer>
-          <RecordIndexContainer
-            recordIndexId={recordIndexId}
-            objectNamePlural={objectNamePlural}
-            createRecord={handleAddButtonClick}
-          />
-        </StyledIndexContainer>
-      </PageBody>
+      <RecordIndexRootPropsContext.Provider
+        value={{
+          recordIndexId,
+          objectNamePlural,
+          objectNameSingular,
+          objectMetadataItem,
+          onIndexRecordsLoaded: handleIndexRecordsLoaded,
+          onIndexIdentifierClick: handleIndexIdentifierClick,
+          onCreateRecord: handleCreateRecord,
+        }}
+      >
+        <PageTitle title={`${capitalize(objectNamePlural)}`} />
+        <RecordIndexPageHeader />
+        <PageBody>
+          <StyledIndexContainer>
+            <ContextStoreComponentInstanceContext.Provider
+              value={{
+                instanceId: 'record-index',
+              }}
+            >
+              <RecordIndexContainerContextStoreObjectMetadataEffect />
+              <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+              <SetMainContextStoreComponentInstanceIdEffect />
+              <RecordIndexContainer />
+            </ContextStoreComponentInstanceContext.Provider>
+          </StyledIndexContainer>
+        </PageBody>
+      </RecordIndexRootPropsContext.Provider>
     </PageContainer>
   );
 };

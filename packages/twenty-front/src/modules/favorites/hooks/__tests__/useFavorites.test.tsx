@@ -1,16 +1,14 @@
-import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
 import { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
   favoriteId,
   favoriteTargetObjectRecord,
@@ -29,17 +27,9 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
 
-const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-      <MockedProvider mocks={mocks} addTypename={false}>
-        {children}
-      </MockedProvider>
-    </SnackBarProviderScope>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useFavorites', () => {
   it('should fetch favorites successfully', async () => {
@@ -51,7 +41,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },
@@ -72,7 +62,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },
@@ -100,7 +90,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },
@@ -125,7 +115,7 @@ describe('useFavorites', () => {
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
         return useFavorites();
       },

@@ -1,12 +1,13 @@
 import { Meta } from '@storybook/react';
 
-import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
-import { Providers } from '@/spreadsheet-import/components/Providers';
-import { SelectHeaderStep } from '@/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep';
 import {
   headerSelectionTableFields,
   mockRsiValues,
-} from '@/spreadsheet-import/tests/mockRsiValues';
+} from '@/spreadsheet-import/__mocks__/mockRsiValues';
+import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
+import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
+import { SelectHeaderStep } from '@/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 
 const meta: Meta<typeof SelectHeaderStep> = {
@@ -21,14 +22,21 @@ export default meta;
 
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
-    <Providers values={mockRsiValues}>
+    <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
         <SelectHeaderStep
           importedRows={headerSelectionTableFields}
-          onContinue={() => Promise.resolve()}
+          setCurrentStepState={() => null}
+          nextStep={() => Promise.resolve()}
+          setPreviousStepState={() => null}
+          onError={() => null}
           onBack={() => Promise.resolve()}
+          currentStepState={{
+            type: SpreadsheetImportStepType.selectHeader,
+            data: headerSelectionTableFields,
+          }}
         />
       </ModalWrapper>
-    </Providers>
+    </ReactSpreadsheetImportContextProvider>
   </DialogManagerScope>
 );

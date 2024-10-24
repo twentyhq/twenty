@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
 import { AvatarType } from 'twenty-ui';
 
-import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
@@ -86,132 +85,9 @@ export const mocks = [
         mutation CreateOneFavorite($input: FavoriteCreateInput!) {
           createFavorite(data: $input) {
             __typename
-        taskId
-        myCustomObjectId
-        workspaceMemberId
-        workspaceMember {
-          __typename
-          userId
-          updatedAt
-          dateFormat
-          id
-          locale
-          avatarUrl
-          timeZone
-          name {
-            firstName
-            lastName
-          }
-          userEmail
-          createdAt
-          timeFormat
-          colorScheme
-        }
-        companyId
-        myCustomObject {
-          __typename
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          position
-          updatedAt
-          name
-          myCustomField
-          id
-          createdAt
-        }
-        updatedAt
-        id
-        opportunity {
-          __typename
-          companyId
-          closeDate
-          stage
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          id
-          updatedAt
-          name
-          createdAt
-          pointOfContactId
-          amount {
-            amountMicros
-            currencyCode
-          }
-          position
-        }
-        noteId
-        note {
-          __typename
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          position
-          body
-          updatedAt
-          createdAt
-          title
-          id
-        }
-        personId
-        task {
-          __typename
-          status
-          assigneeId
-          updatedAt
-          body
-          createdAt
-          dueAt
-          position
-          id
-          title
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-        }
-        opportunityId
-        position
-        createdAt
         company {
           __typename
-          id
-          visaSponsorship
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          domainName {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          introVideo {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          position
-          annualRecurringRevenue {
-            amountMicros
-            currencyCode
-          }
-          employees
-          linkedinLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          workPolicy
+          accountOwnerId
           address {
             addressStreet1
             addressStreet2
@@ -222,22 +98,223 @@ export const mocks = [
             addressLat
             addressLng
           }
+          annualRecurringRevenue {
+            amountMicros
+            currencyCode
+          }
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          domainName {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          employees
+          id
+          idealCustomerProfile
+          introVideo {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          linkedinLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
           name
+          position
+          tagline
           updatedAt
+          visaSponsorship
+          workPolicy
           xLink {
             primaryLinkUrl
             primaryLinkLabel
             secondaryLinks
           }
-          myCustomField
+        }
+        companyId
+        createdAt
+        deletedAt
+        id
+        note {
+          __typename
+          body
           createdAt
-          accountOwnerId
-          tagline
-          idealCustomerProfile
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          id
+          position
+          title
+          updatedAt
         }
+        noteId
+        opportunity {
+          __typename
+          amount {
+            amountMicros
+            currencyCode
+          }
+          closeDate
+          companyId
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          id
+          name
+          pointOfContactId
+          position
+          stage
+          updatedAt
+        }
+        opportunityId
         person {
-          ${PERSON_FRAGMENT}
+          __typename
+          avatarUrl
+          city
+          companyId
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          emails {
+            primaryEmail
+            additionalEmails
+          }
+          id
+          intro
+          jobTitle
+          linkedinLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          name {
+            firstName
+            lastName
+          }
+          performanceRating
+          phones {
+            primaryPhoneNumber
+            primaryPhoneCountryCode
+            additionalPhones
+          }
+          position
+          updatedAt
+          whatsapp {
+            primaryPhoneNumber
+            primaryPhoneCountryCode
+            additionalPhones
+          }
+          workPreference
+          xLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
         }
+        personId
+        position
+        rocket {
+          __typename
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          id
+          name
+          position
+          updatedAt
+        }
+        rocketId
+        task {
+          __typename
+          assigneeId
+          body
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          dueAt
+          id
+          position
+          status
+          title
+          updatedAt
+        }
+        taskId
+        updatedAt
+        view {
+          __typename
+          createdAt
+          deletedAt
+          icon
+          id
+          isCompact
+          kanbanFieldMetadataId
+          key
+          name
+          objectMetadataId
+          position
+          type
+          updatedAt
+        }
+        viewId
+        workflow {
+          __typename
+          createdAt
+          deletedAt
+          id
+          lastPublishedVersionId
+          name
+          position
+          statuses
+          updatedAt
+        }
+        workflowId
+        workspaceMember {
+          __typename
+          avatarUrl
+          colorScheme
+          createdAt
+          dateFormat
+          deletedAt
+          id
+          locale
+          name {
+            firstName
+            lastName
+          }
+          timeFormat
+          timeZone
+          updatedAt
+          userEmail
+          userId
+        }
+        workspaceMemberId
       }
     }
       `,
@@ -263,7 +340,9 @@ export const mocks = [
       query: gql`
         mutation DeleteOneFavorite($idToDelete: ID!) {
           deleteFavorite(id: $idToDelete) {
+            __typename
             id
+            deletedAt
           }
         }
       `,
@@ -286,158 +365,236 @@ export const mocks = [
         ) {
           updateFavorite(id: $idToUpdate, data: $input) {
             __typename
-        taskId
-        myCustomObjectId
-        workspaceMemberId
-        workspaceMember {
-          __typename
-          userId
-          updatedAt
-          dateFormat
-          id
-          locale
-          avatarUrl
-          timeZone
-          name {
-            firstName
-            lastName
-          }
-          userEmail
-          createdAt
-          timeFormat
-          colorScheme
-        }
-        companyId
-        myCustomObject {
-          __typename
-          createdBy {
-            source
+            company {
+              __typename
+              accountOwnerId
+              address {
+                addressStreet1
+                addressStreet2
+                addressCity
+                addressState
+                addressCountry
+                addressPostcode
+                addressLat
+                addressLng
+              }
+              annualRecurringRevenue {
+                amountMicros
+                currencyCode
+              }
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              domainName {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              employees
+              id
+              idealCustomerProfile
+              introVideo {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              linkedinLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              name
+              position
+              tagline
+              updatedAt
+              visaSponsorship
+              workPolicy
+              xLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+            }
+            companyId
+            createdAt
+            deletedAt
+            id
+            note {
+              __typename
+              body
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              id
+              position
+              title
+              updatedAt
+            }
+            noteId
+            opportunity {
+              __typename
+              amount {
+                amountMicros
+                currencyCode
+              }
+              closeDate
+              companyId
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              id
+              name
+              pointOfContactId
+              position
+              stage
+              updatedAt
+            }
+            opportunityId
+            person {
+              __typename
+              avatarUrl
+              city
+              companyId
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              emails {
+                primaryEmail
+                additionalEmails
+              }
+              id
+              intro
+              jobTitle
+              linkedinLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              name {
+                firstName
+                lastName
+              }
+              performanceRating
+              phones {
+                primaryPhoneNumber
+                primaryPhoneCountryCode
+                additionalPhones
+              }
+              position
+              updatedAt
+              whatsapp {
+                primaryPhoneNumber
+                primaryPhoneCountryCode
+                additionalPhones
+              }
+              workPreference
+              xLink {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+            }
+            personId
+            position
+            rocket {
+              __typename
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              id
+              name
+              position
+              updatedAt
+            }
+            rocketId
+            task {
+              __typename
+              assigneeId
+              body
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              dueAt
+              id
+              position
+              status
+              title
+              updatedAt
+            }
+            taskId
+            updatedAt
+            view {
+              __typename
+              createdAt
+              deletedAt
+              icon
+              id
+              isCompact
+              kanbanFieldMetadataId
+              key
+              name
+              objectMetadataId
+              position
+              type
+              updatedAt
+            }
+            viewId
+            workflow {
+              __typename
+              createdAt
+              deletedAt
+              id
+              lastPublishedVersionId
+              name
+              position
+              statuses
+              updatedAt
+            }
+            workflowId
+            workspaceMember {
+              __typename
+              avatarUrl
+              colorScheme
+              createdAt
+              dateFormat
+              deletedAt
+              id
+              locale
+              name {
+                firstName
+                lastName
+              }
+              timeFormat
+              timeZone
+              updatedAt
+              userEmail
+              userId
+            }
             workspaceMemberId
-            name
-          }
-          position
-          updatedAt
-          name
-          myCustomField
-          id
-          createdAt
-        }
-        updatedAt
-        id
-        opportunity {
-          __typename
-          companyId
-          closeDate
-          stage
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          id
-          updatedAt
-          name
-          createdAt
-          pointOfContactId
-          amount {
-            amountMicros
-            currencyCode
-          }
-          position
-        }
-        noteId
-        note {
-          __typename
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          position
-          body
-          updatedAt
-          createdAt
-          title
-          id
-        }
-        personId
-        task {
-          __typename
-          status
-          assigneeId
-          updatedAt
-          body
-          createdAt
-          dueAt
-          position
-          id
-          title
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-        }
-        opportunityId
-        position
-        createdAt
-        company {
-          __typename
-          id
-          visaSponsorship
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          domainName {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          introVideo {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          position
-          annualRecurringRevenue {
-            amountMicros
-            currencyCode
-          }
-          employees
-          linkedinLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          workPolicy
-          address {
-            addressStreet1
-            addressStreet2
-            addressCity
-            addressState
-            addressCountry
-            addressPostcode
-            addressLat
-            addressLng
-          }
-          name
-          updatedAt
-          xLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          myCustomField
-          createdAt
-          accountOwnerId
-          tagline
-          idealCustomerProfile
-        }
-        person {
-          ${PERSON_FRAGMENT}
-        }
           }
         }
       `,

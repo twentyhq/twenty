@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { WorkflowActionRunnerModule } from 'src/modules/workflow/workflow-action-runner/workflow-action-runner.module';
-import { WorkflowRunnerJob } from 'src/modules/workflow/workflow-runner/workflow-runner.job';
-import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
-import { WorkflowStatusModule } from 'src/modules/workflow/workflow-status/workflow-status.module';
+import { WorkflowExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-executor.module';
+import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-run.workspace-service';
 
 @Module({
-  imports: [
-    WorkflowCommonModule,
-    WorkflowActionRunnerModule,
-    WorkflowStatusModule,
+  imports: [WorkflowCommonModule, WorkflowExecutorModule],
+  providers: [
+    WorkflowRunnerWorkspaceService,
+    WorkflowRunWorkspaceService,
+    RunWorkflowJob,
   ],
-  providers: [WorkflowRunnerWorkspaceService, WorkflowRunnerJob],
   exports: [WorkflowRunnerWorkspaceService],
 })
 export class WorkflowRunnerModule {}

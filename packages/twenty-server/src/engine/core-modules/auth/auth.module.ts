@@ -12,7 +12,8 @@ import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controller
 import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -23,13 +24,16 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
+import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
+import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -45,32 +49,41 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
-      [Workspace, User, AppToken, FeatureFlagEntity],
+      [
+        Workspace,
+        User,
+        AppToken,
+        FeatureFlagEntity,
+        WorkspaceSSOIdentityProvider,
+        KeyValuePair,
+      ],
       'core',
     ),
-    ObjectMetadataRepositoryModule.forFeature([
-      ConnectedAccountWorkspaceEntity,
-    ]),
     HttpModule,
+    TokenModule,
     UserWorkspaceModule,
     WorkspaceModule,
     OnboardingModule,
-    TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity]),
     WorkspaceDataSourceModule,
+    WorkspaceInvitationModule,
     ConnectedAccountModule,
+    WorkspaceSSOModule,
+    FeatureFlagModule,
   ],
   controllers: [
     GoogleAuthController,
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     VerifyAuthController,
+    SSOAuthController,
   ],
   providers: [
     SignInUpService,
     AuthService,
-    TokenService,
     JwtAuthStrategy,
+    SamlAuthStrategy,
     AuthResolver,
+    TokenService,
     GoogleAPIsService,
     AppTokenService,
   ],

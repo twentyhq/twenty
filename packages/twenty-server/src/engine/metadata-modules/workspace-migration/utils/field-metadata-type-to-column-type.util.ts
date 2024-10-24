@@ -16,10 +16,8 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
       return 'uuid';
     case FieldMetadataType.TEXT:
     case FieldMetadataType.RICH_TEXT:
+    case FieldMetadataType.ARRAY:
       return 'text';
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
-      return 'varchar';
     case FieldMetadataType.NUMERIC:
       return 'numeric';
     case FieldMetadataType.NUMBER:
@@ -37,6 +35,8 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
       return 'enum';
     case FieldMetadataType.RAW_JSON:
       return 'jsonb';
+    case FieldMetadataType.TS_VECTOR:
+      return 'tsvector';
     default:
       throw new WorkspaceMigrationException(
         `Cannot convert ${fieldMetadataType} to column type.`,

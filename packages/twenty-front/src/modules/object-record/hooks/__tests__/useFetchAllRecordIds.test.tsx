@@ -1,10 +1,8 @@
-import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { ReactNode, useEffect } from 'react';
-import { RecoilRoot, useRecoilState } from 'recoil';
+import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import {
   mockPageSize,
   peopleMockWithIdsOnly,
@@ -17,7 +15,8 @@ import {
   variablesThirdRequest,
 } from '@/object-record/hooks/__mocks__/useFetchAllRecordIds';
 import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
-import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const mocks = [
   {
@@ -52,22 +51,12 @@ const mocks = [
   },
 ];
 
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
+
 describe('useFetchAllRecordIds', () => {
   it('fetches all record ids with fetch more synchronous loop', async () => {
-    const Wrapper = ({ children }: { children: ReactNode }) => (
-      <RecoilRoot>
-        <SnackBarManagerScopeInternalContext.Provider
-          value={{
-            scopeId: 'snack-bar-manager',
-          }}
-        >
-          <MockedProvider mocks={mocks} addTypename={false}>
-            {children}
-          </MockedProvider>
-        </SnackBarManagerScopeInternalContext.Provider>
-      </RecoilRoot>
-    );
-
     const { result } = renderHook(
       () => {
         const [, setObjectMetadataItems] = useRecoilState(
@@ -75,7 +64,7 @@ describe('useFetchAllRecordIds', () => {
         );
 
         useEffect(() => {
-          setObjectMetadataItems(getObjectMetadataItemsMock());
+          setObjectMetadataItems(generatedMockObjectMetadataItems);
         }, [setObjectMetadataItems]);
 
         return useFetchAllRecordIds({

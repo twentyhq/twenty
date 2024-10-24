@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
-import { Chip, ChipVariant } from '@ui/display/chip/components/Chip';
+import { Chip, ChipSize, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
 import { isDefined } from '@ui/utilities/isDefined';
@@ -13,7 +13,9 @@ export type AvatarChipProps = {
   avatarUrl?: string;
   avatarType?: Nullable<AvatarType>;
   variant?: AvatarChipVariant;
+  size?: ChipSize;
   LeftIcon?: IconComponent;
+  LeftIconColor?: string;
   isIconInverted?: boolean;
   className?: string;
   placeholderColorSeed?: string;
@@ -41,10 +43,12 @@ export const AvatarChip = ({
   avatarType = 'rounded',
   variant = AvatarChipVariant.Regular,
   LeftIcon,
+  LeftIconColor,
   isIconInverted,
   className,
   placeholderColorSeed,
   onClick,
+  size = ChipSize.Small,
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -58,6 +62,7 @@ export const AvatarChip = ({
             : ChipVariant.Regular
           : ChipVariant.Transparent
       }
+      size={size}
       leftComponent={
         isDefined(LeftIcon) ? (
           isIconInverted === true ? (
@@ -71,7 +76,11 @@ export const AvatarChip = ({
               />
             </StyledInvertedIconContainer>
           ) : (
-            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+            <LeftIcon
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={LeftIconColor || 'currentColor'}
+            />
           )
         ) : (
           <Avatar

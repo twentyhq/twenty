@@ -1,6 +1,7 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledSkeletonContainer = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
@@ -15,7 +16,10 @@ const StyledRecordTableCellLoader = ({ width }: { width?: number }) => {
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={width} height={16} />
+      <Skeleton
+        width={width}
+        height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+      />
     </SkeletonTheme>
   );
 };

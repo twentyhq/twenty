@@ -1,21 +1,22 @@
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useMemo } from 'react';
 
-import { StepType } from '@/spreadsheet-import/steps/components/UploadFlow';
-
-export const useSpreadsheetImportInitialStep = (initialStep?: StepType) => {
+export const useSpreadsheetImportInitialStep = (
+  initialStep?: SpreadsheetImportStepType,
+) => {
   const steps = ['uploadStep', 'matchColumnsStep', 'validationStep'] as const;
 
   const initialStepNumber = useMemo(() => {
     switch (initialStep) {
-      case StepType.upload:
+      case SpreadsheetImportStepType.upload:
         return 0;
-      case StepType.selectSheet:
+      case SpreadsheetImportStepType.selectSheet:
         return 0;
-      case StepType.selectHeader:
+      case SpreadsheetImportStepType.selectHeader:
         return 0;
-      case StepType.matchColumns:
+      case SpreadsheetImportStepType.matchColumns:
         return 2;
-      case StepType.validateData:
+      case SpreadsheetImportStepType.validateData:
         return 3;
       default:
         return -1;

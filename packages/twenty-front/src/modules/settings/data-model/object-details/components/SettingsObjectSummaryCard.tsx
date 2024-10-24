@@ -2,9 +2,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconArchive, IconDotsVertical, IconPencil, useIcons } from 'twenty-ui';
 
+import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
+import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
-import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
+import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -38,8 +40,12 @@ export const SettingsObjectSummaryCard = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
+  const objectMetadataItemId = objectMetadataItem.id;
 
   const { closeDropdown } = useDropdown(dropdownId);
+  const { setFallbackForLastVisitedView } = useLastVisitedView();
+  const { setFallbackForLastVisitedObjectMetadataItem } =
+    useLastVisitedObjectMetadataItem();
 
   const handleEdit = () => {
     onEdit();
@@ -47,6 +53,8 @@ export const SettingsObjectSummaryCard = ({
   };
 
   const handleDeactivate = () => {
+    setFallbackForLastVisitedObjectMetadataItem(objectMetadataItemId);
+    setFallbackForLastVisitedView(objectMetadataItemId);
     onDeactivate();
     closeDropdown();
   };

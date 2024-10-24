@@ -1,11 +1,11 @@
 {
   "name": "twenty-front",
-  "version": "0.23.1",
+  "version": "0.32.0-canary",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=4096 npx nx build",
+    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=3000 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=6000 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx vite --host",
     "tsup": "npx tsup"
   },
@@ -30,6 +30,16 @@
     "workerDirectory": "public"
   },
   "dependencies": {
+    "@nivo/calendar": "^0.87.0",
+    "@nivo/core": "^0.87.0",
+    "@nivo/line": "^0.87.0",
+    "@tiptap/extension-document": "^2.9.0",
+    "@tiptap/extension-paragraph": "^2.9.0",
+    "@tiptap/extension-placeholder": "^2.9.0",
+    "@tiptap/extension-text": "^2.9.0",
+    "@tiptap/extension-text-style": "^2.8.0",
+    "@tiptap/react": "^2.8.0",
+    "@xyflow/react": "^12.0.4",
     "transliteration": "^2.3.5"
   }
 }

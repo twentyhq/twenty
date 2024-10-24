@@ -7,6 +7,7 @@ export const GET_CLIENT_CONFIG = gql`
         google
         password
         microsoft
+        sso
       }
       billing {
         isBillingEnabled
@@ -16,9 +17,7 @@ export const GET_CLIENT_CONFIG = gql`
       signInPrefilled
       signUpDisabled
       debugMode
-      telemetry {
-        enabled
-      }
+      analyticsEnabled
       support {
         supportDriver
         supportFrontChatId

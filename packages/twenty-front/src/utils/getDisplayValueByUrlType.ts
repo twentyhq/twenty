@@ -1,5 +1,4 @@
-import { LinkType } from '@/ui/navigation/link/components/SocialLink';
-
+import { LinkType } from 'twenty-ui';
 import { isDefined } from './isDefined';
 
 type getUrlDisplayValueByUrlTypeProps = {
@@ -16,7 +15,7 @@ export const getDisplayValueByUrlType = ({
       /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company|school)\/(.*)/,
     );
     if (isDefined(matches?.[1])) {
-      return matches?.[1];
+      return decodeURIComponent(matches?.[1]);
     } else {
       return 'LinkedIn';
     }

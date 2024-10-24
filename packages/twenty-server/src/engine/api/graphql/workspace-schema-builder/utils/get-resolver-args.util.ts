@@ -105,6 +105,13 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
+    case 'destroyOne':
+      return {
+        id: {
+          type: GraphQLID,
+          isNullable: false,
+        },
+      };
     case 'updateMany':
       return {
         data: {
@@ -128,6 +135,21 @@ export const getResolverArgs = (
         filter: {
           kind: InputTypeDefinitionKind.Filter,
           isNullable: false,
+        },
+      };
+    case 'search':
+      return {
+        searchInput: {
+          type: GraphQLString,
+          isNullable: true,
+        },
+        limit: {
+          type: GraphQLInt,
+          isNullable: true,
+        },
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: true,
         },
       };
     default:

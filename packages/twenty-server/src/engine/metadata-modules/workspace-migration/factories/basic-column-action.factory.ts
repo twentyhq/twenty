@@ -21,15 +21,14 @@ import {
 export type BasicFieldMetadataType =
   | FieldMetadataType.UUID
   | FieldMetadataType.TEXT
-  | FieldMetadataType.PHONE
-  | FieldMetadataType.EMAIL
   | FieldMetadataType.NUMERIC
   | FieldMetadataType.NUMBER
   | FieldMetadataType.BOOLEAN
   | FieldMetadataType.POSITION
   | FieldMetadataType.DATE_TIME
   | FieldMetadataType.DATE
-  | FieldMetadataType.POSITION;
+  | FieldMetadataType.POSITION
+  | FieldMetadataType.ARRAY;
 
 @Injectable()
 export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicFieldMetadataType> {
@@ -48,7 +47,9 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         action: WorkspaceMigrationColumnActionType.CREATE,
         columnName,
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
+        isArray: fieldMetadata.type === FieldMetadataType.ARRAY,
         isNullable: fieldMetadata.isNullable ?? true,
+        isUnique: fieldMetadata.isUnique ?? false,
         defaultValue: serializedDefaultValue,
       },
     ];
@@ -81,7 +82,9 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         currentColumnDefinition: {
           columnName: currentColumnName,
           columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
+          isArray: currentFieldMetadata.type === FieldMetadataType.ARRAY,
           isNullable: currentFieldMetadata.isNullable ?? true,
+          isUnique: currentFieldMetadata.isUnique ?? false,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue,
           ),
@@ -89,7 +92,9 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         alteredColumnDefinition: {
           columnName: alteredColumnName,
           columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
+          isArray: alteredFieldMetadata.type === FieldMetadataType.ARRAY,
           isNullable: alteredFieldMetadata.isNullable ?? true,
+          isUnique: alteredFieldMetadata.isUnique ?? false,
           defaultValue: serializedDefaultValue,
         },
       },

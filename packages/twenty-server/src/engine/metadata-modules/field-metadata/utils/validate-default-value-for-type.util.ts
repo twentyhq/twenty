@@ -13,11 +13,12 @@ import {
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDate,
   FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueLinks,
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValuePhones,
   FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueStringArray,
@@ -32,8 +33,6 @@ export const defaultValueValidatorsMap = {
     FieldMetadataDefaultValueUuidFunction,
   ],
   [FieldMetadataType.TEXT]: [FieldMetadataDefaultValueString],
-  [FieldMetadataType.PHONE]: [FieldMetadataDefaultValueString],
-  [FieldMetadataType.EMAIL]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.DATE_TIME]: [
     FieldMetadataDefaultValueDateTime,
     FieldMetadataDefaultValueNowFunction,
@@ -42,7 +41,6 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.BOOLEAN]: [FieldMetadataDefaultValueBoolean],
   [FieldMetadataType.NUMBER]: [FieldMetadataDefaultValueNumber],
   [FieldMetadataType.NUMERIC]: [FieldMetadataDefaultValueString],
-  [FieldMetadataType.LINK]: [FieldMetadataDefaultValueLink],
   [FieldMetadataType.CURRENCY]: [FieldMetadataDefaultValueCurrency],
   [FieldMetadataType.FULL_NAME]: [FieldMetadataDefaultValueFullName],
   [FieldMetadataType.RATING]: [FieldMetadataDefaultValueString],
@@ -53,6 +51,8 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
   [FieldMetadataType.ACTOR]: [FieldMetadataDefaultActor],
+  [FieldMetadataType.EMAILS]: [FieldMetadataDefaultValueEmails],
+  [FieldMetadataType.PHONES]: [FieldMetadataDefaultValuePhones],
 };
 
 type ValidationResult = {

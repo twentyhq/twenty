@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
-config();
+config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
 
 const typeORMRawModuleOptions: DataSourceOptions = {
   url: process.env.PG_DATABASE_URL,

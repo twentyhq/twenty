@@ -8,34 +8,19 @@ import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
+import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
-const StyledContainer = styled.div`
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  cursor: pointer;
-  display: inline-flex;
-  height: ${({ theme }) => theme.spacing(12)};
-  min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
-  max-width: calc(100% - ${({ theme }) => theme.spacing(8)});
-  padding: 0 ${({ theme }) => theme.spacing(4)};
-  overflow: hidden;
-
-  &:last-child {
-    border-bottom: 0;
-  }
-`;
-
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  max-width: 100%;
-  flex: 1;
+  max-width: calc(80% - ${({ theme }) => theme.spacing(2)});
+  text-overflow: ellipsis;
   overflow: hidden;
+  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -44,10 +29,13 @@ const StyledTaskTitle = styled.div<{
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  align-items: center;
 `;
 
 const StyledDueDate = styled.div<{
@@ -58,12 +46,14 @@ const StyledDueDate = styled.div<{
     isPast ? theme.font.color.danger : theme.font.color.secondary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
   white-space: nowrap;
 `;
 
 const StyledRightSideContainer = styled.div`
-  display: flex;
+  align-items: center;
+  display: inline-flex;
+  max-width: 50%;
 `;
 
 const StyledPlaceholder = styled.div`
@@ -71,6 +61,8 @@ const StyledPlaceholder = styled.div`
 `;
 
 const StyledLeftSideContainer = styled.div`
+  align-items: center;
+  display: inline-flex;
   display: flex;
   flex: 1;
   overflow: hidden;
@@ -97,7 +89,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
   });
 
   return (
-    <StyledContainer
+    <ActivityRow
       onClick={() => {
         openActivityRightDrawer(task.id);
       }}
@@ -122,6 +114,14 @@ export const TaskRow = ({ task }: { task: Task }) => {
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
+        {task.dueAt && (
+          <StyledDueDate
+            isPast={hasDatePassed(task.dueAt) && task.status === 'TODO'}
+          >
+            <IconCalendar size={theme.icon.size.md} />
+            {beautifyExactDate(task.dueAt)}
+          </StyledDueDate>
+        )}
         {TaskTargetsContextProvider && (
           <TaskTargetsContextProvider>
             <ActivityTargetsInlineCell
@@ -133,15 +133,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
             />
           </TaskTargetsContextProvider>
         )}
-        <StyledDueDate
-          isPast={
-            !!task.dueAt && hasDatePassed(task.dueAt) && task.status === 'TODO'
-          }
-        >
-          <IconCalendar size={theme.icon.size.md} />
-          {task.dueAt && beautifyExactDate(task.dueAt)}
-        </StyledDueDate>
       </StyledRightSideContainer>
-    </StyledContainer>
+    </ActivityRow>
   );
 };

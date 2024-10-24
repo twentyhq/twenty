@@ -5,8 +5,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ClipboardEvent } from 'react';
 
-import { blockSchema } from '@/activities/blocks/schema';
-import { getSlashMenu } from '@/activities/blocks/slashMenu';
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
 import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
 import {
   CustomSlashMenu,
@@ -14,7 +14,7 @@ import {
 } from '@/ui/input/editor/components/CustomSlashMenu';
 
 interface BlockEditorProps {
-  editor: typeof blockSchema.BlockNoteEditor;
+  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
   onBlur?: () => void;
   onPaste?: (event: ClipboardEvent) => void;
@@ -83,8 +83,8 @@ const StyledEditor = styled.div`
     border: 1px solid ${({ theme }) => theme.border.color.light};
   }
   & .bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item) svg {
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
   }
 
   & .bn-mantine .bn-side-menu > [draggable='true'] {
@@ -92,6 +92,16 @@ const StyledEditor = styled.div`
   }
   & .bn-color-picker-dropdown {
     margin-left: 8px;
+  }
+
+  & .bn-inline-content code {
+    font-family: monospace;
+    color: ${({ theme }) => theme.font.color.danger};
+    padding: 2px 4px;
+    border-radius: 4px;
+    border: 1px solid ${({ theme }) => theme.font.color.extraLight};
+    font-size: 0.9rem;
+    background-color: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 

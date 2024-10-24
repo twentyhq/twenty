@@ -6,7 +6,6 @@ module.exports = {
     'mockServiceWorker.js',
     '**/generated*/*',
     '**/generated/standard-metadata-query-result.ts',
-    '**/getObjectMetadataItemsMock.ts',
     'tsup.config.ts',
     'build',
     'coverage',
@@ -22,7 +21,14 @@ module.exports = {
       parserOptions: {
         project: ['packages/twenty-front/tsconfig.{json,*.json}'],
       },
-      rules: {},
+      plugins: ['project-structure'],
+      settings: {
+        'project-structure/folder-structure-config-path':
+          'packages/twenty-front/folderStructure.json',
+      },
+      rules: {
+        'project-structure/folder-structure': 'error',
+      },
     },
   ],
 };

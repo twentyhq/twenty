@@ -7,9 +7,12 @@ export function generateDefaultValue(
 ): FieldMetadataDefaultValue {
   switch (type) {
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
       return "''";
+    case FieldMetadataType.EMAILS:
+      return {
+        primaryEmail: "''",
+        additionalEmails: null,
+      };
     case FieldMetadataType.FULL_NAME:
       return {
         firstName: "''",
@@ -26,11 +29,6 @@ export function generateDefaultValue(
         addressLat: null,
         addressLng: null,
       };
-    case FieldMetadataType.LINK:
-      return {
-        url: "''",
-        label: "''",
-      };
     case FieldMetadataType.CURRENCY:
       return {
         amountMicros: null,
@@ -41,6 +39,12 @@ export function generateDefaultValue(
         primaryLinkLabel: "''",
         primaryLinkUrl: "''",
         secondaryLinks: null,
+      };
+    case FieldMetadataType.PHONES:
+      return {
+        primaryPhoneNumber: "''",
+        primaryPhoneCountryCode: "''",
+        additionalPhones: null,
       };
     default:
       return null;

@@ -7,11 +7,11 @@ import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useL
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
+import { useScrollLeftValue } from '@/ui/utilities/scroll/hooks/useScrollLeftValue';
+import { useScrollTopValue } from '@/ui/utilities/scroll/hooks/useScrollTopValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
@@ -22,12 +22,13 @@ export const RecordTableBodyEffect = () => {
   const [hasInitializedScroll, setHasInitiazedScroll] = useState(false);
 
   const {
-    fetchMoreRecords: fetchMoreObjects,
+    fetchMoreRecords,
     records,
     totalCount,
     setRecordTableData,
     loading,
     queryStateIdentifier,
+    hasNextPage,
   } = useLoadRecordIndexTable(objectNameSingular);
 
   const isFetchingMoreObjects = useRecoilValue(
@@ -38,14 +39,13 @@ export const RecordTableBodyEffect = () => {
 
   const tableLastRowVisible = useRecoilValue(tableLastRowVisibleState);
 
-  const scrollTop = useRecoilValue(scrollTopState);
-  const setIsRecordTableScrolledTop = useSetRecoilComponentState(
-    isRecordTableScrolledTopComponentState,
-  );
+  const scrollTop = useScrollTopValue('recordTableWithWrappers');
+
+  const setHasRecordTableFetchedAllRecordsComponents =
+    useSetRecoilComponentState(hasRecordTableFetchedAllRecordsComponentStateV2);
 
   // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {
-    setIsRecordTableScrolledTop(scrollTop === 0);
     if (scrollTop > 0) {
       document
         .getElementById('record-table-header')
@@ -55,9 +55,9 @@ export const RecordTableBodyEffect = () => {
         .getElementById('record-table-header')
         ?.classList.remove('header-sticky');
     }
-  }, [scrollTop, setIsRecordTableScrolledTop]);
+  }, [scrollTop]);
 
-  const scrollLeft = useRecoilValue(scrollLeftState);
+  const scrollLeft = useScrollLeftValue('recordTableWithWrappers');
 
   const setIsRecordTableScrolledLeft = useSetRecoilComponentState(
     isRecordTableScrolledLeftComponentState,
@@ -108,9 +108,7 @@ export const RecordTableBodyEffect = () => {
     }
   }, [
     loading,
-    isFetchingMoreObjects,
     lastShowPageRecordId,
-    fetchMoreObjects,
     records,
     scrollToPosition,
     hasInitializedScroll,
@@ -125,14 +123,26 @@ export const RecordTableBodyEffect = () => {
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window
-    await fetchMoreObjects();
+    await fetchMoreRecords();
   }, 100);
 
   useEffect(() => {
-    if (!isFetchingMoreObjects && tableLastRowVisible) {
-      fetchMoreDebouncedIfRequested();
-    }
+    const allRecordsHaveBeenFetched = !hasNextPage;
+
+    setHasRecordTableFetchedAllRecordsComponents(allRecordsHaveBeenFetched);
+  }, [hasNextPage, setHasRecordTableFetchedAllRecordsComponents]);
+
+  useEffect(() => {
+    (async () => {
+      if (!isFetchingMoreObjects && tableLastRowVisible && hasNextPage) {
+        await fetchMoreDebouncedIfRequested();
+      }
+    })();
   }, [
+    hasNextPage,
+    records,
+    lastShowPageRecordId,
+    scrollToPosition,
     fetchMoreDebouncedIfRequested,
     isFetchingMoreObjects,
     tableLastRowVisible,

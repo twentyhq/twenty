@@ -1,17 +1,13 @@
+import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
-import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { GRAY_SCALE } from 'twenty-ui';
 
-import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
-
-type RecordTableBodyFetchMoreLoaderProps = {
-  objectNameSingular: string;
-};
+import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
+import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const StyledText = styled.div`
   align-items: center;
@@ -23,15 +19,8 @@ const StyledText = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const RecordTableBodyFetchMoreLoader = ({
-  objectNameSingular,
-}: RecordTableBodyFetchMoreLoaderProps) => {
-  const { queryStateIdentifier } = useLoadRecordIndexTable(objectNameSingular);
+export const RecordTableBodyFetchMoreLoader = () => {
   const { setRecordTableLastRowVisible } = useRecordTable();
-
-  const isFetchingMoreRecords = useRecoilValue(
-    isFetchingMoreRecordsFamilyState(queryStateIdentifier),
-  );
 
   const onLastRowVisible = useRecoilCallback(
     () => async (inView: boolean) => {
@@ -40,26 +29,35 @@ export const RecordTableBodyFetchMoreLoader = ({
     [setRecordTableLastRowVisible],
   );
 
-  const scrollWrapperRef = useContext(ScrollWrapperContext);
+  const scrollWrapperRef = useContext(
+    RecordTableWithWrappersScrollWrapperContext,
+  );
+
+  const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValue(
+    hasRecordTableFetchedAllRecordsComponentStateV2,
+  );
+
+  const showLoadingMoreRow = !hasRecordTableFetchedAllRecordsComponents;
 
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,
+    delay: 1000,
     rootMargin: '1000px',
-    root: scrollWrapperRef.current?.querySelector(
-      '[data-overlayscrollbars-viewport="scrollbarHidden"]',
+    root: scrollWrapperRef?.ref.current?.querySelector(
+      '[data-overlayscrollbars-viewport]',
     ),
   });
 
+  if (!showLoadingMoreRow) {
+    return <></>;
+  }
+
   return (
-    <tbody ref={tbodyRef}>
-      {isFetchingMoreRecords && (
-        <tr>
-          <td colSpan={7}>
-            <StyledText>Loading more...</StyledText>
-          </td>
-          <td colSpan={7} />
-        </tr>
-      )}
-    </tbody>
+    <tr ref={tbodyRef}>
+      <td colSpan={7}>
+        <StyledText>Loading more...</StyledText>
+      </td>
+      <td colSpan={7} />
+    </tr>
   );
 };

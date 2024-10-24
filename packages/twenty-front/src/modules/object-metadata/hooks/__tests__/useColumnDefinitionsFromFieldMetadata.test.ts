@@ -1,15 +1,35 @@
 import { renderHook } from '@testing-library/react';
 import { Nullable } from 'twenty-ui';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+  onInitializeRecoilSnapshot: ({ set }) => {
+    set(currentWorkspaceState, {
+      id: '1',
+      featureFlags: [],
+      allowImpersonation: false,
+      activationStatus: WorkspaceActivationStatus.Active,
+      metadataVersion: 1,
+      isPublicInviteLinkEnabled: false,
+    });
+  },
+});
 
 describe('useColumnDefinitionsFromFieldMetadata', () => {
   it('should return empty definitions if no object is passed', () => {
     const { result } = renderHook(
       (objectMetadataItem?: Nullable<ObjectMetadataItem>) => {
         return useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+      },
+      {
+        wrapper: Wrapper,
       },
     );
 
@@ -22,22 +42,25 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
   });
 
   it('should return expected definitions', () => {
-    const mockObjectMetadataItems = getObjectMetadataItemsMock();
+    const companyObjectMetadata = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'company',
+    );
 
     const { result } = renderHook(
       (objectMetadataItem?: Nullable<ObjectMetadataItem>) => {
         return useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
       },
       {
-        initialProps: mockObjectMetadataItems[1],
+        initialProps: companyObjectMetadata,
+        wrapper: Wrapper,
       },
     );
 
     const { columnDefinitions, filterDefinitions, sortDefinitions } =
       result.current;
 
-    expect(columnDefinitions.length).toBe(5);
-    expect(filterDefinitions.length).toBe(4);
-    expect(sortDefinitions.length).toBe(4);
+    expect(columnDefinitions.length).toBe(21);
+    expect(filterDefinitions.length).toBe(14);
+    expect(sortDefinitions.length).toBe(14);
   });
 });

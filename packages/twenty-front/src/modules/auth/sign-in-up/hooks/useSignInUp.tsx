@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
@@ -9,32 +9,40 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 
 import { useAuth } from '../../hooks/useAuth';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
+import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 
 export enum SignInUpMode {
   SignIn = 'sign-in',
   SignUp = 'sign-up',
 }
 
-export enum SignInUpStep {
-  Init = 'init',
-  Email = 'email',
-  Password = 'password',
-}
-
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
 
+  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+
   const isMatchingLocation = useIsMatchingLocation();
 
+  const { redirectToSSOLoginPage, findAvailableSSOProviderByEmail } = useSSO();
+  const setAvailableWorkspacesForSSOState = useSetRecoilState(
+    availableSSOIdentityProvidersState,
+  );
+
   const workspaceInviteHash = useParams().workspaceInviteHash;
+  const [searchParams] = useSearchParams();
+  const workspacePersonalInviteToken =
+    searchParams.get('inviteToken') ?? undefined;
 
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
-
-  const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
-    SignInUpStep.Init,
-  );
 
   const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
     return isMatchingLocation(AppPath.SignInUp)
@@ -59,7 +67,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
-  }, [isMatchingLocation, requestFreshCaptchaToken]);
+  }, [isMatchingLocation, requestFreshCaptchaToken, setSignInUpStep]);
 
   const continueWithCredentials = useCallback(async () => {
     const token = await readCaptchaToken();
@@ -92,7 +100,47 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExistsQuery,
     enqueueSnackBar,
     requestFreshCaptchaToken,
+    setSignInUpStep,
   ]);
+
+  const continueWithSSO = () => {
+    setSignInUpStep(SignInUpStep.SSOEmail);
+  };
+
+  const submitSSOEmail = async (email: string) => {
+    const result = await findAvailableSSOProviderByEmail({
+      email,
+    });
+
+    if (isDefined(result.errors)) {
+      return enqueueSnackBar(result.errors[0].message, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+
+    if (
+      !result.data?.findAvailableSSOIdentityProviders ||
+      result.data?.findAvailableSSOIdentityProviders.length === 0
+    ) {
+      enqueueSnackBar('No workspaces with SSO found', {
+        variant: SnackBarVariant.Error,
+      });
+      return;
+    }
+    // If only one workspace, redirect to SSO
+    if (result.data?.findAvailableSSOIdentityProviders.length === 1) {
+      return redirectToSSOLoginPage(
+        result.data.findAvailableSSOIdentityProviders[0].id,
+      );
+    }
+
+    if (result.data?.findAvailableSSOIdentityProviders.length > 1) {
+      setAvailableWorkspacesForSSOState(
+        result.data.findAvailableSSOIdentityProviders,
+      );
+      setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
+    }
+  };
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -112,6 +160,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
               data.email.toLowerCase().trim(),
               data.password,
               workspaceInviteHash,
+              workspacePersonalInviteToken,
               token,
             );
       } catch (err: any) {
@@ -128,6 +177,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       enqueueSnackBar,
       requestFreshCaptchaToken,
     ],
@@ -139,6 +189,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     signInUpMode,
     continueWithCredentials,
     continueWithEmail,
+    continueWithSSO,
+    submitSSOEmail,
     submitCredentials,
   };
 };

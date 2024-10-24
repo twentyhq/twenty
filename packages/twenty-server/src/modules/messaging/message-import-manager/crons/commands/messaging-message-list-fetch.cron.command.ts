@@ -1,11 +1,12 @@
 import { Command, CommandRunner } from 'nest-commander';
 
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
-
-const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN,
+  MessagingMessageListFetchCronJob,
+} from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 
 @Command({
   name: 'cron:messaging:message-list-fetch',

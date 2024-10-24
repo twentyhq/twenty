@@ -1,80 +1,51 @@
-import Editor, { Monaco, EditorProps } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
-import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
+import { codeEditorTheme } from '@/ui/input/code-editor/utils/codeEditorTheme';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useEffect } from 'react';
-
-export const DEFAULT_CODE = `export const handler = async (
-  event: object,
-  context: object
-): Promise<object> => {
-  // Your code here
-  return {};
-}
-`;
-
-const StyledEditor = styled(Editor)`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top: none;
-  border-radius: 0 0 ${({ theme }) => theme.border.radius.sm}
-    ${({ theme }) => theme.border.radius.sm};
-`;
+import Editor, { EditorProps } from '@monaco-editor/react';
+import { isDefined } from 'twenty-ui';
 
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
-  header: React.ReactNode;
   onChange?: (value: string) => void;
 };
 
 export const CodeEditor = ({
-  value = DEFAULT_CODE,
+  value,
+  language,
+  onMount,
   onChange,
-  language = 'typescript',
-  height = 500,
-  options = undefined,
-  header,
+  onValidate,
+  height = 450,
+  options,
 }: CodeEditorProps) => {
   const theme = useTheme();
-  const handleEditorDidMount = (
-    editor: editor.IStandaloneCodeEditor,
-    monaco: Monaco,
-  ) => {
-    monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
-    monaco.editor.setTheme('codeEditorTheme');
-  };
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .monaco-editor .margin .line-numbers {
-        font-weight: bold;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
+
   return (
-    <div>
-      {header}
-      <StyledEditor
-        height={height}
-        language={language}
-        value={value}
-        onMount={handleEditorDidMount}
-        onChange={(value?: string) => value && onChange?.(value)}
-        options={{
-          ...options,
-          overviewRulerLanes: 0,
-          scrollbar: {
-            vertical: 'hidden',
-            horizontal: 'hidden',
-          },
-          minimap: {
-            enabled: false,
-          },
-        }}
-      />
-    </div>
+    <Editor
+      height={height}
+      value={value}
+      language={language}
+      onMount={(editor, monaco) => {
+        monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
+        monaco.editor.setTheme('codeEditorTheme');
+
+        onMount?.(editor, monaco);
+      }}
+      onChange={(value) => {
+        if (isDefined(value)) {
+          onChange?.(value);
+        }
+      }}
+      onValidate={onValidate}
+      options={{
+        overviewRulerLanes: 0,
+        scrollbar: {
+          vertical: 'hidden',
+          horizontal: 'hidden',
+        },
+        minimap: {
+          enabled: false,
+        },
+        ...options,
+      }}
+    />
   );
 };

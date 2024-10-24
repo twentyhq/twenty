@@ -6,16 +6,14 @@ export const mockedClientConfig: ClientConfig = {
   signUpDisabled: false,
   chromeExtensionId: 'MOCKED_EXTENSION_ID',
   debugMode: false,
+  analyticsEnabled: true,
   authProviders: {
+    sso: false,
     google: true,
     password: true,
     magicLink: false,
     microsoft: false,
     __typename: 'AuthProviders',
-  },
-  telemetry: {
-    enabled: false,
-    __typename: 'Telemetry',
   },
   support: {
     supportDriver: 'front',

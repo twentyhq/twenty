@@ -1,11 +1,11 @@
 import {
   AutoResolverOpts,
-  ReadResolverOpts,
   PagingStrategies,
+  ReadResolverOpts,
 } from '@ptc-org/nestjs-query-graphql';
 
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 export const userAutoResolverOpts: AutoResolverOpts<
   any,
@@ -33,6 +33,6 @@ export const userAutoResolverOpts: AutoResolverOpts<
       one: { disabled: true },
     },
     delete: { many: { disabled: true }, one: { disabled: true } },
-    guards: [JwtAuthGuard],
+    guards: [WorkspaceAuthGuard],
   },
 ];

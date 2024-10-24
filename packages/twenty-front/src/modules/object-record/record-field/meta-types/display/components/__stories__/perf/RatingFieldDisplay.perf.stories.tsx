@@ -10,7 +10,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/RatingFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('company', 'testRating'),
+    getFieldDecorator('person', 'performanceRating'),
     ComponentDecorator,
   ],
   component: RatingFieldDisplay,
@@ -29,6 +29,6 @@ export const Default: Story = {};
 export const Performance = getProfilingStory({
   componentName: 'RatingFieldDisplay',
   averageThresholdInMs: 0.5,
-  numberOfRuns: 50,
-  numberOfTestsPerRun: 100,
+  numberOfRuns: 30,
+  numberOfTestsPerRun: 30,
 });

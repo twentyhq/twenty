@@ -1,20 +1,20 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getDisabledFieldMetadataItems } from '@/object-metadata/utils/getDisabledFieldMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectSummaryCard } from '@/settings/data-model/object-details/components/SettingsObjectSummaryCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconHierarchy2, IconPlus } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { H2Title, IconPlus, UndecoratedLink } from 'twenty-ui';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
+import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -41,22 +41,25 @@ export const SettingsObjectDetailPageContent = ({
     navigate(getSettingsPagePath(SettingsPath.Objects));
   };
 
-  const disabledFieldMetadataItems =
-    getDisabledFieldMetadataItems(objectMetadataItem);
-
   const shouldDisplayAddFieldButton = !objectMetadataItem.isRemote;
+
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+
+  const isUniqueIndexesEnabled = useIsFeatureEnabled(
+    'IS_UNIQUE_INDEXES_ENABLED',
+  );
 
   return (
     <SubMenuTopBarContainer
-      Icon={IconHierarchy2}
-      title={
-        <Breadcrumb
-          links={[
-            { children: 'Objects', href: '/settings/objects' },
-            { children: objectMetadataItem.labelPlural },
-          ]}
-        />
-      }
+      title={objectMetadataItem.labelPlural}
+      links={[
+        {
+          children: 'Workspace',
+          href: getSettingsPagePath(SettingsPath.Workspace),
+        },
+        { children: 'Objects', href: '/settings/objects' },
+        { children: objectMetadataItem.labelPlural },
+      ]}
     >
       <SettingsPageContainer>
         <Section>
@@ -80,13 +83,7 @@ export const SettingsObjectDetailPageContent = ({
           />
           {shouldDisplayAddFieldButton && (
             <StyledDiv>
-              <UndecoratedLink
-                to={
-                  isNonEmptyArray(disabledFieldMetadataItems)
-                    ? './new-field/step-1'
-                    : './new-field/step-2'
-                }
-              >
+              <UndecoratedLink to={'./new-field/select'}>
                 <Button
                   Icon={IconPlus}
                   title="Add Field"
@@ -97,6 +94,15 @@ export const SettingsObjectDetailPageContent = ({
             </StyledDiv>
           )}
         </Section>
+        {isAdvancedModeEnabled && isUniqueIndexesEnabled && (
+          <Section>
+            <H2Title
+              title="Indexes"
+              description={`Advanced feature to improve the performance of queries and to enforce unicity constraints.`}
+            />
+            <SettingsObjectIndexTable objectMetadataItem={objectMetadataItem} />
+          </Section>
+        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

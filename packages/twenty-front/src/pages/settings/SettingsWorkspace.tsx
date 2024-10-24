@@ -1,15 +1,26 @@
-import { H2Title, IconSettings } from 'twenty-ui';
+import { GithubVersionLink, H2Title } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-
+import packageJson from '../../../package.json';
 export const SettingsWorkspace = () => (
-  <SubMenuTopBarContainer Icon={IconSettings} title="General">
+  <SubMenuTopBarContainer
+    title="General"
+    links={[
+      {
+        children: 'Workspace',
+        href: getSettingsPagePath(SettingsPath.Workspace),
+      },
+      { children: 'General' },
+    ]}
+  >
     <SettingsPageContainer>
       <Section>
         <H2Title title="Picture" />
@@ -28,6 +39,9 @@ export const SettingsWorkspace = () => (
       </Section>
       <Section>
         <DeleteWorkspace />
+      </Section>
+      <Section>
+        <GithubVersionLink version={packageJson.version} />
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>

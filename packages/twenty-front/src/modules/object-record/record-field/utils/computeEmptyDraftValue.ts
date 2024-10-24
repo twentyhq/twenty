@@ -5,7 +5,6 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
-import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
@@ -27,7 +26,6 @@ export const computeEmptyDraftValue = <FieldValue>({
     isFieldText(fieldDefinition) ||
     isFieldDateTime(fieldDefinition) ||
     isFieldNumber(fieldDefinition) ||
-    isFieldEmail(fieldDefinition) ||
     isFieldRelation(fieldDefinition) ||
     isFieldRawJson(fieldDefinition)
   ) {

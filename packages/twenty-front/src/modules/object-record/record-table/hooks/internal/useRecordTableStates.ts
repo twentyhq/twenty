@@ -4,6 +4,7 @@ import { RecordTableScopeInternalContext } from '@/object-record/record-table/sc
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
 import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
@@ -18,6 +19,7 @@ import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-t
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { softFocusPositionComponentState } from '@/object-record/record-table/states/softFocusPositionComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
@@ -88,6 +90,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isTableCellInEditModeComponentFamilyState,
       scopeId,
     ),
+    isSoftDeleteActiveState: extractComponentState(
+      isSoftDeleteFilterActiveComponentState,
+      scopeId,
+    ),
     isSoftFocusActiveState: extractComponentState(
       isSoftFocusActiveComponentState,
       scopeId,
@@ -127,6 +133,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     selectedRowIdsSelector: extractComponentReadOnlySelector(
       selectedRowIdsComponentSelector,
+      scopeId,
+    ),
+    unselectedRowIdsSelector: extractComponentReadOnlySelector(
+      unselectedRowIdsComponentSelector,
       scopeId,
     ),
     visibleTableColumnsSelector: extractComponentReadOnlySelector(

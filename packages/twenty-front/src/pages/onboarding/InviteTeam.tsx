@@ -1,3 +1,6 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback } from 'react';
 import {
   Controller,
@@ -5,12 +8,9 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconCopy } from 'twenty-ui';
+import { ActionLink, AnimatedTranslation, IconCopy } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -25,13 +25,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { AnimatedTranslation } from '@/ui/utilities/animation/components/AnimatedTranslation';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  OnboardingStatus,
-  useSendInviteLinkMutation,
-} from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`
   display: flex;
@@ -54,6 +51,10 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
+const StyledActionSkipLinkContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(3)} 0 0;
+`;
+
 const validationSchema = z.object({
   emails: z.array(
     z.object({ email: z.union([z.literal(''), z.string().email()]) }),
@@ -65,7 +66,8 @@ type FormInput = z.infer<typeof validationSchema>;
 export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
-  const [sendInviteLink] = useSendInviteLinkMutation();
+  const { sendInvitation } = useCreateWorkspaceInvitation();
+
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -102,15 +104,15 @@ export const InviteTeam = () => {
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
-      return 'tim@apple.dev';
+      return 'tim@apple.com';
     }
     if (emailIndex === 1) {
-      return 'craig@apple.dev';
+      return 'phil@apple.com';
     }
     if (emailIndex === 2) {
-      return 'mike@apple.dev';
+      return 'jony@apple.com';
     }
-    return 'phil@apple.dev';
+    return 'craig@apple.com';
   };
 
   const copyInviteLink = () => {
@@ -134,7 +136,7 @@ export const InviteTeam = () => {
             .filter((email) => email.length > 0),
         ),
       );
-      const result = await sendInviteLink({ variables: { emails } });
+      const result = await sendInvitation({ emails });
 
       setNextOnboardingStatus();
 
@@ -148,8 +150,12 @@ export const InviteTeam = () => {
         });
       }
     },
-    [enqueueSnackBar, sendInviteLink, setNextOnboardingStatus],
+    [enqueueSnackBar, sendInvitation, setNextOnboardingStatus],
   );
+
+  const handleSkip = async () => {
+    await onSubmit({ emails: [] });
+  };
 
   useScopedHotkeys(
     [Key.Enter],
@@ -171,7 +177,7 @@ export const InviteTeam = () => {
         Get the most out of your workspace by inviting your team.
       </SubTitle>
       <StyledAnimatedContainer>
-        {fields.map((field, index) => (
+        {fields.map((_field, index) => (
           <Controller
             key={index}
             name={`emails.${index}.email`}
@@ -218,6 +224,9 @@ export const InviteTeam = () => {
           fullWidth
         />
       </StyledButtonContainer>
+      <StyledActionSkipLinkContainer>
+        <ActionLink onClick={handleSkip}>Skip</ActionLink>
+      </StyledActionSkipLinkContainer>
     </>
   );
 };

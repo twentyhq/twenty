@@ -24,6 +24,30 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
           updatedAt
           labelIdentifierFieldMetadataId
           imageIdentifierFieldMetadataId
+          indexMetadatas(paging: { first: 100 }) {
+            edges {
+              node {
+                id
+                createdAt
+                updatedAt
+                name
+                indexWhereClause
+                indexType
+                isUnique
+                indexFieldMetadatas(paging: { first: 100 }) {
+                  edges {
+                    node {
+                      id
+                      createdAt
+                      updatedAt
+                      order
+                      fieldMetadataId
+                    }
+                  }
+                }
+              }
+            }
+          }
           fields(paging: { first: 1000 }, filter: $fieldFilter) {
             edges {
               node {
@@ -37,36 +61,12 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                 isActive
                 isSystem
                 isNullable
+                isUnique
                 createdAt
                 updatedAt
-                fromRelationMetadata {
-                  id
-                  relationType
-                  toObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                    isSystem
-                    isRemote
-                  }
-                  toFieldMetadataId
-                }
-                toRelationMetadata {
-                  id
-                  relationType
-                  fromObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                    isSystem
-                    isRemote
-                  }
-                  fromFieldMetadataId
-                }
                 defaultValue
                 options
+                settings
                 relationDefinition {
                   relationId
                   direction

@@ -5,7 +5,7 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconHierarchy2 } from 'twenty-ui';
+import { H2Title, IconArchive } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -13,7 +13,6 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsDataModelObjectAboutForm,
@@ -28,9 +27,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const objectEditFormSchema = z
   .object({})
@@ -109,36 +107,36 @@ export const SettingsObjectEdit = () => {
     <RecordFieldValueSelectorContextProvider>
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
-          Icon={IconHierarchy2}
-          title={
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: settingsObjectsPagePath,
-                },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `${settingsObjectsPagePath}/${objectSlug}`,
-                },
-                { children: 'Edit' },
-              ]}
-            />
+          title="Edit"
+          links={[
+            {
+              children: 'Workspace',
+              href: getSettingsPagePath(SettingsPath.Workspace),
+            },
+            {
+              children: 'Objects',
+              href: settingsObjectsPagePath,
+            },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `${settingsObjectsPagePath}/${objectSlug}`,
+            },
+            { children: 'Edit Object' },
+          ]}
+          actionButton={
+            activeObjectMetadataItem.isCustom && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                isCancelDisabled={isSubmitting}
+                onCancel={() =>
+                  navigate(`${settingsObjectsPagePath}/${objectSlug}`)
+                }
+                onSave={formConfig.handleSubmit(handleSave)}
+              />
+            )
           }
         >
           <SettingsPageContainer>
-            <SettingsHeaderContainer>
-              {activeObjectMetadataItem.isCustom && (
-                <SaveAndCancelButtons
-                  isSaveDisabled={!canSave}
-                  isCancelDisabled={isSubmitting}
-                  onCancel={() =>
-                    navigate(`${settingsObjectsPagePath}/${objectSlug}`)
-                  }
-                  onSave={formConfig.handleSubmit(handleSave)}
-                />
-              )}
-            </SettingsHeaderContainer>
             <Section>
               <H2Title
                 title="About"
