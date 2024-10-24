@@ -185,7 +185,9 @@ export {
   IconPlug,
   IconPlus,
   IconPower,
-  IconPresentation, IconPrinter, IconProgressCheck,
+  IconPresentation,
+  IconPrinter,
+  IconProgressCheck,
   IconPuzzle,
   IconQuestionMark,
   IconRefresh,
@@ -217,7 +219,8 @@ export {
   IconTextSize,
   IconTimelineEvent,
   IconTool,
-  IconTrash, IconUnlink,
+  IconTrash,
+  IconUnlink,
   IconUpload,
   IconUser,
   IconUserCircle,
@@ -226,7 +229,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX
+  IconX,
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';
