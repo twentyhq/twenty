@@ -3,7 +3,7 @@
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
-import { Card, CardContent, CardHeader, IconKey } from 'twenty-ui';
+import { Button, Card, CardContent, CardHeader, IconKey } from 'twenty-ui';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;

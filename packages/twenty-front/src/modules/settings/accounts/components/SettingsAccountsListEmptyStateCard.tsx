@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Card, CardContent, CardHeader, IconGoogle } from 'twenty-ui';
+import { Button, Card, CardContent, CardHeader, IconGoogle } from 'twenty-ui';
 
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 
