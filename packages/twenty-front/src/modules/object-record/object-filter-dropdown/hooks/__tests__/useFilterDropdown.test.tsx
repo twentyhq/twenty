@@ -73,28 +73,6 @@ describe('useFilterDropdown', () => {
     });
   });
 
-  it('should set onFilterSelect', async () => {
-    const { result } = renderHook(() => {
-      useFilterDropdown({ filterDropdownId });
-      const { onFilterSelectState } = useFilterDropdownStates(filterDropdownId);
-
-      const [onFilterSelect, setOnFilterSelect] =
-        useRecoilState(onFilterSelectState);
-      return { onFilterSelect, setOnFilterSelect };
-    }, renderHookConfig);
-
-    expect(result.current.onFilterSelect).toBeUndefined();
-
-    act(() => {
-      result.current.setOnFilterSelect(
-        (_currVal?: Filter | null) => (_filter: Filter | null) => {},
-      );
-    });
-    await waitFor(() => {
-      expect(typeof result.current.onFilterSelect).toBe('function');
-    });
-  });
-
   it('should set selectedOperandInDropdown', async () => {
     const { result } = renderHook(() => {
       useFilterDropdown({ filterDropdownId });
@@ -344,30 +322,6 @@ describe('useFilterDropdown', () => {
 
     await waitFor(() => {
       expect(result.current.selectedFilter).toBeUndefined();
-    });
-  });
-
-  it('should call onFilterSelect when a filter option is set', async () => {
-    const { result } = renderHook(() => {
-      const { selectFilter } = useFilterDropdown({ filterDropdownId });
-      const { onFilterSelectState } = useFilterDropdownStates(filterDropdownId);
-
-      const [onFilterSelect, setOnFilterSelect] =
-        useRecoilState(onFilterSelectState);
-      return { onFilterSelect, setOnFilterSelect, selectFilter };
-    }, renderHookConfig);
-    const onFilterSelectMock = jest.fn();
-
-    expect(result.current.onFilterSelect).toBeUndefined();
-
-    act(() => {
-      result.current.setOnFilterSelect(onFilterSelectMock);
-      result.current.selectFilter(mockFilter);
-    });
-
-    await waitFor(() => {
-      expect(onFilterSelectMock).toBeDefined();
-      expect(onFilterSelectMock).toHaveBeenCalled();
     });
   });
 

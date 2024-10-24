@@ -6,7 +6,6 @@ import { isObjectFilterDropdownUnfoldedComponentState } from '@/object-record/ob
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
-import { onFilterSelectComponentState } from '@/object-record/object-filter-dropdown/states/onFilterSelectComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -53,11 +52,6 @@ export const useFilterDropdownStates = (scopeId: string) => {
     scopeId,
   );
 
-  const onFilterSelectState = extractComponentState(
-    onFilterSelectComponentState,
-    scopeId,
-  );
-
   const advancedFilterViewFilterGroupIdState = extractComponentState(
     advancedFilterViewFilterGroupIdComponentState,
     scopeId,
@@ -77,7 +71,6 @@ export const useFilterDropdownStates = (scopeId: string) => {
     isObjectFilterDropdownUnfoldedState,
     selectedFilterState,
     selectedOperandInDropdownState,
-    onFilterSelectState,
     advancedFilterViewFilterGroupIdState,
     advancedFilterViewFilterIdState,
   };

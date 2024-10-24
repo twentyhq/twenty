@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
@@ -28,7 +27,6 @@ export const ViewBarFilterEffect = ({
   );
 
   const {
-    setOnFilterSelect,
     filterDefinitionUsedInDropdownState,
     setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
@@ -48,15 +46,9 @@ export const ViewBarFilterEffect = ({
     if (isDefined(availableFilterDefinitions)) {
       setAvailableFilterDefinitions(availableFilterDefinitions);
     }
-    setOnFilterSelect(() => (filter: Filter | null) => {
-      if (isDefined(filter)) {
-        upsertCombinedViewFilter(filter);
-      }
-    });
   }, [
     availableFilterDefinitions,
     setAvailableFilterDefinitions,
-    setOnFilterSelect,
     upsertCombinedViewFilter,
   ]);
 

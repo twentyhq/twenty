@@ -112,6 +112,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       value: '',
       displayValue: '',
       viewFilterGroupId: newViewFilterGroup.id,
+      subFieldName: '',
       positionInViewFilterGroup: newPositionInViewFilterGroup,
     });
   };

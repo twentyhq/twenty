@@ -39,6 +39,10 @@ export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
           currentViewIdCallbackState,
         );
 
+        console.log({
+          upsertedFilter,
+        });
+
         const unsavedToUpsertViewFilters = getSnapshotValue(
           snapshot,
           unsavedToUpsertViewFiltersCallbackState({ viewId: currentViewId }),
