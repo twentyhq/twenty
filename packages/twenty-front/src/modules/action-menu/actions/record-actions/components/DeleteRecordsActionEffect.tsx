@@ -100,6 +100,7 @@ export const DeleteRecordsActionEffect = ({
         position,
         Icon: IconTrash,
         accent: 'danger',
+        isPinned: true,
         onClick: () => {
           setIsDeleteRecordsModalOpen(true);
         },

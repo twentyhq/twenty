@@ -31,7 +31,9 @@ export const RecordIndexActionMenuBar = () => {
     actionMenuEntriesComponentSelector,
   );
 
-  if (actionMenuEntries.length === 0) {
+  const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
+
+  if (pinnedEntries.length === 0) {
     return null;
   }
 
@@ -43,7 +45,7 @@ export const RecordIndexActionMenuBar = () => {
       }}
     >
       <StyledLabel>{contextStoreNumberOfSelectedRecords} selected:</StyledLabel>
-      {actionMenuEntries.map((entry, index) => (
+      {pinnedEntries.map((entry, index) => (
         <RecordIndexActionMenuBarEntry key={index} entry={entry} />
       ))}
       <RecordIndexActionMenuBarAllActionsButton />
