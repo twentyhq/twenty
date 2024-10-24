@@ -3,14 +3,22 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+export type ObjectRecordForSelect = {
+  objectMetadataItem: ObjectMetadataItem;
+  record: ObjectRecord;
+  recordIdentifier: ObjectRecordIdentifier;
+};
 
 export const RelationFromManyFieldInputMultiRecordsEffect = () => {
   const { fieldValue, fieldDefinition } = useRelationField<EntityForSelect[]>();
