@@ -137,6 +137,7 @@ export const CurrentWorkspaceMemberFavorites = ({
         <StyledIconDotsVertical isMobile={isMobile} size={theme.icon.size.sm} />
       }
       dropdownPlacement="right"
+      dropdownOffset={{ y: -15 }}
       dropdownComponents={
         <StyledDropdownContainer>
           <MenuItem

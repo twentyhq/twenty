@@ -122,7 +122,8 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   if (
     (!currentWorkspaceMemberFavorites ||
       currentWorkspaceMemberFavorites.length === 0) &&
-    (!favoriteFolder || favoriteFolder.length === 0)
+    (!favoriteFolder || favoriteFolder.length === 0) &&
+    !isFavoriteFolderCreating
   ) {
     return <></>;
   }
