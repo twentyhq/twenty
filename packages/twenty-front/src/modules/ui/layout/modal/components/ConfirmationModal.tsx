@@ -134,6 +134,7 @@ export const ConfirmationModal = ({
                   onChange={handleInputConfimrationValueChange}
                   placeholder={confirmationPlaceholder}
                   fullWidth
+                  disableHotkeys
                   key={'input-' + confirmationValue}
                 />
               </Section>
