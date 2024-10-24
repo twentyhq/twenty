@@ -14,8 +14,7 @@ import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { CardPicker } from '@/ui/input/components/CardPicker';
-import { ActionLink, CAL_LINK } from 'twenty-ui';
+import { ActionLink, CAL_LINK, CardPicker } from 'twenty-ui';
 import {
   ProductPriceEntity,
   SubscriptionInterval,

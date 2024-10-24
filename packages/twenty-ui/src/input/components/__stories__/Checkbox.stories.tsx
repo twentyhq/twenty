@@ -1,5 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CatalogDecorator, CatalogStory, ComponentDecorator } from 'twenty-ui';
+import {
+  CatalogDecorator,
+  CatalogStory,
+  ComponentDecorator,
+} from '@ui/testing';
 
 import {
   Checkbox,
