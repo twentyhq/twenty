@@ -12,7 +12,7 @@ describe('searchWebhooksResolver (e2e)', () => {
               node {
                 id
                 targetUrl
-                operation
+                operations
                 description
                 createdAt
                 updatedAt
@@ -46,7 +46,7 @@ describe('searchWebhooksResolver (e2e)', () => {
 
           expect(searchWebhooks).toHaveProperty('id');
           expect(searchWebhooks).toHaveProperty('targetUrl');
-          expect(searchWebhooks).toHaveProperty('operation');
+          expect(searchWebhooks).toHaveProperty('operations');
           expect(searchWebhooks).toHaveProperty('description');
           expect(searchWebhooks).toHaveProperty('createdAt');
           expect(searchWebhooks).toHaveProperty('updatedAt');

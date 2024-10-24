@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { IconInfoCircle, IconMinus, IconPlus } from 'twenty-ui';
+import { Button, IconInfoCircle, IconMinus, IconPlus } from 'twenty-ui';
 import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
 
 type SettingsDataModelFieldNumberDecimalsInputProps = {
