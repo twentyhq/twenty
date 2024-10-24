@@ -1,6 +1,7 @@
 export * from './accessibility';
 export * from './components';
 export * from './display';
+export * from './feedback';
 export * from './input';
 export * from './feedback';
 export * from './layout';
