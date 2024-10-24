@@ -27,6 +27,11 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { isDefined } from '~/utils/isDefined';
 
+const validateEmail = (email: string) => {
+  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return emailRegex.test(email);
+};
+
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
@@ -105,9 +110,14 @@ export const SignInUpForm = () => {
     isDefined(captchaProvider?.provider) &&
     isRequestingCaptchaToken;
 
+  const isEmailValid = useMemo(() => {
+    const email = form.watch('email');
+    return validateEmail(email);
+  }, [form.watch('email')]);
+
   const isEmailStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Email &&
-    (form.watch('email')?.length === 0 || shouldWaitForCaptchaToken);
+    (!isEmailValid || shouldWaitForCaptchaToken);
 
   // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
   // We make the isValid check synchronous and update a reactState to make sure this does not happen
