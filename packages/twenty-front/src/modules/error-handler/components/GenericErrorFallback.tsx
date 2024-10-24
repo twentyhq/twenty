@@ -9,11 +9,10 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  Button,
   IconRefresh,
   THEME_LIGHT,
 } from 'twenty-ui';
-
-import { Button } from '@/ui/input/button/components/Button';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type GenericErrorFallbackProps = FallbackProps;

@@ -5,12 +5,11 @@ import {
   AvatarProps,
   IconChevronRight,
   IconComponent,
-  isDefined,
+  LightIconButtonGroup,
+  LightIconButtonProps,
   OverflowingTextWithTooltip,
+  isDefined,
 } from 'twenty-ui';
-
-import { LightIconButtonProps } from '@/ui/input/button/components/LightIconButton';
-import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
 import {
   StyledHoverableMenuItemBase,

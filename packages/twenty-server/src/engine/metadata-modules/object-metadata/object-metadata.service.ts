@@ -5,7 +5,8 @@ import console from 'console';
 
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
+import { isDefined } from 'class-validator';
+import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -25,6 +26,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
 import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-sync-label-name.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -35,6 +37,7 @@ import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -201,33 +204,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    const objectAlreadyExists = await this.objectMetadataRepository.findOne({
-      where: [
-        {
-          nameSingular: objectMetadataInput.nameSingular,
-          workspaceId: objectMetadataInput.workspaceId,
-        },
-        {
-          nameSingular: objectMetadataInput.namePlural,
-          workspaceId: objectMetadataInput.workspaceId,
-        },
-        {
-          namePlural: objectMetadataInput.nameSingular,
-          workspaceId: objectMetadataInput.workspaceId,
-        },
-        {
-          namePlural: objectMetadataInput.namePlural,
-          workspaceId: objectMetadataInput.workspaceId,
-        },
-      ],
-    });
-
-    if (objectAlreadyExists) {
-      throw new ObjectMetadataException(
-        'Object already exists',
-        ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+    if (objectMetadataInput.shouldSyncLabelAndName === true) {
+      validateNameAndLabelAreSyncOrThrow(
+        objectMetadataInput.labelSingular,
+        objectMetadataInput.nameSingular,
+      );
+      validateNameAndLabelAreSyncOrThrow(
+        objectMetadataInput.labelPlural,
+        objectMetadataInput.namePlural,
       );
     }
+
+    this.validatesNoOtherObjectWithSameNameExistsOrThrows({
+      objectMetadataNamePlural: objectMetadataInput.namePlural,
+      objectMetadataNameSingular: objectMetadataInput.nameSingular,
+      workspaceId: objectMetadataInput.workspaceId,
+    });
 
     const isCustom = !objectMetadataInput.isRemote;
 
@@ -421,12 +413,55 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ): Promise<ObjectMetadataEntity> {
     validateObjectMetadataInputOrThrow(input.update);
 
+    const existingObjectMetadata = await this.objectMetadataRepository.findOne({
+      where: { id: input.id, workspaceId: workspaceId },
+    });
+
+    if (!existingObjectMetadata) {
+      throw new ObjectMetadataException(
+        'Object does not exist',
+        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    const fullObjectMetadataAfterUpdate = {
+      ...existingObjectMetadata,
+      ...input.update,
+    };
+
+    await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
+      objectMetadataNameSingular: fullObjectMetadataAfterUpdate.nameSingular,
+      objectMetadataNamePlural: fullObjectMetadataAfterUpdate.namePlural,
+      workspaceId: workspaceId,
+      existingObjectMetadataId: fullObjectMetadataAfterUpdate.id,
+    });
+
+    if (fullObjectMetadataAfterUpdate.shouldSyncLabelAndName) {
+      validateNameAndLabelAreSyncOrThrow(
+        fullObjectMetadataAfterUpdate.labelSingular,
+        fullObjectMetadataAfterUpdate.nameSingular,
+      );
+      validateNameAndLabelAreSyncOrThrow(
+        fullObjectMetadataAfterUpdate.labelPlural,
+        fullObjectMetadataAfterUpdate.namePlural,
+      );
+    }
+
     const updatedObject = await super.updateOne(input.id, input.update);
+
+    await this.handleObjectNameAndLabelUpdates(
+      existingObjectMetadata,
+      fullObjectMetadataAfterUpdate,
+      input,
+    );
 
     if (input.update.isActive !== undefined) {
       await this.updateObjectRelationships(input.id, input.update.isActive);
     }
 
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      workspaceId,
+    );
     if (input.update.labelIdentifierFieldMetadataId) {
       const labelIdentifierFieldMetadata =
         await this.fieldMetadataRepository.findOneByOrFail({
@@ -1375,4 +1410,235 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       }),
     );
   }
+
+  private async handleObjectNameAndLabelUpdates(
+    existingObjectMetadata: ObjectMetadataEntity,
+    objectMetadataForUpdate: ObjectMetadataEntity,
+    input: UpdateOneObjectInput,
+  ) {
+    if (
+      isDefined(input.update.nameSingular) ||
+      isDefined(input.update.namePlural)
+    ) {
+      if (
+        objectMetadataForUpdate.nameSingular ===
+        objectMetadataForUpdate.namePlural
+      ) {
+        throw new ObjectMetadataException(
+          'The singular and plural name cannot be the same for an object',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+    }
+
+    const newTargetTableName = computeObjectTargetTable(
+      objectMetadataForUpdate,
+    );
+    const existingTargetTableName = computeObjectTargetTable(
+      existingObjectMetadata,
+    );
+
+    if (!(newTargetTableName === existingTargetTableName)) {
+      await this.createRenameTableMigration(
+        existingObjectMetadata,
+        objectMetadataForUpdate,
+      );
+
+      await this.createRelationsUpdatesMigrations(
+        existingObjectMetadata,
+        objectMetadataForUpdate,
+      );
+    }
+
+    if (input.update.labelPlural || input.update.icon) {
+      if (
+        !(input.update.labelPlural === existingObjectMetadata.labelPlural) ||
+        !(input.update.icon === existingObjectMetadata.icon)
+      ) {
+        await this.updateObjectView(
+          objectMetadataForUpdate,
+          objectMetadataForUpdate.workspaceId,
+        );
+      }
+    }
+  }
+
+  private async createRenameTableMigration(
+    existingObjectMetadata: ObjectMetadataEntity,
+    objectMetadataForUpdate: ObjectMetadataEntity,
+  ) {
+    const newTargetTableName = computeObjectTargetTable(
+      objectMetadataForUpdate,
+    );
+    const existingTargetTableName = computeObjectTargetTable(
+      existingObjectMetadata,
+    );
+
+    this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`rename-${existingObjectMetadata.nameSingular}`),
+      objectMetadataForUpdate.workspaceId,
+      [
+        {
+          name: existingTargetTableName,
+          newName: newTargetTableName,
+          action: WorkspaceMigrationTableActionType.ALTER,
+        },
+      ],
+    );
+  }
+
+  private async createRelationsUpdatesMigrations(
+    existingObjectMetadata: ObjectMetadataEntity,
+    updatedObjectMetadata: ObjectMetadataEntity,
+  ) {
+    const existingTableName = computeObjectTargetTable(existingObjectMetadata);
+    const newTableName = computeObjectTargetTable(updatedObjectMetadata);
+
+    if (existingTableName !== newTableName) {
+      const searchCriteria = {
+        isCustom: false,
+        settings: {
+          isForeignKey: true,
+        },
+        name: `${existingObjectMetadata.nameSingular}Id`,
+      };
+
+      const fieldsWihStandardRelation = await this.fieldMetadataRepository.find(
+        {
+          where: {
+            isCustom: false,
+            settings: {
+              isForeignKey: true,
+            },
+            name: `${existingObjectMetadata.nameSingular}Id`,
+          },
+        },
+      );
+
+      await this.fieldMetadataRepository.update(searchCriteria, {
+        name: `${updatedObjectMetadata.nameSingular}Id`,
+      });
+
+      await Promise.all(
+        fieldsWihStandardRelation.map(async (fieldWihStandardRelation) => {
+          const relatedObject = await this.objectMetadataRepository.findOneBy({
+            id: fieldWihStandardRelation.objectMetadataId,
+            workspaceId: updatedObjectMetadata.workspaceId,
+          });
+
+          if (relatedObject) {
+            await this.fieldMetadataRepository.update(
+              {
+                name: existingObjectMetadata.nameSingular,
+                label: existingObjectMetadata.labelSingular,
+              },
+              {
+                name: updatedObjectMetadata.nameSingular,
+                label: updatedObjectMetadata.labelSingular,
+              },
+            );
+
+            const relationTableName = computeObjectTargetTable(relatedObject);
+            const columnName = `${existingObjectMetadata.nameSingular}Id`;
+            const columnType = fieldMetadataTypeToColumnType(
+              fieldWihStandardRelation.type,
+            );
+
+            await this.workspaceMigrationService.createCustomMigration(
+              generateMigrationName(
+                `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObject.nameSingular}`,
+              ),
+              updatedObjectMetadata.workspaceId,
+              [
+                {
+                  name: relationTableName,
+                  action: WorkspaceMigrationTableActionType.ALTER,
+                  columns: [
+                    {
+                      action: WorkspaceMigrationColumnActionType.ALTER,
+                      currentColumnDefinition: {
+                        columnName,
+                        columnType,
+                        isNullable: true,
+                        defaultValue: null,
+                      },
+                      alteredColumnDefinition: {
+                        columnName: `${updatedObjectMetadata.nameSingular}Id`,
+                        columnType,
+                        isNullable: true,
+                        defaultValue: null,
+                      },
+                    },
+                  ],
+                },
+              ],
+            );
+          }
+        }),
+      );
+    }
+  }
+
+  private async updateObjectView(
+    updatedObjectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
+  ) {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    await workspaceDataSource?.query(
+      `UPDATE ${dataSourceMetadata.schema}."view"
+    SET "name"=$1, "icon"=$2 WHERE "objectMetadataId"=$3 AND "key"=$4`,
+      [
+        `All ${updatedObjectMetadata.labelPlural}`,
+        updatedObjectMetadata.icon,
+        updatedObjectMetadata.id,
+        'INDEX',
+      ],
+    );
+  }
+
+  private validatesNoOtherObjectWithSameNameExistsOrThrows = async ({
+    objectMetadataNameSingular,
+    objectMetadataNamePlural,
+    workspaceId,
+    existingObjectMetadataId,
+  }: {
+    objectMetadataNameSingular: string;
+    objectMetadataNamePlural: string;
+    workspaceId: string;
+    existingObjectMetadataId?: string;
+  }): Promise<void> => {
+    const baseWhereConditions = [
+      { nameSingular: objectMetadataNameSingular, workspaceId },
+      { nameSingular: objectMetadataNamePlural, workspaceId },
+      { namePlural: objectMetadataNameSingular, workspaceId },
+      { namePlural: objectMetadataNamePlural, workspaceId },
+    ];
+
+    const whereConditions = baseWhereConditions.map((condition) => {
+      return {
+        ...condition,
+        ...(isDefined(existingObjectMetadataId)
+          ? { id: Not(In([existingObjectMetadataId])) }
+          : {}),
+      };
+    });
+
+    const objectAlreadyExists = await this.objectMetadataRepository.findOne({
+      where: whereConditions,
+    });
+
+    if (objectAlreadyExists) {
+      throw new ObjectMetadataException(
+        'Object already exists',
+        ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+      );
+    }
+  };
 }
