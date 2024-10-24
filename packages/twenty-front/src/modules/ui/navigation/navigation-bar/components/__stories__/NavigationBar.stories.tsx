@@ -5,11 +5,10 @@ import {
   IconList,
   IconSearch,
   IconSettings,
+  NavigationBar,
 } from 'twenty-ui';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-
-import { NavigationBar } from '../NavigationBar';
 
 const meta: Meta<typeof NavigationBar> = {
   title: 'UI/Navigation/NavigationBar/NavigationBar',

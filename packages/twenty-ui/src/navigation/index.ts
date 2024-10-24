@@ -9,3 +9,5 @@ export * from './link/components/SocialLink';
 export * from './link/components/UndecoratedLink';
 export * from './link/constants/Cal';
 export * from './link/constants/GithubLink';
+export * from './navigation-bar/components/NavigationBar';
+export * from './navigation-bar/components/NavigationBarItem';
