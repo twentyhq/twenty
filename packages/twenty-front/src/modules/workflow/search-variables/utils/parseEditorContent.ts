@@ -14,6 +14,10 @@ export const parseEditorContent = (json: JSONContent): string => {
       return node.text || '';
     }
 
+    if (node.type === 'hardBreak') {
+      return '\n';
+    }
+
     if (node.type === 'variableTag') {
       return node.attrs?.variable || '';
     }

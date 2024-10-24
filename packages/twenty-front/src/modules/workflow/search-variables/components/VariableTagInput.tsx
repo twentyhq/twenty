@@ -4,6 +4,7 @@ import { parseEditorContent } from '@/workflow/search-variables/utils/parseEdito
 import { VariableTag } from '@/workflow/search-variables/utils/variableTag';
 import styled from '@emotion/styled';
 import Document from '@tiptap/extension-document';
+import HardBreak from '@tiptap/extension-hard-break';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
@@ -23,12 +24,16 @@ const StyledLabel = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledInputContainer = styled.div`
+const StyledInputContainer = styled.div<{ multiline: boolean }>`
   display: flex;
   flex-direction: row;
+  position: relative;
+  line-height: ${({ multiline }) => (multiline ? '24px' : 'auto')};
+  min-height: ${({ multiline }) => (multiline ? '64px' : 'auto')};
+  max-height: ${({ multiline }) => (multiline ? '80px' : 'auto')};
 `;
 
-const StyledSearchVariablesDropdownContainer = styled.div`
+const StyledSearchVariablesDropdownOutsideContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,18 +43,33 @@ const StyledSearchVariablesDropdownContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
 
-const StyledEditor = styled.div`
+const StyledSearchVariablesDropdownInsideContainer = styled.div`
   display: flex;
-  height: 32px;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: ${({ theme }) => theme.spacing(0.5)};
+  right: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledEditor = styled.div<{ multiline: boolean }>`
+  display: flex;
   width: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-right: none;
   box-sizing: border-box;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  overflow: hidden;
   padding: ${({ theme }) => theme.spacing(2)};
+  border-bottom-right-radius: ${({ multiline, theme }) =>
+    multiline ? theme.border.radius.sm : 'none'};
+  border-top-right-radius: ${({ multiline, theme }) =>
+    multiline ? theme.border.radius.sm : 'none'};
+  border-right: ${({ multiline }) => (multiline ? 'auto' : 'none')};
+  padding-right: ${({ multiline, theme }) =>
+    multiline ? theme.spacing(6) : theme.spacing(2)};
+  overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+  height: ${({ multiline }) => (multiline ? 'auto' : '32px')};
 
   .editor-content {
     width: 100%;
@@ -63,7 +83,8 @@ const StyledEditor = styled.div`
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.regular};
     border: none !important;
-    white-space: nowrap;
+    white-space: ${({ multiline }) => (multiline ? 'pre-wrap' : 'nowrap')};
+    word-wrap: ${({ multiline }) => (multiline ? 'break-word' : 'normal')};
 
     p.is-editor-empty:first-of-type::before {
       content: attr(data-placeholder);
@@ -94,8 +115,9 @@ interface VariableTagInputProps {
   inputId: string;
   label?: string;
   value?: string;
-  onChange?: (content: string) => void;
   placeholder?: string;
+  multiline?: boolean;
+  onChange?: (content: string) => void;
 }
 
 export const VariableTagInput = ({
@@ -103,8 +125,13 @@ export const VariableTagInput = ({
   label,
   value,
   placeholder,
+  multiline,
   onChange,
 }: VariableTagInputProps) => {
+  const StyledSearchVariablesDropdownContainer = multiline
+    ? StyledSearchVariablesDropdownInsideContainer
+    : StyledSearchVariablesDropdownOutsideContainer;
+
   const deboucedOnUpdate = useDebouncedCallback((editor) => {
     const jsonContent = editor.getJSON();
     const parsedContent = parseEditorContent(jsonContent);
@@ -120,6 +147,13 @@ export const VariableTagInput = ({
         placeholder,
       }),
       VariableTag,
+      ...(multiline
+        ? [
+            HardBreak.configure({
+              keepMarks: true,
+            }),
+          ]
+        : []),
     ],
     editable: true,
     onCreate: ({ editor }) => {
@@ -130,6 +164,26 @@ export const VariableTagInput = ({
     onUpdate: ({ editor }) => {
       deboucedOnUpdate(editor);
     },
+    editorProps: {
+      handleKeyDown: (view, event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+
+          // Insert hard break using the view's state and dispatch
+          const { state } = view;
+          const transaction = state.tr.replaceSelectionWith(
+            state.schema.nodes.hardBreak.create(),
+          );
+          view.dispatch(transaction);
+
+          return true;
+        }
+        return false;
+      },
+    },
+    enableInputRules: false,
+    enablePasteRules: false,
+    injectCSS: false,
   });
 
   if (!editor) {
@@ -139,8 +193,8 @@ export const VariableTagInput = ({
   return (
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInputContainer>
-        <StyledEditor>
+      <StyledInputContainer multiline={!!multiline}>
+        <StyledEditor multiline={!!multiline}>
           <EditorContent className="editor-content" editor={editor} />
         </StyledEditor>
         <StyledSearchVariablesDropdownContainer>

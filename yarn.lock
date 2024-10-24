@@ -14965,6 +14965,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-hard-break@npm:^2.9.1":
+  version: 2.9.1
+  resolution: "@tiptap/extension-hard-break@npm:2.9.1"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+  checksum: 10c0/1a9beac209d3df229ac8db5364b34db54ca34c77db413fb5acfaa5380cb19bc7b322739bd8f975ec0fbbf15f69f1c6fdd85cee744f488595c07a0877fcf253da
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-history@npm:^2.5.0":
   version: 2.5.9
   resolution: "@tiptap/extension-history@npm:2.5.9"
@@ -44382,6 +44391,7 @@ __metadata:
     "@tabler/icons-react": "npm:^2.44.0"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:14.0.0"
+    "@tiptap/extension-hard-break": "npm:^2.9.1"
     "@types/addressparser": "npm:^1.0.3"
     "@types/apollo-upload-client": "npm:^17.0.2"
     "@types/bcrypt": "npm:^5.0.0"
