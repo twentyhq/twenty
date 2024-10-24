@@ -1,11 +1,12 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/constants/ManualTriggerAvailabilityOptions';
 import { WorkflowManualTrigger } from '@/workflow/types/Workflow';
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { useId } from 'react';
-import { IconCheckbox, IconHandMove, IconSquare } from 'twenty-ui';
+import { IconHandMove } from 'twenty-ui';
 
 type WorkflowEditTriggerManualFormProps =
   | {
@@ -48,18 +49,7 @@ export const WorkflowEditTriggerManualForm = ({
         fullWidth
         disabled={readonly}
         value={trigger.settings.availability}
-        options={[
-          {
-            label: 'When record(s) are selected',
-            value: 'WHEN_RECORD_SELECTED',
-            Icon: IconCheckbox,
-          },
-          {
-            label: 'When no record(s) are selected',
-            value: 'EVERYWHERE',
-            Icon: IconSquare,
-          },
-        ]}
+        options={MANUAL_TRIGGER_AVAILABILITY_OPTIONS}
         onChange={(updatedTriggerType) => {
           if (readonly === true) {
             return;
