@@ -15,7 +15,7 @@ export type SingleTabProps = {
   id: string;
   hide?: boolean;
   disabled?: boolean;
-  pill?: string;
+  pill?: string | React.ReactElement;
 };
 
 type TabListProps = {

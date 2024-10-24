@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ReactElement } from 'react';
 import { IconComponent, Pill } from 'twenty-ui';
 
 type TabProps = {
@@ -10,7 +11,7 @@ type TabProps = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
-  pill?: string;
+  pill?: string | ReactElement;
 };
 
 const StyledTab = styled.div<{ active?: boolean; disabled?: boolean }>`
@@ -73,7 +74,7 @@ export const Tab = ({
       <StyledHover>
         {Icon && <Icon size={theme.icon.size.md} />}
         {title}
-        {pill && <Pill label={pill} />}
+        {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
       </StyledHover>
     </StyledTab>
   );
