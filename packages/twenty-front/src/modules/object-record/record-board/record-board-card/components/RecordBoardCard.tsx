@@ -29,6 +29,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseInOut,
   AvatarChipVariant,
+  ChipSize,
   IconEye,
   IconEyeOff,
   LightIconButton,
@@ -295,6 +296,7 @@ export const RecordBoardCard = ({
               objectNameSingular={objectMetadataItem.nameSingular}
               record={record as ObjectRecord}
               variant={AvatarChipVariant.Transparent}
+              size={ChipSize.Large}
             />
           )}
 

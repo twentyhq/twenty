@@ -3,18 +3,20 @@ import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
+import { AvatarChip, AvatarChipVariant, ChipSize } from 'twenty-ui';
 
 export type RecordIdentifierChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   variant?: AvatarChipVariant;
+  size?: ChipSize;
 };
 
 export const RecordIdentifierChip = ({
   objectNameSingular,
   record,
   variant,
+  size,
 }: RecordIdentifierChipProps) => {
   const { onIndexIdentifierClick } = useContext(RecordIndexRootPropsContext);
   const { recordChipData } = useRecordChipData({
@@ -38,6 +40,7 @@ export const RecordIdentifierChip = ({
       variant={variant}
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}
+      size={size}
     />
   );
 };
