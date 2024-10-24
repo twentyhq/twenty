@@ -56,6 +56,7 @@ export const ObjectFilterDropdownNumberInput = () => {
             operand: selectedOperandInDropdown,
             displayValue: newValue,
             definition: filterDefinitionUsedInDropdown,
+            viewFilterGroupId: selectedFilter?.viewFilterGroupId,
           });
         }}
       />

@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
+  hasMinHeight?: boolean;
   hasMaxHeight?: boolean;
 }>`
   --padding: ${({ theme }) => theme.spacing(1)};
@@ -12,7 +13,7 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
 
   flex-direction: column;
   gap: 2px;
-  height: 100%;
+  min-height: ${({ hasMinHeight }) => (hasMinHeight ? '150px' : '100%')};
   max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
   overflow-y: auto;
 
@@ -37,13 +38,18 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
 
 export const DropdownMenuItemsContainer = ({
   children,
+  hasMinHeight,
   hasMaxHeight,
 }: {
   children: React.ReactNode;
+  hasMinHeight?: boolean;
   hasMaxHeight?: boolean;
 }) => {
   return (
-    <StyledDropdownMenuItemsExternalContainer hasMaxHeight={hasMaxHeight}>
+    <StyledDropdownMenuItemsExternalContainer
+      hasMaxHeight={hasMaxHeight}
+      hasMinHeight={hasMinHeight}
+    >
       {hasMaxHeight ? (
         <StyledScrollWrapper contextProviderName="dropdownMenuItemsContainer">
           <StyledDropdownMenuItemsInternalContainer>

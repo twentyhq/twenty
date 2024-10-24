@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 export const useSetRecordBoardColumns = (recordBoardId?: string) => {
   const { scopeId, columnIdsState, columnsFamilySelector } =
@@ -10,21 +10,20 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
 
   const setColumns = useRecoilCallback(
     ({ set, snapshot }) =>
-      (columns: RecordBoardColumnDefinition[]) => {
+      (columns: RecordGroupDefinition[]) => {
         const currentColumnsIds = snapshot
           .getLoadable(columnIdsState)
           .getValue();
 
-        const columnIds = columns.map(({ id }) => id);
+        const columnIds = columns
+          .filter(({ isVisible }) => isVisible)
+          .map(({ id }) => id);
 
         if (isDeeplyEqual(currentColumnsIds, columnIds)) {
           return;
         }
 
-        set(
-          columnIdsState,
-          columns.map((column) => column.id),
-        );
+        set(columnIdsState, columnIds);
 
         columns.forEach((column) => {
           const currentColumn = snapshot
