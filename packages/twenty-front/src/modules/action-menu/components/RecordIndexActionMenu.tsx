@@ -4,15 +4,10 @@ import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexAc
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
 
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordIndexActionMenu = ({
-  actionMenuId,
-}: {
-  actionMenuId: string;
-}) => {
+export const RecordIndexActionMenu = () => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
@@ -20,15 +15,13 @@ export const RecordIndexActionMenu = ({
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
-        <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: actionMenuId }}
-        >
+        <>
           <RecordIndexActionMenuBar />
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordIndexActionMenuEffect />
-          <RecordActionMenuEntriesSetter actionMenuType="recordIndex" />
-        </ActionMenuComponentInstanceContext.Provider>
+          <RecordActionMenuEntriesSetter />
+        </>
       )}
     </>
   );

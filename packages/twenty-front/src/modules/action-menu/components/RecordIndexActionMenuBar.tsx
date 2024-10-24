@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { RecordIndexActionMenuBarAllActionsButton } from '@/action-menu/components/RecordIndexActionMenuBarAllActionsButton';
 import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -30,7 +31,9 @@ export const RecordIndexActionMenuBar = () => {
     actionMenuEntriesComponentSelector,
   );
 
-  if (actionMenuEntries.length === 0) {
+  const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
+
+  if (pinnedEntries.length === 0) {
     return null;
   }
 
@@ -42,9 +45,10 @@ export const RecordIndexActionMenuBar = () => {
       }}
     >
       <StyledLabel>{contextStoreNumberOfSelectedRecords} selected:</StyledLabel>
-      {actionMenuEntries.map((entry, index) => (
+      {pinnedEntries.map((entry, index) => (
         <RecordIndexActionMenuBarEntry key={index} entry={entry} />
       ))}
+      <RecordIndexActionMenuBarAllActionsButton />
     </BottomBar>
   );
 };

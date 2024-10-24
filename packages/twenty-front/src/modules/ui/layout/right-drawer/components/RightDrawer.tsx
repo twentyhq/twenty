@@ -47,6 +47,10 @@ const StyledContainer = styled(motion.div)<{ isRightDrawerMinimized: boolean }>`
   right: 0;
   top: 0;
   z-index: 100;
+
+  .modal-backdrop {
+    background: ${({ theme }) => theme.background.overlayTertiary};
+  }
 `;
 
 const StyledRightDrawer = styled.div`

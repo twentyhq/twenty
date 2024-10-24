@@ -8,6 +8,7 @@ export type ActionMenuEntry = {
   label: string;
   position: number;
   Icon: IconComponent;
+  isPinned?: boolean;
   accent?: MenuItemAccent;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactNode;

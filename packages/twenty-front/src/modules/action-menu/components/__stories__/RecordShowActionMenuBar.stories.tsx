@@ -2,7 +2,7 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { RecordShowActionMenuBar } from '@/action-menu/components/RecordShowActionMenuBar';
+import { RecordShowRightDrawerActionMenuBar } from '@/action-menu/components/RecordShowRightDrawerActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -20,9 +20,9 @@ const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
 const exportMock = jest.fn();
 
-const meta: Meta<typeof RecordShowActionMenuBar> = {
-  title: 'Modules/ActionMenu/RecordShowActionMenuBar',
-  component: RecordShowActionMenuBar,
+const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
+  title: 'Modules/ActionMenu/RecordShowRightDrawerActionMenuBar',
+  component: RecordShowRightDrawerActionMenuBar,
   decorators: [
     (Story) => (
       <RecoilRoot
@@ -98,7 +98,7 @@ const meta: Meta<typeof RecordShowActionMenuBar> = {
 
 export default meta;
 
-type Story = StoryObj<typeof RecordShowActionMenuBar>;
+type Story = StoryObj<typeof RecordShowRightDrawerActionMenuBar>;
 
 export const Default: Story = {
   args: {

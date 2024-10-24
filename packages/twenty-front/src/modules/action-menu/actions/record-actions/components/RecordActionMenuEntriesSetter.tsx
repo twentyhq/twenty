@@ -1,15 +1,14 @@
 import { MultipleRecordsActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/MultipleRecordsActionMenuEntriesSetter';
 import { SingleRecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/SingleRecordActionMenuEntriesSetter';
-import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordActionMenuEntriesSetter = ({
-  actionMenuType,
+  isInRightDrawer = false,
 }: {
-  actionMenuType: ActionMenuType;
+  isInRightDrawer?: boolean;
 }) => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -37,7 +36,7 @@ export const RecordActionMenuEntriesSetter = ({
     return (
       <SingleRecordActionMenuEntriesSetter
         objectMetadataItem={objectMetadataItem}
-        actionMenuType={actionMenuType}
+        isInRightDrawer={isInRightDrawer}
       />
     );
   }
@@ -45,7 +44,6 @@ export const RecordActionMenuEntriesSetter = ({
   return (
     <MultipleRecordsActionMenuEntriesSetter
       objectMetadataItem={objectMetadataItem}
-      actionMenuType={actionMenuType}
     />
   );
 };
