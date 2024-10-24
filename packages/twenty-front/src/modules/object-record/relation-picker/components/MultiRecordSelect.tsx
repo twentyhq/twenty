@@ -18,7 +18,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconPlus, isDefined } from 'twenty-ui';
@@ -38,6 +38,7 @@ export const MultiRecordSelect = ({
   onSubmit?: () => void;
   onCreate?: ((searchInput?: string) => void) | (() => void);
 }) => {
+  const [inputValue, setInputValue] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
   const setHotkeyScope = useSetHotkeyScope();
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
@@ -67,9 +68,6 @@ export const MultiRecordSelect = ({
   const relationPickerSearchFilter = useRecoilValue(
     relationPickerSearchFilterState,
   );
-  const debouncedSetSearchFilter = useDebouncedCallback(setSearchFilter, 100, {
-    leading: true,
-  });
 
   useEffect(() => {
     setHotkeyScope(relationPickerScopedId);
@@ -91,9 +89,14 @@ export const MultiRecordSelect = ({
     500,
   );
 
+  const debouncedSetSearchFilter = useDebouncedCallback((value: string) => {
+    setSearchFilter(value);
+  }, 300);
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSetSearchFilter(event.currentTarget.value);
+      const value = event.currentTarget.value;
+      setInputValue(value);
+      debouncedSetSearchFilter(value);
     },
     [debouncedSetSearchFilter],
   );
@@ -108,7 +111,7 @@ export const MultiRecordSelect = ({
       />
       <DropdownMenu ref={containerRef} data-select-disable>
         <DropdownMenuSearchInput
-          value={relationPickerSearchFilter}
+          value={inputValue}
           onChange={handleFilterChange}
           autoFocus
         />
